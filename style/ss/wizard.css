@@ -1,0 +1,254 @@
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(60px) scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+#automationWizard {
+    animation: slideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.wizard-step {
+    animation: fadeInUp 0.4s ease-out;
+}
+
+#automationWizardOverlay button {
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+#automationWizardOverlay button:hover {
+    transform: none;
+}
+
+#automationWizardOverlay button:active {
+    transform: scale(0.98);
+}
+
+#nextButton {
+    box-shadow: 0 4px 16px rgba(255, 122, 80, 0.3);
+}
+
+#nextButton:hover {
+    background: linear-gradient(135deg, #ff8566 0%, #ff7a4a 100%);
+    box-shadow: 0 6px 20px rgba(255, 122, 80, 0.4);
+}
+
+#nextButton:active {
+    transform: scale(0.98);
+}
+
+#getStartedButton {
+    box-shadow: 0 4px 16px rgba(255, 122, 80, 0.3);
+}
+
+#getStartedButton:hover {
+    background: linear-gradient(135deg, #ff8566 0%, #ff7a4a 100%);
+    box-shadow: 0 6px 20px rgba(255, 122, 80, 0.4);
+}
+
+#getStartedButton:active {
+    transform: scale(0.98);
+}
+
+#prevButton:hover {
+    background: rgba(255, 122, 80, 0.1);
+    box-shadow: 0 4px 12px rgba(255, 122, 80, 0.2);
+}
+
+#closeAutomationWizard:hover {
+    color: #ff7a50;
+    background: rgba(255, 122, 80, 0.1);
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes growBar {
+    from {
+        width: 0;
+    }
+    to {
+        width: 100%;
+    }
+}
+
+.orbit {
+    transform-origin: 50px 50px;
+}
+
+.orbit-1 {
+    animation: rotateOrbit 3s linear infinite;
+}
+
+.orbit-2 {
+    animation: rotateOrbit 2.5s linear infinite reverse;
+}
+
+@keyframes rotateOrbit {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+#automationWizardContent {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 107, 53, 0.4) transparent;
+}
+
+#automationWizardContent::-webkit-scrollbar {
+    width: 8px;
+}
+
+#automationWizardContent::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#automationWizardContent::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.12);
+    border-radius: 4px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+#automationWizardContent::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.2);
+    background-clip: padding-box;
+}
+
+@media (max-width: 1200px) {
+    #automationWizard {
+        max-width: 95%;
+    }
+
+    #automationWizardContent {
+        padding: 48px 40px;
+    }
+}
+
+@media (max-width: 768px) {
+    #automationWizardOverlay {
+        padding: 10px;
+    }
+
+    #automationWizard {
+        max-width: 100%;
+        max-height: 95vh;
+    }
+
+    #automationWizard > div:first-child {
+        padding: 40px 32px 28px !important;
+    }
+
+    #automationWizardContent {
+        padding: 40px 32px;
+    }
+
+    #automationWizard > div:last-child {
+        padding: 24px 32px !important;
+        flex-direction: column;
+    }
+
+    #automationWizard > div:last-child > div:first-child {
+        display: none;
+    }
+
+    #automationWizard > div:last-child > div:last-child {
+        width: 100%;
+    }
+
+    #automationWizard button {
+        width: 100%;
+    }
+
+    #prevButton {
+        width: 100%;
+    }
+
+    #nextButton {
+        width: 100%;
+    }
+
+    #getStartedButton {
+        width: 100%;
+    }
+
+    #closeAutomationWizard {
+        width: 40px;
+        height: 40px;
+        font-size: 22px;
+    }
+}
+
+@media (max-width: 480px) {
+    #automationWizardContent {
+        padding: 32px 24px;
+    }
+
+    #automationWizard > div:first-child {
+        padding: 32px 24px 20px !important;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    #automationWizard h2 {
+        font-size: 28px !important;
+    }
+
+    #automationWizard > div:last-child {
+        padding: 20px 24px !important;
+    }
+}

@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>Solis Ops</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f3f1ec; --panel: #fffcf7; --ink: #1a1c1e; --muted: #5c6570;
+      --line: rgba(26,28,30,.1); --ok: #1f7a4d; --ok-bg: #e4f5eb;
+      --warn: #9a6700; --warn-bg: #fff4d6; --err: #b42318; --err-bg: #fde8e6;
+      --idle: #4b5563; --idle-bg: #eef1f4; --accent: #0f5c4c; --accent-soft: #d9efe8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh;
+      font-family: "IBM Plex Sans", system-ui, sans-serif; color: var(--ink);
+      background:
+        radial-gradient(900px 420px at 10% -10%, rgba(15,92,76,.08), transparent 55%),
+        radial-gradient(700px 360px at 100% 0%, rgba(154,103,0,.06), transparent 50%),
+        var(--bg);
+    }
+    .shell { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+    nav {
+      padding: 28px 18px; border-right: 1px solid var(--line);
+      background: rgba(255,252,247,.72); backdrop-filter: blur(10px);
+    }
+    .brand { font-weight: 700; letter-spacing: -.03em; font-size: 1.15rem; margin: 0 0 4px; }
+    .brand-sub { color: var(--muted); font-size: .78rem; margin-bottom: 28px; }
+    .nav-btn {
+      display: block; width: 100%; text-align: left; border: 0; background: transparent;
+      color: var(--muted); font: inherit; font-weight: 500; padding: 10px 12px;
+      border-radius: 10px; cursor: pointer; margin-bottom: 4px;
+    }
+    .nav-btn:hover { background: rgba(15,92,76,.06); color: var(--ink); }
+    .nav-btn.active { background: var(--accent-soft); color: var(--accent); }
+    main { padding: 28px 32px 48px; }
+    .top { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 22px; }
+    h1 { margin: 0; font-size: 1.55rem; letter-spacing: -.03em; }
+    .meta { color: var(--muted); font-size: .85rem; margin-top: 4px; }
+    .btn {
+      border: 1px solid var(--line); background: var(--panel); color: var(--ink);
+      font: inherit; font-weight: 600; font-size: .85rem; padding: 9px 14px;
+      border-radius: 10px; cursor: pointer;
+    }
+    .btn:hover { border-color: rgba(15,92,76,.35); }
+    .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn-sm { padding: 6px 10px; font-size: .78rem; }
+    .danger { color: var(--err); border-color: rgba(180,35,24,.25); background: var(--err-bg); }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-bottom: 22px; }
+    .card {
+      background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+      padding: 16px 16px 14px; box-shadow: 0 8px 24px rgba(26,28,30,.04);
+    }
+    .card .label { color: var(--muted); font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+    .card .value { font-size: 1.55rem; font-weight: 700; letter-spacing: -.04em; margin-top: 6px; font-variant-numeric: tabular-nums; }
+    .card .hint { color: var(--muted); font-size: .8rem; margin-top: 4px; }
+    .section-title { font-size: .95rem; font-weight: 650; margin: 8px 0 12px; }
+    .integ { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+    .integ-card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+    .integ-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+    .integ-name { font-weight: 650; }
+    .pill {
+      font-family: "IBM Plex Mono", monospace; font-size: .68rem; font-weight: 500;
+      padding: 3px 8px; border-radius: 999px; text-transform: uppercase; letter-spacing: .03em;
+    }
+    .pill.ok, .pill.active { background: var(--ok-bg); color: var(--ok); }
+    .pill.warn, .pill.configured_idle, .pill.suspended, .pill.past_due { background: var(--warn-bg); color: var(--warn); }
+    .pill.error, .pill.banned, .pill.revoked { background: var(--err-bg); color: var(--err); }
+    .pill.not_configured, .pill.not_wired, .pill.idle, .pill.cancelled, .pill.inactive {
+      background: var(--idle-bg); color: var(--idle);
+    }
+    .integ-detail { color: var(--muted); font-size: .84rem; line-height: 1.4; min-height: 2.4em; }
+    .integ-meta { margin-top: 8px; font-family: "IBM Plex Mono", monospace; font-size: .72rem; color: var(--muted); }
+    table { width: 100%; border-collapse: collapse; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); font-size: .84rem; }
+    th { background: rgba(15,92,76,.05); color: var(--muted); font-weight: 600; font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; }
+    tr:last-child td { border-bottom: 0; }
+    tr.clickable { cursor: pointer; }
+    tr.clickable:hover td { background: rgba(15,92,76,.04); }
+    .mono { font-family: "IBM Plex Mono", monospace; font-size: .78rem; }
+    .form { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin-bottom: 16px; }
+    textarea, input[type=text], input[type=search], select {
+      width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px;
+      font: inherit; background: #fff; margin-top: 6px; margin-bottom: 12px;
+    }
+    textarea { min-height: 100px; resize: vertical; }
+    .row-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .err-banner {
+      display: none; background: var(--err-bg); color: var(--err);
+      border: 1px solid rgba(180,35,24,.2); border-radius: 12px; padding: 12px 14px; margin-bottom: 16px;
+    }
+    .err-banner.show { display: block; }
+    .post-item { border: 1px solid var(--line); background: var(--panel); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
+    .post-item .content { white-space: pre-wrap; line-height: 1.45; margin: 6px 0 8px; }
+    .post-meta { color: var(--muted); font-size: .78rem; }
+    .post-thumb { max-width: 180px; max-height: 120px; border-radius: 8px; margin-top: 6px; display: block; }
+    .split { display: grid; grid-template-columns: 1.1fr .9fr; gap: 16px; }
+    .drawer {
+      background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px;
+      max-height: 78vh; overflow: auto;
+    }
+    .drawer h2 { margin: 0 0 8px; font-size: 1.1rem; }
+    .drawer .kv { display: grid; grid-template-columns: 120px 1fr; gap: 4px 10px; font-size: .84rem; margin-bottom: 12px; }
+    .drawer .kv span:first-child { color: var(--muted); }
+    .flag { display: inline-block; margin: 2px 4px 2px 0; padding: 2px 8px; border-radius: 999px; background: var(--warn-bg); color: var(--warn); font-size: .72rem; font-weight: 600; }
+    .toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+    .file-pick {
+      display: inline-flex; align-items: center; gap: 8px; padding: 9px 12px;
+      border: 1px dashed var(--line); border-radius: 10px; background: #fff; cursor: pointer; font-size: .85rem;
+    }
+    .file-pick input { display: none; }
+    @media (max-width: 960px) {
+      .shell { grid-template-columns: 1fr; }
+      .split { grid-template-columns: 1fr; }
+      nav { border-right: 0; border-bottom: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 6px; padding: 16px; }
+      .brand-sub { display: none; }
+      main { padding: 18px 16px 40px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <nav>
+      <p class="brand">Solis Ops</p>
+      <p class="brand-sub">Owner · id 1 only</p>
+      <button type="button" class="nav-btn active" data-panel="overview">Overview</button>
+      <button type="button" class="nav-btn" data-panel="accounts">Accounts</button>
+      <button type="button" class="nav-btn" data-panel="abuse">Abuse flags</button>
+      <button type="button" class="nav-btn" data-panel="integrations">Integrations</button>
+      <button type="button" class="nav-btn" data-panel="generations">Generations</button>
+      <button type="button" class="nav-btn" data-panel="compute">Compute</button>
+      <button type="button" class="nav-btn" data-panel="posts">Posts</button>
+      <button type="button" class="nav-btn" data-panel="audit">Audit log</button>
+    </nav>
+    <main>
+      <div class="err-banner" id="errBanner"></div>
+      <div class="top">
+        <div>
+          <h1 id="pageTitle">Overview</h1>
+          <div class="meta" id="lastRefresh">—</div>
+        </div>
+        <div class="row-actions">
+          <button type="button" class="btn" id="refreshBtn">Refresh</button>
+          <button type="button" class="btn danger" id="lock2faBtn" title="End 2FA session">Lock 2FA</button>
+        </div>
+      </div>
+
+      <section class="panel active" id="panel-overview">
+        <div class="grid" id="overviewCards"></div>
+        <div class="section-title">Plans</div>
+        <div class="grid" id="planCards"></div>
+        <div class="section-title">Top compute (7d)</div>
+        <div style="overflow-x:auto"><table><thead><tr><th>User</th><th>Plan</th><th>Gens</th></tr></thead><tbody id="topComputeBody"></tbody></table></div>
+      </section>
+
+      <section class="panel" id="panel-accounts">
+        <div class="toolbar">
+          <input type="search" id="userSearch" placeholder="Search email, name, or id…" style="max-width:320px;margin:0" />
+          <button type="button" class="btn" id="userSearchBtn">Search</button>
+        </div>
+        <div class="split">
+          <div style="overflow-x:auto;max-height:78vh">
+            <table>
+              <thead>
+                <tr><th>ID</th><th>Email</th><th>Plan</th><th>Status</th><th>Signup</th><th>7d</th><th>Total</th></tr>
+              </thead>
+              <tbody id="usersBody"></tbody>
+            </table>
+          </div>
+          <div class="drawer" id="userDrawer">
+            <p class="meta">Select a user to inspect usage, billing, generations, and take actions.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-abuse">
+        <div class="section-title">Live API spam blocks</div>
+        <p class="meta" id="apiSpamNote" style="margin-top:0">Burst abuse auto-blocked (status polling soft-weighted).</p>
+        <div style="overflow-x:auto;margin-bottom:18px">
+          <table>
+            <thead><tr><th>When</th><th>Key</th><th>Reason</th><th>Score</th><th>Hard hits</th><th>Samples</th></tr></thead>
+            <tbody id="apiSpamBody"></tbody>
+          </table>
+        </div>
+        <div class="section-title">Accounts with signals</div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>User</th><th>Plan</th><th>Status</th><th>Flags</th><th>24h</th><th>7d</th><th>Storage</th></tr></thead>
+            <tbody id="abuseBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-integrations">
+        <div class="integ" id="integGrid"></div>
+      </section>
+
+      <section class="panel" id="panel-generations">
+        <div class="section-title">By template (today)</div>
+        <div class="grid" id="templateCards"></div>
+        <div class="section-title">Recent ledger</div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>When</th><th>User</th><th>Plan</th><th>Template</th><th>Effort</th><th>Project</th></tr></thead>
+            <tbody id="gensBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-compute">
+        <div class="toolbar">
+          <select id="computeDays" style="width:auto;margin:0">
+            <option value="7">Last 7 days</option>
+            <option value="30" selected>Last 30 days</option>
+            <option value="90">Last 90 days</option>
+          </select>
+          <button type="button" class="btn" id="computeRefreshBtn">Refresh compute</button>
+          <button type="button" class="btn" id="vastSnapshotBtn" title="Cached 15m — does not rent machines">Vast snapshot</button>
+        </div>
+        <p class="meta" id="computeRatesNote" style="margin-top:0">Estimated internal cost — not provider invoices.</p>
+        <div class="grid" id="computeTotalCards"></div>
+        <div class="section-title">Free plan · completed avg</div>
+        <div class="grid" id="computeFreeCards"></div>
+        <div class="section-title">Cost by plan</div>
+        <div style="overflow-x:auto;margin-bottom:18px">
+          <table>
+            <thead><tr><th>Plan</th><th>Gens</th><th>Avg wall</th><th>Prod $</th><th>Avg $/gen</th></tr></thead>
+            <tbody id="computePlanBody"></tbody>
+          </table>
+        </div>
+        <div class="section-title">Top users by prod-equivalent cost</div>
+        <div style="overflow-x:auto;margin-bottom:18px">
+          <table>
+            <thead><tr><th>User</th><th>Plan</th><th>Gens</th><th>Wall-min</th><th>CPU-min</th><th>Prod $</th><th>Avg wall</th></tr></thead>
+            <tbody id="computeUserBody"></tbody>
+          </table>
+        </div>
+        <div class="section-title">By effort</div>
+        <div class="grid" id="computeEffortCards"></div>
+        <div class="section-title">Provider billing (Vast.ai)</div>
+        <div class="card" id="vastSnapshotCard" style="margin-bottom:18px">
+          <div class="hint">Click “Vast snapshot” when you need balance/instances. Result is cached 15 minutes so refreshes do not burn API credits.</div>
+        </div>
+        <div class="section-title">Recent generations (compute)</div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>When</th><th>User</th><th>Plan</th><th>Status</th><th>Wall</th><th>Prod $</th><th>Effort</th><th>Project</th></tr></thead>
+            <tbody id="computeRecentBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-posts">
+        <div class="form">
+          <label for="postContent"><strong>New feed post</strong></label>
+          <textarea id="postContent" placeholder="What should users see?"></textarea>
+          <label class="file-pick">
+            <input type="file" id="postImage" accept="image/jpeg,image/png,image/webp,image/gif" />
+            <span id="postImageLabel">Choose image from PC…</span>
+          </label>
+          <div class="row-actions" style="margin-top:12px">
+            <button type="button" class="btn btn-primary" id="postCreateBtn">Publish</button>
+          </div>
+        </div>
+        <div id="postsList"></div>
+      </section>
+
+      <section class="panel" id="panel-audit">
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>When</th><th>Action</th><th>Target</th><th>Details</th><th>IP</th></tr></thead>
+            <tbody id="auditBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const TITLES = {
+      overview: 'Overview', accounts: 'Accounts', abuse: 'Abuse flags',
+      integrations: 'Integrations', generations: 'Generations', compute: 'Compute',
+      posts: 'Posts', audit: 'Audit log',
+    };
+    let selectedUserId = null;
+    let computeLoaded = false;
+
+    function fmtUsd(n) {
+      const v = Number(n || 0);
+      if (v === 0) return '$0';
+      if (v < 0.01) return '$' + v.toFixed(4);
+      return '$' + v.toFixed(2);
+    }
+    function fmtSec(n) {
+      const s = Math.round(Number(n || 0));
+      if (s < 60) return s + 's';
+      const m = Math.floor(s / 60), r = s % 60;
+      return m + 'm ' + r + 's';
+    }
+
+    function showErr(msg) {
+      const el = document.getElementById('errBanner');
+      if (!msg) { el.classList.remove('show'); el.textContent = ''; return; }
+      el.textContent = msg; el.classList.add('show');
+    }
+    function esc(s) {
+      return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+    async function api(path, opts = {}) {
+      const res = await fetch(path, { credentials: 'include', ...opts });
+      if (res.status === 404) throw new Error('Not found — sign in as owner (user id 1), then open /admin/monitor.');
+      if (res.status === 401) {
+        const data = await res.json().catch(() => ({}));
+        if (data.code === '2fa_required' || data.error === '2fa_required') {
+          location.replace('/admin/monitor');
+          throw new Error('2FA required');
+        }
+      }
+      const ct = res.headers.get('content-type') || '';
+      const data = ct.includes('application/json') ? await res.json().catch(() => ({})) : {};
+      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+      return data;
+    }
+    function card(label, value, hint) {
+      return `<div class="card"><div class="label">${label}</div><div class="value">${value}</div>${hint ? `<div class="hint">${hint}</div>` : ''}</div>`;
+    }
+    function statusPill(status) {
+      const s = String(status || 'idle');
+      return `<span class="pill ${s}">${esc(s.replace(/_/g,' '))}</span>`;
+    }
+
+    function renderOverview(data) {
+      const u = data.users || {}, g = data.generations || {}, a = data.auth || {}, p = data.posts || {}, plans = u.plans || {};
+      document.getElementById('overviewCards').innerHTML = [
+        card('Users', u.total ?? 0, `${u.paid ?? 0} paid · ${u.banned ?? 0} banned`),
+        card('Gens today', g.today ?? 0, `${g.last_24h ?? 0} last 24h`),
+        card('Gens 7d', g.last_7d ?? 0, `${g.total ?? 0} ledger total`),
+        card('New today', u.new_today ?? 0),
+        card('Failed logins 24h', a.failed_logins_24h ?? 0),
+        card('Feed posts', p.total ?? 0, `${p.today ?? 0} today`),
+      ].join('');
+      document.getElementById('planCards').innerHTML = [
+        card('Free', plans.free ?? 0), card('Basic', plans.basic ?? 0),
+        card('Prime', plans.prime ?? 0), card('Elite', plans.elite ?? 0),
+        card('Paid', u.paid ?? 0),
+      ].join('');
+      const top = g.top_compute_7d || [];
+      document.getElementById('topComputeBody').innerHTML = top.length
+        ? top.map(r => `<tr class="clickable" data-uid="${r.user_id}"><td class="mono">${esc(r.email)}</td><td>${esc(r.plan)}</td><td>${r.c}</td></tr>`).join('')
+        : '<tr><td colspan="3">No activity</td></tr>';
+      document.getElementById('templateCards').innerHTML = (g.by_template_today || []).length
+        ? g.by_template_today.map(t => card(t.template, t.count)).join('')
+        : card('No gens today', '—');
+      const recent = g.recent || [];
+      document.getElementById('gensBody').innerHTML = recent.length
+        ? recent.map(r => `<tr>
+            <td class="mono">${esc(r.created_at||'')}</td>
+            <td class="mono">${esc(r.email||('#'+r.user_id))}</td>
+            <td>${esc(r.plan||'')}</td><td>${esc(r.template||'')}</td>
+            <td>${esc(r.effort||'')}</td>
+            <td class="mono">${esc(String(r.project_id||'').slice(0,28))}</td>
+          </tr>`).join('')
+        : '<tr><td colspan="6">Empty</td></tr>';
+    }
+
+    function renderIntegrations(data) {
+      document.getElementById('integGrid').innerHTML = (data.integrations || []).map(i => `
+        <div class="integ-card">
+          <div class="integ-head"><div class="integ-name">${esc(i.label||i.id)}</div>${statusPill(i.status)}</div>
+          <div class="integ-detail">${esc(i.detail||'')}</div>
+          <div class="integ-meta">
+            ${i.latency_ms!=null?i.latency_ms+' ms':''}
+            ${i.backend?' · '+esc(i.backend):''}
+            ${i.instances!=null?' · instances='+i.instances:''}
+            ${i.compute_mode?' · '+esc(i.compute_mode):''}
+          </div>
+        </div>`).join('');
+    }
+
+    function renderUsers(users) {
+      document.getElementById('usersBody').innerHTML = (users || []).map(u => `
+        <tr class="clickable" data-uid="${u.id}">
+          <td class="mono">${u.id}</td>
+          <td class="mono">${esc(u.email||'')}</td>
+          <td>${esc(u.plan||'')}</td>
+          <td>${statusPill(u.status)}</td>
+          <td class="mono">${esc((u.created_at||'').slice(0,10))}</td>
+          <td>${u.gens_7d??0}</td>
+          <td>${u.gens_total??0}</td>
+        </tr>`).join('') || '<tr><td colspan="7">No users</td></tr>';
+    }
+
+    function renderUserDrawer(data) {
+      if (!data) {
+        document.getElementById('userDrawer').innerHTML = '<p class="meta">Select a user.</p>';
+        return;
+      }
+      const u = data.user || {}, us = data.usage || {}, b = data.billing || {}, c = data.compute || {};
+      const flags = (data.abuse_flags || []).map(f => `<span class="flag">${esc(f)}</span>`).join('') || '<span class="meta">none</span>';
+      const gens = (data.generations || []).slice(0, 15).map(g => `
+        <tr>
+          <td class="mono">${esc((g.created_at||'').slice(0,19))}</td>
+          <td>${esc(g.template||'')}</td>
+          <td>${esc(g.effort||'')}</td>
+          <td>${esc(g.disk_status||'—')}</td>
+        </tr>`).join('') || '<tr><td colspan="4">No ledger rows</td></tr>';
+
+      document.getElementById('userDrawer').innerHTML = `
+        <h2>#${u.id} · ${esc(u.email||'')}</h2>
+        <div>${statusPill(u.status)} <span class="meta">${esc(u.auth_provider||'')}</span></div>
+        <div class="kv" style="margin-top:12px">
+          <span>Plan</span><span>${esc(u.plan||'')}</span>
+          <span>Signup</span><span class="mono">${esc(u.created_at||'')}</span>
+          <span>Last login</span><span class="mono">${esc(u.last_login||'—')}</span>
+          <span>Paddle sub</span><span class="mono">${esc(u.paddle_subscription_id||'—')}</span>
+          <span>Next bill</span><span class="mono">${esc(u.next_billing_date||'—')}</span>
+          <span>Sub status</span><span>${esc(u.subscription_status||u.plan_status||'—')}</span>
+        </div>
+        <div class="section-title">Usage</div>
+        <div class="grid" style="margin-bottom:12px">
+          ${card('24h', us.gens_24h??0)}
+          ${card('7d', us.gens_7d??0)}
+          ${card('30d', us.gens_30d??0)}
+          ${card('Library', us.library_videos??0)}
+          ${card('Storage', (us.storage_mb??0)+' MB')}
+          ${card('Quota day/mo', (us.daily_quota_used??0)+' / '+(us.monthly_quota_used??0))}
+        </div>
+        <div class="section-title">Compute (30d, prod-equiv)</div>
+        <div class="grid" style="margin-bottom:12px">
+          ${card('Gens', c.generations??0)}
+          ${card('Wall-min', c.wall_minutes??0)}
+          ${card('CPU-min', c.cpu_minutes??0)}
+          ${card('Prod $', fmtUsd(c.est_cost_usd), c.note ? String(c.note).slice(0,72) : 'Vast-equivalent')}
+          ${card('Avg wall', fmtSec(c.avg_wall_seconds))}
+          ${card('$/gen', fmtUsd(c.cost_per_generation_usd), c.rate_usd_per_hour!=null ? ('@ $'+Number(c.rate_usd_per_hour).toFixed(2)+'/hr') : '')}
+        </div>
+        <div class="section-title">Billing check</div>
+        <p class="meta">${b.paddle_synced === false ? '⚠ Paid plan without Paddle subscription id — check webhook.' : 'Paddle field looks consistent with plan.'}</p>
+        <div class="section-title">Abuse flags</div>
+        <div>${flags}</div>
+        <div class="section-title" style="margin-top:14px">Admin actions</div>
+        <div class="row-actions">
+          <select id="actionPlan" style="width:auto;margin:0">
+            <option value="free">free</option><option value="basic">basic</option>
+            <option value="prime">prime</option><option value="elite">elite</option>
+          </select>
+          <button type="button" class="btn btn-sm btn-primary" data-act="set_plan">Set plan</button>
+          <button type="button" class="btn btn-sm" data-act="suspend">Suspend</button>
+          <button type="button" class="btn btn-sm" data-act="unsuspend">Unsuspend</button>
+          <button type="button" class="btn btn-sm danger" data-act="ban">Ban</button>
+          <button type="button" class="btn btn-sm" data-act="unban">Unban</button>
+          <button type="button" class="btn btn-sm danger" data-act="revoke_access">Revoke access</button>
+        </div>
+        <div class="section-title" style="margin-top:16px">Generation history</div>
+        <div style="overflow-x:auto">
+          <table><thead><tr><th>When</th><th>Template</th><th>Effort</th><th>Status</th></tr></thead><tbody>${gens}</tbody></table>
+        </div>
+      `;
+      const planSel = document.getElementById('actionPlan');
+      if (planSel && u.plan) planSel.value = u.plan;
+    }
+
+    function renderAbuse(flags, apiSpam, note) {
+      const noteEl = document.getElementById('apiSpamNote');
+      if (noteEl && note) noteEl.textContent = note;
+      const spamBody = document.getElementById('apiSpamBody');
+      if (spamBody) {
+        spamBody.innerHTML = (apiSpam || []).length
+          ? apiSpam.map(s => {
+              if (s.error) return `<tr><td colspan="6">${esc(s.error)}</td></tr>`;
+              return `<tr>
+                <td class="mono">${esc(s.ts || '')}</td>
+                <td class="mono">${esc(s.key || '')}</td>
+                <td><span class="flag">${esc(s.reason || '')}</span></td>
+                <td>${esc(s.score)}</td>
+                <td>${esc(s.hard_hits)}</td>
+                <td class="mono">${esc((s.sample_paths || []).slice(0, 4).join(' · '))}</td>
+              </tr>`;
+            }).join('')
+          : '<tr><td colspan="6">No live API spam blocks</td></tr>';
+      }
+      document.getElementById('abuseBody').innerHTML = (flags || []).length
+        ? flags.map(f => `<tr class="clickable" data-uid="${f.user_id}">
+            <td class="mono">${esc(f.email)}</td><td>${esc(f.plan)}</td>
+            <td>${statusPill(f.status)}</td>
+            <td>${(f.flags||[]).map(x=>`<span class="flag">${esc(x)}</span>`).join('')}</td>
+            <td>${f.gens_24h}</td><td>${f.gens_7d}</td><td>${f.storage_mb} MB</td>
+          </tr>`).join('')
+        : '<tr><td colspan="7">No abuse signals</td></tr>';
+    }
+
+    function renderCompute(data) {
+      const t = data.totals || {}, rates = data.rates || {}, free = data.free_completed_avg || {};
+      document.getElementById('computeRatesNote').textContent =
+        (rates.note || 'Prod-equivalent Vast cost') +
+        ` · GPU $${Number(rates.gpu_usd_per_hour||0).toFixed(2)}/hr` +
+        (rates.rate_source ? ` (${rates.rate_source})` : '') +
+        ` · boot ${Number(rates.boot_seconds_per_gen||0)|0}s/gen` +
+        ` · window ${data.window_days||30}d`;
+      document.getElementById('computeTotalCards').innerHTML = [
+        card('Generations', t.generations ?? 0),
+        card('Wall time', (t.wall_minutes ?? 0) + ' min', fmtSec(t.wall_seconds)),
+        card('CPU time', (t.cpu_minutes ?? 0) + ' min'),
+        card('Prod-equiv $', fmtUsd(t.est_cost_usd), 'not an invoice'),
+        card('Avg wall / gen', fmtSec(t.avg_wall_seconds)),
+        card('Avg $ / gen', fmtUsd(t.cost_per_generation_usd)),
+      ].join('');
+      document.getElementById('computeFreeCards').innerHTML = [
+        card('Free gens', free.generations ?? 0, 'completed only'),
+        card('Avg wall', fmtSec(free.avg_wall_seconds)),
+        card('Avg CPU', fmtSec(free.avg_cpu_seconds)),
+        card('Avg video', fmtSec(free.avg_video_duration_s)),
+        card('Avg prod $', fmtUsd(free.avg_cost_usd)),
+      ].join('');
+      const plans = data.by_plan || [];
+      document.getElementById('computePlanBody').innerHTML = plans.length
+        ? plans.map(p => {
+            const n = Number(p.n || 0);
+            const cost = Number(p.cost || 0);
+            return `<tr>
+              <td>${esc(p.plan||'unknown')}</td>
+              <td>${n}</td>
+              <td>${fmtSec(p.avg_wall)}</td>
+              <td>${fmtUsd(cost)}</td>
+              <td>${fmtUsd(n ? cost / n : 0)}</td>
+            </tr>`;
+          }).join('')
+        : '<tr><td colspan="5">No compute rows yet — run a generation after restart</td></tr>';
+      const users = data.by_user || [];
+      document.getElementById('computeUserBody').innerHTML = users.length
+        ? users.map(u => `<tr class="clickable" data-uid="${u.user_id}">
+            <td class="mono">${esc(u.email)}</td>
+            <td>${esc(u.plan||'')}</td>
+            <td>${u.n??0}</td>
+            <td>${u.wall_min??0}</td>
+            <td>${u.cpu_min??0}</td>
+            <td>${fmtUsd(u.cost)}</td>
+            <td>${fmtSec(u.avg_wall_s)}</td>
+          </tr>`).join('')
+        : '<tr><td colspan="7">No users yet</td></tr>';
+      document.getElementById('computeEffortCards').innerHTML = (data.by_effort || []).length
+        ? data.by_effort.map(e => card(e.effort || 'unknown', e.n ?? 0, 'avg ' + fmtSec(e.avg_wall) + ' · ' + fmtUsd(e.cost))).join('')
+        : card('No effort data', '—');
+      const recent = data.recent || [];
+      document.getElementById('computeRecentBody').innerHTML = recent.length
+        ? recent.map(r => `<tr>
+            <td class="mono">${esc((r.created_at||'').slice(0,19))}</td>
+            <td class="mono">${esc(r.email||('#'+r.user_id))}</td>
+            <td>${esc(r.plan||'')}</td>
+            <td>${statusPill(r.status)}</td>
+            <td>${fmtSec(r.wall_seconds)}</td>
+            <td>${fmtUsd(r.est_cost_usd)}</td>
+            <td>${esc(r.effort||'')}</td>
+            <td class="mono">${esc(String(r.project_id||'').slice(0,28))}</td>
+          </tr>`).join('')
+        : '<tr><td colspan="8">Empty</td></tr>';
+    }
+
+    function renderVastSnapshot(data) {
+      const el = document.getElementById('vastSnapshotCard');
+      if (!data) {
+        el.innerHTML = '<div class="hint">No snapshot.</div>';
+        return;
+      }
+      if (!data.configured) {
+        el.innerHTML = `<div class="label">Vast.ai</div><div class="hint">${esc(data.detail||'Not configured')}</div>`;
+        return;
+      }
+      const inst = (data.instances_preview || []).map(i =>
+        `<div class="integ-meta">#${esc(i.id)} · ${esc(i.gpu_name||'?')} · $${esc(i.dph_total??'—')}/hr · ${esc(i.status||'')}</div>`
+      ).join('') || '<div class="hint">No listed instances</div>';
+      el.innerHTML = `
+        <div class="integ-head"><div class="integ-name">Vast.ai balance</div>${statusPill(data.status)}</div>
+        <div class="value" style="font-size:1.35rem">${data.credit!=null ? esc(String(data.credit)) : '—'}</div>
+        <div class="hint">${esc(data.detail||'')} · fetched ${esc((data.fetched_at||'').slice(0,19))} · running ${data.running_instances??0} / listed ${data.listed_instances??0}</div>
+        ${inst}
+      `;
+    }
+
+    async function loadCompute(forceVast) {
+      const days = document.getElementById('computeDays')?.value || '30';
+      const res = await api('/api/admin/monitor/compute?days=' + encodeURIComponent(days));
+      renderCompute(res.data || {});
+      computeLoaded = true;
+      if (forceVast) {
+        const vast = await api('/api/admin/monitor/provider/vast');
+        renderVastSnapshot(vast.data || {});
+      }
+    }
+
+    function renderPosts(posts) {
+      const root = document.getElementById('postsList');
+      if (!posts?.length) { root.innerHTML = '<p class="meta">No posts yet.</p>'; return; }
+      root.innerHTML = posts.map(p => `
+        <div class="post-item">
+          <div class="post-meta">#${p.id} · ${esc(p.created_at||'')} · ❤ ${p.likes||0}</div>
+          <div class="content">${esc(p.content||'')}</div>
+          ${p.image_url ? `<img class="post-thumb" src="${esc(p.image_url)}" alt="" />` : ''}
+          <button type="button" class="btn btn-sm danger" data-del="${p.id}">Delete</button>
+        </div>`).join('');
+    }
+
+    function renderAudit(logs) {
+      document.getElementById('auditBody').innerHTML = (logs || []).length
+        ? logs.map(l => `<tr>
+            <td class="mono">${esc(l.created_at||'')}</td>
+            <td>${esc(l.action||'')}</td>
+            <td class="mono">${l.target_user_id ?? '—'}</td>
+            <td>${esc(l.details||'')}</td>
+            <td class="mono">${esc(l.ip_address||'')}</td>
+          </tr>`).join('')
+        : '<tr><td colspan="5">No audit entries yet</td></tr>';
+    }
+
+    async function loadUser(id) {
+      selectedUserId = id;
+      try {
+        const res = await api('/api/admin/monitor/users/' + id);
+        renderUserDrawer(res.data);
+        document.querySelectorAll('.nav-btn[data-panel]').forEach(b => b.classList.toggle('active', b.dataset.panel === 'accounts'));
+        document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === 'panel-accounts'));
+        document.getElementById('pageTitle').textContent = 'Accounts';
+      } catch (e) { showErr(e.message); }
+    }
+
+    async function runAction(action) {
+      if (!selectedUserId) return;
+      const reason = prompt('Reason / note (saved to audit log):', '') ?? '';
+      const body = { action, reason };
+      if (action === 'set_plan') {
+        body.plan = document.getElementById('actionPlan')?.value || 'free';
+      }
+      if (['ban', 'revoke_access'].includes(action) && !confirm(`Confirm ${action} on user #${selectedUserId}?`)) return;
+      try {
+        const res = await api('/api/admin/monitor/users/' + selectedUserId + '/action', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        renderUserDrawer(res.data);
+        const users = await api('/api/admin/monitor/users');
+        renderUsers(users.users || []);
+        const audit = await api('/api/admin/monitor/audit');
+        renderAudit(audit.logs || []);
+        showErr('');
+      } catch (e) { showErr(e.message); }
+    }
+
+    async function refreshAll() {
+      showErr('');
+      try {
+        const [ov, integ, posts, users, abuse, audit] = await Promise.all([
+          api('/api/admin/monitor/overview'),
+          api('/api/admin/monitor/integrations'),
+          api('/api/admin/monitor/posts'),
+          api('/api/admin/monitor/users'),
+          api('/api/admin/monitor/abuse'),
+          api('/api/admin/monitor/audit'),
+        ]);
+        renderOverview(ov.data || {});
+        renderIntegrations(integ.data || {});
+        renderPosts(posts.posts || []);
+        renderUsers(users.users || []);
+        renderAbuse(abuse.flags || [], abuse.api_spam || [], abuse.api_spam_note || '');
+        renderAudit(audit.logs || []);
+        if (selectedUserId) await loadUser(selectedUserId);
+        document.getElementById('lastRefresh').textContent = 'Updated ' + new Date().toLocaleString();
+      } catch (e) { showErr(e.message || String(e)); }
+    }
+
+    document.querySelectorAll('.nav-btn[data-panel]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.panel;
+        document.querySelectorAll('.nav-btn[data-panel]').forEach(b => b.classList.toggle('active', b === btn));
+        document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + id));
+        document.getElementById('pageTitle').textContent = TITLES[id] || id;
+        if (id === 'compute' && !computeLoaded) {
+          loadCompute(false).catch(e => showErr(e.message));
+        }
+      });
+    });
+    document.getElementById('refreshBtn').addEventListener('click', refreshAll);
+    document.getElementById('computeRefreshBtn').addEventListener('click', () => {
+      loadCompute(false).catch(e => showErr(e.message));
+    });
+    document.getElementById('computeDays').addEventListener('change', () => {
+      loadCompute(false).catch(e => showErr(e.message));
+    });
+    document.getElementById('vastSnapshotBtn').addEventListener('click', async () => {
+      try {
+        showErr('');
+        const vast = await api('/api/admin/monitor/provider/vast');
+        renderVastSnapshot(vast.data || {});
+        if (!computeLoaded) await loadCompute(false);
+      } catch (e) { showErr(e.message); }
+    });
+    document.getElementById('lock2faBtn').addEventListener('click', async () => {
+      try {
+        await api('/api/admin/monitor/2fa/logout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+        location.replace('/admin/monitor');
+      } catch (e) { showErr(e.message); }
+    });
+    document.getElementById('userSearchBtn').addEventListener('click', async () => {
+      try {
+        const q = document.getElementById('userSearch').value.trim();
+        const res = await api('/api/admin/monitor/users?q=' + encodeURIComponent(q));
+        renderUsers(res.users || []);
+      } catch (e) { showErr(e.message); }
+    });
+    document.getElementById('userSearch').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') document.getElementById('userSearchBtn').click();
+    });
+    document.body.addEventListener('click', (e) => {
+      const uid = e.target?.closest?.('[data-uid]')?.dataset?.uid;
+      if (uid) loadUser(uid);
+      const act = e.target?.dataset?.act;
+      if (act) runAction(act);
+      const del = e.target?.dataset?.del;
+      if (del) {
+        if (!confirm('Delete post #' + del + '?')) return;
+        api('/api/admin/monitor/posts/' + del, { method: 'DELETE' })
+          .then(r => renderPosts(r.posts || []))
+          .catch(err => showErr(err.message));
+      }
+    });
+    document.getElementById('postImage').addEventListener('change', (e) => {
+      const f = e.target.files?.[0];
+      document.getElementById('postImageLabel').textContent = f ? f.name : 'Choose image from PC…';
+    });
+    document.getElementById('postCreateBtn').addEventListener('click', async () => {
+      const content = document.getElementById('postContent').value.trim();
+      if (!content) return showErr('Post content required');
+      const fd = new FormData();
+      fd.append('content', content);
+      const file = document.getElementById('postImage').files?.[0];
+      if (file) fd.append('image', file);
+      try {
+        const res = await fetch('/api/admin/monitor/posts', { method: 'POST', credentials: 'include', body: fd });
+        if (res.status === 404) throw new Error('Not authorized');
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || 'Publish failed');
+        document.getElementById('postContent').value = '';
+        document.getElementById('postImage').value = '';
+        document.getElementById('postImageLabel').textContent = 'Choose image from PC…';
+        renderPosts(data.posts || []);
+        showErr('');
+      } catch (e) { showErr(e.message); }
+    });
+
+    refreshAll();
+    setInterval(refreshAll, 90000);
+  </script>
+</body>
+</html>

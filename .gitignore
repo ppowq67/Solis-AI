@@ -1,0 +1,13 @@
+# Never commit secrets or local junk
+.env
+.env.*
+!.env.example
+node_modules/
+.cache/
+*.log
+*.pem
+*.key
+*.mp4
+*.wav
+cookies.txt
+gcs-credentials.json

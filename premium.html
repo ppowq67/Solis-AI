@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <script src="/js/core/init.js?v=4"></script>
+  <script src="/js/core/avatar-url.js?v=1"></script>
+  <title>Pricing · Solis AI</title>
+  <meta name="description" content="Start free, scale when you're ready." />
+  <meta name="theme-color" content="#fdf9f5" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#18120e" media="(prefers-color-scheme: dark)" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon/genfavicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon/genfavicon-16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --solis: #f97316;
+      --solis-deep: #c2410c;
+      --solis-bright: #ff8c42;
+      --solis-gradient: linear-gradient(135deg, #f97316, #d65a31, #ff8c42, #b84d1a);
+      --solis-gradient-soft: linear-gradient(135deg, rgba(249,115,22,0.12), rgba(255,140,66,0.08));
+      --solis-light: #fed7aa;
+      --solis-xlight: #fff7ed;
+      --ink: #18120e;
+      --ink-soft: #2d1f17;
+      --ink-deep: #0d0a07;
+
+      --text-primary: #18120e;
+      --text-secondary: #5c5048;
+      --text-muted: #9e8878;
+      --text-faint: #c4b5a8;
+      --border: rgba(200, 185, 170, 0.3);
+      --border-strong: rgba(200, 185, 170, 0.55);
+      --border-solis: rgba(249, 115, 22, 0.2);
+
+      --glass-bg: linear-gradient(150deg, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.48) 50%, rgba(255,248,240,0.42) 100%);
+      --glass-bg-strong: linear-gradient(150deg, rgba(255,255,255,0.92) 0%, rgba(255,248,235,0.78) 50%, rgba(255,237,213,0.65) 100%);
+      --glass-shadow: 0 4px 24px rgba(120,80,40,0.08), 0 1px 4px rgba(120,80,40,0.05), inset 0 1px 0 rgba(255,255,255,0.95), inset 0 -1px 0 rgba(180,140,110,0.10);
+      --glass-shadow-lg: 0 18px 50px rgba(120,80,40,0.12), 0 4px 14px rgba(120,80,40,0.06), inset 0 1px 0 rgba(255,255,255,0.95);
+      --glass-shadow-solis: 0 8px 32px rgba(249,115,22,0.10), 0 2px 8px rgba(120,80,40,0.06), inset 0 1px 0 rgba(255,255,255,0.98), inset 0 -1px 0 rgba(249,115,22,0.08);
+
+      --font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
+      --font-numeric: 'Poppins', system-ui, sans-serif;
+      --font-body: 'DM Sans', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+      --max-width: 1200px;
+      --max-width-narrow: 880px;
+      --radius: 16px;
+      --radius-lg: 22px;
+      --radius-xl: 28px;
+
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+      --text-dark: var(--text-primary);
+      --primary-orange: var(--solis);
+      --text-light: var(--text-muted);
+    }
+
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
+    body {
+      min-height: 100vh;
+      font-family: var(--font-body);
+      background: #fdf9f5;
+      color: var(--text-primary);
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    ::selection { background: rgba(249,115,22,0.22); color: var(--ink); }
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(249,115,22,0.4); border-radius: 10px; border: 2px solid transparent; background-clip: content-box; }
+
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; }
+    ul { list-style: none; }
+    img, svg { display: block; max-width: 100%; }
+    .bg-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+    .blob { position: absolute; border-radius: 50%; filter: blur(90px); will-change: transform; transition: transform 0.6s var(--ease-out); }
+    .blob-1 { width: 680px; height: 680px; top: -220px; right: -120px; background: radial-gradient(circle, rgba(251,146,60,0.13) 0%, rgba(249,115,22,0.05) 60%, transparent 100%); }
+    .blob-2 { width: 480px; height: 480px; top: 60%; left: -140px; background: radial-gradient(circle, rgba(253,186,116,0.12) 0%, rgba(251,146,60,0.03) 60%, transparent 100%); }
+    .blob-3 { width: 380px; height: 380px; top: 30%; left: 40%; background: radial-gradient(circle, rgba(255,237,213,0.40) 0%, transparent 70%); }
+
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px) saturate(160%);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      border: 1px solid rgba(255,255,255,0.82);
+      border-bottom-color: rgba(200,185,170,0.35);
+      border-right-color: rgba(200,185,170,0.25);
+      box-shadow: var(--glass-shadow);
+    }
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(24px) saturate(160%);
+      -webkit-backdrop-filter: blur(24px) saturate(160%);
+      border: 1px solid rgba(255,255,255,0.85);
+      border-bottom-color: rgba(200,185,170,0.3);
+      border-right-color: rgba(200,185,170,0.2);
+      box-shadow: var(--glass-shadow);
+    }
+    .glass-card-strong {
+      background: var(--glass-bg-strong);
+      backdrop-filter: blur(24px) saturate(160%);
+      -webkit-backdrop-filter: blur(24px) saturate(160%);
+      border: 1px solid rgba(255,255,255,0.94);
+      border-bottom-color: rgba(249,115,22,0.2);
+      border-right-color: rgba(249,115,22,0.12);
+      box-shadow: var(--glass-shadow-solis);
+    }
+    .text-solis-gradient { background: var(--solis-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
+
+    .section { position: relative; z-index: 1; padding: clamp(72px, 9vw, 112px) 20px; }
+    .section-inner { max-width: var(--max-width); margin: 0 auto; }
+    .section-inner-narrow { max-width: var(--max-width-narrow); margin: 0 auto; }
+
+    .section-header { text-align: center; margin-bottom: 56px; }
+    .section-header .eyebrow { margin-bottom: 20px; }
+    .section-title { font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px); font-weight: 800; letter-spacing: -0.035em; line-height: 1.08; margin-bottom: 14px; }
+    .section-subtitle { font-size: clamp(15px, 1.5vw, 17px); color: var(--text-secondary); max-width: 580px; margin: 0 auto; line-height: 1.6; }
+
+    .hide-mobile { display: inline; }
+    @media (max-width: 640px) { .hide-mobile { display: none; } }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      background: var(--ink); color: #fff;
+      font-family: var(--font-display); font-size: 13.5px; font-weight: 700; letter-spacing: -0.01em;
+      padding: 11px 22px; border-radius: 100px; border: none;
+      transition: all 0.3s var(--ease-out);
+      position: relative; overflow: hidden;
+    }
+    .btn-primary::before { content: ''; position: absolute; inset: 0; background: var(--solis-gradient); opacity: 0; transition: opacity 0.3s; z-index: 0; }
+    .btn-primary:hover::before { opacity: 1; }
+    .btn-primary:hover { box-shadow: 0 10px 28px rgba(249,115,22,0.35); transform: translateY(-2px); }
+    .btn-primary > * { position: relative; z-index: 1; }
+    .btn-primary svg { width: 14px; height: 14px; }
+
+    .btn-secondary {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      background: rgba(255,255,255,0.9); color: var(--text-primary);
+      font-family: var(--font-display); font-size: 13.5px; font-weight: 600;
+      padding: 11px 22px; border-radius: 100px;
+      border: 1px solid var(--border-strong);
+      transition: all 0.25s var(--ease-out);
+    }
+    .btn-secondary:hover { background: #fff; border-color: rgba(249,115,22,0.4); box-shadow: 0 6px 18px rgba(120,80,40,0.10); transform: translateY(-1px); }
+
+    .btn-ghost-light {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      color: rgba(255,255,255,0.9);
+      font-family: var(--font-display); font-size: 14px; font-weight: 600;
+      padding: 13px 26px; border-radius: 100px;
+      border: 1px solid rgba(255,255,255,0.18);
+      transition: all 0.2s;
+    }
+    .btn-ghost-light:hover { color: #fff; border-color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.06); }
+
+    .nav-container { position: fixed; top: calc(28px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: var(--max-width); z-index: 1000; }
+    .nav { border-radius: 9999px; padding: 9px 9px 9px 22px; display: flex; justify-content: space-between; align-items: center; transition: box-shadow 0.3s ease, padding 0.3s ease; }
+    .nav.is-scrolled { box-shadow: 0 8px 28px rgba(120,80,40,0.12), 0 2px 8px rgba(120,80,40,0.06), inset 0 1px 0 rgba(255,255,255,0.95); }
+    .nav-brand { display: flex; align-items: center; gap: 9px; color: var(--text-primary); }
+    .nav-brand svg { width: 28px; height: 28px; flex-shrink: 0; }
+    .nav-brand-name { font-family: var(--font-display); font-size: 1.1rem; font-weight: 800; letter-spacing: -0.025em; }
+    .nav-center { display: flex; gap: 4px; align-items: center; }
+    .nav-center a { color: var(--text-muted); font-size: 0.85rem; font-weight: 500; padding: 8px 14px; border-radius: 100px; transition: all 0.2s; }
+    .nav-center a:hover { color: var(--text-primary); background: rgba(255,255,255,0.5); }
+    .nav-center a.is-active { color: var(--text-primary); background: rgba(249,115,22,0.1); font-weight: 600; }
+    .nav-right { display: flex; align-items: center; gap: 10px; }
+    .nav-login { color: var(--text-muted); font-size: 0.85rem; font-weight: 600; padding: 8px 14px; border-radius: 100px; transition: all 0.2s; }
+    .nav-login:hover { color: var(--text-primary); background: rgba(255,255,255,0.5); }
+    .nav-cta { background: var(--ink); color: #fff; font-family: var(--font-display); font-size: 13px; font-weight: 700; padding: 10px 20px; border-radius: 100px; border: none; display: inline-flex; align-items: center; gap: 6px; transition: all 0.3s var(--ease-out); position: relative; overflow: hidden; }
+    .nav-cta::before { content: ''; position: absolute; inset: 0; background: var(--solis-gradient); opacity: 0; transition: opacity 0.3s; }
+    .nav-cta:hover::before { opacity: 1; }
+    .nav-cta:hover { box-shadow: 0 8px 22px rgba(249,115,22,0.35); transform: translateY(-1px); }
+    .nav-cta > * { position: relative; z-index: 1; }
+    .nav-cta svg { width: 13px; height: 13px; transition: transform 0.3s; }
+    .nav-cta:hover svg { transform: translateX(2px); }
+
+    .profile-dropdown-wr { position: relative; display: none; align-items: center; }
+    .profile-avatar-btn {
+      width: 40px; height: 40px; border-radius: 50%;
+      border: 1px solid rgba(0, 0, 0, 0.08); cursor: pointer; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      background-color: white; padding: 0;
+      transition: box-shadow 0.1s ease, transform 0.1s ease; flex-shrink: 0;
+    }
+    .profile-avatar-btn:hover { box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.15); transform: scale(1.05); }
+    .profile-avatar-btn img { width: 100%; height: 100%; object-fit: cover; }
+    .profile-avatar-btn svg { width: 24px; height: 24px; color: var(--text-dark); flex-shrink: 0; }
+
+    .profile-dropdown {
+      position: absolute; top: calc(100% + 10px); right: 0; width: 300px;
+      border-radius: 20px; padding: 12px; transform-origin: top right; z-index: 2000;
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(24px) saturate(160%) brightness(1.04);
+      -webkit-backdrop-filter: blur(24px) saturate(160%) brightness(1.04);
+      border: 0.5px solid rgba(255, 255, 255, 0.85);
+      box-shadow:
+        0 16px 48px rgba(0, 0, 0, 0.1),
+        0 4px 12px rgba(0, 0, 0, 0.06),
+        inset 0 1.5px 0 rgba(255, 255, 255, 0.95),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.25),
+        inset 1px 0 0 rgba(255, 255, 255, 0.5),
+        inset -1px 0 0 rgba(255, 255, 255, 0.3);
+      opacity: 0; visibility: hidden; transform: scale(0.95);
+      transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
+    }
+    .profile-dropdown::after {
+      content: ''; position: absolute; top: 0; left: 14%; right: 14%; height: 1px; border-radius: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.95) 30%, rgba(255,255,255,1) 50%, rgba(255,255,255,0.95) 70%, transparent);
+      pointer-events: none;
+    }
+    .profile-dropdown.open { opacity: 1; visibility: visible; transform: scale(1); }
+    .profile-dropdown-profile {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 8px; border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    .profile-dropdown-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      border: 1px solid rgba(0, 0, 0, 0.08); overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      background: white; flex-shrink: 0;
+    }
+    .profile-dropdown-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .profile-dropdown-info { flex: 1; overflow: hidden; }
+    .profile-dropdown-name { font-weight: 700; font-size: 13px; color: var(--text-dark); }
+    .profile-dropdown-plan {
+      font-size: 10px; color: var(--primary-orange);
+      font-weight: 600; text-transform: uppercase; margin-top: 2px;
+    }
+    .profile-dropdown-link {
+      padding: 10px 8px; display: flex; align-items: center; gap: 12px;
+      text-decoration: none; color: var(--text-dark);
+      font-size: 13px; font-weight: 500; border-radius: 12px;
+      transition: background 0.14s ease, color 0.14s ease; cursor: pointer; margin-bottom: 2px;
+    }
+    .profile-dropdown-link svg { color: var(--text-light); transition: color 0.14s ease; flex-shrink: 0; }
+    .profile-dropdown-link:hover { background: rgba(255, 140, 0, 0.08); color: var(--primary-orange); }
+    .profile-dropdown-link:hover svg { color: var(--primary-orange); }
+    .profile-dropdown-divider { height: 1px; background: rgba(0, 0, 0, 0.05); margin: 4px 0; }
+    .profile-dropdown-logout { color: #ef4444; }
+    .profile-dropdown-logout svg { color: #ef4444; }
+    .profile-dropdown-logout:hover { background: rgba(239, 68, 68, 0.08); color: #ef4444; }
+    .profile-dropdown-logout:hover svg { color: #ef4444; }
+
+    .nav-toggle { display: none; background: none; border: none; color: var(--text-primary); padding: 8px; margin-right: -4px; border-radius: 50%; align-items: center; justify-content: center; }
+    .nav-toggle .icon-close { display: none; }
+    .nav-toggle[aria-expanded="true"] .icon-open { display: none; }
+    .nav-toggle[aria-expanded="true"] .icon-close { display: block; }
+    .nav-mobile { margin-top: 10px; border-radius: 22px; padding: 12px; display: flex; flex-direction: column; gap: 2px; }
+    .nav-mobile[hidden] { display: none; }
+    .nav-mobile a { padding: 11px 14px; border-radius: 12px; font-size: 0.95rem; font-weight: 500; color: var(--text-secondary); transition: background 0.2s; }
+    .nav-mobile a:hover { background: rgba(255,255,255,0.6); }
+    .nav-mobile-divider { height: 1px; background: var(--border); margin: 8px 4px; }
+    .nav-mobile-cta { font-family: var(--font-display); text-align: center; font-weight: 700; color: #fff !important; background: var(--ink); margin-top: 4px; }
+
+    @media (max-width: 900px) { .nav-center { display: none; } }
+    @media (max-width: 768px) { .nav-right { display: none; } .nav-toggle { display: inline-flex; } .nav { padding: 8px 12px 8px 16px; } }
+
+    main { flex: 1; position: relative; z-index: 1; padding-top: calc(110px + env(safe-area-inset-top, 0px)); padding-bottom: 80px; }
+
+    .hero { padding: 32px 20px 24px; }
+    .hero-inner { max-width: var(--max-width); margin: 0 auto; text-align: center; }
+    .hero-eyebrow { margin-bottom: 22px; }
+    .hero-title { font-family: var(--font-display); font-size: clamp(36px, 6vw, 60px); font-weight: 800; letter-spacing: -0.04em; line-height: 1.04; margin: 0 auto 18px; max-width: 800px; }
+    .hero-subtitle { font-size: clamp(15px, 1.6vw, 17px); color: var(--text-secondary); max-width: 580px; margin: 0 auto 28px; line-height: 1.6; }
+
+    .trust-badges { display: flex; align-items: center; justify-content: center; gap: 24px; flex-wrap: wrap; margin-bottom: 8px; }
+    .trust-badge { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 600; color: var(--text-secondary); }
+    .trust-badge svg { width: 15px; height: 15px; color: var(--solis); }
+    .trust-badge strong { color: var(--text-primary); font-weight: 700; }
+    @media (max-width: 640px) { .trust-badges { gap: 14px 18px; } .trust-badge { font-size: 11.5px; } }
+
+    .billing-wrap { display: flex; align-items: center; justify-content: center; margin-top: 28px; }
+    .billing-toggle {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: rgba(255,255,255,0.7);
+      border: 1px solid var(--border-strong);
+      border-radius: 100px;
+      padding: 5px 8px 5px 14px;
+      font-size: 13px; color: var(--text-secondary); font-weight: 500;
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    }
+    .billing-label { transition: color 0.2s; }
+    .billing-label.is-active { color: var(--text-primary); font-weight: 700; }
+    .toggle-track {
+      width: 42px; height: 23px; border-radius: 100px;
+      background: var(--ink); position: relative; border: none; flex-shrink: 0;
+      transition: background 0.2s;
+    }
+    .toggle-knob { position: absolute; top: 3px; left: 3px; width: 17px; height: 17px; border-radius: 50%; background: #fff; transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1); }
+    .toggle-track[aria-checked="true"] .toggle-knob { transform: translateX(19px); }
+    .save-badge { background: rgba(249,115,22,0.1); color: var(--solis-deep); border-radius: 100px; padding: 3px 10px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
+    .save-badge svg { width: 11px; height: 11px; }
+
+    .savings-callout { text-align: center; margin-top: 14px; font-size: 12.5px; color: var(--text-muted); height: 18px; transition: opacity 0.2s; }
+    .savings-callout strong { color: var(--solis-deep); font-family: var(--font-numeric); font-weight: 700; }
+
+    .pricing-section { padding: 32px 20px 64px; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: center; max-width: var(--max-width); margin: 0 auto; }
+    @media (max-width: 860px) { .pricing-grid { grid-template-columns: 1fr; gap: 14px; max-width: 480px; } }
+
+    .plan-card {
+      border-radius: var(--radius-lg); padding: 28px 26px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(24px) saturate(160%);
+      -webkit-backdrop-filter: blur(24px) saturate(160%);
+      border: 1px solid rgba(255,255,255,0.85);
+      border-bottom-color: rgba(200,185,170,0.3);
+      box-shadow: var(--glass-shadow);
+      display: flex; flex-direction: column;
+      position: relative; overflow: hidden;
+      transition: box-shadow 0.3s, transform 0.3s;
+      transform: scale(0.97);
+    }
+    .plan-card:hover, .plan-card.prime:hover { box-shadow: 0 18px 52px rgba(120,80,40,0.14), 0 4px 12px rgba(120,80,40,0.07), inset 0 1px 0 rgba(255,255,255,0.95); }
+    .plan-card.prime {
+      background: var(--glass-bg-strong);
+      border-color: rgba(255,255,255,0.94);
+      border-bottom-color: rgba(249,115,22,0.2);
+      border-right-color: rgba(249,115,22,0.12);
+      box-shadow: var(--glass-shadow-solis);
+      transform: scale(1.03);
+      z-index: 2;
+    }
+    @media (max-width: 860px) { .plan-card, .plan-card.prime { transform: none; } }
+
+    .ribbon { position: absolute; top: 0; right: 0; color: #fff; font-size: 10px; font-weight: 800; padding: 7px 20px; border-radius: 0 var(--radius-lg) 0 14px; text-transform: uppercase; letter-spacing: 0.1em; z-index: 3; background: var(--solis-gradient); box-shadow: 0 4px 12px rgba(249,115,22,0.4); }
+
+    .plan-icon-wrap { display: flex; align-items: center; margin-bottom: 14px; }
+    .plan-name { font-family: var(--font-display); font-size: 17px; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 4px; }
+    .name-basic { color: var(--text-secondary); }
+    .name-prime { background: var(--solis-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .name-elite { color: var(--ink); }
+
+    .plan-tagline { font-size: 12.5px; color: var(--text-muted); margin-bottom: 18px; line-height: 1.45; min-height: 34px; }
+
+    .plan-price { display: flex; align-items: flex-end; gap: 1px; margin-bottom: 4px; line-height: 1; }
+    .plan-price-currency { font-family: var(--font-numeric); font-size: 20px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; margin-right: 1px; }
+    .plan-price-int { font-family: var(--font-numeric); font-size: 56px; font-weight: 800; letter-spacing: -2.5px; color: #1a1a1ae0; line-height: 1; transition: opacity 0.2s; }
+    .plan-price-dec { font-family: var(--font-numeric); font-size: 20px; font-weight: 700; color: var(--text-secondary); padding-bottom: 7px; }
+    .plan-price-period { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+    .plan-price-billnote { font-size: 11.5px; color: var(--text-faint); margin-bottom: 18px; min-height: 16px; }
+    .plan-price-billnote strong { color: var(--solis-deep); font-family: var(--font-numeric); font-weight: 700; }
+
+    .plan-btn { width: 100%; padding: 13px 16px; border-radius: 12px; font-family: var(--font-display); font-size: 13.5px; font-weight: 700; border: none; cursor: pointer; transition: all 0.25s; margin-bottom: 12px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
+    .plan-btn svg { width: 13px; height: 13px; transition: transform 0.3s; }
+    .plan-btn:hover svg { transform: translateX(2px); }
+    .plan-btn-basic { background: rgba(255,255,255,0.9); color: var(--text-primary); border: 1px solid var(--border-strong); }
+    .plan-btn-basic:hover { background: #fff; border-color: rgba(180,150,120,0.7); transform: translateY(-1px); }
+    .plan-btn-prime { background: var(--ink); color: #fff; position: relative; overflow: hidden; }
+    .plan-btn-prime::before { content: ''; position: absolute; inset: 0; background: var(--solis-gradient); opacity: 0; transition: opacity 0.3s; }
+    .plan-btn-prime:hover::before { opacity: 1; }
+    .plan-btn-prime:hover { box-shadow: 0 8px 20px rgba(249,115,22,0.35); transform: translateY(-1px); }
+    .plan-btn-prime > * { position: relative; z-index: 1; }
+    .plan-btn-elite { background: rgba(24,18,14,0.04); color: var(--ink); border: 1px solid rgba(24,18,14,0.14); }
+    .plan-btn-elite:hover { background: var(--ink); color: #fff; border-color: transparent; transform: translateY(-1px); }
+
+    .plan-divider { height: 1px; background: var(--border); margin: 4px 0 16px; }
+    .plan-features-label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 12px; }
+    .plan-features { display: flex; flex-direction: column; gap: 10px; }
+    .plan-features li { display: flex; align-items: flex-start; gap: 9px; font-size: 12.5px; color: var(--text-secondary); line-height: 1.45; }
+    .plan-features li .check { width: 16px; height: 16px; border-radius: 50%; background: rgba(249,115,22,0.1); color: var(--solis); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .plan-features li .check svg { width: 9px; height: 9px; }
+    .plan-features li.disabled { color: var(--text-faint); }
+    .plan-features li.disabled .check { background: rgba(200,185,170,0.2); color: var(--text-faint); }
+    .plan-features li.disabled .check svg { stroke: currentColor; }
+    .plan-features li b { font-weight: 700; color: var(--text-primary); }
+
+    .pricing-footnote { text-align: center; margin-top: 36px; font-size: 12.5px; color: var(--text-muted); max-width: 580px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+    .pricing-footnote a { color: var(--solis); }
+    .pricing-footnote a:hover { text-decoration: underline; text-underline-offset: 2px; }
+    .pricing-footnote .dot { margin: 0 6px; }
+
+    .comparison-card { border-radius: var(--radius-xl); overflow: hidden; max-width: var(--max-width); margin: 0 auto; }
+    .comparison-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .comparison-table { width: 100%; border-collapse: collapse; min-width: 640px; }
+    .comparison-table thead { background: rgba(255,247,237,0.6); }
+    .comparison-table thead.sticky { position: sticky; top: 0; z-index: 5; }
+    .comparison-table th { padding: 22px 20px; text-align: center; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); border-bottom: 1px solid var(--border); }
+    .comparison-table th.col-feature { text-align: left; width: 40%; }
+    .comparison-table th.col-plan-prime { background: rgba(249,115,22,0.05); }
+    .col-plan-name { font-family: var(--font-display); font-size: 15px; font-weight: 800; text-transform: none; letter-spacing: -0.01em; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .col-plan-name.name-prime { background: var(--solis-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .col-plan-name .prime-badge { font-size: 9px; padding: 2px 6px; border-radius: 4px; background: var(--solis-gradient); color: #fff; -webkit-text-fill-color: #fff; font-weight: 700; letter-spacing: 0.05em; }
+    .col-plan-price { font-family: var(--font-numeric); font-size: 13px; margin-top: 4px; font-weight: 600; color: var(--text-muted); text-transform: none; letter-spacing: 0; }
+    .comparison-table .row-group td { background: rgba(249,115,22,0.04); padding: 12px 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--solis-deep); border-top: 1px solid var(--border); }
+    .comparison-table .row-group td:first-child { border-top-left-radius: 8px; }
+    .comparison-table .row-feature { border-top: 1px solid var(--border); transition: background 0.15s; }
+    .comparison-table .row-feature:hover { background: rgba(255,255,255,0.4); }
+    .comparison-table .row-feature td { padding: 16px 20px; text-align: center; }
+    .comparison-table .row-feature td:first-child { text-align: left; font-size: 13.5px; font-weight: 500; color: var(--text-secondary); }
+    .comparison-table .row-feature td.col-prime { background: rgba(249,115,22,0.04); }
+
+    .cell-yes { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: rgba(249,115,22,0.08); color: var(--solis); }
+    .cell-yes.is-prime { background: rgba(249,115,22,0.12); }
+    .cell-yes svg { width: 13px; height: 13px; }
+    .cell-no { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: rgba(200,185,170,0.18); color: rgba(180,160,145,0.65); }
+    .cell-no svg { width: 13px; height: 13px; }
+    .cell-text { font-family: var(--font-numeric); font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+    .cell-text.is-prime { color: var(--solis); }
+    .cell-text b { font-weight: 700; color: var(--text-primary); }
+
+    .comparison-scroll-hint { display: none; }
+    @media (max-width: 768px) {
+      .comparison-scroll-hint { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 16px 0; font-size: 11.5px; color: var(--text-muted); font-weight: 500; }
+      .comparison-scroll-hint svg { width: 14px; height: 14px; color: var(--solis); animation: nudge 1.8s ease-in-out infinite; }
+      @keyframes nudge { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(4px); } }
+      .comparison-table { min-width: 480px; }
+      .comparison-table th, .comparison-table .row-feature td, .comparison-table .row-group td { padding: 14px 12px; }
+      .comparison-table th.col-feature, .comparison-table .row-feature td:first-child, .comparison-table .row-group td:first-child {
+        position: sticky; left: 0; z-index: 2;
+        background: rgba(255,247,237,0.95);
+        box-shadow: 4px 0 8px -4px rgba(120,80,40,0.1);
+        min-width: 130px;
+      }
+      .comparison-table thead th.col-feature { z-index: 6; background: rgba(255,247,237,0.98); }
+      .comparison-table .row-group td:first-child { background: rgba(249,115,22,0.06); }
+      .comparison-table th.col-plan-prime, .comparison-table .row-feature td.col-prime { background: rgba(249,115,22,0.05); }
+      .col-plan-name { font-size: 13.5px; }
+      .col-plan-price { font-size: 11.5px; }
+      .comparison-table .row-feature td:first-child { font-size: 12.5px; }
+      .cell-text { font-size: 12px; }
+    }
+
+    .addons-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: var(--max-width); margin: 0 auto; }
+    @media (max-width: 860px) { .addons-grid { grid-template-columns: 1fr; } }
+    .addon-card { padding: 24px; border-radius: var(--radius-lg); background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.8); border-bottom-color: rgba(200,185,170,0.3); box-shadow: var(--glass-shadow); transition: transform 0.3s, box-shadow 0.3s; }
+    .addon-card:hover { transform: translateY(-3px); box-shadow: 0 14px 36px rgba(120,80,40,0.10); }
+    .addon-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 10px; }
+    .addon-icon { width: 36px; height: 36px; border-radius: 10px; background: rgba(249,115,22,0.1); color: var(--solis); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .addon-icon svg { width: 18px; height: 18px; }
+    .addon-price { font-family: var(--font-numeric); font-size: 18px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em; }
+    .addon-price span { font-size: 11px; font-weight: 500; color: var(--text-muted); }
+    .addon-title { font-family: var(--font-display); font-size: 15px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 6px; }
+    .addon-desc { font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; }
+
+    .enterprise-card { max-width: var(--max-width); margin: 0 auto; padding: 40px; border-radius: var(--radius-xl); background: linear-gradient(135deg, #18120e 0%, #2d1f17 50%, #1a1410 100%); box-shadow: 0 18px 60px rgba(24,18,14,0.30), inset 0 1px 0 rgba(255,255,255,0.06); position: relative; overflow: hidden; display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: center; }
+    @media (max-width: 768px) { .enterprise-card { grid-template-columns: 1fr; padding: 32px 24px; gap: 24px; } }
+    .enterprise-glow { position: absolute; top: -100px; right: -80px; width: 380px; height: 380px; border-radius: 50%; background: radial-gradient(circle, rgba(249,115,22,0.3) 0%, transparent 65%); opacity: 0.6; pointer-events: none; }
+    .enterprise-content { position: relative; }
+    .enterprise-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 100px; padding: 5px 14px; font-size: 11.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--solis-light); margin-bottom: 18px; }
+    .enterprise-title { font-family: var(--font-display); font-size: clamp(24px, 3vw, 32px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; color: #fff; margin-bottom: 14px; }
+    .enterprise-desc { font-size: 14.5px; color: rgba(255,255,255,0.7); max-width: 520px; line-height: 1.6; margin-bottom: 20px; }
+    .enterprise-perks { display: flex; flex-wrap: wrap; gap: 10px 18px; }
+    .enterprise-perk { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: rgba(255,255,255,0.85); font-weight: 500; }
+    .enterprise-perk svg { width: 14px; height: 14px; color: var(--solis); }
+    .enterprise-cta { position: relative; display: flex; flex-direction: column; gap: 10px; }
+    @media (max-width: 768px) { .enterprise-cta { flex-direction: row; } }
+    .enterprise-cta .btn-light { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--ink); background: #fff; padding: 13px 26px; border-radius: 100px; transition: all 0.3s var(--ease-out); display: inline-flex; align-items: center; gap: 8px; justify-content: center; }
+    .enterprise-cta .btn-light:hover { background: var(--solis-light); box-shadow: 0 10px 28px rgba(249,115,22,0.45); transform: translateY(-2px); }
+    .enterprise-cta .btn-light svg { width: 14px; height: 14px; }
+    .enterprise-cta .btn-ghost-light { font-size: 13.5px; padding: 12px 22px; }
+
+    .faq-list { display: flex; flex-direction: column; gap: 12px; max-width: 760px; margin: 0 auto; }
+    .faq-item { border-radius: var(--radius); overflow: hidden; }
+    .faq-question { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 24px; background: none; border: none; text-align: left; font-family: var(--font-display); font-size: 15.5px; font-weight: 700; letter-spacing: -0.01em; color: var(--text-primary); }
+    @media (max-width: 640px) { .faq-question { padding: 18px 20px; font-size: 14.5px; } }
+    .faq-chevron { color: var(--solis); flex-shrink: 0; transition: transform 0.3s var(--ease-out); }
+    .faq-item.is-open .faq-chevron { transform: rotate(180deg); }
+    .faq-answer { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.35s var(--ease-out); }
+    .faq-item.is-open .faq-answer { grid-template-rows: 1fr; }
+    .faq-answer-inner { overflow: hidden; }
+    .faq-answer-inner p { padding: 0 24px 22px; font-size: 14px; line-height: 1.65; color: var(--text-secondary); }
+    @media (max-width: 640px) { .faq-answer-inner p { padding: 0 20px 18px; font-size: 13.5px; } }
+    .faq-answer-inner a { color: var(--solis); font-weight: 600; }
+    .faq-answer-inner a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    .faq-footer { margin-top: 40px; text-align: center; font-size: 13.5px; color: var(--text-muted); }
+    .faq-footer a { font-weight: 600; color: var(--solis-deep); display: inline-flex; align-items: center; gap: 4px; }
+    .faq-footer a:hover { text-decoration: underline; text-underline-offset: 4px; }
+    .faq-footer a svg { width: 13px; height: 13px; }
+    .final-cta-card { position: relative; overflow: hidden; border-radius: var(--radius-xl); padding: 56px 40px; text-align: center; background: linear-gradient(135deg, #18120e 0%, #2d1f17 50%, #1a1410 100%); box-shadow: 0 24px 70px rgba(24,18,14,0.35), inset 0 1px 0 rgba(255,255,255,0.06); max-width: var(--max-width); margin: 0 auto; }
+    @media (max-width: 640px) { .final-cta-card { padding: 44px 20px; } }
+    .final-cta-glow-1, .final-cta-glow-2 { position: absolute; border-radius: 50%; pointer-events: none; }
+    .final-cta-glow-1 { top: -140px; right: -100px; width: 460px; height: 460px; background: radial-gradient(circle, rgba(249,115,22,0.4) 0%, transparent 65%); opacity: 0.8; }
+    .final-cta-glow-2 { bottom: -140px; left: -100px; width: 380px; height: 380px; background: radial-gradient(circle, rgba(255,140,66,0.25) 0%, transparent 65%); opacity: 0.6; }
+    .final-cta-content { position: relative; }
+    .final-cta-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 100px; padding: 6px 16px; font-size: 11.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--solis-light); margin-bottom: 22px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+    .final-cta-title { font-family: var(--font-display); font-size: clamp(26px, 4vw, 38px); font-weight: 800; letter-spacing: -0.035em; line-height: 1.1; color: #fff; max-width: 640px; margin: 0 auto 16px; }
+    .final-cta-subtitle { font-size: 15px; color: rgba(255,255,255,0.7); max-width: 480px; margin: 0 auto 32px; line-height: 1.6; }
+    .final-cta-buttons { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
+    @media (min-width: 640px) { .final-cta-buttons { flex-direction: row; } }
+    .btn-light { font-family: var(--font-display); font-size: 14.5px; font-weight: 700; color: var(--ink); background: #fff; padding: 13px 28px; border-radius: 100px; transition: all 0.3s var(--ease-out); display: inline-flex; align-items: center; gap: 8px; }
+    .btn-light:hover { background: var(--solis-light); box-shadow: 0 10px 28px rgba(249,115,22,0.45); transform: translateY(-2px); }
+    .btn-light svg { width: 14px; height: 14px; }
+
+    .footer { position: relative; z-index: 1; margin-top: auto; max-width: var(--max-width); margin-left: auto; margin-right: auto; width: 100%; padding: 48px 20px 40px; }
+    .footer-card { border-radius: var(--radius-xl); padding: 40px; }
+    @media (max-width: 640px) { .footer-card { padding: 28px 20px; } }
+    .footer-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; }
+    @media (min-width: 768px) { .footer-grid { grid-template-columns: 2fr 1fr 1fr 1fr 1fr; } }
+    .footer-brand .nav-brand { margin-bottom: 16px; }
+    .footer-tagline { font-size: 13px; color: var(--text-muted); line-height: 1.55; max-width: 260px; }
+    .footer-status { margin-top: 20px; display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-muted); }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: #10b981; display: inline-block; box-shadow: 0 0 0 3px rgba(16,185,129,0.2); }
+    .footer-col h4 { font-family: var(--font-display); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); margin-bottom: 14px; }
+    .footer-col ul { display: flex; flex-direction: column; gap: 9px; }
+    .footer-col a { font-size: 13px; color: var(--text-muted); transition: color 0.15s; }
+    .footer-col a:hover { color: var(--text-primary); }
+    .footer-bottom { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 16px; }
+    @media (min-width: 640px) { .footer-bottom { flex-direction: row; } }
+    .footer-bottom p { font-size: 12px; color: var(--text-muted); }
+    .footer-social { display: flex; gap: 6px; }
+    .footer-social a { width: 32px; height: 32px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: var(--text-muted); transition: all 0.2s; border: 1px solid transparent; }
+    .footer-social a:hover { color: var(--solis-deep); background: rgba(249,115,22,0.08); border-color: rgba(249,115,22,0.2); }
+    .footer-social svg { width: 14px; height: 14px; }
+
+    ._cta { position: fixed; bottom: 0; left: 0; right: 0; z-index: 900; padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)); background: rgba(255,255,255,0.92); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); border-top: 1px solid var(--border); transform: translateY(110%); transition: transform 0.4s var(--ease-out); display: none; }
+    ._cta.is-visible { transform: translateY(0); }
+    ._cta-inner { max-width: 480px; margin: 0 auto; display: flex; align-items: center; gap: 12px; }
+    ._cta-text { flex: 1; min-width: 0; }
+    ._cta-plan { font-family: var(--font-display); font-size: 13px; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 6px; }
+    ._cta-plan .prime-tag { font-size: 9.5px; padding: 2px 6px; border-radius: 4px; background: var(--solis-gradient); color: #fff; font-weight: 700; letter-spacing: 0.05em; }
+    ._cta-price { font-family: var(--font-numeric); font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    ._cta-price strong { color: var(--solis-deep); font-weight: 700; }
+    ._cta-btn { background: var(--ink); color: #fff; font-family: var(--font-display); font-size: 13px; font-weight: 700; padding: 11px 18px; border-radius: 100px; border: none; flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; transition: all 0.25s; position: relative; overflow: hidden; }
+    ._cta-btn::before { content: ''; position: absolute; inset: 0; background: var(--solis-gradient); opacity: 0; transition: opacity 0.3s; }
+    ._cta-btn:hover::before { opacity: 1; }
+    ._cta-btn > * { position: relative; z-index: 1; }
+    ._cta-btn svg { width: 12px; height: 12px; }
+    @media (max-width: 860px) { ._cta { display: block; } }
+
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out); }
+    .reveal.is-visible { opacity: 1; transform: translateY(0); }
+    .reveal-stagger > * { opacity: 0; transform: translateY(20px); transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out); }
+    .reveal-stagger.is-visible > * { opacity: 1; transform: translateY(0); }
+    .reveal-stagger.is-visible > *:nth-child(1) { transition-delay: 0.05s; }
+    .reveal-stagger.is-visible > *:nth-child(2) { transition-delay: 0.13s; }
+    .reveal-stagger.is-visible > *:nth-child(3) { transition-delay: 0.21s; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal, .reveal-stagger > * { opacity: 1 !important; transform: none !important; transition: none !important; }
+      html { scroll-behavior: auto !important; }
+      .blob { transition: none !important; }
+    }
+
+    a:focus-visible, button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 2px solid var(--solis); outline-offset: 3px; border-radius: 6px; }
+
+    .section { content-visibility: auto; contain-intrinsic-size: 1px 600px; }
+    .plan-card, .addon-card, .faq-item, .testimonial-card { contain: layout style; }
+
+    @media (max-width: 768px) {
+      .blob-3 { display: none; }
+      .blob { filter: blur(60px); transition: none !important; will-change: auto; }
+
+      .glass, .glass-card, .glass-card-strong, .nav, .nav-mobile,
+      .stats-card, .testimonial-card, .plan-card, .addon-card, .faq-item,
+      .footer-card, .comparison-card, ._cta {
+        backdrop-filter: blur(12px) saturate(140%);
+        -webkit-backdrop-filter: blur(12px) saturate(140%);
+      }
+      .glass-card, .glass-card-strong { box-shadow: 0 2px 12px rgba(120,80,40,0.06), inset 0 1px 0 rgba(255,255,255,0.9); }
+
+      .section { padding: 56px 16px; }
+      .hero { padding: 24px 16px 16px; }
+
+      .nav-container { top: calc(12px + env(safe-area-inset-top, 0px)); width: calc(100% - 24px); }
+      .nav { padding: 7px 7px 7px 14px; }
+      .nav-brand svg { width: 24px; height: 24px; }
+      .nav-brand-name { font-size: 1rem; }
+
+      .hero-title { font-size: clamp(30px, 8vw, 40px); letter-spacing: -0.04em; margin-bottom: 14px; }
+      .hero-subtitle { font-size: 14.5px; margin-bottom: 22px; }
+      .hero-eyebrow { margin-bottom: 18px; }
+
+      .billing-toggle { padding: 4px 7px 4px 12px; font-size: 12.5px; gap: 8px; }
+      .toggle-track { width: 38px; height: 21px; }
+      .toggle-knob { width: 15px; height: 15px; }
+      .toggle-track[aria-checked="true"] .toggle-knob { transform: translateX(17px); }
+      .save-badge { font-size: 10.5px; padding: 2px 8px; }
+
+      .pricing-section { padding: 24px 16px 48px; }
+      .pricing-grid { gap: 14px; }
+      .plan-card { padding: 24px 20px; border-radius: 20px; }
+      .plan-card.prime { transform: none; }
+      .plan-card.prime:hover { transform: translateY(-3px); }
+      .plan-name { font-size: 16px; }
+      .plan-price-int { font-size: 48px; }
+      .plan-price-currency { font-size: 18px; }
+      .plan-price-dec { font-size: 18px; }
+      .plan-btn { padding: 12px 14px; font-size: 13px; }
+      .plan-features li { font-size: 12px; }
+
+      .comparison-card { border-radius: 18px; }
+      .comparison-mobile { padding: 14px; }
+
+      .addons-grid { gap: 12px; }
+      .addon-card { padding: 20px; border-radius: 18px; }
+
+      .enterprise-card { padding: 28px 20px; border-radius: 22px; }
+      .enterprise-title { font-size: 22px; }
+      .enterprise-desc { font-size: 13.5px; }
+      .enterprise-perks { gap: 8px 14px; }
+      .enterprise-perk { font-size: 12px; }
+
+      .testimonial-card { padding: 28px 22px; border-radius: 22px; }
+      .testimonial-quote-text { font-size: 18px; }
+
+      .final-cta-card { padding: 40px 20px; border-radius: 22px; }
+      .final-cta-title { font-size: 24px; }
+
+      .faq-question { padding: 16px 18px; font-size: 14px; }
+      .faq-answer-inner p { padding: 0 18px 16px; font-size: 13px; }
+
+      .footer { padding: 32px 16px 28px; }
+      .footer-card { padding: 24px 18px; border-radius: 22px; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 24px 16px; }
+      .footer-brand { grid-column: 1 / -1; }
+      .footer-bottom { margin-top: 28px; padding-top: 20px; }
+    }
+
+    @media (max-width: 400px) {
+      .hero-title { font-size: 28px; }
+      .plan-price-int { font-size: 44px; }
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .blob { transition: none !important; }
+      .cursor-glow { display: none !important; }
+    }
+    @media (save-data: save-data) {
+      .blob { display: none; }
+      .glass, .glass-card, .glass-card-strong, .nav, .plan-card, .comparison-card, .testimonial-card, .footer-card, ._cta {
+        backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+        background: rgba(255,255,255,0.92) !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-canvas" aria-hidden="true">
+    <div class="blob blob-1" id="blob1"></div>
+    <div class="blob blob-2" id="blob2"></div>
+    <div class="blob blob-3" id="blob3"></div>
+  </div>
+
+  <nav class="nav-container" aria-label="Primary">
+    <div class="nav glass" id="navShell">
+      <a href="#" class="nav-brand" aria-label="Solis AI home">
+        <svg viewBox="0 0 100 100" width="28" height="28" aria-hidden="true">
+          <circle cx="50" cy="50" r="12" fill="#ea580c" />
+          <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#ea580c" stroke-width="6" transform="rotate(45 50 50)" fill="none" />
+          <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#ea580c" stroke-width="6" transform="rotate(-45 50 50)" fill="none" />
+        </svg>
+        <span class="nav-brand-name" onclick="window.location.href='/index.html'">Solis AI</span>
+      </a>
+      <div class="nav-center">
+        <a href="#features">Features</a>
+        <a href="#" class="is-active">Pricing</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <div class="nav-right">
+        <a href="/login.html" class="nav-login">Sign in</a>
+        <a href="/dashboard.html" class="nav-cta" id="navDashboardCta">
+          Start free
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
+        </a>
+        <div class="profile-dropdown-wr" id="profileDropdownWr">
+          <button type="button" class="profile-avatar-btn" id="profileAvatarBtn" aria-label="Profile">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </button>
+          <div class="profile-dropdown" id="profileDropdown">
+            <div class="profile-dropdown-profile">
+              <div class="profile-dropdown-avatar" id="dropdownUserAvatar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </div>
+              <div class="profile-dropdown-info">
+                <div class="profile-dropdown-name" id="dropdownUserName">
+                  <span class="username-text">Guest User</span>
+                </div>
+                <div class="profile-dropdown-plan" id="dropdownUserPlan">Free Plan</div>
+              </div>
+            </div>
+            <a class="profile-dropdown-link" href="/dashboard.html" id="dropdownDashboard">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+              </svg>
+              <span>Dashboard</span>
+            </a>
+            <div class="profile-dropdown-divider"></div>
+            <a class="profile-dropdown-link profile-dropdown-logout" href="#" id="dropdownLogout">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+              <span>Sign Out</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
+        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="nav-mobile glass-card" id="navMobile" role="menu" hidden>
+      <a href="#features" role="menuitem">Features</a>
+      <a href="#pricing" role="menuitem" class="is-active" style="background:rgba(249,115,22,0.1);color:var(--text-primary);font-weight:600;">Pricing</a>
+      <a href="#faq" role="menuitem">FAQ</a>
+      <div class="nav-mobile-divider"></div>
+      <a href="/login.html" role="menuitem" class="nav-mobile-signin">Sign in</a>
+      <a href="/dashboard.html" role="menuitem" class="nav-mobile-cta">Start free</a>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero" id="pricing">
+      <div class="hero-inner reveal">
+        <h1 class="hero-title">Choose your <span class="text-solis-gradient">creator tier</span></h1>
+        <p class="hero-subtitle">Start free. Upgrade when clips start paying for themselves.</p>
+
+        <div class="billing-wrap">
+          <div class="billing-toggle" role="group" aria-label="Billing period">
+            <span class="billing-label is-active" data-when="monthly">Monthly billing</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pricing-section">
+      <div class="pricing-grid reveal-stagger">
+        <article class="plan-card" data-plan="basic">
+          <h3 class="plan-name name-basic">Basic</h3>
+          <p class="plan-tagline">Perfect for beginners finding their footing and shipping their first clips.</p>
+
+          <div class="plan-price">
+            <span class="plan-price-currency">$</span>
+            <span class="plan-price-int">9</span>
+            <span class="plan-price-dec">.99</span>
+            <p class="plan-price-period">/monthly</p>
+          </div>
+          <p class="plan-price-billnote">Billed monthly</p>
+
+          <button type="button" class="plan-btn plan-btn-basic" data-plan-name="Basic">
+            Buy Basic
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
+          </button>
+
+          <div class="plan-divider"></div>
+          <p class="plan-features-label">What&apos;s included</p>
+          <ul class="plan-features">
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>5</b> generations / day</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>75</b> generations / month</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>10</b> saved videos max</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>10 GB</b> storage</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>30 min</b> of AI processing</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Fast generation</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>No watermark</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>PRO templates</li>
+            <li class="disabled"><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="2.5" y1="2.5" x2="9.5" y2="9.5"/><line x1="9.5" y1="2.5" x2="2.5" y2="9.5"/></svg></span>Short-form upload</li>
+            <li class="disabled"><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="2.5" y1="2.5" x2="9.5" y2="9.5"/><line x1="9.5" y1="2.5" x2="2.5" y2="9.5"/></svg></span>Overpurpose <em style="font-style:normal;opacity:.85">coming very soon</em></li>
+            <li class="disabled"><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="2.5" y1="2.5" x2="9.5" y2="9.5"/><line x1="9.5" y1="2.5" x2="2.5" y2="9.5"/></svg></span>Priority queue</li>
+          </ul>
+        </article>
+
+        <article class="plan-card prime" data-plan="prime">
+          <div class="ribbon">Most Popular</div>
+          <h3 class="plan-name name-prime">Prime</h3>
+          <p class="plan-tagline">The sweet spot for everything you need to ship daily viral shorts.</p>
+
+          <div class="plan-price">
+            <span class="plan-price-currency">$</span>
+            <span class="plan-price-int">23</span>
+            <span class="plan-price-dec">.99</span>
+            <p class="plan-price-period">/monthly</p>
+          </div>
+          <p class="plan-price-billnote">Billed monthly</p>
+
+          <button type="button" class="plan-btn plan-btn-prime" data-plan-name="Prime">
+            <span>Start free trial</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
+          </button>
+
+          <div class="plan-divider"></div>
+          <p class="plan-features-label">Everything in Basic, plus</p>
+          <ul class="plan-features">
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>10</b> generations / day</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>200</b> generations / month</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>20</b> saved videos max</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>25 GB</b> storage</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>120 min</b> of AI processing</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Faster generation</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>All templates</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Short-form upload</li>
+            <li class="disabled"><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="2.5" y1="2.5" x2="9.5" y2="9.5"/><line x1="9.5" y1="2.5" x2="2.5" y2="9.5"/></svg></span>Overpurpose <em style="font-style:normal;opacity:.85">coming very soon</em></li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>5+ more</li>
+          </ul>
+        </article>
+
+        <article class="plan-card" data-plan="elite">
+          <h3 class="plan-name name-elite">Elite</h3>
+          <p class="plan-tagline">Everything unlocked, with priority rendering and dedicated support.</p>
+
+          <div class="plan-price">
+            <span class="plan-price-currency">$</span>
+            <span class="plan-price-int">39</span>
+            <span class="plan-price-dec">.99</span>
+            <p class="plan-price-period">/monthly</p>
+          </div>
+          <p class="plan-price-billnote">Billed monthly</p>
+
+          <button type="button" class="plan-btn plan-btn-elite" data-plan-name="Elite">
+            Buy Elite
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
+          </button>
+
+          <div class="plan-divider"></div>
+          <p class="plan-features-label">Everything in Prime, plus</p>
+          <ul class="plan-features">
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>20</b> generations / day</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>400</b> generations / month</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>50</b> saved videos max</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>100 GB</b> storage</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>240 min</b> of AI processing</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Fastest generation</li>
+            <li class="disabled"><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="2.5" y1="2.5" x2="9.5" y2="9.5"/><line x1="9.5" y1="2.5" x2="2.5" y2="9.5"/></svg></span>Advanced Overpurpose <em style="font-style:normal;opacity:.85">coming very soon</em></li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Priority render queue</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Dedicated support channel</li>
+          </ul>
+        </article>
+      </div>
+
+      <p class="pricing-footnote reveal">
+        Prices in USD. Applicable taxes calculated at checkout.
+        <span class="dot">·</span>
+        <a href="#faq">Billing FAQ</a>
+        <span class="dot">·</span>
+        <a href="#">Terms</a>
+        <span class="dot">·</span>
+        <a href="#">Privacy</a>
+      </p>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-inner">
+        <div class="section-header">
+          <h2 class="section-title">Every feature, <span class="text-solis-gradient">side by side.</span></h2>
+          <p class="section-subtitle">A complete breakdown so you can pick the tier that fits your workflow, no surprises after checkout.</p>
+        </div>
+
+        <div class="comparison-scroll-hint" aria-hidden="true">
+          <span>Scroll to compare</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
+        </div>
+
+        <div class="comparison-card glass-card">
+          <div class="comparison-table-wrap">
+            <table class="comparison-table">
+              <thead>
+                <tr>
+                  <th class="col-feature">Feature</th>
+                  <th>
+                    <div class="col-plan-name name-basic">Basic</div>
+                    <div class="col-plan-price">$9.99/mo</div>
+                  </th>
+                  <th class="col-plan-prime">
+                    <div class="col-plan-name name-prime">Prime <span class="prime-badge">POPULAR</span></div>
+                    <div class="col-plan-price">$23.99/mo</div>
+                  </th>
+                  <th>
+                    <div class="col-plan-name name-elite">Elite</div>
+                    <div class="col-plan-price">$39.99/mo</div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="comparisonBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="faq">
+      <div class="section-inner-narrow">
+        <div class="section-header reveal">
+          <h2 class="section-title">Answers, before you ask</h2>
+          <p class="section-subtitle">Everything you need to know about plans, billing, trials, and what happens when you grow.</p>
+        </div>
+        <div class="faq-list reveal" id="faqList"></div>
+        <p class="faq-footer reveal">
+          Still have questions? <a href="#">Talk to us <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg></a>
+        </p>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-inner">
+        <div class="final-cta-card">
+          <div class="final-cta-glow-1" aria-hidden="true"></div>
+          <div class="final-cta-glow-2" aria-hidden="true"></div>
+          <div class="final-cta-content">
+            <h3 class="final-cta-title">Stop scrolling. <span class="text-solis-gradient">Start clipping.</span></h3>
+            <p class="final-cta-subtitle">Join 2,400+ creators turning long videos into viral shorts. Pick a tier, render your first clip in minutes.</p>
+            <div class="final-cta-buttons">
+              <a href="#pricing" class="btn-light">Choose your tier <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg></a>
+              <a href="#" class="btn-ghost-light">Hey! We are relatively new!</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-card glass-card">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="#" class="nav-brand">
+            <svg viewBox="0 0 100 100" width="28" height="28" aria-hidden="true">
+              <circle cx="50" cy="50" r="12" fill="#ea580c" />
+              <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#ea580c" stroke-width="6" transform="rotate(45 50 50)" fill="none" />
+              <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#ea580c" stroke-width="6" transform="rotate(-45 50 50)" fill="none" />
+            </svg>
+            <span class="nav-brand-name">Solis AI</span>
+          </a>
+          <p class="footer-tagline">The creator-first AI video repurposing studio. Turn long videos into platform-ready shorts in minutes.</p>
+          <div class="footer-status"><span class="status-dot"></span>All systems operational</div>
+        </div>
+        <div class="footer-col"><h4>Product</h4><ul><li><a href="/#_features">Features</a></li><li><a href="#pricing">Pricing</a></li><li><a href="/#_how">How it works</a></li><li><a href="/#_faq">FAQ</a></li><li><a href="/dashboard.html">Dashboard</a></li></ul></div>
+        <div class="footer-col"><h4>Company</h4><ul><li><a href="mailto:help.solisai@outlook.com">Contact</a></li><li><a href="mailto:help.solisai@outlook.com">Support</a></li><li><a href="https://discord.gg/SuZQBCZCKt" target="_blank" rel="noopener">Community</a></li><li><a href="https://www.instagram.com/solisaivideo/" target="_blank" rel="noopener">Instagram</a></li><li><a href="https://x.com/solisaivideo" target="_blank" rel="noopener">X / Twitter</a></li></ul></div>
+        <div class="footer-col"><h4>Resources</h4><ul><li><a href="mailto:help.solisai@outlook.com">Help center</a></li><li><a href="/login.html">Sign in</a></li><li><a href="/premium.html">Plans &amp; billing</a></li><li><a href="/refund.html">Cancel &amp; refunds</a></li><li><a href="https://discord.gg/SuZQBCZCKt" target="_blank" rel="noopener">Discord</a></li></ul></div>
+        <div class="footer-col"><h4>Legal</h4><ul><li><a href="/terms.html">Terms of Service</a></li><li><a href="/privacy.html">Privacy Policy</a></li><li><a href="/refund.html">Refund Policy</a></li><li><a href="mailto:copyright@solisai.video">Copyright / DMCA</a></li><li><a href="mailto:help.solisai@outlook.com">Legal contact</a></li></ul></div>
+      </div>
+      <div class="footer-bottom">
+        <p>© <span id="footerYear"></span> Solis AI, Inc. Crafted for creators, everywhere.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Twitter"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+          <a href="#" aria-label="Discord"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.331c-1.182 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg></a>
+          <a href="#" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="_cta" id="_cta" aria-hidden="true">
+    <div class="_cta-inner">
+      <div class="_cta-text">
+        <div class="_cta-plan">
+          Prime
+          <span class="prime-tag">POPULAR</span>
+        </div>
+        <div class="_cta-price" id="_ctaPrice"><strong>$23.99</strong>/mo · 3-day free trial</div>
+      </div>
+      <button type="button" class="_cta-btn">
+        Start free
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var $ = function (s, r) { return (r || document).querySelector(s); };
+      var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+      var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var isCoarse = window.matchMedia('(pointer: coarse)').matches;
+      var yearEl = $('#footerYear');
+      if (yearEl) yearEl.textContent = new Date().getFullYear();
+      var navShell = $('#navShell');
+      function onScroll() {
+        if (!navShell) return;
+        if (window.scrollY > 12) navShell.classList.add('is-scrolled');
+        else navShell.classList.remove('is-scrolled');
+        updateStickyCta();
+      }
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+      var navToggle = $('#navToggle');
+      var navMobile = $('#navMobile');
+      function setMenuOpen(open) {
+        if (!navToggle || !navMobile) return;
+        navToggle.setAttribute('aria-expanded', String(open));
+        navToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+        navMobile.hidden = !open;
+      }
+      if (navToggle) navToggle.addEventListener('click', function () { setMenuOpen(navToggle.getAttribute('aria-expanded') !== 'true'); });
+      if (navMobile) $$('a', navMobile).forEach(function (a) { a.addEventListener('click', function () { setMenuOpen(false); }); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setMenuOpen(false); });
+      var stickyCtaPrice = $('#_ctaPrice');
+      if (stickyCtaPrice) {
+        stickyCtaPrice.innerHTML = '<strong>$23.99</strong>/mo · 3-day free trial';
+      }
+      var comparisonData = [
+        { group: 'Generation', rows: [
+          { feature: 'Daily generations',           basic: { t: 'text', v: '5 / day' },  prime: { t: 'text', v: '10 / day' }, elite: { t: 'text', v: '20 / day' } },
+          { feature: 'Monthly generations',         basic: { t: 'text', v: '75 / mo' },  prime: { t: 'text', v: '200 / mo' }, elite: { t: 'text', v: '400 / mo' } },
+          { feature: 'Saved videos (max)',          basic: { t: 'text', v: '10' },       prime: { t: 'text', v: '20' },      elite: { t: 'text', v: '50' } },
+          { feature: 'Library storage',             basic: { t: 'text', v: '10 GB' },    prime: { t: 'text', v: '25 GB' },  elite: { t: 'text', v: '100 GB' } },
+          { feature: 'AI processing budget',       basic: { t: 'text', v: '30 min' },   prime: { t: 'text', v: '120 min' }, elite: { t: 'text', v: '240 min' } },
+          { feature: 'URL / source length',         basic: { t: 'text', v: 'Unlimited' }, prime: { t: 'text', v: 'Unlimited' }, elite: { t: 'text', v: 'Unlimited' } },
+          { feature: 'Render speed',                basic: { t: 'text', v: 'Fast' },     prime: { t: 'text', v: 'Faster' },  elite: { t: 'text', v: 'Fastest' } },
+        ]},
+        { group: 'Creator tools', rows: [
+          { feature: 'Watermark-free exports',      basic: { t: 'yes' }, prime: { t: 'yes' }, elite: { t: 'yes' } },
+          { feature: 'PRO templates',               basic: { t: 'yes' }, prime: { t: 'yes' }, elite: { t: 'yes' } },
+          { feature: 'All premium templates',       basic: { t: 'no' },  prime: { t: 'yes' }, elite: { t: 'yes' } },
+          { feature: 'Short-form upload',           basic: { t: 'no' },  prime: { t: 'yes' }, elite: { t: 'yes' } },
+          { feature: 'Overpurpose',                 basic: { t: 'text', v: 'Coming very soon' }, prime: { t: 'text', v: 'Coming very soon' }, elite: { t: 'text', v: 'Coming very soon' } },
+          { feature: 'Advanced Overpurpose',        basic: { t: 'text', v: 'Coming very soon' }, prime: { t: 'text', v: 'Coming very soon' }, elite: { t: 'text', v: 'Coming very soon' } },
+        ]},
+        { group: 'Workflow', rows: [
+          { feature: 'Priority render queue',       basic: { t: 'no' },  prime: { t: 'no' },  elite: { t: 'yes' } },
+          { feature: 'Dedicated support channel',   basic: { t: 'no' },  prime: { t: 'no' },  elite: { t: 'yes' } },
+          { feature: 'Cancel anytime',              basic: { t: 'yes' }, prime: { t: 'yes' }, elite: { t: 'yes' } },
+          { feature: 'Commercial usage license',    basic: { t: 'yes' }, prime: { t: 'yes' }, elite: { t: 'yes' } },
+        ]},
+      ];
+
+      var ICON_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="4,12 10,18 20,6"/></svg>';
+      var ICON_MINUS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="6" y1="12" x2="18" y2="12"/></svg>';
+
+      function renderCell(cell, isPrime) {
+        if (cell.t === 'yes') return '<span class="cell-yes' + (isPrime ? ' is-prime' : '') + '">' + ICON_CHECK + '</span>';
+        if (cell.t === 'no') return '<span class="cell-no">' + ICON_MINUS + '</span>';
+        return '<span class="cell-text' + (isPrime ? ' is-prime' : '') + '">' + cell.v + '</span>';
+      }
+
+      var tbody = $('#comparisonBody');
+      if (tbody) {
+        var html = '';
+        comparisonData.forEach(function (group) {
+          html += '<tr class="row-group"><td colspan="4">' + group.group + '</td></tr>';
+          group.rows.forEach(function (row) {
+            html += '<tr class="row-feature">' +
+              '<td>' + row.feature + '</td>' +
+              '<td>' + renderCell(row.basic, false) + '</td>' +
+              '<td class="col-prime">' + renderCell(row.prime, true) + '</td>' +
+              '<td>' + renderCell(row.elite, false) + '</td>' +
+            '</tr>';
+          });
+        });
+        tbody.innerHTML = html;
+      }
+      var faqs = [
+        { q: 'Can I switch tiers later?', a: "Yes, upgrade or downgrade at any time from your dashboard. Upgrades take effect immediately and we prorate the difference. Downgrades take effect at the end of your current billing cycle, so you keep the higher limits until then." },
+        { q: "What counts as a 'generation'?", a: "A generation is one clip rendered from a source video using a Solis AI template. Re-rendering the same source with a different template counts as a new generation. Failed renders caused by platform-side errors are automatically refunded to your daily quota." },
+        { q: 'Do you offer refunds?', a: "If you started with a free trial, you can cancel within 5 days of your first charge and receive a full refund - no questions asked. Annual plans are refundable on a prorated basis within the first 14 days. See our <a href='#'>Terms</a> for the full policy." },
+        { q: 'Is there a free trial?', a: "Currently, 'Prime' tier includes a 3-day free trial. You won't be charged until the trial ends and you can cancel anytime from your dashboard before the trial expires with no charge."},
+        { q: 'What payment methods do you accept?', a: 'We accept all major credit and debit cards through Paddle, our merchant of record. Apple Pay, Google Pay, and PayPal are also supported at checkout.' },
+        { q: 'How does the priority queue work on Elite?', a: "Elite subscribers' renders are placed at the front of our global render queue, ahead of Basic and Prime subscribers. During peak hours this typically reduces wait time by 60–80% versus the standard queue." },
+        { q: 'What happens to my clips if I cancel?', a: "All clips you've already rendered and downloaded remain yours forever, they're watermark-free on every tier. If you cancel, your saved videos in the Solis library are retained for 30 days, then permanently deleted unless you re-subscribe." },
+        { q: 'Can I use Solis for client work?', a: 'Yes. Every paid tier includes a commercial license for the clips you render - so you can use Solis for your own content and for clients.' }
+      ];
+      var faqList = $('#faqList');
+      if (faqList) {
+        var ICON_CHEVRON = '<svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6,9 12,15 18,9"/></svg>';
+        faqs.forEach(function (faq, i) {
+          var item = document.createElement('div');
+          item.className = 'faq-item glass-card' + (i === 0 ? ' is-open' : '');
+          item.innerHTML =
+            '<button type="button" class="faq-question" aria-expanded="' + (i === 0 ? 'true' : 'false') + '" aria-controls="faq-panel-' + i + '">' +
+              '<span>' + faq.q + '</span>' + ICON_CHEVRON +
+            '</button>' +
+            '<div class="faq-answer" id="faq-panel-' + i + '" role="region"><div class="faq-answer-inner"><p>' + faq.a + '</p></div></div>';
+          faqList.appendChild(item);
+          var btn = $('.faq-question', item);
+          btn.addEventListener('click', function () {
+            var open = item.classList.toggle('is-open');
+            btn.setAttribute('aria-expanded', String(open));
+          });
+        });
+      }
+      var stickyCta = $('#_cta');
+      var pricingSection = $('.pricing-section');
+      function updateStickyCta() {
+        if (!stickyCta || !pricingSection) return;
+        var rect = pricingSection.getBoundingClientRect();
+        var viewportH = window.innerHeight;
+        var cardsBottom = rect.bottom;
+        var scrolledPastCards = rect.top < 100;
+        var cardsVisible = cardsBottom > 0;
+        if (scrolledPastCards && cardsVisible && window.scrollY > 400) {
+          stickyCta.classList.add('is-visible');
+          stickyCta.setAttribute('aria-hidden', 'false');
+        } else {
+          stickyCta.classList.remove('is-visible');
+          stickyCta.setAttribute('aria-hidden', 'true');
+        }
+      }
+      updateStickyCta();
+      var revealEls = $$('.reveal, .reveal-stagger');
+      if (prefersReducedMotion) {
+        revealEls.forEach(function (el) { el.classList.add('is-visible'); });
+      } else if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              var el = entry.target;
+              var delay = el.dataset.delay ? parseInt(el.dataset.delay, 10) : 0;
+              setTimeout(function () { el.classList.add('is-visible'); }, delay);
+              io.unobserve(el);
+            }
+          });
+        }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+        revealEls.forEach(function (el) { io.observe(el); });
+      } else {
+        revealEls.forEach(function (el) { el.classList.add('is-visible'); });
+      }
+      if (!prefersReducedMotion) {
+        $$('a[href^="#"]').forEach(function (a) {
+          a.addEventListener('click', function (e) {
+            var href = a.getAttribute('href');
+            if (!href || href === '#') return;
+            var target = document.querySelector(href);
+            if (!target) return;
+            e.preventDefault();
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+        });
+      }
+    })();
+  </script>
+  <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+  <script src="/js/core/paddle-config.js?v=3"></script>
+  <script src="/js/payment/payment-flow.js?v=2"></script>
+  <script src="/js/s_new/qwqs.js?v=4"></script>
+  <script src="/js/payment/premium-page.js?v=2"></script>
+</body>
+</html>

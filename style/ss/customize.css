@@ -1,0 +1,466 @@
+.floating-customize-bar {
+    position: fixed;
+    background: linear-gradient(135deg, rgba(255, 139, 94, 0.95) 0%, rgba(255, 107, 53, 0.95) 100%);
+    border-radius: 16px;
+    padding: 10px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25),
+                0 0 20px rgba(255, 139, 94, 0.4);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    z-index: 9999;
+    cursor: move;
+    user-select: none;
+    animation: floatIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    opacity: 0;
+    display: none;
+}
+
+.floating-customize-bar.visible {
+    opacity: 1;
+    display: block;
+}
+
+@keyframes floatIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.customize-toolbar {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.customize-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    border: none;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.customize-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.customize-btn:active {
+    transform: scale(0.95);
+}
+
+.close-customize-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: none;
+    background: rgba(0, 0, 0, 0.2);
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.close-customize-btn:hover {
+    background: rgba(0, 0, 0, 0.3);
+    transform: scale(1.05);
+}
+
+.floating-customize-panel {
+    position: fixed;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3),
+                0 0 30px rgba(255, 139, 94, 0.2);
+    border: 1px solid rgba(255, 139, 94, 0.2);
+    z-index: 9998;
+    min-width: 280px;
+    max-height: 70vh;
+    overflow-y: auto;
+    display: none;
+    animation: slideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.floating-customize-panel.open {
+    display: flex;
+    flex-direction: column;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+.panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-bottom: 2px solid #ff8b5e;
+    flex-shrink: 0;
+}
+
+.panel-header h4 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #1a1d23;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.panel-header i {
+    color: #ff8b5e;
+    font-size: 1.2rem;
+}
+
+.panel-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.control-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.control-label i {
+    color: #ff8b5e;
+}
+
+.control-input {
+    padding: 10px 12px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    background: #fafbfc;
+    color: #1a1d23;
+    transition: all 0.2s ease;
+}
+
+.control-input:focus {
+    outline: none;
+    border-color: #ff8b5e;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(255, 139, 94, 0.1);
+}
+
+.range-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.range-control input[type="range"] {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: #e0e0e0;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.range-control input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff8b5e, #ff6b3d);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(255, 139, 94, 0.3);
+    transition: all 0.2s ease;
+}
+
+.range-control input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+.range-value {
+    min-width: 40px;
+    text-align: right;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #ff8b5e;
+}
+
+.color-control {
+    display: grid;
+    grid-template-columns: 50px 1fr;
+    gap: 10px;
+    align-items: center;
+}
+
+.color-picker {
+    width: 50px;
+    height: 40px;
+    border: 2px solid #ff8b5e;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.color-picker:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(255, 139, 94, 0.3);
+}
+
+.color-input-hex {
+    padding: 8px 10px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-family: 'Courier New', monospace;
+    background: #fafbfc;
+    color: #1a1d23;
+    transition: all 0.2s ease;
+}
+
+.color-input-hex:focus {
+    outline: none;
+    border-color: #ff8b5e;
+    background: white;
+}
+
+.button-group {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+}
+
+.group-btn {
+    padding: 8px;
+    background: #f5f5f5;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #666;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 36px;
+}
+
+.group-btn:hover {
+    background: white;
+    border-color: #ff8b5e;
+    color: #ff8b5e;
+}
+
+.group-btn.active {
+    background: linear-gradient(135deg, #ff8b5e, #ff6b3d);
+    border-color: #ff6b3d;
+    color: white;
+    box-shadow: 0 4px 12px rgba(255, 139, 94, 0.3);
+}
+
+.select-control {
+    padding: 10px 12px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    background: #fafbfc;
+    color: #1a1d23;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.select-control:focus {
+    outline: none;
+    border-color: #ff8b5e;
+    background: white;
+}
+
+.reset-btn {
+    margin-top: 12px;
+    padding: 10px;
+    background: #f5f5f5;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #666;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.reset-btn:hover {
+    background: white;
+    border-color: #ff8b5e;
+    color: #ff8b5e;
+}
+
+.customizable-element {
+    transition: all 0.15s ease !important;
+    cursor: pointer !important;
+}
+
+.customizable-element:hover {
+    outline: 4px solid #ff8b5e !important;
+    outline-offset: 1px !important;
+    background-color: rgba(255, 139, 94, 0.1) !important;
+    box-shadow:
+        0 0 0 4px rgba(255, 139, 94, 0.25),
+        0 0 30px rgba(255, 139, 94, 0.8),
+        inset 0 0 10px rgba(255, 139, 94, 0.2) !important;
+    position: relative !important;
+    z-index: 50 !important;
+}
+
+.customizable-element.editing {
+    outline: 4px solid #ff6b3d !important;
+    outline-offset: 1px !important;
+    background-color: rgba(255, 107, 53, 0.15) !important;
+    box-shadow:
+        0 0 0 4px rgba(255, 107, 53, 0.35),
+        0 0 35px rgba(255, 107, 53, 0.9),
+        inset 0 0 15px rgba(255, 107, 53, 0.3) !important;
+    position: relative !important;
+    z-index: 100 !important;
+}
+
+.floating-customize-panel::-webkit-scrollbar {
+    width: 6px;
+}
+
+.floating-customize-panel::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.floating-customize-panel::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 3px;
+}
+
+.floating-customize-panel::-webkit-scrollbar-thumb:hover {
+    background: #ff8b5e;
+}
+
+.panel-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.panel-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.panel-content::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 3px;
+}
+
+.panel-content::-webkit-scrollbar-thumb:hover {
+    background: #ff8b5e;
+}
+
+@media (max-width: 768px) {
+    .floating-customize-bar {
+        padding: 10px;
+        min-width: 55px;
+    }
+
+    .customize-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    .floating-customize-panel {
+        min-width: 250px;
+        max-height: 60vh;
+    }
+
+    .button-group {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (hover: none) {
+    .customize-btn,
+    .group-btn,
+    .reset-btn {
+        padding: 12px;
+    }
+
+    .customize-btn {
+        width: 48px;
+        height: 48px;
+    }
+}
+
+h1.customizable-element:hover,
+h2.customizable-element:hover,
+h3.customizable-element:hover,
+h4.customizable-element:hover,
+h5.customizable-element:hover,
+h6.customizable-element:hover,
+p.customizable-element:hover,
+span.customizable-element:hover,
+div.customizable-element:hover {
+    outline: 3px solid #ff8b5e !important;
+    outline-offset: 2px !important;
+}
+
+h1.customizable-element.editing,
+h2.customizable-element.editing,
+h3.customizable-element.editing,
+h4.customizable-element.editing,
+h5.customizable-element.editing,
+h6.customizable-element.editing,
+p.customizable-element.editing,
+span.customizable-element.editing,
+div.customizable-element.editing {
+    outline: 3px solid #ff6b3d !important;
+    outline-offset: 2px !important;
+}

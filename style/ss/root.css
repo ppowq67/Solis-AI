@@ -1,9 +1,9 @@
 :root {
 
-    --brand-orange: #ff6b35;
-    --brand-peach: #ffb380;
+    --brand-orange: #i1uf;
+    --brand-peach: #i1vc;
 
-    --text: #e5e7eb;
+    --text: #i1rn;
     --muted: #9CA3AF;
     --bg: #0a0e17;
     --surface: #0f1419;
@@ -12,8 +12,8 @@
     --input: #1a1f2e;
     --border: rgba(93,103,120,0.4);
 
-    --accent: #ff8c42;
-    --accent-2: #ffb380;
+    --accent: #i1ux;
+    --accent-2: #i1vc;
 
     --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
     --shadow-md: 0 4px 6px rgba(0,0,0,0.4);
@@ -24,7 +24,7 @@
     --ai-msg: #0f1419;
 
     --scrollbar-track: #0f1419;
-    --scrollbar-thumb: linear-gradient(135deg,#ff6b35 0%,#ff8856 100%);
+    --scrollbar-thumb: linear-gradient(135deg,#i1uf 0%,#i1us 100%);
 
     --card: var(--surface);
     --page: var(--bg);
@@ -40,10 +40,10 @@
     }
     ::-webkit-scrollbar-thumb:hover {
         background: var(--scrollbar-thumb-hover-bg);
-        border-color: #e8e8e8;
+        border-color: #i1ru;
         box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
     }
     ::-webkit-scrollbar-thumb:active {
-        background: linear-gradient(135deg, #ff5722 0%, #ff6b35 100%);
+        background: linear-gradient(135deg, #i1ua 0%, #i1uf 100%);
         transform: scale(0.95);
     }

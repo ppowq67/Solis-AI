@@ -2,8 +2,8 @@
   const e = "solis_template_memory";
   const t = "solis_caption_by_template";
   const n = 5;
-  const s = 900;
-  const i = 999;
+  const i = 900;
+  const s = 999;
   const o = 40;
   const l = 1200;
   const r = 45 * 1e3;
@@ -25,12 +25,12 @@
       captions: !isRankingTemplate(e)
     };
   }
-  function sanitizeForTemplate(e, {styles: t = null, captions: n = null, layout: s = null} = {}) {
-    const i = templateMemoryProfile(e);
+  function sanitizeForTemplate(e, {styles: t = null, captions: n = null, layout: i = null} = {}) {
+    const s = templateMemoryProfile(e);
     return {
-      styles: i.styles && t && typeof t === "object" && Object.keys(t).length ? t : null,
-      captions: i.captions && n && typeof n === "object" && Object.keys(n).length ? n : null,
-      layout: i.layout && layoutUseful(s) ? normalizeLayout(s) : null
+      styles: s.styles && t && typeof t === "object" && Object.keys(t).length ? t : null,
+      captions: s.captions && n && typeof n === "object" && Object.keys(n).length ? n : null,
+      layout: s.layout && layoutUseful(i) ? normalizeLayout(i) : null
     };
   }
   function layoutUseful(e) {
@@ -115,8 +115,8 @@
   }
   let f = null;
   let p = 0;
-  let g = false;
-  let y = null;
+  let y = false;
+  let g = null;
   let d = null;
   let m = false;
   let S = null;
@@ -165,28 +165,28 @@
     try {
       const t = localStorage.getItem(e);
       if (!t) return defaultState();
-      const s = JSON.parse(t);
-      if (!s || typeof s !== "object") return defaultState();
-      const i = {
+      const i = JSON.parse(t);
+      if (!i || typeof i !== "object") return defaultState();
+      const s = {
         ...defaultState(),
-        ...s,
+        ...i,
         version: n,
-        templates: s.templates && typeof s.templates === "object" ? s.templates : {},
-        usageLog: Array.isArray(s.usageLog) ? s.usageLog : []
+        templates: i.templates && typeof i.templates === "object" ? i.templates : {},
+        usageLog: Array.isArray(i.usageLog) ? i.usageLog : []
       };
-      let o = s.version !== n;
-      Object.keys(i.templates).forEach(e => {
-        const t = i.templates[e];
+      let o = i.version !== n;
+      Object.keys(s.templates).forEach(e => {
+        const t = s.templates[e];
         if (!t || typeof t !== "object") return;
         const n = sanitizeForTemplate(e, {
           styles: t.styles,
           captions: t.captions,
           layout: t.layout
         });
-        const s = JSON.stringify(t.styles || null) !== JSON.stringify(n.styles || null);
+        const i = JSON.stringify(t.styles || null) !== JSON.stringify(n.styles || null);
         const l = JSON.stringify(t.layout || null) !== JSON.stringify(n.layout || null);
         const r = JSON.stringify(t.captions || null) !== JSON.stringify(n.captions || null);
-        if (s || l || r) {
+        if (i || l || r) {
           t.styles = n.styles;
           t.layout = n.layout;
           t.captions = n.captions;
@@ -196,10 +196,10 @@
       });
       if (o) {
         try {
-          localStorage.setItem(e, JSON.stringify(i));
+          localStorage.setItem(e, JSON.stringify(s));
         } catch (e) {}
       }
-      return i;
+      return s;
     } catch (e) {
       return defaultState();
     }
@@ -228,39 +228,39 @@
     }
   }
   function summarizeStyles(e, t, n) {
-    const s = [];
+    const i = [];
     if (n && typeof n === "object") {
       const e = String(n.splitscreen_secondary_type || "");
-      if (e === "face_track") s.push("Reframe"); else if (e === "blank") s.push("Black"); else if (e === "blank_blur") s.push("Blur"); else if (e === "gameplay") s.push("Gameplay");
-      if (n.splitscreen_inverted) s.push("flip");
+      if (e === "face_track") i.push("Reframe"); else if (e === "blank") i.push("Black"); else if (e === "blank_blur") i.push("Blur"); else if (e === "gameplay") i.push("Gameplay");
+      if (n.splitscreen_inverted) i.push("flip");
       const t = Number(n.splitscreen_content_ratio);
-      if (Number.isFinite(t)) s.push(`split ${Math.round(t * 100)}%`);
+      if (Number.isFinite(t)) i.push(`split ${Math.round(t * 100)}%`);
     }
     if (t && typeof t === "object") {
-      if (t.font) s.push(String(t.font).split(",")[0].replace(/['"]/g, ""));
-      if (t.anim) s.push(String(t.anim));
-      if (t.color) s.push(String(t.color));
-      if (t.y_pct != null) s.push(`y${Math.round(Number(t.y_pct) * 100)}`);
+      if (t.font) i.push(String(t.font).split(",")[0].replace(/['"]/g, ""));
+      if (t.anim) i.push(String(t.anim));
+      if (t.color) i.push(String(t.color));
+      if (t.y_pct != null) i.push(`y${Math.round(Number(t.y_pct) * 100)}`);
     }
-    if (!s.length && e && typeof e === "object") {
+    if (!i.length && e && typeof e === "object") {
       const t = Object.keys(e);
       if (t.length) {
         const n = e[t[0]] || {};
-        if (n.font) s.push(String(n.font).split(",")[0].replace(/['"]/g, ""));
-        if (n.font_size) s.push(`${n.font_size}px`);
+        if (n.font) i.push(String(n.font).split(",")[0].replace(/['"]/g, ""));
+        if (n.font_size) i.push(`${n.font_size}px`);
         if (Array.isArray(n.color) && n.color.length >= 3) {
-          s.push(`rgb(${n.color.slice(0, 3).join(",")})`);
+          i.push(`rgb(${n.color.slice(0, 3).join(",")})`);
         }
       }
     }
-    if (s.length) return s.slice(0, 4).join(" · ");
+    if (i.length) return i.slice(0, 4).join(" · ");
     if (e && Object.keys(e).length) {
       return `${Object.keys(e).length} saved style${Object.keys(e).length === 1 ? "" : "s"}`;
     }
     return "Previous styles";
   }
   function collectLiveLayout(e) {
-    const t = String(e || y || "").toLowerCase();
+    const t = String(e || g || "").toLowerCase();
     if (t && t !== "splitscreen" && !t.includes("split")) return null;
     try {
       if (typeof window.getSplitscreenConfig === "function") {
@@ -318,12 +318,12 @@
     const n = String(t || "");
     e.textContent = "";
     e.setAttribute("aria-label", n);
-    e.classList.add("solis-nocopy");
+    e.classList.add("c13q");
     for (let t = 0; t < n.length; t++) {
-      const s = document.createElement("span");
-      s.textContent = n[t];
-      s.setAttribute("aria-hidden", "true");
-      e.appendChild(s);
+      const i = document.createElement("span");
+      i.textContent = n[t];
+      i.setAttribute("aria-hidden", "true");
+      e.appendChild(i);
       if (t < n.length - 1) {
         e.appendChild(document.createTextNode("​"));
       }
@@ -334,10 +334,10 @@
     const n = {
       ...e
     };
-    const s = String(n.font || "").replace(/['"]/g, "").split(",")[0].trim();
-    const i = fontAnimHint(s);
-    if (i && (!n.anim || n.anim === "center" || n.anim === "skew" || n.anim === "slide")) {
-      n.anim = i;
+    const i = String(n.font || "").replace(/['"]/g, "").split(",")[0].trim();
+    const s = fontAnimHint(i);
+    if (s && (!n.anim || n.anim === "center" || n.anim === "skew" || n.anim === "slide")) {
+      n.anim = s;
     }
     if (n.anim === "center") n.anim = "fade";
     const o = String(n.anim || "").toLowerCase();
@@ -379,17 +379,17 @@
     const t = readState();
     const n = t.templates[e] || null;
     if (!n) return null;
-    const s = sanitizeForTemplate(e, {
+    const i = sanitizeForTemplate(e, {
       styles: n.styles,
       captions: n.captions,
       layout: n.layout
     });
     return {
       ...n,
-      styles: s.styles,
-      captions: s.captions,
-      layout: s.layout,
-      fingerprint: fingerprint(s.styles, s.captions, s.layout) || n.fingerprint
+      styles: i.styles,
+      captions: i.captions,
+      layout: i.layout,
+      fingerprint: fingerprint(i.styles, i.captions, i.layout) || n.fingerprint
     };
   }
   function listMemories() {
@@ -432,7 +432,7 @@
         }
       }
     } catch (e) {}
-    if (t) return recallCaptionSnap(e || y);
+    if (t) return recallCaptionSnap(e || g);
     return null;
   }
   function applyStyles(e, t) {
@@ -443,24 +443,24 @@
         window.SolisMemory._applying = true;
         const e = JSON.parse(JSON.stringify(t));
         const n = window.rankingCustomizer.customizations || {};
-        const s = typeof window.rankingCustomizer.countFonts === "function" ? window.rankingCustomizer.countFonts(n) : 0;
-        const i = typeof window.rankingCustomizer.countFonts === "function" ? window.rankingCustomizer.countFonts(e) : 0;
-        if (i === 0 && s > 0) {
+        const i = typeof window.rankingCustomizer.countFonts === "function" ? window.rankingCustomizer.countFonts(n) : 0;
+        const s = typeof window.rankingCustomizer.countFonts === "function" ? window.rankingCustomizer.countFonts(e) : 0;
+        if (s === 0 && i > 0) {
           const t = {
             ...n
           };
-          Object.entries(e).forEach(([e, s]) => {
+          Object.entries(e).forEach(([e, i]) => {
             if (e === "__ranking_layout") {
-              t[e] = s;
+              t[e] = i;
               return;
             }
-            if (!s || typeof s !== "object") {
-              if (s != null) t[e] = s;
+            if (!i || typeof i !== "object") {
+              if (i != null) t[e] = i;
               return;
             }
             t[e] = {
               ...t[e] || {},
-              ...s
+              ...i
             };
             if (n[e]?.font && !t[e].font) t[e].font = n[e].font;
           });
@@ -524,14 +524,14 @@
     }
     return false;
   }
-  function upsertTemplateMemory(e, {styles: t, captions: n, layout: s, source: i} = {}) {
+  function upsertTemplateMemory(e, {styles: t, captions: n, layout: i, source: s} = {}) {
     if (!e || !isEnabled()) return;
     const o = readState();
     const l = o.templates[e] || {};
     const r = templateMemoryProfile(e);
     let a = t !== undefined ? t : l.styles || null;
     let c = n !== undefined ? n : l.captions || null;
-    let u = s !== undefined ? mergeLayouts(l.layout, s) : l.layout || null;
+    let u = i !== undefined ? mergeLayouts(l.layout, i) : l.layout || null;
     if (!r.styles) a = null;
     if (!r.layout) u = null;
     if (!r.captions) c = null;
@@ -553,7 +553,7 @@
       rejectCount: l.rejectCount || 0,
       lastRejectedFingerprint: l.fingerprint === f ? l.lastRejectedFingerprint || null : null,
       lastSuggestedAt: l.fingerprint === f ? l.lastSuggestedAt : null,
-      source: i || l.source || "edit"
+      source: s || l.source || "edit"
     };
     if (c) rememberCaptionSnap(e, c);
     writeState(o, {
@@ -561,35 +561,35 @@
     });
     syncSettingsUI();
   }
-  function recordFromGeneration(e, t, n, s) {
+  function recordFromGeneration(e, t, n, i) {
     if (!e || !isEnabled()) return;
-    const i = templateMemoryProfile(e);
+    const s = templateMemoryProfile(e);
     const l = readState();
     const r = l.templates[e] || {};
-    let a = i.styles ? t || collectLiveStyles(e) : null;
-    let c = i.captions ? n || collectLiveCaptions(e, {
+    let a = s.styles ? t || collectLiveStyles(e) : null;
+    let c = s.captions ? n || collectLiveCaptions(e, {
       allowSnap: true
     }) : null;
-    let f = i.layout ? mergeLayouts(r.layout, s || collectLiveLayout(e)) : null;
-    if (i.captions && (!c || !Object.keys(c).length)) {
+    let f = s.layout ? mergeLayouts(r.layout, i || collectLiveLayout(e)) : null;
+    if (s.captions && (!c || !Object.keys(c).length)) {
       c = recallCaptionSnap(e);
     }
-    const g = sanitizeForTemplate(e, {
+    const y = sanitizeForTemplate(e, {
       styles: a,
       captions: c,
       layout: f
     });
-    a = g.styles;
-    c = g.captions;
-    f = g.layout;
-    if (i.layout && !f && layoutUseful(r.layout)) {
+    a = y.styles;
+    c = y.captions;
+    f = y.layout;
+    if (s.layout && !f && layoutUseful(r.layout)) {
       f = normalizeLayout(r.layout);
     }
     if (!(a && Object.keys(a).length) && !(c && Object.keys(c).length) && !layoutUseful(f)) {
       return;
     }
-    const y = fingerprint(a, c, f);
-    const d = r.fingerprint === y;
+    const g = fingerprint(a, c, f);
+    const d = r.fingerprint === g;
     l.templates[e] = {
       updatedAt: (new Date).toISOString(),
       styles: a ? JSON.parse(JSON.stringify(a)) : null,
@@ -597,7 +597,7 @@
       lastGeneratedCaptions: c ? JSON.parse(JSON.stringify(c)) : r.lastGeneratedCaptions || null,
       lastGeneratedStyles: a ? JSON.parse(JSON.stringify(a)) : r.lastGeneratedStyles || null,
       layout: f ? JSON.parse(JSON.stringify(f)) : null,
-      fingerprint: y,
+      fingerprint: g,
       rejectCount: d ? r.rejectCount || 0 : 0,
       lastRejectedFingerprint: d ? r.lastRejectedFingerprint || null : null,
       lastRejectedAt: d ? r.lastRejectedAt || null : null,
@@ -607,7 +607,7 @@
     l.usageLog.unshift({
       templateId: e,
       at: (new Date).toISOString(),
-      fingerprint: y
+      fingerprint: g
     });
     l.usageLog = l.usageLog.slice(0, o);
     if (c) rememberCaptionSnap(e, c);
@@ -620,32 +620,32 @@
   }
   function recordLayout(e, t) {
     if (!isEnabled()) return;
-    const n = e || y || window.clipsStudio?.currentTemplateForPreview?.id;
+    const n = e || g || window.clipsStudio?.currentTemplateForPreview?.id;
     if (!n || !isSplitscreenTemplate(n)) return;
-    const s = t || collectLiveLayout(n);
-    if (!layoutUseful(s)) return;
+    const i = t || collectLiveLayout(n);
+    if (!layoutUseful(i)) return;
     upsertTemplateMemory(n, {
-      layout: s,
+      layout: i,
       source: "layout"
     });
   }
   function recordCaptions(e, t) {
     if (!isEnabled()) return;
-    const n = e || y || window.clipsStudio?.currentTemplateForPreview?.id;
+    const n = e || g || window.clipsStudio?.currentTemplateForPreview?.id;
     if (!n) return;
-    const s = t || collectLiveCaptions(n);
-    if (!s || !Object.keys(s).length) return;
+    const i = t || collectLiveCaptions(n);
+    if (!i || !Object.keys(i).length) return;
     upsertTemplateMemory(n, {
-      captions: s,
+      captions: i,
       source: "caption"
     });
   }
   function noteEdit(e) {
     if (!isEnabled()) return;
-    const t = e || y || window.clipsStudio?.currentTemplateForPreview?.id;
+    const t = e || g || window.clipsStudio?.currentTemplateForPreview?.id;
     if (!t) return;
     p += 1;
-    y = t;
+    g = t;
   }
   function scheduleSuggest(e) {
     if (f) {
@@ -659,30 +659,30 @@
     const t = 40 + Math.floor(Math.random() * 80);
     f = setTimeout(() => {
       f = null;
-      const t = document.getElementById("templatePreviewModal");
+      const t = document.getElementById("i24d");
       if (!t || !t.classList.contains("active")) return;
       if (!shouldSuggest(e)) {
         flushDeferredRankingCustoms();
         return;
       }
       showSuggestion(e);
-    }, s + t);
+    }, i + t);
   }
   function captionsDiffer(e, t) {
     return fingerprint(null, e) !== fingerprint(null, t);
   }
   function shouldSuggest(e) {
     if (!isSuggestEnabled() || !e) return false;
-    if (g) return false;
+    if (y) return false;
     if (u.has(e)) return false;
     const t = getTemplateMemory(e);
     if (!t) return false;
     const n = stylesForSuggest(t);
-    const s = !!(n && Object.keys(n).length);
-    const i = captionsForSuggest(t);
-    const o = !!(i && Object.keys(i).length);
+    const i = !!(n && Object.keys(n).length);
+    const s = captionsForSuggest(t);
+    const o = !!(s && Object.keys(s).length);
     const l = layoutUseful(t.layout);
-    if (!s && !o && !l) return false;
+    if (!i && !o && !l) return false;
     if (t.lastRejectedFingerprint && t.lastRejectedFingerprint === t.fingerprint) {
       const n = Date.parse(t.lastRejectedAt || 0);
       if (Number.isFinite(n) && Date.now() - n < r) return false;
@@ -700,23 +700,23 @@
     if (isLibraryPreviewOpen() && !l) return false;
     const f = collectLiveStyles(e);
     const p = collectLiveCaptions(e);
-    const y = collectLiveLayout(e);
+    const g = collectLiveLayout(e);
     const d = !!(p && Object.keys(p).length);
     const m = !!(f && Object.keys(f).length);
     const S = templateMemoryProfile(e);
     const w = o && S.captions && !isLibraryPreviewOpen();
-    const h = s && S.styles;
+    const h = i && S.styles;
     const b = l && S.layout;
     if (!w && !h && !b) return false;
     const _ = Date.parse(t.lastSuggestedAt || 0);
     if (Number.isFinite(_)) {
       const n = isRankingTemplate(e) ? c : a;
       if (Date.now() - _ < n) {
-        const e = b && layoutDiffers(t.layout, y);
+        const e = b && layoutDiffers(t.layout, g);
         if (!e) return false;
       }
     }
-    if (b && layoutDiffers(t.layout, y)) return true;
+    if (b && layoutDiffers(t.layout, g)) return true;
     if (h && isRankingTemplate(e)) {
       if (window.__solisRankingDeferCustoms) return true;
       const e = stylesForSuggest(t);
@@ -724,17 +724,17 @@
     }
     if (w && !d) return true;
     if (h && !m && !d) return true;
-    const k = smarterCaptions(i, e);
-    const M = fingerprint(f, p, y) === t.fingerprint;
-    const C = !k || fingerprint(null, p) === fingerprint(null, k);
-    if (M && C) return false;
+    const k = smarterCaptions(s, e);
+    const C = fingerprint(f, p, g) === t.fingerprint;
+    const M = !k || fingerprint(null, p) === fingerprint(null, k);
+    if (C && M) return false;
     return true;
   }
   function flushDeferredRankingCustoms() {
     if (!window.__solisRankingDeferCustoms) return;
     window.__solisRankingDeferCustoms = false;
     try {
-      const e = y || "ranked_compilation";
+      const e = g || "ranked_compilation";
       const t = getTemplateMemory(e);
       const n = stylesForSuggest(t);
       if (n && Object.keys(n).length && isRankingTemplate(e)) {
@@ -795,22 +795,22 @@
   }
   function placeSuggestNearPreview() {
     const e = ensureSuggestEl();
-    const t = document.getElementById("templateVideoPreview");
+    const t = document.getElementById("i24g");
     const n = t || null;
     revealSuggestEl(e);
-    const s = e.offsetWidth || 64;
-    const i = e.offsetHeight || 34;
+    const i = e.offsetWidth || 64;
+    const s = e.offsetHeight || 34;
     if (!n) {
-      e.style.left = `${Math.max(12, window.innerWidth - s - 16)}px`;
+      e.style.left = `${Math.max(12, window.innerWidth - i - 16)}px`;
       e.style.top = "16px";
       e.style.transform = "none";
       return;
     }
     const o = n.getBoundingClientRect();
-    let l = Math.round(o.right - s - 6);
+    let l = Math.round(o.right - i - 6);
     let r = Math.round(o.top + 8);
-    l = Math.min(window.innerWidth - s - 8, Math.max(8, l));
-    r = Math.min(window.innerHeight - i - 8, Math.max(8, r));
+    l = Math.min(window.innerWidth - i - 8, Math.max(8, l));
+    r = Math.min(window.innerHeight - s - 8, Math.max(8, r));
     e.style.left = `${l}px`;
     e.style.top = `${r}px`;
     e.style.transform = "none";
@@ -840,8 +840,8 @@
       if (typeof window.clearSubtitleMemorySuggest === "function") {
         window.clearSubtitleMemorySuggest();
       } else {
-        document.querySelectorAll(".rk-ghost-stack,.sub-mem-ghost").forEach(e => e.remove());
-        const e = document.getElementById("subMemActions");
+        document.querySelectorAll(".czh,.c1dh").forEach(e => e.remove());
+        const e = document.getElementById("i23z");
         if (e) {
           e.classList.remove("open");
           e.style.visibility = "hidden";
@@ -849,7 +849,7 @@
           e.style.pointerEvents = "none";
         }
       }
-      const e = document.getElementById("rkSuggestActions");
+      const e = document.getElementById("i20d");
       if (e) {
         e.classList.remove("open");
         e.style.visibility = "hidden";
@@ -896,9 +896,9 @@
     if (isLibraryPreviewOpen()) return false;
     t = t || getTemplateMemory(e);
     const n = captionsForSuggest(t);
-    let s = smarterCaptions(n, e);
-    if (!s) {
-      s = smarterCaptions({
+    let i = smarterCaptions(n, e);
+    if (!i) {
+      i = smarterCaptions({
         anim: "karaoke",
         font: "Montserrat",
         color: "#ffffff",
@@ -910,12 +910,12 @@
         enabled: true
       }, e);
     }
-    if (!s || typeof window.offerSubtitleMemorySuggest !== "function") return false;
-    const i = collectLiveCaptions(e);
-    const o = !!(i && Object.keys(i).length);
-    if (o && !captionsDiffer(s, i)) return false;
-    window.offerSubtitleMemorySuggest(s, e);
-    return !!document.getElementById("subMemActions")?.classList.contains("open") || !!document.querySelector(".sub-mem-ghost");
+    if (!i || typeof window.offerSubtitleMemorySuggest !== "function") return false;
+    const s = collectLiveCaptions(e);
+    const o = !!(s && Object.keys(s).length);
+    if (o && !captionsDiffer(i, s)) return false;
+    window.offerSubtitleMemorySuggest(i, e);
+    return !!document.getElementById("i23z")?.classList.contains("open") || !!document.querySelector(".c1dh");
   }
   function showSuggestion(e) {
     if (!shouldSuggest(e)) return;
@@ -930,8 +930,8 @@
         n = offerCaptionSuggest(e, t);
       }
     } else if (isRankingTemplate(e)) {
-      const s = stylesForSuggest(t);
-      if (s && Object.keys(s).length) {
+      const i = stylesForSuggest(t);
+      if (i && Object.keys(i).length) {
         n = !!offerRankingStylesSuggest(e, t);
       }
     } else {
@@ -941,14 +941,14 @@
       flushDeferredRankingCustoms();
       return;
     }
-    const s = document.getElementById("solisMemorySuggest");
-    const i = !!(s && !s.hidden && s.classList.contains("open"));
-    const o = !!document.getElementById("subMemActions")?.classList.contains("open") || !!document.querySelector(".sub-mem-ghost");
-    if (!i && !o && isRankingTemplate(e)) {
+    const i = document.getElementById("solisMemorySuggest");
+    const s = !!(i && !i.hidden && i.classList.contains("open"));
+    const o = !!document.getElementById("i23z")?.classList.contains("open") || !!document.querySelector(".c1dh");
+    if (!s && !o && isRankingTemplate(e)) {
       flushDeferredRankingCustoms();
       return;
     }
-    g = true;
+    y = true;
     const l = readState();
     if (l.templates[e]) {
       l.templates[e].lastSuggestedAt = (new Date).toISOString();
@@ -961,18 +961,18 @@
     if (typeof window.offerSplitscreenMemorySuggest !== "function") return false;
     const n = window.offerSplitscreenMemorySuggest(t.layout, e);
     if (!n) return false;
-    const s = ensureSuggestEl();
-    const i = s.querySelector("#solisMemorySuggestTitle");
-    if (i) {
-      i.hidden = true;
-      i.textContent = "";
+    const i = ensureSuggestEl();
+    const s = i.querySelector("#i20n");
+    if (s) {
+      s.hidden = true;
+      s.textContent = "";
     }
-    const o = s.querySelector("#solisMemorySuggestSub");
+    const o = i.querySelector("#solisMemorySuggestSub");
     if (o) o.textContent = "";
-    s.dataset.templateId = e;
-    s.dataset.mode = "layout-only";
+    i.dataset.templateId = e;
+    i.dataset.mode = "layout-only";
     placeSuggestNearPreview();
-    revealSuggestEl(s);
+    revealSuggestEl(i);
     return true;
   }
   function offerRankingStylesSuggest(e, t) {
@@ -980,12 +980,12 @@
     t = t || getTemplateMemory(e);
     const n = stylesForSuggest(t);
     if (!n || !Object.keys(n).length) return false;
-    const s = Object.keys(n).filter(e => e !== "__ranking_layout");
-    const i = s.some(e => {
+    const i = Object.keys(n).filter(e => e !== "__ranking_layout");
+    const s = i.some(e => {
       const t = n[e];
       return t && typeof t === "object" && (t.font || t.font_size || t.color);
     });
-    if (!i) return false;
+    if (!s) return false;
     const o = collectLiveStyles(e);
     const l = !!window.__solisRankingDeferCustoms;
     if (!l && fingerprint(o, null) === fingerprint(n, null)) return false;
@@ -994,11 +994,11 @@
         if (typeof window.RankingTextPill.hide === "function") window.RankingTextPill.hide();
         if (typeof window.RankingTextPill.clearSuggest === "function") window.RankingTextPill.clearSuggest();
       }
-      document.getElementById("subPillMenu")?.classList.remove("active");
+      document.getElementById("i241")?.classList.remove("active");
     } catch (e) {}
     window.__solisRankingDeferCustoms = false;
     const r = ensureSuggestEl();
-    const a = r.querySelector("#solisMemorySuggestTitle");
+    const a = r.querySelector("#i20n");
     if (a) {
       a.hidden = false;
       a.removeAttribute("hidden");
@@ -1027,14 +1027,14 @@
     return true;
   }
   function continueSuggestAfterCaption(e) {
-    const t = e || y;
+    const t = e || g;
     if (!t || !isSuggestEnabled()) return;
     if (u.has(t)) return;
     const n = getTemplateMemory(t);
     if (!n) return;
     if (n.lastRejectedFingerprint && n.lastRejectedFingerprint === n.fingerprint) return;
     setTimeout(() => {
-      const e = document.getElementById("templatePreviewModal");
+      const e = document.getElementById("i24d");
       if (!e || !e.classList.contains("active")) return;
       if (u.has(t)) return;
       if (!isSplitscreenTemplate(t) && wantsLayoutSuggest(t, n) && offerLayoutSuggest(t, n)) return;
@@ -1042,38 +1042,38 @@
     }, 180);
   }
   function continueSuggestAfterLayout(e) {
-    const t = e || y;
+    const t = e || g;
     if (!t || !isSuggestEnabled()) return;
     if (u.has(t)) return;
     const n = getTemplateMemory(t);
     if (!n) return;
     setTimeout(() => {
-      const e = document.getElementById("templatePreviewModal");
+      const e = document.getElementById("i24d");
       if (!e || !e.classList.contains("active")) return;
       if (u.has(t)) return;
       if (!isRankingTemplate(t) && offerCaptionSuggest(t, n)) {
-        g = true;
+        y = true;
         return;
       }
       offerRankingStylesSuggest(t, n);
       if (document.getElementById("solisMemorySuggest") && !document.getElementById("solisMemorySuggest").hidden) {
-        g = true;
+        y = true;
       }
     }, 160);
   }
   function acceptSuggestion() {
     const e = ensureSuggestEl();
-    const t = e.dataset.templateId || y;
+    const t = e.dataset.templateId || g;
     const n = e.dataset.mode || "all";
     hideSuggest();
     if (t) u.delete(t);
-    const s = getTemplateMemory(t);
-    if (!s) return;
+    const i = getTemplateMemory(t);
+    if (!i) return;
     if (n === "layout-only") {
       try {
         if (window.SolisMemory) window.SolisMemory._applying = true;
-        if (typeof window.applySplitscreenMemoryLayout === "function" && s.layout) {
-          window.applySplitscreenMemoryLayout(s.layout, {
+        if (typeof window.applySplitscreenMemoryLayout === "function" && i.layout) {
+          window.applySplitscreenMemoryLayout(i.layout, {
             commit: true
           });
         }
@@ -1087,31 +1087,31 @@
         writeState(e);
       }
       p = 0;
-      g = false;
+      y = false;
       try {
-        document.querySelectorAll(".gp-mem-pick").forEach(e => e.classList.remove("gp-mem-pick"));
-        document.getElementById("subPillMenu")?.classList.remove("active");
+        document.querySelectorAll(".cgk").forEach(e => e.classList.remove("cgk"));
+        document.getElementById("i241")?.classList.remove("active");
         if (typeof window.hideGameplayPillMenu === "function") window.hideGameplayPillMenu(); else if (typeof hideGameplayPillMenu === "function") hideGameplayPillMenu();
       } catch (e) {}
       continueSuggestAfterLayout(t);
       return;
     }
     if (n === "styles-only") {
-      const n = e._solisMemStyles || stylesForSuggest(s);
+      const n = e._solisMemStyles || stylesForSuggest(i);
       if (n && Object.keys(n).length) {
         window.__solisRankingDeferCustoms = false;
         applyStyles(t, n);
       }
     } else {
-      if (s.captions) applyCaptions(s.captions, t);
-      if (s.layout && typeof window.applySplitscreenMemoryLayout === "function") {
+      if (i.captions) applyCaptions(i.captions, t);
+      if (i.layout && typeof window.applySplitscreenMemoryLayout === "function") {
         try {
-          window.applySplitscreenMemoryLayout(s.layout, {
+          window.applySplitscreenMemoryLayout(i.layout, {
             commit: true
           });
         } catch (e) {}
       }
-      const e = stylesForSuggest(s);
+      const e = stylesForSuggest(i);
       if (e && Object.keys(e).length) {
         window.__solisRankingDeferCustoms = false;
         applyStyles(t, e);
@@ -1123,19 +1123,19 @@
       delete e._solisMemStylesPreviewed;
       e.classList.remove("solis-memory-suggest--ranking");
     } catch (e) {}
-    const i = readState();
-    if (i.templates[t]) {
-      i.templates[t].lastAcceptedAt = (new Date).toISOString();
-      i.templates[t].lastRejectedFingerprint = null;
-      writeState(i);
+    const s = readState();
+    if (s.templates[t]) {
+      s.templates[t].lastAcceptedAt = (new Date).toISOString();
+      s.templates[t].lastRejectedFingerprint = null;
+      writeState(s);
     }
     p = 0;
     if (typeof window.clearSubtitleMemorySuggest === "function") {
       window.clearSubtitleMemorySuggest();
     }
     try {
-      document.getElementById("subPillMenu")?.classList.remove("active");
-      document.querySelectorAll("#templateVideoPreview .sub-text-block.selected").forEach(e => e.classList.remove("selected"));
+      document.getElementById("i241")?.classList.remove("active");
+      document.querySelectorAll("#i24g .c1dv.selected").forEach(e => e.classList.remove("selected"));
       if (window.RankingTextPill) {
         if (typeof window.RankingTextPill.clearSuggest === "function") window.RankingTextPill.clearSuggest();
         if (typeof window.RankingTextPill.hide === "function") window.RankingTextPill.hide();
@@ -1145,7 +1145,7 @@
   }
   function rejectSuggestion() {
     const e = ensureSuggestEl();
-    const t = e.dataset.templateId || y;
+    const t = e.dataset.templateId || g;
     const n = e.dataset.mode || "all";
     if (n === "layout-only") {
       try {
@@ -1157,7 +1157,7 @@
         if (typeof window.hideGameplayPillMenu === "function") window.hideGameplayPillMenu();
       } catch (e) {}
       hideSuggest();
-      g = false;
+      y = false;
       p = 0;
       setTimeout(() => {
         if (!t || u.has(t)) return;
@@ -1165,7 +1165,7 @@
         const e = getTemplateMemory(t);
         if (!e) return;
         if (offerCaptionSuggest(t, e)) {
-          g = true;
+          y = true;
         }
       }, 280);
       return;
@@ -1192,21 +1192,21 @@
     }
   }
   function markSuggestionRejected(e) {
-    const t = e || y;
+    const t = e || g;
     if (!t) return;
     u.add(t);
-    g = true;
+    y = true;
     p = 0;
     if (f) {
       clearTimeout(f);
       f = null;
     }
     const n = readState();
-    const s = n.templates[t];
-    if (s) {
-      s.rejectCount = (s.rejectCount || 0) + 1;
-      s.lastRejectedFingerprint = s.fingerprint || fingerprint(s.styles, s.captions, s.layout);
-      s.lastRejectedAt = (new Date).toISOString();
+    const i = n.templates[t];
+    if (i) {
+      i.rejectCount = (i.rejectCount || 0) + 1;
+      i.lastRejectedFingerprint = i.fingerprint || fingerprint(i.styles, i.captions, i.layout);
+      i.lastRejectedAt = (new Date).toISOString();
       writeState(n);
     }
   }
@@ -1271,25 +1271,25 @@
       },
       usageLog: Array.isArray(e.usageLog) && e.usageLog.length ? e.usageLog : Array.isArray(t.usageLog) ? t.usageLog : []
     };
-    const s = t.templates || {};
-    Object.keys(s).forEach(e => {
+    const i = t.templates || {};
+    Object.keys(i).forEach(e => {
       const t = n.templates[e];
-      const i = _sanitizeRemoteTemplate(e, s[e]);
+      const s = _sanitizeRemoteTemplate(e, i[e]);
       if (!t) {
-        if (i) n.templates[e] = i;
+        if (s) n.templates[e] = s;
         return;
       }
-      if (!i) return;
+      if (!s) return;
       const o = Date.parse(t.updatedAt || 0) || 0;
-      const l = Date.parse(i.updatedAt || 0) || 0;
-      if (l > o) n.templates[e] = i; else if (l === o) {
-        const s = {
+      const l = Date.parse(s.updatedAt || 0) || 0;
+      if (l > o) n.templates[e] = s; else if (l === o) {
+        const i = {
           ...t,
-          captions: t.captions || i.captions || null,
-          styles: t.styles || i.styles || null,
-          layout: t.layout || i.layout || null
+          captions: t.captions || s.captions || null,
+          styles: t.styles || s.styles || null,
+          layout: t.layout || s.layout || null
         };
-        n.templates[e] = _sanitizeRemoteTemplate(e, s) || s;
+        n.templates[e] = _sanitizeRemoteTemplate(e, i) || i;
       } else {
         n.templates[e] = _sanitizeRemoteTemplate(e, t) || t;
       }
@@ -1315,8 +1315,8 @@
         const t = await e.json();
         const n = t?.memory;
         if (!n || typeof n !== "object") return;
-        const s = mergeMemoryStates(readState(), n);
-        writeState(s, {
+        const i = mergeMemoryStates(readState(), n);
+        writeState(i, {
           sync: false
         });
         m = true;
@@ -1328,8 +1328,8 @@
     return S;
   }
   async function onTemplatePreviewOpen(e) {
-    y = e || null;
-    g = false;
+    g = e || null;
+    y = false;
     p = 0;
     hideSuggest();
     try {
@@ -1352,10 +1352,10 @@
     scheduleSuggest(e);
     if (!m) {
       pullServerMemory().then(() => {
-        if (!g) scheduleSuggest(e);
+        if (!y) scheduleSuggest(e);
       }).catch(() => {});
     }
-    setTimeout(() => flushDeferredRankingCustoms(), s + 400);
+    setTimeout(() => flushDeferredRankingCustoms(), i + 400);
   }
   function onTemplatePreviewClose() {
     if (f) {
@@ -1363,13 +1363,13 @@
       f = null;
     }
     hideSuggest();
-    g = false;
+    y = false;
     try {
-      if (y) {
-        const e = templateMemoryProfile(y);
-        const t = e.captions ? collectLiveCaptions(y) : null;
-        const n = e.styles && !isRankingTemplate(y) ? collectLiveStyles(y) : undefined;
-        upsertTemplateMemory(y, {
+      if (g) {
+        const e = templateMemoryProfile(g);
+        const t = e.captions ? collectLiveCaptions(g) : null;
+        const n = e.styles && !isRankingTemplate(g) ? collectLiveStyles(g) : undefined;
+        upsertTemplateMemory(g, {
           styles: n || undefined,
           captions: t || undefined,
           source: "close"
@@ -1400,7 +1400,7 @@
         window.RankingTextPill.deselectAll();
       }
     } catch (e) {}
-    y = null;
+    g = null;
   }
   function generateFromUsage() {
     const e = readState();
@@ -1408,13 +1408,13 @@
     try {
       const n = localStorage.getItem("rankingCustomizations");
       if (n) {
-        const s = JSON.parse(n);
-        if (s && Object.keys(s).length) {
-          const n = fingerprint(s, null, null);
+        const i = JSON.parse(n);
+        if (i && Object.keys(i).length) {
+          const n = fingerprint(i, null, null);
           e.templates.ranked_compilation = {
             ...e.templates.ranked_compilation || {},
             updatedAt: (new Date).toISOString(),
-            styles: s,
+            styles: i,
             captions: null,
             layout: null,
             fingerprint: n,
@@ -1458,28 +1458,28 @@
   }
   function syncSettingsUI() {
     const e = readState();
-    const t = document.getElementById("stgMemoryEnabledToggle");
-    const n = document.getElementById("stgMemorySuggestToggle");
-    const s = document.getElementById("stgMemoryEnabledLabel");
-    const i = document.getElementById("stgMemorySuggestLabel");
+    const t = document.getElementById("i228");
+    const n = document.getElementById("i22b");
+    const i = document.getElementById("i227");
+    const s = document.getElementById("i22a");
     if (t) {
-      t.classList.toggle("is-on", !!e.enabled);
+      t.classList.toggle("cic", !!e.enabled);
       t.setAttribute("aria-checked", e.enabled ? "true" : "false");
     }
-    if (s) s.textContent = e.enabled ? "On" : "Off";
+    if (i) i.textContent = e.enabled ? "On" : "Off";
     if (n) {
-      n.classList.toggle("is-on", !!e.suggestEnabled);
+      n.classList.toggle("cic", !!e.suggestEnabled);
       n.setAttribute("aria-checked", e.suggestEnabled ? "true" : "false");
       n.disabled = !e.enabled;
-      n.classList.toggle("is-disabled", !e.enabled);
+      n.classList.toggle("ci7", !e.enabled);
     }
-    if (i) i.textContent = e.suggestEnabled ? "On" : "Off";
-    const o = document.getElementById("stgPrivacyMemoryToggle");
+    if (s) s.textContent = e.suggestEnabled ? "On" : "Off";
+    const o = document.getElementById("i232");
     if (o) {
-      o.classList.toggle("is-on", !!e.enabled);
+      o.classList.toggle("cic", !!e.enabled);
       o.setAttribute("aria-checked", e.enabled ? "true" : "false");
     }
-    const l = document.getElementById("stgMemoryList");
+    const l = document.getElementById("i229");
     if (!l) return;
     const r = listMemories();
     if (!r.length) {
@@ -1507,10 +1507,10 @@
     return String(e || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   }
   function bindSettingsPanel() {
-    const e = document.getElementById("stgMemoryEnabledToggle");
-    const t = document.getElementById("stgMemorySuggestToggle");
-    const n = document.getElementById("stgMemoryClearAllBtn");
-    const s = document.getElementById("stgMemoryList");
+    const e = document.getElementById("i228");
+    const t = document.getElementById("i22b");
+    const n = document.getElementById("i226");
+    const i = document.getElementById("i229");
     e?.addEventListener("click", () => setEnabled(!isEnabled()));
     t?.addEventListener("click", () => {
       if (!isEnabled()) return;
@@ -1519,7 +1519,7 @@
     n?.addEventListener("click", () => {
       clearAll();
     });
-    s?.addEventListener("click", e => {
+    i?.addEventListener("click", e => {
       const t = e.target.closest("[data-clear-mem]");
       if (!t) return;
       clearTemplate(t.getAttribute("data-clear-mem"));
@@ -1554,14 +1554,14 @@
     acceptSuggestion: acceptSuggestion,
     rememberCaptionSnap: rememberCaptionSnap,
     recallCaptionSnap: recallCaptionSnap,
-    getCurrentTemplateId: () => y,
+    getCurrentTemplateId: () => g,
     isRankingTemplate: isRankingTemplate,
     isSplitscreenTemplate: isSplitscreenTemplate,
     _applying: false
   };
   document.addEventListener("keydown", e => {
     const t = document.getElementById("solisMemorySuggest");
-    if (window.__solisPendingSubMem || document.querySelector(".sub-mem-ghost") || document.getElementById("subMemActions")?.classList.contains("open")) {
+    if (window.__solisPendingSubMem || document.querySelector(".c1dh") || document.getElementById("i23z")?.classList.contains("open")) {
       return;
     }
     if (!t || t.hidden) return;

@@ -46,14 +46,14 @@ function safeSetImage(e, t, i = "") {
     console.warn("Invalid image URL");
     return;
   }
-  const o = document.createElement("img");
-  o.setAttribute("src", t);
-  o.setAttribute("alt", escapeHtml(i));
-  o.style.cssText = "width: 100%; height: 100%; object-fit: cover; border-radius: 50%;";
+  const n = document.createElement("img");
+  n.setAttribute("src", t);
+  n.setAttribute("alt", escapeHtml(i));
+  n.style.cssText = "width: 100%; height: 100%; object-fit: cover; border-radius: 50%;";
   while (e.firstChild) {
     e.removeChild(e.firstChild);
   }
-  e.appendChild(o);
+  e.appendChild(n);
 }
 
 function validateUserObject(e) {
@@ -85,9 +85,9 @@ let notificationSystem = {
 
 function initializeNotificationSystem() {
   if (notificationSystem.initialized) return;
-  notificationSystem.bellElement = document.getElementById("bellBtn");
-  notificationSystem.profileElement = document.getElementById("profileAvatarBtn");
-  notificationSystem.notificationsDropdown = document.getElementById("notificationsDropdown");
+  notificationSystem.bellElement = document.getElementById("i1p6");
+  notificationSystem.profileElement = document.getElementById("i208");
+  notificationSystem.notificationsDropdown = document.getElementById("i1y1");
   if (!notificationSystem.bellElement || !notificationSystem.profileElement) {
     console.warn("Required notification elements not found");
     return;
@@ -100,7 +100,7 @@ function initializeNotificationSystem() {
 }
 
 function syncProfileButton() {
-  const e = document.getElementById("profileAvatarBtn");
+  const e = document.getElementById("i208");
   if (!e) return;
   let t = null;
   try {
@@ -124,14 +124,14 @@ function syncProfileButton() {
     console.warn("Invalid user object");
     return;
   }
-  const o = i.user;
-  const n = (o.auth_provider || "").toString().toLowerCase();
-  const a = o.picture || o.avatar || null;
+  const n = i.user;
+  const o = (n.auth_provider || "").toString().toLowerCase();
+  const a = n.picture || n.avatar || null;
   const s = '<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: 100%;"><rect width="24" height="24" fill="none"/><path d="M20 4H4C2.9 4 2.01 4.9 2.01 6L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="#EA4335"/></svg>';
   while (e.firstChild) {
     e.removeChild(e.firstChild);
   }
-  if (n.includes("google")) {
+  if (o.includes("google")) {
     e.innerHTML = s;
   } else if (a && typeof a === "string") {
     if (isValidImageUrl(a)) {
@@ -154,7 +154,7 @@ function attachNotificationEventListeners() {
       clearUnreadStatus();
     }
   });
-  const i = document.getElementById("dropdownNotifications");
+  const i = document.getElementById("i1r9");
   if (i && !i.dataset.bound) {
     i.dataset.bound = "1";
     i.addEventListener("click", e => {
@@ -164,9 +164,9 @@ function attachNotificationEventListeners() {
     });
   }
   document.addEventListener("click", closeAllDropdowns);
-  const o = document.getElementById("markAsRead");
-  if (o) {
-    o.addEventListener("click", e => {
+  const n = document.getElementById("i1x8");
+  if (n) {
+    n.addEventListener("click", e => {
       e.preventDefault();
       clearUnreadStatus();
     });
@@ -176,7 +176,7 @@ function attachNotificationEventListeners() {
 function closeAllDropdowns() {
   const e = notificationSystem.notificationsDropdown;
   if (e) e.classList.remove("open");
-  const t = document.getElementById("profileDropdown");
+  const t = document.getElementById("i20a");
   if (t) t.classList.remove("open");
   const i = notificationSystem.unreadCount > 0 || typeof NotificationSystemV2 !== "undefined" && NotificationSystemV2.state?.unreadCount > 0;
   if (typeof syncNotifBellVisibility === "function") {
@@ -242,7 +242,7 @@ function addNotification(e) {
 }
 
 function showVideoGeneratedNotification(e = {}) {
-  const {videoTitle: t = "Video Generated", videoUrl: i = "#", thumbnailUrl: o = null, duration: n = 0} = e;
+  const {videoTitle: t = "Video Generated", videoUrl: i = "#", thumbnailUrl: n = null, duration: o = 0} = e;
   showVideoGeneratedOverlay(t, i);
   addNotification({
     title: "Video Generated",
@@ -264,16 +264,16 @@ function showVideoGenerated(e = {}) {
 }
 
 function showVideoGeneratedOverlay(e = "Video Ready!", t = "#") {
-  const i = document.getElementById("videoGeneratedBackdrop");
-  const o = document.getElementById("videoGeneratedOverlay");
-  if (!i || !o) {
+  const i = document.getElementById("i25b");
+  const n = document.getElementById("i25c");
+  if (!i || !n) {
     console.warn("Video generated overlay elements not found");
     return;
   }
-  const n = o.querySelector(".video-generated-title");
-  const a = o.querySelector(".video-generated-message");
-  const s = o.querySelector('[data-action="view"]');
-  if (n) n.textContent = e;
+  const o = n.querySelector(".c1kx");
+  const a = n.querySelector(".c1ku");
+  const s = n.querySelector('[data-action="view"]');
+  if (o) o.textContent = e;
   if (a) a.textContent = "Your video has been successfully generated and is ready to download or share.";
   if (s) {
     s.onclick = () => {
@@ -284,13 +284,13 @@ function showVideoGeneratedOverlay(e = "Video Ready!", t = "#") {
     };
   }
   i.classList.add("show");
-  o.classList.add("show");
+  n.classList.add("show");
   setTimeout(hideVideoGeneratedOverlay, 8e3);
 }
 
 function hideVideoGeneratedOverlay() {
-  const e = document.getElementById("videoGeneratedBackdrop");
-  const t = document.getElementById("videoGeneratedOverlay");
+  const e = document.getElementById("i25b");
+  const t = document.getElementById("i25c");
   if (e) e.classList.remove("show");
   if (t) t.classList.remove("show");
 }
@@ -313,20 +313,20 @@ function isMobileNotifChrome() {
 }
 
 function syncNotifBellVisibility(e) {
-  const t = document.getElementById("notifWrapper") || document.querySelector(".notif-wrapper");
-  const i = document.getElementById("dropdownNotifBadge");
-  const o = notificationSystem.unreadCount || (typeof NotificationSystemV2 !== "undefined" ? NotificationSystemV2.state?.unreadCount || 0 : 0);
-  const n = typeof e === "boolean" ? e : o > 0;
-  const a = !!document.getElementById("notificationsDropdown")?.classList.contains("open");
-  const s = isMobileNotifChrome() ? n || a : true;
+  const t = document.getElementById("i1xz") || document.querySelector(".cpg");
+  const i = document.getElementById("i1r8");
+  const n = notificationSystem.unreadCount || (typeof NotificationSystemV2 !== "undefined" ? NotificationSystemV2.state?.unreadCount || 0 : 0);
+  const o = typeof e === "boolean" ? e : n > 0;
+  const a = !!document.getElementById("i1y1")?.classList.contains("open");
+  const s = isMobileNotifChrome() ? o || a : true;
   if (t) {
     t.classList.toggle("is-visible", s);
     t.setAttribute("aria-hidden", s ? "false" : "true");
   }
   if (i) {
-    if (n && o > 0) {
+    if (o && n > 0) {
       i.hidden = false;
-      i.textContent = o > 9 ? "9+" : String(o);
+      i.textContent = n > 9 ? "9+" : String(n);
     } else {
       i.hidden = true;
       i.textContent = "";
@@ -346,8 +346,8 @@ if (typeof window !== "undefined" && !window.__solisNotifChromeResizeBound) {
 }
 
 function openNotificationsFromProfile() {
-  const e = document.getElementById("notificationsDropdown");
-  const t = document.getElementById("notifWrapper") || document.querySelector(".notif-wrapper");
+  const e = document.getElementById("i1y1");
+  const t = document.getElementById("i1xz") || document.querySelector(".cpg");
   closeAllDropdowns();
   if (t) {
     t.classList.add("is-visible");
@@ -359,7 +359,7 @@ function openNotificationsFromProfile() {
 }
 
 function renderNotificationsList() {
-  const e = document.getElementById("notificationsList");
+  const e = document.getElementById("i1y2");
   if (!e) return;
   while (e.firstChild) {
     e.removeChild(e.firstChild);
@@ -375,18 +375,18 @@ function renderNotificationsList() {
     if (!t || typeof t !== "object") return;
     const i = document.createElement("div");
     i.className = "notif-item";
-    const o = document.createElement("div");
-    o.className = "notif-icon";
-    const n = document.createElement("svg");
-    n.setAttribute("width", "18");
-    n.setAttribute("height", "18");
-    n.setAttribute("viewBox", "0 0 24 24");
-    n.setAttribute("fill", "none");
-    n.setAttribute("stroke", "currentColor");
-    n.setAttribute("stroke-linecap", "round");
-    n.setAttribute("stroke-linejoin", "round");
-    n.innerHTML = getNotificationIcon(t.icon);
-    o.appendChild(n);
+    const n = document.createElement("div");
+    n.className = "notif-icon";
+    const o = document.createElement("svg");
+    o.setAttribute("width", "18");
+    o.setAttribute("height", "18");
+    o.setAttribute("viewBox", "0 0 24 24");
+    o.setAttribute("fill", "none");
+    o.setAttribute("stroke", "currentColor");
+    o.setAttribute("stroke-linecap", "round");
+    o.setAttribute("stroke-linejoin", "round");
+    o.innerHTML = getNotificationIcon(t.icon);
+    n.appendChild(o);
     const a = document.createElement("div");
     a.className = "notif-content";
     const s = document.createElement("div");
@@ -401,7 +401,7 @@ function renderNotificationsList() {
     a.appendChild(s);
     a.appendChild(r);
     a.appendChild(c);
-    i.appendChild(o);
+    i.appendChild(n);
     i.appendChild(a);
     e.appendChild(i);
   });
@@ -431,12 +431,12 @@ function formatTime(e) {
   }
   const t = new Date;
   const i = t - e;
-  const o = Math.floor(i / 1e3);
-  const n = Math.floor(o / 60);
-  const a = Math.floor(n / 60);
+  const n = Math.floor(i / 1e3);
+  const o = Math.floor(n / 60);
+  const a = Math.floor(o / 60);
   const s = Math.floor(a / 24);
-  if (o < 60) return "just now";
-  if (n < 60) return `${n}m ago`;
+  if (n < 60) return "just now";
+  if (o < 60) return `${o}m ago`;
   if (a < 24) return `${a}h ago`;
   if (s < 7) return `${s}d ago`;
   return e.toLocaleDateString();
@@ -446,29 +446,29 @@ function updateProfileInfo() {
   const e = document.getElementById("profileNameDisplay");
   const t = document.getElementById("profilePlanDisplay");
   const i = document.getElementById("profileAvatarDisplay");
-  let o = null;
+  let n = null;
   try {
     if (typeof window !== "undefined" && window.currentUser) {
-      o = window.currentUser;
+      n = window.currentUser;
     } else {
       const e = localStorage.getItem("currentUser");
       if (e) {
         const t = e.trim();
         if (t.startsWith("{") && t.endsWith("}")) {
-          o = JSON.parse(e);
+          n = JSON.parse(e);
         }
       }
     }
   } catch (e) {
     console.error("Error reading user data:", e);
-    o = null;
+    n = null;
   }
-  const n = validateUserObject(o);
-  if (!n || !n.valid) {
+  const o = validateUserObject(n);
+  if (!o || !o.valid) {
     console.warn("Invalid user object");
     return;
   }
-  const a = n.user;
+  const a = o.user;
   const s = escapeHtml((a.name || a.displayName || a.email || "User").toString().substring(0, 100));
   const r = escapeHtml((a.tier || a.plan || "Free Plan").toString().toUpperCase().substring(0, 50));
   const c = a.picture || a.avatar || null;
@@ -517,8 +517,8 @@ const StorageManager = {
         Logger.warn("Invalid payload structure");
         return null;
       }
-      const o = Date.now() - i.timestamp;
-      if (o > 30 * 24 * 60 * 60 * 1e3) {
+      const n = Date.now() - i.timestamp;
+      if (n > 30 * 24 * 60 * 60 * 1e3) {
         Logger.warn("Data is stale, clearing");
         localStorage.removeItem(e);
         return null;
@@ -670,14 +670,14 @@ const NotificationSystemV2 = {
       t(i);
       return;
     }
-    const o = new MutationObserver(() => {
+    const n = new MutationObserver(() => {
       const i = document.querySelector(e);
       if (i) {
-        o.disconnect();
+        n.disconnect();
         t(i);
       }
     });
-    o.observe(document.body, {
+    n.observe(document.body, {
       childList: true,
       subtree: true
     });
@@ -700,7 +700,7 @@ const NotificationSystemV2 = {
         const e = i.badges;
         if (e.badges && e.badges.length > 0) {
           Logger.success(`Loaded ${e.badges.length} badge(s) from database`);
-          const t = document.querySelector(".profile-dropdown-name");
+          const t = document.querySelector(".cxo");
           if (!t) {
             Logger.warn("profile-dropdown-name disappeared after fetch, re-waiting...");
             NotificationSystemV2.waitForElement(".profile-dropdown-name", () => {
@@ -764,7 +764,7 @@ const NotificationSystemV2 = {
   },
   displayUserBadge: e => {
     if (!e || !e.badges || e.badges.length === 0) return;
-    const t = document.querySelector(".profile-dropdown-name");
+    const t = document.querySelector(".cxo");
     if (!t) return;
     if (!document.getElementById("badge-tooltip-styles")) {
       const e = document.createElement("style");
@@ -780,44 +780,44 @@ const NotificationSystemV2 = {
     t.style.display = "flex";
     t.style.alignItems = "center";
     t.style.gap = "8px";
-    const o = document.createElement("div");
-    o.className = "badge-container";
-    o.style.cssText = `\n            display: flex;\n            align-items: center;\n            gap: 4px;\n            flex-shrink: 0;\n        `;
+    const n = document.createElement("div");
+    n.className = "badge-container";
+    n.style.cssText = `\n            display: flex;\n            align-items: center;\n            gap: 4px;\n            flex-shrink: 0;\n        `;
     e.badges.slice(0, 2).forEach(e => {
       const t = e.badge_info;
       if (!t || !t.name) return;
       const i = document.createElement("div");
       i.className = "user-badge";
       i.style.cssText = `display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:3px;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));cursor:pointer;flex-shrink:0;`;
-      const n = NotificationSystemV2.createBadgeSvg(e.badge_type, t.color);
-      i.appendChild(n);
+      const o = NotificationSystemV2.createBadgeSvg(e.badge_type, t.color);
+      i.appendChild(o);
       const a = e.badge_tier || t.tier || "Special";
       const s = `${t.name} • ${a}`;
       i.addEventListener("mouseenter", e => {
         const t = document.getElementById("badge-global-tooltip");
         if (!t) return;
         t.textContent = s;
-        const o = i.getBoundingClientRect();
+        const n = i.getBoundingClientRect();
         t.style.opacity = "0";
         t.style.display = "block";
-        const n = t.offsetWidth;
-        t.style.left = o.left + o.width / 2 - n / 2 + "px";
-        t.style.top = o.top - t.offsetHeight - 6 + "px";
+        const o = t.offsetWidth;
+        t.style.left = n.left + n.width / 2 - o / 2 + "px";
+        t.style.top = n.top - t.offsetHeight - 6 + "px";
         t.style.opacity = "1";
       });
       i.addEventListener("mouseleave", () => {
         const e = document.getElementById("badge-global-tooltip");
         if (e) e.style.opacity = "0";
       });
-      o.appendChild(i);
+      n.appendChild(i);
     });
-    t.appendChild(o);
+    t.appendChild(n);
   },
   setupNotificationHandlers: () => {
-    const e = document.getElementById("bellBtn") || document.querySelector(".bell-btn");
-    const t = document.getElementById("notificationsDropdown");
-    const i = document.getElementById("markAsRead");
-    const o = document.getElementById("dropdownNotifications");
+    const e = document.getElementById("i1p6") || document.querySelector(".c2f");
+    const t = document.getElementById("i1y1");
+    const i = document.getElementById("i1x8");
+    const n = document.getElementById("i1r9");
     if (e && t) {
       e.addEventListener("click", e => {
         e.stopPropagation();
@@ -832,16 +832,16 @@ const NotificationSystemV2 = {
         }
       });
     }
-    if (o && !o.dataset.v2Bound) {
-      o.dataset.v2Bound = "1";
-      o.addEventListener("click", e => {
+    if (n && !n.dataset.v2Bound) {
+      n.dataset.v2Bound = "1";
+      n.addEventListener("click", e => {
         e.preventDefault();
         e.stopPropagation();
         if (typeof openNotificationsFromProfile === "function") {
           openNotificationsFromProfile();
         } else if (t) {
           NotificationSystemV2.closeAllDropdowns();
-          document.getElementById("notifWrapper")?.classList.add("is-visible");
+          document.getElementById("i1xz")?.classList.add("is-visible");
           t.classList.add("open");
         }
       });
@@ -895,7 +895,7 @@ const NotificationSystemV2 = {
     return t;
   },
   updateDisplay: () => {
-    const e = document.getElementById("bellBtn");
+    const e = document.getElementById("i1p6");
     const t = NotificationSystemV2.state.unreadCount > 0;
     if (e) {
       if (t) {
@@ -907,12 +907,12 @@ const NotificationSystemV2 = {
     if (typeof syncNotifBellVisibility === "function") {
       syncNotifBellVisibility(t);
     } else {
-      const e = document.getElementById("notifWrapper");
+      const e = document.getElementById("i1xz");
       if (e) {
         e.classList.toggle("is-visible", t);
         e.setAttribute("aria-hidden", t ? "false" : "true");
       }
-      const i = document.getElementById("dropdownNotifBadge");
+      const i = document.getElementById("i1r8");
       if (i) {
         if (t) {
           i.hidden = false;
@@ -926,7 +926,7 @@ const NotificationSystemV2 = {
     NotificationSystemV2.renderList();
   },
   renderList: () => {
-    const e = document.getElementById("notificationsList");
+    const e = document.getElementById("i1y2");
     if (!e) {
       console.warn("notificationsList container not found in DOM!");
       return;
@@ -940,10 +940,10 @@ const NotificationSystemV2 = {
       return;
     }
     NotificationSystemV2.state.notifications.forEach((t, i) => {
-      const o = document.createElement("div");
-      o.className = "notif-item";
       const n = document.createElement("div");
-      n.className = "notif-icon";
+      n.className = "notif-item";
+      const o = document.createElement("div");
+      o.className = "notif-icon";
       const a = document.createElement("svg");
       a.setAttribute("width", "18");
       a.setAttribute("height", "18");
@@ -953,7 +953,7 @@ const NotificationSystemV2 = {
       a.setAttribute("stroke-linecap", "round");
       a.setAttribute("stroke-linejoin", "round");
       a.innerHTML = NotificationSystemV2.getIcon(t.icon);
-      n.appendChild(a);
+      o.appendChild(a);
       const s = document.createElement("div");
       s.className = "notif-content";
       const r = document.createElement("div");
@@ -968,9 +968,9 @@ const NotificationSystemV2 = {
       s.appendChild(r);
       s.appendChild(c);
       s.appendChild(l);
-      o.appendChild(n);
-      o.appendChild(s);
-      e.appendChild(o);
+      n.appendChild(o);
+      n.appendChild(s);
+      e.appendChild(n);
     });
   },
   getIcon: e => {
@@ -986,12 +986,12 @@ const NotificationSystemV2 = {
   formatTime: e => {
     const t = typeof e === "string" ? new Date(e) : e;
     const i = new Date;
-    const o = i - t;
-    const n = Math.floor(o / 1e3);
-    const a = Math.floor(n / 60);
+    const n = i - t;
+    const o = Math.floor(n / 1e3);
+    const a = Math.floor(o / 60);
     const s = Math.floor(a / 60);
     const r = Math.floor(s / 24);
-    if (n < 60) return "just now";
+    if (o < 60) return "just now";
     if (a < 60) return `${a}m ago`;
     if (s < 24) return `${s}h ago`;
     if (r < 7) return `${r}d ago`;
@@ -1005,9 +1005,9 @@ const NotificationSystemV2 = {
     Logger.log("Unread status cleared");
   },
   closeAllDropdowns: () => {
-    const e = document.getElementById("notificationsDropdown");
+    const e = document.getElementById("i1y1");
     if (e) e.classList.remove("open");
-    const t = document.getElementById("profileDropdown");
+    const t = document.getElementById("i20a");
     if (t) t.classList.remove("open");
     const i = NotificationSystemV2.state.unreadCount > 0;
     if (typeof syncNotifBellVisibility === "function") {

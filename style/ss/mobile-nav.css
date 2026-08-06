@@ -1,5 +1,5 @@
 :root {
-    --mnav-orange: #ff6b35;
+    --mnav-orange: #i1uf;
     --mnav-text: rgba(40, 32, 26, 0.82);
     --mnav-text-on: #1c1410;
     --mnav-glass: linear-gradient(
@@ -30,8 +30,8 @@
     to   { opacity: 1; transform: translateX(0); }
 }
 
-.mnav-portal-arrow,
-.mnav-side-spacer {
+.ckv,
+.ckx {
     display: none !important;
 }
 
@@ -43,9 +43,9 @@
 @media (max-width: 768px) {
 
     .sidebar       { display: none !important; }
-    .ui-wrapper    { display: none !important; }
-    #profileBtn    { display: none !important; }
-    .clips-tabs    { display: none !important; }
+    .c1hh    { display: none !important; }
+    #i209    { display: none !important; }
+    .c6f    { display: none !important; }
 
     body {
         padding-bottom: 0;
@@ -58,7 +58,7 @@
 
     html { touch-action: manipulation; }
 
-    .nav-wrapper {
+    .cmy {
         position: fixed !important;
         left: 0 !important;
         right: 0 !important;
@@ -83,12 +83,12 @@
         overflow: visible !important;
     }
 
-    .nav-wrapper > .mnav-side-spacer {
+    .cmy > .ckx {
         display: none !important;
     }
 
-    .nav-wrapper > .mobile-clips-bar,
-    .nav-wrapper > .clips-sub-nav {
+    .cmy > .ckz,
+    .cmy > .c6a {
         position: relative;
         z-index: 1;
         pointer-events: auto !important;
@@ -102,7 +102,7 @@
         cursor: default;
     }
 
-    .nav-wrapper > .mnav-side-actions {
+    .cmy > .ckw {
         position: absolute;
         right: max(10px, env(safe-area-inset-right, 0px));
         bottom: calc(10px + env(safe-area-inset-bottom, 0px));
@@ -126,11 +126,11 @@
         cursor: default;
     }
 
-    .nav-wrapper > .mnav-side-actions:empty {
+    .cmy > .ckw:empty {
         display: none !important;
     }
 
-    .nav-wrapper > .mnav-side-actions .profile-action-cluster {
+    .cmy > .ckw .cx8 {
         display: flex !important;
         align-items: center;
         gap: 4px;
@@ -145,8 +145,8 @@
         overflow: visible !important;
     }
 
-    .nav-wrapper > .mnav-side-actions .notif-wrapper,
-    .nav-wrapper > .mnav-side-actions .profile-dropdown-wr {
+    .cmy > .ckw .cpg,
+    .cmy > .ckw .cxr {
         display: flex !important;
         position: relative !important;
         margin: 0 !important;
@@ -158,7 +158,7 @@
         overflow: visible !important;
     }
 
-    .nav-wrapper > .mnav-side-actions .notif-wrapper {
+    .cmy > .ckw .cpg {
         width: 0 !important;
         max-width: 0 !important;
         opacity: 0 !important;
@@ -173,7 +173,7 @@
             margin 0.32s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    .nav-wrapper > .mnav-side-actions .notif-wrapper.is-visible {
+    .cmy > .ckw .cpg.is-visible {
         width: 40px !important;
         max-width: 40px !important;
         margin-right: 0 !important;
@@ -189,7 +189,7 @@
         100% { transform: scale(1) translateX(0); opacity: 1; }
     }
 
-    .nav-wrapper > .mnav-side-actions .bell-btn {
+    .cmy > .ckw .c2f {
         width: 40px !important;
         height: 40px !important;
         border-radius: 50%;
@@ -202,21 +202,21 @@
         -webkit-tap-highlight-color: transparent;
     }
 
-    .nav-wrapper > .mnav-side-actions .bell-btn:active {
+    .cmy > .ckw .c2f:active {
         background: rgba(255, 107, 53, 0.14) !important;
         color: var(--mnav-orange) !important;
         transform: scale(0.96);
         box-shadow: none;
     }
 
-    .nav-wrapper > .mnav-side-actions .notif-wrapper:has(.notif-dropdown.open) .bell-btn {
+    .cmy > .ckw .cpg:has(.cp6.open) .c2f {
         background: rgba(255, 107, 53, 0.12) !important;
         color: var(--mnav-orange) !important;
         box-shadow: none;
         transform: none;
     }
 
-    .nav-wrapper > .mnav-side-actions .bell-btn svg {
+    .cmy > .ckw .c2f svg {
         width: 20px;
         height: 20px;
         stroke: currentColor;
@@ -224,7 +224,7 @@
         pointer-events: none;
     }
 
-    .nav-wrapper > .mnav-side-actions .notif-dropdown {
+    .cmy > .ckw .cp6 {
         top: auto !important;
         bottom: calc(100% + 12px) !important;
         right: 0 !important;
@@ -236,11 +236,11 @@
         pointer-events: auto !important;
     }
 
-    .nav-wrapper > .mnav-side-actions .notif-dropdown.open {
+    .cmy > .ckw .cp6.open {
         transform: scale(1) !important;
     }
 
-    .nav-wrapper > .mnav-side-actions .profile-avatar-btn {
+    .cmy > .ckw .cxa {
         width: 40px !important;
         height: 40px !important;
         border-radius: 50% !important;
@@ -254,12 +254,12 @@
         -webkit-tap-highlight-color: transparent;
     }
 
-    .nav-wrapper > .mnav-side-actions .profile-avatar-btn:active {
+    .cmy > .ckw .cxa:active {
         transform: scale(0.96);
         box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.22) !important;
     }
 
-    .nav-wrapper > .mnav-side-actions .profile-avatar-btn img {
+    .cmy > .ckw .cxa img {
         width: 100% !important;
         height: 100% !important;
         object-fit: cover !important;
@@ -268,15 +268,15 @@
         pointer-events: none;
     }
 
-    .nav-wrapper > .mnav-side-actions .profile-avatar-btn svg {
+    .cmy > .ckw .cxa svg {
         width: 22px !important;
         height: 22px !important;
         color: #292524 !important;
         pointer-events: none;
     }
 
-    .nav-wrapper > .mnav-side-actions .profile-dropdown,
-    .nav-wrapper > .profile-dropdown-wr .profile-dropdown {
+    .cmy > .ckw .cxh,
+    .cmy > .cxr .cxh {
         top: auto !important;
         bottom: calc(100% + 12px) !important;
         right: 0 !important;
@@ -288,28 +288,28 @@
         pointer-events: auto !important;
     }
 
-    .nav-wrapper > .mnav-side-actions .profile-dropdown.open,
-    .nav-wrapper > .profile-dropdown-wr .profile-dropdown.open {
+    .cmy > .ckw .cxh.open,
+    .cmy > .cxr .cxh.open {
         transform: scale(1) !important;
     }
 
-    .nav-wrapper > .profile-dropdown-wr {
+    .cmy > .cxr {
         display: none !important;
     }
 
-    body.mnav-on-portal .clips-sub-item.active {
+    body.mnav-on-portal .c69.active {
         color: rgba(120, 113, 108, 0.55);
     }
 
-    body.mnav-on-portal .mobile-clips-indicator,
-    body.mnav-on-portal .clips-sub-indicator {
+    body.mnav-on-portal .cl0,
+    body.mnav-on-portal .c68 {
         opacity: 0.35;
         transform: translateX(-120%) !important;
     }
 
-    #portalContainer.mnav-section-anim,
-    #clipsContainer.mnav-section-anim,
-    .clips-container.mnav-section-anim {
+    #i1z1.mnav-section-anim,
+    #i1pl.mnav-section-anim,
+    .c5z.mnav-section-anim {
         position: fixed !important;
         inset: 0 !important;
         width: 100% !important;
@@ -321,29 +321,29 @@
         -webkit-backface-visibility: hidden;
     }
 
-    #portalContainer.mnav-enter-from-left,
-    #clipsContainer.mnav-enter-from-left,
-    .clips-container.mnav-enter-from-left {
+    #i1z1.mnav-enter-from-left,
+    #i1pl.mnav-enter-from-left,
+    .c5z.mnav-enter-from-left {
         animation: mnavEnterFromLeft 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
 
-    #portalContainer.mnav-enter-from-right,
-    #clipsContainer.mnav-enter-from-right,
-    .clips-container.mnav-enter-from-right {
+    #i1z1.mnav-enter-from-right,
+    #i1pl.mnav-enter-from-right,
+    .c5z.mnav-enter-from-right {
         animation: mnavEnterFromRight 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
 
-    #portalContainer.mnav-exit-to-left,
-    #clipsContainer.mnav-exit-to-left,
-    .clips-container.mnav-exit-to-left {
+    #i1z1.mnav-exit-to-left,
+    #i1pl.mnav-exit-to-left,
+    .c5z.mnav-exit-to-left {
         animation: mnavExitToLeft 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
         pointer-events: none !important;
         z-index: 19 !important;
     }
 
-    #portalContainer.mnav-exit-to-right,
-    #clipsContainer.mnav-exit-to-right,
-    .clips-container.mnav-exit-to-right {
+    #i1z1.mnav-exit-to-right,
+    #i1pl.mnav-exit-to-right,
+    .c5z.mnav-exit-to-right {
         animation: mnavExitToRight 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
         pointer-events: none !important;
         z-index: 19 !important;
@@ -366,26 +366,26 @@
         to   { transform: translate3d(28%, 0, 0); opacity: 0; }
     }
 
-    .nav-wrapper.disabled {
+    .cmy.disabled {
         opacity: 0 !important;
         pointer-events: none !important;
         visibility: hidden !important;
     }
 
-    .mobile-menu-backdrop,
-    .mobile-menu-panel,
-    .mobile-menu-fab,
-    .mobile-nav-dock,
-    .nav-pill,
-    .active-pane,
-    .nav-collapse-toggle,
-    .profile-pill,
-    .clips-top-pill {
+    .cl3,
+    .cl5,
+    .cl4,
+    .cl6,
+    .cmv,
+    .cd,
+    .cml,
+    .cxz,
+    .c6h {
         display: none !important;
     }
 
-    .mobile-clips-bar,
-    .clips-sub-nav {
+    .ckz,
+    .c6a {
         pointer-events: auto;
         position: relative !important;
         left: auto !important;
@@ -404,7 +404,7 @@
         z-index: 1;
     }
 
-    .clips-sub-pill {
+    .c6b {
         position: relative;
         display: grid !important;
         grid-template-columns: repeat(3, 1fr);
@@ -423,8 +423,8 @@
         overflow: hidden;
     }
 
-    .mobile-clips-indicator,
-    .clips-sub-indicator {
+    .cl0,
+    .c68 {
         display: block !important;
         position: absolute;
         top: 5px;
@@ -443,8 +443,8 @@
         will-change: transform;
     }
 
-    .mobile-clips-tab,
-    .clips-sub-item {
+    .cl1,
+    .c69 {
         position: relative;
         z-index: 2;
         display: flex;
@@ -470,13 +470,13 @@
         -webkit-tap-highlight-color: transparent;
     }
 
-    .mobile-clips-tab:active,
-    .clips-sub-item:active {
+    .cl1:active,
+    .c69:active {
         transform: scale(0.96);
     }
 
-    .mobile-clips-tab svg,
-    .clips-sub-item svg {
+    .cl1 svg,
+    .c69 svg {
         width: 20px;
         height: 20px;
         stroke: currentColor;
@@ -487,8 +487,8 @@
         filter: none !important;
     }
 
-    .mobile-clips-tab span,
-    .clips-sub-item span {
+    .cl1 span,
+    .c69 span {
         position: static !important;
         opacity: 1 !important;
         transform: none !important;
@@ -506,14 +506,14 @@
         color: inherit;
     }
 
-    .mobile-clips-tab.active,
-    .clips-sub-item.active {
+    .cl1.active,
+    .c69.active {
         color: var(--mnav-text-on);
         background: transparent !important;
     }
 
-    .mobile-clips-tab.active svg,
-    .clips-sub-item.active svg {
+    .cl1.active svg,
+    .c69.active svg {
         color: var(--mnav-orange);
         stroke: var(--mnav-orange);
         transform: scale(1.06);
@@ -521,14 +521,14 @@
         opacity: 1 !important;
     }
 
-    .mobile-clips-tab.active span,
-    .clips-sub-item.active span {
+    .cl1.active span,
+    .c69.active span {
         color: var(--mnav-orange);
     }
 
-    .main-content,
-    .page-content,
-    .content-wrapper,
+    .cki,
+    .cqc,
+    .c7g,
     main {
         position: relative;
         z-index: 0 !important;
@@ -536,17 +536,17 @@
         overflow: hidden !important;
     }
 
-    #appContainer {
+    #i1oq {
         overflow: hidden !important;
         height: 100svh !important;
         max-height: 100svh !important;
     }
 
-    .chat-container,
-    .dashboard-container,
-    #portalContainer,
-    .clips-container,
-    #customEditorContainer {
+    .c51,
+    .c9f,
+    #i1z1,
+    .c5z,
+    #i1q8 {
         padding-left: 16px !important;
         padding-right: 16px !important;
         padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 96px) !important;
@@ -557,8 +557,8 @@
         box-sizing: border-box !important;
     }
 
-    #clipsContainer,
-    .clips-container {
+    #i1pl,
+    .c5z {
         touch-action: pan-y;
         overflow-x: hidden !important;
         overflow-y: auto !important;
@@ -568,18 +568,18 @@
         -ms-overflow-style: none !important;
     }
 
-    #clipsContainer::-webkit-scrollbar,
-    .clips-container::-webkit-scrollbar,
-    #appContainer::-webkit-scrollbar,
-    .main-content::-webkit-scrollbar {
+    #i1pl::-webkit-scrollbar,
+    .c5z::-webkit-scrollbar,
+    #i1oq::-webkit-scrollbar,
+    .cki::-webkit-scrollbar {
         width: 0 !important;
         height: 0 !important;
         display: none !important;
         background: transparent !important;
     }
 
-    .templates-grid,
-    .library-grid {
+    .c1fo,
+    .ciw {
         margin-left: 0 !important;
         margin-right: 0 !important;
         width: 100% !important;
@@ -589,7 +589,7 @@
         box-sizing: border-box;
     }
 
-    .clips-header {
+    .c64 {
         width: 100%;
         max-width: 560px;
         margin-left: auto;
@@ -597,57 +597,57 @@
         box-sizing: border-box;
     }
 
-    .clips-section {
+    .c67 {
         width: 100%;
         box-sizing: border-box;
     }
 
-    .clips-section.clips-drag {
+    .c67.clips-drag {
         transition: none !important;
         will-change: transform, opacity;
         animation: none !important;
     }
 
-    .clips-section.clips-drag-snap {
+    .c67.clips-drag-snap {
         transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
                     opacity 0.28s cubic-bezier(0.22, 1, 0.36, 1) !important;
         animation: none !important;
     }
 
-    .clips-section.active.clips-slide-from-right {
+    .c67.active.clips-slide-from-right {
         animation: clipsSlideFromRight 0.36s cubic-bezier(0.22, 1, 0.36, 1) both !important;
     }
 
-    .clips-section.active.clips-slide-from-left {
+    .c67.active.clips-slide-from-left {
         animation: clipsSlideFromLeft 0.36s cubic-bezier(0.22, 1, 0.36, 1) both !important;
     }
 }
 
 @media (max-width: 768px) and (hover: hover) and (pointer: fine) {
-    .mobile-clips-tab:hover:not(.active),
-    .clips-sub-item:hover:not(.active) {
+    .cl1:hover:not(.active),
+    .c69:hover:not(.active) {
         color: var(--mnav-orange) !important;
         background: rgba(255, 107, 53, 0.1) !important;
     }
-    .mobile-clips-tab:hover:not(.active) svg,
-    .clips-sub-item:hover:not(.active) svg {
+    .cl1:hover:not(.active) svg,
+    .c69:hover:not(.active) svg {
         color: var(--mnav-orange);
         stroke: var(--mnav-orange);
         transform: scale(1.04);
     }
-    .mobile-clips-tab:hover:not(.active) span,
-    .clips-sub-item:hover:not(.active) span {
+    .cl1:hover:not(.active) span,
+    .c69:hover:not(.active) span {
         color: var(--mnav-orange);
     }
 
-    .nav-wrapper > .mnav-side-actions .bell-btn:hover {
+    .cmy > .ckw .c2f:hover {
         background: rgba(255, 107, 53, 0.12) !important;
         color: var(--mnav-orange) !important;
         transform: scale(1.06);
         box-shadow: none;
     }
 
-    .nav-wrapper > .mnav-side-actions .profile-avatar-btn:hover {
+    .cmy > .ckw .cxa:hover {
         background: #fff !important;
         border-color: rgba(255, 107, 53, 0.35) !important;
         box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.22) !important;
@@ -656,30 +656,30 @@
 }
 
 @media (min-width: 769px) {
-    .nav-wrapper,
-    .profile-pill,
-    .mobile-clips-bar,
-    .clips-top-pill {
+    .cmy,
+    .cxz,
+    .ckz,
+    .c6h {
         display: none !important;
     }
 }
 
 @media (max-width: 380px) {
-    .mobile-clips-bar,
-    .clips-sub-nav {
+    .ckz,
+    .c6a {
         width: min(280px, calc(100vw - 88px));
         max-width: min(280px, calc(100vw - 88px));
     }
-    .mobile-clips-tab span,
-    .clips-sub-item span {
+    .cl1 span,
+    .c69 span {
         font-size: 9px;
     }
-    .nav-wrapper > .mnav-side-actions .bell-btn,
-    .nav-wrapper > .mnav-side-actions .profile-avatar-btn {
+    .cmy > .ckw .c2f,
+    .cmy > .ckw .cxa {
         width: 36px !important;
         height: 36px !important;
     }
-    .nav-wrapper > .mnav-side-actions .notif-wrapper.is-visible {
+    .cmy > .ckw .cpg.is-visible {
         width: 36px !important;
         max-width: 36px !important;
     }

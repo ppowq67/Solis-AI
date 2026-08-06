@@ -11,14 +11,14 @@ const VALIDATION = {
 window.sanitizeString = function(e) {
   if (typeof e !== "string") return "";
   const t = e.substring(0, VALIDATION.MAX_STRING_LENGTH);
-  const o = document.createElement("div");
-  o.textContent = t;
-  return o.innerHTML;
+  const n = document.createElement("div");
+  n.textContent = t;
+  return n.innerHTML;
 };
 
-window.validateNumber = function(e, t = 0, o = Infinity, n = 0) {
-  if (typeof e !== "number" || isNaN(e)) return n;
-  return Math.max(t, Math.min(o, e));
+window.validateNumber = function(e, t = 0, n = Infinity, o = 0) {
+  if (typeof e !== "number" || isNaN(e)) return o;
+  return Math.max(t, Math.min(n, e));
 };
 
 window.getSafeErrorMessage = function(e) {
@@ -33,8 +33,8 @@ window.getSafeErrorMessage = function(e) {
 window.isValidImageUrl = function(e) {
   if (!e || typeof e !== "string") return false;
   const t = e.trim();
-  const o = t.toLowerCase();
-  if (o.startsWith("javascript:") || o.startsWith("vbscript:") || o.startsWith("data:")) {
+  const n = t.toLowerCase();
+  if (n.startsWith("javascript:") || n.startsWith("vbscript:") || n.startsWith("data:")) {
     return false;
   }
   if (t.startsWith("/") && !t.startsWith("//")) {
@@ -51,34 +51,34 @@ window.isValidImageUrl = function(e) {
 window.validateUserObject = function(e) {
   if (!e || typeof e !== "object") return null;
   const t = [ "name", "email", "username", "picture", "avatar", "photo", "plan", "id", "tier", "youtube_connected", "bio" ];
-  const o = {};
-  for (const n of t) {
-    if (e.hasOwnProperty(n)) {
-      const t = e[n];
-      if (n === "email" && typeof t === "string") {
+  const n = {};
+  for (const o of t) {
+    if (e.hasOwnProperty(o)) {
+      const t = e[o];
+      if (o === "email" && typeof t === "string") {
         if (t.length > VALIDATION.MAX_EMAIL_LENGTH) return null;
-        o[n] = window.sanitizeString(t);
-      } else if (n === "username" && typeof t === "string") {
+        n[o] = window.sanitizeString(t);
+      } else if (o === "username" && typeof t === "string") {
         if (t.length > VALIDATION.MAX_USERNAME_LENGTH) return null;
-        o[n] = window.sanitizeString(t);
-      } else if ((n === "name" || n === "picture" || n === "avatar" || n === "photo") && typeof t === "string") {
+        n[o] = window.sanitizeString(t);
+      } else if ((o === "name" || o === "picture" || o === "avatar" || o === "photo") && typeof t === "string") {
         if (t.length > VALIDATION.MAX_STRING_LENGTH) return null;
-        o[n] = window.sanitizeString(t);
-      } else if (n === "plan" && typeof t === "string") {
+        n[o] = window.sanitizeString(t);
+      } else if (o === "plan" && typeof t === "string") {
         if (!VALIDATION.ALLOWED_PLANS.includes(t.toLowerCase())) return null;
-        o[n] = t.toLowerCase();
-      } else if ((n === "id" || n === "tier") && (typeof t === "string" || typeof t === "number")) {
-        o[n] = t;
-      } else if (n === "youtube_connected" && typeof t === "boolean") {
-        o[n] = t;
-      } else if (n === "bio" && typeof t === "string") {
+        n[o] = t.toLowerCase();
+      } else if ((o === "id" || o === "tier") && (typeof t === "string" || typeof t === "number")) {
+        n[o] = t;
+      } else if (o === "youtube_connected" && typeof t === "boolean") {
+        n[o] = t;
+      } else if (o === "bio" && typeof t === "string") {
         if (t.length > 120) return null;
-        o[n] = window.sanitizeString(t);
+        n[o] = window.sanitizeString(t);
       }
     }
   }
-  if (!o.id && !o.email) return null;
-  return o;
+  if (!n.id && !n.email) return null;
+  return n;
 };
 
 window.handleSecureLogout = function() {
@@ -116,18 +116,18 @@ async function updateProfileDropdown(e) {
     console.warn("User object failed validation, skipping dropdown update");
     return;
   }
-  const o = document.getElementById("dropdownUserName");
-  const n = document.getElementById("dropdownUserPlan");
-  const r = document.getElementById("dropdownUserAvatar");
-  if (o) {
+  const n = document.getElementById("i1rd");
+  const o = document.getElementById("i1re");
+  const r = document.getElementById("i1rc");
+  if (n) {
     const e = t.name || t.username || t.email || "Guest User";
-    let n = o.querySelector(".username-text");
-    if (!n) {
-      n = document.createElement("span");
-      n.className = "username-text";
-      o.insertBefore(n, o.firstChild);
+    let o = n.querySelector(".c1kj");
+    if (!o) {
+      o = document.createElement("span");
+      o.className = "username-text";
+      n.insertBefore(o, n.firstChild);
     }
-    n.textContent = e;
+    o.textContent = e;
   }
   let i = "Free";
   try {
@@ -155,10 +155,10 @@ async function updateProfileDropdown(e) {
   } catch (e) {
     console.warn("Could not fetch plan from backend, using safe default:", e);
   }
-  if (n && typeof i === "string" && i.length > 0) {
+  if (o && typeof i === "string" && i.length > 0) {
     const e = i.charAt(0).toUpperCase() + i.slice(1).toLowerCase();
     const t = `${e} Plan`;
-    n.textContent = t;
+    o.textContent = t;
   }
   const a = typeof resolveAvatarUrl === "function" ? resolveAvatarUrl(t) : t.picture || t.avatar || t.photo || null;
   if (r) {
@@ -182,14 +182,14 @@ async function updateProfileDropdown(e) {
 window.updateProfileDropdown = updateProfileDropdown;
 
 document.addEventListener("DOMContentLoaded", () => {
-  const e = document.getElementById("profileAvatarBtn");
-  const t = document.getElementById("profileDropdown");
-  const o = document.getElementById("profileDropdownWr");
+  const e = document.getElementById("i208");
+  const t = document.getElementById("i20a");
+  const n = document.getElementById("i20b");
   if (e) {
     e.addEventListener("click", e => {
       e.stopPropagation();
-      const o = document.getElementById("notificationsDropdown");
-      if (o) o.classList.remove("open");
+      const n = document.getElementById("i1y1");
+      if (n) n.classList.remove("open");
       if (t) {
         t.classList.toggle("open");
       }
@@ -198,16 +198,16 @@ document.addEventListener("DOMContentLoaded", () => {
     console.warn("profileAvatarBtn element not found");
   }
   document.addEventListener("click", e => {
-    if (o && o.contains(e.target)) {
+    if (n && n.contains(e.target)) {
       return;
     }
     if (t) {
       t.classList.remove("open");
     }
   });
-  const n = document.getElementById("dropdownBilling");
-  const r = document.getElementById("dropdownPricing");
-  const i = document.getElementById("dropdownLogout");
+  const o = document.getElementById("dropdownBilling");
+  const r = document.getElementById("i1ra");
+  const i = document.getElementById("i1r7");
   if (r) {
     r.addEventListener("click", e => {
       e.preventDefault();

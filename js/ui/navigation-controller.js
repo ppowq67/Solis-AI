@@ -9,7 +9,7 @@ class NavigationController {
       direction: null,
       isMoving: false
     };
-    this.navContainer = document.getElementById("navContainer");
+    this.navContainer = document.getElementById("i1xn");
     this.indicator = document.getElementById("indicator");
     this.init();
   }
@@ -22,7 +22,7 @@ class NavigationController {
   }
   initIndicatorPosition() {
     if (!this.indicator) return;
-    const t = document.querySelectorAll(".nav-item");
+    const t = document.querySelectorAll(".cmo");
     let i = 0;
     t.forEach((t, n) => {
       if (t.classList.contains("active")) {
@@ -39,7 +39,7 @@ class NavigationController {
     }, 50);
   }
   navigate(t, i) {
-    document.querySelectorAll(".nav-item").forEach(t => {
+    document.querySelectorAll(".cmo").forEach(t => {
       t.classList.remove("active");
     });
     t.classList.add("active");

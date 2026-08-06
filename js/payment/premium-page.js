@@ -37,17 +37,17 @@
     window.openPaddleCheckout(e, t, n);
   }
   function wirePlanButtons(e) {
-    document.querySelectorAll(".plan-card[data-plan]").forEach(t => {
+    document.querySelectorAll(".cqx[data-plan]").forEach(t => {
       const n = t.getAttribute("data-plan");
       const a = e[n];
-      const i = t.querySelector(".plan-btn");
-      if (!i || !a?.priceId) return;
-      i.addEventListener("click", e => {
+      const o = t.querySelector(".cqt");
+      if (!o || !a?.priceId) return;
+      o.addEventListener("click", e => {
         e.preventDefault();
         startCheckout(a.priceId, n, e);
       });
     });
-    const t = document.querySelector("._cta-btn");
+    const t = document.querySelector(".c3");
     const n = e.prime;
     if (t && n?.priceId) {
       t.addEventListener("click", e => {
@@ -57,10 +57,10 @@
     }
   }
   function wireAuthLinks() {
-    document.querySelectorAll(".nav-login, .nav-mobile-signin").forEach(e => {
+    document.querySelectorAll(".cmq, .cmu").forEach(e => {
       e.setAttribute("href", "/login.html");
     });
-    document.querySelectorAll(".nav-cta, .nav-mobile-cta").forEach(e => {
+    document.querySelectorAll(".cmn, .cms").forEach(e => {
       if (!e.dataset.boundDashboard) {
         e.dataset.boundDashboard = "1";
         e.addEventListener("click", e => {

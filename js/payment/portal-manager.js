@@ -111,15 +111,15 @@ class PortalManager {
     const s = t.gens_24h || 0;
     const o = t.avg_score;
     if (this.clipsMonthElement) {
-      const t = this.clipsMonthElement.querySelector(".activity-val");
-      const n = this.clipsMonthElement.querySelector("[data-change], .activity-change");
+      const t = this.clipsMonthElement.querySelector(".cy");
+      const n = this.clipsMonthElement.querySelector("[data-change], .cf");
       if (t) t.textContent = String(a);
       if (n) n.textContent = `+${i} this week`;
       this.updateSparkline(this.clipsMonthElement, e);
     }
     if (this.avgScoreElement) {
-      const t = this.avgScoreElement.querySelector(".activity-val");
-      const e = this.avgScoreElement.querySelector("[data-change], .activity-change");
+      const t = this.avgScoreElement.querySelector(".cy");
+      const e = this.avgScoreElement.querySelector("[data-change], .cf");
       if (o != null) {
         if (t) t.textContent = String(o);
         if (e) {
@@ -133,15 +133,15 @@ class PortalManager {
       }
     }
     if (this.totalExportsElement) {
-      const t = this.totalExportsElement.querySelector(".activity-val");
-      const i = this.totalExportsElement.querySelector("[data-change], .activity-change");
+      const t = this.totalExportsElement.querySelector(".cy");
+      const i = this.totalExportsElement.querySelector("[data-change], .cf");
       if (t) t.textContent = String(n);
       if (i) i.textContent = "Completed";
       this.updateBars(this.totalExportsElement, e);
     }
     if (this.hoursSavedElement) {
-      const i = this.hoursSavedElement.querySelector(".activity-val");
-      const a = this.hoursSavedElement.querySelector("[data-change], .activity-change");
+      const i = this.hoursSavedElement.querySelector(".cy");
+      const a = this.hoursSavedElement.querySelector("[data-change], .cf");
       const n = Number(t.output_seconds) || 0;
       if (n > 0) {
         const t = n / 3600;
@@ -158,8 +158,8 @@ class PortalManager {
   }
   updateSparkline(t, e) {
     if (!t || !e?.length) return;
-    const i = t.querySelector(".activity-chart-line");
-    const a = t.querySelector(".activity-chart-area");
+    const i = t.querySelector(".ci");
+    const a = t.querySelector(".ch");
     if (!i || !a) return;
     const n = 160;
     const s = 48;
@@ -178,12 +178,12 @@ class PortalManager {
   }
   updateScoreRing(t, e) {
     const i = Math.max(0, Math.min(100, Number(e) || 0));
-    const a = t?.querySelector(".activity-meter-fill");
+    const a = t?.querySelector(".cr");
     if (a) {
       a.style.width = `${i}%`;
       return;
     }
-    const n = t?.querySelector(".activity-ring-fill");
+    const n = t?.querySelector(".ct");
     if (!n) return;
     if (n.tagName === "circle" || n.getAttribute("pathLength")) {
       n.setAttribute("stroke-dasharray", `${i} 100`);

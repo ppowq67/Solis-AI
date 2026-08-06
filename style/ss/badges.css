@@ -1,11 +1,11 @@
-.pro-badge-premium {
+.cwh {
     background: linear-gradient(135deg,
-        #ffd700 0%,
-        #ffed4e 20%,
-        #fff9c4 40%,
-        #ffed4e 60%,
-        #ffd700 80%,
-        #d4af37 100%
+        #i1vg 0%,
+        #i1vn 20%,
+        #i1vx 40%,
+        #i1vn 60%,
+        #i1vg 80%,
+        #i1qg 100%
     );
     color: #6b5a2e;
     font-size: 10px;
@@ -27,7 +27,7 @@
     overflow: hidden;
 }
 
-.pro-badge-premium::before {
+.cwh::before {
     content: '';
     position: absolute;
     top: -50%;

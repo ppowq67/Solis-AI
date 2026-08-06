@@ -20,7 +20,7 @@ class RankingTemplateEditor {
   ensureZones() {
     const e = this.container.querySelector("h1.title, h1");
     const t = this.container.querySelector('[data-template-element-id="title_channel"]');
-    let n = this.container.querySelector(".ranking-editor-zone-header");
+    let n = this.container.querySelector(".cyp");
     if (!n && e) {
       n = document.createElement("div");
       n.className = "ranking-editor-zone ranking-editor-zone-header";
@@ -33,8 +33,8 @@ class RankingTemplateEditor {
         n.appendChild(t);
       }
     }
-    const i = this.container.querySelector(".ranking-list");
-    if (i) i.classList.add("ranking-editor-zone", "ranking-editor-zone-ranks");
+    const i = this.container.querySelector(".cyq");
+    if (i) i.classList.add("cyo", "ranking-editor-zone-ranks");
   }
   isRankNumberElement(e) {
     const t = e?.getAttribute?.("data-template-element-id") || "";
@@ -127,12 +127,12 @@ class RankingTemplateEditor {
     i.selectElements(o, a, e, r);
   }
   attachEventListeners() {
-    const e = this.container.querySelector(".ranking-editor-zone-header");
+    const e = this.container.querySelector(".cyp");
     const t = this.container.querySelector(".ranking-editor-zone-ranks");
     const n = this._abort.signal;
     const onTextActivate = (e, t) => {
       if (!e) return;
-      if (t.target.closest("#rkPillMenu, .sub-dropdown, #rkSuggestActions, .sub-resize-handle")) return;
+      if (t.target.closest("#rkPillMenu, .c1d0, #i20d, .c1do")) return;
       if (window.RankingTextPill?.consumeRankPointerClick?.()) return;
       t.preventDefault?.();
       t.stopPropagation();
@@ -226,7 +226,7 @@ class RankingTemplateEditor {
   }
   enableInlineEdit(e) {
     if (this.isRankNumberElement(e)) return;
-    if (e.classList.contains("rk-inline-editing")) return;
+    if (e.classList.contains("czi")) return;
     const t = e.textContent;
     const n = e.getAttribute("data-placeholder") || "";
     if (e.classList.contains("rk-title-empty") || !t.trim() && n) {
@@ -237,12 +237,12 @@ class RankingTemplateEditor {
     e.contentEditable = "true";
     e.setAttribute("contenteditable", "true");
     e.setAttribute("spellcheck", "true");
-    e.classList.add("rk-inline-editing");
+    e.classList.add("czi");
     e.style.outline = "none";
     e.style.setProperty("user-select", "text", "important");
     e.style.setProperty("-webkit-user-select", "text", "important");
     e.style.cursor = "text";
-    const i = e.closest(".preview-placeholder, #templateVideoPreview");
+    const i = e.closest(".cvb, #i24g");
     if (i) i.classList.add("rk-phone-editing");
     e.focus();
     try {
@@ -258,7 +258,7 @@ class RankingTemplateEditor {
       e.removeEventListener("pointerdown", onPointerDownStop);
       e.contentEditable = "false";
       e.setAttribute("contenteditable", "false");
-      e.classList.remove("rk-inline-editing");
+      e.classList.remove("czi");
       e.style.outline = "";
       e.style.removeProperty("user-select");
       e.style.removeProperty("-webkit-user-select");
@@ -333,8 +333,8 @@ class RankingTemplateEditor {
 }
 
 function initializeRankingTemplateEditor() {
-  const e = document.getElementById("templateVideoPreview");
-  const t = e?.querySelector(".ranking-preview-container");
+  const e = document.getElementById("i24g");
+  const t = e?.querySelector(".cyr");
   if (!t) return;
   try {
     window.rankingTemplateEditor?.destroy?.();
@@ -346,12 +346,12 @@ function initializeRankingTemplateEditor() {
       window.RankingTextPill?.seedDefaultSizes?.();
     });
   } catch (e) {}
-  const n = document.getElementById("customizer-ui-system");
+  const n = document.getElementById("i1q9");
   if (n) n.style.display = "none";
   const i = document.getElementById("pill");
   if (i) {
     i.style.display = "none";
-    i.classList.remove("is-expanded", "slide-in");
+    i.classList.remove("ci8", "slide-in");
   }
   if (window.customizer && typeof window.customizer.hidePanel === "function") {
     try {

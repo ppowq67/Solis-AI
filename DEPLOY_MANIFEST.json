@@ -1,5 +1,5 @@
 {
-  "created_at": "2026-08-06T20:38:35.597246+00:00",
+  "created_at": "2026-08-06T20:58:54.581878+00:00",
   "source": "D:\\SolisAI\\frontend",
   "staging": "D:\\SolisAI\\deploy\\solis-frontend",
   "remote": "https://github.com/ppowq67/solisai.git",
@@ -7,14 +7,17 @@
   "frontend_host": "https://solisai.video",
   "obfuscation": {
     "js": "mild (terser mangle locals + beautify; no compress)",
-    "css": "comment scrub",
-    "review_maps": "_review/source-maps/"
+    "css_html": "coordinated class/id rename + comment scrub",
+    "review_maps": "_review/source-maps/ + _review/name-map.json"
   },
   "stats": {
     "files": 112,
     "rewritten": 4,
     "rewrite_hits": 15,
     "scrubbed": 106,
+    "dom_classes": 2068,
+    "dom_ids": 725,
+    "dom_files": 77,
     "js_obfuscated": 58,
     "js_failed": 0,
     "skipped": 23,

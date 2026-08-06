@@ -38,7 +38,7 @@ class OutputClipsManager {
       i.className = "output-clips-modal";
       i.innerHTML = `\n                <div class="output-clips-container">\n                    <div class="output-clips-header">\n                        <h2>🎬 Download Rendered Clips</h2>\n                        <p class="output-clips-subtitle">${n}</p>\n                        <button class="close-output-clips-modal" aria-label="Close">×</button>\n                    </div>\n\n                    <div class="output-clips-grid">\n                        ${e.output_clips.map(n => this.createClipCard(n, t)).join("")}\n                    </div>\n\n                    <div class="output-clips-footer">\n                        <p class="output-clips-info">\n                            ℹ️ ${e.total_clips} rendered clips with ranking overlays\n                        </p>\n                    </div>\n                </div>\n            `;
       document.body.appendChild(i);
-      i.querySelector(".close-output-clips-modal").addEventListener("click", () => {
+      i.querySelector(".c6o").addEventListener("click", () => {
         i.remove();
       });
       i.addEventListener("click", t => {
@@ -46,7 +46,7 @@ class OutputClipsManager {
           i.remove();
         }
       });
-      i.querySelectorAll(".download-clip-btn").forEach(n => {
+      i.querySelectorAll(".cal").forEach(n => {
         n.addEventListener("click", async e => {
           e.preventDefault();
           const i = n.dataset.clipFilename;

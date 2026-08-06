@@ -1,16 +1,16 @@
 :root {
     --customizer-accent: #007AFF;
     --customizer-accent-soft: rgba(0, 122, 255, 0.1);
-    --customizer__bgcanvas: #fbfbfd;
+    --customizer__bgcanvas: #i1ti;
     --customizer-ui-bg: rgba(255, 255, 255, 0.9);
     --customizer-border: rgba(0, 0, 0, 0.08);
-    --customizer-text-main: linear-gradient(135deg, #ff7a50, #ff6b35);
+    --customizer-text-main: linear-gradient(135deg, #i1ul, #i1uf);
     --customizer-text-secondary: #6e6e73;
     --customizer-easing: cubic-bezier(0.34, 1.56, 0.64, 1);
     --customizer-shadow: 0 30px 60px rgba(0,0,0,0.12), 0 0 1px rgba(0,0,0,0.1);
 }
 
-#customizer-ui-system {
+#i1q9 {
     position: fixed;
     bottom: 0;
     right: 0;
@@ -18,11 +18,11 @@
     pointer-events: none;
 }
 
-#customizer-ui-system > * {
+#i1q9 > * {
     pointer-events: auto;
 }
 
-.customizer-panel-container {
+.c8t {
     position: fixed;
     background: var(--customizer-ui-bg);
     backdrop-filter: blur(40px) saturate(180%);
@@ -47,18 +47,18 @@
     pointer-events: none;
 }
 
-.customizer-panel-container.active {
+.c8t.active {
     max-height: 680px;
     opacity: 1;
     transform: scale(1) translateY(0);
     pointer-events: auto;
 }
 
-.customizer-panel-container.customizer-animate-expand {
+.c8t.customizer-animate-expand {
     animation: customizer-panelExpand 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
-.customizer-panel-container.customizer-animate-close {
+.c8t.customizer-animate-close {
     animation: customizer-panelSuck 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     max-height: 0;
     opacity: 0;
@@ -94,14 +94,14 @@
     }
 }
 
-.customizer-panel-header {
+.c8v {
     padding: 20px 20px 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.customizer-panel-header h3 {
+.c8v h3 {
     font-size: 11px;
     font-weight: 800;
     text-transform: uppercase;
@@ -111,18 +111,18 @@
     padding: 0;
 }
 
-.customizer-panel-content {
+.c8u {
     padding: 0 16px 28px;
     overflow-y: auto;
     flex: 1.2;
 }
 
-.customizer-view {
+.c9c {
     display: none;
     animation: none;
 }
 
-.customizer-view.active {
+.c9c.active {
     display: block;
     animation: customizer-slideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
@@ -138,7 +138,7 @@
     }
 }
 
-.customizer-font-list {
+.c8m {
     display: flex;
     flex-direction: column;
     gap: 2px;
@@ -150,7 +150,7 @@
     overflow-y: auto;
 }
 
-.customizer-font-item {
+.c8l {
     padding: 8px 12px;
     border-radius: 10px;
     cursor: pointer;
@@ -162,42 +162,42 @@
     position: relative;
 }
 
-.customizer-font-item:hover {
+.c8l:hover {
     background: rgba(255,255,255,0.6);
     transform: translateX(2px);
 }
 
-.customizer-font-item:active {
+.c8l:active {
     transform: translateX(0);
 }
 
-.customizer-font-item.customizer-active {
+.c8l.customizer-active {
     background: white;
     color: var(--customizer-accent);
     box-shadow: 0 4px 12px rgba(0,0,0,0.04);
     transform: translateX(2px);
 }
 
-.customizer-scrubber-block {
+.c93 {
     margin-bottom: 14px;
     user-select: none;
     touch-action: none;
 }
 
-.customizer-scrubber-label {
+.c97 {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
     margin-bottom: 6px;
 }
 
-.customizer-scrubber-label .customizer-lbl {
+.c97 .c8p {
     font-size: 12px;
     font-weight: 700;
     color: var(--customizer-text-main);
 }
 
-.customizer-scrubber-label .customizer-val {
+.c97 .c9b {
     font-size: 12px;
     font-weight: 700;
     color: var(--customizer-accent);
@@ -207,11 +207,11 @@
     text-align: right;
 }
 
-.customizer-scrubber-track {
+.c98 {
     position: relative;
     height: 52px;
     border-radius: 26px;
-    background: #f1f1f4;
+    background: #i1sl;
     border: 1px solid rgba(0,0,0,0.04);
     display: flex;
     align-items: center;
@@ -221,12 +221,12 @@
     user-select: none;
 }
 
-.customizer-scrubber-track.customizer-active {
-    background: #e4e4e7;
+.c98.customizer-active {
+    background: #i1rk;
     border-color: rgba(0,0,0,0.08);
 }
 
-.customizer-scrubber-dots {
+.c94 {
     display: flex;
     width: 100%;
     justify-content: space-between;
@@ -236,30 +236,30 @@
     pointer-events: none;
 }
 
-.customizer-s-dot {
+.c90 {
     width: 3px;
     height: 3px;
     border-radius: 9999px;
-    background: #d4d4d8;
+    background: #i1qh;
     transition: all 0.25s ease;
     flex-shrink: 0;
 }
 
-.customizer-s-dot.customizer-active {
+.c90.customizer-active {
     background: #71717a;
 }
 
-.customizer-s-dot.customizer-current {
+.c90.customizer-current {
     width: 5px;
     height: 5px;
     background: #18181b;
 }
 
-.customizer-scrubber-track.customizer-active .customizer-s-dot.customizer-current {
+.c98.customizer-active .c90.customizer-current {
     transform: scale(1.4);
 }
 
-.customizer-scrubber-glow {
+.c95 {
     position: absolute;
     inset: 0;
     pointer-events: none;
@@ -267,16 +267,16 @@
     transition: opacity 0.4s;
 }
 
-.customizer-scrubber-track.customizer-active .customizer-scrubber-glow {
+.c98.customizer-active .c95 {
     opacity: 0.5;
 }
 
-.customizer-scrubber-handle {
+.c96 {
     position: absolute;
     top: 50%;
     width: 36px;
     height: 36px;
-    background: linear-gradient(135deg, #ff7a50, #ff6b35);
+    background: linear-gradient(135deg, #i1ul, #i1uf);
     box-shadow: 0 6px 20px rgba(0,0,0,0.22);
     display: flex;
     align-items: center;
@@ -288,28 +288,28 @@
                 transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.customizer-scrubber-handle.customizer-dragging {
+.c96.customizer-dragging {
     transition: border-radius 0.25s ease, transform 0.15s ease;
 }
 
-.customizer-s-grip {
+.c91 {
     display: flex;
     gap: 1px;
     align-items: center;
 }
 
-.customizer-s-grip-bar {
+.c92 {
     width: 2px;
     border-radius: 9999px;
     background: rgba(255,255,255,0.3);
     transition: height 0.25s ease, background 0.25s ease;
 }
 
-.customizer-scrubber-handle.customizer-dragging .customizer-s-grip-bar {
+.c96.customizer-dragging .c92 {
     background: rgba(255,255,255,0.85);
 }
 
-.customizer-palette-title {
+.c8s {
     font-size: 10px;
     font-weight: 800;
     text-transform: uppercase;
@@ -317,14 +317,14 @@
     margin: 12px 0 8px;
 }
 
-.customizer-color-grid {
+.c8h {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(38px, 1fr));
     gap: 10px;
     margin-bottom: 16px;
 }
 
-.customizer-color-dot {
+.c8g {
     aspect-ratio: 1;
     border-radius: 50%;
     cursor: pointer;
@@ -334,47 +334,47 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.12);
 }
 
-.customizer-color-dot:hover {
+.c8g:hover {
     transform: scale(1.15);
     z-index: 2;
     box-shadow: 0 4px 12px rgba(0,0,0,0.18);
 }
 
-.customizer-color-dot.customizer-active {
+.c8g.customizer-active {
     border-color: var(--customizer-accent);
     box-shadow: 0 0 0 3px rgba(255, 107, 61, 0.2), 0 4px 12px rgba(0,0,0,0.2);
 }
 
-.customizer-presets-grid {
+.c8z {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
 }
 
-.customizer-preset-card {
+.c8w {
     padding: 12px;
     border: 1.5px solid rgba(0,0,0,0.06);
     border-radius: 14px;
     cursor: pointer;
     transition: all 0.3s var(--customizer-easing);
-    background: #fafafa;
+    background: #i1td;
     user-select: none;
     -webkit-user-select: none;
 }
 
-.customizer-preset-card:hover {
+.c8w:hover {
     border-color: rgba(0,122,255,0.3);
     background: rgba(0,122,255,0.03);
     transform: translateY(-2px);
 }
 
-.customizer-preset-card.customizer-active {
+.c8w.customizer-active {
     border-color: var(--customizer-accent);
     background: rgba(0,122,255,0.08);
     box-shadow: 0 4px 12px rgba(0,122,255,0.15);
 }
 
-.customizer-preset-preview {
+.c8y {
     width: 100%;
     min-height: 48px;
     display: flex;
@@ -387,11 +387,11 @@
     transition: all 0.3s ease;
 }
 
-.customizer-preset-card:hover .customizer-preset-preview {
+.c8w:hover .c8y {
     transform: scale(1.02);
 }
 
-.customizer-preset-label {
+.c8x {
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
@@ -401,7 +401,7 @@
     text-align: center;
 }
 
-.customizer-dock {
+.c8j {
     position: fixed;
     background: var(--customizer-ui-bg);
     backdrop-filter: blur(20px) saturate(150%);
@@ -418,7 +418,7 @@
     transition: all 0.3s ease;
 }
 
-.customizer-nav-btn {
+.c8r {
     width: 52px;
     height: 52px;
     border-radius: 22px;
@@ -432,27 +432,27 @@
     position: relative;
 }
 
-.customizer-nav-btn:hover {
+.c8r:hover {
     transform: scale(1.08);
     background: rgba(0,0,0,0.04);
 }
 
-.customizer-nav-btn:active {
+.c8r:active {
     transform: scale(0.96);
 }
 
-.customizer-nav-btn.active {
+.c8r.active {
     background: var(--customizer-text-main);
     box-shadow: 0 4px 16px rgba(255, 122, 80, 0.3);
     transform: scale(1.05);
 }
 
-.customizer-nav-btn.active svg {
+.c8r.active svg {
     stroke: white;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
-.customizer-nav-btn svg {
+.c8r svg {
     width: 22px;
     height: 22px;
     stroke: var(--customizer-text-secondary);
@@ -461,25 +461,25 @@
     transition: stroke 0.3s ease, filter 0.3s ease;
 }
 
-.customizer-panel-content::-webkit-scrollbar {
+.c8u::-webkit-scrollbar {
     width: 5px;
 }
 
-.customizer-panel-content::-webkit-scrollbar-thumb {
+.c8u::-webkit-scrollbar-thumb {
     background: rgba(0,0,0,0.1);
     border-radius: 10px;
 }
 
-.customizer-font-list::-webkit-scrollbar {
+.c8m::-webkit-scrollbar {
     width: 5px;
 }
 
-.customizer-font-list::-webkit-scrollbar-thumb {
+.c8m::-webkit-scrollbar-thumb {
     background: rgba(0,0,0,0.1);
     border-radius: 10px;
 }
 
-.customizer-empty-state {
+.c8k {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -494,7 +494,7 @@
 }
 
 @media (max-width: 600px) {
-    .customizer-panel-container {
+    .c8t {
         width: 98vw;
         border-radius: 18px;
         bottom: 16px;
@@ -502,15 +502,15 @@
         max-height: 0;
     }
 
-    .customizer-panel-header {
+    .c8v {
         padding: 18px 16px 8px;
     }
 
-    .customizer-panel-content {
+    .c8u {
         padding: 0 8px 18px;
     }
 
-    .customizer-dock {
+    .c8j {
         width: 98vw;
         border-radius: 12px;
         bottom: 8px;
@@ -520,7 +520,7 @@
         padding: 4px 0;
     }
 
-    .customizer-nav-btn {
+    .c8r {
         width: 44px;
         height: 44px;
         border-radius: 12px;

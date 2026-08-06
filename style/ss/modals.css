@@ -1,4 +1,4 @@
-.modal-overlay {
+.clm {
     position: fixed;
     top: 0;
     left: 0;
@@ -15,33 +15,33 @@
     transition: opacity 0.3s ease;
 }
 
-.modal-overlay.active {
+.clm.active {
     display: flex;
     opacity: 1;
     pointer-events: all;
 }
 
-#automationUpgradeModal {
+#i1os {
     display: none !important;
     opacity: 0 !important;
     visibility: hidden !important;
 }
 
-#automationUpgradeModal.active {
+#i1os.active {
     display: flex !important;
     opacity: 1 !important;
     visibility: visible !important;
     pointer-events: all !important;
 }
 
-#automationUpgradeModal.active .upgrade-modal {
+#i1os.active .c1hx {
     opacity: 0 !important;
     transform: scale(1) !important;
     visibility: hidden !important;
     display: none !important;
 }
 
-.upgrade-modal-overlay {
+.c1i0 {
     position: fixed;
     top: 0;
     left: 0;
@@ -58,13 +58,13 @@
     transition: opacity 0.3s ease;
 }
 
-.upgrade-modal-overlay.active {
+.c1i0.active {
     display: flex;
     opacity: 1;
     pointer-events: all;
 }
 
-.upgrade-modal-container {
+.c1hz {
     background: white;
     border-radius: 0;
     max-width: 750px;
@@ -77,12 +77,12 @@
     overflow: hidden;
 }
 
-.upgrade-modal-overlay.active .upgrade-modal-container {
+.c1i0.active .c1hz {
     transform: scale(1);
     opacity: 1;
 }
 
-.upgrade-modal {
+.c1hx {
     background: white;
     border-radius: 0;
     max-width: 750px;
@@ -99,14 +99,14 @@
     pointer-events: none !important;
 }
 
-.modal-overlay.active .upgrade-modal {
+.clm.active .c1hx {
     transform: scale(1);
     opacity: 0 !important;
     display: none !important;
     visibility: hidden !important;
 }
 
-#automationUpgradeModal.active .upgrade-modal {
+#i1os.active .c1hx {
     transform: scale(1) !important;
     opacity: 0 !important;
     display: none !important;
@@ -115,7 +115,7 @@
     pointer-events: none !important;
 }
 
-.close-button {
+.c6l {
     position: absolute;
     top: 16px;
     right: 16px;
@@ -131,47 +131,47 @@
     padding: 0;
 }
 
-.close-button svg {
+.c6l svg {
     width: 24px;
     height: 24px;
     stroke: #718096;
     stroke-width: 2;
 }
 
-.upgrade-modal-top {
+.c1i3 {
     padding: 32px 40px 28px;
-    background: linear-gradient(135deg, #FFF5F2 0%, #FFE5DC 100%);
-    border-bottom: 3px solid #FF9671;
+    background: linear-gradient(135deg, #i1nm 0%, #i1ne 100%);
+    border-bottom: 3px solid #i1mv;
     position: relative;
 }
 
-.upgrade-limit-badge {
+.c1hu {
     display: inline-flex;
     align-items: center;
     gap: 8px;
     background: white;
     padding: 8px 16px;
     margin-bottom: 16px;
-    border: 2px solid #FF9671;
+    border: 2px solid #i1mv;
     box-shadow: 0 4px 12px rgba(255, 150, 113, 0.2);
 }
 
-.upgrade-limit-badge svg {
+.c1hu svg {
     width: 18px;
     height: 18px;
-    stroke: #FF7A50;
+    stroke: #i1mn;
     stroke-width: 2.5;
 }
 
-.upgrade-limit-text {
+.c1hv {
     font-size: 0.8rem;
     font-weight: 800;
-    color: #FF7A50;
+    color: #i1mn;
     text-transform: uppercase;
     letter-spacing: 0.8px;
 }
 
-.upgrade-modal-title {
+.c1i2 {
     font-size: 2rem;
     font-weight: 900;
     color: #1A1A2E;
@@ -180,19 +180,19 @@
     line-height: 1.1;
 }
 
-.upgrade-modal-subtitle {
+.c1i1 {
     font-size: 1rem;
     color: #2D3748;
     line-height: 1.5;
     font-weight: 500;
 }
 
-.upgrade-modal-subtitle strong {
-    color: #FF7A50;
+.c1i1 strong {
+    color: #i1mn;
     font-weight: 800;
 }
 
-.upgrade-modal-bottom {
+.c1hy {
     padding: 32px 40px;
     display: grid;
     grid-template-columns: 1fr auto;
@@ -200,11 +200,11 @@
     align-items: center;
 }
 
-.upgrade-features-section {
+.c1hs {
     flex: 1;
 }
 
-.upgrade-features-title {
+.c1ht {
     font-size: 0.95rem;
     font-weight: 800;
     color: #1A1A2E;
@@ -213,13 +213,13 @@
     letter-spacing: 0.5px;
 }
 
-.upgrade-features-grid {
+.c1hr {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 14px;
 }
 
-.upgrade-feature-item {
+.c1hq {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -228,22 +228,22 @@
     font-weight: 600;
 }
 
-.upgrade-feature-item svg {
+.c1hq svg {
     width: 20px;
     height: 20px;
-    stroke: #FF7A50;
+    stroke: #i1mn;
     stroke-width: 2.5;
     flex-shrink: 0;
 }
 
-.upgrade-cta-section {
+.c1hp {
     display: flex;
     flex-direction: column;
     gap: 12px;
     min-width: 220px;
 }
 
-.upgrade-popular-badge {
+.c1i6 {
     background: linear-gradient(135deg, #6DDCCF, #4ECDC4);
     color: white;
     padding: 6px 12px;
@@ -255,9 +255,9 @@
     box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
 }
 
-.upgrade-cta-button {
+.c1ho {
     padding: 18px 32px;
-    background: linear-gradient(135deg, #FF9671, #FF7A50);
+    background: linear-gradient(135deg, #i1mv, #i1mn);
     color: white;
     border: none;
     border-radius: 12px;
@@ -278,7 +278,7 @@
     max-width: 280px;
 }
 
-.upgrade-cta-button::before {
+.c1ho::before {
     content: '';
     position: absolute;
     top: 0;
@@ -290,7 +290,7 @@
     z-index: 1;
 }
 
-.upgrade-cta-button::after {
+.c1ho::after {
     content: '';
     position: absolute;
     inset: 0;
@@ -299,21 +299,21 @@
     pointer-events: none;
 }
 
-.upgrade-cta-button:hover::before {
+.c1ho:hover::before {
     left: 100%;
 }
 
-.upgrade-cta-button:hover {
+.c1ho:hover {
     transform: translateY(-4px);
     box-shadow: 0 14px 36px rgba(255, 122, 80, 0.45);
-    background: linear-gradient(135deg, #FF7A50, #FF5533);
+    background: linear-gradient(135deg, #i1mn, #i1mi);
 }
 
-.upgrade-cta-button:active {
+.c1ho:active {
     transform: translateY(-1px);
 }
 
-.upgrade-cta-button svg {
+.c1ho svg {
     width: 20px;
     height: 20px;
     stroke: currentColor;
@@ -323,27 +323,27 @@
     z-index: 2;
 }
 
-.upgrade-cta-button span {
+.c1ho span {
     position: relative;
     z-index: 2;
 }
 
-.price-tag {
+.cwa {
     text-align: center;
     font-size: 0.85rem;
     color: #718096;
     font-weight: 600;
 }
 
-.price-highlight {
+.cw9 {
     display: block;
-    color: #FF7A50;
+    color: #i1mn;
     font-weight: 900;
     font-size: 1.3rem;
     margin-top: 4px;
 }
 
-.money-back {
+.cm3 {
     text-align: center;
     font-size: 0.75rem;
     color: #4ECDC4;
@@ -355,7 +355,7 @@
     gap: 4px;
 }
 
-.money-back svg {
+.cm3 svg {
     width: 14px;
     height: 14px;
     stroke: currentColor;
@@ -363,25 +363,25 @@
 }
 
 @media (max-width: 768px) {
-    .modal-bottom {
+    .cl9 {
         grid-template-columns: 1fr;
         gap: 28px;
     }
 
-    .features-grid {
+    .cd8 {
         grid-template-columns: 1fr;
     }
 
-    .cta-section {
+    .c81 {
         width: 100%;
         min-width: auto;
     }
 
-    #automation-modal {
+    #i1or {
         display: none !important;
     }
 
-    #automation-modal[style*="display: flex"] {
+    #i1or[style*="display: flex"] {
         display: flex !important;
     }
 }

@@ -34,7 +34,7 @@
       min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column;
       line-height: 1.5; padding-bottom: env(safe-area-inset-bottom, 0px);
       font-family: var(--font-body), system-ui, sans-serif;
-      background: #fdf9f5;
+      background: #i1to;
       background-image: url('/sky-bg.png');
       background-size: cover;
       background-position: center top;
@@ -67,11 +67,11 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(249,115,22,0.35); border-radius: 10px; border: 2px solid transparent; background-clip: content-box; }
     :root {
-      --solis: #f97316;
-      --solis-deep: #c2410c;
-      --solis-bright: #ff8c42;
-      --solis-gradient: linear-gradient(135deg, #f97316, #d65a31, #ff8c42, #b84d1a);
-      --solis-light: #fed7aa;
+      --solis: #i1t9;
+      --solis-deep: #i1pd;
+      --solis-bright: #i1ux;
+      --solis-gradient: linear-gradient(135deg, #i1t9, #i1qi, #i1ux, #i1p1);
+      --solis-light: #i1tw;
       --ink: #18120e;
       --text-primary: #18120e;
       --text-secondary: #5c5048;
@@ -97,12 +97,12 @@
       border-right-color: rgba(200,185,170,0.2);
       box-shadow: 0 4px 24px rgba(120,80,40,0.08), 0 1px 4px rgba(120,80,40,0.05), inset 0 1px 0 rgba(255,255,255,0.95), inset 0 -1px 0 rgba(180,140,110,0.10);
     }
-    .solis-text {
-      background: linear-gradient(135deg, #f97316, #d65a31, #ff8c42, #b84d1a);
+    .c13y {
+      background: linear-gradient(135deg, #i1t9, #i1qi, #i1ux, #i1p1);
       -webkit-background-clip: text; background-clip: text;
       -webkit-text-fill-color: transparent; color: transparent;
     }
-    .eyebrow {
+    .cco {
       display: inline-flex; align-items: center; gap: 8px;
       background: rgba(249,115,22,0.08); border: 1px solid rgba(249,115,22,0.2);
       border-radius: 100px; padding: 5px 14px;
@@ -117,7 +117,7 @@
     .bar.scrolled { box-shadow: 0 8px 28px rgba(120,80,40,0.12), 0 2px 8px rgba(120,80,40,0.06), inset 0 1px 0 rgba(255,255,255,0.95); }
     .brand { display: flex; align-items: center; gap: 9px; color: var(--text-primary); }
     .logotype { font-family: var(--font-display), system-ui, sans-serif; font-size: 1.1rem; font-weight: 800; letter-spacing: -0.025em; }
-    .logotype-beta { font-family: var(--font-display), system-ui, sans-serif; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-left: 2px; position: relative; top: -1px; }
+    .cke { font-family: var(--font-display), system-ui, sans-serif; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-left: 2px; position: relative; top: -1px; }
     .links { display: flex; gap: 4px; align-items: center; }
     .links a { color: var(--text-muted); font-size: 0.85rem; font-weight: 500; padding: 8px 14px; border-radius: 100px; transition: all 0.2s; font-family: var(--font-body), system-ui, sans-serif; }
     .links a:hover { color: var(--text-primary); background: rgba(255,255,255,0.5); }
@@ -138,7 +138,7 @@
     .mobile a { padding: 11px 14px; border-radius: 12px; font-size: 0.95rem; font-weight: 500; color: var(--text-secondary); transition: background 0.2s; font-family: var(--font-body), system-ui, sans-serif; }
     .mobile a:hover { background: rgba(255,255,255,0.6); }
     .divider { height: 1px; background: var(--border); margin: 8px 4px; }
-    .mob-signup { font-family: var(--font-display), system-ui, sans-serif !important; text-align: center; font-weight: 700 !important; color: #fff !important; background: var(--ink); margin-top: 4px; }
+    .cky { font-family: var(--font-display), system-ui, sans-serif !important; text-align: center; font-weight: 700 !important; color: #fff !important; background: var(--ink); margin-top: 4px; }
     @media (max-width: 900px) { .links { display: none; } }
     @media (max-width: 768px) { .actions { display: none; } .toggle { display: inline-flex; } .bar { padding: 8px 12px 8px 16px; } }
     main { flex: 1; position: relative; z-index: 1; }
@@ -149,7 +149,7 @@
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       min-height: 100dvh;
     }
-    .hero .eyebrow { margin-bottom: 24px; }
+    .hero .cco { margin-bottom: 24px; }
     .hero .title {
       font-family: var(--font-display), system-ui, sans-serif;
       font-size: clamp(40px, 7vw, 72px); font-weight: 800;
@@ -167,23 +167,23 @@
       font-size: clamp(15px, 1.6vw, 18px); color: var(--text-secondary);
       max-width: 560px; margin: 0 auto 36px; line-height: 1.65;
     }
-    .pill-wrap { max-width: 540px; width: 100%; margin: 0 auto 20px; position: relative; z-index: 1; }
-    .pill-wrap::before {
+    .cqr { max-width: 540px; width: 100%; margin: 0 auto 20px; position: relative; z-index: 1; }
+    .cqr::before {
       content: ''; position: absolute; inset: -5px; border-radius: 100px; z-index: -1;
-      background: conic-gradient(from var(--border-angle, 0deg), #f97316, #ef4444, #f59e0b, #f97316, #d65a31, #fbbf24, #f97316);
+      background: conic-gradient(from var(--border-angle, 0deg), #i1t9, #i1sb, #i1sy, #i1t9, #i1qi, #i1th, #i1t9);
       animation: border-spin 3s linear infinite;
       opacity: 0; transition: opacity 0.6s ease;
       filter: blur(8px);
     }
-    .pill-wrap.revealed::before { opacity: 0.75; }
-    .pill-wrap:hover::before { opacity: 1; filter: blur(4px); }
-    .pill-wrap::after {
+    .cqr.revealed::before { opacity: 0.75; }
+    .cqr:hover::before { opacity: 1; filter: blur(4px); }
+    .cqr::after {
       content: ''; position: absolute; inset: -1px; border-radius: 100px; z-index: -1;
-      background: conic-gradient(from var(--border-angle, 0deg), #f97316, #ef4444, #f59e0b, #f97316, #d65a31, #fbbf24, #f97316);
+      background: conic-gradient(from var(--border-angle, 0deg), #i1t9, #i1sb, #i1sy, #i1t9, #i1qi, #i1th, #i1t9);
       animation: border-spin 3s linear infinite;
       opacity: 0; transition: opacity 0.6s ease;
     }
-    .pill-wrap.revealed::after { opacity: 1; }
+    .cqr.revealed::after { opacity: 1; }
     @property --border-angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
     @keyframes border-spin { to { --border-angle: 360deg; } }
     .pill {
@@ -201,15 +201,15 @@
       box-shadow: 0 8px 40px rgba(249,115,22,0.18), 0 0 0 4px rgba(249,115,22,0.08), 0 0 60px rgba(249,115,22,0.08), inset 0 1px 0 rgba(255,255,255,0.5);
       background: rgba(250,248,245,0.96);
     }
-    .pill-icon { color: var(--text-muted); flex-shrink: 0; display: flex; align-items: center; transition: color 0.3s; }
-    .pill.focused .pill-icon { color: var(--solis-deep); }
-    .pill-input {
+    .cqo { color: var(--text-muted); flex-shrink: 0; display: flex; align-items: center; transition: color 0.3s; }
+    .pill.focused .cqo { color: var(--solis-deep); }
+    .cqp {
       flex: 1; border: none; outline: none; background: transparent;
       font-family: var(--font-body), system-ui, sans-serif;
       font-size: 14px; color: var(--text-primary); padding: 13px 12px; min-width: 0;
     }
-    .pill-input::placeholder { color: var(--text-muted); opacity: 0.6; }
-    .pill-btn {
+    .cqp::placeholder { color: var(--text-muted); opacity: 0.6; }
+    .cqj {
       display: inline-flex; align-items: center; gap: 6px;
       background: var(--ink); color: #fff;
       font-family: var(--font-display), system-ui, sans-serif;
@@ -219,50 +219,50 @@
       white-space: nowrap; flex-shrink: 0;
       cursor: pointer;
     }
-    .pill-btn:hover { background: var(--solis); box-shadow: 0 6px 24px rgba(249,115,22,0.45); }
-    .pill-btn:hover svg { transform: translateX(3px); }
-    .pill-btn:active { transform: scale(0.97); }
-    .pill-btn svg { transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-    .pill-hint { font-size: 11.5px; color: var(--text-muted); margin-top: 10px; max-width: 540px; width: 100%; margin-left: auto; margin-right: auto; }
-    .pill-hint span { font-weight: 600; color: var(--text-secondary); }
-    .trust { padding: 28px 0 0; position: relative; z-index: 1; overflow: hidden; }
-    .hero-trust { width: 100%; text-align: center; }
-    .trust-inner { max-width: 100%; margin: 0 auto; text-align: center; padding: 0; }
-    .trust-label {
+    .cqj:hover { background: var(--solis); box-shadow: 0 6px 24px rgba(249,115,22,0.45); }
+    .cqj:hover svg { transform: translateX(3px); }
+    .cqj:active { transform: scale(0.97); }
+    .cqj svg { transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+    .cqn { font-size: 11.5px; color: var(--text-muted); margin-top: 10px; max-width: 540px; width: 100%; margin-left: auto; margin-right: auto; }
+    .cqn span { font-weight: 600; color: var(--text-secondary); }
+    .c1h1 { padding: 28px 0 0; position: relative; z-index: 1; overflow: hidden; }
+    .chp { width: 100%; text-align: center; }
+    .c1h5 { max-width: 100%; margin: 0 auto; text-align: center; padding: 0; }
+    .c1h6 {
       font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
       color: var(--text-muted); margin-bottom: 18px;
       font-family: var(--font-display), system-ui, sans-serif;
     }
-    .hero-quote {
+    .chl {
       margin-top: 44px; max-width: 480px; margin-left: auto; margin-right: auto;
     }
-    .hero-quote blockquote {
+    .chl blockquote {
       font-size: clamp(14.5px, 1.4vw, 16px); font-style: italic;
       color: var(--text-secondary); line-height: 1.65;
       margin: 0; font-family: var(--font-body), system-ui, sans-serif;
     }
-    .hero-quote cite {
+    .chl cite {
       display: block; margin-top: 10px;
       font-style: normal; font-size: 12.5px; font-weight: 600;
       color: var(--text-muted); font-family: var(--font-display), system-ui, sans-serif;
       letter-spacing: 0.01em;
     }
-    .hero-quote cite span { color: var(--solis-deep); }
-    .marquee {
+    .chl cite span { color: var(--solis-deep); }
+    .ckk {
       position: relative; overflow: hidden;
       mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
       -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
     }
-    .track {
+    .c1gy {
       display: flex; gap: 12px; width: max-content;
       animation: marquee-scroll 30s linear infinite;
     }
-    .track:hover { animation-play-state: paused; }
+    .c1gy:hover { animation-play-state: paused; }
     @keyframes marquee-scroll {
       0% { transform: translateX(0); }
       100% { transform: translateX(-50%); }
     }
-    .brand-pill {
+    .c3h {
       display: inline-flex; align-items: center; gap: 8px;
       padding: 8px 18px; border-radius: 100px;
       background: rgba(255,255,255,0.55);
@@ -272,20 +272,20 @@
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); white-space: nowrap;
       box-shadow: 0 1px 6px rgba(120,80,40,0.04); cursor: default;
     }
-    .brand-pill:hover {
+    .c3h:hover {
       background: rgba(255,255,255,0.85);
       border-color: rgba(200,185,170,0.4);
       box-shadow: 0 4px 16px rgba(120,80,40,0.1);
       transform: translateY(-2px) scale(1.04);
     }
-    .brand-icon {
+    .c3f {
       width: 18px; height: 18px; flex-shrink: 0;
     }
     .section { position: relative; z-index: 1; padding: clamp(72px, 9vw, 112px) 20px; }
-    .inner { max-width: 1200px; margin: 0 auto; }
-    .narrow { max-width: 880px; margin: 0 auto; }
+    .chv { max-width: 1200px; margin: 0 auto; }
+    .cmh { max-width: 880px; margin: 0 auto; }
     .header { text-align: center; margin-bottom: 56px; }
-    .header .eyebrow { margin-bottom: 20px; }
+    .header .cco { margin-bottom: 20px; }
     .header .title {
       font-family: var(--font-display), system-ui, sans-serif;
       font-size: clamp(28px, 4vw, 44px); font-weight: 800;
@@ -296,8 +296,8 @@
       font-size: clamp(15px, 1.5vw, 17px); color: var(--text-secondary);
       max-width: 580px; margin: 0 auto; line-height: 1.6;
     }
-    .bento { display: flex; flex-direction: column; gap: 16px; }
-    .spotlight {
+    .c2h { display: flex; flex-direction: column; gap: 16px; }
+    .c146 {
       border-radius: 24px; padding: clamp(32px, 5vw, 52px) clamp(24px, 5vw, 56px);
       background: linear-gradient(150deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.55) 50%, rgba(255,248,240,0.48) 100%);
       backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%);
@@ -307,11 +307,11 @@
       position: relative; overflow: hidden;
       display: flex; align-items: flex-start; gap: clamp(24px, 4vw, 44px);
     }
-    .spotlight::before {
+    .c146::before {
       content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
       background: linear-gradient(90deg, transparent 5%, rgba(249,115,22,0.25) 50%, transparent 95%);
     }
-    .spotlight-icon {
+    .c147 {
       width: 64px; height: 64px; border-radius: 20px; flex-shrink: 0;
       background: linear-gradient(135deg, rgba(249,115,22,0.12) 0%, rgba(249,115,22,0.06) 100%);
       border: 1px solid rgba(249,115,22,0.15);
@@ -319,29 +319,29 @@
       box-shadow: 0 2px 12px rgba(249,115,22,0.08);
       transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .spotlight:hover .spotlight-icon {
+    .c146:hover .c147 {
       transform: scale(1.05);
       box-shadow: 0 4px 20px rgba(249,115,22,0.15);
     }
-    .spotlight-icon svg { width: 30px; height: 30px; }
-    .spotlight .content { flex: 1; min-width: 0; }
-    .spotlight .title {
+    .c147 svg { width: 30px; height: 30px; }
+    .c146 .content { flex: 1; min-width: 0; }
+    .c146 .title {
       font-family: var(--font-display), system-ui, sans-serif;
       font-size: clamp(22px, 3vw, 30px); font-weight: 800;
       letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 10px; color: var(--text-primary);
     }
-    .spotlight .desc { font-size: clamp(14px, 1.3vw, 15.5px); color: var(--text-secondary); line-height: 1.7; max-width: 640px; }
-    .spotlight .chips {
+    .c146 .desc { font-size: clamp(14px, 1.3vw, 15.5px); color: var(--text-secondary); line-height: 1.7; max-width: 640px; }
+    .c146 .c5b {
       display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px;
     }
-    .spotlight .chip {
+    .c146 .chip {
       display: inline-flex; align-items: center; gap: 6px;
       padding: 5px 14px; border-radius: 100px;
       background: rgba(249,115,22,0.06);
       border: 1px solid rgba(249,115,22,0.1);
       font-size: 12px; font-weight: 600; color: var(--text-secondary);
     }
-    .spotlight .chip svg { color: var(--solis); flex-shrink: 0; }
+    .c146 .chip svg { color: var(--solis); flex-shrink: 0; }
     .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
     .feat {
       border-radius: 22px; padding: clamp(24px, 3vw, 32px) clamp(22px, 3vw, 28px);
@@ -352,7 +352,7 @@
       box-shadow: 0 2px 16px rgba(120,80,40,0.06), 0 1px 3px rgba(120,80,40,0.04), inset 0 1px 0 rgba(255,255,255,0.95);
       position: relative; display: flex; flex-direction: column;
     }
-    .feat-icon {
+    .ccy {
       width: 48px; height: 48px; border-radius: 14px;
       background: linear-gradient(135deg, rgba(249,115,22,0.09) 0%, rgba(249,115,22,0.04) 100%);
       border: 1px solid rgba(249,115,22,0.1);
@@ -360,33 +360,33 @@
       margin-bottom: 20px;
       transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .feat:hover .feat-icon {
+    .feat:hover .ccy {
       background: linear-gradient(135deg, rgba(249,115,22,0.14) 0%, rgba(249,115,22,0.07) 100%);
       transform: scale(1.06);
       box-shadow: 0 4px 16px rgba(249,115,22,0.12);
     }
-    .feat-icon svg { width: 22px; height: 22px; }
-    .feat-name {
+    .ccy svg { width: 22px; height: 22px; }
+    .ccz {
       font-family: var(--font-display), system-ui, sans-serif;
       font-size: 16.5px; font-weight: 700; letter-spacing: -0.02em;
       margin-bottom: 8px; color: var(--text-primary); line-height: 1.3;
     }
-    .feat-desc { font-size: 13.5px; color: var(--text-secondary); line-height: 1.65; flex: 1; }
-    .feat-tag {
+    .ccx { font-size: 13.5px; color: var(--text-secondary); line-height: 1.65; flex: 1; }
+    .cd0 {
       display: inline-flex; align-items: center; gap: 5px;
       font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
       color: var(--text-muted); margin-top: 16px; padding-top: 16px;
       border-top: 1px solid rgba(200,185,170,0.18);
     }
-    .feat-tag svg { color: var(--solis); opacity: 0.7; }
+    .cd0 svg { color: var(--solis); opacity: 0.7; }
     @media (max-width: 768px) {
-      .spotlight { flex-direction: column; gap: 20px; }
+      .c146 { flex-direction: column; gap: 20px; }
       .grid { grid-template-columns: 1fr; }
     }
     .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; position: relative; max-width: 920px; margin: 0 auto; }
     @media (max-width: 768px) { .steps { grid-template-columns: 1fr; gap: 24px; } }
-    .connector { display: none; position: absolute; top: 36px; left: calc(33.33% - 16px); right: calc(33.33% - 16px); height: 2px; background: linear-gradient(90deg, rgba(249,115,22,0.25), rgba(249,115,22,0.08)); border-radius: 2px; }
-    @media (min-width: 769px) { .connector { display: block; } }
+    .c7d { display: none; position: absolute; top: 36px; left: calc(33.33% - 16px); right: calc(33.33% - 16px); height: 2px; background: linear-gradient(90deg, rgba(249,115,22,0.25), rgba(249,115,22,0.08)); border-radius: 2px; }
+    @media (min-width: 769px) { .c7d { display: block; } }
     .step { text-align: center; padding: 0 16px; }
     .num {
       width: 72px; height: 72px; border-radius: 50%;
@@ -399,8 +399,8 @@
       font-size: 28px; font-weight: 800; color: var(--solis-deep);
       letter-spacing: -0.02em;
     }
-    .step-title { font-family: var(--font-display), system-ui, sans-serif; font-size: 18px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 8px; color: var(--text-primary); }
-    .step-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.6; max-width: 300px; margin: 0 auto; }
+    .c154 { font-family: var(--font-display), system-ui, sans-serif; font-size: 18px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 8px; color: var(--text-primary); }
+    .c153 { font-size: 14px; color: var(--text-secondary); line-height: 1.6; max-width: 300px; margin: 0 auto; }
     .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
     @media (max-width: 768px) { .stats { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
     .stat { text-align: center; padding: clamp(22px, 3vw, 32px) 16px; }
@@ -409,7 +409,7 @@
       font-size: clamp(30px, 5vw, 48px); font-weight: 800;
       letter-spacing: -0.03em; line-height: 1.1;
     }
-    .stat-label { font-size: 13px; color: var(--text-muted); margin-top: 6px; font-weight: 500; }
+    .c14h { font-size: 13px; color: var(--text-muted); margin-top: 6px; font-weight: 500; }
     .cta {
       position: relative; z-index: 1; margin: 0 20px 80px;
       border-radius: 32px; overflow: hidden;
@@ -423,23 +423,23 @@
       animation: cta-glow-breathe 5s ease-in-out infinite;
     }
     @keyframes cta-glow-breathe { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-    .glow-b {
+    .cff {
       position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
       width: 500px; height: 250px; pointer-events: none;
       background: radial-gradient(ellipse at 50% 100%, rgba(249,115,22,0.08) 0%, transparent 70%);
       animation: cta-glow-breathe 5s ease-in-out infinite 1.5s;
     }
-    .cta-title {
+    .c83 {
       font-family: var(--font-display), system-ui, sans-serif;
       font-size: clamp(28px, 4vw, 44px); font-weight: 800;
       letter-spacing: -0.035em; color: #fff; margin-bottom: 12px; position: relative;
     }
-    .cta-subtitle {
+    .c82 {
       font-size: clamp(14px, 1.4vw, 16px); color: rgba(255,255,255,0.45);
       max-width: 480px; margin: 0 auto 36px; line-height: 1.6; position: relative;
     }
-    .cta-wrap { max-width: 540px; margin: 0 auto 16px; position: relative; }
-    .cta-pill {
+    .c84 { max-width: 540px; margin: 0 auto 16px; position: relative; }
+    .c80 {
       display: flex; align-items: center; gap: 0;
       background: rgba(255,255,255,0.07);
       border: 1.5px solid rgba(255,255,255,0.12);
@@ -447,20 +447,20 @@
       transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       box-shadow: 0 0 0 0 rgba(249,115,22,0), inset 0 1px 0 rgba(255,255,255,0.06);
     }
-    .cta-pill.focused {
+    .c80.focused {
       border-color: rgba(249,115,22,0.5);
       background: rgba(255,255,255,0.1);
       box-shadow: 0 8px 40px rgba(249,115,22,0.2), 0 0 80px rgba(249,115,22,0.06), 0 0 0 4px rgba(249,115,22,0.08), inset 0 1px 0 rgba(255,255,255,0.08);
     }
-    .cta-icon { color: rgba(255,255,255,0.3); flex-shrink: 0; display: flex; align-items: center; transition: color 0.3s; }
-    .cta-pill.focused .cta-icon { color: var(--solis); }
-    .cta-input {
+    .c7y { color: rgba(255,255,255,0.3); flex-shrink: 0; display: flex; align-items: center; transition: color 0.3s; }
+    .c80.focused .c7y { color: var(--solis); }
+    .c7z {
       flex: 1; border: none; outline: none; background: transparent;
       font-family: var(--font-body), system-ui, sans-serif;
       font-size: 15px; color: #fff; padding: 12px 14px; min-width: 0;
     }
-    .cta-input::placeholder { color: rgba(255,255,255,0.3); }
-    .cta-btn {
+    .c7z::placeholder { color: rgba(255,255,255,0.3); }
+    .c7w {
       display: inline-flex; align-items: center; gap: 7px;
       background: #fff; color: var(--ink);
       font-family: var(--font-display), system-ui, sans-serif;
@@ -469,36 +469,36 @@
       transition: background 0.3s ease, color 0.3s ease, box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       white-space: nowrap; flex-shrink: 0;
     }
-    .cta-btn:hover { background: var(--solis); color: #fff; box-shadow: 0 8px 28px rgba(249,115,22,0.4); transform: scale(1.04); }
-    .cta-btn:active { transform: scale(0.98); }
-    .cta-hint { font-size: 11.5px; color: rgba(255,255,255,0.25); position: relative; }
-    .cta-hint span { color: rgba(255,255,255,0.4); font-weight: 600; }
+    .c7w:hover { background: var(--solis); color: #fff; box-shadow: 0 8px 28px rgba(249,115,22,0.4); transform: scale(1.04); }
+    .c7w:active { transform: scale(0.98); }
+    .c7x { font-size: 11.5px; color: rgba(255,255,255,0.25); position: relative; }
+    .c7x span { color: rgba(255,255,255,0.4); font-weight: 600; }
     @media (max-width: 640px) {
-      .cta-pill { padding: 5px 5px 5px 16px; }
-      .cta-btn { padding: 10px; font-size: 13px; gap: 0; }
-      .cta-btn span { display: none; }
-      .cta-icon { display: none; }
-      .cta-input { padding: 10px 8px; font-size: 16px; }
+      .c80 { padding: 5px 5px 5px 16px; }
+      .c7w { padding: 10px; font-size: 13px; gap: 0; }
+      .c7w span { display: none; }
+      .c7y { display: none; }
+      .c7z { padding: 10px 8px; font-size: 16px; }
     }
     .faqs { max-width: 680px; margin: 0 auto; }
     .faq { border-bottom: 1px solid rgba(200,185,170,0.25); padding-bottom: 14px; margin-bottom: 14px; }
     .faq.open { padding-bottom: 20px; }
-    .faq-btn {
+    .ccr {
       display: flex; align-items: center; justify-content: space-between;
       width: 100%; background: none; border: none; cursor: pointer;
       gap: 12px; text-align: left;
       font-family: var(--font-display), system-ui, sans-serif;
       font-size: 15px; font-weight: 600; color: #18120e; padding: 4px 0;
     }
-    .faq-btn svg { flex-shrink: 0; transition: transform 0.25s ease; color: #9e8878; }
-    .faq.open .faq-btn svg { transform: rotate(180deg); }
-    .answer {
+    .ccr svg { flex-shrink: 0; transition: transform 0.25s ease; color: #9e8878; }
+    .faq.open .ccr svg { transform: rotate(180deg); }
+    .c1t {
       overflow: hidden; max-height: 0;
       transition: max-height 0.3s ease, opacity 0.25s ease;
       opacity: 0; font-size: 14px; color: #5c5048;
       line-height: 1.65; padding-top: 0;
     }
-    .faq.open .answer {
+    .faq.open .c1t {
       max-height: 300px; opacity: 1; padding-top: 8px;
     }
     .footer {
@@ -508,10 +508,10 @@
     }
     .foot { border-radius: 28px; padding: 40px; background: rgba(253,249,245,0.6); }
     @media (max-width: 640px) { .foot { padding: 28px 20px; } }
-    .foot-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; }
-    @media (min-width: 768px) { .foot-grid { grid-template-columns: 2fr 1fr 1fr 1fr 1fr; } }
-    .foot-brand .brand { margin-bottom: 16px; }
-    .tagline { font-size: 13px; color: var(--text-muted); line-height: 1.55; max-width: 260px; }
+    .ce0 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; }
+    @media (min-width: 768px) { .ce0 { grid-template-columns: 2fr 1fr 1fr 1fr 1fr; } }
+    .cdz .brand { margin-bottom: 16px; }
+    .c1ee { font-size: 13px; color: var(--text-muted); line-height: 1.55; max-width: 260px; }
     .status { margin-top: 20px; display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-muted); }
     .live { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; display: inline-block; flex-shrink: 0; animation: pulse 2s ease-in-out infinite; }
     .col h4 { font-family: var(--font-display), system-ui, sans-serif; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); margin-bottom: 14px; }
@@ -524,22 +524,22 @@
     }
     @media (min-width: 640px) { .bottom { flex-direction: row; } }
     .bottom p { font-size: 12px; color: var(--text-muted); }
-    .social { display: flex; gap: 6px; }
-    .social a { width: 32px; height: 32px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: var(--text-muted); transition: all 0.2s; border: 1px solid transparent; }
-    .social a:hover { color: var(--solis-deep); background: rgba(249,115,22,0.08); border-color: rgba(249,115,22,0.2); }
+    .c12n { display: flex; gap: 6px; }
+    .c12n a { width: 32px; height: 32px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: var(--text-muted); transition: all 0.2s; border: 1px solid transparent; }
+    .c12n a:hover { color: var(--solis-deep); background: rgba(249,115,22,0.08); border-color: rgba(249,115,22,0.2); }
     @media (max-width: 480px) {
       .footer { padding: 32px 16px 28px; }
       .foot { padding: 24px 18px; border-radius: 22px; }
-      .foot-grid { grid-template-columns: 1fr 1fr; gap: 24px 16px; }
-      .foot-brand { grid-column: 1 / -1; }
+      .ce0 { grid-template-columns: 1fr 1fr; gap: 24px 16px; }
+      .cdz { grid-column: 1 / -1; }
       .bottom { margin-top: 28px; padding-top: 20px; }
     }
-    @media (max-width: 380px) { .foot-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 380px) { .ce0 { grid-template-columns: 1fr; } }
     .canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
     .blob { position: absolute; border-radius: 50%; filter: blur(100px); will-change: transform; }
-    .blob-a { width: 700px; height: 700px; top: -220px; right: -120px; background: radial-gradient(circle, rgba(251,146,60,0.14) 0%, rgba(249,115,22,0.06) 60%, transparent 100%); animation: float1 25s ease-in-out infinite; }
-    .blob-b { width: 500px; height: 500px; bottom: -140px; left: -120px; background: radial-gradient(circle, rgba(253,186,116,0.12) 0%, rgba(251,146,60,0.04) 60%, transparent 100%); animation: float2 20s ease-in-out infinite; }
-    .blob-c { width: 360px; height: 360px; top: 35%; left: 22%; background: radial-gradient(circle, rgba(255,237,213,0.45) 0%, transparent 70%); animation: float3 30s ease-in-out infinite; }
+    .c37 { width: 700px; height: 700px; top: -220px; right: -120px; background: radial-gradient(circle, rgba(251,146,60,0.14) 0%, rgba(249,115,22,0.06) 60%, transparent 100%); animation: float1 25s ease-in-out infinite; }
+    .c38 { width: 500px; height: 500px; bottom: -140px; left: -120px; background: radial-gradient(circle, rgba(253,186,116,0.12) 0%, rgba(251,146,60,0.04) 60%, transparent 100%); animation: float2 20s ease-in-out infinite; }
+    .c39 { width: 360px; height: 360px; top: 35%; left: 22%; background: radial-gradient(circle, rgba(255,237,213,0.45) 0%, transparent 70%); animation: float3 30s ease-in-out infinite; }
     @keyframes float1 {
       0%, 100% { transform: translate(0, 0) scale(1); }
       33% { transform: translate(30px, -50px) scale(1.05); }
@@ -564,17 +564,17 @@
     .d2 { transition-delay: 0.2s; }
     .d3 { transition-delay: 0.3s; }
     .d4 { transition-delay: 0.4s; }
-    .blur-in {
+    .c3e {
       opacity: 0; filter: blur(12px); transform: scale(0.88) translateY(16px);
       transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
                   filter 1.2s cubic-bezier(0.16, 1, 0.3, 1),
                   transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .blur-in.visible { opacity: 1; filter: blur(0); transform: scale(1) translateY(0); }
-    .blur-1 { transition-delay: 0s; }
-    .blur-2 { transition-delay: 0.15s; }
-    .blur-3 { transition-delay: 0.3s; }
-    .blur-4 { transition-delay: 0.45s; }
+    .c3e.visible { opacity: 1; filter: blur(0); transform: scale(1) translateY(0); }
+    .c3a { transition-delay: 0s; }
+    .c3b { transition-delay: 0.15s; }
+    .c3c { transition-delay: 0.3s; }
+    .c3d { transition-delay: 0.45s; }
     @keyframes float-subtle {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-6px); }
@@ -583,7 +583,7 @@
       0%, 100% { box-shadow: 0 0 20px rgba(249,115,22,0.0); }
       50% { box-shadow: 0 0 30px rgba(249,115,22,0.12); }
     }
-    .spotlight.visible { animation: glow-pulse 4s ease-in-out infinite 1s; }
+    .c146.visible { animation: glow-pulse 4s ease-in-out infinite 1s; }
     .feat { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease; }
     .feat:hover {
       transform: translateY(-6px) scale(1.01);
@@ -595,25 +595,25 @@
     .num { transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
     .stat .value { transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
     .stat:hover .value { transform: scale(1.08); }
-    .spotlight .chip { transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-    .spotlight .chip:hover { background: rgba(249,115,22,0.12); border-color: rgba(249,115,22,0.25); transform: translateY(-2px) scale(1.04); box-shadow: 0 4px 12px rgba(249,115,22,0.1); }
+    .c146 .chip { transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+    .c146 .chip:hover { background: rgba(249,115,22,0.12); border-color: rgba(249,115,22,0.25); transform: translateY(-2px) scale(1.04); box-shadow: 0 4px 12px rgba(249,115,22,0.1); }
     @keyframes chip-in {
       from { opacity: 0; transform: scale(0.7) translateY(8px); }
       to { opacity: 1; transform: scale(1) translateY(0); }
     }
-    .spotlight.visible .chip { animation: chip-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
-    .spotlight.visible .chip:nth-child(1) { animation-delay: 0.3s; }
-    .spotlight.visible .chip:nth-child(2) { animation-delay: 0.38s; }
-    .spotlight.visible .chip:nth-child(3) { animation-delay: 0.46s; }
-    .spotlight.visible .chip:nth-child(4) { animation-delay: 0.54s; }
-    .spotlight.visible .chip:nth-child(5) { animation-delay: 0.62s; }
-    .spotlight.visible .chip:nth-child(6) { animation-delay: 0.70s; }
+    .c146.visible .chip { animation: chip-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+    .c146.visible .chip:nth-child(1) { animation-delay: 0.3s; }
+    .c146.visible .chip:nth-child(2) { animation-delay: 0.38s; }
+    .c146.visible .chip:nth-child(3) { animation-delay: 0.46s; }
+    .c146.visible .chip:nth-child(4) { animation-delay: 0.54s; }
+    .c146.visible .chip:nth-child(5) { animation-delay: 0.62s; }
+    .c146.visible .chip:nth-child(6) { animation-delay: 0.70s; }
     @keyframes hero-shimmer {
       0% { background-position: -200% center; }
       100% { background-position: 200% center; }
     }
-    .shimmer {
-      background: linear-gradient(90deg, #f97316 0%, #ff6b35 15%, #fbbf24 30%, #f97316 50%, #ef4444 65%, #fbbf24 80%, #f97316 100%);
+    .c11a {
+      background: linear-gradient(90deg, #i1t9 0%, #i1uf 15%, #i1th 30%, #i1t9 50%, #i1sb 65%, #i1th 80%, #i1t9 100%);
       background-size: 300% auto;
       -webkit-background-clip: text; background-clip: text;
       -webkit-text-fill-color: transparent; color: transparent;
@@ -621,25 +621,25 @@
     }
     @media (max-width: 640px) {
       .hero { padding: calc(80px + env(safe-area-inset-top, 0px)) 16px 48px; min-height: auto; }
-      .hero-quote { margin-top: 32px; }
-      .hero-quote blockquote { font-size: 13.5px; }
+      .chl { margin-top: 32px; }
+      .chl blockquote { font-size: 13.5px; }
       .pill { padding: 6px 4px 6px 14px; border-width: 1.5px; }
-      .pill-btn { padding: 12px; font-size: 13px; gap: 0; }
-      .pill-btn span { display: none; }
-      .pill-icon { display: none; }
-      .pill-input { padding: 11px 8px; font-size: 16px; }
-      .pill-wrap::before { inset: -4px; filter: blur(6px); }
-      .pill-wrap::after { inset: -1px; }
-      .track { gap: 8px; animation-duration: 22s; }
-      .brand-pill { padding: 7px 14px; font-size: 12px; }
-      .brand-icon { width: 15px; height: 15px; }
-      .spotlight { padding: 24px 20px; }
-      .spotlight .title { font-size: 20px; }
-      .spotlight .chips { gap: 6px; }
-      .spotlight .chip { font-size: 11px; padding: 4px 10px; }
+      .cqj { padding: 12px; font-size: 13px; gap: 0; }
+      .cqj span { display: none; }
+      .cqo { display: none; }
+      .cqp { padding: 11px 8px; font-size: 16px; }
+      .cqr::before { inset: -4px; filter: blur(6px); }
+      .cqr::after { inset: -1px; }
+      .c1gy { gap: 8px; animation-duration: 22s; }
+      .c3h { padding: 7px 14px; font-size: 12px; }
+      .c3f { width: 15px; height: 15px; }
+      .c146 { padding: 24px 20px; }
+      .c146 .title { font-size: 20px; }
+      .c146 .c5b { gap: 6px; }
+      .c146 .chip { font-size: 11px; padding: 4px 10px; }
       .feat { padding: 22px 18px; border-radius: 18px; }
-      .feat-icon { width: 42px; height: 42px; border-radius: 12px; margin-bottom: 16px; }
-      .feat-name { font-size: 15px; }
+      .ccy { width: 42px; height: 42px; border-radius: 12px; margin-bottom: 16px; }
+      .ccz { font-size: 15px; }
       .cta { margin: 0 16px 60px; border-radius: 24px; }
       .section { padding: clamp(56px, 10vw, 88px) 16px; }
       .header { margin-bottom: 40px; }
@@ -649,23 +649,23 @@
       .num { width: 60px; height: 60px; font-size: 24px; margin-bottom: 16px; }
     }
     @media (max-width: 380px) {
-      .pill-input { padding: 11px 6px; font-size: 14px; }
+      .cqp { padding: 11px 6px; font-size: 14px; }
       .pill { padding: 4px 4px 4px 12px; }
-      .cta-input { padding: 8px 6px; font-size: 14px; }
-      .cta-pill { padding: 4px 4px 4px 12px; }
+      .c7z { padding: 8px 6px; font-size: 14px; }
+      .c80 { padding: 4px 4px 4px 12px; }
     }
   </style>
 </head>
 <body>
 
   <div class="canvas" aria-hidden="true">
-    <div class="blob blob-a"></div>
-    <div class="blob blob-b"></div>
-    <div class="blob blob-c"></div>
+    <div class="blob c37"></div>
+    <div class="blob c38"></div>
+    <div class="blob c39"></div>
   </div>
 
   <nav class="nav" aria-label="Primary">
-    <div class="bar glass" id="_nav">
+    <div class="bar glass" id="i1o0">
       <a href="/" class="brand" aria-label="Solis AI home">
         <svg viewBox="0 0 100 100" width="28" height="28" aria-hidden="true">
           <circle cx="50" cy="50" r="12" fill="#ea580c" />
@@ -675,9 +675,9 @@
         <span class="logotype">Solis AI</span>
       </a>
       <div class="links">
-        <a href="#_features" data-scroll="_features">Features</a>
-        <a href="#_how" data-scroll="_how">How It Works</a>
-        <a href="#_faq" data-scroll="_faq">FAQ</a>
+        <a href="#i1nw" data-scroll="_features">Features</a>
+        <a href="#i1nx" data-scroll="_how">How It Works</a>
+        <a href="#i1nv" data-scroll="_faq">FAQ</a>
         <a href="/premium.html">Pricing</a>
       </div>
       <div class="actions">
@@ -693,29 +693,29 @@
       <button
         type="button"
         class="toggle"
-        id="_toggle"
+        id="i1o2"
         aria-label="Open menu"
         aria-expanded="false"
       >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" class="menu-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" class="ckl">
           <line x1="4" y1="6" x2="20" y2="6" />
           <line x1="4" y1="12" x2="20" y2="12" />
           <line x1="4" y1="18" x2="20" y2="18" />
         </svg>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" class="close-icon" style="display:none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" class="c6n" style="display:none;">
           <line x1="18" y1="6" x2="6" y2="18" />
           <line x1="6" y1="6" x2="18" y2="18" />
         </svg>
       </button>
     </div>
-    <div class="mobile card" id="_mobile" role="menu" style="display:none;">
-      <a href="#_features" role="menuitem" data-scroll="_features">Features</a>
-      <a href="#_how" role="menuitem" data-scroll="_how">How It Works</a>
-      <a href="#_faq" role="menuitem" data-scroll="_faq">FAQ</a>
+    <div class="mobile card" id="i1nz" role="menu" style="display:none;">
+      <a href="#i1nw" role="menuitem" data-scroll="_features">Features</a>
+      <a href="#i1nx" role="menuitem" data-scroll="_how">How It Works</a>
+      <a href="#i1nv" role="menuitem" data-scroll="_faq">FAQ</a>
       <a href="/premium.html" role="menuitem">Pricing</a>
       <div class="divider"></div>
       <a href="/login.html" role="menuitem">Sign in</a>
-      <a href="/login.html" role="menuitem" class="mob-signup">Start free</a>
+      <a href="/login.html" role="menuitem" class="cky">Start free</a>
     </div>
   </nav>
 
@@ -725,15 +725,15 @@
 
         <span class="pre reveal">all it takes is</span>
         <h1 class="title reveal d1">
-          <span class="shimmer">One URL</span>
+          <span class="c11a">One URL</span>
         </h1>
         <p class="subtitle reveal d2">
           The first agentic AI that turns any video into ready-to-post short-form content in just 3 clicks. Clean, fast and work-free.
         </p>
 
-        <div class="pill-wrap reveal d3">
-          <div class="pill" id="_pill">
-            <span class="pill-icon">
+        <div class="cqr reveal d3">
+          <div class="pill" id="i1o1">
+            <span class="cqo">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
                 <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
                 <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
@@ -741,12 +741,12 @@
             </span>
             <input
               type="url"
-              class="pill-input"
-              id="_url"
+              class="cqp"
+              id="i1o3"
               placeholder="Drop any video link here..."
               aria-label="Video URL input"
             />
-            <button class="pill-btn" type="button">
+            <button class="cqj" type="button">
               <span>Get started</span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
                 <line x1="5" y1="12" x2="19" y2="12" />
@@ -755,77 +755,77 @@
             </button>
           </div>
         </div>
-        <p class="pill-hint">
+        <p class="cqn">
           Solis AI is new and constantly evolving
         </p>
 
-        <div class="hero-trust reveal" style="margin-top: 40px;">
-          <div class="trust-inner">
-        <p class="trust-label">Trusted by creators on</p>
-        <div class="marquee">
-          <div class="track" id="_marquee">
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#FF0000"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        <div class="chp reveal" style="margin-top: 40px;">
+          <div class="c1h5">
+        <p class="c1h6">Trusted by creators on</p>
+        <div class="ckk">
+          <div class="c1gy" id="i1ny">
+            <span class="c3h">
+              <svg class="c3f" viewBox="0 0 24 24" fill="#FF0000"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
               YouTube
             </span>
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#000000"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+            <span class="c3h">
+              <svg class="c3f" viewBox="0 0 24 24" fill="#000000"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
               TikTok
             </span>
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#E4405F"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 1 0 0-12.324zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405a1.441 1.441 0 0 1-2.88 0 1.441 1.441 0 0 1 2.88 0z"/></svg>
+            <span class="c3h">
+              <svg class="c3f" viewBox="0 0 24 24" fill="#E4405F"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 1 0 0-12.324zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405a1.441 1.441 0 0 1-2.88 0 1.441 1.441 0 0 1 2.88 0z"/></svg>
               Instagram
             </span>
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#18120e"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            <span class="c3h">
+              <svg class="c3f" viewBox="0 0 24 24" fill="#18120e"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
               X
             </span>
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            <span class="c3h">
+              <svg class="c3f" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
               LinkedIn
             </span>
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            <span class="c3h">
+              <svg class="c3f" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
               Facebook
             </span>
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#1ab7ea"><path d="M23.977 6.416c-.105 2.338-1.739 5.543-4.894 9.609-3.268 4.247-6.026 6.37-8.29 6.37-1.409 0-2.578-1.294-3.553-3.881L5.322 11.4C4.603 8.816 3.834 7.522 3.01 7.522c-.179 0-.806.378-1.881 1.132L0 7.197c1.185-1.044 2.351-2.084 3.501-3.128C5.08 2.701 6.266 1.984 7.055 1.91c1.867-.18 3.016 1.1 3.447 3.838.465 2.953.789 4.789.971 5.507.539 2.45 1.131 3.674 1.776 3.674.502 0 1.256-.796 2.265-2.385 1.004-1.589 1.54-2.797 1.612-3.628.144-1.371-.395-2.061-1.614-2.061-.574 0-1.167.121-1.777.391 1.186-3.868 3.434-5.757 6.762-5.637 2.473.06 3.628 1.664 3.493 4.797l-.013.01z"/></svg>
+            <span class="c3h">
+              <svg class="c3f" viewBox="0 0 24 24" fill="#1ab7ea"><path d="M23.977 6.416c-.105 2.338-1.739 5.543-4.894 9.609-3.268 4.247-6.026 6.37-8.29 6.37-1.409 0-2.578-1.294-3.553-3.881L5.322 11.4C4.603 8.816 3.834 7.522 3.01 7.522c-.179 0-.806.378-1.881 1.132L0 7.197c1.185-1.044 2.351-2.084 3.501-3.128C5.08 2.701 6.266 1.984 7.055 1.91c1.867-.18 3.016 1.1 3.447 3.838.465 2.953.789 4.789.971 5.507.539 2.45 1.131 3.674 1.776 3.674.502 0 1.256-.796 2.265-2.385 1.004-1.589 1.54-2.797 1.612-3.628.144-1.371-.395-2.061-1.614-2.061-.574 0-1.167.121-1.777.391 1.186-3.868 3.434-5.757 6.762-5.637 2.473.06 3.628 1.664 3.493 4.797l-.013.01z"/></svg>
               Vimeo
             </span>
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#9146FF"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg>
+            <span class="c3h">
+              <svg class="c3f" viewBox="0 0 24 24" fill="#9146FF"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg>
               Twitch
             </span>
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#FF0000"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            <span class="c3h">
+              <svg class="c3f" viewBox="0 0 24 24" fill="#FF0000"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
               YouTube
             </span>
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#000000"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+            <span class="c3h">
+              <svg class="c3f" viewBox="0 0 24 24" fill="#000000"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
               TikTok
             </span>
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#E4405F"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 1 0 0-12.324zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405a1.441 1.441 0 0 1-2.88 0 1.441 1.441 0 0 1 2.88 0z"/></svg>
+            <span class="c3h">
+              <svg class="c3f" viewBox="0 0 24 24" fill="#E4405F"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 1 0 0-12.324zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405a1.441 1.441 0 0 1-2.88 0 1.441 1.441 0 0 1 2.88 0z"/></svg>
               Instagram
             </span>
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#18120e"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            <span class="c3h">
+              <svg class="c3f" viewBox="0 0 24 24" fill="#18120e"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
               X
             </span>
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            <span class="c3h">
+              <svg class="c3f" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
               LinkedIn
             </span>
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            <span class="c3h">
+              <svg class="c3f" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
               Facebook
             </span>
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#1ab7ea"><path d="M23.977 6.416c-.105 2.338-1.739 5.543-4.894 9.609-3.268 4.247-6.026 6.37-8.29 6.37-1.409 0-2.578-1.294-3.553-3.881L5.322 11.4C4.603 8.816 3.834 7.522 3.01 7.522c-.179 0-.806.378-1.881 1.132L0 7.197c1.185-1.044 2.351-2.084 3.501-3.128C5.08 2.701 6.266 1.984 7.055 1.91c1.867-.18 3.016 1.1 3.447 3.838.465 2.953.789 4.789.971 5.507.539 2.45 1.131 3.674 1.776 3.674.502 0 1.256-.796 2.265-2.385 1.004-1.589 1.54-2.797 1.612-3.628.144-1.371-.395-2.061-1.614-2.061-.574 0-1.167.121-1.777.391 1.186-3.868 3.434-5.757 6.762-5.637 2.473.06 3.628 1.664 3.493 4.797l-.013.01z"/></svg>
+            <span class="c3h">
+              <svg class="c3f" viewBox="0 0 24 24" fill="#1ab7ea"><path d="M23.977 6.416c-.105 2.338-1.739 5.543-4.894 9.609-3.268 4.247-6.026 6.37-8.29 6.37-1.409 0-2.578-1.294-3.553-3.881L5.322 11.4C4.603 8.816 3.834 7.522 3.01 7.522c-.179 0-.806.378-1.881 1.132L0 7.197c1.185-1.044 2.351-2.084 3.501-3.128C5.08 2.701 6.266 1.984 7.055 1.91c1.867-.18 3.016 1.1 3.447 3.838.465 2.953.789 4.789.971 5.507.539 2.45 1.131 3.674 1.776 3.674.502 0 1.256-.796 2.265-2.385 1.004-1.589 1.54-2.797 1.612-3.628.144-1.371-.395-2.061-1.614-2.061-.574 0-1.167.121-1.777.391 1.186-3.868 3.434-5.757 6.762-5.637 2.473.06 3.628 1.664 3.493 4.797l-.013.01z"/></svg>
               Vimeo
             </span>
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#9146FF"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg>
+            <span class="c3h">
+              <svg class="c3f" viewBox="0 0 24 24" fill="#9146FF"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg>
               Twitch
             </span>
           </div>
@@ -833,41 +833,41 @@
       </div>
         </div>
 
-        <div class="hero-quote reveal d4">
+        <div class="chl reveal d4">
               <blockquote>"Even in beta, Solis AI already feels like the future of content creation. I pasted a link and got back a short I could actually use. Can't wait to see where this goes."</blockquote>
           <cite><span>@ Early access user</span></cite>
         </div>
 
     </section>
 
-    <section class="section" id="_how">
-      <div class="inner">
+    <section class="section" id="i1nx">
+      <div class="chv">
         <div class="header reveal">
           <h2 class="title">
-            Go from URL to publish-ready content <span class="solis-text">in minutes.</span>
+            Go from URL to publish-ready content <span class="c13y">in minutes.</span>
           </h2>
         </div>
 
         <div class="steps">
-          <div class="connector" aria-hidden="true"></div>
+          <div class="c7d" aria-hidden="true"></div>
           <div class="step reveal d1">
             <div class="num">1</div>
-            <h3 class="step-title">Paste your URL</h3>
-            <p class="step-desc">
+            <h3 class="c154">Paste your URL</h3>
+            <p class="c153">
               Drop any video link, YouTube, TikTok, Instagram and more. Our AI fetches and analyzes it instantly.
             </p>
           </div>
           <div class="step reveal d2">
             <div class="num">2</div>
-            <h3 class="step-title">Choose your Template</h3>
-            <p class="step-desc">
+            <h3 class="c154">Choose your Template</h3>
+            <p class="c153">
               Select a template to suit your content.
             </p>
           </div>
           <div class="step reveal d3">
             <div class="num">3</div>
-            <h3 class="step-title">Export</h3>
-            <p class="step-desc">
+            <h3 class="c154">Export</h3>
+            <p class="c153">
               Export your video in one click. Everything is automated, leaving customizing only an option.
             </p>
           </div>
@@ -875,20 +875,20 @@
       </div>
     </section>
 
-    <section class="section" id="_features">
-      <div class="inner">
+    <section class="section" id="i1nw">
+      <div class="chv">
         <div class="header reveal">
           <h2 class="title">
-            Not a tool. <span class="solis-text">An AI agent.</span>
+            Not a tool. <span class="c13y">An AI agent.</span>
           </h2>
           <p class="subtitle">
             Solis AI doesn't just clip videos. It thinks, plans, and executes, choosing the best path for every piece of content.
           </p>
         </div>
 
-        <div class="bento">
-          <div class="spotlight reveal">
-              <div class="spotlight-icon">
+        <div class="c2h">
+          <div class="c146 reveal">
+              <div class="c147">
                 <svg viewBox="0 0 24 24" fill="none" stroke="#c2410c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="30" height="30">
                   <rect x="4" y="4" width="16" height="16" rx="2" />
                   <rect x="9" y="9" width="6" height="6" />
@@ -907,7 +907,7 @@
                 <p class="desc">
                   One agent. Every step handled. Solis AI analyzes, refines, and transforms your videos into optimized content with intelligent decisions at every stage.
                 </p>
-                <div class="chips">
+                <div class="c5b">
                   <span class="chip">
                     <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><polyline points="1.5,6 4.5,9 10.5,3" /></svg>
                     Full Automation
@@ -934,24 +934,24 @@
 
           <div class="grid">
             <div class="feat reveal d1">
-              <div class="feat-icon">
+              <div class="ccy">
                 <svg viewBox="0 0 24 24" fill="none" stroke="#c2410c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
                   <path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21" />
                   <path d="M22 21H7" />
                   <path d="m5 11 9 9" />
                 </svg>
               </div>
-              <h3 class="feat-name">Overpurpose</h3>
-              <p class="feat-desc">
+              <h3 class="ccz">Overpurpose</h3>
+              <p class="ccx">
                 A powerful feature currently in development, coming out very soon.
               </p>
-              <div class="feat-tag">
+              <div class="cd0">
                 In development
               </div>
             </div>
 
             <div class="feat reveal d2">
-              <div class="feat-icon">
+              <div class="ccy">
                 <svg viewBox="0 0 24 24" fill="none" stroke="#c2410c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
                   <polyline points="17 1 21 5 17 9" />
                   <path d="M3 11V9a4 4 0 0 1 4-4h14" />
@@ -959,37 +959,37 @@
                   <path d="M21 13v2a4 4 0 0 1-4 4H3" />
                 </svg>
               </div>
-              <h3 class="feat-name">Dual Workflow</h3>
-              <p class="feat-desc">
+              <h3 class="ccz">Dual Workflow</h3>
+              <p class="ccx">
                 Long-form to short-form, or short-form to clean, remixed, repurposed content. Both directions, one engine.
               </p>
             </div>
 
             <div class="feat reveal d3">
-              <div class="feat-icon">
+              <div class="ccy">
                 <svg viewBox="0 0 24 24" fill="none" stroke="#c2410c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
                   <rect x="3" y="3" width="18" height="18" rx="2" />
                   <path d="M12 3v18" />
                 </svg>
               </div>
-              <h3 class="feat-name">Custom Layouts</h3>
-              <p class="feat-desc">
+              <h3 class="ccz">Custom Layouts</h3>
+              <p class="ccx">
                 Drag-to-adjust split-screen, swap positions, resize panels. No fixed templates, you control the composition.
               </p>
             </div>
 
             <div class="feat reveal d4">
-              <div class="feat-icon">
+              <div class="ccy">
                 <svg viewBox="0 0 24 24" fill="none" stroke="#c2410c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
                   <path d="M12 20h9" />
                   <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
                 </svg>
               </div>
-              <h3 class="feat-name">Post-Generation Editing</h3>
-              <p class="feat-desc">
+              <h3 class="ccz">Post-Generation Editing</h3>
+              <p class="ccx">
                 Change layout, remove elements, adjust captions, no full re-run needed. Edit after generation, instantly.
               </p>
-              <div class="feat-tag">
+              <div class="cd0">
                 <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="10" height="10"><path d="M1.5 6l3 3 6-6" /></svg>
                 Most requested
               </div>
@@ -1000,32 +1000,32 @@
     </section>
 
     <section class="section" style="padding-top: 0;">
-      <div class="inner">
+      <div class="chv">
         <div class="stats">
           <div class="feat stat reveal d1">
-            <div class="value solis-text">25x</div>
-            <p class="stat-label">Faster than manual editing</p>
+            <div class="value c13y">25x</div>
+            <p class="c14h">Faster than manual editing</p>
           </div>
           <div class="feat stat reveal d2">
-            <div class="value solis-text">No Credits</div>
-            <p class="stat-label">No confusing credits. Your plan includes daily usage limits.</p>
+            <div class="value c13y">No Credits</div>
+            <p class="c14h">No confusing credits. Your plan includes daily usage limits.</p>
           </div>
           <div class="feat stat reveal d3">
-            <div class="value solis-text">Flexibility</div>
-            <p class="stat-label">Customize at any time. No limits.</p>
+            <div class="value c13y">Flexibility</div>
+            <p class="c14h">Customize at any time. No limits.</p>
           </div>
           <div class="feat stat reveal d4">
-            <div class="value solis-text">Fast Gen.</div>
-            <p class="stat-label">Create short-form content within few minutes. No long waits.</p>
+            <div class="value c13y">Fast Gen.</div>
+            <p class="c14h">Create short-form content within few minutes. No long waits.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="section" id="_faq">
-      <div class="inner">
+    <section class="section" id="i1nv">
+      <div class="chv">
         <div class="header reveal">
-          <span class="eyebrow">
+          <span class="cco">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12" style="color:var(--solis-deep)">
               <path d="M9 9l.2 2.9a2 2 0 1 0 5.6 0L15 9" />
               <path d="M7.5 9H4a1 1 0 0 0-.9 1.4l1.8 3.6a2 2 0 0 1 0 1.6l-1.8 3.6a1 1 0 0 0 .9 1.4h13a1 1 0 0 0 .9-1.4l-1.8-3.6a2 2 0 0 1 0-1.6l1.8-3.6A1 1 0 0 0 17 9h-3.5" />
@@ -1037,52 +1037,52 @@
         </div>
         <div class="faqs reveal">
           <div class="faq">
-            <button class="faq-btn" type="button" aria-expanded="false">
+            <button class="ccr" type="button" aria-expanded="false">
               <span>What makes Solis AI different from other clip tools?</span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="6,9 12,15 18,9" /></svg>
             </button>
-            <div class="answer">
+            <div class="c1t">
               Solis AI is the first agentic content repurposing AI that goes beyond traditional clip tools. Unlike traditional solutions that rely on fixed templates and simple cuts, Solis AI understands your video, makes intelligent decisions, and transforms existing content into fresh, platform-ready videos. Before generation even begins, you can customize your preferences, choose your desired style, and guide how Solis AI processes your content. It adapts to your vision, giving you the flexibility to refine and control the final result.
             </div>
             </div>
           <div class="faq">
-            <button class="faq-btn" type="button" aria-expanded="false">
+            <button class="ccr" type="button" aria-expanded="false">
               <span>What video platforms are supported?</span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="6,9 12,15 18,9" /></svg>
             </button>
-            <div class="answer">
+            <div class="c1t">
               Solis AI supports YouTube, YouTube Shorts, TikTok, and Instagram, with more platforms coming soon. Just paste your video link and let Solis AI transform it into engaging short-form content.
               </div>
             </div>
           <div class="faq">
-            <button class="faq-btn" type="button" aria-expanded="false">
+            <button class="ccr" type="button" aria-expanded="false">
               <span>What does 'agentic' mean in this context?</span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="6,9 12,15 18,9" /></svg>
             </button>
-            <div class="answer">
+            <div class="c1t">
               Agentic means Solis AI doesn't just follow instructions, it makes intelligent decisions. It analyzes your content, finds the best moments, removes distractions, selects the right format, and handles the entire editing process for you. You get optimized, platform-ready clips without the manual work.
               </div>
             </div>
           <div class="faq">
-            <button class="faq-btn" type="button" aria-expanded="false">
+            <button class="ccr" type="button" aria-expanded="false">
               <span>Can I edit after generation?</span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="6,9 12,15 18,9" /></svg>
             </button>
-            <div class="answer">Yes. Solis AI lets you customize text, remove elements, adjust captions, swap positions and more, all without re-running the full generation again. This is one of our most-loved features.</div>
+            <div class="c1t">Yes. Solis AI lets you customize text, remove elements, adjust captions, swap positions and more, all without re-running the full generation again. This is one of our most-loved features.</div>
           </div>
           <div class="faq">
-            <button class="faq-btn" type="button" aria-expanded="false">
+            <button class="ccr" type="button" aria-expanded="false">
               <span>Is there a free trial?</span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="6,9 12,15 18,9" /></svg>
             </button>
-            <div class="answer">Absolutely. Every new account starts with a 7-day free trial on the Prime plan.</div>
+            <div class="c1t">Absolutely. Every new account starts with a 7-day free trial on the Prime plan.</div>
           </div>
           <div class="faq">
-            <button class="faq-btn" type="button" aria-expanded="false">
+            <button class="ccr" type="button" aria-expanded="false">
               <span>Is Solis AI new?</span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="6,9 12,15 18,9" /></svg>
             </button>
-            <div class="answer">Solis AI is very new, but the technology behind it has been in development for around a year. We're excited to bring it to the market and help creators create content faster and easier than ever before.</div>
+            <div class="c1t">Solis AI is very new, but the technology behind it has been in development for around a year. We're excited to bring it to the market and help creators create content faster and easier than ever before.</div>
           </div>
         </div>
       </div>
@@ -1091,18 +1091,18 @@
     <section style="position: relative; z-index: 1; padding: 0 20px;">
       <div class="cta">
         <div class="glow" aria-hidden="true"></div>
-        <div class="glow-b" aria-hidden="true"></div>
+        <div class="cff" aria-hidden="true"></div>
 
-        <h2 class="cta-title blur-in blur-1">
+        <h2 class="c83 c3e c3a">
           Ready to repurpose<br>smarter?
         </h2>
-        <p class="cta-subtitle blur-in blur-2">
+        <p class="c82 c3e c3b">
           Be among the first creators to experience a new era of AI-powered content creation. Save hours every week with Solis AI. Start free today, scale whenever you want.
         </p>
 
-        <div class="cta-wrap blur-in blur-3">
-          <div class="cta-pill" id="_cta-pill">
-            <span class="cta-icon">
+        <div class="c84 c3e c3c">
+          <div class="c80" id="i1ns">
+            <span class="c7y">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
                 <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
                 <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
@@ -1110,12 +1110,12 @@
             </span>
             <input
               type="url"
-              class="cta-input"
-              id="_cta-url"
+              class="c7z"
+              id="i1nt"
               placeholder="Drop any video link here..."
               aria-label="Video URL input"
             />
-            <button class="cta-btn" type="button">
+            <button class="c7w" type="button">
               <span>Get started</span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
                 <line x1="5" y1="12" x2="19" y2="12" />
@@ -1123,7 +1123,7 @@
               </svg>
             </button>
           </div>
-          <p class="cta-hint">
+          <p class="c7x">
             Works with <span>YouTube</span>, <span>TikTok</span>, <span>Instagram</span> and more
           </p>
         </div>
@@ -1134,17 +1134,17 @@
 
   <footer class="footer">
     <div class="foot card">
-      <div class="foot-grid">
-        <div class="foot-brand">
+      <div class="ce0">
+        <div class="cdz">
           <a href="/" class="brand">
             <svg viewBox="0 0 100 100" width="28" height="28" aria-hidden="true">
               <circle cx="50" cy="50" r="12" fill="#ea580c" />
               <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#ea580c" stroke-width="6" transform="rotate(45 50 50)" fill="none" />
               <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#ea580c" stroke-width="6" transform="rotate(-45 50 50)" fill="none" />
             </svg>
-            <span class="logotype">Solis AI</span><span class="logotype-beta">beta</span>
+            <span class="logotype">Solis AI</span><span class="cke">beta</span>
           </a>
-          <p class="tagline">
+          <p class="c1ee">
             The creator-first AI video repurposing studio. Turn long videos into platform-ready shorts in minutes.
           </p>
           <div class="status">
@@ -1155,9 +1155,9 @@
         <div class="col">
           <h4>Product</h4>
           <ul>
-            <li><a href="#_features" data-scroll="_features">Features</a></li>
-            <li><a href="#_how" data-scroll="_how">How it works</a></li>
-            <li><a href="#_faq" data-scroll="_faq">FAQ</a></li>
+            <li><a href="#i1nw" data-scroll="_features">Features</a></li>
+            <li><a href="#i1nx" data-scroll="_how">How it works</a></li>
+            <li><a href="#i1nv" data-scroll="_faq">FAQ</a></li>
             <li><a href="/premium.html">Pricing</a></li>
             <li><a href="/dashboard.html">Dashboard</a></li>
           </ul>
@@ -1195,7 +1195,7 @@
       </div>
       <div class="bottom">
         <p>&copy; <script>document.write(new Date().getFullYear())</script> Solis AI. Currently in beta, crafted for creators, everywhere. Paid plans billed via Paddle.</p>
-        <div class="social">
+        <div class="c12n">
           <a href="https://www.instagram.com/solisaivideo/" aria-label="Instagram">
             <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
               <path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 1 0 0-12.324zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405a1.441 1.441 0 0 1-2.88 0 1.441 1.441 0 0 1 2.88 0z" />
@@ -1228,7 +1228,7 @@
 
   <script>
   (function() {
-    var navbar = document.getElementById('_nav');
+    var navbar = document.getElementById('i1o0');
     function onScroll() {
       if (window.scrollY > 40) {
         navbar.classList.add('scrolled');
@@ -1238,10 +1238,10 @@
     }
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
-    var navToggle = document.getElementById('_toggle');
-    var navMobile = document.getElementById('_mobile');
-    var iconMenu = navToggle.querySelector('.menu-icon');
-    var iconClose = navToggle.querySelector('.close-icon');
+    var navToggle = document.getElementById('i1o2');
+    var navMobile = document.getElementById('i1nz');
+    var iconMenu = navToggle.querySelector('.ckl');
+    var iconClose = navToggle.querySelector('.c6n');
     var mobileOpen = false;
     navToggle.addEventListener('click', function() {
       mobileOpen = !mobileOpen;
@@ -1278,16 +1278,16 @@
         }
       });
     });
-    var urlPill = document.getElementById('_pill');
-    var urlInput = document.getElementById('_url');
+    var urlPill = document.getElementById('i1o1');
+    var urlInput = document.getElementById('i1o3');
     urlInput.addEventListener('focus', function() {
       urlPill.classList.add('focused');
     });
     urlInput.addEventListener('blur', function() {
       urlPill.classList.remove('focused');
     });
-    var ctaPill = document.getElementById('_cta-pill');
-    var ctaInput = document.getElementById('_cta-url');
+    var ctaPill = document.getElementById('i1ns');
+    var ctaInput = document.getElementById('i1nt');
     if (ctaPill && ctaInput) {
       ctaInput.addEventListener('focus', function() {
         ctaPill.classList.add('focused');
@@ -1295,19 +1295,19 @@
       ctaInput.addEventListener('blur', function() {
         ctaPill.classList.remove('focused');
       });
-    }    document.querySelectorAll('.pill-btn, .cta-btn').forEach(function(btn) {
+    }    document.querySelectorAll('.cqj, .c7w').forEach(function(btn) {
       btn.addEventListener('click', function() {
         window.location.href = '/login.html';
       });
     });
     var faqItems = document.querySelectorAll('.faq');
     faqItems.forEach(function(item) {
-      var btn = item.querySelector('.faq-btn');
+      var btn = item.querySelector('.ccr');
       btn.addEventListener('click', function() {
         var isOpen = item.classList.contains('open');
         faqItems.forEach(function(other) {
           other.classList.remove('open');
-          other.querySelector('.faq-btn').setAttribute('aria-expanded', 'false');
+          other.querySelector('.ccr').setAttribute('aria-expanded', 'false');
         });
         if (!isOpen) {
           item.classList.add('open');
@@ -1319,14 +1319,14 @@
       entries.forEach(function(entry) {
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
-          if (entry.target.classList.contains('pill-wrap') || entry.target.querySelector('.pill-wrap')) {
-            var pw = entry.target.classList.contains('pill-wrap') ? entry.target : entry.target.querySelector('.pill-wrap');
+          if (entry.target.classList.contains('cqr') || entry.target.querySelector('.cqr')) {
+            var pw = entry.target.classList.contains('cqr') ? entry.target : entry.target.querySelector('.cqr');
             if (pw) setTimeout(function() { pw.classList.add('revealed'); }, 600);
           }
         }
       });
     }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
-    document.querySelectorAll('.reveal, .blur-in').forEach(function(el) {
+    document.querySelectorAll('.reveal, .c3e').forEach(function(el) {
       revealObserver.observe(el);
     });
   })();

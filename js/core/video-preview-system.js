@@ -13,7 +13,7 @@ class VideoPreviewSystem {
   loadYouTubeIframe(e, t = false) {
     this.currentVideoId = e;
     this.isShortMode = t;
-    const n = document.getElementById("templateVideoPreview");
+    const n = document.getElementById("i24g");
     if (!n) return;
     if (t) {
       n.innerHTML = `\n                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; gap: 8px; border-radius: 8px; overflow: hidden; background: #000;">\n                    \x3c!-- LEFT: Original with native captions --\x3e\n                    <div style="flex: 1; position: relative; display: flex; flex-direction: column; min-height: 0;">\n                        <div style="font-size: 11px; color: #fff; padding: 6px 8px; background: rgba(0,0,0,0.8); text-align: center; font-weight: 600; flex-shrink: 0;">ORIGINAL</div>\n                        <div style="flex: 1; position: relative; overflow: hidden; border-radius: 4px; min-height: 0;">\n                            <iframe\n                                width="100%"\n                                height="100%"\n                                src="https://www.youtube.com/embed/${e}?rel=0&modestbranding=1"\n                                frameborder="0"\n                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"\n                                allowfullscreen\n                                style="border-radius: 4px; display: block;"\n                            ></iframe>\n                        </div>\n                    </div>\n\n                    \x3c!-- RIGHT: Captions removed + custom overlay --\x3e\n                    <div style="flex: 1; position: relative; display: flex; flex-direction: column; min-height: 0;">\n                        <div style="font-size: 11px; color: #fff; padding: 6px 8px; background: rgba(0,0,0,0.8); text-align: center; font-weight: 600; flex-shrink: 0;">MODIFIED</div>\n                        <div style="flex: 1; position: relative; overflow: hidden; border-radius: 4px; min-height: 0;">\n                            <iframe\n                                width="100%"\n                                height="100%"\n                                src="https://www.youtube.com/embed/${e}?rel=0&modestbranding=1"\n                                frameborder="0"\n                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"\n                                allowfullscreen\n                                style="border-radius: 4px; display: block; position: relative; z-index: 1;"\n                            ></iframe>\n                            <div id="previewOverlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 4px; pointer-events: none; z-index: 10;"></div>\n                        </div>\n                    </div>\n                </div>\n            `;
@@ -63,7 +63,7 @@ class VideoPreviewSystem {
     }
   }
   initializeComparisonCaptions(e) {
-    const t = document.getElementById("templateVideoPreview");
+    const t = document.getElementById("i24g");
     if (!t) return;
     const n = t.querySelectorAll('[style*="flex: 1"]');
     if (n.length < 2) return;
@@ -186,7 +186,7 @@ class VideoPreviewSystem {
     }
     let t = document.querySelector('[data-overlay="right"]') || document.getElementById("previewOverlay");
     if (!t) {
-      const e = document.getElementById("templateVideoPreview");
+      const e = document.getElementById("i24g");
       if (!e) return;
       t = document.createElement("div");
       t.id = "previewOverlay";

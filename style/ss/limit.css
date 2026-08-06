@@ -1,4 +1,4 @@
-.limit-overlay {
+.cjh {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.3);
@@ -17,7 +17,7 @@
     to { opacity: 1; }
 }
 
-.limit-modal {
+.cjg {
     background: #fff;
     border-radius: 28px;
     width: 100%;
@@ -35,19 +35,19 @@
     to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.limit-modal .panel-left {
+.cjg .cqf {
     width: 52%;
-    background: #FDF6F3;
+    background: #i1md;
     padding: 44px 40px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     position: relative;
-    border-right: 1px solid #EBEBEB;
+    border-right: 1px solid #i1m0;
     overflow: hidden;
 }
 
-.limit-modal .panel-left::before {
+.cjg .cqf::before {
     content: '';
     position: absolute;
     bottom: -70px;
@@ -55,12 +55,12 @@
     width: 240px;
     height: 240px;
     border-radius: 50%;
-    background: #FFD0C2;
+    background: #i1n7;
     opacity: 0.25;
     pointer-events: none;
 }
 
-.limit-modal .panel-left::after {
+.cjg .cqf::after {
     content: '';
     position: absolute;
     top: -50px;
@@ -68,17 +68,17 @@
     width: 160px;
     height: 160px;
     border-radius: 50%;
-    background: #FFD0C2;
+    background: #i1n7;
     opacity: 0.2;
     pointer-events: none;
 }
 
-.limit-modal .left-top {
+.cjg .cik {
     position: relative;
     z-index: 1;
 }
 
-.limit-modal .limit-wrap {
+.cjg .cjm {
     width: 64px;
     height: 64px;
     background: #fff;
@@ -98,7 +98,7 @@
     100% { transform: scale(1) rotate(0deg); opacity: 1; }
 }
 
-.limit-modal h1 {
+.cjg h1 {
     font-family: 'Instrument Serif', serif;
     font-size: 30px;
     color: #111;
@@ -109,7 +109,7 @@
     animation: limitFadeUp 0.35s ease 0.55s forwards;
 }
 
-.limit-modal .subtitle {
+.cjg .subtitle {
     font-size: 14px;
     color: #555;
     line-height: 1.65;
@@ -123,7 +123,7 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
-.limit-modal .usage-box {
+.cjg .c1jj {
     position: relative;
     z-index: 1;
     background: rgba(255, 255, 255, 0.7);
@@ -134,14 +134,14 @@
     animation: limitFadeUp 0.35s ease 0.71s forwards;
 }
 
-.limit-modal .usage-header {
+.cjg .c1jl {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
 }
 
-.limit-modal .usage-label {
+.cjg .c1jm {
     display: flex;
     align-items: center;
     gap: 6px;
@@ -150,13 +150,13 @@
     font-weight: 500;
 }
 
-.limit-modal .usage-count {
+.cjg .c1jk {
     font-size: 13px;
     font-weight: 600;
-    color: #FF6A3D;
+    color: #i1mj;
 }
 
-.limit-modal .usage-bar-track {
+.cjg .c1ji {
     background: rgba(0, 0, 0, 0.06);
     border-radius: 8px;
     height: 6px;
@@ -164,25 +164,25 @@
     margin-bottom: 8px;
 }
 
-.limit-modal .usage-bar-fill {
-    background: linear-gradient(to right, #FF6A3D, #FF9166);
+.cjg .c1jh {
+    background: linear-gradient(to right, #i1mj, #i1mu);
     height: 100%;
     border-radius: 8px;
     transition: width 0.3s ease;
 }
 
-.limit-modal .usage-note {
+.cjg .c1jn {
     font-size: 12px;
-    color: #AAA;
+    color: #i1lj;
     text-align: center;
 }
 
-.limit-modal .usage-note span {
-    color: #FF6A3D;
+.cjg .c1jn span {
+    color: #i1mj;
     font-weight: 600;
 }
 
-.limit-modal .panel-right {
+.cjg .cqg {
     flex: 1;
     padding: 32px 40px;
     display: flex;
@@ -191,7 +191,7 @@
     position: relative;
 }
 
-.limit-modal .close-btn {
+.cjg .c6k {
     position: absolute;
     top: 20px;
     right: 20px;
@@ -203,35 +203,35 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    color: #AAA;
+    color: #i1lj;
     transition: color 0.2s;
     border-radius: 10px;
 }
 
-.limit-modal .close-btn:hover {
+.cjg .c6k:hover {
     color: #555;
     background: rgba(0, 0, 0, 0.04);
 }
 
-.limit-modal .plans-label {
+.cjg .cti {
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #AAA;
+    color: #i1lj;
     margin-bottom: 16px;
 }
 
-.limit-modal .plan-options {
+.cjg .cs8 {
     display: grid;
     grid-template-columns: 1fr;
     gap: 12px;
     margin-bottom: 24px;
 }
 
-.limit-modal .plan-card {
+.cjg .cqx {
     position: relative;
-    border: 1px solid #EBEBEB;
+    border: 1px solid #i1m0;
     border-radius: 16px;
     padding: 16px;
     display: flex;
@@ -239,25 +239,25 @@
     gap: 12px;
     cursor: pointer;
     transition: all 0.2s;
-    background: #FFF;
+    background: #i1ni;
 }
 
-.limit-modal .plan-card:hover {
-    border-color: #DDD;
-    background: #FAFAFA;
+.cjg .cqx:hover {
+    border-color: #i1lt;
+    background: #i1mb;
 }
 
-.limit-modal .plan-card.highlighted {
-    border-color: #FF6A3D;
-    background: #FFF3EF;
+.cjg .cqx.highlighted {
+    border-color: #i1mj;
+    background: #i1nj;
 }
 
-.limit-modal .plan-card.current-plan {
-    border-color: #DDD;
+.cjg .cqx.current-plan {
+    border-color: #i1lt;
     opacity: 0.6;
 }
 
-.limit-modal .plan-card.current-plan::after {
+.cjg .cqx.current-plan::after {
     content: 'Current';
     position: absolute;
     top: 8px;
@@ -269,11 +269,11 @@
     text-transform: uppercase;
 }
 
-.limit-modal .popular-tag {
+.cjg .ctw {
     position: absolute;
     top: -8px;
     right: 16px;
-    background: #FF6A3D;
+    background: #i1mj;
     color: white;
     font-size: 10px;
     font-weight: 700;
@@ -283,7 +283,7 @@
     text-transform: uppercase;
 }
 
-.limit-modal .plan-card-icon {
+.cjg .cqz {
     width: 40px;
     height: 40px;
     display: flex;
@@ -292,44 +292,44 @@
     flex-shrink: 0;
 }
 
-.limit-modal .plan-card-icon svg {
+.cjg .cqz svg {
     width: 100%;
     height: 100%;
 }
 
-.limit-modal .plan-card-body {
+.cjg .cqy {
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 2px;
 }
 
-.limit-modal .plan-card-body strong {
+.cjg .cqy strong {
     font-size: 14px;
     color: #111;
     font-weight: 600;
 }
 
-.limit-modal .plan-card-body span {
+.cjg .cqy span {
     font-size: 12px;
-    color: #AAA;
+    color: #i1lj;
 }
 
-.limit-modal .plan-card-price {
+.cjg .cr0 {
     font-size: 13px;
     font-weight: 600;
     color: #111;
     white-space: nowrap;
 }
 
-.limit-modal .right-footer {
+.cjg .czg {
     padding-top: 16px;
-    border-top: 1px solid #EBEBEB;
+    border-top: 1px solid #i1m0;
 }
 
-.limit-modal .cta-btn {
+.cjg .c7w {
     width: 100%;
-    background: linear-gradient(135deg, #FF6A3D 0%, #FF5219 100%);
+    background: linear-gradient(135deg, #i1mj 0%, #i1mh 100%);
     color: white;
     border: none;
     padding: 13px 24px;
@@ -345,37 +345,37 @@
     transition: all 0.2s;
 }
 
-.limit-modal .cta-btn:hover {
+.cjg .c7w:hover {
     transform: translateY(-1px);
     box-shadow: 0 8px 20px rgba(255, 106, 61, 0.25);
 }
 
-.limit-modal .cta-btn:active {
+.cjg .c7w:active {
     transform: translateY(0);
 }
 
 @media (max-width: 640px) {
-    .limit-modal {
+    .cjg {
         flex-direction: column;
         min-height: auto;
     }
 
-    .limit-modal .panel-left {
+    .cjg .cqf {
         width: 100%;
         border-right: none;
-        border-bottom: 1px solid #EBEBEB;
+        border-bottom: 1px solid #i1m0;
         padding: 32px 24px;
     }
 
-    .limit-modal .panel-right {
+    .cjg .cqg {
         padding: 24px;
     }
 
-    .limit-modal h1 {
+    .cjg h1 {
         font-size: 24px;
     }
 
-    .limit-modal .plan-options {
+    .cjg .cs8 {
         grid-template-columns: 1fr;
     }
 }

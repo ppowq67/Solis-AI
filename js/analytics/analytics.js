@@ -254,13 +254,13 @@ class AnalyticsManager {
       const c = new TextEncoder;
       const l = c.encode(n);
       const u = await window.crypto.subtle.sign("HMAC", o, l);
-      const d = Array.from(new Uint8Array(u)).map(t => t.toString(16).padStart(2, "0")).join("");
+      const h = Array.from(new Uint8Array(u)).map(t => t.toString(16).padStart(2, "0")).join("");
       this._logSecurityEvent("REQUEST_SIGNED_SUCCESS", {
         endpoint: e,
         timestamp: s
       });
       return {
-        signature: d,
+        signature: h,
         timestamp: s,
         nonce: a
       };
@@ -319,13 +319,13 @@ class AnalyticsManager {
     }, 5e3);
   }
   setupFilterButtons() {
-    document.querySelectorAll(".period-btn").forEach(t => {
+    document.querySelectorAll(".cqh").forEach(t => {
       t.addEventListener("click", () => {
         const e = t.dataset.period;
         this.setTimePeriod(e);
       });
     });
-    document.querySelectorAll(".platform-btn").forEach(t => {
+    document.querySelectorAll(".ctj").forEach(t => {
       t.addEventListener("click", () => {
         const e = t.dataset.platform;
         this.setPlatformFilter(e);
@@ -334,7 +334,7 @@ class AnalyticsManager {
   }
   setTimePeriod(t) {
     this.analyticsData.currentPeriod = t;
-    document.querySelectorAll(".period-btn").forEach(e => {
+    document.querySelectorAll(".cqh").forEach(e => {
       e.classList.remove("active");
       if (e.dataset.period === t) {
         e.classList.add("active");
@@ -344,7 +344,7 @@ class AnalyticsManager {
   }
   setPlatformFilter(t) {
     this.analyticsData.currentPlatform = t;
-    document.querySelectorAll(".platform-btn").forEach(e => {
+    document.querySelectorAll(".ctj").forEach(e => {
       e.classList.remove("active");
       if (e.dataset.platform === t) {
         e.classList.add("active");
@@ -374,8 +374,8 @@ class AnalyticsManager {
         const easeOutQuad = t => 1 - (1 - t) * (1 - t);
         const l = easeOutQuad(c);
         const u = Math.floor(r + (e - r) * l);
-        const d = s + this.formatNumber(u) + a;
-        this._safeSetTextContent(t, d);
+        const h = s + this.formatNumber(u) + a;
+        this._safeSetTextContent(t, h);
         if (c < 1) {
           requestAnimationFrame(updateValue);
         } else {
@@ -577,7 +577,7 @@ class AnalyticsManager {
       if (e) this._safeSetTextContent(e, "0");
       const i = document.querySelector('[data-card="views"] .card-value');
       if (i) this._safeSetTextContent(i, "0");
-      document.querySelectorAll(".card-trend span").forEach(t => {
+      document.querySelectorAll(".c4h span").forEach(t => {
         this._safeSetTextContent(t, "0%");
         t.parentElement.className = "card-trend trend-neutral";
         const e = t.parentElement.querySelector("i");
@@ -612,7 +612,7 @@ class AnalyticsManager {
   }
   updateTrends() {
     if (!this.isConnected) {
-      document.querySelectorAll(".card-trend").forEach(t => {
+      document.querySelectorAll(".c4h").forEach(t => {
         t.className = "card-trend trend-neutral";
         const e = t.querySelector("span");
         if (e) e.textContent = "0%";
@@ -646,7 +646,7 @@ class AnalyticsManager {
     for (const [t, e] of Object.entries(i)) {
       const i = document.querySelector(`[data-card="${t}"]`);
       if (i) {
-        const t = i.querySelector(".card-trend");
+        const t = i.querySelector(".c4h");
         if (t) {
           const i = t.querySelector("span");
           const s = Math.abs(e);
@@ -691,7 +691,7 @@ class AnalyticsManager {
     this.drawPlatformChart();
   }
   drawUsageChart() {
-    const t = document.getElementById("usageChart");
+    const t = document.getElementById("i256");
     if (!t) return;
     if (typeof Chart === "undefined") {
       this._logSecurityEvent("CHART_LIB_UNAVAILABLE", {});
@@ -840,7 +840,7 @@ class AnalyticsManager {
     }
   }
   drawPlatformChart() {
-    const t = document.getElementById("platformChart");
+    const t = document.getElementById("i1yy");
     if (!t) return;
     if (typeof Chart === "undefined") {
       this._logSecurityEvent("CHART_LIB_UNAVAILABLE", {});

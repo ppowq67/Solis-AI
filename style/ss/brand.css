@@ -1,4 +1,4 @@
-.brand-text {
+.c3i {
   opacity: 0;
   width: 0;
   overflow: hidden;
@@ -11,9 +11,9 @@
 
   background: linear-gradient(
       135deg,
-      #ff6b35 0%,
-      #ff8856 50%,
-      #ff6b35 100%
+      #i1uf 0%,
+      #i1us 50%,
+      #i1uf 100%
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -24,7 +24,7 @@
   display: inline-block;
 }
 
-.ai-logo:hover + .brand-text {
+.c19:hover + .c3i {
   opacity: 1;
   width: auto;
   margin-left: 12px;

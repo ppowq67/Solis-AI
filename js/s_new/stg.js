@@ -1,11 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const e = document.getElementById("stgBackdrop");
-  const t = document.getElementById("stgModal");
-  const n = document.getElementById("stgClose");
-  const o = document.getElementById("stgUpgradeBtn");
-  const i = document.getElementById("dropdownSettings");
-  const s = document.getElementById("stgLogoutBtn");
-  const a = document.getElementById("stgMainTitle");
+  const e = document.getElementById("i216");
+  const t = document.getElementById("i22f");
+  const n = document.getElementById("i21d");
+  const o = document.getElementById("i23d");
+  const i = document.getElementById("i1rb");
+  const s = document.getElementById("i221");
+  const a = document.getElementById("i222");
   const r = {
     profile: "Profile",
     account: "Account",
@@ -16,8 +16,8 @@ document.addEventListener("DOMContentLoaded", () => {
     subscription: "Billing/Usage",
     support: "Support"
   };
-  const l = "solis_effort_ui_mode";
-  const c = "solis_plugin_auto_captions";
+  const c = "solis_effort_ui_mode";
+  const l = "solis_plugin_auto_captions";
   const d = "solis_plugin_auto_sfx";
   function readPluginFlag(e, t = false) {
     try {
@@ -30,29 +30,29 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   window.getSolisPluginPrefs = function getSolisPluginPrefs() {
     return {
-      auto_captions: readPluginFlag(c, false),
+      auto_captions: readPluginFlag(l, false),
       auto_sfx: false
     };
   };
   function readEffortUiMode() {
     try {
-      const e = localStorage.getItem(l);
+      const e = localStorage.getItem(c);
       if (e === "slider" || e === "flyout") return e;
     } catch (e) {}
     return "slider";
   }
   function persistEffortUiMode(e) {
     try {
-      localStorage.setItem(l, e);
+      localStorage.setItem(c, e);
     } catch (e) {}
   }
   function syncEffortUiToggle() {
-    const e = document.getElementById("stgEffortSliderToggle");
-    const t = document.getElementById("stgEffortUiLabel");
+    const e = document.getElementById("i21x");
+    const t = document.getElementById("i21y");
     const n = readEffortUiMode();
     const o = n === "flyout";
     if (e) {
-      e.classList.toggle("is-on", o);
+      e.classList.toggle("cic", o);
       e.setAttribute("aria-checked", o ? "true" : "false");
     }
     if (t) t.textContent = o ? "On" : "Off";
@@ -68,9 +68,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
   function syncThemeCards() {
-    document.querySelectorAll(".stgThemeCard[data-theme-choice]").forEach(e => {
+    document.querySelectorAll(".c1au[data-theme-choice]").forEach(e => {
       const t = e.getAttribute("data-theme-choice") === "white";
-      e.classList.toggle("is-selected", t);
+      e.classList.toggle("cif", t);
       e.setAttribute("aria-checked", t ? "true" : "false");
     });
   }
@@ -78,14 +78,14 @@ document.addEventListener("DOMContentLoaded", () => {
     let t = e;
     if (t === "connections" || t === "connectors" || t === "plugins") return;
     t = r[t] ? t : "profile";
-    document.querySelectorAll(".stgNavBtn[data-stg-panel]").forEach(e => {
+    document.querySelectorAll(".c18k[data-stg-panel]").forEach(e => {
       const n = e.getAttribute("data-stg-panel") === t;
-      e.classList.toggle("is-active", n);
+      e.classList.toggle("ci6", n);
       e.setAttribute("aria-selected", n ? "true" : "false");
     });
-    document.querySelectorAll(".stgPanel").forEach(e => {
+    document.querySelectorAll(".c18w").forEach(e => {
       const n = e.getAttribute("data-stg-panel") === t;
-      e.classList.toggle("is-active", n);
+      e.classList.toggle("ci6", n);
       e.classList.remove("stg-panel-enter");
       if (n && isMobileSettings()) {
         void e.offsetWidth;
@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
       void t.offsetWidth;
     }
     t.setAttribute("data-stg-view", n);
-    const i = document.getElementById("stgMobileBack");
+    const i = document.getElementById("i22c");
     if (i) i.hidden = n !== "panel";
     if (n === "home") {
       mountMobileSettingsHero();
@@ -128,18 +128,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
   function mountMobileSettingsHero() {
-    const e = document.getElementById("stgMobileHeroInner");
-    const t = document.getElementById("stgProfileHero");
-    const n = document.getElementById("stgPanelProfile");
+    const e = document.getElementById("i22e");
+    const t = document.getElementById("i233");
+    const n = document.getElementById("i22t");
     if (!e || !t || !n) return;
     if (t.parentElement !== e) {
       e.appendChild(t);
     }
   }
   function restoreDesktopProfileHero() {
-    const e = document.getElementById("stgProfileHero");
-    const t = document.getElementById("stgPanelProfile");
-    const n = t?.querySelector(".stgPanelLead");
+    const e = document.getElementById("i233");
+    const t = document.getElementById("i22t");
+    const n = t?.querySelector(".c18x");
     if (!e || !t) return;
     if (e.parentElement === t) return;
     if (n && n.nextSibling) {
@@ -150,13 +150,13 @@ document.addEventListener("DOMContentLoaded", () => {
       t.prepend(e);
     }
   }
-  document.querySelectorAll(".stgNavBtn[data-stg-panel]").forEach(e => {
+  document.querySelectorAll(".c18k[data-stg-panel]").forEach(e => {
     e.addEventListener("click", () => {
-      if (e.disabled || e.classList.contains("is-disabled")) return;
+      if (e.disabled || e.classList.contains("ci7")) return;
       switchSettingsPanel(e.getAttribute("data-stg-panel"));
     });
   });
-  document.getElementById("stgMobileBack")?.addEventListener("click", () => {
+  document.getElementById("i22c")?.addEventListener("click", () => {
     setSettingsMobileView("home");
   });
   window.addEventListener("resize", () => {
@@ -168,17 +168,17 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       restoreDesktopProfileHero();
       t.removeAttribute("data-stg-view");
-      const e = document.querySelector(".stgNavBtn.is-active[data-stg-panel]");
+      const e = document.querySelector(".c18k.ci6[data-stg-panel]");
       switchSettingsPanel(e?.getAttribute("data-stg-panel") || "profile");
     }
   });
-  document.getElementById("stgMobileHero")?.addEventListener("click", e => {
-    if (e.target.closest("#stgEditHeaderBtn, #stgAvatarContainer, .stgNameInput, .stgBioInput")) return;
+  document.getElementById("i22d")?.addEventListener("click", e => {
+    if (e.target.closest("#i21w, #i214, .c18i, .c15p")) return;
     if (isMobileSettings() && t?.getAttribute("data-stg-view") === "home") {
       switchSettingsPanel("profile");
     }
   });
-  const u = document.getElementById("stgEffortSliderToggle");
+  const u = document.getElementById("i21x");
   if (u) {
     syncEffortUiToggle();
     applyEffortUiMode(readEffortUiMode());
@@ -187,20 +187,20 @@ document.addEventListener("DOMContentLoaded", () => {
       applyEffortUiMode(e);
     });
   }
-  const f = document.getElementById("stgAdvancedToggle");
-  const g = f?.closest(".stgAdvanced");
-  const p = document.getElementById("stgAdvancedBody");
-  if (f && g && p) {
+  const f = document.getElementById("i212");
+  const m = f?.closest(".c15g");
+  const p = document.getElementById("i211");
+  if (f && m && p) {
     f.addEventListener("click", () => {
-      const e = !g.classList.contains("is-open");
-      g.classList.toggle("is-open", e);
+      const e = !m.classList.contains("cid");
+      m.classList.toggle("cid", e);
       f.setAttribute("aria-expanded", e ? "true" : "false");
       if (e) p.removeAttribute("hidden"); else p.setAttribute("hidden", "");
     });
   }
-  document.querySelectorAll(".stgThemeCard[data-theme-choice]").forEach(e => {
+  document.querySelectorAll(".c1au[data-theme-choice]").forEach(e => {
     e.addEventListener("click", () => {
-      if (e.disabled || e.classList.contains("is-disabled")) return;
+      if (e.disabled || e.classList.contains("ci7")) return;
       const t = e.getAttribute("data-theme-choice");
       if (t !== "white") return;
       if (typeof setTheme === "function") setTheme("light"); else {
@@ -213,10 +213,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
   syncThemeCards();
-  const m = "solis_privacy_improve_product";
+  const g = "solis_privacy_improve_product";
   function readImproveSolis() {
     try {
-      const e = localStorage.getItem(m);
+      const e = localStorage.getItem(g);
       if (e === null || e === undefined) return true;
       return e === "1" || e === "true";
     } catch (e) {
@@ -225,35 +225,35 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   function setImproveSolis(e) {
     try {
-      localStorage.setItem(m, e ? "1" : "0");
+      localStorage.setItem(g, e ? "1" : "0");
     } catch (e) {}
     syncPrivacyToggles();
   }
   function syncPrivacyToggles() {
-    const e = document.getElementById("stgPrivacyImproveToggle");
-    const t = document.getElementById("stgPrivacyMemoryToggle");
+    const e = document.getElementById("i231");
+    const t = document.getElementById("i232");
     const n = readImproveSolis();
     if (e) {
-      e.classList.toggle("is-on", n);
+      e.classList.toggle("cic", n);
       e.setAttribute("aria-checked", n ? "true" : "false");
     }
     const o = window.SolisMemory?.isEnabled ? !!window.SolisMemory.isEnabled() : true;
     if (t) {
-      t.classList.toggle("is-on", o);
+      t.classList.toggle("cic", o);
       t.setAttribute("aria-checked", o ? "true" : "false");
     }
   }
-  document.getElementById("stgPrivacyImproveToggle")?.addEventListener("click", () => {
+  document.getElementById("i231")?.addEventListener("click", () => {
     setImproveSolis(!readImproveSolis());
   });
-  document.getElementById("stgPrivacyMemoryToggle")?.addEventListener("click", () => {
+  document.getElementById("i232")?.addEventListener("click", () => {
     if (!window.SolisMemory?.setEnabled) return;
     window.SolisMemory.setEnabled(!window.SolisMemory.isEnabled());
     syncPrivacyToggles();
   });
-  document.getElementById("stgPrivacyClearMemoryBtn")?.addEventListener("click", () => {
+  document.getElementById("i230")?.addEventListener("click", () => {
     if (window.SolisMemory?.clearAll) window.SolisMemory.clearAll();
-    const e = document.getElementById("stgPrivacyClearMemoryBtn");
+    const e = document.getElementById("i230");
     if (e) {
       const t = e.textContent;
       e.textContent = "Cleared";
@@ -267,7 +267,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (i) {
     i.addEventListener("click", e => {
       e.preventDefault();
-      const t = document.getElementById("profileDropdown");
+      const t = document.getElementById("i20a");
       if (t) t.classList.remove("open");
       openSettingsModal();
     });
@@ -286,30 +286,30 @@ document.addEventListener("DOMContentLoaded", () => {
   function openSettingsModal(n) {
     document.body.classList.add("stg-open");
     document.body.style.overflow = "hidden";
-    document.getElementById("navWrapper")?.classList.add("disabled");
+    document.getElementById("i1xs")?.classList.add("disabled");
     if (isMobileSettings()) {
       if (n && r[n]) {
-        document.querySelectorAll(".stgNavBtn[data-stg-panel]").forEach(e => {
+        document.querySelectorAll(".c18k[data-stg-panel]").forEach(e => {
           const t = e.getAttribute("data-stg-panel") === n;
-          e.classList.toggle("is-active", t);
+          e.classList.toggle("ci6", t);
           e.setAttribute("aria-selected", t ? "true" : "false");
         });
-        document.querySelectorAll(".stgPanel").forEach(e => {
-          e.classList.toggle("is-active", e.getAttribute("data-stg-panel") === n);
+        document.querySelectorAll(".c18w").forEach(e => {
+          e.classList.toggle("ci6", e.getAttribute("data-stg-panel") === n);
         });
         if (a) a.textContent = r[n] || "Settings";
         t?.setAttribute("data-stg-view", "panel");
-        const e = document.getElementById("stgMobileBack");
+        const e = document.getElementById("i22c");
         if (e) e.hidden = false;
       } else {
-        document.querySelectorAll(".stgNavBtn[data-stg-panel]").forEach(e => {
-          e.classList.remove("is-active");
+        document.querySelectorAll(".c18k[data-stg-panel]").forEach(e => {
+          e.classList.remove("ci6");
           e.setAttribute("aria-selected", "false");
         });
         t?.setAttribute("data-stg-view", "home");
         mountMobileSettingsHero();
         if (a) a.textContent = "Settings";
-        const e = document.getElementById("stgMobileBack");
+        const e = document.getElementById("i22c");
         if (e) e.hidden = true;
       }
     } else {
@@ -331,7 +331,7 @@ document.addEventListener("DOMContentLoaded", () => {
     t?.classList.remove("open");
     document.body.classList.remove("stg-open");
     document.body.style.overflow = "";
-    document.getElementById("navWrapper")?.classList.remove("disabled");
+    document.getElementById("i1xs")?.classList.remove("disabled");
   }
   async function fetchSecureSettingsData() {
     const e = typeof getAuthHeaders === "function" ? getAuthHeaders() : {
@@ -444,21 +444,21 @@ document.addEventListener("DOMContentLoaded", () => {
     if (n) n.textContent = t;
   }
   function setSubscriptionLoading(e) {
-    const t = document.getElementById("stgPanelBilling") || document.getElementById("stgPanelSubscription");
+    const t = document.getElementById("i22o") || document.getElementById("i22u");
     if (!t) return;
-    t.classList.toggle("is-loading", !!e);
+    t.classList.toggle("cia", !!e);
     t.classList.toggle("is-ready", !e);
   }
   function syncBillingCancelUI(e = {}) {
-    const t = document.getElementById("stgBillingActions");
-    const n = document.getElementById("stgCancelSubBtn");
-    const o = document.getElementById("stgCancelSubHint");
+    const t = document.getElementById("i217");
+    const n = document.getElementById("i21a");
+    const o = document.getElementById("i21b");
     if (!t || !n) return;
     const i = String(e.plan || "free").toLowerCase();
     const s = String(e.status || e.planStatus || "").toLowerCase();
     const a = i !== "free";
     const r = s === "cancelled" || s === "canceled";
-    const l = e.canCancel === true || a && !r && e.hasPaddle !== false && s !== "inactive";
+    const c = e.canCancel === true || a && !r && e.hasPaddle !== false && s !== "inactive";
     t.hidden = !a;
     if (!a) return;
     if (r) {
@@ -470,14 +470,14 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       return;
     }
-    n.disabled = !l;
+    n.disabled = !c;
     n.textContent = "Cancel subscription";
     if (o) {
-      o.textContent = l ? "Stops future renewals through Paddle. You keep access until the end of the current billing period." : "Subscription is not linked to Paddle yet. Contact support if you need to cancel.";
+      o.textContent = c ? "Stops future renewals through Paddle. You keep access until the end of the current billing period." : "Subscription is not linked to Paddle yet. Contact support if you need to cancel.";
     }
   }
   async function cancelSubscriptionViaPaddle() {
-    const e = document.getElementById("stgCancelSubBtn");
+    const e = document.getElementById("i21a");
     if (e?.disabled) return;
     const t = confirm("⚠️ Cancel subscription — immediate action\n\n" + "This takes effect right away for billing:\n" + "• Future renewals stop immediately\n" + "• You keep your current plan until the end of this billing period\n" + "• After that date you drop to Free (no refund for unused days)\n\n" + "Continue?");
     if (!t) return;
@@ -580,12 +580,12 @@ document.addEventListener("DOMContentLoaded", () => {
     setText("stgName", e.name || e.username || "Guest User");
     setText("stgUserEmail", e.email || "unknown@email.com");
     setText("stgEmailAddress", e.email || "unknown@email.com");
-    const t = document.getElementById("stgBio");
-    const n = document.getElementById("stgProfileHero");
+    const t = document.getElementById("i218");
+    const n = document.getElementById("i233");
     if (t && !n?.classList.contains("is-editing")) {
       t.textContent = e.bio || "";
     }
-    const i = document.getElementById("stgAvatar");
+    const i = document.getElementById("i213");
     if (i) {
       const t = typeof resolveAvatarUrl === "function" ? resolveAvatarUrl(e) : e.picture || e.avatar || null;
       const n = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>';
@@ -607,16 +607,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     setSubscriptionLoading(true);
     const s = String(e.plan || "free").toLowerCase();
-    const a = document.getElementById("stgPlanBanner");
-    const r = document.getElementById("stgPlanMeta");
-    const l = document.getElementById("stgPlanCompare");
-    const c = document.getElementById("stgQuotaGrid");
+    const a = document.getElementById("i22x");
+    const r = document.getElementById("i22z");
+    const c = document.getElementById("i22y");
+    const l = document.getElementById("i234");
     const applyPlanBanner = e => {
       if (a) a.setAttribute("data-plan", e);
       const t = e === "free";
       if (r) r.hidden = t;
-      if (l) l.hidden = !t;
-      if (c) c.hidden = t;
+      if (c) c.hidden = !t;
+      if (l) l.hidden = t;
     };
     if ([ "free", "basic", "prime", "elite" ].includes(s)) {
       setText("stgCurrentPlan", s.charAt(0).toUpperCase() + s.slice(1));
@@ -624,7 +624,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     try {
       const {profile: t, subscription: n, clipsStatus: i, storageInfo: s} = await fetchSecureSettingsData();
-      const a = document.getElementById("stgProfileHero")?.classList.contains("is-editing");
+      const a = document.getElementById("i233")?.classList.contains("is-editing");
       if (t.name) {
         setText("stgName", t.name);
         if (!a && window.currentUser) {
@@ -657,7 +657,7 @@ document.addEventListener("DOMContentLoaded", () => {
           window.currentUser.picture = n;
           window.currentUser.avatar = n;
         }
-        const o = document.getElementById("stgAvatar");
+        const o = document.getElementById("i213");
         const i = typeof resolveAvatarUrl === "function" ? resolveAvatarUrl({
           ...e,
           ...t,
@@ -678,81 +678,81 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
       const r = String(t.plan || "free").toLowerCase();
-      const l = [ "free", "basic", "prime", "elite" ];
-      const c = l.includes(r) ? r : "free";
-      const d = c.charAt(0).toUpperCase() + c.slice(1);
-      const u = c === "free";
+      const c = [ "free", "basic", "prime", "elite" ];
+      const l = c.includes(r) ? r : "free";
+      const d = l.charAt(0).toUpperCase() + l.slice(1);
+      const u = l === "free";
       setText("stgCurrentPlan", d);
-      applyPlanBanner(c);
+      applyPlanBanner(l);
       if (o) {
-        o.classList.toggle("hidden", c === "elite" || u);
+        o.classList.toggle("hidden", l === "elite" || u);
       }
       const f = i && typeof i === "object" ? i : {};
-      const g = f.storage?.videos || {};
+      const m = f.storage?.videos || {};
       const p = f.storage?.space_mb || {};
-      const m = f.daily || {};
+      const g = f.daily || {};
       const w = f.monthly || {};
       const y = f.max_effort || {};
-      const h = Math.max(1, Number(g.limit ?? f.plan?.videos_space ?? 2) || 2);
-      const b = Math.max(0, Number(g.used ?? 0) || 0);
+      const h = Math.max(1, Number(m.limit ?? f.plan?.videos_space ?? 2) || 2);
+      const b = Math.max(0, Number(m.used ?? 0) || 0);
       setText("stgVideosUsed", b + " / " + h);
-      setQuotaFill(document.getElementById("stgVideosFill"), b, h);
+      setQuotaFill(document.getElementById("i23f"), b, h);
       let E = Math.max(0, Number(p.used) || 0) * 1024 * 1024;
       let v = Math.max(1, Number(p.total) || 512) * 1024 * 1024;
       if (Number(f.plan?.storage_gb) > 0 && (!p.total || p.total <= 0)) {
         v = Number(f.plan.storage_gb) * 1024 * 1024 * 1024;
       }
       setText("stgStorage", formatStoragePair(E, v));
-      setQuotaFill(document.getElementById("stgStorageFill"), E, v);
-      const S = Math.max(0, Number(m.limit ?? f.plan?.videos_per_day ?? 0) || 0);
-      const C = Math.max(0, Number(m.used ?? 0) || 0);
+      setQuotaFill(document.getElementById("i23c"), E, v);
+      const S = Math.max(0, Number(g.limit ?? f.plan?.videos_per_day ?? 0) || 0);
+      const x = Math.max(0, Number(g.used ?? 0) || 0);
       if (S > 0) {
-        setText("stgDailyGens", C + " / " + S);
-        setQuotaFill(document.getElementById("stgDailyFill"), C, S);
+        setText("stgDailyGens", x + " / " + S);
+        setQuotaFill(document.getElementById("i21t"), x, S);
         const e = document.getElementById("stgDailyHint");
         if (e) {
-          if (m.resets_at) {
-            e.textContent = formatQuotaResetHint(m.resets_at, C >= S ? "Daily quota reached. Resets {when}." : "Resets {when}.");
+          if (g.resets_at) {
+            e.textContent = formatQuotaResetHint(g.resets_at, x >= S ? "Daily quota reached. Resets {when}." : "Resets {when}.");
           }
         }
       } else {
         setText("stgDailyGens", "—");
-        setQuotaFill(document.getElementById("stgDailyFill"), 0, 1);
+        setQuotaFill(document.getElementById("i21t"), 0, 1);
       }
       const I = Math.max(0, Number(w.limit ?? f.plan?.videos_per_month ?? 0) || 0);
-      const B = Math.max(0, Number(w.used ?? 0) || 0);
+      const C = Math.max(0, Number(w.used ?? 0) || 0);
       if (I > 0) {
-        setText("stgMonthlyGens", B + " / " + I);
-        setQuotaFill(document.getElementById("stgMonthlyFill"), B, I);
-        const e = document.getElementById("stgMonthlyHint");
+        setText("stgMonthlyGens", C + " / " + I);
+        setQuotaFill(document.getElementById("i22g"), C, I);
+        const e = document.getElementById("i22i");
         if (e) {
-          e.textContent = formatQuotaResetHint(w.resets_at, B >= I ? "Monthly quota reached. Resets {when}." : "Resets {when}.");
+          e.textContent = formatQuotaResetHint(w.resets_at, C >= I ? "Monthly quota reached. Resets {when}." : "Resets {when}.");
         }
       } else {
         setText("stgMonthlyGens", "—");
-        setQuotaFill(document.getElementById("stgMonthlyFill"), 0, 1);
+        setQuotaFill(document.getElementById("i22g"), 0, 1);
       }
-      const x = Number(y.limit ?? 0);
-      const M = Number(y.used ?? 0);
-      const L = y.remaining;
-      if (x > 0) {
-        setText("stgMaxEffort", M + " / " + x + " used");
-        setQuotaFill(document.getElementById("stgMaxFill"), M, x);
-        const e = document.getElementById("stgMaxHint");
+      const L = Number(y.limit ?? 0);
+      const B = Number(y.used ?? 0);
+      const U = y.remaining;
+      if (L > 0) {
+        setText("stgMaxEffort", B + " / " + L + " used");
+        setQuotaFill(document.getElementById("i224"), B, L);
+        const e = document.getElementById("i225");
         if (e) {
-          const t = Math.max(0, Number(L ?? x - M));
+          const t = Math.max(0, Number(U ?? L - B));
           e.textContent = t > 0 ? t + " Premium Request" + (t === 1 ? "" : "s") + " left in this window." : "Premium Requests locked until reset.";
         }
       } else {
         setText("stgMaxEffort", "Not on your plan");
-        setQuotaFill(document.getElementById("stgMaxFill"), 0, 1);
-        const e = document.getElementById("stgMaxHint");
+        setQuotaFill(document.getElementById("i224"), 0, 1);
+        const e = document.getElementById("i225");
         if (e) e.textContent = "Upgrade to Prime or Elite for Premium Requests.";
       }
-      const U = formatRenewalLabel(t.subscription_end_date || t.plan_expires_at, t.plan_status);
-      if (U) setText("stgRenewalDate", U); else if (!u) setText("stgRenewalDate", "Active subscription"); else setText("stgRenewalDate", "No active subscription");
+      const M = formatRenewalLabel(t.subscription_end_date || t.plan_expires_at, t.plan_status);
+      if (M) setText("stgRenewalDate", M); else if (!u) setText("stgRenewalDate", "Active subscription"); else setText("stgRenewalDate", "No active subscription");
       syncBillingCancelUI({
-        plan: c,
+        plan: l,
         planStatus: t.plan_status || t.subscription_status,
         hasPaddle: !!(t.paddle_subscription_id || n?.paddleSubscriptionId),
         canCancel: n?.canCancel,
@@ -786,7 +786,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const o = document.getElementById("stgYouTubeConnector");
     if (t) {
       t.textContent = e ? "Connected" : "Not connected";
-      t.classList.toggle("is-on", e);
+      t.classList.toggle("cic", e);
     }
     if (n) {
       n.textContent = e ? "Disconnect" : "Connect";
@@ -810,14 +810,14 @@ document.addEventListener("DOMContentLoaded", () => {
   window.closeSettingsModal = closeSettingsModal;
   window.updateSettingsModal = updateSettingsModal;
   window.switchSettingsPanel = switchSettingsPanel;
-  const y = document.getElementById("stgEditHeaderBtn");
+  const y = document.getElementById("i21w");
   let h = false;
   function setProfileEditing(e) {
-    const t = document.getElementById("stgProfileHero");
-    const n = document.getElementById("stgName");
-    const o = document.getElementById("stgBio");
-    const i = document.getElementById("stgNameInput");
-    const s = document.getElementById("stgBioInput");
+    const t = document.getElementById("i233");
+    const n = document.getElementById("i22j");
+    const o = document.getElementById("i218");
+    const i = document.getElementById("i22k");
+    const s = document.getElementById("i219");
     if (!t || !i || !s || !y) return;
     h = !!e;
     t.classList.toggle("is-editing", h);
@@ -842,8 +842,8 @@ document.addEventListener("DOMContentLoaded", () => {
       setProfileEditing(true);
       return;
     }
-    const e = document.getElementById("stgNameInput");
-    const t = document.getElementById("stgBioInput");
+    const e = document.getElementById("i22k");
+    const t = document.getElementById("i219");
     saveProfileChanges(e?.value?.trim() || "", t?.value?.trim() || "");
   }
   async function saveProfileChanges(e, t) {
@@ -901,7 +901,7 @@ document.addEventListener("DOMContentLoaded", () => {
           localStorage.setItem("currentUser", JSON.stringify(t));
         }
       } catch (e) {}
-      document.querySelectorAll(".user-name, #dropdownUserName, #menuUserName").forEach(e => {
+      document.querySelectorAll(".c1k9, #i1rd, #menuUserName").forEach(e => {
         if (e) e.textContent = a;
       });
       if (typeof window.apiCache?.clearUserProfile === "function") {
@@ -919,19 +919,19 @@ document.addEventListener("DOMContentLoaded", () => {
       cancelProfileEdit();
     }
   }
-  const b = document.getElementById("pfpFileInput");
-  const E = document.getElementById("stgAvatarContainer");
-  const v = document.getElementById("stgCropBackdrop");
-  const S = document.getElementById("stgCropModal");
-  const C = document.getElementById("stgCropImg");
-  const I = document.getElementById("stgCropViewport");
-  const B = document.getElementById("stgCropStage");
-  const x = document.getElementById("stgCropZoom");
-  const M = document.getElementById("stgCropSave");
-  let L = false;
-  let U = 0;
-  const P = 4e3;
-  const T = 5 * 1024 * 1024;
+  const b = document.getElementById("i1y8");
+  const E = document.getElementById("i214");
+  const v = document.getElementById("i21g");
+  const S = document.getElementById("i21k");
+  const x = document.getElementById("i21j");
+  const I = document.getElementById("i21o");
+  const C = document.getElementById("i21m");
+  const L = document.getElementById("i21p");
+  const B = document.getElementById("i21l");
+  let U = false;
+  let M = 0;
+  const T = 4e3;
+  const P = 5 * 1024 * 1024;
   const A = 512;
   const _ = {
     open: false,
@@ -974,33 +974,33 @@ document.addEventListener("DOMContentLoaded", () => {
     _.offsetY = Math.max(-s, Math.min(s, _.offsetY));
   }
   function applyCropTransform() {
-    if (!C) return;
+    if (!x) return;
     clampCropOffsets();
     const e = _.baseScale * _.zoom;
-    C.style.width = `${_.naturalW}px`;
-    C.style.height = `${_.naturalH}px`;
-    C.style.transform = `translate(-50%, -50%) translate(${_.offsetX}px, ${_.offsetY}px) scale(${e})`;
+    x.style.width = `${_.naturalW}px`;
+    x.style.height = `${_.naturalH}px`;
+    x.style.transform = `translate(-50%, -50%) translate(${_.offsetX}px, ${_.offsetY}px) scale(${e})`;
   }
   function closeCropModal() {
     _.open = false;
     _.dragging = false;
-    v?.classList.remove("is-open");
-    S?.classList.remove("is-open");
+    v?.classList.remove("cid");
+    S?.classList.remove("cid");
     if (v) v.hidden = true;
     if (S) S.hidden = true;
     if (_.objectUrl) {
       URL.revokeObjectURL(_.objectUrl);
       _.objectUrl = null;
     }
-    if (C) C.removeAttribute("src");
+    if (x) x.removeAttribute("src");
     if (b) b.value = "";
-    if (M) {
-      M.disabled = false;
-      M.classList.remove("is-busy");
+    if (B) {
+      B.disabled = false;
+      B.classList.remove("is-busy");
     }
   }
   function openCropModal(e) {
-    if (!S || !C || !I) {
+    if (!S || !x || !I) {
       uploadProfilePicture(e);
       return;
     }
@@ -1010,11 +1010,11 @@ document.addEventListener("DOMContentLoaded", () => {
     _.zoom = 1;
     _.offsetX = 0;
     _.offsetY = 0;
-    if (x) x.value = "1";
+    if (L) L.value = "1";
     const onLoad = () => {
-      C.removeEventListener("load", onLoad);
-      _.naturalW = C.naturalWidth || 0;
-      _.naturalH = C.naturalHeight || 0;
+      x.removeEventListener("load", onLoad);
+      _.naturalW = x.naturalWidth || 0;
+      _.naturalH = x.naturalHeight || 0;
       if (_.naturalW < 64 || _.naturalH < 64) {
         closeCropModal();
         if (typeof window.showNotification === "function") {
@@ -1038,14 +1038,14 @@ document.addEventListener("DOMContentLoaded", () => {
       _.open = true;
       if (v) {
         v.hidden = false;
-        v.classList.add("is-open");
+        v.classList.add("cid");
       }
       S.hidden = false;
-      S.classList.add("is-open");
+      S.classList.add("cid");
       requestAnimationFrame(() => applyCropTransform());
     };
-    C.addEventListener("load", onLoad);
-    C.src = t;
+    x.addEventListener("load", onLoad);
+    x.src = t;
   }
   async function exportCroppedAvatarFile() {
     const e = cropViewportSize();
@@ -1063,16 +1063,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const s = e / t;
     const a = _.naturalW / 2 - _.offsetX / t;
     const r = _.naturalH / 2 - _.offsetY / t;
-    const l = a - s / 2;
-    const c = r - s / 2;
-    i.drawImage(C, l, c, s, s, 0, 0, n, n);
+    const c = a - s / 2;
+    const l = r - s / 2;
+    i.drawImage(x, c, l, s, s, 0, 0, n, n);
     const d = await new Promise(e => {
       o.toBlob(t => {
         if (t && t.size > 0) e(t); else o.toBlob(t => e(t), "image/jpeg", .9);
       }, "image/webp", .9);
     });
     if (!d || d.size <= 0) throw new Error("Failed to process image");
-    if (d.size > T) throw new Error("Image too large. Maximum size is 5MB.");
+    if (d.size > P) throw new Error("Image too large. Maximum size is 5MB.");
     const u = d.type === "image/webp" ? "image/webp" : "image/jpeg";
     const f = u === "image/webp" ? "webp" : "jpg";
     return new File([ d ], `avatar.${f}`, {
@@ -1098,21 +1098,21 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       n.src = t;
     };
-    setImg(document.getElementById("stgAvatar"));
+    setImg(document.getElementById("i213"));
     setImg(document.querySelector(".user-avatar"));
-    setImg(document.getElementById("profileAvatarBtn"));
-    setImg(document.getElementById("dropdownUserAvatar"));
+    setImg(document.getElementById("i208"));
+    setImg(document.getElementById("i1rc"));
     setImg(document.getElementById("menuUserAvatar"));
   }
   async function uploadProfilePicture(e) {
-    if (L || !e) return;
-    L = true;
-    const t = document.getElementById("stgAvatar");
+    if (U || !e) return;
+    U = true;
+    const t = document.getElementById("i213");
     try {
       if (t) t.style.opacity = "0.55";
-      if (M) {
-        M.disabled = true;
-        M.classList.add("is-busy");
+      if (B) {
+        B.disabled = true;
+        B.classList.add("is-busy");
       }
       const n = new FormData;
       n.append("pfp", e, e.name || "avatar.webp");
@@ -1151,7 +1151,7 @@ document.addEventListener("DOMContentLoaded", () => {
         window.apiCache.userProfile = null;
         window.apiCache.userProfileTime = 0;
       }
-      U = Date.now();
+      M = Date.now();
       closeCropModal();
       if (typeof window.showNotification === "function") {
         window.showNotification("Profile picture updated", "success");
@@ -1163,18 +1163,18 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         alert(e.message || "Failed to upload profile picture");
       }
-      if (M) {
-        M.disabled = false;
-        M.classList.remove("is-busy");
+      if (B) {
+        B.disabled = false;
+        B.classList.remove("is-busy");
       }
     } finally {
       if (t) t.style.opacity = "1";
-      L = false;
+      U = false;
       if (b) b.value = "";
     }
   }
   async function saveCroppedAvatar() {
-    if (!_.open || L) return;
+    if (!_.open || U) return;
     try {
       const e = await exportCroppedAvatarFile();
       await uploadProfilePicture(e);
@@ -1192,7 +1192,7 @@ document.addEventListener("DOMContentLoaded", () => {
     _.lastX = e.clientX;
     _.lastY = e.clientY;
     _.pointerId = e.pointerId;
-    B?.setPointerCapture?.(e.pointerId);
+    C?.setPointerCapture?.(e.pointerId);
   }
   function onCropPointerMove(e) {
     if (!_.dragging) return;
@@ -1209,54 +1209,54 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!_.dragging) return;
     _.dragging = false;
     try {
-      B?.releasePointerCapture?.(e.pointerId);
+      C?.releasePointerCapture?.(e.pointerId);
     } catch (e) {}
   }
-  if (B) {
-    B.addEventListener("pointerdown", onCropPointerDown);
-    B.addEventListener("pointermove", onCropPointerMove);
-    B.addEventListener("pointerup", onCropPointerUp);
-    B.addEventListener("pointercancel", onCropPointerUp);
-    B.addEventListener("wheel", e => {
+  if (C) {
+    C.addEventListener("pointerdown", onCropPointerDown);
+    C.addEventListener("pointermove", onCropPointerMove);
+    C.addEventListener("pointerup", onCropPointerUp);
+    C.addEventListener("pointercancel", onCropPointerUp);
+    C.addEventListener("wheel", e => {
       if (!_.open) return;
       e.preventDefault();
       const t = e.deltaY > 0 ? -.08 : .08;
       _.zoom = Math.max(1, Math.min(3, _.zoom + t));
-      if (x) x.value = String(_.zoom);
+      if (L) L.value = String(_.zoom);
       applyCropTransform();
     }, {
       passive: false
     });
   }
-  x?.addEventListener("input", () => {
-    _.zoom = Math.max(1, Math.min(3, Number(x.value) || 1));
+  L?.addEventListener("input", () => {
+    _.zoom = Math.max(1, Math.min(3, Number(L.value) || 1));
     applyCropTransform();
   });
-  document.getElementById("stgCropZoomIn")?.addEventListener("click", () => {
+  document.getElementById("i21q")?.addEventListener("click", () => {
     _.zoom = Math.min(3, _.zoom + .12);
-    if (x) x.value = String(_.zoom);
+    if (L) L.value = String(_.zoom);
     applyCropTransform();
   });
-  document.getElementById("stgCropZoomOut")?.addEventListener("click", () => {
+  document.getElementById("i21r")?.addEventListener("click", () => {
     _.zoom = Math.max(1, _.zoom - .12);
-    if (x) x.value = String(_.zoom);
+    if (L) L.value = String(_.zoom);
     applyCropTransform();
   });
-  document.getElementById("stgCropCancel")?.addEventListener("click", () => closeCropModal());
-  document.getElementById("stgCropClose")?.addEventListener("click", () => closeCropModal());
+  document.getElementById("i21h")?.addEventListener("click", () => closeCropModal());
+  document.getElementById("i21i")?.addEventListener("click", () => closeCropModal());
   v?.addEventListener("click", () => closeCropModal());
   S?.addEventListener("click", e => {
     if (e.target === S) closeCropModal();
   });
-  M?.addEventListener("click", () => {
+  B?.addEventListener("click", () => {
     saveCroppedAvatar();
   });
-  S?.querySelector(".stgCropCard")?.addEventListener("click", e => e.stopPropagation());
+  S?.querySelector(".c167")?.addEventListener("click", e => e.stopPropagation());
   if (E && b) {
     E.addEventListener("click", e => {
       e.preventDefault();
       e.stopPropagation();
-      if (L || _.open) return;
+      if (U || _.open) return;
       b.click();
     });
   }
@@ -1265,7 +1265,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const e = b.files && b.files[0];
       if (!e) return;
       const t = Date.now();
-      if (t - U < P) {
+      if (t - M < T) {
         if (typeof window.showNotification === "function") {
           window.showNotification("Please wait before uploading another picture", "warning");
         }
@@ -1276,7 +1276,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const t = new Uint8Array(await e.slice(0, 16).arrayBuffer());
         const n = detectImageMime(t);
         if (!n) throw new Error("File is not a valid JPG, PNG, or WebP image");
-        if (e.size <= 0 || e.size > T) {
+        if (e.size <= 0 || e.size > P) {
           throw new Error("Image too large. Maximum size is 5MB.");
         }
         openCropModal(e);
@@ -1300,8 +1300,8 @@ document.addEventListener("DOMContentLoaded", () => {
     return `SOL-${o.join("-")}`;
   }
   function populateAccountPanel() {
-    const e = window.currentUser?.public_id || window.currentUser?.solis_id || document.getElementById("stgSolisPublicId")?.textContent || "—";
-    const t = document.getElementById("stgSolisPublicId");
+    const e = window.currentUser?.public_id || window.currentUser?.solis_id || document.getElementById("i23a")?.textContent || "—";
+    const t = document.getElementById("i23a");
     if (t && e && e !== "—") t.textContent = formatSolisIdDisplay(e);
     const n = navigator.userAgent || "";
     let o = "This browser";
@@ -1323,7 +1323,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     };
     setText("stgSessionUpdated", fmt(s));
-    const a = document.getElementById("stgSessionCreated");
+    const a = document.getElementById("i236");
     if (a && (!a.textContent || a.textContent === "—")) {
       a.textContent = fmt(s);
     }
@@ -1331,8 +1331,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const r = typeof getAuthHeaders === "function" ? getAuthHeaders() : {
       "Content-Type": "application/json"
     };
-    const l = typeof window.apiUrl === "function" ? window.apiUrl("/api/user/account/sessions") : "/api/user/account/sessions";
-    fetch(l, {
+    const c = typeof window.apiUrl === "function" ? window.apiUrl("/api/user/account/sessions") : "/api/user/account/sessions";
+    fetch(c, {
       credentials: "include",
       headers: r
     }).then(e => e.ok ? e.json() : null).then(e => {
@@ -1355,8 +1355,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }).catch(() => setText("stgSessionLocation", "Unknown"));
   }
-  document.getElementById("stgCopySolisIdBtn")?.addEventListener("click", async () => {
-    const e = document.getElementById("stgSolisPublicId")?.textContent?.trim() || "";
+  document.getElementById("i21f")?.addEventListener("click", async () => {
+    const e = document.getElementById("i23a")?.textContent?.trim() || "";
     if (!e || e === "—") return;
     try {
       await navigator.clipboard.writeText(e);
@@ -1367,7 +1367,7 @@ document.addEventListener("DOMContentLoaded", () => {
       alert(e);
     }
   });
-  document.getElementById("stgLogoutAllBtn")?.addEventListener("click", async () => {
+  document.getElementById("i220")?.addEventListener("click", async () => {
     if (!confirm("Log out of all devices? You will need to sign in again.")) return;
     try {
       const e = typeof getAuthHeaders === "function" ? getAuthHeaders() : {
@@ -1385,10 +1385,10 @@ document.addEventListener("DOMContentLoaded", () => {
       alert(e.message || "Could not log out");
     }
   });
-  document.getElementById("stgCancelSubBtn")?.addEventListener("click", () => {
+  document.getElementById("i21a")?.addEventListener("click", () => {
     cancelSubscriptionViaPaddle();
   });
-  document.getElementById("stgDeleteAccountBtn")?.addEventListener("click", async () => {
+  document.getElementById("i21v")?.addEventListener("click", async () => {
     const e = prompt("Type DELETE to permanently close your Solis account:");
     if (!e) return;
     if (String(e).trim().toUpperCase() !== "DELETE") {

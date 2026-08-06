@@ -164,10 +164,10 @@ async function fetchAndAddAuthProvider() {
 
 function openUserMenu() {
   if (!userMenuPanel) {
-    userMenuPanel = document.getElementById("userMenuPanel");
+    userMenuPanel = document.getElementById("i259");
   }
   if (!userMenuBackdrop) {
-    userMenuBackdrop = document.getElementById("userMenuBackdrop");
+    userMenuBackdrop = document.getElementById("i258");
   }
   if (!userMenuPanel || !userMenuBackdrop) {
     console.error("Menu elements not found");
@@ -185,8 +185,8 @@ function openUserMenu() {
 }
 
 function closeUserMenuPanel() {
-  if (!userMenuPanel) userMenuPanel = document.getElementById("userMenuPanel");
-  if (!userMenuBackdrop) userMenuBackdrop = document.getElementById("userMenuBackdrop");
+  if (!userMenuPanel) userMenuPanel = document.getElementById("i259");
+  if (!userMenuBackdrop) userMenuBackdrop = document.getElementById("i258");
   userMenuPanel.classList.remove("active");
   userMenuBackdrop.classList.remove("active");
   const e = window.innerWidth <= 768 ? "100%" : "420px";
@@ -197,7 +197,7 @@ function closeUserMenuPanel() {
 }
 
 function updateProfileButton() {
-  const e = document.getElementById("profileAvatarBtn");
+  const e = document.getElementById("i208");
   if (!e) {
     console.warn("profileAvatarBtn element not found");
     return;
@@ -237,9 +237,9 @@ function updateProfileButton() {
 }
 
 async function updateProfileDropdown() {
-  const e = document.getElementById("dropdownUserName");
-  const t = document.getElementById("dropdownUserPlan");
-  const n = document.getElementById("dropdownUserAvatar");
+  const e = document.getElementById("i1rd");
+  const t = document.getElementById("i1re");
+  const n = document.getElementById("i1rc");
   let r = null;
   try {
     if (typeof window !== "undefined" && window.currentUser) {
@@ -253,13 +253,13 @@ async function updateProfileDropdown() {
     return;
   }
   if (!r) {
-    const n = e?.querySelector(".username-text");
+    const n = e?.querySelector(".c1kj");
     if (n) n.textContent = "Guest User";
     if (t) t.textContent = "Free Plan";
     return;
   }
   const o = r.name || r.displayName || r.email || "User";
-  const i = e?.querySelector(".username-text");
+  const i = e?.querySelector(".c1kj");
   if (i) i.textContent = o;
   try {
     const e = await fetch(window.apiUrl("/api/user/profile"), {
@@ -274,7 +274,7 @@ async function updateProfileDropdown() {
       const t = await e.json();
       const n = t.plan || r.plan || "Free";
       const o = n.charAt(0).toUpperCase() + n.slice(1) + " Plan";
-      const i = document.getElementById("dropdownUserPlan");
+      const i = document.getElementById("i1re");
       if (i) {
         i.textContent = o;
       } else {
@@ -285,7 +285,7 @@ async function updateProfileDropdown() {
       console.warn("Profile API returned non-ok status:", e.status);
       const t = r.plan || "Free";
       const n = t.charAt(0).toUpperCase() + t.slice(1) + " Plan";
-      const o = document.getElementById("dropdownUserPlan");
+      const o = document.getElementById("i1re");
       if (o) {
         o.textContent = n;
       }
@@ -294,7 +294,7 @@ async function updateProfileDropdown() {
     console.error("Failed to fetch plan info:", e);
     const t = r.plan || "Free";
     const n = t.charAt(0).toUpperCase() + t.slice(1) + " Plan";
-    const o = document.getElementById("dropdownUserPlan");
+    const o = document.getElementById("i1re");
     if (o) {
       o.textContent = n;
     }
@@ -364,8 +364,8 @@ function updateMenuUserInfo() {
 }
 
 function initUserMenu() {
-  userMenuPanel = document.getElementById("userMenuPanel");
-  userMenuBackdrop = document.getElementById("userMenuBackdrop");
+  userMenuPanel = document.getElementById("i259");
+  userMenuBackdrop = document.getElementById("i258");
   const e = document.getElementById("closeUserMenu");
   const t = document.getElementById("menuSubscription");
   const n = document.getElementById("menuPreferences");

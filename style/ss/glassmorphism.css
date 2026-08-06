@@ -1,4 +1,4 @@
-.glass-panel {
+.cfd {
     background: rgba(255, 255, 255, 0.4);
     backdrop-filter: blur(30px) saturate(180%);
     -webkit-backdrop-filter: blur(30px) saturate(180%);
@@ -8,8 +8,8 @@
                 inset 0 1px 1px rgba(255, 255, 255, 0.7);
 }
 
-.pill-btn {
-    background: linear-gradient(135deg, #ff6b3d 0%, #ff8c5a 100%);
+.cqj {
+    background: linear-gradient(135deg, #i1ug 0%, #i1uy 100%);
     color: white;
     border: none;
     border-radius: 20px;
@@ -23,17 +23,17 @@
     letter-spacing: 0.3px;
 }
 
-.pill-btn:hover {
+.cqj:hover {
     transform: translateY(-2px) scale(1.04);
     box-shadow: 0 10px 28px rgba(255, 107, 61, 0.4),
                 inset 0 1px 1px rgba(255, 255, 255, 0.4);
 }
 
-.pill-btn:active {
+.cqj:active {
     transform: translateY(0) scale(0.98);
 }
 
-.glass-card {
+.cf7 {
     background: rgba(255, 255, 255, 0.35);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -45,14 +45,14 @@
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.glass-card:hover {
+.cf7:hover {
     background: rgba(255, 255, 255, 0.45);
     transform: translateY(-4px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08),
                 inset 0 1px 1px rgba(255, 255, 255, 0.7);
 }
 
-.glass-modal {
+.cfc {
     background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(40px);
     -webkit-backdrop-filter: blur(40px);
@@ -61,7 +61,7 @@
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
 }
 
-.glass-dropdown {
+.cfa {
     background: rgba(255, 255, 255, 0.5);
     backdrop-filter: blur(25px) saturate(180%);
     -webkit-backdrop-filter: blur(25px) saturate(180%);
@@ -71,7 +71,7 @@
                 inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
-.glass-input {
+.cfb {
     background: rgba(255, 255, 255, 0.3);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
@@ -82,7 +82,7 @@
     transition: all 0.2s;
 }
 
-.glass-input:focus {
+.cfb:focus {
     background: rgba(255, 255, 255, 0.4);
     border-color: rgba(255, 107, 61, 0.4);
     box-shadow: 0 0 0 3px rgba(255, 107, 61, 0.1);
@@ -102,7 +102,7 @@
     }
 }
 
-.glass-animate {
+.cf6 {
     animation: glassSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -115,11 +115,11 @@
     }
 }
 
-.glass-text-shadow {
+.cfe {
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.glass-divider {
+.cf9 {
     background: linear-gradient(to right,
         rgba(255, 107, 61, 0) 0%,
         rgba(255, 107, 61, 0.2) 50%,
@@ -128,19 +128,19 @@
     margin: 12px 0;
 }
 
-[data-theme="dark"] .glass-panel {
+[data-theme="dark"] .cfd {
     background: rgba(20, 20, 25, 0.4);
     border-color: rgba(255, 255, 255, 0.1);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
                 inset 0 1px 1px rgba(255, 255, 255, 0.1);
 }
 
-[data-theme="dark"] .glass-card {
+[data-theme="dark"] .cf7 {
     background: rgba(20, 20, 25, 0.3);
     border-color: rgba(255, 255, 255, 0.08);
 }
 
-[data-theme="dark"] .glass-card:hover {
+[data-theme="dark"] .cf7:hover {
     background: rgba(20, 20, 25, 0.4);
     box-shadow: 0 8px 24px rgba(255, 107, 61, 0.1),
                 inset 0 1px 1px rgba(255, 255, 255, 0.05);
@@ -154,9 +154,9 @@
     }
 }
 
-.glow-btn {
+.cfg {
     position: relative;
-    background: linear-gradient(135deg, #ff6b3d 0%, #ff8c5a 100%);
+    background: linear-gradient(135deg, #i1ug 0%, #i1uy 100%);
     color: white;
     border: none;
     border-radius: 16px;
@@ -168,12 +168,12 @@
                 0 0 20px rgba(255, 107, 61, 0.2);
 }
 
-.glow-btn:hover {
+.cfg:hover {
     transform: translateY(-3px);
     box-shadow: 0 12px 32px rgba(255, 107, 61, 0.45),
                 0 0 30px rgba(255, 107, 61, 0.3);
 }
 
-.glow-btn:active {
+.cfg:active {
     transform: translateY(-1px);
 }

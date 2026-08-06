@@ -1,4 +1,4 @@
-.prop-label {
+.cy8 {
                 display: block;
                 font-size: 11px;
                 font-weight: 800;
@@ -24,27 +24,27 @@
             }
         }
 
-        .loading-spinner {
+        .ck3 {
             display: inline-block;
             width: 16px;
             height: 16px;
             border: 2px solid rgba(255, 107, 61, 0.3);
-            border-top-color: #ff6b3d;
+            border-top-color: #i1ug;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
         }
 
-        .clips-carousel {
+        .c5y {
             animation: slideIn 0.4s ease;
         }
 
-        .clip-box:hover {
+        .c5d:hover {
             border-color: rgba(255, 107, 61, 0.8) !important;
             transform: translateY(-4px);
             box-shadow: 0 8px 24px rgba(255, 107, 61, 0.2);
         }
 
-        .clip-action:hover {
+        .c5c:hover {
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
@@ -52,17 +52,17 @@
         .message {
             animation: slideIn 0.3s ease;
         }
-        .mobile-sidebar,
-        .mobile-sidebar * {
+        .cl7,
+        .cl7 * {
             --ios-glass: rgba(28, 24, 20, 0.65);
             --ios-blur: blur(40px) saturate(180%) brightness(100%);
             --ios-border: 0.5px solid rgba(255, 230, 200, 0.15);
             --ios-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
 
             --active-fill: rgba(255, 180, 100, 0.12);
-            --text-primary: #ffffff;
+            --text-primary: #i1w5;
             --text-secondary: rgba(255, 255, 255, 0.4);
-            --accent: #ff9d42;
+            --accent: #i1v7;
             --glow-warm: rgba(255, 160, 60, 0.4);
             --glow-soft: rgba(255, 220, 150, 0.2);
         }

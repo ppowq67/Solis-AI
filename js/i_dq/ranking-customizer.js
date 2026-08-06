@@ -1,1215 +1,993 @@
 const RANKING_VIDEO_WIDTH = 1080;
-const RANKING_OUTLINE_OFFSETS = [
-    [2, 0], [-2, 0], [0, 2], [0, -2],
-    [1, 1], [-1, -1], [1, -1], [-1, 1],
-];
+
+const RANKING_OUTLINE_OFFSETS = [ [ 2, 0 ], [ -2, 0 ], [ 0, 2 ], [ 0, -2 ], [ 1, 1 ], [ -1, -1 ], [ 1, -1 ], [ -1, 1 ] ];
 
 const RANKING_THIN_OUTLINE_OFFSETS = RANKING_OUTLINE_OFFSETS;
 
-const RANKING_THICK_OUTLINE_OFFSETS = [
-    [3, 0], [-3, 0], [0, 3], [0, -3],
-    [2, 2], [-2, -2], [2, -2], [-2, 2],
-];
+const RANKING_THICK_OUTLINE_OFFSETS = [ [ 3, 0 ], [ -3, 0 ], [ 0, 3 ], [ 0, -3 ], [ 2, 2 ], [ -2, -2 ], [ 2, -2 ], [ -2, 2 ] ];
 
-const RANKING_STROKE_CSS =
-    '2px 0 0 #000,-2px 0 0 #000,0 2px 0 #000,0 -2px 0 #000,' +
-    '1px 1px 0 #000,-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000';
+const RANKING_STROKE_CSS = "2px 0 0 #000,-2px 0 0 #000,0 2px 0 #000,0 -2px 0 #000," + "1px 1px 0 #000,-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000";
 
 const RANKING_SHADOW_CSS = {
-    none: 'none',
-    stroke: RANKING_STROKE_CSS,
-    outline: RANKING_STROKE_CSS,
-    'thick-outline':
-        '3px 0 0 #000,-3px 0 0 #000,0 3px 0 #000,0 -3px 0 #000,' +
-        '2px 2px 0 #000,-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000',
+  none: "none",
+  stroke: RANKING_STROKE_CSS,
+  outline: RANKING_STROKE_CSS,
+  "thick-outline": "3px 0 0 #000,-3px 0 0 #000,0 3px 0 #000,0 -3px 0 #000," + "2px 2px 0 #000,-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000"
 };
 
 const RANKING_OFFSETS_BY_STYLE = {
-    stroke: RANKING_OUTLINE_OFFSETS,
-    outline: RANKING_THIN_OUTLINE_OFFSETS,
-    'thick-outline': RANKING_THICK_OUTLINE_OFFSETS,
-    none: [],
+  stroke: RANKING_OUTLINE_OFFSETS,
+  outline: RANKING_THIN_OUTLINE_OFFSETS,
+  "thick-outline": RANKING_THICK_OUTLINE_OFFSETS,
+  none: []
 };
 
 const RANKING_FONT_TO_FILE = {
-    'Luckiest Guy': 'LuckiestGuy-Regular.ttf',
-    'Bebas Neue': 'BebasNeue-Regular.ttf',
-    'Anton': 'Anton-Regular.ttf',
-    'Montserrat': 'Montserrat-Bold.ttf',
-    'Poppins': 'Poppins-SemiBold.ttf',
-    'Roboto': 'Roboto-Bold.ttf',
-    'Fredoka': 'Fredoka-Bold.ttf',
+  "Luckiest Guy": "LuckiestGuy-Regular.ttf",
+  "Bebas Neue": "BebasNeue-Regular.ttf",
+  Anton: "Anton-Regular.ttf",
+  Montserrat: "Montserrat-Bold.ttf",
+  Poppins: "Poppins-SemiBold.ttf",
+  Roboto: "Roboto-Bold.ttf",
+  Fredoka: "Fredoka-Bold.ttf"
 };
 
 const RANKING_FONT_WEIGHT = {
-    'Luckiest Guy': '400',
-    'Bebas Neue': '400',
-    'Anton': '400',
-    'Montserrat': '700',
-    'Poppins': '600',
-    'Roboto': '700',
-    'Fredoka': '700',
+  "Luckiest Guy": "400",
+  "Bebas Neue": "400",
+  Anton: "400",
+  Montserrat: "700",
+  Poppins: "600",
+  Roboto: "700",
+  Fredoka: "700"
 };
 
-const RANKING_FILE_TO_FONT = Object.fromEntries(
-    Object.entries(RANKING_FONT_TO_FILE).map(([name, file]) => [file, name])
-);
+const RANKING_FILE_TO_FONT = Object.fromEntries(Object.entries(RANKING_FONT_TO_FILE).map(([t, e]) => [ e, t ]));
 
 class RankingCustomizer {
-    constructor() {
-        this.customizations = {};
-        this.selectedElement = null;
-        this.elementElements = new Map(); // Map element IDs to DOM elements
-        this.init();
+  constructor() {
+    this.customizations = {};
+    this.selectedElement = null;
+    this.elementElements = new Map;
+    this.init();
+  }
+  init() {
+    this.createUI();
+    this.setupEventListeners();
+    this.loadDefaultElements();
+  }
+  createUI() {
+    if (document.getElementById("ranking-customizer-panel")) return;
+    const t = document.createElement("div");
+    t.id = "ranking-customizer-panel";
+    t.className = "ranking-customizer";
+    t.innerHTML = `\n            <div class="ranking-customizer-header">\n                <h3>✏️ Ranking Template Editor</h3>\n                <button class="ranking-customizer-close" onclick="rankingCustomizer.toggle()">×</button>\n            </div>\n\n            <div class="ranking-customizer-content">\n                \x3c!-- Main Titles Section --\x3e\n                <div class="ranking-section">\n                    <h4>📌 Main Titles</h4>\n                    <div class="ranking-edit-group">\n                        <label>Title 1 (e.g., "RANKING")</label>\n                        <input type="text" data-element="title_ranking" placeholder="RANKING" maxlength="30">\n                    </div>\n                    <div class="ranking-edit-group">\n                        <label>Title 2 (e.g., "BEST")</label>\n                        <input type="text" data-element="title_funniest" placeholder="BEST" maxlength="30">\n                    </div>\n                    <div class="ranking-edit-group">\n                        <label>Subtitle</label>\n                        <input type="text" data-element="title_channel" placeholder="CHANNEL MOMENTS" maxlength="40">\n                    </div>\n                </div>\n\n                \x3c!-- Rank Elements Section --\x3e\n                <div class="ranking-section">\n                    <h4>🏆 Rank Titles (1-5)</h4>\n                    <div id="ranking-ranks-container">\n                        \x3c!-- Populated by JavaScript --\x3e\n                    </div>\n                </div>\n\n                \x3c!-- Color customization --\x3e\n                <div class="ranking-section" style="display:none;" id="ranking-colors-section">\n                    <h4>🎨 Colors</h4>\n                    <div id="ranking-color-controls">\n                        \x3c!-- Populated when element selected --\x3e\n                    </div>\n                </div>\n\n                \x3c!-- Preview --\x3e\n                <div class="ranking-section">\n                    <h4>👁️ Preview</h4>\n                    <p style="font-size: 12px; color: #888; margin-top: 8px;">Double-click template elements to customize them</p>\n                </div>\n            </div>\n        `;
+    document.body?.appendChild(t);
+    this.panel = t;
+  }
+  loadDefaultElements() {
+    const t = document.getElementById("ranking-ranks-container");
+    if (!t) return;
+    for (let e = 1; e <= 5; e++) {
+      const n = document.createElement("div");
+      n.className = "ranking-edit-group";
+      n.innerHTML = `\n                <label>Rank ${e} Title</label>\n                <input type="text" data-element="rank_${e}_title" placeholder="Rank ${e} Moment Title" maxlength="50">\n                <label style="margin-top: 8px; font-size: 12px; display: block;">Color</label>\n                <div class="ranking-color-picker" data-element="rank_${e}_title" style="display: flex; gap: 6px; flex-wrap: wrap;">\n                    ${this.createColorPalette(`rank_${e}_title`)}\n                </div>\n            `;
+      t.appendChild(n);
     }
-
-    init() {
-        this.createUI();
-        this.setupEventListeners();
-        this.loadDefaultElements();
+  }
+  createColorPalette(t) {
+    const e = [ {
+      name: "Gold",
+      rgb: "rgb(255, 215, 0)"
+    }, {
+      name: "Silver",
+      rgb: "rgb(192, 192, 192)"
+    }, {
+      name: "Bronze",
+      rgb: "rgb(205, 127, 50)"
+    }, {
+      name: "White",
+      rgb: "rgb(255, 255, 255)"
+    }, {
+      name: "Red",
+      rgb: "rgb(255, 0, 0)"
+    }, {
+      name: "Cyan",
+      rgb: "rgb(0, 255, 255)"
+    }, {
+      name: "Lime",
+      rgb: "rgb(0, 255, 0)"
+    }, {
+      name: "Yellow",
+      rgb: "rgb(255, 255, 0)"
+    } ];
+    return e.map(e => `\n            <button class="ranking-color-btn" style="background-color: ${e.rgb}; width: 32px; height: 32px; border-radius: 4px; border: 2px solid #333; cursor: pointer;"\n                    onclick="rankingCustomizer.setElementColor('${t}', '${e.rgb}')"\n                    title="${e.name}"></button>\n        `).join("");
+  }
+  setupEventListeners() {
+    document.addEventListener("input", t => {
+      if (t.target.matches("[data-element]")) {
+        const e = t.target.getAttribute("data-element");
+        const n = t.target.value;
+        this.setElementContent(e, n);
+      }
+    });
+    const t = localStorage.getItem("rankingCustomizations");
+    if (t) {
+      try {
+        this.customizations = this._sanitizeCustoms(JSON.parse(t));
+        this.applyCustomizations();
+      } catch (t) {
+        console.warn("Failed to load saved customizations:", t);
+      }
     }
-
-    createUI() {
-        if (document.getElementById('ranking-customizer-panel')) return;
-
-        const container = document.createElement('div');
-        container.id = 'ranking-customizer-panel';
-        container.className = 'ranking-customizer';
-        container.innerHTML = `
-            <div class="ranking-customizer-header">
-                <h3>✏️ Ranking Template Editor</h3>
-                <button class="ranking-customizer-close" onclick="rankingCustomizer.toggle()">×</button>
-            </div>
-
-            <div class="ranking-customizer-content">
-                <!-- Main Titles Section -->
-                <div class="ranking-section">
-                    <h4>📌 Main Titles</h4>
-                    <div class="ranking-edit-group">
-                        <label>Title 1 (e.g., "RANKING")</label>
-                        <input type="text" data-element="title_ranking" placeholder="RANKING" maxlength="30">
-                    </div>
-                    <div class="ranking-edit-group">
-                        <label>Title 2 (e.g., "BEST")</label>
-                        <input type="text" data-element="title_funniest" placeholder="BEST" maxlength="30">
-                    </div>
-                    <div class="ranking-edit-group">
-                        <label>Subtitle</label>
-                        <input type="text" data-element="title_channel" placeholder="CHANNEL MOMENTS" maxlength="40">
-                    </div>
-                </div>
-
-                <!-- Rank Elements Section -->
-                <div class="ranking-section">
-                    <h4>🏆 Rank Titles (1-5)</h4>
-                    <div id="ranking-ranks-container">
-                        <!-- Populated by JavaScript -->
-                    </div>
-                </div>
-
-                <!-- Color customization -->
-                <div class="ranking-section" style="display:none;" id="ranking-colors-section">
-                    <h4>🎨 Colors</h4>
-                    <div id="ranking-color-controls">
-                        <!-- Populated when element selected -->
-                    </div>
-                </div>
-
-                <!-- Preview -->
-                <div class="ranking-section">
-                    <h4>👁️ Preview</h4>
-                    <p style="font-size: 12px; color: #888; margin-top: 8px;">Double-click template elements to customize them</p>
-                </div>
-            </div>
-        `;
-
-        document.body?.appendChild(container);
-        this.panel = container;
-    }
-
-    loadDefaultElements() {
-        const ranksContainer = document.getElementById('ranking-ranks-container');
-        if (!ranksContainer) return;
-
-        for (let i = 1; i <= 5; i++) {
-            const group = document.createElement('div');
-            group.className = 'ranking-edit-group';
-            group.innerHTML = `
-                <label>Rank ${i} Title</label>
-                <input type="text" data-element="rank_${i}_title" placeholder="Rank ${i} Moment Title" maxlength="50">
-                <label style="margin-top: 8px; font-size: 12px; display: block;">Color</label>
-                <div class="ranking-color-picker" data-element="rank_${i}_title" style="display: flex; gap: 6px; flex-wrap: wrap;">
-                    ${this.createColorPalette(`rank_${i}_title`)}
-                </div>
-            `;
-            ranksContainer.appendChild(group);
+  }
+  _sanitizeCustoms(t) {
+    const e = t && typeof t === "object" ? t : {};
+    for (const [t, n] of Object.entries(e)) {
+      if (!n || typeof n !== "object") continue;
+      const e = t.startsWith("title_") || t.startsWith("rank_");
+      if (!e) continue;
+      if (n.stroke_style === "none" && (!n.outline_offsets || !n.outline_offsets.length)) {
+        delete n.stroke_style;
+        delete n.outline_offsets;
+      }
+      if (typeof n.font_size === "number" && n.font_size > 0 && n.font_size < 20) {
+        delete n.font_size;
+      }
+      if (t.startsWith("title_") && typeof n.font_size === "number" && n.font_size > 160) {
+        n.font_size = 160;
+      }
+      if (t.startsWith("rank_") && typeof n.font_size === "number" && n.font_size > 150) {
+        n.font_size = 150;
+      }
+      if (typeof n.content === "string") {
+        n.content = n.content.replace(/\s+/g, " ").trim().slice(0, t.startsWith("title_") ? 28 : 42);
+        if (t === "title_funniest" && /^funniest$/i.test(n.content)) {
+          n.content = "BEST";
         }
+      }
     }
-
-    createColorPalette(elementId) {
-        const colors = [
-            { name: 'Gold', rgb: 'rgb(255, 215, 0)' },
-            { name: 'Silver', rgb: 'rgb(192, 192, 192)' },
-            { name: 'Bronze', rgb: 'rgb(205, 127, 50)' },
-            { name: 'White', rgb: 'rgb(255, 255, 255)' },
-            { name: 'Red', rgb: 'rgb(255, 0, 0)' },
-            { name: 'Cyan', rgb: 'rgb(0, 255, 255)' },
-            { name: 'Lime', rgb: 'rgb(0, 255, 0)' },
-            { name: 'Yellow', rgb: 'rgb(255, 255, 0)' }
-        ];
-
-        return colors.map(color => `
-            <button class="ranking-color-btn" style="background-color: ${color.rgb}; width: 32px; height: 32px; border-radius: 4px; border: 2px solid #333; cursor: pointer;"
-                    onclick="rankingCustomizer.setElementColor('${elementId}', '${color.rgb}')"
-                    title="${color.name}"></button>
-        `).join('');
+    return e;
+  }
+  setElementContent(t, e) {
+    if (!this.customizations[t]) {
+      this.customizations[t] = {};
     }
-
-    setupEventListeners() {
-        document.addEventListener('input', (e) => {
-            if (e.target.matches('[data-element]')) {
-                const elementId = e.target.getAttribute('data-element');
-                const value = e.target.value;
-                this.setElementContent(elementId, value);
-            }
+    this.customizations[t].content = e;
+    this.saveCustomizations();
+  }
+  setElementColor(t, e) {
+    if (!t) return;
+    if (!this.customizations[t]) {
+      this.customizations[t] = {};
+    }
+    const n = this._colorToRgba(e);
+    if (n) {
+      this.customizations[t].color = n;
+      this.saveCustomizations();
+    }
+  }
+  setElementFontSizeScaled(t, e) {
+    if (!t || !(e > 0)) return;
+    if (!this.customizations[t]) {
+      this.customizations[t] = {};
+    }
+    this.customizations[t].font_size = this._scaleFontSize(e);
+    this.saveCustomizations();
+  }
+  setElementStrokeStyle(t, e) {
+    if (!t) return;
+    if (!this.customizations[t]) {
+      this.customizations[t] = {};
+    }
+    const n = String(e || "outline").trim().toLowerCase() || "outline";
+    this.customizations[t].stroke_style = n;
+    if (n === "none") {
+      this.customizations[t].outline_offsets = [];
+      this.customizations[t].outline_color = null;
+    } else {
+      const e = RANKING_OFFSETS_BY_STYLE[n] || RANKING_OUTLINE_OFFSETS;
+      this.customizations[t].outline_offsets = e.map(t => [ ...t ]);
+      this.customizations[t].outline_color = [ 0, 0, 0, 255 ];
+    }
+    this.saveCustomizations();
+  }
+  persistElementStyles(t) {
+    if (!t?.getAttribute) return;
+    const e = t.getAttribute("data-template-element-id");
+    if (!e) return;
+    if (!this.customizations[e]) this.customizations[e] = {};
+    const n = this.customizations[e];
+    const o = (t.textContent || "").trim() || String(t.getAttribute("data-rk-full-title") || "").trim();
+    if (e.endsWith("_number") && e.startsWith("rank_")) {
+      delete n.content;
+    } else if (o) {
+      n.content = o;
+    }
+    n.font = this._resolvePersistFont(t, e, n);
+    try {
+      this._writeFontLock({
+        [e]: n.font
+      });
+    } catch (t) {}
+    const i = t.style.color || t.style.getPropertyValue("color") || "";
+    const s = this._colorToRgba(i) || this._colorToRgba(getComputedStyle(t).color);
+    if (s) n.color = s;
+    const r = t.style.fontSize || t.style.getPropertyValue("font-size");
+    const a = r && r !== "inherit" ? parseFloat(r) : parseFloat(getComputedStyle(t).fontSize);
+    if (a > 0) {
+      n.font_size = this._scaleFontSize(a);
+    }
+    const l = this._readStrokeState(t);
+    n.stroke_style = l.style;
+    if (l.enabled) {
+      n.outline_color = [ 0, 0, 0, 255 ];
+      const t = RANKING_OFFSETS_BY_STYLE[l.style] || RANKING_OUTLINE_OFFSETS;
+      n.outline_offsets = t.map(t => [ ...t ]);
+    } else {
+      n.outline_offsets = [];
+      n.outline_color = null;
+    }
+    this.saveCustomizations();
+  }
+  persistAllPreviewStyles() {
+    const t = this._getActiveRankingContainer();
+    if (!t) return;
+    t.querySelectorAll("[data-template-element-id]").forEach(t => {
+      try {
+        this.persistElementStyles(t);
+      } catch (t) {}
+    });
+    this._propagateRankNumberStyles();
+    try {
+      if (window.__solisRankingLayout) {
+        this.customizations.__ranking_layout = {
+          ...this.customizations.__ranking_layout || {},
+          ...window.__solisRankingLayout
+        };
+      }
+    } catch (t) {}
+    this.saveCustomizations();
+  }
+  saveCustomizations() {
+    localStorage.setItem("rankingCustomizations", JSON.stringify(this.customizations));
+    try {
+      sessionStorage.setItem("solisPendingRankingCustoms", JSON.stringify(this.customizations || {}));
+    } catch (t) {}
+    try {
+      this._patchStyleLock(this.customizations);
+    } catch (t) {}
+    try {
+      if (window.SolisMemory && !window.SolisMemory._applying && typeof window.SolisMemory.noteEdit === "function") {
+        const t = window.clipsStudio?.currentTemplateForPreview?.id || "ranked_compilation";
+        window.SolisMemory.noteEdit(t);
+      }
+    } catch (t) {}
+  }
+  countFonts(t) {
+    if (!t || typeof t !== "object") return 0;
+    return Object.entries(t).filter(([t, e]) => t !== "__ranking_layout" && e && typeof e === "object" && e.font).length;
+  }
+  _patchStyleLock(t) {
+    if (!t || typeof t !== "object") return;
+    let e = null;
+    try {
+      e = JSON.parse(sessionStorage.getItem("solisRankingStyleLock") || "null");
+    } catch (t) {
+      e = null;
+    }
+    const n = {};
+    const o = [ e, t ].filter(t => t && typeof t === "object");
+    o.forEach(t => {
+      Object.entries(t).forEach(([t, e]) => {
+        if (!e || typeof e !== "object") {
+          if (e != null) n[t] = e;
+          return;
+        }
+        const o = {
+          ...n[t] && typeof n[t] === "object" ? n[t] : {}
+        };
+        Object.entries(e).forEach(([t, e]) => {
+          if (e !== undefined && e !== null && e !== "") o[t] = e;
         });
-
-        const saved = localStorage.getItem('rankingCustomizations');
-        if (saved) {
-            try {
-                this.customizations = this._sanitizeCustoms(JSON.parse(saved));
-                this.applyCustomizations();
-            } catch (e) {
-                console.warn('Failed to load saved customizations:', e);
-            }
-        }
+        n[t] = o;
+      });
+    });
+    if (this.countFonts(n) === 0 && this.countFonts(e) > 0) {
+      sessionStorage.setItem("solisRankingStyleLock", JSON.stringify(e));
+      window.__solisRankingStyleLock = e;
+      return;
     }
-
-    _sanitizeCustoms(raw) {
-        const customs = (raw && typeof raw === 'object') ? raw : {};
-        for (const [id, node] of Object.entries(customs)) {
-            if (!node || typeof node !== 'object') continue;
-            const isTitle = id.startsWith('title_') || id.startsWith('rank_');
-            if (!isTitle) continue;
-            if (node.stroke_style === 'none' && (!node.outline_offsets || !node.outline_offsets.length)) {
-                delete node.stroke_style;
-                delete node.outline_offsets;
-            }
-            if (typeof node.font_size === 'number' && node.font_size > 0 && node.font_size < 20) {
-                delete node.font_size;
-            }
-            if (id.startsWith('title_') && typeof node.font_size === 'number' && node.font_size > 160) {
-                node.font_size = 160;
-            }
-            if (id.startsWith('rank_') && typeof node.font_size === 'number' && node.font_size > 150) {
-                node.font_size = 150;
-            }
-            if (typeof node.content === 'string') {
-                node.content = node.content
-                    .replace(/\s+/g, ' ')
-                    .trim()
-                    .slice(0, id.startsWith('title_') ? 28 : 42);
-                if (id === 'title_funniest' && /^funniest$/i.test(node.content)) {
-                    node.content = 'BEST';
-                }
-            }
-        }
-        return customs;
+    sessionStorage.setItem("solisRankingStyleLock", JSON.stringify(n));
+    window.__solisRankingStyleLock = n;
+  }
+  _getActiveRankingContainer() {
+    return document.querySelector("#templateVideoPreview .ranking-preview-container") || document.querySelector(".ranking-preview-container");
+  }
+  _scaleFontSize(t) {
+    const e = this._getActiveRankingContainer();
+    const n = e?.clientWidth || 280;
+    return Math.max(12, Math.round(t * (RANKING_VIDEO_WIDTH / n)));
+  }
+  _normalizeFont(t) {
+    if (!t) return RANKING_FONT_TO_FILE["Luckiest Guy"];
+    const e = t.replace(/['"]/g, "").split(",")[0].trim();
+    if (/^bebas(\s*neue)?$/i.test(e) || /^bebasneue/i.test(e)) {
+      return RANKING_FONT_TO_FILE.Anton;
     }
-
-    setElementContent(elementId, content) {
-        if (!this.customizations[elementId]) {
-            this.customizations[elementId] = {};
-        }
-        this.customizations[elementId].content = content;
-        this.saveCustomizations();
+    if (e.endsWith(".ttf") || e.endsWith(".otf")) {
+      if (/bebas/i.test(e)) return RANKING_FONT_TO_FILE.Anton;
+      const t = RANKING_FILE_TO_FONT[e] || Object.keys(RANKING_FILE_TO_FONT).find(t => t.toLowerCase() === e.toLowerCase());
+      if (t) {
+        const n = RANKING_FILE_TO_FONT[t] || RANKING_FILE_TO_FONT[e];
+        return RANKING_FONT_TO_FILE[n] || e;
+      }
+      return e;
     }
-
-    setElementColor(elementId, rgbColor) {
-        if (!elementId) return;
-        if (!this.customizations[elementId]) {
-            this.customizations[elementId] = {};
-        }
-        const rgba = this._colorToRgba(rgbColor);
-        if (rgba) {
-            this.customizations[elementId].color = rgba;
-            this.saveCustomizations();
-        }
+    if (RANKING_FONT_TO_FILE[e]) return RANKING_FONT_TO_FILE[e];
+    const n = Object.keys(RANKING_FONT_TO_FILE).find(t => t.toLowerCase() === e.toLowerCase());
+    if (n) return RANKING_FONT_TO_FILE[n];
+    return RANKING_FONT_TO_FILE["Luckiest Guy"];
+  }
+  _isDefaultLuckiest(t) {
+    if (!t) return true;
+    const e = this._displayFont(t);
+    return e === "Luckiest Guy";
+  }
+  _resolvePersistFont(t, e, n) {
+    const o = t?.getAttribute?.("data-rk-font");
+    if (o) return this._normalizeFont(o);
+    const i = this._readFontLock()?.[e];
+    if (i) return this._normalizeFont(i);
+    if (n?.font) return this._normalizeFont(n.font);
+    const s = (t?.style?.getPropertyValue?.("font-family") || t?.style?.fontFamily || "").trim();
+    if (s) return this._normalizeFont(s);
+    let r = "";
+    try {
+      r = getComputedStyle(t).fontFamily || "";
+    } catch (t) {}
+    return this._normalizeFont(r || "Luckiest Guy");
+  }
+  _readFontLock() {
+    try {
+      return JSON.parse(sessionStorage.getItem("solisRankingFontLock") || "{}") || {};
+    } catch (t) {
+      return {};
     }
-
-    setElementFontSizeScaled(elementId, previewPx) {
-        if (!elementId || !(previewPx > 0)) return;
-        if (!this.customizations[elementId]) {
-            this.customizations[elementId] = {};
+  }
+  _writeFontLock(t) {
+    if (!t || typeof t !== "object") return;
+    const e = this._readFontLock();
+    const n = {
+      ...e
+    };
+    Object.entries(t).forEach(([t, e]) => {
+      if (t && e) n[t] = e;
+    });
+    try {
+      sessionStorage.setItem("solisRankingFontLock", JSON.stringify(n));
+      window.__solisRankingFontLock = n;
+    } catch (t) {}
+  }
+  setElementFontFile(t, e) {
+    if (!t) return;
+    if (!this.customizations[t]) this.customizations[t] = {};
+    const n = this._normalizeFont(e);
+    this.customizations[t].font = n;
+    this.saveCustomizations();
+    try {
+      this._writeFontLock({
+        [t]: n
+      });
+      this._patchStyleLock({
+        [t]: {
+          font: n
         }
-        this.customizations[elementId].font_size = this._scaleFontSize(previewPx);
-        this.saveCustomizations();
+      });
+    } catch (t) {}
+  }
+  _displayFont(t) {
+    if (!t) return "Luckiest Guy";
+    const e = String(t).replace(/['"]/g, "").split(",")[0].trim();
+    if (RANKING_FONT_TO_FILE[e]) return e;
+    if (RANKING_FILE_TO_FONT[e]) return RANKING_FILE_TO_FONT[e];
+    const n = e.toLowerCase();
+    const o = Object.keys(RANKING_FONT_TO_FILE).find(t => t.toLowerCase() === n);
+    if (o) return o;
+    const i = Object.keys(RANKING_FILE_TO_FONT).find(t => t.toLowerCase() === n);
+    if (i) return RANKING_FILE_TO_FONT[i];
+    return "Luckiest Guy";
+  }
+  _readStrokeState(t) {
+    const e = getComputedStyle(t);
+    const n = (t.style.textShadow || e.textShadow || "").replace(/\s+/g, " ");
+    if (!n || n === "none") {
+      if (t.classList.contains("text-stroke")) {
+        return {
+          enabled: true,
+          style: "outline"
+        };
+      }
+      return {
+        enabled: false,
+        style: "none"
+      };
     }
-
-    setElementStrokeStyle(elementId, strokeStyle) {
-        if (!elementId) return;
-        if (!this.customizations[elementId]) {
-            this.customizations[elementId] = {};
+    if (n.includes("3px 0") || n.includes("3px 0px")) {
+      return {
+        enabled: true,
+        style: "thick-outline"
+      };
+    }
+    return {
+      enabled: true,
+      style: "outline"
+    };
+  }
+  _applyStrokeStyleToElement(t, e) {
+    if (!t) return;
+    if (e === "none") {
+      t.classList.remove("text-stroke");
+      t.style.textShadow = "none";
+      return;
+    }
+    if (e === "stroke") {
+      t.classList.add("text-stroke");
+      t.style.textShadow = "";
+      return;
+    }
+    t.classList.remove("text-stroke");
+    t.style.textShadow = RANKING_SHADOW_CSS[e] || RANKING_SHADOW_CSS.outline;
+  }
+  _propagateRankNumberStyles() {
+    for (let t = 1; t <= 5; t++) {
+      const e = `rank_${t}_number`;
+      const n = `rank_${t}_title`;
+      const o = this.customizations[e];
+      if (!o) continue;
+      if (!this.customizations[n]) this.customizations[n] = {};
+      const i = this.customizations[n];
+      for (const t of [ "font", "font_size", "outline_color", "outline_offsets", "stroke_style" ]) {
+        if (o[t] !== undefined) {
+          i[t] = Array.isArray(o[t]) ? o[t].map(t => [ ...t ]) : o[t];
         }
-        const style = String(strokeStyle || 'outline').trim().toLowerCase() || 'outline';
-        this.customizations[elementId].stroke_style = style;
-        if (style === 'none') {
-            this.customizations[elementId].outline_offsets = [];
-            this.customizations[elementId].outline_color = null;
+      }
+      if (o.color && i.color === undefined) {
+        i.color = [ ...o.color ];
+      }
+    }
+  }
+  syncFromDOM() {
+    const t = this._getActiveRankingContainer();
+    if (!t) return;
+    t.querySelectorAll("[data-template-element-id]").forEach(t => {
+      const e = t.getAttribute("data-template-element-id");
+      if (!e) return;
+      if (!this.customizations[e]) this.customizations[e] = {};
+      const n = t.textContent.trim() || String(t.getAttribute("data-rk-full-title") || "").trim();
+      if (e.endsWith("_number") && e.startsWith("rank_")) {
+        const n = e.match(/^rank_(\d+)_number$/);
+        if (n) {
+          t.textContent = `${n[1]}.`;
+          delete this.customizations[e].content;
+        }
+      } else if (n) {
+        this.customizations[e].content = n;
+      }
+      const o = this._colorToRgba(t.style.color || getComputedStyle(t).color);
+      if (o) this.customizations[e].color = o;
+      const i = t.style.backgroundColor || "";
+      if (i && i !== "transparent" && i !== "rgba(0, 0, 0, 0)" && t.classList.contains("rk-has-fill")) {
+        const t = this._colorToRgba(i);
+        if (t) {
+          this.customizations[e].box = true;
+          this.customizations[e].box_color = t;
+          this.customizations[e].box_border_width = 12;
+        }
+      } else {
+        this.customizations[e].box = false;
+        this.customizations[e].box_color = null;
+      }
+      const s = getComputedStyle(t);
+      const r = t.style.fontSize;
+      const a = r && r !== "inherit" ? parseFloat(r) : parseFloat(s.fontSize);
+      if (a) {
+        this.customizations[e].font_size = this._scaleFontSize(a);
+      }
+      const l = t.getAttribute("data-rk-font") || t.style.getPropertyValue("font-family") || t.style.fontFamily || s.fontFamily;
+      this.customizations[e].font = this._normalizeFont(l);
+      const c = this._readStrokeState(t);
+      this.customizations[e].stroke_style = c.style;
+      if (c.enabled) {
+        this.customizations[e].outline_color = [ 0, 0, 0, 255 ];
+        const t = RANKING_OFFSETS_BY_STYLE[c.style] || RANKING_OUTLINE_OFFSETS;
+        this.customizations[e].outline_offsets = t.map(t => [ ...t ]);
+        if (c.style === "stroke" || c.style === "outline") {
+          this.customizations[e].shadow_color = null;
+          this.customizations[e].shadow_offset = null;
         } else {
-            const offsets = RANKING_OFFSETS_BY_STYLE[style] || RANKING_OUTLINE_OFFSETS;
-            this.customizations[elementId].outline_offsets = offsets.map((p) => [...p]);
-            this.customizations[elementId].outline_color = [0, 0, 0, 255];
+          this.customizations[e].shadow_color = null;
+          this.customizations[e].shadow_offset = null;
         }
-        this.saveCustomizations();
+      } else {
+        this.customizations[e].outline_offsets = [];
+        this.customizations[e].shadow_color = null;
+        this.customizations[e].shadow_offset = null;
+      }
+    });
+    this._propagateRankNumberStyles();
+    this.saveCustomizations();
+  }
+  _colorToRgba(t) {
+    if (!t) return null;
+    const e = t.match(/^#([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
+    if (e) {
+      return [ parseInt(e[1], 16), parseInt(e[2], 16), parseInt(e[3], 16), 255 ];
     }
-
-    persistElementStyles(el) {
-        if (!el?.getAttribute) return;
-        const elementId = el.getAttribute('data-template-element-id');
-        if (!elementId) return;
-        if (!this.customizations[elementId]) this.customizations[elementId] = {};
-        const node = this.customizations[elementId];
-
-        const text = (el.textContent || '').trim()
-            || String(el.getAttribute('data-rk-full-title') || '').trim();
-        if (elementId.endsWith('_number') && elementId.startsWith('rank_')) {
-            delete node.content;
-        } else if (text) {
-            node.content = text;
+    const n = t.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+    if (n) {
+      return [ parseInt(n[1], 10), parseInt(n[2], 10), parseInt(n[3], 10), 255 ];
+    }
+    return null;
+  }
+  applyCustomizations() {
+    this._propagateRankNumberStyles();
+    const t = this._getActiveRankingContainer();
+    if (t) {
+      Object.entries(this.customizations).forEach(([e, n]) => {
+        const o = t.querySelector(`[data-template-element-id="${e}"]`);
+        if (!o) return;
+        if (e.endsWith("_number") && e.startsWith("rank_")) {
+          const t = e.match(/^rank_(\d+)_number$/);
+          if (t) o.textContent = `${t[1]}.`;
+          o.contentEditable = "false";
+        } else if (n.content) {
+          o.textContent = n.content;
         }
-
-        node.font = this._resolvePersistFont(el, elementId, node);
-        try { this._writeFontLock({ [elementId]: node.font }); } catch (_) { /* ignore */ }
-
-        const colorRaw = el.style.color || el.style.getPropertyValue('color') || '';
-        const rgba = this._colorToRgba(colorRaw)
-            || this._colorToRgba(getComputedStyle(el).color);
-        if (rgba) node.color = rgba;
-
-        const inlineFs = el.style.fontSize || el.style.getPropertyValue('font-size');
-        const previewPx = inlineFs && inlineFs !== 'inherit'
-            ? parseFloat(inlineFs)
-            : parseFloat(getComputedStyle(el).fontSize);
-        if (previewPx > 0) {
-            node.font_size = this._scaleFontSize(previewPx);
+        if (n.color) {
+          const [t, e, i] = n.color;
+          o.style.color = `rgb(${t}, ${e}, ${i})`;
         }
-
-        const stroke = this._readStrokeState(el);
-        node.stroke_style = stroke.style;
-        if (stroke.enabled) {
-            node.outline_color = [0, 0, 0, 255];
-            const offsets = RANKING_OFFSETS_BY_STYLE[stroke.style] || RANKING_OUTLINE_OFFSETS;
-            node.outline_offsets = offsets.map((p) => [...p]);
+        if (n.box && n.box_color) {
+          o.style.backgroundColor = "transparent";
+          o.style.background = "transparent";
+          o.style.removeProperty("padding");
+          o.style.removeProperty("border-radius");
+          o.classList.remove("rk-has-fill");
+        } else if (n.box === false) {
+          o.style.backgroundColor = "transparent";
+          o.style.background = "transparent";
+          o.style.removeProperty("padding");
+          o.style.removeProperty("border-radius");
+          o.classList.remove("rk-has-fill");
+        }
+        if (n.font) {
+          const t = this._displayFont(n.font);
+          const e = t === "Luckiest Guy" ? `'Luckiest Guy', cursive` : `'${t}', sans-serif`;
+          o.style.setProperty("font-family", e, "important");
+          o.style.setProperty("font-weight", RANKING_FONT_WEIGHT[t] || "400", "important");
+          o.setAttribute("data-rk-font", t);
+        }
+        const i = e === "title_ranking" || e === "title_funniest" || e === "title_channel";
+        if (n.font_size) {
+          const e = n.font_size * ((t.clientWidth || 280) / RANKING_VIDEO_WIDTH);
+          const s = i ? 18 : 16;
+          const r = i ? 40 : 38;
+          o.style.setProperty("font-size", `${Math.max(s, Math.min(r, Math.round(e)))}px`, "important");
+          o.classList.add("rk-sized");
+        }
+        if (n.stroke_style && n.stroke_style !== "none") {
+          this._applyStrokeStyleToElement(o, n.stroke_style);
+        } else if (n.outline_offsets?.length) {
+          this._applyStrokeStyleToElement(o, "stroke");
+        } else if (n.stroke_style !== "none") {
+          o.classList.add("text-stroke");
+          if (o.style.textShadow === "none") o.style.textShadow = "";
+          o.style.removeProperty("text-shadow");
+        }
+        if (e === "title_funniest") o.classList.add("funniest");
+      });
+      try {
+        if (window.RankingTextPill?.applyTopPanel) {
+          window.RankingTextPill.applyTopPanel();
+        }
+      } catch (t) {}
+      return;
+    }
+    Object.entries(this.customizations).forEach(([t, e]) => {
+      const n = this.panel?.querySelector(`[data-element="${t}"]`);
+      if (n && e.content) {
+        n.value = e.content;
+      }
+    });
+  }
+  getCustomizations() {
+    return this.customizations;
+  }
+  toggle() {
+    if (this.panel) {
+      this.panel.style.display = this.panel.style.display === "none" ? "block" : "none";
+    }
+  }
+  show() {
+    if (this.panel) {
+      this.panel.style.display = "block";
+    }
+  }
+  hide() {
+    if (this.panel) {
+      this.panel.style.display = "none";
+    }
+  }
+  captureGenerateLock() {
+    const t = this._getActiveRankingContainer();
+    const e = {};
+    try {
+      Object.entries(this.customizations || {}).forEach(([t, n]) => {
+        if (n && typeof n === "object") e[t] = {
+          ...n
+        }; else if (n != null) e[t] = n;
+      });
+    } catch (t) {}
+    try {
+      const t = JSON.parse(sessionStorage.getItem("solisRankingStyleLock") || "null");
+      if (t && typeof t === "object") {
+        Object.entries(t).forEach(([n, o]) => {
+          if (!o || typeof o !== "object") {
+            if (o != null && e[n] == null) e[n] = o;
+            return;
+          }
+          e[n] = {
+            ...e[n] || {},
+            ...o,
+            ...e[n] || {}
+          };
+          if (t[n]?.font && !e[n].font) e[n].font = t[n].font;
+          if (this.customizations?.[n]?.font) e[n].font = this.customizations[n].font;
+        });
+      }
+    } catch (t) {}
+    if (t) {
+      t.querySelectorAll("[data-template-element-id]").forEach(t => {
+        const n = t.getAttribute("data-template-element-id");
+        if (!n) return;
+        if (!e[n]) e[n] = {};
+        const o = e[n];
+        const i = (t.textContent || "").trim() || String(t.getAttribute("data-rk-full-title") || "").trim();
+        if (n.endsWith("_number") && n.startsWith("rank_")) {
+          delete o.content;
+        } else if (i && !/^add title/i.test(i)) {
+          o.content = i;
+        }
+        o.font = this._resolvePersistFont(t, n, o);
+        const s = t.style.color || t.style.getPropertyValue("color") || getComputedStyle(t).color;
+        const r = this._colorToRgba(s);
+        if (r) o.color = r;
+        const a = t.style.fontSize || t.style.getPropertyValue("font-size");
+        let l = a && a !== "inherit" ? parseFloat(a) : NaN;
+        if (!(l > 0)) l = parseFloat(getComputedStyle(t).fontSize);
+        if (l > 0) o.font_size = this._scaleFontSize(l);
+        const c = this._readStrokeState(t);
+        o.stroke_style = c.style;
+        if (c.enabled) {
+          o.outline_color = [ 0, 0, 0, 255 ];
+          const t = RANKING_OFFSETS_BY_STYLE[c.style] || RANKING_OUTLINE_OFFSETS;
+          o.outline_offsets = t.map(t => [ ...t ]);
         } else {
-            node.outline_offsets = [];
-            node.outline_color = null;
+          o.outline_offsets = [];
+          o.outline_color = null;
         }
-        this.saveCustomizations();
+      });
     }
-
-    persistAllPreviewStyles() {
-        const container = this._getActiveRankingContainer();
-        if (!container) return;
-        container.querySelectorAll('[data-template-element-id]').forEach((el) => {
-            try { this.persistElementStyles(el); } catch (_) { /* ignore */ }
-        });
-        this._propagateRankNumberStyles();
-        try {
-            if (window.__solisRankingLayout) {
-                this.customizations.__ranking_layout = {
-                    ...(this.customizations.__ranking_layout || {}),
-                    ...window.__solisRankingLayout,
-                };
-            }
-        } catch (_) { /* ignore */ }
-        this.saveCustomizations();
+    try {
+      if (window.__solisRankingLayout) {
+        e.__ranking_layout = {
+          ...e.__ranking_layout || {},
+          ...window.__solisRankingLayout
+        };
+      } else if (this.customizations?.__ranking_layout) {
+        e.__ranking_layout = {
+          ...this.customizations.__ranking_layout
+        };
+      }
+    } catch (t) {}
+    for (let t = 1; t <= 5; t++) {
+      const n = e[`rank_${t}_number`];
+      const o = e[`rank_${t}_title`] || (e[`rank_${t}_title`] = {});
+      if (!n || typeof n !== "object") continue;
+      for (const t of [ "font", "font_size", "outline_color", "outline_offsets", "stroke_style" ]) {
+        if (n[t] !== undefined) {
+          o[t] = Array.isArray(n[t]) ? n[t].map(t => [ ...t ]) : n[t];
+        }
+      }
+      if (n.color && o.color === undefined) o.color = [ ...n.color ];
     }
-
-    saveCustomizations() {
-        localStorage.setItem('rankingCustomizations', JSON.stringify(this.customizations));
-        try {
-            sessionStorage.setItem(
-                'solisPendingRankingCustoms',
-                JSON.stringify(this.customizations || {}),
-            );
-        } catch (_) { /* ignore */ }
-        try {
-            this._patchStyleLock(this.customizations);
-        } catch (_) { /* ignore */ }
-        try {
-            if (window.SolisMemory && !window.SolisMemory._applying && typeof window.SolisMemory.noteEdit === 'function') {
-                const tid = window.clipsStudio?.currentTemplateForPreview?.id || 'ranked_compilation';
-                window.SolisMemory.noteEdit(tid);
-            }
-        } catch (_) { /* ignore */ }
+    const n = this.countFonts(e);
+    let o = 0;
+    let i = null;
+    try {
+      i = JSON.parse(sessionStorage.getItem("solisRankingStyleLock") || "null");
+      o = this.countFonts(i);
+    } catch (t) {}
+    if (n === 0 && o > 0) {
+      const t = JSON.parse(JSON.stringify(i));
+      Object.entries(e).forEach(([e, n]) => {
+        if (e === "__ranking_layout") {
+          t[e] = n;
+          return;
+        }
+        if (!n || typeof n !== "object") return;
+        if (!t[e]) t[e] = {};
+        if (n.content !== undefined) t[e].content = n.content;
+        if (n.font) t[e].font = n.font;
+        if (n.font_size) t[e].font_size = n.font_size;
+        if (n.color) t[e].color = n.color;
+      });
+      this.customizations = {
+        ...this.customizations
+      };
+      Object.entries(t).forEach(([t, e]) => {
+        if (e && typeof e === "object" && !Array.isArray(e)) {
+          this.customizations[t] = {
+            ...this.customizations[t] || {},
+            ...e
+          };
+        } else if (e != null) {
+          this.customizations[t] = e;
+        }
+      });
+      try {
+        localStorage.setItem("rankingCustomizations", JSON.stringify(this.customizations));
+        sessionStorage.setItem("solisPendingRankingCustoms", JSON.stringify(t));
+        sessionStorage.setItem("solisRankingStyleLock", JSON.stringify(t));
+      } catch (t) {}
+      return JSON.parse(JSON.stringify(t));
     }
-
-    countFonts(map) {
-        if (!map || typeof map !== 'object') return 0;
-        return Object.entries(map).filter(
-            ([k, v]) => k !== '__ranking_layout' && v && typeof v === 'object' && v.font
-        ).length;
-    }
-
-    _patchStyleLock(incoming) {
-        if (!incoming || typeof incoming !== 'object') return;
-        let prev = null;
+    this.customizations = {
+      ...this.customizations
+    };
+    Object.entries(e).forEach(([t, e]) => {
+      if (e && typeof e === "object" && !Array.isArray(e)) {
+        this.customizations[t] = {
+          ...this.customizations[t] || {},
+          ...e
+        };
+      } else if (e != null) {
+        this.customizations[t] = e;
+      }
+    });
+    try {
+      localStorage.setItem("rankingCustomizations", JSON.stringify(this.customizations));
+      sessionStorage.setItem("solisPendingRankingCustoms", JSON.stringify(e));
+      if (this.countFonts(e) > 0) {
+        sessionStorage.setItem("solisRankingStyleLock", JSON.stringify(e));
+      }
+    } catch (t) {}
+    return JSON.parse(JSON.stringify(e));
+  }
+  flushRankingStylesForGenerate() {
+    try {
+      document.querySelectorAll("#templateVideoPreview .rk-inline-editing").forEach(t => {
         try {
-            prev = JSON.parse(sessionStorage.getItem('solisRankingStyleLock') || 'null');
-        } catch (_) { prev = null; }
-        const merged = {};
-        const sources = [prev, incoming].filter((m) => m && typeof m === 'object');
-        sources.forEach((src) => {
-            Object.entries(src).forEach(([k, v]) => {
-                if (!v || typeof v !== 'object') {
-                    if (v != null) merged[k] = v;
-                    return;
-                }
-                const node = { ...(merged[k] && typeof merged[k] === 'object' ? merged[k] : {}) };
-                Object.entries(v).forEach(([pk, pv]) => {
-                    if (pv !== undefined && pv !== null && pv !== '') node[pk] = pv;
-                });
-                merged[k] = node;
+          t.blur();
+        } catch (t) {}
+      });
+    } catch (t) {}
+    try {
+      this.persistAllPreviewStyles();
+    } catch (t) {}
+    let t = null;
+    try {
+      t = this.captureGenerateLock();
+    } catch (e) {
+      t = null;
+    }
+    if (!t || typeof t !== "object") t = {};
+    if (this.countFonts(t) === 0) {
+      try {
+        const e = JSON.parse(sessionStorage.getItem("solisRankingStyleLock") || "null");
+        if (this.countFonts(e) > 0) {
+          const n = {};
+          [ e, t ].forEach(t => {
+            if (!t || typeof t !== "object") return;
+            Object.entries(t).forEach(([t, o]) => {
+              if (!o || typeof o !== "object") {
+                if (o != null) n[t] = o;
+                return;
+              }
+              n[t] = {
+                ...n[t] || {},
+                ...o
+              };
+              if (e[t]?.font && !n[t].font) n[t].font = e[t].font;
             });
-        });
-        if (this.countFonts(merged) === 0 && this.countFonts(prev) > 0) {
-            sessionStorage.setItem('solisRankingStyleLock', JSON.stringify(prev));
-            window.__solisRankingStyleLock = prev;
-            return;
+          });
+          t = n;
         }
-        sessionStorage.setItem('solisRankingStyleLock', JSON.stringify(merged));
-        window.__solisRankingStyleLock = merged;
+      } catch (t) {}
     }
-
-    _getActiveRankingContainer() {
-        return document.querySelector('#templateVideoPreview .ranking-preview-container')
-            || document.querySelector('.ranking-preview-container');
-    }
-
-    _scaleFontSize(previewPx) {
-        const container = this._getActiveRankingContainer();
-        const w = container?.clientWidth || 280;
-        return Math.max(12, Math.round(previewPx * (RANKING_VIDEO_WIDTH / w)));
-    }
-
-    _normalizeFont(fontFamily) {
-        if (!fontFamily) return RANKING_FONT_TO_FILE['Luckiest Guy'];
-        const name = fontFamily.replace(/['"]/g, '').split(',')[0].trim();
-        if (/^bebas(\s*neue)?$/i.test(name) || /^bebasneue/i.test(name)) {
-            return RANKING_FONT_TO_FILE.Anton;
-        }
-        if (name.endsWith('.ttf') || name.endsWith('.otf')) {
-            if (/bebas/i.test(name)) return RANKING_FONT_TO_FILE.Anton;
-            const byFile = RANKING_FILE_TO_FONT[name]
-                || Object.keys(RANKING_FILE_TO_FONT).find((f) => f.toLowerCase() === name.toLowerCase());
-            if (byFile) {
-                const display = RANKING_FILE_TO_FONT[byFile] || RANKING_FILE_TO_FONT[name];
-                return RANKING_FONT_TO_FILE[display] || name;
-            }
-            return name;
-        }
-        if (RANKING_FONT_TO_FILE[name]) return RANKING_FONT_TO_FILE[name];
-        const byName = Object.keys(RANKING_FONT_TO_FILE).find(
-            (k) => k.toLowerCase() === name.toLowerCase()
-        );
-        if (byName) return RANKING_FONT_TO_FILE[byName];
-        return RANKING_FONT_TO_FILE['Luckiest Guy'];
-    }
-
-    _isDefaultLuckiest(fontFamilyOrFile) {
-        if (!fontFamilyOrFile) return true;
-        const display = this._displayFont(fontFamilyOrFile);
-        return display === 'Luckiest Guy';
-    }
-
-    _resolvePersistFont(el, elementId, node) {
-        const attr = el?.getAttribute?.('data-rk-font');
-        if (attr) return this._normalizeFont(attr);
-
-        const lock = this._readFontLock()?.[elementId];
-        if (lock) return this._normalizeFont(lock);
-
-        if (node?.font) return this._normalizeFont(node.font);
-
-        const inline = (
-            el?.style?.getPropertyValue?.('font-family')
-            || el?.style?.fontFamily
-            || ''
-        ).trim();
-        if (inline) return this._normalizeFont(inline);
-
-        let computed = '';
-        try { computed = getComputedStyle(el).fontFamily || ''; } catch (_) { /* ignore */ }
-        return this._normalizeFont(computed || 'Luckiest Guy');
-    }
-
-    _readFontLock() {
-        try {
-            return JSON.parse(sessionStorage.getItem('solisRankingFontLock') || '{}') || {};
-        } catch (_) {
-            return {};
-        }
-    }
-
-    _writeFontLock(partial) {
-        if (!partial || typeof partial !== 'object') return;
-        const prev = this._readFontLock();
-        const next = { ...prev };
-        Object.entries(partial).forEach(([eid, font]) => {
-            if (eid && font) next[eid] = font;
-        });
-        try {
-            sessionStorage.setItem('solisRankingFontLock', JSON.stringify(next));
-            window.__solisRankingFontLock = next;
-        } catch (_) { /* ignore */ }
-    }
-
-    setElementFontFile(elementId, fontFileOrFamily) {
-        if (!elementId) return;
-        if (!this.customizations[elementId]) this.customizations[elementId] = {};
-        const file = this._normalizeFont(fontFileOrFamily);
-        this.customizations[elementId].font = file;
-        this.saveCustomizations();
-        try {
-            this._writeFontLock({ [elementId]: file });
-            this._patchStyleLock({
-                [elementId]: { font: file },
-            });
-        } catch (_) { /* ignore */ }
-    }
-
-    _displayFont(stored) {
-        if (!stored) return 'Luckiest Guy';
-        const raw = String(stored).replace(/['"]/g, '').split(',')[0].trim();
-        if (RANKING_FONT_TO_FILE[raw]) return raw;
-        if (RANKING_FILE_TO_FONT[raw]) return RANKING_FILE_TO_FONT[raw];
-        const lower = raw.toLowerCase();
-        const byName = Object.keys(RANKING_FONT_TO_FILE).find((k) => k.toLowerCase() === lower);
-        if (byName) return byName;
-        const byFile = Object.keys(RANKING_FILE_TO_FONT).find((f) => f.toLowerCase() === lower);
-        if (byFile) return RANKING_FILE_TO_FONT[byFile];
-        return 'Luckiest Guy';
-    }
-
-    _readStrokeState(el) {
-        const cs = getComputedStyle(el);
-        const shadow = (el.style.textShadow || cs.textShadow || '').replace(/\s+/g, ' ');
-        if (!shadow || shadow === 'none') {
-            if (el.classList.contains('text-stroke')) {
-                return { enabled: true, style: 'outline' };
-            }
-            return { enabled: false, style: 'none' };
-        }
-        if (shadow.includes('3px 0') || shadow.includes('3px 0px')) {
-            return { enabled: true, style: 'thick-outline' };
-        }
-        return { enabled: true, style: 'outline' };
-    }
-
-    _applyStrokeStyleToElement(el, strokeStyle) {
-        if (!el) return;
-        if (strokeStyle === 'none') {
-            el.classList.remove('text-stroke');
-            el.style.textShadow = 'none';
-            return;
-        }
-        if (strokeStyle === 'stroke') {
-            el.classList.add('text-stroke');
-            el.style.textShadow = '';
-            return;
-        }
-        el.classList.remove('text-stroke');
-        el.style.textShadow = RANKING_SHADOW_CSS[strokeStyle] || RANKING_SHADOW_CSS.outline;
-    }
-
-    _propagateRankNumberStyles() {
-        for (let i = 1; i <= 5; i++) {
-            const numId = `rank_${i}_number`;
-            const titleId = `rank_${i}_title`;
-            const numCustom = this.customizations[numId];
-            if (!numCustom) continue;
-            if (!this.customizations[titleId]) this.customizations[titleId] = {};
-            const titleCustom = this.customizations[titleId];
-            for (const prop of ['font', 'font_size', 'outline_color', 'outline_offsets', 'stroke_style']) {
-                if (numCustom[prop] !== undefined) {
-                    titleCustom[prop] = Array.isArray(numCustom[prop])
-                        ? numCustom[prop].map((p) => [...p])
-                        : numCustom[prop];
-                }
-            }
-            if (numCustom.color && titleCustom.color === undefined) {
-                titleCustom.color = [...numCustom.color];
-            }
-        }
-    }
-
-    syncFromDOM() {
-        const container = this._getActiveRankingContainer();
-        if (!container) return;
-        container.querySelectorAll('[data-template-element-id]').forEach((el) => {
-            const elementId = el.getAttribute('data-template-element-id');
-            if (!elementId) return;
-            if (!this.customizations[elementId]) this.customizations[elementId] = {};
-
-            const text = el.textContent.trim()
-                || String(el.getAttribute('data-rk-full-title') || '').trim();
-            if (elementId.endsWith('_number') && elementId.startsWith('rank_')) {
-                const m = elementId.match(/^rank_(\d+)_number$/);
-                if (m) {
-                    el.textContent = `${m[1]}.`;
-                    delete this.customizations[elementId].content;
-                }
-            } else if (text) {
-                this.customizations[elementId].content = text;
-            }
-
-            const rgba = this._colorToRgba(el.style.color || getComputedStyle(el).color);
-            if (rgba) this.customizations[elementId].color = rgba;
-
-            const bgRaw = el.style.backgroundColor || '';
-            if (bgRaw && bgRaw !== 'transparent' && bgRaw !== 'rgba(0, 0, 0, 0)'
-                && el.classList.contains('rk-has-fill')) {
-                const bgRgba = this._colorToRgba(bgRaw);
-                if (bgRgba) {
-                    this.customizations[elementId].box = true;
-                    this.customizations[elementId].box_color = bgRgba;
-                    this.customizations[elementId].box_border_width = 12;
-                }
-            } else {
-                this.customizations[elementId].box = false;
-                this.customizations[elementId].box_color = null;
-            }
-
-            const cs = getComputedStyle(el);
-            const inlineFs = el.style.fontSize;
-            const previewPx = inlineFs && inlineFs !== 'inherit'
-                ? parseFloat(inlineFs)
-                : parseFloat(cs.fontSize);
-            if (previewPx) {
-                this.customizations[elementId].font_size = this._scaleFontSize(previewPx);
-            }
-
-            const ff = el.getAttribute('data-rk-font')
-                || el.style.getPropertyValue('font-family')
-                || el.style.fontFamily
-                || cs.fontFamily;
-            this.customizations[elementId].font = this._normalizeFont(ff);
-
-            const stroke = this._readStrokeState(el);
-            this.customizations[elementId].stroke_style = stroke.style;
-            if (stroke.enabled) {
-                this.customizations[elementId].outline_color = [0, 0, 0, 255];
-                const offsets = RANKING_OFFSETS_BY_STYLE[stroke.style] || RANKING_OUTLINE_OFFSETS;
-                this.customizations[elementId].outline_offsets = offsets.map((p) => [...p]);
-                if (stroke.style === 'stroke' || stroke.style === 'outline') {
-                    this.customizations[elementId].shadow_color = null;
-                    this.customizations[elementId].shadow_offset = null;
-                } else {
-                    this.customizations[elementId].shadow_color = null;
-                    this.customizations[elementId].shadow_offset = null;
-                }
-            } else {
-                this.customizations[elementId].outline_offsets = [];
-                this.customizations[elementId].shadow_color = null;
-                this.customizations[elementId].shadow_offset = null;
-            }
-        });
-        this._propagateRankNumberStyles();
-        this.saveCustomizations();
-    }
-
-    _colorToRgba(color) {
-        if (!color) return null;
-        const hex = color.match(/^#([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
-        if (hex) {
-            return [parseInt(hex[1], 16), parseInt(hex[2], 16), parseInt(hex[3], 16), 255];
-        }
-        const rgb = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-        if (rgb) {
-            return [parseInt(rgb[1], 10), parseInt(rgb[2], 10), parseInt(rgb[3], 10), 255];
-        }
+    try {
+      sessionStorage.setItem("solisPendingRankingCustoms", JSON.stringify(t));
+      if (this.countFonts(t) > 0) {
+        sessionStorage.setItem("solisRankingStyleLock", JSON.stringify(t));
+      }
+      window.__solisPendingGenerateRankingCustoms = t;
+      window.__solisRankingStyleLock = t;
+    } catch (t) {}
+    return this.ensureGeneratePayload(t);
+  }
+  ensureGeneratePayload(t) {
+    const e = [ "title_ranking", "title_funniest", "title_channel", "rank_1_number", "rank_1_title", "rank_2_number", "rank_2_title", "rank_3_number", "rank_3_title", "rank_4_number", "rank_4_title", "rank_5_number", "rank_5_title" ];
+    const n = "LuckiestGuy-Regular.ttf";
+    const o = {
+      title_ranking: 120,
+      title_funniest: 120,
+      title_channel: 72,
+      rank_1_number: 110,
+      rank_1_title: 95,
+      rank_2_number: 110,
+      rank_2_title: 95,
+      rank_3_number: 110,
+      rank_3_title: 95,
+      rank_4_number: 110,
+      rank_4_title: 95,
+      rank_5_number: 110,
+      rank_5_title: 95
+    };
+    const i = {
+      title_ranking: [ 255, 255, 255, 255 ],
+      title_funniest: [ 255, 0, 0, 255 ],
+      title_channel: [ 255, 255, 255, 255 ],
+      rank_1_number: [ 255, 215, 0, 255 ],
+      rank_1_title: [ 255, 215, 0, 255 ],
+      rank_2_number: [ 192, 192, 192, 255 ],
+      rank_2_title: [ 192, 192, 192, 255 ],
+      rank_3_number: [ 205, 127, 50, 255 ],
+      rank_3_title: [ 205, 127, 50, 255 ],
+      rank_4_number: [ 255, 255, 255, 255 ],
+      rank_4_title: [ 255, 255, 255, 255 ],
+      rank_5_number: [ 255, 255, 255, 255 ],
+      rank_5_title: [ 255, 255, 255, 255 ]
+    };
+    const s = {};
+    const r = [ t, this.customizations, (() => {
+      try {
+        return JSON.parse(localStorage.getItem("rankingCustomizations") || "null");
+      } catch (t) {
         return null;
-    }
-
-    applyCustomizations() {
-        this._propagateRankNumberStyles();
-        const container = this._getActiveRankingContainer();
-        if (container) {
-            Object.entries(this.customizations).forEach(([elementId, customization]) => {
-                const el = container.querySelector(`[data-template-element-id="${elementId}"]`);
-                if (!el) return;
-                if (elementId.endsWith('_number') && elementId.startsWith('rank_')) {
-                    const m = elementId.match(/^rank_(\d+)_number$/);
-                    if (m) el.textContent = `${m[1]}.`;
-                    el.contentEditable = 'false';
-                } else if (customization.content) {
-                    el.textContent = customization.content;
-                }
-                if (customization.color) {
-                    const [r, g, b] = customization.color;
-                    el.style.color = `rgb(${r}, ${g}, ${b})`;
-                }
-                if (customization.box && customization.box_color) {
-                    el.style.backgroundColor = 'transparent';
-                    el.style.background = 'transparent';
-                    el.style.removeProperty('padding');
-                    el.style.removeProperty('border-radius');
-                    el.classList.remove('rk-has-fill');
-                } else if (customization.box === false) {
-                    el.style.backgroundColor = 'transparent';
-                    el.style.background = 'transparent';
-                    el.style.removeProperty('padding');
-                    el.style.removeProperty('border-radius');
-                    el.classList.remove('rk-has-fill');
-                }
-                if (customization.font) {
-                    const displayFont = this._displayFont(customization.font);
-                    const stack = displayFont === 'Luckiest Guy'
-                        ? `'Luckiest Guy', cursive`
-                        : `'${displayFont}', sans-serif`;
-                    el.style.setProperty('font-family', stack, 'important');
-                    el.style.setProperty(
-                        'font-weight',
-                        RANKING_FONT_WEIGHT[displayFont] || '400',
-                        'important',
-                    );
-                    el.setAttribute('data-rk-font', displayFont);
-                }
-                const isHeader = elementId === 'title_ranking'
-                    || elementId === 'title_funniest'
-                    || elementId === 'title_channel';
-                if (customization.font_size) {
-                    const scaled = customization.font_size * ((container.clientWidth || 280) / RANKING_VIDEO_WIDTH);
-                    const min = isHeader ? 18 : 16;
-                    const max = isHeader ? 40 : 38;
-                    el.style.setProperty('font-size', `${Math.max(min, Math.min(max, Math.round(scaled)))}px`, 'important');
-                    el.classList.add('rk-sized');
-                }
-                if (customization.stroke_style && customization.stroke_style !== 'none') {
-                    this._applyStrokeStyleToElement(el, customization.stroke_style);
-                } else if (customization.outline_offsets?.length) {
-                    this._applyStrokeStyleToElement(el, 'stroke');
-                } else if (customization.stroke_style !== 'none') {
-                    el.classList.add('text-stroke');
-                    if (el.style.textShadow === 'none') el.style.textShadow = '';
-                    el.style.removeProperty('text-shadow');
-                }
-                if (elementId === 'title_funniest') el.classList.add('funniest');
-            });
-            try {
-                if (window.RankingTextPill?.applyTopPanel) {
-                    window.RankingTextPill.applyTopPanel();
-                }
-            } catch (_) { /* ignore */ }
-            return;
+      }
+    })(), (() => {
+      try {
+        return JSON.parse(sessionStorage.getItem("solisRankingStyleLock") || "null");
+      } catch (t) {
+        return null;
+      }
+    })(), (() => {
+      try {
+        return JSON.parse(sessionStorage.getItem("solisPendingRankingCustoms") || "null");
+      } catch (t) {
+        return null;
+      }
+    })(), window.__solisRankingStyleLock ];
+    r.forEach(t => {
+      if (!t || typeof t !== "object") return;
+      Object.entries(t).forEach(([t, e]) => {
+        if (!e || typeof e !== "object") {
+          if (e != null) s[t] = e;
+          return;
         }
-        Object.entries(this.customizations).forEach(([elementId, customization]) => {
-            const input = this.panel?.querySelector(`[data-element="${elementId}"]`);
-            if (input && customization.content) {
-                input.value = customization.content;
-            }
-        });
-    }
-
-    getCustomizations() {
-        return this.customizations;
-    }
-
-    toggle() {
-        if (this.panel) {
-            this.panel.style.display = this.panel.style.display === 'none' ? 'block' : 'none';
-        }
-    }
-
-    show() {
-        if (this.panel) {
-            this.panel.style.display = 'block';
-        }
-    }
-
-    hide() {
-        if (this.panel) {
-            this.panel.style.display = 'none';
-        }
-    }
-
-    captureGenerateLock() {
-        const container = this._getActiveRankingContainer();
-        const lock = {};
-
-        try {
-            Object.entries(this.customizations || {}).forEach(([k, v]) => {
-                if (v && typeof v === 'object') lock[k] = { ...v };
-                else if (v != null) lock[k] = v;
-            });
-        } catch (_) { /* ignore */ }
-
-        try {
-            const prior = JSON.parse(sessionStorage.getItem('solisRankingStyleLock') || 'null');
-            if (prior && typeof prior === 'object') {
-                Object.entries(prior).forEach(([k, v]) => {
-                    if (!v || typeof v !== 'object') {
-                        if (v != null && lock[k] == null) lock[k] = v;
-                        return;
-                    }
-                    lock[k] = { ...(lock[k] || {}), ...v, ...(lock[k] || {}) };
-                    if (prior[k]?.font && !lock[k].font) lock[k].font = prior[k].font;
-                    if (this.customizations?.[k]?.font) lock[k].font = this.customizations[k].font;
-                });
-            }
-        } catch (_) { /* ignore */ }
-
-        if (container) {
-            container.querySelectorAll('[data-template-element-id]').forEach((el) => {
-                const eid = el.getAttribute('data-template-element-id');
-                if (!eid) return;
-                if (!lock[eid]) lock[eid] = {};
-                const node = lock[eid];
-
-                const text = (el.textContent || '').trim()
-                    || String(el.getAttribute('data-rk-full-title') || '').trim();
-                if (eid.endsWith('_number') && eid.startsWith('rank_')) {
-                    delete node.content;
-                } else if (text && !/^add title/i.test(text)) {
-                    node.content = text;
-                }
-
-                node.font = this._resolvePersistFont(el, eid, node);
-
-                const colorRaw = el.style.color
-                    || el.style.getPropertyValue('color')
-                    || getComputedStyle(el).color;
-                const rgba = this._colorToRgba(colorRaw);
-                if (rgba) node.color = rgba;
-
-                const inlineFs = el.style.fontSize || el.style.getPropertyValue('font-size');
-                let previewPx = inlineFs && inlineFs !== 'inherit' ? parseFloat(inlineFs) : NaN;
-                if (!(previewPx > 0)) previewPx = parseFloat(getComputedStyle(el).fontSize);
-                if (previewPx > 0) node.font_size = this._scaleFontSize(previewPx);
-
-                const stroke = this._readStrokeState(el);
-                node.stroke_style = stroke.style;
-                if (stroke.enabled) {
-                    node.outline_color = [0, 0, 0, 255];
-                    const offsets = RANKING_OFFSETS_BY_STYLE[stroke.style] || RANKING_OUTLINE_OFFSETS;
-                    node.outline_offsets = offsets.map((p) => [...p]);
-                } else {
-                    node.outline_offsets = [];
-                    node.outline_color = null;
-                }
-            });
-        }
-
-        try {
-            if (window.__solisRankingLayout) {
-                lock.__ranking_layout = {
-                    ...(lock.__ranking_layout || {}),
-                    ...window.__solisRankingLayout,
-                };
-            } else if (this.customizations?.__ranking_layout) {
-                lock.__ranking_layout = { ...this.customizations.__ranking_layout };
-            }
-        } catch (_) { /* ignore */ }
-
-        for (let i = 1; i <= 5; i++) {
-            const num = lock[`rank_${i}_number`];
-            const title = lock[`rank_${i}_title`] || (lock[`rank_${i}_title`] = {});
-            if (!num || typeof num !== 'object') continue;
-            for (const prop of ['font', 'font_size', 'outline_color', 'outline_offsets', 'stroke_style']) {
-                if (num[prop] !== undefined) {
-                    title[prop] = Array.isArray(num[prop]) ? num[prop].map((p) => [...p]) : num[prop];
-                }
-            }
-            if (num.color && title.color === undefined) title.color = [...num.color];
-        }
-
-        const nextFonts = this.countFonts(lock);
-        let prevFonts = 0;
-        let prevLock = null;
-        try {
-            prevLock = JSON.parse(sessionStorage.getItem('solisRankingStyleLock') || 'null');
-            prevFonts = this.countFonts(prevLock);
-        } catch (_) { /* ignore */ }
-        if (nextFonts === 0 && prevFonts > 0) {
-            const kept = JSON.parse(JSON.stringify(prevLock));
-            Object.entries(lock).forEach(([k, v]) => {
-                if (k === '__ranking_layout') {
-                    kept[k] = v;
-                    return;
-                }
-                if (!v || typeof v !== 'object') return;
-                if (!kept[k]) kept[k] = {};
-                if (v.content !== undefined) kept[k].content = v.content;
-                if (v.font) kept[k].font = v.font;
-                if (v.font_size) kept[k].font_size = v.font_size;
-                if (v.color) kept[k].color = v.color;
-            });
-            this.customizations = { ...this.customizations };
-            Object.entries(kept).forEach(([k, v]) => {
-                if (v && typeof v === 'object' && !Array.isArray(v)) {
-                    this.customizations[k] = { ...(this.customizations[k] || {}), ...v };
-                } else if (v != null) {
-                    this.customizations[k] = v;
-                }
-            });
-            try {
-                localStorage.setItem('rankingCustomizations', JSON.stringify(this.customizations));
-                sessionStorage.setItem('solisPendingRankingCustoms', JSON.stringify(kept));
-                sessionStorage.setItem('solisRankingStyleLock', JSON.stringify(kept));
-            } catch (_) { /* ignore */ }
-            return JSON.parse(JSON.stringify(kept));
-        }
-
-        this.customizations = { ...this.customizations };
-        Object.entries(lock).forEach(([k, v]) => {
-            if (v && typeof v === 'object' && !Array.isArray(v)) {
-                this.customizations[k] = { ...(this.customizations[k] || {}), ...v };
-            } else if (v != null) {
-                this.customizations[k] = v;
-            }
-        });
-        try {
-            localStorage.setItem('rankingCustomizations', JSON.stringify(this.customizations));
-            sessionStorage.setItem('solisPendingRankingCustoms', JSON.stringify(lock));
-            if (this.countFonts(lock) > 0) {
-                sessionStorage.setItem('solisRankingStyleLock', JSON.stringify(lock));
-            }
-        } catch (_) { /* ignore */ }
-
-        return JSON.parse(JSON.stringify(lock));
-    }
-
-    flushRankingStylesForGenerate() {
-        try {
-            document.querySelectorAll('#templateVideoPreview .rk-inline-editing').forEach((el) => {
-                try { el.blur(); } catch (_) { /* ignore */ }
-            });
-        } catch (_) { /* ignore */ }
-        try { this.persistAllPreviewStyles(); } catch (_) { /* ignore */ }
-        let snap = null;
-        try {
-            snap = this.captureGenerateLock();
-        } catch (_) {
-            snap = null;
-        }
-        if (!snap || typeof snap !== 'object') snap = {};
-        if (this.countFonts(snap) === 0) {
-            try {
-                const prior = JSON.parse(sessionStorage.getItem('solisRankingStyleLock') || 'null');
-                if (this.countFonts(prior) > 0) {
-                    const merged = {};
-                    [prior, snap].forEach((src) => {
-                        if (!src || typeof src !== 'object') return;
-                        Object.entries(src).forEach(([k, v]) => {
-                            if (!v || typeof v !== 'object') {
-                                if (v != null) merged[k] = v;
-                                return;
-                            }
-                            merged[k] = { ...(merged[k] || {}), ...v };
-                            if (prior[k]?.font && !merged[k].font) merged[k].font = prior[k].font;
-                        });
-                    });
-                    snap = merged;
-                }
-            } catch (_) { /* ignore */ }
-        }
-        try {
-            sessionStorage.setItem('solisPendingRankingCustoms', JSON.stringify(snap));
-            if (this.countFonts(snap) > 0) {
-                sessionStorage.setItem('solisRankingStyleLock', JSON.stringify(snap));
-            }
-            window.__solisPendingGenerateRankingCustoms = snap;
-            window.__solisRankingStyleLock = snap;
-        } catch (_) { /* ignore */ }
-        return this.ensureGeneratePayload(snap);
-    }
-
-    ensureGeneratePayload(raw) {
-        const RANKING_IDS = [
-            'title_ranking', 'title_funniest', 'title_channel',
-            'rank_1_number', 'rank_1_title',
-            'rank_2_number', 'rank_2_title',
-            'rank_3_number', 'rank_3_title',
-            'rank_4_number', 'rank_4_title',
-            'rank_5_number', 'rank_5_title',
-        ];
-        const DEFAULT_FONT = 'LuckiestGuy-Regular.ttf';
-        const DEFAULT_SIZE = {
-            title_ranking: 120,
-            title_funniest: 120,
-            title_channel: 72,
-            rank_1_number: 110, rank_1_title: 95,
-            rank_2_number: 110, rank_2_title: 95,
-            rank_3_number: 110, rank_3_title: 95,
-            rank_4_number: 110, rank_4_title: 95,
-            rank_5_number: 110, rank_5_title: 95,
+        s[t] = {
+          ...s[t] || {},
+          ...e
         };
-        const DEFAULT_COLOR = {
-            title_ranking: [255, 255, 255, 255],
-            title_funniest: [255, 0, 0, 255],
-            title_channel: [255, 255, 255, 255],
-            rank_1_number: [255, 215, 0, 255], rank_1_title: [255, 215, 0, 255],
-            rank_2_number: [192, 192, 192, 255], rank_2_title: [192, 192, 192, 255],
-            rank_3_number: [205, 127, 50, 255], rank_3_title: [205, 127, 50, 255],
-            rank_4_number: [255, 255, 255, 255], rank_4_title: [255, 255, 255, 255],
-            rank_5_number: [255, 255, 255, 255], rank_5_title: [255, 255, 255, 255],
-        };
-
-        const out = {};
-        const sources = [
-            raw,
-            this.customizations,
-            (() => { try { return JSON.parse(localStorage.getItem('rankingCustomizations') || 'null'); } catch (_) { return null; } })(),
-            (() => { try { return JSON.parse(sessionStorage.getItem('solisRankingStyleLock') || 'null'); } catch (_) { return null; } })(),
-            (() => { try { return JSON.parse(sessionStorage.getItem('solisPendingRankingCustoms') || 'null'); } catch (_) { return null; } })(),
-            window.__solisRankingStyleLock,
-        ];
-        sources.forEach((src) => {
-            if (!src || typeof src !== 'object') return;
-            Object.entries(src).forEach(([k, v]) => {
-                if (!v || typeof v !== 'object') {
-                    if (v != null) out[k] = v;
-                    return;
-                }
-                out[k] = { ...(out[k] || {}), ...v };
+      });
+    });
+    const a = this._readFontLock();
+    Object.entries(a).forEach(([t, e]) => {
+      if (!e) return;
+      if (!s[t] || typeof s[t] !== "object") s[t] = {};
+      s[t].font = e;
+    });
+    try {
+      const t = this._getActiveRankingContainer();
+      if (t) {
+        t.querySelectorAll("[data-template-element-id]").forEach(t => {
+          const e = t.getAttribute("data-template-element-id");
+          if (!e) return;
+          if (!s[e]) s[e] = {};
+          s[e].font = this._resolvePersistFont(t, e, s[e]);
+          try {
+            this._writeFontLock({
+              [e]: s[e].font
             });
+          } catch (t) {}
+          const n = this._colorToRgba(t.style.color || getComputedStyle(t).color);
+          if (n) s[e].color = n;
+          const o = t.style.fontSize;
+          const i = o && o !== "inherit" ? parseFloat(o) : parseFloat(getComputedStyle(t).fontSize);
+          if (i > 0) s[e].font_size = this._scaleFontSize(i);
         });
-
-        const fontLock = this._readFontLock();
-        Object.entries(fontLock).forEach(([eid, font]) => {
-            if (!font) return;
-            if (!out[eid] || typeof out[eid] !== 'object') out[eid] = {};
-            out[eid].font = font;
-        });
-
-        try {
-            const container = this._getActiveRankingContainer();
-            if (container) {
-                container.querySelectorAll('[data-template-element-id]').forEach((el) => {
-                    const eid = el.getAttribute('data-template-element-id');
-                    if (!eid) return;
-                    if (!out[eid]) out[eid] = {};
-                    out[eid].font = this._resolvePersistFont(el, eid, out[eid]);
-                    try { this._writeFontLock({ [eid]: out[eid].font }); } catch (_) { /* ignore */ }
-                    const rgba = this._colorToRgba(el.style.color || getComputedStyle(el).color);
-                    if (rgba) out[eid].color = rgba;
-                    const inlineFs = el.style.fontSize;
-                    const previewPx = inlineFs && inlineFs !== 'inherit'
-                        ? parseFloat(inlineFs)
-                        : parseFloat(getComputedStyle(el).fontSize);
-                    if (previewPx > 0) out[eid].font_size = this._scaleFontSize(previewPx);
-                });
-            }
-        } catch (_) { /* ignore */ }
-
-        if (window.__solisRankingLayout && typeof window.__solisRankingLayout === 'object') {
-            out.__ranking_layout = {
-                ...(out.__ranking_layout || {}),
-                ...window.__solisRankingLayout,
-            };
-        }
-
-        RANKING_IDS.forEach((eid) => {
-            if (!out[eid] || typeof out[eid] !== 'object') out[eid] = {};
-            const node = out[eid];
-            if (!node.font) {
-                node.font = fontLock[eid] || this.customizations?.[eid]?.font || DEFAULT_FONT;
-            } else {
-                node.font = this._normalizeFont(node.font);
-            }
-            if (!(node.font_size > 0) || node.font_size < 70) {
-                node.font_size = DEFAULT_SIZE[eid] || 95;
-            }
-            if (!Array.isArray(node.color) || node.color.length < 3) {
-                node.color = DEFAULT_COLOR[eid] || [255, 255, 255, 255];
-            }
-        });
-
-        try {
-            localStorage.setItem('rankingCustomizations', JSON.stringify({
-                ...(this.customizations || {}),
-                ...out,
-            }));
-            sessionStorage.setItem('solisPendingRankingCustoms', JSON.stringify(out));
-            if (this.countFonts(out) > 0) {
-                sessionStorage.setItem('solisRankingStyleLock', JSON.stringify(out));
-            }
-            window.__solisRankingStyleLock = out;
-            Object.entries(out).forEach(([k, v]) => {
-                if (v && typeof v === 'object' && !Array.isArray(v)) {
-                    this.customizations[k] = { ...(this.customizations[k] || {}), ...v };
-                }
-            });
-        } catch (_) { /* ignore */ }
-
-        return JSON.parse(JSON.stringify(out));
+      }
+    } catch (t) {}
+    if (window.__solisRankingLayout && typeof window.__solisRankingLayout === "object") {
+      s.__ranking_layout = {
+        ...s.__ranking_layout || {},
+        ...window.__solisRankingLayout
+      };
     }
-
-    collectCustomizations() {
-        try {
-            if (this._getActiveRankingContainer()) {
-                return this.ensureGeneratePayload(this.captureGenerateLock());
-            }
-        } catch (_) { /* fall through */ }
-        try {
-            this.syncFromDOM();
-        } catch (_) { /* ignore */ }
-        try {
-            return this.ensureGeneratePayload(this.customizations || {});
-        } catch (_) {
-            return this.ensureGeneratePayload({ ...(this.customizations || {}) });
+    e.forEach(t => {
+      if (!s[t] || typeof s[t] !== "object") s[t] = {};
+      const e = s[t];
+      if (!e.font) {
+        e.font = a[t] || this.customizations?.[t]?.font || n;
+      } else {
+        e.font = this._normalizeFont(e.font);
+      }
+      if (!(e.font_size > 0) || e.font_size < 70) {
+        e.font_size = o[t] || 95;
+      }
+      if (!Array.isArray(e.color) || e.color.length < 3) {
+        e.color = i[t] || [ 255, 255, 255, 255 ];
+      }
+    });
+    try {
+      localStorage.setItem("rankingCustomizations", JSON.stringify({
+        ...this.customizations || {},
+        ...s
+      }));
+      sessionStorage.setItem("solisPendingRankingCustoms", JSON.stringify(s));
+      if (this.countFonts(s) > 0) {
+        sessionStorage.setItem("solisRankingStyleLock", JSON.stringify(s));
+      }
+      window.__solisRankingStyleLock = s;
+      Object.entries(s).forEach(([t, e]) => {
+        if (e && typeof e === "object" && !Array.isArray(e)) {
+          this.customizations[t] = {
+            ...this.customizations[t] || {},
+            ...e
+          };
         }
+      });
+    } catch (t) {}
+    return JSON.parse(JSON.stringify(s));
+  }
+  collectCustomizations() {
+    try {
+      if (this._getActiveRankingContainer()) {
+        return this.ensureGeneratePayload(this.captureGenerateLock());
+      }
+    } catch (t) {}
+    try {
+      this.syncFromDOM();
+    } catch (t) {}
+    try {
+      return this.ensureGeneratePayload(this.customizations || {});
+    } catch (t) {
+      return this.ensureGeneratePayload({
+        ...this.customizations || {}
+      });
     }
+  }
 }
 
 window.rankingCustomizer = null;
+
 (function bootRankingCustomizer() {
-    const start = () => {
-        if (window.rankingCustomizer) return;
-        try {
-            window.rankingCustomizer = new RankingCustomizer();
-        } catch (err) {
-            console.warn('[RankingCustomizer] init failed:', err);
-        }
-    };
-    if (document.body) start();
-    else document.addEventListener('DOMContentLoaded', start, { once: true });
+  const start = () => {
+    if (window.rankingCustomizer) return;
+    try {
+      window.rankingCustomizer = new RankingCustomizer;
+    } catch (t) {
+      console.warn("[RankingCustomizer] init failed:", t);
+    }
+  };
+  if (document.body) start(); else document.addEventListener("DOMContentLoaded", start, {
+    once: true
+  });
 })();
 
-const style = document.createElement('style');
-style.textContent = `
-    .ranking-customizer {
-        position: fixed;
-        right: 20px;
-        top: 100px;
-        width: 350px;
-        background: rgba(30, 30, 30, 0.95);
-        border: 1px solid #ff6b35;
-        border-radius: 12px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        z-index: 9998;
-        max-height: 80vh;
-        overflow-y: auto;
-        display: none;
-        color: #fff;
-        font-family: 'Plus Jakarta Sans', sans-serif;
-    }
+const style = document.createElement("style");
 
-    .ranking-customizer-header {
-        padding: 16px;
-        background: linear-gradient(135deg, #ff6b35 0%, #ff8856 100%);
-        border-radius: 12px 12px 0 0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        color: white;
-    }
+style.textContent = `\n    .ranking-customizer {\n        position: fixed;\n        right: 20px;\n        top: 100px;\n        width: 350px;\n        background: rgba(30, 30, 30, 0.95);\n        border: 1px solid #ff6b35;\n        border-radius: 12px;\n        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);\n        z-index: 9998;\n        max-height: 80vh;\n        overflow-y: auto;\n        display: none;\n        color: #fff;\n        font-family: 'Plus Jakarta Sans', sans-serif;\n    }\n\n    .ranking-customizer-header {\n        padding: 16px;\n        background: linear-gradient(135deg, #ff6b35 0%, #ff8856 100%);\n        border-radius: 12px 12px 0 0;\n        display: flex;\n        justify-content: space-between;\n        align-items: center;\n        color: white;\n    }\n\n    .ranking-customizer-header h3 {\n        margin: 0;\n        font-size: 14px;\n        font-weight: 700;\n    }\n\n    .ranking-customizer-close {\n        background: rgba(255, 255, 255, 0.2);\n        border: none;\n        color: white;\n        font-size: 24px;\n        width: 32px;\n        height: 32px;\n        border-radius: 6px;\n        cursor: pointer;\n        transition: all 0.2s;\n    }\n\n    .ranking-customizer-close:hover {\n        background: rgba(255, 255, 255, 0.3);\n    }\n\n    .ranking-customizer-content {\n        padding: 16px;\n    }\n\n    .ranking-section {\n        margin-bottom: 24px;\n    }\n\n    .ranking-section h4 {\n        margin: 0 0 12px 0;\n        font-size: 13px;\n        font-weight: 700;\n        text-transform: uppercase;\n        color: #ff6b35;\n        letter-spacing: 0.5px;\n    }\n\n    .ranking-edit-group {\n        margin-bottom: 12px;\n    }\n\n    .ranking-edit-group label {\n        display: block;\n        font-size: 12px;\n        color: #aaa;\n        margin-bottom: 6px;\n        font-weight: 500;\n    }\n\n    .ranking-edit-group input {\n        width: 100%;\n        padding: 8px 12px;\n        background: rgba(255, 255, 255, 0.05);\n        border: 1px solid rgba(255, 255, 255, 0.1);\n        border-radius: 6px;\n        color: #fff;\n        font-family: 'Plus Jakarta Sans', sans-serif;\n        font-size: 13px;\n        transition: all 0.2s;\n        box-sizing: border-box;\n    }\n\n    .ranking-edit-group input:focus {\n        outline: none;\n        background: rgba(255, 255, 255, 0.1);\n        border-color: #ff6b35;\n        box-shadow: 0 0 8px rgba(255, 107, 53, 0.2);\n    }\n\n    .ranking-color-picker {\n        display: flex;\n        gap: 8px;\n        flex-wrap: wrap;\n    }\n\n    .ranking-color-btn {\n        width: 32px;\n        height: 32px;\n        border-radius: 4px;\n        border: 2px solid #555;\n        cursor: pointer;\n        transition: all 0.2s;\n    }\n\n    .ranking-color-btn:hover {\n        transform: scale(1.1);\n        border-color: #ff6b35;\n        box-shadow: 0 0 8px rgba(255, 107, 53, 0.4);\n    }\n\n    .ranking-color-btn.active {\n        border-color: #ff6b35;\n        box-shadow: 0 0 12px rgba(255, 107, 53, 0.6);\n    }\n\n    @media (max-width: 768px) {\n        .ranking-customizer {\n            width: calc(100% - 40px);\n            right: 20px;\n            left: 20px;\n            max-height: 60vh;\n        }\n    }\n`;
 
-    .ranking-customizer-header h3 {
-        margin: 0;
-        font-size: 14px;
-        font-weight: 700;
-    }
-
-    .ranking-customizer-close {
-        background: rgba(255, 255, 255, 0.2);
-        border: none;
-        color: white;
-        font-size: 24px;
-        width: 32px;
-        height: 32px;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .ranking-customizer-close:hover {
-        background: rgba(255, 255, 255, 0.3);
-    }
-
-    .ranking-customizer-content {
-        padding: 16px;
-    }
-
-    .ranking-section {
-        margin-bottom: 24px;
-    }
-
-    .ranking-section h4 {
-        margin: 0 0 12px 0;
-        font-size: 13px;
-        font-weight: 700;
-        text-transform: uppercase;
-        color: #ff6b35;
-        letter-spacing: 0.5px;
-    }
-
-    .ranking-edit-group {
-        margin-bottom: 12px;
-    }
-
-    .ranking-edit-group label {
-        display: block;
-        font-size: 12px;
-        color: #aaa;
-        margin-bottom: 6px;
-        font-weight: 500;
-    }
-
-    .ranking-edit-group input {
-        width: 100%;
-        padding: 8px 12px;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 6px;
-        color: #fff;
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 13px;
-        transition: all 0.2s;
-        box-sizing: border-box;
-    }
-
-    .ranking-edit-group input:focus {
-        outline: none;
-        background: rgba(255, 255, 255, 0.1);
-        border-color: #ff6b35;
-        box-shadow: 0 0 8px rgba(255, 107, 53, 0.2);
-    }
-
-    .ranking-color-picker {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-    }
-
-    .ranking-color-btn {
-        width: 32px;
-        height: 32px;
-        border-radius: 4px;
-        border: 2px solid #555;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .ranking-color-btn:hover {
-        transform: scale(1.1);
-        border-color: #ff6b35;
-        box-shadow: 0 0 8px rgba(255, 107, 53, 0.4);
-    }
-
-    .ranking-color-btn.active {
-        border-color: #ff6b35;
-        box-shadow: 0 0 12px rgba(255, 107, 53, 0.6);
-    }
-
-    @media (max-width: 768px) {
-        .ranking-customizer {
-            width: calc(100% - 40px);
-            right: 20px;
-            left: 20px;
-            max-height: 60vh;
-        }
-    }
-`;
 document.head.appendChild(style);

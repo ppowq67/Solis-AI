@@ -1,1834 +1,1599 @@
 const GENERATION_TASK_PIPELINES = {
-    ranked_compilation: [
-        { id: 'wait', label: 'Free queue · Processing soon', keywords: ['queued', 'queue', 'ahead of you', 'open slot', 'starting shortly', 'free queue', 'priority', 'processing soon'] },
-        { id: 'install', label: 'Installing video', keywords: ['download', 'installing', 'preparing download', 'starting generation'] },
-        { id: 'clip', label: 'Clipping moments', keywords: ['moment', 'detect', 'segment', 'highlight', 'analyz', 'clip', 'extract', 'audio', 'finding'] },
-        { id: 'overlay', label: 'Overlaying ranking', keywords: ['overlay', 'ranking', 'title', 'progressive'] },
-        { id: 'compile', label: 'Compiling video', keywords: ['compil', 'touch', 'custom', 'watermark', '9:16', 'vertical', 'finaliz'] },
-        { id: 'export', label: 'Exporting', keywords: ['exporting video', 'encoding final'] },
-    ],
-    splitscreen: [
-        { id: 'wait', label: 'Free queue · Processing soon', keywords: ['queued', 'queue', 'ahead of you', 'open slot', 'starting shortly', 'free queue', 'priority', 'processing soon'] },
-        { id: 'install', label: 'Installing video', keywords: ['download', 'installing', 'preparing download', 'starting generation'] },
-        { id: 'moment', label: 'Finding best moment', keywords: ['moment', 'audio', 'analyz', 'finding', 'extract', '30-second', '30 second', 'adaptive'] },
-        { id: 'secondary', label: 'Preparing secondary panel', keywords: ['reframe', 'face', 'gameplay', 'minecraft', 'layout', 'secondary', 'panel'] },
-        { id: 'compose', label: 'Building split screen', keywords: ['split-screen', 'split screen', 'compos', 'stack', 'creating split'] },
-        { id: 'export', label: 'Exporting', keywords: ['exporting video', 'encoding final'] },
-    ],
-    library_apply: [
-        { id: 'apply', label: 'Applying changes', keywords: ['apply', 'applying', 'recompose', 'layout', 'changes', 'reframe', 'split'] },
-        { id: 'download', label: 'Downloading', keywords: ['download', 'export', 'saving', 'ready'] },
-    ],
+  ranked_compilation: [ {
+    id: "wait",
+    label: "Free queue · Processing soon",
+    keywords: [ "queued", "queue", "ahead of you", "open slot", "starting shortly", "free queue", "priority", "processing soon" ]
+  }, {
+    id: "install",
+    label: "Installing video",
+    keywords: [ "download", "installing", "preparing download", "starting generation" ]
+  }, {
+    id: "clip",
+    label: "Clipping moments",
+    keywords: [ "moment", "detect", "segment", "highlight", "analyz", "clip", "extract", "audio", "finding" ]
+  }, {
+    id: "overlay",
+    label: "Overlaying ranking",
+    keywords: [ "overlay", "ranking", "title", "progressive" ]
+  }, {
+    id: "compile",
+    label: "Compiling video",
+    keywords: [ "compil", "touch", "custom", "watermark", "9:16", "vertical", "finaliz" ]
+  }, {
+    id: "export",
+    label: "Exporting",
+    keywords: [ "exporting video", "encoding final" ]
+  } ],
+  splitscreen: [ {
+    id: "wait",
+    label: "Free queue · Processing soon",
+    keywords: [ "queued", "queue", "ahead of you", "open slot", "starting shortly", "free queue", "priority", "processing soon" ]
+  }, {
+    id: "install",
+    label: "Installing video",
+    keywords: [ "download", "installing", "preparing download", "starting generation" ]
+  }, {
+    id: "moment",
+    label: "Finding best moment",
+    keywords: [ "moment", "audio", "analyz", "finding", "extract", "30-second", "30 second", "adaptive" ]
+  }, {
+    id: "secondary",
+    label: "Preparing secondary panel",
+    keywords: [ "reframe", "face", "gameplay", "minecraft", "layout", "secondary", "panel" ]
+  }, {
+    id: "compose",
+    label: "Building split screen",
+    keywords: [ "split-screen", "split screen", "compos", "stack", "creating split" ]
+  }, {
+    id: "export",
+    label: "Exporting",
+    keywords: [ "exporting video", "encoding final" ]
+  } ],
+  library_apply: [ {
+    id: "apply",
+    label: "Applying changes",
+    keywords: [ "apply", "applying", "recompose", "layout", "changes", "reframe", "split" ]
+  }, {
+    id: "download",
+    label: "Downloading",
+    keywords: [ "download", "export", "saving", "ready" ]
+  } ]
 };
 
-const DEFAULT_PIPELINE_TEMPLATE = 'ranked_compilation';
+const DEFAULT_PIPELINE_TEMPLATE = "ranked_compilation";
 
-const ACTIVE_GENERATION_STATUSES = new Set(['queued', 'downloading', 'processing']);
+const ACTIVE_GENERATION_STATUSES = new Set([ "queued", "downloading", "processing" ]);
 
 class GenerationProgressSpinner {
-    constructor() {
-        this.wrapper = document.getElementById('generationProgressWrapper');
-        this.launcher = document.getElementById('generationLauncher');
-        this.progressCircle = document.getElementById('progressCircle');
-        this.progressText = document.getElementById('generationProgressText');
-        this.progressCheck = document.getElementById('generationProgressCheck');
-        this.progressTooltip = document.getElementById('generationProgressTooltip');
-        this.todoPanel = document.getElementById('generationTodoPanel');
-        this.todoList = document.getElementById('generationTodoList');
-        this.taskCounter = document.getElementById('generationTaskCounter');
-        this.errorBanner = document.getElementById('generationErrorBanner');
-
-        this.activeGenerations = new Map();
-        this._projectAliases = new Map();
-        this.generatingCount = 0;
-        this.tasksInitialized = false;
-        this.tasksIntroPlayed = false;
-        this._introRevealTimers = [];
-        this.panelOpen = false;
-        this.currentTaskIndex = -1;
-        this.completedTaskCount = 0;
-        this.serverSyncDone = false;
-        this.optimisticPending = false;
-        this._syncRetryAttempt = 0;
-        this._syncRetryMax = 5;
-        this._userCancelledIds = new Set();
-        this._lastKnownProjectId = null;
-
-        this.CIRCLE_CIRCUMFERENCE = 126;
-        this.STORAGE_KEY = 'solisAI_activeGenerations';
-        this.TEMPLATE_META_KEY = 'solisAI_generationTemplateMeta';
-        this.GENERATING_COUNT_KEY = 'solisAI_generatingCount';
-        this.activeTemplateId = DEFAULT_PIPELINE_TEMPLATE;
-        this.activeTemplateOptions = {};
-        this.POLLING_INTERVAL = 4500; // HTTP backup only — WS carries live progress
-        this.POLLING_INTERVAL_WS = 12000; // slower when socket is healthy
-        this.WS_FRESH_MS = 10000; // skip HTTP if WS updated this job recently
-        this.pollingTimer = null;
-        this.wsHandlersSetup = false;
-        this._completionHandled = false;
-        this._errorDismissTimer = null;
-        this._libraryRefreshQueued = false;
-        this.showQueueWaitTask = false;
-
-        this._ensureDomRefs();
-        this._bindPanelEvents();
-        this._restoreFromLocalStorageImmediate();
-        this.startPolling();
-
-        if (typeof solisWSClient !== 'undefined' && solisWSClient !== null) {
-            this.setupWebSocketHandlers();
-        }
-
-        setTimeout(() => {
-            if (typeof solisWSClient !== 'undefined' && solisWSClient !== null && !this.wsHandlersSetup) {
-                this.setupWebSocketHandlers();
-            }
-        }, 1000);
-
-        this._scheduleServerSync();
+  constructor() {
+    this.wrapper = document.getElementById("generationProgressWrapper");
+    this.launcher = document.getElementById("generationLauncher");
+    this.progressCircle = document.getElementById("progressCircle");
+    this.progressText = document.getElementById("generationProgressText");
+    this.progressCheck = document.getElementById("generationProgressCheck");
+    this.progressTooltip = document.getElementById("generationProgressTooltip");
+    this.todoPanel = document.getElementById("generationTodoPanel");
+    this.todoList = document.getElementById("generationTodoList");
+    this.taskCounter = document.getElementById("generationTaskCounter");
+    this.errorBanner = document.getElementById("generationErrorBanner");
+    this.activeGenerations = new Map;
+    this._projectAliases = new Map;
+    this.generatingCount = 0;
+    this.tasksInitialized = false;
+    this.tasksIntroPlayed = false;
+    this._introRevealTimers = [];
+    this.panelOpen = false;
+    this.currentTaskIndex = -1;
+    this.completedTaskCount = 0;
+    this.serverSyncDone = false;
+    this.optimisticPending = false;
+    this._syncRetryAttempt = 0;
+    this._syncRetryMax = 5;
+    this._userCancelledIds = new Set;
+    this._lastKnownProjectId = null;
+    this.CIRCLE_CIRCUMFERENCE = 126;
+    this.STORAGE_KEY = "solisAI_activeGenerations";
+    this.TEMPLATE_META_KEY = "solisAI_generationTemplateMeta";
+    this.GENERATING_COUNT_KEY = "solisAI_generatingCount";
+    this.activeTemplateId = DEFAULT_PIPELINE_TEMPLATE;
+    this.activeTemplateOptions = {};
+    this.POLLING_INTERVAL = 4500;
+    this.POLLING_INTERVAL_WS = 12e3;
+    this.WS_FRESH_MS = 1e4;
+    this.pollingTimer = null;
+    this.wsHandlersSetup = false;
+    this._completionHandled = false;
+    this._errorDismissTimer = null;
+    this._libraryRefreshQueued = false;
+    this.showQueueWaitTask = false;
+    this._ensureDomRefs();
+    this._bindPanelEvents();
+    this._restoreFromLocalStorageImmediate();
+    this.startPolling();
+    if (typeof solisWSClient !== "undefined" && solisWSClient !== null) {
+      this.setupWebSocketHandlers();
     }
-
-    _ensureDomRefs() {
-        if (!this.wrapper) this.wrapper = document.getElementById('generationProgressWrapper');
-        if (!this.launcher) this.launcher = document.getElementById('generationLauncher');
-        if (!this.progressCircle) this.progressCircle = document.getElementById('progressCircle');
-        if (!this.progressText) this.progressText = document.getElementById('generationProgressText');
-        if (!this.progressCheck) this.progressCheck = document.getElementById('generationProgressCheck');
-        if (!this.progressTooltip) this.progressTooltip = document.getElementById('generationProgressTooltip');
-        if (!this.todoPanel) this.todoPanel = document.getElementById('generationTodoPanel');
-        if (!this.todoList) this.todoList = document.getElementById('generationTodoList');
-        if (!this.taskCounter) this.taskCounter = document.getElementById('generationTaskCounter');
-        if (!this.errorBanner) this.errorBanner = document.getElementById('generationErrorBanner');
-    }
-
-    _restoreFromLocalStorageImmediate() {
-        try {
-            const stored = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '[]');
-            for (const projectId of stored) {
-                if (!this._isValidProjectId(projectId) || this.activeGenerations.has(projectId)) continue;
-                this.activeGenerations.set(projectId, {
-                    startTime: Date.now(),
-                    progress: 0,
-                    message: 'Resuming...',
-                });
-            }
-            if (this.activeGenerations.size > 0) {
-                this._ensureDomRefs();
-                if (this.wrapper) this.wrapper.style.display = 'flex';
-                this._ensureTaskList();
-                this._syncDisplayFromActive();
-                this._syncGeneratingBadge();
-            }
-        } catch (_) {}
-    }
-
-    _scheduleServerSync() {
-        const delays = [0, 500, 1500, 3000, 5000];
-        const attempt = this._syncRetryAttempt;
-        if (attempt >= this._syncRetryMax) return;
-
-        const delay = delays[Math.min(attempt, delays.length - 1)];
-        setTimeout(async () => {
-            if (this.serverSyncDone) return;
-            const ok = await this._syncFromServerAttempt();
-            if (!ok && !this.serverSyncDone) {
-                this._syncRetryAttempt += 1;
-                if (this._syncRetryAttempt < this._syncRetryMax) {
-                    this._scheduleServerSync();
-                }
-            }
-        }, delay);
-    }
-
-    _apiBase() {
-        return window.API_BASE_URL || window.API_BASE || '/api';
-    }
-
-    _requestHeaders() {
-        if (typeof getAuthHeaders === 'function') {
-            return getAuthHeaders();
-        }
-        return { 'Content-Type': 'application/json' };
-    }
-
-    _isValidProjectId(projectId) {
-        if (!projectId || typeof projectId !== 'string') return false;
-        if (/[\.\/\\:|<>"'\x00]/.test(projectId)) return false;
-        return /^prj_[A-Za-z0-9]{12,}$/.test(projectId) || /^[0-9]+_[a-zA-Z0-9-]+$/.test(projectId);
-    }
-
-    _normalizeTemplateId(templateId) {
-        if (!templateId || typeof templateId !== 'string') return DEFAULT_PIPELINE_TEMPLATE;
-        if (templateId === 'splitscreen') return 'splitscreen';
-        if (templateId.includes('rank') || templateId === 'ranked_compilation' || templateId === 'ranking_moments') {
-            return 'ranked_compilation';
-        }
-        return GENERATION_TASK_PIPELINES[templateId] ? templateId : DEFAULT_PIPELINE_TEMPLATE;
-    }
-
-    _getActiveTasks() {
-        const pipelineId = this._normalizeTemplateId(this.activeTemplateId);
-        let base = GENERATION_TASK_PIPELINES[pipelineId] || GENERATION_TASK_PIPELINES[DEFAULT_PIPELINE_TEMPLATE];
-        if (!this.showQueueWaitTask) {
-            base = base.filter((task) => task.id !== 'wait');
-        }
-        if (pipelineId !== 'splitscreen') return base;
-
-        const secondaryLabel = this._splitscreenSecondaryTaskLabel(
-            this.activeTemplateOptions?.secondaryType
-                || this.activeTemplateOptions?.splitscreen_secondary_type
-                || this.activeTemplateOptions?.gameplay_clip_id
-        );
-        return base.map((task) => {
-            if (task.id !== 'secondary') return task;
-            return {
-                ...task,
-                label: secondaryLabel.label,
-                keywords: [...task.keywords, ...secondaryLabel.keywords],
-            };
+    setTimeout(() => {
+      if (typeof solisWSClient !== "undefined" && solisWSClient !== null && !this.wsHandlersSetup) {
+        this.setupWebSocketHandlers();
+      }
+    }, 1e3);
+    this._scheduleServerSync();
+  }
+  _ensureDomRefs() {
+    if (!this.wrapper) this.wrapper = document.getElementById("generationProgressWrapper");
+    if (!this.launcher) this.launcher = document.getElementById("generationLauncher");
+    if (!this.progressCircle) this.progressCircle = document.getElementById("progressCircle");
+    if (!this.progressText) this.progressText = document.getElementById("generationProgressText");
+    if (!this.progressCheck) this.progressCheck = document.getElementById("generationProgressCheck");
+    if (!this.progressTooltip) this.progressTooltip = document.getElementById("generationProgressTooltip");
+    if (!this.todoPanel) this.todoPanel = document.getElementById("generationTodoPanel");
+    if (!this.todoList) this.todoList = document.getElementById("generationTodoList");
+    if (!this.taskCounter) this.taskCounter = document.getElementById("generationTaskCounter");
+    if (!this.errorBanner) this.errorBanner = document.getElementById("generationErrorBanner");
+  }
+  _restoreFromLocalStorageImmediate() {
+    try {
+      const e = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || "[]");
+      for (const t of e) {
+        if (!this._isValidProjectId(t) || this.activeGenerations.has(t)) continue;
+        this.activeGenerations.set(t, {
+          startTime: Date.now(),
+          progress: 0,
+          message: "Resuming..."
         });
-    }
-
-    _splitscreenSecondaryTaskLabel(secondaryType) {
-        const id = String(secondaryType || '').toLowerCase();
-        if (id === 'face_track' || id === 'reframe') {
-            return {
-                label: 'Reframing face',
-                keywords: ['applying reframe', 'face track', 'reframe'],
-            };
-        }
-        if (id === 'blank') {
-            return {
-                label: 'Preparing black panel',
-                keywords: ['blank', 'black panel', 'canvas', 'solid'],
-            };
-        }
-        if (id === 'blank_blur') {
-            return {
-                label: 'Preparing blur panel',
-                keywords: ['blank', 'blur', 'canvas', 'backdrop'],
-            };
-        }
-        if (id === 'gameplay' || (id && !['face_track', 'blank', 'blank_blur', 'reframe'].includes(id))) {
-            return {
-                label: 'Loading gameplay',
-                keywords: ['creating split-screen video', 'gameplay clip'],
-            };
-        }
-        return {
-            label: 'Preparing secondary panel',
-            keywords: ['secondary panel', 'layout'],
-        };
-    }
-
-    _shouldShowQueueWaitTask(message = '', queueInfo = null) {
-        if (queueInfo?.queue_status === 'running') return false;
-        if (queueInfo?.queue_status === 'waiting') return true;
-        const ahead = Number.isFinite(Number(queueInfo?.users_ahead))
-            ? Number(queueInfo.users_ahead)
-            : this._queueAheadFromMessage(message);
-        if (ahead != null && ahead > 0) return true;
-        const msg = String(message || '').toLowerCase();
-        if (msg.includes('ahead of you') || msg.includes('open slot')) return true;
-        if (msg.includes('queued') && msg.includes('waiting')) return true;
-        return false;
-    }
-
-    _setQueueWaitVisible(visible) {
-        const next = Boolean(visible);
-        if (this.showQueueWaitTask === next) return false;
-        const hadWait = this.showQueueWaitTask;
-        this.showQueueWaitTask = next;
-        this.tasksInitialized = false;
-        this.tasksIntroPlayed = false;
-        this._clearIntroRevealTimers();
-        if (this.todoList) this.todoList.innerHTML = '';
-        if (hadWait && !next && this.currentTaskIndex > 0) {
-            this.currentTaskIndex = Math.max(0, this.currentTaskIndex - 1);
-        } else if (!hadWait && next) {
-            this.currentTaskIndex = 0;
-        } else if (hadWait && !next && this.currentTaskIndex === 0) {
-            this.currentTaskIndex = 0;
-        }
+      }
+      if (this.activeGenerations.size > 0) {
+        this._ensureDomRefs();
+        if (this.wrapper) this.wrapper.style.display = "flex";
         this._ensureTaskList();
-        if (this.panelOpen) this._playTasksIntro();
-        return true;
-    }
-
-    _setActivePipeline(templateId, options = {}) {
-        const normalized = this._normalizeTemplateId(templateId);
-        const prevTemplate = this.activeTemplateId;
-        const prevOptions = JSON.stringify(this.activeTemplateOptions || {});
-        const nextOptions = JSON.stringify(options || {});
-
-        this.activeTemplateId = normalized;
-        this.activeTemplateOptions = options || {};
-
-        if (prevTemplate !== normalized || prevOptions !== nextOptions) {
-            this.tasksInitialized = false;
-            this.tasksIntroPlayed = false;
-            this._resetTaskVisibility();
-            if (this.todoList) this.todoList.innerHTML = '';
+        this._syncDisplayFromActive();
+        this._syncGeneratingBadge();
+      }
+    } catch (e) {}
+  }
+  _scheduleServerSync() {
+    const e = [ 0, 500, 1500, 3e3, 5e3 ];
+    const t = this._syncRetryAttempt;
+    if (t >= this._syncRetryMax) return;
+    const s = e[Math.min(t, e.length - 1)];
+    setTimeout(async () => {
+      if (this.serverSyncDone) return;
+      const e = await this._syncFromServerAttempt();
+      if (!e && !this.serverSyncDone) {
+        this._syncRetryAttempt += 1;
+        if (this._syncRetryAttempt < this._syncRetryMax) {
+          this._scheduleServerSync();
         }
+      }
+    }, s);
+  }
+  _apiBase() {
+    return window.API_BASE_URL || window.API_BASE || "/api";
+  }
+  _requestHeaders() {
+    if (typeof getAuthHeaders === "function") {
+      return getAuthHeaders();
     }
-
-    _saveTemplateMeta(projectId, templateId, options = {}) {
-        if (!this._isValidProjectId(projectId)) return;
-        try {
-            const meta = JSON.parse(localStorage.getItem(this.TEMPLATE_META_KEY) || '{}');
-            meta[projectId] = {
-                templateId: this._normalizeTemplateId(templateId),
-                options: options || {},
-            };
-            localStorage.setItem(this.TEMPLATE_META_KEY, JSON.stringify(meta));
-        } catch (_) {}
+    return {
+      "Content-Type": "application/json"
+    };
+  }
+  _isValidProjectId(e) {
+    if (!e || typeof e !== "string") return false;
+    if (/[\.\/\\:|<>"'\x00]/.test(e)) return false;
+    return /^prj_[A-Za-z0-9]{12,}$/.test(e) || /^[0-9]+_[a-zA-Z0-9-]+$/.test(e);
+  }
+  _normalizeTemplateId(e) {
+    if (!e || typeof e !== "string") return DEFAULT_PIPELINE_TEMPLATE;
+    if (e === "splitscreen") return "splitscreen";
+    if (e.includes("rank") || e === "ranked_compilation" || e === "ranking_moments") {
+      return "ranked_compilation";
     }
-
-    _getTemplateMeta(projectId) {
-        if (!this._isValidProjectId(projectId)) return null;
-        try {
-            const meta = JSON.parse(localStorage.getItem(this.TEMPLATE_META_KEY) || '{}');
-            return meta[projectId] || null;
-        } catch (_) {
-            return null;
-        }
+    return GENERATION_TASK_PIPELINES[e] ? e : DEFAULT_PIPELINE_TEMPLATE;
+  }
+  _getActiveTasks() {
+    const e = this._normalizeTemplateId(this.activeTemplateId);
+    let t = GENERATION_TASK_PIPELINES[e] || GENERATION_TASK_PIPELINES[DEFAULT_PIPELINE_TEMPLATE];
+    if (!this.showQueueWaitTask) {
+      t = t.filter(e => e.id !== "wait");
     }
-
-    _removeTemplateMeta(projectId) {
-        try {
-            const meta = JSON.parse(localStorage.getItem(this.TEMPLATE_META_KEY) || '{}');
-            if (!meta[projectId]) return;
-            delete meta[projectId];
-            if (Object.keys(meta).length) {
-                localStorage.setItem(this.TEMPLATE_META_KEY, JSON.stringify(meta));
-            } else {
-                localStorage.removeItem(this.TEMPLATE_META_KEY);
-            }
-        } catch (_) {}
+    if (e !== "splitscreen") return t;
+    const s = this._splitscreenSecondaryTaskLabel(this.activeTemplateOptions?.secondaryType || this.activeTemplateOptions?.splitscreen_secondary_type || this.activeTemplateOptions?.gameplay_clip_id);
+    return t.map(e => {
+      if (e.id !== "secondary") return e;
+      return {
+        ...e,
+        label: s.label,
+        keywords: [ ...e.keywords, ...s.keywords ]
+      };
+    });
+  }
+  _splitscreenSecondaryTaskLabel(e) {
+    const t = String(e || "").toLowerCase();
+    if (t === "face_track" || t === "reframe") {
+      return {
+        label: "Reframing face",
+        keywords: [ "applying reframe", "face track", "reframe" ]
+      };
     }
-
-    _applyPipelineFromGeneration(gen, projectId = null) {
-        if (!gen) return;
-        const meta = projectId ? this._getTemplateMeta(projectId) : null;
-        const templateId = gen.templateId || meta?.templateId || this.activeTemplateId;
-        const options = (gen.templateOptions && Object.keys(gen.templateOptions).length)
-            ? gen.templateOptions
-            : (meta?.options || this.activeTemplateOptions || {});
-        this._setActivePipeline(templateId, options);
+    if (t === "blank") {
+      return {
+        label: "Preparing black panel",
+        keywords: [ "blank", "black panel", "canvas", "solid" ]
+      };
     }
-
-    _isFailureStatus(status) {
-        const normalized = (status || '').toLowerCase();
-        return normalized === 'error' || normalized === 'failed' || normalized === 'timeout';
+    if (t === "blank_blur") {
+      return {
+        label: "Preparing blur panel",
+        keywords: [ "blank", "blur", "canvas", "backdrop" ]
+      };
     }
-
-    _isCancelledStatus(status) {
-        const normalized = (status || '').toLowerCase();
-        return normalized === 'cancelled' || normalized === 'canceled';
+    if (t === "gameplay" || t && ![ "face_track", "blank", "blank_blur", "reframe" ].includes(t)) {
+      return {
+        label: "Loading gameplay",
+        keywords: [ "creating split-screen video", "gameplay clip" ]
+      };
     }
-
-    _markUserCancelled(projectId) {
-        if (!projectId) return;
-        if (!this._userCancelledIds) this._userCancelledIds = new Set();
-        this._userCancelledIds.add(String(projectId));
-        setTimeout(() => {
-            try { this._userCancelledIds?.delete(String(projectId)); } catch (_) {}
-        }, 120000);
+    return {
+      label: "Preparing secondary panel",
+      keywords: [ "secondary panel", "layout" ]
+    };
+  }
+  _shouldShowQueueWaitTask(e = "", t = null) {
+    if (t?.queue_status === "running") return false;
+    if (t?.queue_status === "waiting") return true;
+    const s = Number.isFinite(Number(t?.users_ahead)) ? Number(t.users_ahead) : this._queueAheadFromMessage(e);
+    if (s != null && s > 0) return true;
+    const i = String(e || "").toLowerCase();
+    if (i.includes("ahead of you") || i.includes("open slot")) return true;
+    if (i.includes("queued") && i.includes("waiting")) return true;
+    return false;
+  }
+  _setQueueWaitVisible(e) {
+    const t = Boolean(e);
+    if (this.showQueueWaitTask === t) return false;
+    const s = this.showQueueWaitTask;
+    this.showQueueWaitTask = t;
+    this.tasksInitialized = false;
+    this.tasksIntroPlayed = false;
+    this._clearIntroRevealTimers();
+    if (this.todoList) this.todoList.innerHTML = "";
+    if (s && !t && this.currentTaskIndex > 0) {
+      this.currentTaskIndex = Math.max(0, this.currentTaskIndex - 1);
+    } else if (!s && t) {
+      this.currentTaskIndex = 0;
+    } else if (s && !t && this.currentTaskIndex === 0) {
+      this.currentTaskIndex = 0;
     }
-
-    _wasUserCancelled(projectId) {
-        if (!projectId || !this._userCancelledIds?.size) return false;
-        const id = String(projectId);
-        if (this._userCancelledIds.has(id)) return true;
-        for (const cancelled of this._userCancelledIds) {
-            if (this._idsLikelySameJob?.(cancelled, id)) return true;
-        }
-        return false;
+    this._ensureTaskList();
+    if (this.panelOpen) this._playTasksIntro();
+    return true;
+  }
+  _setActivePipeline(e, t = {}) {
+    const s = this._normalizeTemplateId(e);
+    const i = this.activeTemplateId;
+    const r = JSON.stringify(this.activeTemplateOptions || {});
+    const n = JSON.stringify(t || {});
+    this.activeTemplateId = s;
+    this.activeTemplateOptions = t || {};
+    if (i !== s || r !== n) {
+      this.tasksInitialized = false;
+      this.tasksIntroPlayed = false;
+      this._resetTaskVisibility();
+      if (this.todoList) this.todoList.innerHTML = "";
     }
-
-    _idsLikelySameJob(a, b) {
-        if (!a || !b) return false;
-        if (String(a) === String(b)) return true;
-        const resolved = this._resolveActiveProjectId?.(a) || a;
-        const resolvedB = this._resolveActiveProjectId?.(b) || b;
-        return String(resolved) === String(resolvedB);
+  }
+  _saveTemplateMeta(e, t, s = {}) {
+    if (!this._isValidProjectId(e)) return;
+    try {
+      const i = JSON.parse(localStorage.getItem(this.TEMPLATE_META_KEY) || "{}");
+      i[e] = {
+        templateId: this._normalizeTemplateId(t),
+        options: s || {}
+      };
+      localStorage.setItem(this.TEMPLATE_META_KEY, JSON.stringify(i));
+    } catch (e) {}
+  }
+  _getTemplateMeta(e) {
+    if (!this._isValidProjectId(e)) return null;
+    try {
+      const t = JSON.parse(localStorage.getItem(this.TEMPLATE_META_KEY) || "{}");
+      return t[e] || null;
+    } catch (e) {
+      return null;
     }
-
-    _isSuccessStatus(status) {
-        return (status || '').toLowerCase() === 'completed';
+  }
+  _removeTemplateMeta(e) {
+    try {
+      const t = JSON.parse(localStorage.getItem(this.TEMPLATE_META_KEY) || "{}");
+      if (!t[e]) return;
+      delete t[e];
+      if (Object.keys(t).length) {
+        localStorage.setItem(this.TEMPLATE_META_KEY, JSON.stringify(t));
+      } else {
+        localStorage.removeItem(this.TEMPLATE_META_KEY);
+      }
+    } catch (e) {}
+  }
+  _applyPipelineFromGeneration(e, t = null) {
+    if (!e) return;
+    const s = t ? this._getTemplateMeta(t) : null;
+    const i = e.templateId || s?.templateId || this.activeTemplateId;
+    const r = e.templateOptions && Object.keys(e.templateOptions).length ? e.templateOptions : s?.options || this.activeTemplateOptions || {};
+    this._setActivePipeline(i, r);
+  }
+  _isFailureStatus(e) {
+    const t = (e || "").toLowerCase();
+    return t === "error" || t === "failed" || t === "timeout";
+  }
+  _isCancelledStatus(e) {
+    const t = (e || "").toLowerCase();
+    return t === "cancelled" || t === "canceled";
+  }
+  _markUserCancelled(e) {
+    if (!e) return;
+    if (!this._userCancelledIds) this._userCancelledIds = new Set;
+    this._userCancelledIds.add(String(e));
+    setTimeout(() => {
+      try {
+        this._userCancelledIds?.delete(String(e));
+      } catch (e) {}
+    }, 12e4);
+  }
+  _wasUserCancelled(e) {
+    if (!e || !this._userCancelledIds?.size) return false;
+    const t = String(e);
+    if (this._userCancelledIds.has(t)) return true;
+    for (const e of this._userCancelledIds) {
+      if (this._idsLikelySameJob?.(e, t)) return true;
     }
-
-    _clearErrorDismissTimer() {
-        if (this._errorDismissTimer) {
-            clearTimeout(this._errorDismissTimer);
-            this._errorDismissTimer = null;
-        }
+    return false;
+  }
+  _idsLikelySameJob(e, t) {
+    if (!e || !t) return false;
+    if (String(e) === String(t)) return true;
+    const s = this._resolveActiveProjectId?.(e) || e;
+    const i = this._resolveActiveProjectId?.(t) || t;
+    return String(s) === String(i);
+  }
+  _isSuccessStatus(e) {
+    return (e || "").toLowerCase() === "completed";
+  }
+  _clearErrorDismissTimer() {
+    if (this._errorDismissTimer) {
+      clearTimeout(this._errorDismissTimer);
+      this._errorDismissTimer = null;
     }
-
-    _showErrorBanner(message = 'There was an error — try again') {
-        this._ensureDomRefs();
-        if (this.errorBanner) {
-            this.errorBanner.textContent = message;
-            this.errorBanner.hidden = false;
-            this.errorBanner.classList.add('is-visible');
-        }
-        if (this.todoPanel) this.todoPanel.classList.add('is-error-state');
+  }
+  _showErrorBanner(e = "There was an error — try again") {
+    this._ensureDomRefs();
+    if (this.errorBanner) {
+      this.errorBanner.textContent = e;
+      this.errorBanner.hidden = false;
+      this.errorBanner.classList.add("is-visible");
     }
-
-    _hideErrorBanner() {
-        if (this.errorBanner) {
-            this.errorBanner.hidden = true;
-            this.errorBanner.classList.remove('is-visible');
-        }
-        if (this.todoPanel) this.todoPanel.classList.remove('is-error-state');
+    if (this.todoPanel) this.todoPanel.classList.add("is-error-state");
+  }
+  _hideErrorBanner() {
+    if (this.errorBanner) {
+      this.errorBanner.hidden = true;
+      this.errorBanner.classList.remove("is-visible");
     }
-
-    async _resolveRemovedProject(projectId) {
-        const data = await this._fetchProjectStatus(projectId);
-        if (!data) {
-            const gen = this.activeGenerations.get(projectId);
-            const misses = (gen?._pollMisses || 0) + 1;
-            if (gen) gen._pollMisses = misses;
-            if (misses < 3) return;
-            this.failGeneration(projectId, 'There was an error — try again');
-            return;
-        }
-        const gen = this.activeGenerations.get(projectId);
-        if (gen) gen._pollMisses = 0;
-        if (this._isSuccessStatus(data.status)) {
-            this.completeGeneration(projectId);
-        } else if (this._isCancelledStatus(data.status)) {
-            this.stopGeneration(projectId, data.message || 'Stopped');
-        } else if (this._isFailureStatus(data.status)) {
-            this.failGeneration(projectId, data.message || 'There was an error — try again');
-        } else if (ACTIVE_GENERATION_STATUSES.has((data.status || '').toLowerCase())) {
-            this.updateProgress(projectId, data.progress ?? 0, data.message || 'Processing...', true);
-        } else {
-            this.failGeneration(projectId, data.message || 'There was an error — try again');
-        }
+    if (this.todoPanel) this.todoPanel.classList.remove("is-error-state");
+  }
+  async _resolveRemovedProject(e) {
+    const t = await this._fetchProjectStatus(e);
+    if (!t) {
+      const t = this.activeGenerations.get(e);
+      const s = (t?._pollMisses || 0) + 1;
+      if (t) t._pollMisses = s;
+      if (s < 3) return;
+      this.failGeneration(e, "There was an error — try again");
+      return;
     }
-
-    _statusUrl(projectId) {
-        const safeId = encodeURIComponent(projectId);
-        return `${this._apiBase()}/clips/status/${safeId}`;
+    const s = this.activeGenerations.get(e);
+    if (s) s._pollMisses = 0;
+    if (this._isSuccessStatus(t.status)) {
+      this.completeGeneration(e);
+    } else if (this._isCancelledStatus(t.status)) {
+      this.stopGeneration(e, t.message || "Stopped");
+    } else if (this._isFailureStatus(t.status)) {
+      this.failGeneration(e, t.message || "There was an error — try again");
+    } else if (ACTIVE_GENERATION_STATUSES.has((t.status || "").toLowerCase())) {
+      this.updateProgress(e, t.progress ?? 0, t.message || "Processing...", true);
+    } else {
+      this.failGeneration(e, t.message || "There was an error — try again");
     }
-
-    _hasActiveGenerationUI() {
-        return this.optimisticPending || this.activeGenerations.size > 0;
+  }
+  _statusUrl(e) {
+    const t = encodeURIComponent(e);
+    return `${this._apiBase()}/clips/status/${t}`;
+  }
+  _hasActiveGenerationUI() {
+    return this.optimisticPending || this.activeGenerations.size > 0;
+  }
+  _bindPanelEvents() {
+    if (this.launcher) {
+      this.launcher.addEventListener("click", e => {
+        e.stopPropagation();
+        if (!this._hasActiveGenerationUI()) return;
+        this.openPanel();
+      });
     }
-
-    _bindPanelEvents() {
-        if (this.launcher) {
-            this.launcher.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (!this._hasActiveGenerationUI()) return;
-                this.openPanel();
-            });
-        }
-
-        document.addEventListener('click', (e) => {
-            if (!this.panelOpen || !this.wrapper) return;
-            if (this.wrapper.contains(e.target)) return;
-            this.closePanel();
-        });
-
-        if (this.todoPanel) {
-            this.todoPanel.addEventListener('click', (e) => e.stopPropagation());
-        }
+    document.addEventListener("click", e => {
+      if (!this.panelOpen || !this.wrapper) return;
+      if (this.wrapper.contains(e.target)) return;
+      this.closePanel();
+    });
+    if (this.todoPanel) {
+      this.todoPanel.addEventListener("click", e => e.stopPropagation());
     }
-
-    _ensureTaskList() {
-        if (this.tasksInitialized || !this.todoList) return;
-        const tasks = this._getActiveTasks();
-        this.todoList.innerHTML = tasks.map((task, i) => `
-            <li class="generation-todo-item" id="generation-task-${i}" data-task-id="${task.id}">
-                <div class="generation-task-indicator">
-                    <div class="generation-task-circle generation-task-pending"></div>
-                    <div class="generation-task-circle generation-task-active-wrap">
-                        <svg class="generation-task-spinner" viewBox="0 0 50 50" aria-hidden="true">
-                            <circle cx="25" cy="25" r="20" fill="none" stroke="rgba(16,185,129,0.2)" stroke-width="4.5"></circle>
-                            <circle cx="25" cy="25" r="20" fill="none" stroke="#10b981" stroke-width="4.5"
-                                stroke-linecap="round" transform="rotate(-90 25 25)"></circle>
-                        </svg>
-                    </div>
-                    <div class="generation-task-circle generation-task-done">
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" aria-hidden="true">
-                            <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                    </div>
-                </div>
-                <div class="generation-task-label-wrap">
-                    <div class="generation-task-label">${task.label}</div>
-                    ${task.id === 'wait' ? '<div class="generation-task-hint" hidden></div>' : ''}
-                    <div class="generation-task-strikethrough"></div>
-                </div>
-            </li>
-        `).join('');
-        this.tasksInitialized = true;
-        this._updateTaskCounter();
-    }
-
-    _clearIntroRevealTimers() {
-        this._introRevealTimers.forEach((id) => clearTimeout(id));
-        this._introRevealTimers = [];
-    }
-
-    _resetTaskVisibility() {
-        if (!this.todoList) return;
-        this.todoList.querySelectorAll('.generation-todo-item').forEach((el) => {
-            el.classList.remove('is-revealed', 'is-instant');
-            el.style.removeProperty('--reveal-delay');
-        });
-    }
-
-    _showAllTasksInstant() {
-        this._getActiveTasks().forEach((_, i) => {
-            const el = document.getElementById(`generation-task-${i}`);
-            if (!el) return;
-            el.style.removeProperty('--reveal-delay');
-            el.classList.add('is-revealed', 'is-instant');
-        });
-    }
-
-    _playTasksIntro() {
-        this._clearIntroRevealTimers();
-        this._resetTaskVisibility();
-        this.tasksIntroPlayed = true;
-
+  }
+  _ensureTaskList() {
+    if (this.tasksInitialized || !this.todoList) return;
+    const e = this._getActiveTasks();
+    this.todoList.innerHTML = e.map((e, t) => `\n            <li class="generation-todo-item" id="generation-task-${t}" data-task-id="${e.id}">\n                <div class="generation-task-indicator">\n                    <div class="generation-task-circle generation-task-pending"></div>\n                    <div class="generation-task-circle generation-task-active-wrap">\n                        <svg class="generation-task-spinner" viewBox="0 0 50 50" aria-hidden="true">\n                            <circle cx="25" cy="25" r="20" fill="none" stroke="rgba(16,185,129,0.2)" stroke-width="4.5"></circle>\n                            <circle cx="25" cy="25" r="20" fill="none" stroke="#10b981" stroke-width="4.5"\n                                stroke-linecap="round" transform="rotate(-90 25 25)"></circle>\n                        </svg>\n                    </div>\n                    <div class="generation-task-circle generation-task-done">\n                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" aria-hidden="true">\n                            <polyline points="20 6 9 17 4 12"></polyline>\n                        </svg>\n                    </div>\n                </div>\n                <div class="generation-task-label-wrap">\n                    <div class="generation-task-label">${e.label}</div>\n                    ${e.id === "wait" ? '<div class="generation-task-hint" hidden></div>' : ""}\n                    <div class="generation-task-strikethrough"></div>\n                </div>\n            </li>\n        `).join("");
+    this.tasksInitialized = true;
+    this._updateTaskCounter();
+  }
+  _clearIntroRevealTimers() {
+    this._introRevealTimers.forEach(e => clearTimeout(e));
+    this._introRevealTimers = [];
+  }
+  _resetTaskVisibility() {
+    if (!this.todoList) return;
+    this.todoList.querySelectorAll(".generation-todo-item").forEach(e => {
+      e.classList.remove("is-revealed", "is-instant");
+      e.style.removeProperty("--reveal-delay");
+    });
+  }
+  _showAllTasksInstant() {
+    this._getActiveTasks().forEach((e, t) => {
+      const s = document.getElementById(`generation-task-${t}`);
+      if (!s) return;
+      s.style.removeProperty("--reveal-delay");
+      s.classList.add("is-revealed", "is-instant");
+    });
+  }
+  _playTasksIntro() {
+    this._clearIntroRevealTimers();
+    this._resetTaskVisibility();
+    this.tasksIntroPlayed = true;
+    this._showAllTasksInstant();
+  }
+  openPanel() {
+    if (!this.todoPanel || !this.launcher) return;
+    this._ensureTaskList();
+    this.launcher.classList.add("is-panel-open");
+    this.todoPanel.classList.add("is-open");
+    this.panelOpen = true;
+    requestAnimationFrame(() => {
+      if (!this.tasksIntroPlayed) {
+        this._playTasksIntro();
+      } else {
         this._showAllTasksInstant();
+      }
+    });
+  }
+  closePanel() {
+    if (!this.todoPanel || !this.launcher) return;
+    this._clearIntroRevealTimers();
+    this.launcher.classList.remove("is-panel-open");
+    this.todoPanel.classList.remove("is-open");
+    this.panelOpen = false;
+  }
+  _isQueueWaitingMessage(e = "") {
+    const t = (e || "").toLowerCase();
+    return t.includes("queued") || t.includes("ahead of you") || t.includes("open slot") || t.includes("starting shortly") || t.includes("free queue") || t.includes("priority") || t.includes("processing soon") || t.includes("queue") && !t.includes("starting generation");
+  }
+  _queueAheadFromMessage(e = "") {
+    const t = String(e || "").match(/(\d+)\s+ahead/i);
+    return t ? Number(t[1]) : null;
+  }
+  _queueLabelForInfo(e = "", t = null) {
+    const s = String(e || "").toLowerCase();
+    const i = t?.priority_lane === true || t?.lane === "priority" || s.includes("priority");
+    if (i) {
+      return {
+        label: "Priority · Starting soon",
+        hint: ""
+      };
     }
-
-    openPanel() {
-        if (!this.todoPanel || !this.launcher) return;
-        this._ensureTaskList();
-        this.launcher.classList.add('is-panel-open');
-        this.todoPanel.classList.add('is-open');
-        this.panelOpen = true;
-
-        requestAnimationFrame(() => {
-            if (!this.tasksIntroPlayed) {
-                this._playTasksIntro();
-            } else {
-                this._showAllTasksInstant();
-            }
+    return {
+      label: "Free queue · Processing soon",
+      hint: "Upgrade for priority processing"
+    };
+  }
+  _updateQueueTaskLabel(e = "", t = null) {
+    const s = this._getActiveTasks();
+    const i = s.findIndex(e => e.id === "wait");
+    if (i < 0) return;
+    const r = document.getElementById(`generation-task-${i}`);
+    const n = r?.querySelector(".generation-task-label");
+    const a = r?.querySelector(".generation-task-hint");
+    if (!n) return;
+    if (this._isQueueWaitingMessage(e) || t?.queue_status === "waiting") {
+      const {label: s, hint: i} = this._queueLabelForInfo(e, t);
+      n.textContent = s;
+      if (a) {
+        if (i) {
+          a.hidden = false;
+          a.textContent = i;
+        } else {
+          a.hidden = true;
+          a.textContent = "";
+        }
+      }
+      r.classList.add("is-waiting");
+      r.classList.toggle("is-priority-lane", !i);
+      r.classList.toggle("is-free-lane", Boolean(i));
+    } else {
+      n.textContent = s[i].label;
+      if (a) {
+        a.hidden = true;
+        a.textContent = "";
+      }
+      r.classList.remove("is-waiting", "is-priority-lane", "is-free-lane");
+    }
+  }
+  _resolveTaskIndex(e, t = "") {
+    const s = this._getActiveTasks();
+    const i = (t || "").toLowerCase();
+    if (e >= 100 || i.includes("processing complete") || i.includes("video ready")) {
+      return Math.max(0, s.length - 1);
+    }
+    if (this.showQueueWaitTask && this._isQueueWaitingMessage(i)) {
+      const e = s.findIndex(e => e.id === "wait");
+      return e >= 0 ? e : 0;
+    }
+    for (let e = 0; e < s.length; e++) {
+      const t = s[e];
+      if (t.id === "wait") continue;
+      if (t.keywords.some(e => i.includes(e))) {
+        return e;
+      }
+    }
+    if (s.length === 0) return 0;
+    const r = s[0]?.id === "wait" ? s.length - 1 : s.length;
+    const n = s[0]?.id === "wait" ? 1 : 0;
+    const a = Math.floor(Math.max(0, Math.min(99, e)) / 100 * Math.max(1, r));
+    return Math.min(n + a, s.length - 1);
+  }
+  _updateTaskStates(e, t = "", s = null) {
+    this._ensureTaskList();
+    const i = this._getActiveTasks();
+    const r = this.showQueueWaitTask;
+    let n = this._resolveTaskIndex(e, t);
+    if (r) {
+      const e = i.findIndex(e => e.id === "wait");
+      n = e >= 0 ? e : 0;
+      this.currentTaskIndex = n;
+    } else if (this.currentTaskIndex >= 0 && e < 100) {
+      n = Math.max(n, this.currentTaskIndex);
+      this.currentTaskIndex = n;
+    } else {
+      this.currentTaskIndex = n;
+    }
+    i.forEach((t, s) => {
+      const i = document.getElementById(`generation-task-${s}`);
+      if (!i) return;
+      i.classList.remove("is-active", "is-done", "is-failed", "is-waiting");
+      if (e >= 100) {
+        i.classList.add("is-done");
+      } else if (s < n) {
+        i.classList.add("is-done");
+      } else if (s === n) {
+        i.classList.add("is-active");
+        if (r) i.classList.add("is-waiting");
+      }
+    });
+    this._updateQueueTaskLabel(t, s);
+    this.completedTaskCount = e >= 100 ? i.length : n;
+    this._updateTaskCounter();
+  }
+  _updateTaskCounter() {
+    if (!this.taskCounter) return;
+    const e = this._getActiveTasks().length;
+    const t = Math.max(0, e - this.completedTaskCount);
+    if (t === 0) {
+      this.taskCounter.textContent = "All done";
+    } else if (t === 1) {
+      this.taskCounter.textContent = "1 remaining";
+    } else {
+      this.taskCounter.textContent = `${t} remaining`;
+    }
+  }
+  _markTasksFailed() {
+    this._ensureTaskList();
+    const e = Math.max(0, this.currentTaskIndex);
+    const t = document.getElementById(`generation-task-${e}`);
+    if (t) {
+      t.classList.remove("is-active", "is-done");
+      t.classList.add("is-failed");
+      if (!t.classList.contains("is-revealed")) {
+        t.classList.add("is-revealed", "is-instant");
+      }
+    }
+  }
+  _syncGeneratingBadge() {
+    const e = this.activeGenerations.size + (this.optimisticPending ? 1 : 0);
+    this.generatingCount = e;
+    try {
+      localStorage.setItem(this.GENERATING_COUNT_KEY, String(e));
+    } catch (e) {}
+    if (e > 0) this.showLibraryBadge(); else this.hideLibraryBadge();
+  }
+  saveToLocalStorage(e) {
+    if (!this._isValidProjectId(e)) return;
+    try {
+      const t = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || "[]");
+      if (!t.includes(e)) {
+        t.push(e);
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(t));
+      }
+    } catch (e) {
+      console.warn("Failed to save generation to localStorage:", e);
+    }
+  }
+  removeFromLocalStorage(e) {
+    try {
+      let t = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || "[]");
+      t = t.filter(t => t !== e);
+      if (t.length > 0) {
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(t));
+      } else {
+        localStorage.removeItem(this.STORAGE_KEY);
+      }
+      this._removeTemplateMeta(e);
+    } catch (e) {
+      console.warn("Failed to remove generation from localStorage:", e);
+    }
+  }
+  _writeLocalStorageFromActive() {
+    try {
+      const e = [ ...this.activeGenerations.keys() ].filter(e => this._isValidProjectId(e));
+      if (e.length) {
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(e));
+      } else {
+        localStorage.removeItem(this.STORAGE_KEY);
+      }
+    } catch (e) {}
+  }
+  showLibraryBadge() {
+    const e = document.querySelector('[data-tab="library"]');
+    if (!e) return;
+    e.querySelector(".library-notification-badge")?.remove();
+    const t = document.createElement("div");
+    t.className = "library-notification-badge";
+    e.style.position = "relative";
+    e.appendChild(t);
+  }
+  hideLibraryBadge() {
+    document.querySelector('[data-tab="library"] .library-notification-badge')?.remove();
+  }
+  showVideoReadyNotification() {
+    document.querySelector(".video-ready-notification")?.remove();
+    const e = document.createElement("div");
+    e.className = "video-ready-notification";
+    e.innerHTML = 'Your video is ready to go! <span class="video-ready-badge">OFFICIAL</span>';
+    document.body.appendChild(e);
+    setTimeout(() => e.remove(), 5e3);
+  }
+  restoreGeneration(e, t = 0, s = "Resuming...", i = "processing", r = null, n = null) {
+    if (!this._isValidProjectId(e)) return;
+    if (this._wasUserCancelled(e)) return;
+    const a = (i || "processing").toLowerCase();
+    if (a === "completed") {
+      this.completeGeneration(e);
+      return;
+    }
+    if (a === "error" || a === "failed" || a === "timeout") {
+      this.removeFromLocalStorage(e);
+      this.failGeneration(e, "There was an error — try again");
+      return;
+    }
+    if (!ACTIVE_GENERATION_STATUSES.has(a)) return;
+    const o = this._getTemplateMeta(e);
+    const l = r || o?.templateId || DEFAULT_PIPELINE_TEMPLATE;
+    const c = n || o?.options || {};
+    if (this.activeGenerations.has(e)) {
+      const i = this.activeGenerations.get(e);
+      i.progress = Math.max(i.progress, Math.max(0, Math.min(100, t || 0)));
+      if (s) i.message = s;
+      i.templateId = l;
+      i.templateOptions = c;
+    } else {
+      this.activeGenerations.set(e, {
+        startTime: Date.now(),
+        progress: Math.max(0, Math.min(100, t || 0)),
+        message: s || "Resuming...",
+        templateId: l,
+        templateOptions: c
+      });
+    }
+    this._saveTemplateMeta(e, l, c);
+    this.saveToLocalStorage(e);
+    this._ensureDomRefs();
+    if (this.wrapper) this.wrapper.style.display = "flex";
+    this.tasksIntroPlayed = false;
+    this._resetTaskVisibility();
+    this._applyPipelineFromGeneration(this.activeGenerations.get(e), e);
+    this._ensureTaskList();
+    this._syncDisplayFromActive();
+    this._syncGeneratingBadge();
+    this.startPolling();
+    this._refreshProjectStatus(e);
+  }
+  async _refreshProjectStatus(e) {
+    if (!this._isValidProjectId(e)) return;
+    const t = await this._fetchProjectStatus(e);
+    if (!t) return;
+    if (t.template_id || t.template) {
+      const s = t.splitscreen_secondary_type ? {
+        secondaryType: t.splitscreen_secondary_type
+      } : {};
+      this._saveTemplateMeta(e, t.template_id || t.template, s);
+      if (this.activeGenerations.has(e)) {
+        const i = this.activeGenerations.get(e);
+        i.templateId = t.template_id || t.template;
+        i.templateOptions = s;
+      }
+    }
+    const s = (t.status || "").toLowerCase();
+    if (ACTIVE_GENERATION_STATUSES.has(s)) {
+      this.updateProgress(e, t.progress ?? 0, t.message || "Processing...", true, t.queue || null);
+    } else if (this._isSuccessStatus(s)) {
+      this.completeGeneration(e);
+    } else if (this._isCancelledStatus(s)) {
+      this.stopGeneration(e, t.message || "Stopped");
+    } else if (this._isFailureStatus(s)) {
+      this.failGeneration(e, t.message || "There was an error — try again");
+    }
+  }
+  _syncDisplayFromActive() {
+    this._ensureDomRefs();
+    if (!this.wrapper || !this.progressCircle || this.activeGenerations.size === 0) return;
+    const e = [ ...this.activeGenerations.entries() ].sort((e, t) => t[1].progress - e[1].progress)[0];
+    if (e) {
+      const [t, s] = e;
+      this._applyPipelineFromGeneration(s, t);
+      this.displayProgress(s.progress, s.message, s.queueInfo || null);
+    }
+  }
+  async syncFromServer(e = {}) {
+    if (this.serverSyncDone && !e.force) return;
+    if (e.force) {
+      this.serverSyncDone = false;
+      this._syncRetryAttempt = 0;
+    }
+    const t = await this._syncFromServerAttempt();
+    if (!t && !this.serverSyncDone && this._syncRetryAttempt < this._syncRetryMax) {
+      this._syncRetryAttempt += 1;
+      this._scheduleServerSync();
+    }
+  }
+  async _syncFromServerAttempt() {
+    this._ensureDomRefs();
+    try {
+      const e = await fetch(`${this._apiBase()}/clips/status/active`, {
+        method: "GET",
+        headers: this._requestHeaders(),
+        credentials: "include"
+      });
+      if (e.status === 401 || e.status === 403) {
+        await this._syncFromLocalStorageFallback();
+        return false;
+      }
+      if (!e.ok) {
+        await this._syncFromLocalStorageFallback();
+        return false;
+      }
+      const t = await e.json();
+      if (!t.success || !Array.isArray(t.active_generations)) {
+        await this._syncFromLocalStorageFallback();
+        return false;
+      }
+      const s = new Set;
+      for (const e of t.active_generations) {
+        const t = e.project_id;
+        const i = (e.status || "").toLowerCase();
+        if (!t) continue;
+        if (i === "timeout") {
+          await this._abandonProject(t);
+          continue;
+        }
+        if (!ACTIVE_GENERATION_STATUSES.has(i)) continue;
+        s.add(t);
+        const r = e.splitscreen_secondary_type ? {
+          secondaryType: e.splitscreen_secondary_type
+        } : {};
+        this.restoreGeneration(t, e.progress || 0, e.message || "Processing...", i, e.template_id || e.template || null, r);
+      }
+      for (const e of [ ...this.activeGenerations.keys() ]) {
+        if (!s.has(e)) {
+          await this._resolveRemovedProject(e);
+        }
+      }
+      this._writeLocalStorageFromActive();
+      this._syncGeneratingBadge();
+      if (this.activeGenerations.size === 0 && !this.optimisticPending) {
+        this.hide();
+        this._unlockUrlSubmitButton();
+      }
+      this.serverSyncDone = true;
+      return true;
+    } catch (e) {
+      console.warn("[Spinner] Server sync failed, using local fallback:", e);
+      await this._syncFromLocalStorageFallback();
+      return false;
+    }
+  }
+  async _abandonProject(e) {
+    if (!this._isValidProjectId(e)) return;
+    try {
+      await fetch(`${this._apiBase()}/clips/${encodeURIComponent(e)}/cancel`, {
+        method: "POST",
+        headers: this._requestHeaders(),
+        credentials: "include"
+      });
+    } catch (t) {
+      try {
+        await fetch(`${this._apiBase()}/clips/projects/${encodeURIComponent(e)}/abandon`, {
+          method: "POST",
+          headers: this._requestHeaders(),
+          credentials: "include"
         });
+      } catch (e) {}
     }
-
-    closePanel() {
-        if (!this.todoPanel || !this.launcher) return;
-        this._clearIntroRevealTimers();
-        this.launcher.classList.remove('is-panel-open');
-        this.todoPanel.classList.remove('is-open');
-        this.panelOpen = false;
+    this.activeGenerations.delete(e);
+    this.removeFromLocalStorage(e);
+  }
+  _unlockUrlSubmitButton() {
+    const e = document.getElementById("processUrlBtn");
+    if (e) {
+      e.disabled = false;
+      e.style.opacity = "1";
+      e.style.cursor = "pointer";
+      e.classList.remove("is-generating", "is-cancelling", "is-cancel-locked");
+      e.setAttribute("aria-label", "Continue");
+      e.removeAttribute("title");
     }
-
-    _isQueueWaitingMessage(message = '') {
-        const msg = (message || '').toLowerCase();
-        return msg.includes('queued')
-            || msg.includes('ahead of you')
-            || msg.includes('open slot')
-            || msg.includes('starting shortly')
-            || msg.includes('free queue')
-            || msg.includes('priority')
-            || msg.includes('processing soon')
-            || (msg.includes('queue') && !msg.includes('starting generation'));
+    sessionStorage.removeItem("urlButtonLocked");
+    sessionStorage.removeItem("urlButtonLockeduntil");
+    const t = document.getElementById("confirmUseTemplateBtn");
+    if (t) {
+      t.disabled = false;
+      t.style.pointerEvents = "";
+      t.style.opacity = "";
     }
-
-    _queueAheadFromMessage(message = '') {
-        const match = String(message || '').match(/(\d+)\s+ahead/i);
-        return match ? Number(match[1]) : null;
+    if (window.clipsStudio) {
+      window.clipsStudio._generationStartInFlight = false;
+      window.clipsStudio._cancelGenerationInFlight = false;
     }
-
-    _queueLabelForInfo(message = '', queueInfo = null) {
-        const msg = String(message || '').toLowerCase();
-        const priority = queueInfo?.priority_lane === true
-            || queueInfo?.lane === 'priority'
-            || msg.includes('priority');
-        if (priority) {
-            return {
-                label: 'Priority · Starting soon',
-                hint: '',
-            };
-        }
-        return {
-            label: 'Free queue · Processing soon',
-            hint: 'Upgrade for priority processing',
-        };
-    }
-
-    _updateQueueTaskLabel(message = '', queueInfo = null) {
-        const tasks = this._getActiveTasks();
-        const waitIdx = tasks.findIndex((t) => t.id === 'wait');
-        if (waitIdx < 0) return;
-        const el = document.getElementById(`generation-task-${waitIdx}`);
-        const labelEl = el?.querySelector('.generation-task-label');
-        const hintEl = el?.querySelector('.generation-task-hint');
-        if (!labelEl) return;
-
-        if (this._isQueueWaitingMessage(message) || queueInfo?.queue_status === 'waiting') {
-            const { label, hint } = this._queueLabelForInfo(message, queueInfo);
-            labelEl.textContent = label;
-            if (hintEl) {
-                if (hint) {
-                    hintEl.hidden = false;
-                    hintEl.textContent = hint;
-                } else {
-                    hintEl.hidden = true;
-                    hintEl.textContent = '';
-                }
-            }
-            el.classList.add('is-waiting');
-            el.classList.toggle('is-priority-lane', !hint);
-            el.classList.toggle('is-free-lane', Boolean(hint));
+  }
+  async _syncFromLocalStorageFallback() {
+    try {
+      const e = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || "[]");
+      for (const t of e) {
+        if (!this._isValidProjectId(t)) continue;
+        const e = await this._fetchProjectStatus(t);
+        if (e && ACTIVE_GENERATION_STATUSES.has(e.status)) {
+          this.restoreGeneration(t, e.progress, e.message, e.status);
+        } else if (e && this._isSuccessStatus(e.status)) {
+          this.completeGeneration(t);
+        } else if (e && this._isCancelledStatus(e.status)) {
+          this.stopGeneration(t, e.message || "Stopped");
+        } else if (e && this._isFailureStatus(e.status)) {
+          this.failGeneration(t, e.message || "There was an error — try again");
         } else {
-            labelEl.textContent = tasks[waitIdx].label;
-            if (hintEl) {
-                hintEl.hidden = true;
-                hintEl.textContent = '';
-            }
-            el.classList.remove('is-waiting', 'is-priority-lane', 'is-free-lane');
+          this.removeFromLocalStorage(t);
         }
-    }
-
-    _resolveTaskIndex(progress, message = '') {
-        const tasks = this._getActiveTasks();
-        const msg = (message || '').toLowerCase();
-
-        if (progress >= 100 || msg.includes('processing complete') || msg.includes('video ready')) {
-            return Math.max(0, tasks.length - 1);
-        }
-
-        if (this.showQueueWaitTask && this._isQueueWaitingMessage(msg)) {
-            const waitIdx = tasks.findIndex((t) => t.id === 'wait');
-            return waitIdx >= 0 ? waitIdx : 0;
-        }
-
-        for (let i = 0; i < tasks.length; i++) {
-            const task = tasks[i];
-            if (task.id === 'wait') continue;
-            if (task.keywords.some((kw) => msg.includes(kw))) {
-                return i;
-            }
-        }
-
-        if (tasks.length === 0) return 0;
-        const usable = tasks[0]?.id === 'wait' ? tasks.length - 1 : tasks.length;
-        const offset = tasks[0]?.id === 'wait' ? 1 : 0;
-        const band = Math.floor((Math.max(0, Math.min(99, progress)) / 100) * Math.max(1, usable));
-        return Math.min(offset + band, tasks.length - 1);
-    }
-
-    _updateTaskStates(progress, message = '', queueInfo = null) {
-        this._ensureTaskList();
-        const tasks = this._getActiveTasks();
-        const waiting = this.showQueueWaitTask;
-        let activeIndex = this._resolveTaskIndex(progress, message);
-
-        if (waiting) {
-            const waitIdx = tasks.findIndex((t) => t.id === 'wait');
-            activeIndex = waitIdx >= 0 ? waitIdx : 0;
-            this.currentTaskIndex = activeIndex;
-        } else if (this.currentTaskIndex >= 0 && progress < 100) {
-            activeIndex = Math.max(activeIndex, this.currentTaskIndex);
-            this.currentTaskIndex = activeIndex;
-        } else {
-            this.currentTaskIndex = activeIndex;
-        }
-
-        tasks.forEach((_, i) => {
-            const el = document.getElementById(`generation-task-${i}`);
-            if (!el) return;
-            el.classList.remove('is-active', 'is-done', 'is-failed', 'is-waiting');
-            if (progress >= 100) {
-                el.classList.add('is-done');
-            } else if (i < activeIndex) {
-                el.classList.add('is-done');
-            } else if (i === activeIndex) {
-                el.classList.add('is-active');
-                if (waiting) el.classList.add('is-waiting');
-            }
-        });
-
-        this._updateQueueTaskLabel(message, queueInfo);
-
-        this.completedTaskCount = progress >= 100
-            ? tasks.length
-            : activeIndex;
-        this._updateTaskCounter();
-    }
-
-    _updateTaskCounter() {
-        if (!this.taskCounter) return;
-        const total = this._getActiveTasks().length;
-        const remaining = Math.max(0, total - this.completedTaskCount);
-        if (remaining === 0) {
-            this.taskCounter.textContent = 'All done';
-        } else if (remaining === 1) {
-            this.taskCounter.textContent = '1 remaining';
-        } else {
-            this.taskCounter.textContent = `${remaining} remaining`;
-        }
-    }
-
-    _markTasksFailed() {
-        this._ensureTaskList();
-        const failIndex = Math.max(0, this.currentTaskIndex);
-        const el = document.getElementById(`generation-task-${failIndex}`);
-        if (el) {
-            el.classList.remove('is-active', 'is-done');
-            el.classList.add('is-failed');
-            if (!el.classList.contains('is-revealed')) {
-                el.classList.add('is-revealed', 'is-instant');
-            }
-        }
-    }
-
-    _syncGeneratingBadge() {
-        const count = this.activeGenerations.size + (this.optimisticPending ? 1 : 0);
-        this.generatingCount = count;
-        try {
-            localStorage.setItem(this.GENERATING_COUNT_KEY, String(count));
-        } catch (_) {}
-        if (count > 0) this.showLibraryBadge();
-        else this.hideLibraryBadge();
-    }
-
-    saveToLocalStorage(projectId) {
-        if (!this._isValidProjectId(projectId)) return;
-        try {
-            const activeProjects = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '[]');
-            if (!activeProjects.includes(projectId)) {
-                activeProjects.push(projectId);
-                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(activeProjects));
-            }
-        } catch (error) {
-            console.warn('Failed to save generation to localStorage:', error);
-        }
-    }
-
-    removeFromLocalStorage(projectId) {
-        try {
-            let activeProjects = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '[]');
-            activeProjects = activeProjects.filter((id) => id !== projectId);
-            if (activeProjects.length > 0) {
-                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(activeProjects));
-            } else {
-                localStorage.removeItem(this.STORAGE_KEY);
-            }
-            this._removeTemplateMeta(projectId);
-        } catch (error) {
-            console.warn('Failed to remove generation from localStorage:', error);
-        }
-    }
-
-    _writeLocalStorageFromActive() {
-        try {
-            const ids = [...this.activeGenerations.keys()].filter((id) => this._isValidProjectId(id));
-            if (ids.length) {
-                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(ids));
-            } else {
-                localStorage.removeItem(this.STORAGE_KEY);
-            }
-        } catch (_) {}
-    }
-
-    showLibraryBadge() {
-        const libraryTab = document.querySelector('[data-tab="library"]');
-        if (!libraryTab) return;
-        libraryTab.querySelector('.library-notification-badge')?.remove();
-        const badge = document.createElement('div');
-        badge.className = 'library-notification-badge';
-        libraryTab.style.position = 'relative';
-        libraryTab.appendChild(badge);
-    }
-
-    hideLibraryBadge() {
-        document.querySelector('[data-tab="library"] .library-notification-badge')?.remove();
-    }
-
-    showVideoReadyNotification() {
-        document.querySelector('.video-ready-notification')?.remove();
-        const notification = document.createElement('div');
-        notification.className = 'video-ready-notification';
-        notification.innerHTML = 'Your video is ready to go! <span class="video-ready-badge">OFFICIAL</span>';
-        document.body.appendChild(notification);
-        setTimeout(() => notification.remove(), 5000);
-    }
-
-    restoreGeneration(projectId, progress = 0, message = 'Resuming...', status = 'processing', templateId = null, templateOptions = null) {
-        if (!this._isValidProjectId(projectId)) return;
-        if (this._wasUserCancelled(projectId)) return;
-
-        const normalizedStatus = (status || 'processing').toLowerCase();
-        if (normalizedStatus === 'completed') {
-            this.completeGeneration(projectId);
-            return;
-        }
-        if (normalizedStatus === 'error' || normalizedStatus === 'failed' || normalizedStatus === 'timeout') {
-            this.removeFromLocalStorage(projectId);
-            this.failGeneration(projectId, 'There was an error — try again');
-            return;
-        }
-        if (!ACTIVE_GENERATION_STATUSES.has(normalizedStatus)) return;
-
-        const meta = this._getTemplateMeta(projectId);
-        const resolvedTemplateId = templateId || meta?.templateId || DEFAULT_PIPELINE_TEMPLATE;
-        const resolvedOptions = templateOptions || meta?.options || {};
-
-        if (this.activeGenerations.has(projectId)) {
-            const gen = this.activeGenerations.get(projectId);
-            gen.progress = Math.max(gen.progress, Math.max(0, Math.min(100, progress || 0)));
-            if (message) gen.message = message;
-            gen.templateId = resolvedTemplateId;
-            gen.templateOptions = resolvedOptions;
-        } else {
-            this.activeGenerations.set(projectId, {
-                startTime: Date.now(),
-                progress: Math.max(0, Math.min(100, progress || 0)),
-                message: message || 'Resuming...',
-                templateId: resolvedTemplateId,
-                templateOptions: resolvedOptions,
-            });
-        }
-        this._saveTemplateMeta(projectId, resolvedTemplateId, resolvedOptions);
-        this.saveToLocalStorage(projectId);
-
+      }
+      if (this.activeGenerations.size > 0) {
         this._ensureDomRefs();
-        if (this.wrapper) this.wrapper.style.display = 'flex';
-        this.tasksIntroPlayed = false;
-        this._resetTaskVisibility();
-        this._applyPipelineFromGeneration(this.activeGenerations.get(projectId), projectId);
-        this._ensureTaskList();
+        if (this.wrapper) this.wrapper.style.display = "flex";
         this._syncDisplayFromActive();
         this._syncGeneratingBadge();
         this.startPolling();
-        this._refreshProjectStatus(projectId);
+      } else if (!this.optimisticPending) {
+        this.hide();
+        this._unlockUrlSubmitButton();
+      }
+    } catch (e) {
+      if (this.activeGenerations.size === 0) {
+        localStorage.removeItem(this.STORAGE_KEY);
+      }
     }
-
-    async _refreshProjectStatus(projectId) {
-        if (!this._isValidProjectId(projectId)) return;
-        const data = await this._fetchProjectStatus(projectId);
-        if (!data) return;
-
-        if (data.template_id || data.template) {
-            const options = data.splitscreen_secondary_type
-                ? { secondaryType: data.splitscreen_secondary_type }
-                : {};
-            this._saveTemplateMeta(projectId, data.template_id || data.template, options);
-            if (this.activeGenerations.has(projectId)) {
-                const gen = this.activeGenerations.get(projectId);
-                gen.templateId = data.template_id || data.template;
-                gen.templateOptions = options;
-            }
-        }
-
-        const normalizedStatus = (data.status || '').toLowerCase();
-        if (ACTIVE_GENERATION_STATUSES.has(normalizedStatus)) {
-            this.updateProgress(
-                projectId,
-                data.progress ?? 0,
-                data.message || 'Processing...',
-                true,
-                data.queue || null,
-            );
-        } else if (this._isSuccessStatus(normalizedStatus)) {
-            this.completeGeneration(projectId);
-        } else if (this._isCancelledStatus(normalizedStatus)) {
-            this.stopGeneration(projectId, data.message || 'Stopped');
-        } else if (this._isFailureStatus(normalizedStatus)) {
-            this.failGeneration(projectId, data.message || 'There was an error — try again');
-        }
-    }
-
-    _syncDisplayFromActive() {
-        this._ensureDomRefs();
-        if (!this.wrapper || !this.progressCircle || this.activeGenerations.size === 0) return;
-
-        const maxGen = [...this.activeGenerations.entries()]
-            .sort((a, b) => b[1].progress - a[1].progress)[0];
-
-        if (maxGen) {
-            const [projectId, gen] = maxGen;
-            this._applyPipelineFromGeneration(gen, projectId);
-            this.displayProgress(gen.progress, gen.message, gen.queueInfo || null);
-        }
-    }
-
-    async syncFromServer(options = {}) {
-        if (this.serverSyncDone && !options.force) return;
-        if (options.force) {
-            this.serverSyncDone = false;
-            this._syncRetryAttempt = 0;
-        }
-        const ok = await this._syncFromServerAttempt();
-        if (!ok && !this.serverSyncDone && this._syncRetryAttempt < this._syncRetryMax) {
-            this._syncRetryAttempt += 1;
-            this._scheduleServerSync();
-        }
-    }
-
-    async _syncFromServerAttempt() {
-        this._ensureDomRefs();
-
-        try {
-            const response = await fetch(`${this._apiBase()}/clips/status/active`, {
-                method: 'GET',
-                headers: this._requestHeaders(),
-                credentials: 'include',
-            });
-
-            if (response.status === 401 || response.status === 403) {
-                await this._syncFromLocalStorageFallback();
-                return false;
-            }
-            if (!response.ok) {
-                await this._syncFromLocalStorageFallback();
-                return false;
-            }
-
-            const data = await response.json();
-            if (!data.success || !Array.isArray(data.active_generations)) {
-                await this._syncFromLocalStorageFallback();
-                return false;
-            }
-
-            const serverIds = new Set();
-            for (const gen of data.active_generations) {
-                const projectId = gen.project_id;
-                const status = (gen.status || '').toLowerCase();
-                if (!projectId) continue;
-
-                if (status === 'timeout') {
-                    await this._abandonProject(projectId);
-                    continue;
-                }
-
-                if (!ACTIVE_GENERATION_STATUSES.has(status)) continue;
-
-                serverIds.add(projectId);
-                const templateOptions = gen.splitscreen_secondary_type
-                    ? { secondaryType: gen.splitscreen_secondary_type }
-                    : {};
-                this.restoreGeneration(
-                    projectId,
-                    gen.progress || 0,
-                    gen.message || 'Processing...',
-                    status,
-                    gen.template_id || gen.template || null,
-                    templateOptions
-                );
-            }
-
-            for (const projectId of [...this.activeGenerations.keys()]) {
-                if (!serverIds.has(projectId)) {
-                    await this._resolveRemovedProject(projectId);
-                }
-            }
-
-            this._writeLocalStorageFromActive();
-            this._syncGeneratingBadge();
-
-            if (this.activeGenerations.size === 0 && !this.optimisticPending) {
-                this.hide();
-                this._unlockUrlSubmitButton();
-            }
-
-            this.serverSyncDone = true;
-            return true;
-        } catch (error) {
-            console.warn('[Spinner] Server sync failed, using local fallback:', error);
-            await this._syncFromLocalStorageFallback();
-            return false;
-        }
-    }
-
-    async _abandonProject(projectId) {
-        if (!this._isValidProjectId(projectId)) return;
-        try {
-            await fetch(`${this._apiBase()}/clips/${encodeURIComponent(projectId)}/cancel`, {
-                method: 'POST',
-                headers: this._requestHeaders(),
-                credentials: 'include',
-            });
-        } catch (_) {
-            try {
-                await fetch(`${this._apiBase()}/clips/projects/${encodeURIComponent(projectId)}/abandon`, {
-                    method: 'POST',
-                    headers: this._requestHeaders(),
-                    credentials: 'include',
-                });
-            } catch (__) {}
-        }
-        this.activeGenerations.delete(projectId);
-        this.removeFromLocalStorage(projectId);
-    }
-
-    _unlockUrlSubmitButton() {
-        const submitBtn = document.getElementById('processUrlBtn');
-        if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.style.opacity = '1';
-            submitBtn.style.cursor = 'pointer';
-            submitBtn.classList.remove('is-generating', 'is-cancelling', 'is-cancel-locked');
-            submitBtn.setAttribute('aria-label', 'Continue');
-            submitBtn.removeAttribute('title');
-        }
-        sessionStorage.removeItem('urlButtonLocked');
-        sessionStorage.removeItem('urlButtonLockeduntil');
-
-        const confirmBtn = document.getElementById('confirmUseTemplateBtn');
-        if (confirmBtn) {
-            confirmBtn.disabled = false;
-            confirmBtn.style.pointerEvents = '';
-            confirmBtn.style.opacity = '';
-        }
-        if (window.clipsStudio) {
-            window.clipsStudio._generationStartInFlight = false;
-            window.clipsStudio._cancelGenerationInFlight = false;
-        }
-    }
-
-    async _syncFromLocalStorageFallback() {
-        try {
-            const stored = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '[]');
-            for (const projectId of stored) {
-                if (!this._isValidProjectId(projectId)) continue;
-                const status = await this._fetchProjectStatus(projectId);
-                if (status && ACTIVE_GENERATION_STATUSES.has(status.status)) {
-                    this.restoreGeneration(projectId, status.progress, status.message, status.status);
-                } else if (status && this._isSuccessStatus(status.status)) {
-                    this.completeGeneration(projectId);
-                } else if (status && this._isCancelledStatus(status.status)) {
-                    this.stopGeneration(projectId, status.message || 'Stopped');
-                } else if (status && this._isFailureStatus(status.status)) {
-                    this.failGeneration(projectId, status.message || 'There was an error — try again');
-                } else {
-                    this.removeFromLocalStorage(projectId);
-                }
-            }
-            if (this.activeGenerations.size > 0) {
-                this._ensureDomRefs();
-                if (this.wrapper) this.wrapper.style.display = 'flex';
-                this._syncDisplayFromActive();
-                this._syncGeneratingBadge();
-                this.startPolling();
-            } else if (!this.optimisticPending) {
-                this.hide();
-                this._unlockUrlSubmitButton();
-            }
-        } catch (_) {
-            if (this.activeGenerations.size === 0) {
-                localStorage.removeItem(this.STORAGE_KEY);
-            }
-        }
-    }
-
-    async _fetchProjectStatus(projectId) {
-        if (!this._isValidProjectId(projectId)) return null;
-        try {
-            const response = await fetch(this._statusUrl(projectId), {
-                method: 'GET',
-                credentials: 'include',
-                headers: this._requestHeaders(),
-            });
-            if (response.status === 401 || response.status === 403 || response.status === 404) {
-                this.removeFromLocalStorage(projectId);
-                return null;
-            }
-            if (!response.ok) return null;
-            const data = await response.json();
-            if (!data || !data.status || data.status === 'unknown') return null;
-            return data;
-        } catch (_) {
-            return null;
-        }
-    }
-
-    setupWebSocketHandlers() {
-        if (this.wsHandlersSetup || typeof solisWSClient === 'undefined') return;
-        this.wsHandlersSetup = true;
-
-        solisWSClient.on('moment_detected', (data) => {
-            const { project_id, moment_count, progress } = data;
-            if (!this._isValidProjectId(project_id)) return;
-            if (this._wasUserCancelled(project_id)) return;
-            const activeId = this._resolveActiveProjectId(project_id);
-            if (!activeId) return;
-            this._markWsFresh(activeId);
-            const countdownRank = Math.max(1, 6 - moment_count);
-            const label = `Moment #${countdownRank} detected`;
-            this.updateProgress(activeId, progress, label);
-        });
-
-        solisWSClient.on('compilation_progress', (data) => {
-            const { project_id, progress, step } = data;
-            if (!this._isValidProjectId(project_id)) return;
-            if (this._wasUserCancelled(project_id)) return;
-            const activeId = this._resolveActiveProjectId(project_id);
-            if (!activeId) return;
-            this._markWsFresh(activeId);
-            this.updateProgress(activeId, progress, step || 'Processing...', true);
-        });
-
-        solisWSClient.on('clips_status_update', (data) => {
-            const { project_id, status, progress, message, queue } = data;
-            if (!this._isValidProjectId(project_id)) return;
-            if (this._wasUserCancelled(project_id)) {
-                const normalizedEarly = (status || '').toLowerCase();
-                if (this._isCancelledStatus(normalizedEarly)) {
-                    this.stopGeneration(project_id, message || 'Stopped');
-                }
-                return;
-            }
-            const activeId = this._resolveActiveProjectId(project_id) || project_id;
-            const normalized = (status || '').toLowerCase();
-            if (normalized === 'completed') {
-                this.completeGeneration(activeId);
-            } else if (this._isCancelledStatus(normalized)) {
-                this.stopGeneration(activeId, message || 'Stopped');
-            } else if (this._isFailureStatus(normalized)) {
-                this.failGeneration(activeId, message || 'There was an error — try again');
-            } else if (ACTIVE_GENERATION_STATUSES.has(normalized)) {
-                if (!this._resolveActiveProjectId(project_id) && !this.activeGenerations.has(project_id)) return;
-                this._markWsFresh(activeId);
-                this.updateProgress(activeId, progress ?? 0, message || 'Processing...', true, queue || null);
-            }
-        });
-
-        solisWSClient.on('generation_error', (data) => {
-            const projectId = data?.project_id || data?.taskId;
-            if (!this._isValidProjectId(projectId)) return;
-            if (this._wasUserCancelled(projectId)) return;
-            const activeId = this._resolveActiveProjectId(projectId) || projectId;
-            this.failGeneration(activeId, data?.message || data?.error || 'There was an error — try again');
-        });
-
-        solisWSClient.on('processing_error', (data) => {
-            const projectId = data?.taskId || data?.project_id;
-            if (!this._isValidProjectId(projectId)) return;
-            if (this._wasUserCancelled(projectId)) return;
-            const activeId = this._resolveActiveProjectId(projectId) || projectId;
-            this.failGeneration(activeId, data?.message || data?.error || 'There was an error — try again');
-        });
-
-        solisWSClient.on('video_ready', (data) => {
-            const { project_id, output_path, video_title, thumbnail_url, template_name, template } = data || {};
-            if (!this._isValidProjectId(project_id)) return;
-            if (this._wasUserCancelled(project_id)) return;
-            const activeId = this._resolveActiveProjectId(project_id) || project_id;
-
-            try {
-                const studio = window.clipsStudio;
-                if (studio && Array.isArray(studio.libraryItems)) {
-                    const pid = String(project_id);
-                    let item = studio.libraryItems.find(
-                        (i) => String(i.projectId || i.id) === pid
-                    );
-                    if (!item) {
-                        item = {
-                            id: project_id,
-                            projectId: project_id,
-                            status: 'completed',
-                            timestamp: new Date(),
-                            _optimistic: true,
-                        };
-                        studio.libraryItems.unshift(item);
-                    }
-                    if (video_title) item.name = video_title;
-                    if (thumbnail_url) item.thumbnailUrl = thumbnail_url;
-                    if (template_name) item.templateName = template_name;
-                    if (template) item.template = template;
-                    item.status = 'completed';
-                    item._optimistic = false;
-                    studio._libraryLastLoaded = 0;
-                    if (!studio.libraryPreviewModalOpen) {
-                        studio.updateLibraryView?.();
-                    } else {
-                        studio._libraryRefreshPending = true;
-                    }
-                }
-            } catch (_) {}
-
-            if (typeof window.notificationSystem?.showVideoGenerated === 'function') {
-                window.notificationSystem.showVideoGenerated({
-                    videoTitle: video_title || `Video ${String(project_id).substring(0, 8)}...`,
-                    videoUrl: output_path || '#',
-                    message: 'Your video has been generated successfully!',
-                });
-            }
-            this._refreshLibrarySoon();
-            this.completeGeneration(activeId);
-        });
-
-        solisWSClient.on('error', (data) => {
-            const projectId = data?.taskId || data?.project_id;
-            if (projectId && this._isValidProjectId(projectId)) {
-                this.failGeneration(projectId, data?.error || data?.message || 'There was an error — try again');
-            }
-        });
-    }
-
-    beginOptimisticGeneration(message = 'Starting...', templateId = DEFAULT_PIPELINE_TEMPLATE, options = {}) {
-        this._setActivePipeline(templateId, options);
-        this.optimisticPending = true;
-        this.currentTaskIndex = -1;
-        this.completedTaskCount = 0;
-        this.showQueueWaitTask = false;
-        this._ensureDomRefs();
-        if (this.wrapper) this.wrapper.style.display = 'flex';
-        this.tasksIntroPlayed = false;
-        this._resetTaskVisibility();
-        this._ensureTaskList();
-        this.displayProgress(0, this._cleanMessage(message));
-        this._syncGeneratingBadge();
-        this.openPanel();
-    }
-
-    cancelOptimisticGeneration() {
-        if (!this.optimisticPending) return;
-        this.optimisticPending = false;
-        if (this.activeGenerations.size === 0) {
-            this.stopPolling();
-            this.hide();
-        } else {
-            this._syncGeneratingBadge();
-        }
-    }
-
-    startGeneration(projectId, message = 'Queued — waiting for an open slot...', templateId = null, options = {}) {
-        if (!this._isValidProjectId(projectId)) return;
-        if (this._wasUserCancelled(projectId)) {
-            return;
-        }
-        this._lastKnownProjectId = projectId;
-
-        const meta = this._getTemplateMeta(projectId);
-        const resolvedTemplateId = templateId || meta?.templateId || this.activeTemplateId || DEFAULT_PIPELINE_TEMPLATE;
-        const resolvedOptions = (options && Object.keys(options).length)
-            ? options
-            : (meta?.options || this.activeTemplateOptions || {});
-        this._setActivePipeline(resolvedTemplateId, resolvedOptions);
-        this._saveTemplateMeta(projectId, resolvedTemplateId, resolvedOptions);
-        this.currentTaskIndex = -1;
-        this.completedTaskCount = 0;
-        this._completionHandled = false;
-
-        this._ensureDomRefs();
-        if (this.wrapper) this.wrapper.style.display = 'flex';
-        this._ensureTaskList();
-        if (!this.panelOpen) this.openPanel();
-
-        this.optimisticPending = false;
-        this.activeGenerations.set(projectId, {
-            startTime: Date.now(),
-            progress: 0,
-            message,
-            templateId: resolvedTemplateId,
-            templateOptions: resolvedOptions,
-        });
-        this.saveToLocalStorage(projectId);
-        this._syncGeneratingBadge();
-        this.updateProgress(projectId, 0, message);
-        this.startPolling();
-
-        this.verifyWebSocketAccess(projectId, (allowed) => {
-            if (!allowed && this.activeGenerations.has(projectId)) {
-                this.failGeneration(projectId);
-            }
-        });
-    }
-
-    verifyWebSocketAccess(projectId, callback) {
-        if (!this._isValidProjectId(projectId)) {
-            callback(false);
-            return;
-        }
-        fetch(`${this._apiBase()}/clips/verify/${encodeURIComponent(projectId)}`, {
-            method: 'GET',
-            credentials: 'include',
-            headers: this._requestHeaders(),
-        })
-        .then((response) => response.json())
-        .then((data) => callback(!!data.allowed))
-        .catch(() => callback(false));
-    }
-
-    updateProgress(projectId, progress, message = '', force = false, queueInfo = null) {
-        if (!this._isValidProjectId(projectId)) return;
-        progress = Math.max(0, Math.min(100, Math.floor(progress)));
-
-        const resolvedId = this._resolveActiveProjectId(projectId) || projectId;
-        if (resolvedId !== projectId) this._linkProjectAliases(projectId, resolvedId);
-
-        if (!this.activeGenerations.has(resolvedId)) {
-            if (this._completionHandled || this.activeGenerations.size === 0) {
-                return;
-            }
-            return;
-        }
-
-        const waiting = this._shouldShowQueueWaitTask(message, queueInfo);
-        if (waiting) {
-            progress = Math.min(progress, 2);
-        }
-        this._setQueueWaitVisible(waiting);
-
-        const gen = this.activeGenerations.get(resolvedId);
-        const progressIncreased = progress > gen.progress;
-        const messageChanged = message && message !== gen.message;
-        const queueChanged = queueInfo && JSON.stringify(queueInfo) !== JSON.stringify(gen.queueInfo || null);
-        if (!force && !progressIncreased && !messageChanged && !queueChanged) return;
-        if (waiting) {
-            gen.progress = Math.min(progress, 2);
-        } else {
-            gen.progress = Math.max(gen.progress, progress);
-        }
-        if (message) gen.message = message;
-        if (queueInfo) gen.queueInfo = queueInfo;
-        else if (!this._isQueueWaitingMessage(gen.message)) gen.queueInfo = null;
-
-        this._syncCancelLockOnSubmitButton(progress, message);
-        this._ensureDomRefs();
-        this._syncDisplayFromActive();
-    }
-
-    _isCancelLockedStage(progress = 0, message = '') {
-        const p = Number(progress) || 0;
-        if (p >= 78) return true;
-        const msg = String(message || '').toLowerCase();
-        return (
-            msg.includes('building split')
-            || msg.includes('build split')
-            || msg.includes('compil')
-            || msg.includes('encoding final')
-            || msg.includes('export')
-            || msg.includes('finaliz')
-            || msg.includes('watermark')
-            || msg.includes('adding caption')
-            || msg.includes('assembling')
-        );
-    }
-
-    _syncCancelLockOnSubmitButton(progress, message) {
-        const submitBtn = document.getElementById('processUrlBtn');
-        if (!submitBtn || !submitBtn.classList.contains('is-generating')) return;
-        const locked = this._isCancelLockedStage(progress, message);
-        submitBtn.classList.toggle('is-cancel-locked', locked);
-        if (locked) {
-            submitBtn.setAttribute('aria-label', 'Finishing…');
-            submitBtn.title = 'Almost done — can’t stop now';
-        } else {
-            submitBtn.setAttribute('aria-label', 'Stop generation');
-            submitBtn.title = 'Stop generation';
-        }
-    }
-
-    _cleanMessage(message) {
-        if (!message || typeof message !== 'string') return '';
-        let cleaned = message
-            .replace(/[\u{1F300}-\u{1FAFF}\u2600-\u27BF]/gu, '')
-            .replace(/\s+/g, ' ')
-            .trim();
-
-        if (/\b\d+(\.\d+)?\s*(MB\/s|MiB\/s|KB\/s|KiB\/s|Gbps|Mbps)\b/i.test(cleaned)
-            || /\b\d+(\.\d+)?\s*(MB|MiB|GB|GiB)\b/i.test(cleaned)
-            || /\bat\s+\d+(\.\d+)?\s*(MB|KB)/i.test(cleaned)) {
-            if (/download|install/i.test(cleaned)) return 'Installing video...';
-            return 'Working...';
-        }
-
-        cleaned = cleaned
-            .replace(/\b\d+(\.\d+)?\s*(MB\/s|MiB\/s|KB\/s|KiB\/s|Gbps|Mbps)\b/gi, '')
-            .replace(/\([^)]*\.(mp4|wav|webm|mkv)[^)]*\)/gi, '')
-            .replace(/\s+/g, ' ')
-            .trim();
-
-        return cleaned;
-    }
-
-    _friendlyProgressLabel(progress, message = '', queueInfo = null) {
-        const cleaned = this._cleanMessage(message);
-        if (this.showQueueWaitTask || this._shouldShowQueueWaitTask(cleaned, queueInfo)) {
-            return this._queueLabelForInfo(cleaned, queueInfo).label;
-        }
-        const tasks = this._getActiveTasks();
-        const idx = this._resolveTaskIndex(progress, cleaned);
-        const taskLabel = tasks[idx]?.label;
-        if (progress >= 100) return cleaned || 'Complete!';
-        if (taskLabel && cleaned) {
-            const msg = cleaned.toLowerCase();
-            const matched = tasks[idx]?.keywords?.some((kw) => msg.includes(kw));
-            if (matched) return taskLabel;
-        }
-        return cleaned || taskLabel || `${progress}% complete`;
-    }
-
-    displayProgress(progress, message = '', queueInfo = null) {
-        this._ensureDomRefs();
-        if (!this.wrapper || !this.progressCircle) return;
-
-        const cleaned = this._cleanMessage(message);
-        this._setQueueWaitVisible(this._shouldShowQueueWaitTask(cleaned, queueInfo));
-        const waiting = this.showQueueWaitTask;
-        const displayPct = waiting ? Math.min(progress, 2) : progress;
-        const label = this._friendlyProgressLabel(displayPct, cleaned, queueInfo);
-
-        this.wrapper.style.display = 'flex';
-
-        const isComplete = displayPct >= 100;
-        const offset = isComplete
-            ? 0
-            : this.CIRCLE_CIRCUMFERENCE - ((Math.max(0, Math.min(100, displayPct)) / 100) * this.CIRCLE_CIRCUMFERENCE);
-        this.progressCircle.style.strokeDashoffset = String(offset);
-        this.progressCircle.style.stroke = waiting ? '#f59e0b' : '#10b981';
-
-        if (this.launcher) {
-            this.launcher.classList.toggle('is-complete', isComplete);
-            this.launcher.classList.toggle('is-queued', waiting && !isComplete);
-            this.launcher.classList.remove('is-error', 'is-active');
-        }
-
-        if (this.progressText) {
-            this.progressText.textContent = isComplete ? '' : (waiting ? '…' : `${Math.floor(displayPct)}%`);
-        }
-
-        if (this.progressTooltip) {
-            this.progressTooltip.textContent = isComplete
-                ? (label || 'Complete!')
-                : (label || `${displayPct}% complete`);
-        }
-
-        this._updateTaskStates(displayPct, cleaned, queueInfo);
-    }
-
-    _linkProjectAliases(a, b) {
-        if (!a || !b || a === b) return;
-        if (!this._projectAliases) this._projectAliases = new Map();
-        this._projectAliases.set(a, b);
-        this._projectAliases.set(b, a);
-    }
-
-    _resolveActiveProjectId(projectId) {
-        if (!projectId) return null;
-        if (this.activeGenerations.has(projectId)) return projectId;
-
-        const aliased = this._projectAliases?.get(projectId);
-        if (aliased && this.activeGenerations.has(aliased)) return aliased;
-
-        if (this.activeGenerations.size === 1) {
-            const only = [...this.activeGenerations.keys()][0];
-            this._linkProjectAliases(projectId, only);
-            return only;
-        }
-
-        if (this.activeGenerations.size === 2) {
-            const keys = [...this.activeGenerations.keys()];
-            const prj = keys.find((k) => String(k).startsWith('prj_'));
-            const internal = keys.find((k) => /^[0-9]+_/.test(String(k)));
-            if (prj && internal) {
-                this._linkProjectAliases(prj, internal);
-                if (projectId === prj || projectId === internal) return projectId;
-                if (String(projectId).startsWith('prj_')) return prj;
-                if (/^[0-9]+_/.test(String(projectId))) return internal;
-                return prj;
-            }
-        }
-
+  }
+  async _fetchProjectStatus(e) {
+    if (!this._isValidProjectId(e)) return null;
+    try {
+      const t = await fetch(this._statusUrl(e), {
+        method: "GET",
+        credentials: "include",
+        headers: this._requestHeaders()
+      });
+      if (t.status === 401 || t.status === 403 || t.status === 404) {
+        this.removeFromLocalStorage(e);
         return null;
+      }
+      if (!t.ok) return null;
+      const s = await t.json();
+      if (!s || !s.status || s.status === "unknown") return null;
+      return s;
+    } catch (e) {
+      return null;
     }
-
-    _deleteGeneration(projectId) {
-        if (!projectId) return;
-        const resolved = this._resolveActiveProjectId(projectId) || projectId;
-        const aliased = this._projectAliases?.get(resolved);
-        this.activeGenerations.delete(resolved);
-        this.removeFromLocalStorage(resolved);
-        if (aliased) {
-            this.activeGenerations.delete(aliased);
-            this.removeFromLocalStorage(aliased);
+  }
+  setupWebSocketHandlers() {
+    if (this.wsHandlersSetup || typeof solisWSClient === "undefined") return;
+    this.wsHandlersSetup = true;
+    solisWSClient.on("moment_detected", e => {
+      const {project_id: t, moment_count: s, progress: i} = e;
+      if (!this._isValidProjectId(t)) return;
+      if (this._wasUserCancelled(t)) return;
+      const r = this._resolveActiveProjectId(t);
+      if (!r) return;
+      this._markWsFresh(r);
+      const n = Math.max(1, 6 - s);
+      const a = `Moment #${n} detected`;
+      this.updateProgress(r, i, a);
+    });
+    solisWSClient.on("compilation_progress", e => {
+      const {project_id: t, progress: s, step: i} = e;
+      if (!this._isValidProjectId(t)) return;
+      if (this._wasUserCancelled(t)) return;
+      const r = this._resolveActiveProjectId(t);
+      if (!r) return;
+      this._markWsFresh(r);
+      this.updateProgress(r, s, i || "Processing...", true);
+    });
+    solisWSClient.on("clips_status_update", e => {
+      const {project_id: t, status: s, progress: i, message: r, queue: n} = e;
+      if (!this._isValidProjectId(t)) return;
+      if (this._wasUserCancelled(t)) {
+        const e = (s || "").toLowerCase();
+        if (this._isCancelledStatus(e)) {
+          this.stopGeneration(t, r || "Stopped");
         }
-        this.activeGenerations.delete(projectId);
-        this.removeFromLocalStorage(projectId);
-
-        if (this.activeGenerations.size === 1) {
-            const only = [...this.activeGenerations.keys()][0];
-            const onlyIsPrj = String(only).startsWith('prj_');
-            const pidIsPrj = String(projectId).startsWith('prj_');
-            const pidIsInternal = /^[0-9]+_/.test(String(projectId));
-            if ((onlyIsPrj && pidIsInternal) || (!onlyIsPrj && pidIsPrj)) {
-                this.activeGenerations.delete(only);
-                this.removeFromLocalStorage(only);
-            }
+        return;
+      }
+      const a = this._resolveActiveProjectId(t) || t;
+      const o = (s || "").toLowerCase();
+      if (o === "completed") {
+        this.completeGeneration(a);
+      } else if (this._isCancelledStatus(o)) {
+        this.stopGeneration(a, r || "Stopped");
+      } else if (this._isFailureStatus(o)) {
+        this.failGeneration(a, r || "There was an error — try again");
+      } else if (ACTIVE_GENERATION_STATUSES.has(o)) {
+        if (!this._resolveActiveProjectId(t) && !this.activeGenerations.has(t)) return;
+        this._markWsFresh(a);
+        this.updateProgress(a, i ?? 0, r || "Processing...", true, n || null);
+      }
+    });
+    solisWSClient.on("generation_error", e => {
+      const t = e?.project_id || e?.taskId;
+      if (!this._isValidProjectId(t)) return;
+      if (this._wasUserCancelled(t)) return;
+      const s = this._resolveActiveProjectId(t) || t;
+      this.failGeneration(s, e?.message || e?.error || "There was an error — try again");
+    });
+    solisWSClient.on("processing_error", e => {
+      const t = e?.taskId || e?.project_id;
+      if (!this._isValidProjectId(t)) return;
+      if (this._wasUserCancelled(t)) return;
+      const s = this._resolveActiveProjectId(t) || t;
+      this.failGeneration(s, e?.message || e?.error || "There was an error — try again");
+    });
+    solisWSClient.on("video_ready", e => {
+      const {project_id: t, output_path: s, video_title: i, thumbnail_url: r, template_name: n, template: a} = e || {};
+      if (!this._isValidProjectId(t)) return;
+      if (this._wasUserCancelled(t)) return;
+      const o = this._resolveActiveProjectId(t) || t;
+      try {
+        const e = window.clipsStudio;
+        if (e && Array.isArray(e.libraryItems)) {
+          const s = String(t);
+          let o = e.libraryItems.find(e => String(e.projectId || e.id) === s);
+          if (!o) {
+            o = {
+              id: t,
+              projectId: t,
+              status: "completed",
+              timestamp: new Date,
+              _optimistic: true
+            };
+            e.libraryItems.unshift(o);
+          }
+          if (i) o.name = i;
+          if (r) o.thumbnailUrl = r;
+          if (n) o.templateName = n;
+          if (a) o.template = a;
+          o.status = "completed";
+          o._optimistic = false;
+          e._libraryLastLoaded = 0;
+          if (!e.libraryPreviewModalOpen) {
+            e.updateLibraryView?.();
+          } else {
+            e._libraryRefreshPending = true;
+          }
         }
-    }
-
-    async runLibraryApplyFlow(projectId, { applyFn, downloadFn }) {
-        const idOk = this._isValidProjectId(projectId)
-            || (typeof projectId === 'string' && /^[a-zA-Z0-9_.-]{8,}$/.test(projectId));
-        if (!idOk) {
-            throw new Error('Invalid project');
-        }
-
-        const templateId = 'library_apply';
-        this._setActivePipeline(templateId, {});
-        this._completionHandled = false;
-        this.optimisticPending = false;
-        this.currentTaskIndex = -1;
-        this.completedTaskCount = 0;
-
-        this._ensureDomRefs();
-        if (this.wrapper) this.wrapper.style.display = 'flex';
-        this.tasksIntroPlayed = false;
-        this._resetTaskVisibility();
-        this._ensureTaskList();
-        this.openPanel();
-
-        this.activeGenerations.set(projectId, {
-            startTime: Date.now(),
-            progress: 0,
-            message: 'Preparing download...',
-            templateId,
-            templateOptions: {},
+      } catch (e) {}
+      if (typeof window.notificationSystem?.showVideoGenerated === "function") {
+        window.notificationSystem.showVideoGenerated({
+          videoTitle: i || `Video ${String(t).substring(0, 8)}...`,
+          videoUrl: s || "#",
+          message: "Your video has been generated successfully!"
         });
-        this._syncGeneratingBadge();
-        this.updateProgress(projectId, 8, 'Preparing download...', true);
-
-        try {
-            if (typeof applyFn === 'function') {
-                this.updateProgress(projectId, 22, 'Saving edits...', true);
-                await applyFn();
-                this.updateProgress(projectId, 58, 'Ready to download', true);
-            }
-
-            if (typeof downloadFn === 'function') {
-                this.updateProgress(projectId, 72, 'Downloading...', true);
-                await downloadFn();
-                this.updateProgress(projectId, 92, 'Download started', true);
-            }
-
-            const prevNotify = this.showVideoReadyNotification;
-            this.showVideoReadyNotification = () => {};
-            this.displayProgress(100, 'Download started!');
-            this.completeGeneration(projectId);
-            this.showVideoReadyNotification = prevNotify;
-        } catch (error) {
-            this.failGeneration(projectId, error?.message || 'Download failed');
-            throw error;
-        }
+      }
+      this._refreshLibrarySoon();
+      this.completeGeneration(o);
+    });
+    solisWSClient.on("error", e => {
+      const t = e?.taskId || e?.project_id;
+      if (t && this._isValidProjectId(t)) {
+        this.failGeneration(t, e?.error || e?.message || "There was an error — try again");
+      }
+    });
+  }
+  beginOptimisticGeneration(e = "Starting...", t = DEFAULT_PIPELINE_TEMPLATE, s = {}) {
+    this._setActivePipeline(t, s);
+    this.optimisticPending = true;
+    this.currentTaskIndex = -1;
+    this.completedTaskCount = 0;
+    this.showQueueWaitTask = false;
+    this._ensureDomRefs();
+    if (this.wrapper) this.wrapper.style.display = "flex";
+    this.tasksIntroPlayed = false;
+    this._resetTaskVisibility();
+    this._ensureTaskList();
+    this.displayProgress(0, this._cleanMessage(e));
+    this._syncGeneratingBadge();
+    this.openPanel();
+  }
+  cancelOptimisticGeneration() {
+    if (!this.optimisticPending) return;
+    this.optimisticPending = false;
+    if (this.activeGenerations.size === 0) {
+      this.stopPolling();
+      this.hide();
+    } else {
+      this._syncGeneratingBadge();
     }
-
-    _refreshLibrarySoon() {
-        if (this._libraryRefreshQueued) return;
-        this._libraryRefreshQueued = true;
-        const run = (attempt = 0) => {
-            this._libraryRefreshQueued = attempt < 2; // allow one follow-up retry
-            if (typeof updateStorageBadgeDisplay === 'function') {
-                updateStorageBadgeDisplay();
-            }
-            if (window.clipsStudio?.loadLibraryItems) {
-                window.clipsStudio._libraryLastLoaded = 0;
-                window.clipsStudio.loadLibraryItems({ soft: true, force: true })
-                    .catch(() => {})
-                    .finally(() => {
-                        if (attempt < 1) {
-                            setTimeout(() => run(attempt + 1), 1200);
-                        } else {
-                            this._libraryRefreshQueued = false;
-                        }
-                    });
-            } else {
-                this._libraryRefreshQueued = false;
-            }
-        };
-        setTimeout(() => run(0), 400);
+  }
+  startGeneration(e, t = "Queued — waiting for an open slot...", s = null, i = {}) {
+    if (!this._isValidProjectId(e)) return;
+    if (this._wasUserCancelled(e)) {
+      return;
     }
-
-    completeGeneration(projectId) {
-        if (this._completionHandled && this.activeGenerations.size === 0 && !this.optimisticPending) {
-            return;
-        }
-
-        if (projectId && this._isValidProjectId(projectId)) {
-            this._deleteGeneration(projectId);
-        } else if (this.activeGenerations.size === 1) {
-            const only = [...this.activeGenerations.keys()][0];
-            this._deleteGeneration(only);
-        }
-
-        this.optimisticPending = false;
-        this._completionHandled = true;
-        this._syncGeneratingBadge();
-        this.showVideoReadyNotification();
-        this.displayProgress(100, 'Processing complete! Video ready!');
-        this._unlockUrlSubmitButton();
-        this._refreshLibrarySoon();
-
-        if (this.activeGenerations.size === 0) {
-            this.stopPolling();
-            setTimeout(() => {
-                this._completionHandled = false;
-                this.closePanel();
-                this.hide();
-            }, 180);
-        }
+    this._lastKnownProjectId = e;
+    const r = this._getTemplateMeta(e);
+    const n = s || r?.templateId || this.activeTemplateId || DEFAULT_PIPELINE_TEMPLATE;
+    const a = i && Object.keys(i).length ? i : r?.options || this.activeTemplateOptions || {};
+    this._setActivePipeline(n, a);
+    this._saveTemplateMeta(e, n, a);
+    this.currentTaskIndex = -1;
+    this.completedTaskCount = 0;
+    this._completionHandled = false;
+    this._ensureDomRefs();
+    if (this.wrapper) this.wrapper.style.display = "flex";
+    this._ensureTaskList();
+    if (!this.panelOpen) this.openPanel();
+    this.optimisticPending = false;
+    this.activeGenerations.set(e, {
+      startTime: Date.now(),
+      progress: 0,
+      message: t,
+      templateId: n,
+      templateOptions: a
+    });
+    this.saveToLocalStorage(e);
+    this._syncGeneratingBadge();
+    this.updateProgress(e, 0, t);
+    this.startPolling();
+    this.verifyWebSocketAccess(e, t => {
+      if (!t && this.activeGenerations.has(e)) {
+        this.failGeneration(e);
+      }
+    });
+  }
+  verifyWebSocketAccess(e, t) {
+    if (!this._isValidProjectId(e)) {
+      t(false);
+      return;
     }
-
-    _notifyGenerationFailed(projectId, message) {
-        try {
-            window.dispatchEvent(new CustomEvent('solisGenerationFailed', {
-                detail: { projectId, message },
-            }));
-        } catch (_) {}
-
-        const studio = window.clipsStudio;
-        if (!studio?.processingItems?.length) return;
-
-        for (const item of studio.processingItems) {
-            if (item.projectId !== projectId) continue;
-            studio.stopMonitoring?.(item.id);
-        }
-        studio.processingItems = studio.processingItems.filter((i) => i.projectId !== projectId);
-        studio.saveProcessingItems?.();
-        studio.updateProcessingView?.();
-        studio.updateLibraryView?.();
-        if (studio.processingItems.length === 0) {
-            studio.stopLibraryPolling?.();
-        }
+    fetch(`${this._apiBase()}/clips/verify/${encodeURIComponent(e)}`, {
+      method: "GET",
+      credentials: "include",
+      headers: this._requestHeaders()
+    }).then(e => e.json()).then(e => t(!!e.allowed)).catch(() => t(false));
+  }
+  updateProgress(e, t, s = "", i = false, r = null) {
+    if (!this._isValidProjectId(e)) return;
+    t = Math.max(0, Math.min(100, Math.floor(t)));
+    const n = this._resolveActiveProjectId(e) || e;
+    if (n !== e) this._linkProjectAliases(e, n);
+    if (!this.activeGenerations.has(n)) {
+      if (this._completionHandled || this.activeGenerations.size === 0) {
+        return;
+      }
+      return;
     }
-
-    failGeneration(projectId, message = 'There was an error — try again') {
-        this._notifyGenerationFailed(projectId, message);
-        this._clearErrorDismissTimer();
-        this.optimisticPending = false;
+    const a = this._shouldShowQueueWaitTask(s, r);
+    if (a) {
+      t = Math.min(t, 2);
+    }
+    this._setQueueWaitVisible(a);
+    const o = this.activeGenerations.get(n);
+    const l = t > o.progress;
+    const c = s && s !== o.message;
+    const h = r && JSON.stringify(r) !== JSON.stringify(o.queueInfo || null);
+    if (!i && !l && !c && !h) return;
+    if (a) {
+      o.progress = Math.min(t, 2);
+    } else {
+      o.progress = Math.max(o.progress, t);
+    }
+    if (s) o.message = s;
+    if (r) o.queueInfo = r; else if (!this._isQueueWaitingMessage(o.message)) o.queueInfo = null;
+    this._syncCancelLockOnSubmitButton(t, s);
+    this._ensureDomRefs();
+    this._syncDisplayFromActive();
+  }
+  _isCancelLockedStage(e = 0, t = "") {
+    const s = Number(e) || 0;
+    if (s >= 78) return true;
+    const i = String(t || "").toLowerCase();
+    return i.includes("building split") || i.includes("build split") || i.includes("compil") || i.includes("encoding final") || i.includes("export") || i.includes("finaliz") || i.includes("watermark") || i.includes("adding caption") || i.includes("assembling");
+  }
+  _syncCancelLockOnSubmitButton(e, t) {
+    const s = document.getElementById("processUrlBtn");
+    if (!s || !s.classList.contains("is-generating")) return;
+    const i = this._isCancelLockedStage(e, t);
+    s.classList.toggle("is-cancel-locked", i);
+    if (i) {
+      s.setAttribute("aria-label", "Finishing…");
+      s.title = "Almost done — can’t stop now";
+    } else {
+      s.setAttribute("aria-label", "Stop generation");
+      s.title = "Stop generation";
+    }
+  }
+  _cleanMessage(e) {
+    if (!e || typeof e !== "string") return "";
+    let t = e.replace(/[\u{1F300}-\u{1FAFF}\u2600-\u27BF]/gu, "").replace(/\s+/g, " ").trim();
+    if (/\b\d+(\.\d+)?\s*(MB\/s|MiB\/s|KB\/s|KiB\/s|Gbps|Mbps)\b/i.test(t) || /\b\d+(\.\d+)?\s*(MB|MiB|GB|GiB)\b/i.test(t) || /\bat\s+\d+(\.\d+)?\s*(MB|KB)/i.test(t)) {
+      if (/download|install/i.test(t)) return "Installing video...";
+      return "Working...";
+    }
+    t = t.replace(/\b\d+(\.\d+)?\s*(MB\/s|MiB\/s|KB\/s|KiB\/s|Gbps|Mbps)\b/gi, "").replace(/\([^)]*\.(mp4|wav|webm|mkv)[^)]*\)/gi, "").replace(/\s+/g, " ").trim();
+    return t;
+  }
+  _friendlyProgressLabel(e, t = "", s = null) {
+    const i = this._cleanMessage(t);
+    if (this.showQueueWaitTask || this._shouldShowQueueWaitTask(i, s)) {
+      return this._queueLabelForInfo(i, s).label;
+    }
+    const r = this._getActiveTasks();
+    const n = this._resolveTaskIndex(e, i);
+    const a = r[n]?.label;
+    if (e >= 100) return i || "Complete!";
+    if (a && i) {
+      const e = i.toLowerCase();
+      const t = r[n]?.keywords?.some(t => e.includes(t));
+      if (t) return a;
+    }
+    return i || a || `${e}% complete`;
+  }
+  displayProgress(e, t = "", s = null) {
+    this._ensureDomRefs();
+    if (!this.wrapper || !this.progressCircle) return;
+    const i = this._cleanMessage(t);
+    this._setQueueWaitVisible(this._shouldShowQueueWaitTask(i, s));
+    const r = this.showQueueWaitTask;
+    const n = r ? Math.min(e, 2) : e;
+    const a = this._friendlyProgressLabel(n, i, s);
+    this.wrapper.style.display = "flex";
+    const o = n >= 100;
+    const l = o ? 0 : this.CIRCLE_CIRCUMFERENCE - Math.max(0, Math.min(100, n)) / 100 * this.CIRCLE_CIRCUMFERENCE;
+    this.progressCircle.style.strokeDashoffset = String(l);
+    this.progressCircle.style.stroke = r ? "#f59e0b" : "#10b981";
+    if (this.launcher) {
+      this.launcher.classList.toggle("is-complete", o);
+      this.launcher.classList.toggle("is-queued", r && !o);
+      this.launcher.classList.remove("is-error", "is-active");
+    }
+    if (this.progressText) {
+      this.progressText.textContent = o ? "" : r ? "…" : `${Math.floor(n)}%`;
+    }
+    if (this.progressTooltip) {
+      this.progressTooltip.textContent = o ? a || "Complete!" : a || `${n}% complete`;
+    }
+    this._updateTaskStates(n, i, s);
+  }
+  _linkProjectAliases(e, t) {
+    if (!e || !t || e === t) return;
+    if (!this._projectAliases) this._projectAliases = new Map;
+    this._projectAliases.set(e, t);
+    this._projectAliases.set(t, e);
+  }
+  _resolveActiveProjectId(e) {
+    if (!e) return null;
+    if (this.activeGenerations.has(e)) return e;
+    const t = this._projectAliases?.get(e);
+    if (t && this.activeGenerations.has(t)) return t;
+    if (this.activeGenerations.size === 1) {
+      const t = [ ...this.activeGenerations.keys() ][0];
+      this._linkProjectAliases(e, t);
+      return t;
+    }
+    if (this.activeGenerations.size === 2) {
+      const t = [ ...this.activeGenerations.keys() ];
+      const s = t.find(e => String(e).startsWith("prj_"));
+      const i = t.find(e => /^[0-9]+_/.test(String(e)));
+      if (s && i) {
+        this._linkProjectAliases(s, i);
+        if (e === s || e === i) return e;
+        if (String(e).startsWith("prj_")) return s;
+        if (/^[0-9]+_/.test(String(e))) return i;
+        return s;
+      }
+    }
+    return null;
+  }
+  _deleteGeneration(e) {
+    if (!e) return;
+    const t = this._resolveActiveProjectId(e) || e;
+    const s = this._projectAliases?.get(t);
+    this.activeGenerations.delete(t);
+    this.removeFromLocalStorage(t);
+    if (s) {
+      this.activeGenerations.delete(s);
+      this.removeFromLocalStorage(s);
+    }
+    this.activeGenerations.delete(e);
+    this.removeFromLocalStorage(e);
+    if (this.activeGenerations.size === 1) {
+      const t = [ ...this.activeGenerations.keys() ][0];
+      const s = String(t).startsWith("prj_");
+      const i = String(e).startsWith("prj_");
+      const r = /^[0-9]+_/.test(String(e));
+      if (s && r || !s && i) {
+        this.activeGenerations.delete(t);
+        this.removeFromLocalStorage(t);
+      }
+    }
+  }
+  async runLibraryApplyFlow(e, {applyFn: t, downloadFn: s}) {
+    const i = this._isValidProjectId(e) || typeof e === "string" && /^[a-zA-Z0-9_.-]{8,}$/.test(e);
+    if (!i) {
+      throw new Error("Invalid project");
+    }
+    const r = "library_apply";
+    this._setActivePipeline(r, {});
+    this._completionHandled = false;
+    this.optimisticPending = false;
+    this.currentTaskIndex = -1;
+    this.completedTaskCount = 0;
+    this._ensureDomRefs();
+    if (this.wrapper) this.wrapper.style.display = "flex";
+    this.tasksIntroPlayed = false;
+    this._resetTaskVisibility();
+    this._ensureTaskList();
+    this.openPanel();
+    this.activeGenerations.set(e, {
+      startTime: Date.now(),
+      progress: 0,
+      message: "Preparing download...",
+      templateId: r,
+      templateOptions: {}
+    });
+    this._syncGeneratingBadge();
+    this.updateProgress(e, 8, "Preparing download...", true);
+    try {
+      if (typeof t === "function") {
+        this.updateProgress(e, 22, "Saving edits...", true);
+        await t();
+        this.updateProgress(e, 58, "Ready to download", true);
+      }
+      if (typeof s === "function") {
+        this.updateProgress(e, 72, "Downloading...", true);
+        await s();
+        this.updateProgress(e, 92, "Download started", true);
+      }
+      const i = this.showVideoReadyNotification;
+      this.showVideoReadyNotification = () => {};
+      this.displayProgress(100, "Download started!");
+      this.completeGeneration(e);
+      this.showVideoReadyNotification = i;
+    } catch (t) {
+      this.failGeneration(e, t?.message || "Download failed");
+      throw t;
+    }
+  }
+  _refreshLibrarySoon() {
+    if (this._libraryRefreshQueued) return;
+    this._libraryRefreshQueued = true;
+    const run = (e = 0) => {
+      this._libraryRefreshQueued = e < 2;
+      if (typeof updateStorageBadgeDisplay === "function") {
+        updateStorageBadgeDisplay();
+      }
+      if (window.clipsStudio?.loadLibraryItems) {
+        window.clipsStudio._libraryLastLoaded = 0;
+        window.clipsStudio.loadLibraryItems({
+          soft: true,
+          force: true
+        }).catch(() => {}).finally(() => {
+          if (e < 1) {
+            setTimeout(() => run(e + 1), 1200);
+          } else {
+            this._libraryRefreshQueued = false;
+          }
+        });
+      } else {
+        this._libraryRefreshQueued = false;
+      }
+    };
+    setTimeout(() => run(0), 400);
+  }
+  completeGeneration(e) {
+    if (this._completionHandled && this.activeGenerations.size === 0 && !this.optimisticPending) {
+      return;
+    }
+    if (e && this._isValidProjectId(e)) {
+      this._deleteGeneration(e);
+    } else if (this.activeGenerations.size === 1) {
+      const e = [ ...this.activeGenerations.keys() ][0];
+      this._deleteGeneration(e);
+    }
+    this.optimisticPending = false;
+    this._completionHandled = true;
+    this._syncGeneratingBadge();
+    this.showVideoReadyNotification();
+    this.displayProgress(100, "Processing complete! Video ready!");
+    this._unlockUrlSubmitButton();
+    this._refreshLibrarySoon();
+    if (this.activeGenerations.size === 0) {
+      this.stopPolling();
+      setTimeout(() => {
         this._completionHandled = false;
-
-        if (projectId && this._isValidProjectId(projectId)) {
-            this._deleteGeneration(projectId);
-        } else if (this.activeGenerations.size > 0) {
-            for (const id of [...this.activeGenerations.keys()]) {
-                this._deleteGeneration(id);
-            }
+        this.closePanel();
+        this.hide();
+      }, 180);
+    }
+  }
+  _notifyGenerationFailed(e, t) {
+    try {
+      window.dispatchEvent(new CustomEvent("solisGenerationFailed", {
+        detail: {
+          projectId: e,
+          message: t
         }
-
-        this._syncGeneratingBadge();
+      }));
+    } catch (e) {}
+    const s = window.clipsStudio;
+    if (!s?.processingItems?.length) return;
+    for (const t of s.processingItems) {
+      if (t.projectId !== e) continue;
+      s.stopMonitoring?.(t.id);
+    }
+    s.processingItems = s.processingItems.filter(t => t.projectId !== e);
+    s.saveProcessingItems?.();
+    s.updateProcessingView?.();
+    s.updateLibraryView?.();
+    if (s.processingItems.length === 0) {
+      s.stopLibraryPolling?.();
+    }
+  }
+  failGeneration(e, t = "There was an error — try again") {
+    this._notifyGenerationFailed(e, t);
+    this._clearErrorDismissTimer();
+    this.optimisticPending = false;
+    this._completionHandled = false;
+    if (e && this._isValidProjectId(e)) {
+      this._deleteGeneration(e);
+    } else if (this.activeGenerations.size > 0) {
+      for (const e of [ ...this.activeGenerations.keys() ]) {
+        this._deleteGeneration(e);
+      }
+    }
+    this._syncGeneratingBadge();
+    this.stopPolling();
+    this._unlockUrlSubmitButton();
+    this._ensureDomRefs();
+    if (this.wrapper) this.wrapper.style.display = "flex";
+    this._ensureTaskList();
+    this._markTasksFailed();
+    if (this.launcher) {
+      this.launcher.classList.remove("is-complete");
+      this.launcher.classList.add("is-error");
+    }
+    if (this.progressCircle) {
+      this.progressCircle.style.strokeDashoffset = "0";
+      this.progressCircle.style.stroke = "#ef4444";
+    }
+    if (this.progressText) {
+      this.progressText.textContent = "✕";
+    }
+    if (this.progressTooltip) {
+      this.progressTooltip.textContent = t;
+    }
+    if (this.taskCounter) {
+      this.taskCounter.textContent = "Failed";
+    }
+    this._showErrorBanner(t);
+    this.openPanel();
+    this._errorDismissTimer = setTimeout(() => {
+      this._dismissErrorState();
+    }, 2800);
+  }
+  stopGeneration(e, t = "Stopped") {
+    this._clearErrorDismissTimer();
+    this.optimisticPending = false;
+    this._completionHandled = false;
+    if (e) this._markUserCancelled(e);
+    if (e && this._isValidProjectId(e)) {
+      this._deleteGeneration(e);
+    } else if (this.activeGenerations.size > 0) {
+      for (const e of [ ...this.activeGenerations.keys() ]) {
+        this._markUserCancelled(e);
+        this._deleteGeneration(e);
+      }
+    }
+    this._syncGeneratingBadge();
+    this.stopPolling();
+    this._unlockUrlSubmitButton();
+    this._hideErrorBanner?.();
+    if (this.launcher) {
+      this.launcher.classList.remove("is-complete", "is-error");
+    }
+    if (this.progressTooltip) {
+      this.progressTooltip.textContent = t;
+    }
+    if (this.taskCounter) {
+      this.taskCounter.textContent = t;
+    }
+    this.closePanel();
+    if (this.activeGenerations.size === 0 && !this.optimisticPending) {
+      this.hide();
+    }
+  }
+  _dismissErrorState() {
+    this._clearErrorDismissTimer();
+    this._hideErrorBanner();
+    this.closePanel();
+    if (this.launcher) this.launcher.classList.remove("is-error");
+    if (this.activeGenerations.size === 0 && !this.optimisticPending) {
+      this.hide();
+    }
+  }
+  hide() {
+    if (this.activeGenerations.size > 0 || this.optimisticPending) return;
+    this._clearErrorDismissTimer();
+    this.optimisticPending = false;
+    this._hideErrorBanner();
+    if (this.wrapper) this.wrapper.style.display = "none";
+    this.closePanel();
+    if (this.progressCircle) {
+      this.progressCircle.style.strokeDashoffset = String(this.CIRCLE_CIRCUMFERENCE);
+      this.progressCircle.style.stroke = "#10b981";
+    }
+    if (this.launcher) this.launcher.classList.remove("is-complete", "is-panel-open", "is-error", "is-active", "is-queued");
+    if (this.progressText) this.progressText.textContent = "0%";
+    if (this.progressTooltip) this.progressTooltip.textContent = "Generating...";
+    this.currentTaskIndex = -1;
+    this.completedTaskCount = 0;
+    this.tasksIntroPlayed = false;
+    this.showQueueWaitTask = false;
+    this._clearIntroRevealTimers();
+    this.tasksInitialized = false;
+    if (this.todoList) this.todoList.innerHTML = "";
+  }
+  startPolling() {
+    if (this.pollingTimer) return;
+    const poll = async () => {
+      if (this.activeGenerations.size === 0) {
         this.stopPolling();
-        this._unlockUrlSubmitButton();
-
-        this._ensureDomRefs();
-        if (this.wrapper) this.wrapper.style.display = 'flex';
-        this._ensureTaskList();
-        this._markTasksFailed();
-
-        if (this.launcher) {
-            this.launcher.classList.remove('is-complete');
-            this.launcher.classList.add('is-error');
+        return;
+      }
+      const e = Date.now();
+      for (const [t, s] of [ ...this.activeGenerations.entries() ]) {
+        if (s._lastWsAt && e - s._lastWsAt < this.WS_FRESH_MS) {
+          continue;
         }
-        if (this.progressCircle) {
-            this.progressCircle.style.strokeDashoffset = '0';
-            this.progressCircle.style.stroke = '#ef4444';
+        const i = await this._fetchProjectStatus(t);
+        if (!i) {
+          const e = (s._pollMisses || 0) + 1;
+          s._pollMisses = e;
+          if (e >= 3) {
+            await this._resolveRemovedProject(t);
+          }
+          continue;
         }
-        if (this.progressText) {
-            this.progressText.textContent = '✕';
+        s._pollMisses = 0;
+        const r = (i.status || "").toLowerCase();
+        if (ACTIVE_GENERATION_STATUSES.has(r)) {
+          const e = i.progress ?? 0;
+          const s = i.message || "Processing...";
+          this.updateProgress(t, e, s, true, i.queue || null);
+        } else if (this._isSuccessStatus(r)) {
+          this.completeGeneration(t);
+        } else if (this._isCancelledStatus(r)) {
+          this.stopGeneration(t, i.message || "Stopped");
+        } else {
+          this.failGeneration(t, i.message || "There was an error — try again");
         }
-        if (this.progressTooltip) {
-            this.progressTooltip.textContent = message;
-        }
-        if (this.taskCounter) {
-            this.taskCounter.textContent = 'Failed';
-        }
-
-        this._showErrorBanner(message);
-        this.openPanel();
-
-        this._errorDismissTimer = setTimeout(() => {
-            this._dismissErrorState();
-        }, 2800);
-    }
-
-    stopGeneration(projectId, message = 'Stopped') {
-        this._clearErrorDismissTimer();
-        this.optimisticPending = false;
-        this._completionHandled = false;
-        if (projectId) this._markUserCancelled(projectId);
-
-        if (projectId && this._isValidProjectId(projectId)) {
-            this._deleteGeneration(projectId);
-        } else if (this.activeGenerations.size > 0) {
-            for (const id of [...this.activeGenerations.keys()]) {
-                this._markUserCancelled(id);
-                this._deleteGeneration(id);
-            }
-        }
-
-        this._syncGeneratingBadge();
+      }
+      if (this.activeGenerations.size === 0) {
         this.stopPolling();
-        this._unlockUrlSubmitButton();
-        this._hideErrorBanner?.();
-
-        if (this.launcher) {
-            this.launcher.classList.remove('is-complete', 'is-error');
-        }
-        if (this.progressTooltip) {
-            this.progressTooltip.textContent = message;
-        }
-        if (this.taskCounter) {
-            this.taskCounter.textContent = message;
-        }
-
-        this.closePanel();
-        if (this.activeGenerations.size === 0 && !this.optimisticPending) {
-            this.hide();
-        }
+        return;
+      }
+      let t = false;
+      try {
+        t = !!(typeof solisWSClient !== "undefined" && solisWSClient && (solisWSClient.isConnected?.() || solisWSClient.connected));
+      } catch (e) {}
+      const s = t ? this.POLLING_INTERVAL_WS : this.POLLING_INTERVAL;
+      this.pollingTimer = setTimeout(poll, s);
+    };
+    poll();
+  }
+  _markWsFresh(e) {
+    const t = this.activeGenerations.get(e);
+    if (t) t._lastWsAt = Date.now();
+  }
+  stopPolling() {
+    if (this.pollingTimer) {
+      clearTimeout(this.pollingTimer);
+      this.pollingTimer = null;
     }
-
-    _dismissErrorState() {
-        this._clearErrorDismissTimer();
-        this._hideErrorBanner();
-        this.closePanel();
-        if (this.launcher) this.launcher.classList.remove('is-error');
-        if (this.activeGenerations.size === 0 && !this.optimisticPending) {
-            this.hide();
-        }
-    }
-
-    hide() {
-        if (this.activeGenerations.size > 0 || this.optimisticPending) return;
-
-        this._clearErrorDismissTimer();
-        this.optimisticPending = false;
-        this._hideErrorBanner();
-        if (this.wrapper) this.wrapper.style.display = 'none';
-        this.closePanel();
-
-        if (this.progressCircle) {
-            this.progressCircle.style.strokeDashoffset = String(this.CIRCLE_CIRCUMFERENCE);
-            this.progressCircle.style.stroke = '#10b981';
-        }
-        if (this.launcher) this.launcher.classList.remove('is-complete', 'is-panel-open', 'is-error', 'is-active', 'is-queued');
-        if (this.progressText) this.progressText.textContent = '0%';
-        if (this.progressTooltip) this.progressTooltip.textContent = 'Generating...';
-
-        this.currentTaskIndex = -1;
-        this.completedTaskCount = 0;
-        this.tasksIntroPlayed = false;
-        this.showQueueWaitTask = false;
-        this._clearIntroRevealTimers();
-        this.tasksInitialized = false;
-        if (this.todoList) this.todoList.innerHTML = '';
-    }
-
-    startPolling() {
-        if (this.pollingTimer) return;
-
-        const poll = async () => {
-            if (this.activeGenerations.size === 0) {
-                this.stopPolling();
-                return;
-            }
-
-            const now = Date.now();
-            for (const [projectId, gen] of [...this.activeGenerations.entries()]) {
-                if (gen._lastWsAt && (now - gen._lastWsAt) < this.WS_FRESH_MS) {
-                    continue;
-                }
-                const data = await this._fetchProjectStatus(projectId);
-                if (!data) {
-                    const misses = (gen._pollMisses || 0) + 1;
-                    gen._pollMisses = misses;
-                    if (misses >= 3) {
-                        await this._resolveRemovedProject(projectId);
-                    }
-                    continue;
-                }
-                gen._pollMisses = 0;
-
-                const status = (data.status || '').toLowerCase();
-                if (ACTIVE_GENERATION_STATUSES.has(status)) {
-                    const progress = data.progress ?? 0;
-                    const msg = data.message || 'Processing...';
-                    this.updateProgress(projectId, progress, msg, true, data.queue || null);
-                } else if (this._isSuccessStatus(status)) {
-                    this.completeGeneration(projectId);
-                } else if (this._isCancelledStatus(status)) {
-                    this.stopGeneration(projectId, data.message || 'Stopped');
-                } else {
-                    this.failGeneration(projectId, data.message || 'There was an error — try again');
-                }
-            }
-
-            if (this.activeGenerations.size === 0) {
-                this.stopPolling();
-                return;
-            }
-
-            let wsOk = false;
-            try {
-                wsOk = !!(typeof solisWSClient !== 'undefined'
-                    && solisWSClient
-                    && (solisWSClient.isConnected?.() || solisWSClient.connected));
-            } catch (_) { /* ignore */ }
-            const delay = wsOk ? this.POLLING_INTERVAL_WS : this.POLLING_INTERVAL;
-            this.pollingTimer = setTimeout(poll, delay);
-        };
-
-        poll();
-    }
-
-    _markWsFresh(projectId) {
-        const gen = this.activeGenerations.get(projectId);
-        if (gen) gen._lastWsAt = Date.now();
-    }
-
-    stopPolling() {
-        if (this.pollingTimer) {
-            clearTimeout(this.pollingTimer);
-            this.pollingTimer = null;
-        }
-    }
-
-    getStatus() {
-        return {
-            isActive: this.activeGenerations.size > 0,
-            activeCount: this.activeGenerations.size,
-            generations: Object.fromEntries(this.activeGenerations),
-        };
-    }
+  }
+  getStatus() {
+    return {
+      isActive: this.activeGenerations.size > 0,
+      activeCount: this.activeGenerations.size,
+      generations: Object.fromEntries(this.activeGenerations)
+    };
+  }
 }
 
 let generationProgressSpinner = null;
 
 function getGenerationProgressSpinner() {
-    return window.generationProgressSpinner || generationProgressSpinner || null;
+  return window.generationProgressSpinner || generationProgressSpinner || null;
 }
 
 function initGenerationProgressSpinner() {
-    if (getGenerationProgressSpinner()) return getGenerationProgressSpinner();
-    const instance = new GenerationProgressSpinner();
-    generationProgressSpinner = instance;
-    window.generationProgressSpinner = instance;
-    return instance;
+  if (getGenerationProgressSpinner()) return getGenerationProgressSpinner();
+  const e = new GenerationProgressSpinner;
+  generationProgressSpinner = e;
+  window.generationProgressSpinner = e;
+  return e;
 }
 
 window.getGenerationProgressSpinner = getGenerationProgressSpinner;
+
 window.initGenerationProgressSpinner = initGenerationProgressSpinner;
 
 function bootGenerationProgressSpinner() {
-    if (document.getElementById('generationProgressWrapper')) {
-        initGenerationProgressSpinner();
-    }
+  if (document.getElementById("generationProgressWrapper")) {
+    initGenerationProgressSpinner();
+  }
 }
 
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', bootGenerationProgressSpinner);
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", bootGenerationProgressSpinner);
 } else {
-    bootGenerationProgressSpinner();
+  bootGenerationProgressSpinner();
 }
 
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        GenerationProgressSpinner,
-        generationProgressSpinner,
-        getGenerationProgressSpinner,
-        initGenerationProgressSpinner,
-    };
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = {
+    GenerationProgressSpinner: GenerationProgressSpinner,
+    generationProgressSpinner: generationProgressSpinner,
+    getGenerationProgressSpinner: getGenerationProgressSpinner,
+    initGenerationProgressSpinner: initGenerationProgressSpinner
+  };
 }

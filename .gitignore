@@ -11,3 +11,8 @@ node_modules/
 *.wav
 cookies.txt
 gcs-credentials.json
+# Ops / internal — not for public host
+admin/
+**/admin/
+# Source maps embed originals — keep local only, never push to public GitHub/CDN
+_review/

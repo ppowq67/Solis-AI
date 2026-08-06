@@ -1,85 +1,81 @@
-(function () {
-  const FALLBACK_PLANS = {
-    basic: { priceId: 'pri_01kbavpdvztyny35d5jzbxdb3j' },
-    prime: { priceId: 'pri_01kbds38r5h1ranax74yv92sps' },
-    elite: { priceId: 'pri_01kbjpgwz7v6pdn2jggt0zhq6k' },
+(function() {
+  const e = {
+    basic: {
+      priceId: "pri_01kbavpdvztyny35d5jzbxdb3j"
+    },
+    prime: {
+      priceId: "pri_01kbds38r5h1ranax74yv92sps"
+    },
+    elite: {
+      priceId: "pri_01kbjpgwz7v6pdn2jggt0zhq6k"
+    }
   };
-
   function apiBase() {
     return window.API_BASE_URL || `${window.location.origin}/api`;
   }
-
   async function fetchPlanCatalog() {
     try {
-      const url = typeof window.apiUrl === 'function'
-        ? window.apiUrl('/api/payment/paddle-config')
-        : `${apiBase().replace(/\/$/, '')}/payment/paddle-config`;
-      const res = await fetch(url, {
-        method: 'GET',
-        credentials: 'include',
+      const e = typeof window.apiUrl === "function" ? window.apiUrl("/api/payment/paddle-config") : `${apiBase().replace(/\/$/, "")}/payment/paddle-config`;
+      const t = await fetch(e, {
+        method: "GET",
+        credentials: "include"
       });
-      if (!res.ok) throw new Error(`paddle-config ${res.status}`);
-      const data = await res.json();
-      if (data.plans && Object.keys(data.plans).length) return data.plans;
-    } catch (err) {
-      console.warn('[Premium] Using fallback price IDs:', err.message);
+      if (!t.ok) throw new Error(`paddle-config ${t.status}`);
+      const n = await t.json();
+      if (n.plans && Object.keys(n.plans).length) return n.plans;
+    } catch (e) {
+      console.warn("[Premium] Using fallback price IDs:", e.message);
     }
-    return FALLBACK_PLANS;
+    return e;
   }
-
-  function startCheckout(priceId, planKey, event) {
-    if (typeof window.openPaddleCheckout !== 'function') {
-      console.error('[Premium] Checkout handler not loaded');
-      alert('Payment system is still loading. Please try again in a moment.');
+  function startCheckout(e, t, n) {
+    if (typeof window.openPaddleCheckout !== "function") {
+      console.error("[Premium] Checkout handler not loaded");
+      alert("Payment system is still loading. Please try again in a moment.");
       return;
     }
-    window.openPaddleCheckout(priceId, planKey, event);
+    window.openPaddleCheckout(e, t, n);
   }
-
-  function wirePlanButtons(plans) {
-    document.querySelectorAll('.plan-card[data-plan]').forEach((card) => {
-      const planKey = card.getAttribute('data-plan');
-      const info = plans[planKey];
-      const btn = card.querySelector('.plan-btn');
-      if (!btn || !info?.priceId) return;
-
-      btn.addEventListener('click', (e) => {
+  function wirePlanButtons(e) {
+    document.querySelectorAll(".plan-card[data-plan]").forEach(t => {
+      const n = t.getAttribute("data-plan");
+      const a = e[n];
+      const i = t.querySelector(".plan-btn");
+      if (!i || !a?.priceId) return;
+      i.addEventListener("click", e => {
         e.preventDefault();
-        startCheckout(info.priceId, planKey, e);
+        startCheckout(a.priceId, n, e);
       });
     });
-
-    const stickyBtn = document.querySelector('._cta-btn');
-    const prime = plans.prime;
-    if (stickyBtn && prime?.priceId) {
-      stickyBtn.addEventListener('click', (e) => {
+    const t = document.querySelector("._cta-btn");
+    const n = e.prime;
+    if (t && n?.priceId) {
+      t.addEventListener("click", e => {
         e.preventDefault();
-        startCheckout(prime.priceId, 'prime', e);
+        startCheckout(n.priceId, "prime", e);
       });
     }
   }
-
   function wireAuthLinks() {
-    document.querySelectorAll('.nav-login, .nav-mobile-signin').forEach((el) => {
-      el.setAttribute('href', '/login.html');
+    document.querySelectorAll(".nav-login, .nav-mobile-signin").forEach(e => {
+      e.setAttribute("href", "/login.html");
     });
-    document.querySelectorAll('.nav-cta, .nav-mobile-cta').forEach((el) => {
-      if (!el.dataset.boundDashboard) {
-        el.dataset.boundDashboard = '1';
-        el.addEventListener('click', (e) => {
-          const user = window.currentAuthenticatedUser || window.currentUser;
-          if (user) {
+    document.querySelectorAll(".nav-cta, .nav-mobile-cta").forEach(e => {
+      if (!e.dataset.boundDashboard) {
+        e.dataset.boundDashboard = "1";
+        e.addEventListener("click", e => {
+          const t = window.currentAuthenticatedUser || window.currentUser;
+          if (t) {
             e.preventDefault();
-            window.location.href = '/dashboard.html';
+            window.location.href = "/dashboard.html";
           }
         });
       }
     });
   }
-
-  document.addEventListener('DOMContentLoaded', async () => {
+  document.addEventListener("DOMContentLoaded", async () => {
     wireAuthLinks();
-    const plans = await fetchPlanCatalog();
-    wirePlanButtons(plans);
+    const e = await fetchPlanCatalog();
+    wirePlanButtons(e);
   });
 })();

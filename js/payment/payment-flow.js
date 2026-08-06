@@ -1,216 +1,190 @@
-(function () {
-  const POLL_INTERVAL_MS = 2000;
-  const MAX_POLL_ATTEMPTS = 20;
-
-  function sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+(function() {
+  const e = 2e3;
+  const n = 20;
+  function sleep(e) {
+    return new Promise(n => setTimeout(n, e));
   }
-
   function apiBase() {
-    if (typeof window.apiUrl === 'function') {
-      return (path) => window.apiUrl(path);
+    if (typeof window.apiUrl === "function") {
+      return e => window.apiUrl(e);
     }
-    const base = (window.API_BASE_URL || `${window.location.origin}/api`).replace(/\/$/, '');
-    return (path) => {
-      let p = String(path);
-      if (p.startsWith('/api/')) p = p.slice(4);
-      else if (p.startsWith('/api')) p = p.slice(4);
-      if (!p.startsWith('/')) p = '/' + p;
-      return base + p;
+    const e = (window.API_BASE_URL || `${window.location.origin}/api`).replace(/\/$/, "");
+    return n => {
+      let t = String(n);
+      if (t.startsWith("/api/")) t = t.slice(4); else if (t.startsWith("/api")) t = t.slice(4);
+      if (!t.startsWith("/")) t = "/" + t;
+      return e + t;
     };
   }
-
-  const paymentUrl = apiBase();
-
-  function showProcessingOverlay(message) {
+  const t = apiBase();
+  function showProcessingOverlay(e) {
     removeProcessingOverlay();
-    const overlay = document.createElement('div');
-    overlay.id = 'payment-processing-overlay';
-    overlay.style.cssText = `
-      position: fixed; inset: 0; z-index: 1000000;
-      background: rgba(15, 23, 42, 0.72);
-      display: flex; align-items: center; justify-content: center;
-      backdrop-filter: blur(6px);
-    `;
-    overlay.innerHTML = `
-      <div style="
-        background: white; border-radius: 20px; padding: 32px 40px;
-        text-align: center; max-width: 420px; box-shadow: 0 20px 60px rgba(0,0,0,0.25);
-        font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-      ">
-        <div style="
-          width: 44px; height: 44px; border: 3px solid #fed7aa;
-          border-top-color: #f97316; border-radius: 50%;
-          margin: 0 auto 20px; animation: paymentSpin 0.8s linear infinite;
-        "></div>
-        <p style="margin: 0; font-size: 1.05rem; font-weight: 700; color: #0f172a;">${message}</p>
-        <p style="margin: 10px 0 0; font-size: 0.9rem; color: #64748b;">This usually takes a few seconds.</p>
-      </div>
-    `;
-    if (!document.getElementById('payment-flow-styles')) {
-      const style = document.createElement('style');
-      style.id = 'payment-flow-styles';
-      style.textContent = '@keyframes paymentSpin { to { transform: rotate(360deg); } }';
-      document.head.appendChild(style);
+    const n = document.createElement("div");
+    n.id = "payment-processing-overlay";
+    n.style.cssText = `\n      position: fixed; inset: 0; z-index: 1000000;\n      background: rgba(15, 23, 42, 0.72);\n      display: flex; align-items: center; justify-content: center;\n      backdrop-filter: blur(6px);\n    `;
+    n.innerHTML = `\n      <div style="\n        background: white; border-radius: 20px; padding: 32px 40px;\n        text-align: center; max-width: 420px; box-shadow: 0 20px 60px rgba(0,0,0,0.25);\n        font-family: 'Plus Jakarta Sans', system-ui, sans-serif;\n      ">\n        <div style="\n          width: 44px; height: 44px; border: 3px solid #fed7aa;\n          border-top-color: #f97316; border-radius: 50%;\n          margin: 0 auto 20px; animation: paymentSpin 0.8s linear infinite;\n        "></div>\n        <p style="margin: 0; font-size: 1.05rem; font-weight: 700; color: #0f172a;">${e}</p>\n        <p style="margin: 10px 0 0; font-size: 0.9rem; color: #64748b;">This usually takes a few seconds.</p>\n      </div>\n    `;
+    if (!document.getElementById("payment-flow-styles")) {
+      const e = document.createElement("style");
+      e.id = "payment-flow-styles";
+      e.textContent = "@keyframes paymentSpin { to { transform: rotate(360deg); } }";
+      document.head.appendChild(e);
     }
-    document.body.appendChild(overlay);
+    document.body.appendChild(n);
   }
-
   function removeProcessingOverlay() {
-    document.getElementById('payment-processing-overlay')?.remove();
+    document.getElementById("payment-processing-overlay")?.remove();
   }
-
-  async function verifyPrice(priceId, planName) {
-    const res = await fetch(paymentUrl('/api/payment/verify-price'), {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ priceId, planName }),
+  async function verifyPrice(e, n) {
+    const a = await fetch(t("/api/payment/verify-price"), {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        priceId: e,
+        planName: n
+      })
     });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error || 'Invalid plan selection');
+    if (!a.ok) {
+      const e = await a.json().catch(() => ({}));
+      throw new Error(e.error || "Invalid plan selection");
     }
     return true;
   }
-
-  async function pollPaymentStatus(transactionId) {
-    for (let attempt = 1; attempt <= MAX_POLL_ATTEMPTS; attempt++) {
-      const res = await fetch(paymentUrl('/api/payment/verify-payment-status'), {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ transaction_id: transactionId || null }),
+  async function pollPaymentStatus(a) {
+    for (let o = 1; o <= n; o++) {
+      const i = await fetch(t("/api/payment/verify-payment-status"), {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          transaction_id: a || null
+        })
       });
-
-      if (res.ok) {
-        const data = await res.json();
-        if (data.success && data.registered) {
-          return data;
+      if (i.ok) {
+        const e = await i.json();
+        if (e.success && e.registered) {
+          return e;
         }
       }
-
-      if (attempt < MAX_POLL_ATTEMPTS) {
-        await sleep(POLL_INTERVAL_MS);
+      if (o < n) {
+        await sleep(e);
       }
     }
     return null;
   }
-
-  async function tryLocalFallback(planName) {
-    const config = window.paddleManager?.getConfig?.();
-    if (!config?.useLocalFallback) {
+  async function tryLocalFallback(e) {
+    const n = window.paddleManager?.getConfig?.();
+    if (!n?.useLocalFallback) {
       return null;
     }
-    const res = await fetch(paymentUrl('/api/payment/process-local-payment'), {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ plan: planName }),
+    const a = await fetch(t("/api/payment/process-local-payment"), {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        plan: e
+      })
     });
-    if (!res.ok) {
+    if (!a.ok) {
       return null;
     }
-    return res.json();
+    return a.json();
   }
-
-  async function completeCheckout(checkoutData) {
-    const planName = window.pendingPlanUpgrade;
-    if (!planName) {
-      console.error('[Payment] No pending plan');
-      return { ok: false, error: 'Missing plan' };
+  async function completeCheckout(e) {
+    const n = window.pendingPlanUpgrade;
+    if (!n) {
+      console.error("[Payment] No pending plan");
+      return {
+        ok: false,
+        error: "Missing plan"
+      };
     }
-
-    const transactionId =
-      checkoutData?.transaction_id ||
-      checkoutData?.id ||
-      checkoutData?.transaction?.id ||
-      null;
-
-    showProcessingOverlay('Activating your plan…');
-
+    const t = e?.transaction_id || e?.id || e?.transaction?.id || null;
+    showProcessingOverlay("Activating your plan…");
     try {
-      let result = await pollPaymentStatus(transactionId);
-      if (!result) {
-        result = await tryLocalFallback(planName);
+      let e = await pollPaymentStatus(t);
+      if (!e) {
+        e = await tryLocalFallback(n);
       }
-
       removeProcessingOverlay();
-
-      if (!result || !result.success) {
+      if (!e || !e.success) {
         return {
           ok: false,
-          error: 'Payment received but activation is still pending. Check your dashboard in a minute.',
+          error: "Payment received but activation is still pending. Check your dashboard in a minute."
         };
       }
-
       window.pendingPlanUpgrade = null;
-      return { ok: true, plan: result.plan || planName };
-    } catch (err) {
+      return {
+        ok: true,
+        plan: e.plan || n
+      };
+    } catch (e) {
       removeProcessingOverlay();
-      console.error('[Payment] Activation error:', err);
-      return { ok: false, error: err.message || 'Activation failed' };
+      console.error("[Payment] Activation error:", e);
+      return {
+        ok: false,
+        error: e.message || "Activation failed"
+      };
     }
   }
-
-  async function openCheckout(priceId, planName, event) {
-    if (event?.preventDefault) event.preventDefault();
-    if (event?.stopPropagation) event.stopPropagation();
-
+  async function openCheckout(e, n, a) {
+    if (a?.preventDefault) a.preventDefault();
+    if (a?.stopPropagation) a.stopPropagation();
     if (!window.paddleManager?.initialized) {
-      throw new Error('Payment system is still loading. Please try again.');
+      throw new Error("Payment system is still loading. Please try again.");
     }
-
-    await verifyPrice(priceId, planName);
-
-    const sessionRes = await fetch(paymentUrl('/api/payment/prepare-checkout'), {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ priceId, planName }),
+    await verifyPrice(e, n);
+    const o = await fetch(t("/api/payment/prepare-checkout"), {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        priceId: e,
+        planName: n
+      })
     });
-
-    if (!sessionRes.ok) {
-      const err = await sessionRes.json().catch(() => ({}));
-      throw new Error(err.error || 'Could not start checkout');
+    if (!o.ok) {
+      const e = await o.json().catch(() => ({}));
+      throw new Error(e.error || "Could not start checkout");
     }
-
-    const session = await sessionRes.json();
-    await window.paddleManager.openCheckout(priceId, planName, session);
+    const i = await o.json();
+    await window.paddleManager.openCheckout(e, n, i);
     return true;
   }
-
   async function handleDashboardReturn() {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('payment') !== 'success') return;
-
-    const plan = params.get('plan');
-    const clean = window.location.pathname + window.location.hash;
-    window.history.replaceState({}, document.title, clean);
-
-    showProcessingOverlay('Confirming your upgrade…');
-    let activated = await pollPaymentStatus(null);
-    if (!activated && plan) {
-      activated = await tryLocalFallback(plan);
+    const e = new URLSearchParams(window.location.search);
+    if (e.get("payment") !== "success") return;
+    const n = e.get("plan");
+    const t = window.location.pathname + window.location.hash;
+    window.history.replaceState({}, document.title, t);
+    showProcessingOverlay("Confirming your upgrade…");
+    let a = await pollPaymentStatus(null);
+    if (!a && n) {
+      a = await tryLocalFallback(n);
     }
     removeProcessingOverlay();
-
-    const activePlan = activated?.plan || plan;
-    if (activePlan && typeof window.handlePaymentSuccessOnDashboard === 'function') {
-      window.handlePaymentSuccessOnDashboard(activePlan);
+    const o = a?.plan || n;
+    if (o && typeof window.handlePaymentSuccessOnDashboard === "function") {
+      window.handlePaymentSuccessOnDashboard(o);
     }
   }
-
   window.PaymentFlow = {
-    openCheckout,
-    completeCheckout,
-    showProcessingOverlay,
-    removeProcessingOverlay,
-    handleDashboardReturn,
+    openCheckout: openCheckout,
+    completeCheckout: completeCheckout,
+    showProcessingOverlay: showProcessingOverlay,
+    removeProcessingOverlay: removeProcessingOverlay,
+    handleDashboardReturn: handleDashboardReturn
   };
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', handleDashboardReturn);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", handleDashboardReturn);
   } else {
     handleDashboardReturn();
   }

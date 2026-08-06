@@ -6,7 +6,6 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <!-- solis-dash-build: 20260806-ranking-style-lock -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#ff6b3d">
@@ -37,7 +36,6 @@
     <link rel="stylesheet" href="/style/ss/ios-pill-nav.css?v=12">
     <link rel="stylesheet" href="/style/ss/mobile-nav.css?v=15">
     <link rel="stylesheet" href="/style/ss/customize.css?v=2">
-    <!-- ARCHIVED: <link rel="stylesheet" href="/style/ss/newcustomizer.css"> -->
     <link rel="stylesheet" href="/style/ss/clips.css?v=242">
     <link rel="stylesheet" href="/style/ss/profile.css?v=15">
     <link rel="stylesheet" href="/style/ss/newsfeed-widget.css?v=4">
@@ -964,8 +962,6 @@
 </head>
 <body>
 
-    <!-- sc-->
-
 <div class="profile-notif-wrapper">
     <div class="generation-progress-wrapper" id="generationProgressWrapper" style="display: none;">
         <div class="generation-launcher" id="generationLauncher" title="View generation tasks">
@@ -1482,7 +1478,6 @@
                     <p class="stgPanelLead">Plan, renewal, and generation usage.</p>
                     <div class="stgPlanBanner" id="stgPlanBanner" data-plan="free">
                         <svg class="stgPlanPoly" viewBox="0 0 480 120" preserveAspectRatio="xMaxYMid slice" aria-hidden="true" fill="none" stroke="none">
-                            <!-- Free: soft stone / sparse -->
                             <g class="stgPlanPolySet" data-poly="free">
                                 <polygon points="480,0 380,0 430,50" fill="rgba(160,148,136,0.18)"/>
                                 <polygon points="380,0 280,0 330,42" fill="rgba(175,165,152,0.14)"/>
@@ -1501,7 +1496,6 @@
                                 <polygon points="300,100 340,120 220,120" fill="rgba(152,142,132,0.12)"/>
                                 <polygon points="160,90 300,100 220,120" fill="rgba(160,150,140,0.09)"/>
                             </g>
-                            <!-- Basic: cool slate-blue facets -->
                             <g class="stgPlanPolySet" data-poly="basic">
                                 <polygon points="480,0 410,0 450,35" fill="rgba(120,155,200,0.18)"/>
                                 <polygon points="410,0 330,0 370,48" fill="rgba(140,170,210,0.14)"/>
@@ -1526,7 +1520,6 @@
                                 <polygon points="270,88 280,120 180,120" fill="rgba(112,150,188,0.1)"/>
                                 <polygon points="150,85 270,88 180,120" fill="rgba(120,155,190,0.08)"/>
                             </g>
-                            <!-- Prime: tropical lagoon -->
                             <g class="stgPlanPolySet" data-poly="prime">
                                 <polygon points="480,0 400,0 440,40" fill="rgba(45,212,191,0.22)"/>
                                 <polygon points="400,0 320,0 360,48" fill="rgba(45,212,191,0.14)"/>
@@ -1555,7 +1548,6 @@
                                 <polygon points="180,90 200,120 100,120" fill="rgba(45,212,191,0.1)"/>
                                 <polygon points="80,70 180,90 100,120" fill="rgba(45,212,191,0.07)"/>
                             </g>
-                            <!-- Elite: indigo high-poly -->
                             <g class="stgPlanPolySet" data-poly="elite">
                                 <polygon points="480,0 440,0 460,24" fill="rgba(99,102,241,0.24)"/>
                                 <polygon points="440,0 400,0 420,20" fill="rgba(129,140,248,0.18)"/>
@@ -1777,7 +1769,6 @@
     </div>
 </div>
 
-<!-- Profile picture adjuster (centered crop) -->
 <div class="stgCropBackdrop" id="stgCropBackdrop" hidden></div>
 <div class="stgCropModal" id="stgCropModal" role="dialog" aria-modal="true" aria-labelledby="stgCropTitle" hidden>
     <div class="stgCropCard">
@@ -2192,11 +2183,9 @@
                 </div>
             </div>
 
-            <!-- News Feed Card Widget -->
             <div class="news-feed-card widget-newsfeed" id="newsFeedCard">
                 <div class="nf-widget-container">
 
-                    <!-- Image Full Overlay -->
                     <div id="image-overlay" class="nf-image-overlay hidden">
                         <div class="nf-overlay-content">
                             <img id="full-img-view" src="" alt="" class="nf-full-image">
@@ -2206,7 +2195,6 @@
                         </div>
                     </div>
 
-                    <!-- Hidden Admin Post Creation Modal -->
                     <div id="admin-post-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center;">
                         <div style="background: #1f2937; border: 1px solid #374151; border-radius: 12px; padding: 24px; width: 90%; max-width: 500px; box-shadow: 0 20px 60px rgba(0,0,0,0.5);">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
@@ -2225,7 +2213,6 @@
                         </div>
                     </div>
 
-                    <!-- PROFILE POPOVER -->
                     <div id="profile-popover" class="nf-profile-popover hidden" role="dialog" aria-label="Author profile">
                         <div class="nf-profile-hero">
                             <img id="p-avatar" src="" class="nf-profile-avatar" alt="">
@@ -2251,11 +2238,9 @@
                         </div>
                     </div>
 
-                    <!-- Main Card -->
                     <div class="nf-card">
                         <div class="nf-card-content">
                             <div id="post-view" class="nf-post-view">
-                                <!-- Header -->
                                 <div class="nf-header">
                                     <div id="header-trigger" class="nf-header-trigger">
                                         <div class="nf-header-avatar-wrapper">
@@ -2275,7 +2260,6 @@
                                     <div id="dots" class="nf-dots"></div>
                                 </div>
 
-                                <!-- Body -->
                                 <div class="nf-body">
                                     <div id="content-block" class="nf-content-block">
                                         <p id="main-text" class="nf-main-text"></p>
@@ -2291,7 +2275,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Footer -->
                                 <div class="nf-footer">
                                     <div class="nf-actions-left">
                                         <div class="nf-like-container">
@@ -2302,7 +2285,6 @@
                                             </button>
                                         </div>
 
-                                        <!-- Views Counter -->
                                         <div class="nf-views" title="Views">
                                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                                             <span id="view-count" class="nf-view-count">0</span>
@@ -3251,7 +3233,6 @@
         </div>
     </div>
 
-    <!-- User Profile Modal -->
     <div class="user-profile-modal" id="userProfileModal">
         <div class="user-profile-popup">
             <button class="profile-close-btn" onclick="closeUserProfile()">×</button>
@@ -3426,12 +3407,10 @@
                             <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
                         </svg>
                     </div>
-                    <!-- Mute chip lives on the phone — keeps the timeline shell full-width -->
                     <button type="button" class="preview-audio-toggle" id="previewAudioToggle" hidden
                         aria-pressed="false" title="Unmute preview" aria-label="Unmute preview"></button>
                 </div>
 
-                <!-- Library preview: timeline / trimmer (+ split) -->
                 <div class="preview-timeline-row" id="previewTimelineRow" hidden>
                     <div class="preview-timeline-shell" id="previewTimelineShell">
                         <span class="preview-timeline-time" id="previewTimelineCurrent" aria-live="off">0:00</span>
@@ -3448,7 +3427,6 @@
                                 <button type="button" class="preview-timeline-handle right" id="previewTimelineHandleR" aria-label="Trim end"></button>
                                 <div class="preview-timeline-playhead" id="previewTimelinePlayhead" aria-hidden="true"></div>
                             </div>
-                            <!-- AI text hook track — purple line under timestamps; hover opens hook editor pill -->
                             <div class="preview-timeline-hook-lane" id="previewTimelineHookLane" hidden>
                                 <button type="button" class="preview-timeline-hook-bar" id="previewTimelineHookBar"
                                     title="AI Text Hook" aria-label="Edit AI text hook">
@@ -3464,7 +3442,6 @@
                     </div>
                 </div>
 
-                <!-- Right-click menu for library preview / timeline -->
                 <div class="preview-ctx-menu" id="previewCtxMenu" hidden role="menu" aria-label="Preview actions">
                     <button type="button" class="preview-ctx-item" data-ctx-action="split" role="menuitem">
                         <i data-lucide="scissors" aria-hidden="true"></i>
@@ -3481,7 +3458,6 @@
                     <div id="previewEditorPill" class="toolbar-pill preview-editor-toolbar">
                         <div id="previewPillGlassBg" class="pill-glass-bg"></div>
                         <div id="previewPillIndicator" class="active-indicator"></div>
-                        <!-- T / freeform text removed — captions + animations cover preview text -->
                         <button type="button" class="tool-btn" data-tool="captions"
                             onclick="activatePreviewToolbar(this); addSubtitleBlock()"
                             title="Preview caption fonts & style" aria-label="Captions">
@@ -3520,7 +3496,6 @@
                                 <span class="stgToggleKnob" aria-hidden="true"></span>
                             </label>
                         </div>
-                        <!-- Sound Effects modifier temporarily removed from UI -->
                     </div>
                 </div>
 
@@ -3539,7 +3514,6 @@
             <div class="template-preview-sidebar">
                 <div class="template-sheet-handle" id="templateSheetHandle"></div>
                 <div class="template-tab-content active" id="configTab">
-                    <!-- Normal Template Info Panel -->
                     <div class="template-info-panel" id="templateInfoPanel">
                         <div class="tip-head">
                             <h3 id="previewTemplateName">Clip Compilation</h3>
@@ -3608,7 +3582,6 @@
                         </div>
                     </div>
 
-                    <!-- Library Preview Info Panel -->
                     <div class="library-info-panel" id="libraryInfoPanel" style="display: none;">
                         <h3 style="display: none; margin: 0 0 16px 0; font-size: 18px; font-weight: 700; color: #0f172a;">AI</h3>
                         <div class="ai-placeholder" hidden style="display: none; padding: 20px 16px; margin-bottom: 24px; background: linear-gradient(135deg, #f5f1f0 0%, #ede6e0 100%); border-radius: 8px; min-height: 120px; align-items: center; justify-content: center; border: 2px dashed #d4c4ba;">
@@ -3620,10 +3593,8 @@
                             </div>
                         </div>
 
-<!-- Social platform buttons with Solis AI design -->
 <div class="social-platform-container">
     <div class="social-platform-icons">
-        <!-- Info Button (left side) -->
         <button class="social-info-btn" aria-label="Social sharing information">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="100%" height="100%">
                 <text x="12" y="16" text-anchor="middle" font-size="12" font-weight="900" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="0.8">!</text>
@@ -3633,7 +3604,6 @@
             </div>
         </button>
 
-        <!-- YouTube -->
         <button class="social-icon-btn" data-platform="youtube" aria-label="Share to YouTube">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 90" width="100%" height="100%">
                 <path d="M87.5,25.6c-1-3.8-4-6.8-7.8-7.8C72.7,16,45,16,45,16s-27.7,0-34.7,1.9c-3.8,1-6.8,4-7.8,7.8C0.6,32.6,0.6,45,0.6,45s0,12.4,1.9,19.4c1,3.8,4,6.8,7.8,7.8C17.3,74,45,74,45,74s27.7,0,34.7-1.9c3.8-1,6.8-4,7.8-7.8C89.4,57.4,89.4,45,89.4,45S89.4,32.6,87.5,25.6z" fill="#FF0000"/>
@@ -3644,7 +3614,6 @@
             </div>
         </button>
 
-        <!-- Instagram -->
         <button class="social-icon-btn" data-platform="instagram" aria-label="Share to Instagram">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
                 <defs>
@@ -3665,7 +3634,6 @@
             </div>
         </button>
 
-        <!-- TikTok -->
         <button class="social-icon-btn" data-platform="tiktok" aria-label="Share to TikTok">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="100%" height="100%" style="overflow: visible;">
                 <path fill="#25F4EE" d="M9 0h1.98c.144.715.54 1.617 1.235 2.512C12.895 3.389 13.797 4 15 4v2c-1.753 0-3.07-.814-4-1.829V11a5 5 0 1 1-5-5v2a3 3 0 1 0 3 3z" transform="translate(0.4, 0.2)"/>
@@ -3815,7 +3783,6 @@
                     </div>
                 </div>
 
-                <!-- Social icon buttons with hover tooltip -->
                 <style>
                     .social-icon-btn:hover .social-tooltip {
                         opacity: 1;
@@ -4394,7 +4361,6 @@
     <script src="/js/core/websocket-security.js?v=1"></script>
     <script src="/js/core/video-streaming.js?v=1"></script>
     <script src="/js/core/websocket-client.js?v=3"></script>
-    <!-- 🚀 SaaS-Level Request Management -->
     <script src="/js/core/api-manager.js?v=1"></script>
     <script src="/js/core/fetch-interceptor.js?v=1"></script>
     <script src="/js/core/websocket-manager.js?v=1"></script>
@@ -4494,7 +4460,6 @@
     <div id="proFeatureModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(26, 26, 46, 0.8); z-index: 9600; justify-content: center; align-items: center; padding: 20px; overflow: auto; backdrop-filter: blur(4px);">
         <div style="background: white; max-width: 680px; width: 100%; border-radius: 24px; box-shadow: 0 20px 60px rgba(255, 107, 53, 0.3); position: relative; overflow: hidden; margin: auto;">
 
-            <!-- Close button -->
             <button id="closeProFeatureModal" style="position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 28px; cursor: pointer; color: #999; z-index: 10; transition: all 0.2s; padding: 0; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">×</button>
             <div class="premium-card" style="border-radius: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0;">
                 <div class="card-content" style="padding: 48px; display: flex; flex-direction: column; justify-content: center;">
@@ -4565,7 +4530,6 @@
     </div>
     <script src="/js/i_dq/youtube-analytics-secure.js?v=1"></script>
     <script src="js/i_dq/store.js"></script>
-    <!-- REANNABLE !!!<script src="js/qwsad.js"></script> -->
        </div>
    </div>
 
@@ -4663,7 +4627,6 @@
 
    </script>
 
-   <!-- Preview editor toolbar pill (from video2.html) -->
    <script>
        (function initPreviewEditorToolbar() {
            const indicator = document.getElementById('previewPillIndicator');
@@ -4843,7 +4806,6 @@
        })();
    </script>
 
-   <!-- PC hover teach-previews: toolbar tools + modifiers (fine pointer only) -->
    <script>
    (function initSolisHoverTeach() {
        const HOVER_MS = 280;
@@ -5530,7 +5492,6 @@
    })();
    </script>
 
-   <!-- ✅ INITIALIZATION: Create generation spinner instance and restore state after page loads -->
    <script>
        document.addEventListener('DOMContentLoaded', function() {
 

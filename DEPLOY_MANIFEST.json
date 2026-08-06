@@ -1,20 +1,28 @@
 {
-  "created_at": "2026-08-06T20:19:27.095697+00:00",
+  "created_at": "2026-08-06T20:38:35.597246+00:00",
   "source": "D:\\SolisAI\\frontend",
   "staging": "D:\\SolisAI\\deploy\\solis-frontend",
-  "remote": "https://github.com/ppowq67/solis-frontend.git",
+  "remote": "https://github.com/ppowq67/solisai.git",
   "api_host": "https://api.solisai.video",
   "frontend_host": "https://solisai.video",
+  "obfuscation": {
+    "js": "mild (terser mangle locals + beautify; no compress)",
+    "css": "comment scrub",
+    "review_maps": "_review/source-maps/"
+  },
   "stats": {
-    "files": 114,
-    "rewritten": 3,
-    "rewrite_hits": 11,
-    "obfuscated": 108,
+    "files": 112,
+    "rewritten": 4,
+    "rewrite_hits": 15,
+    "scrubbed": 106,
+    "js_obfuscated": 58,
+    "js_failed": 0,
     "skipped": 23,
-    "bytes_out": 12071391
+    "bytes_out": 12019043
   },
   "notes": [
     "deploy/ is gitignored in the monorepo \u2014 no secrets path into main repo history.",
-    "Staging never copies .env / credentials / media dumps."
+    "Staging never copies .env / credentials / media dumps / admin.",
+    "Do not upload _review/ to the public CDN."
   ]
 }

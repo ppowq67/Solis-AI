@@ -1,342 +1,299 @@
-window.addEventListener('load', () => {
-            const inputSection = document.querySelector('.input-section');
-            const inputContainer = document.querySelector('.input-container');
-            const currentIndex = parseInt(localStorage.getItem('sidebarActiveIndex') || '0');
-
-            if (inputSection && inputContainer) {
-                if (currentIndex === 0) {
-                    inputSection.classList.add('active');
-                    inputContainer.classList.remove('hidden');
-                    inputSection.style.cssText = 'display: flex !important; visibility: visible !important; opacity: 1 !important; pointer-events: all !important; z-index: 1000 !important;';
-                } else {
-                    inputSection.classList.remove('active');
-                    inputContainer.classList.add('hidden');
-                    inputSection.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; z-index: -10000 !important;';
-                }
-            }
-        });
-    window.handleDeleteAllClips = async function() {
-        const modal = document.getElementById('deleteConfirmationModal');
-        const deleteTitle = document.getElementById('deleteModalTitle');
-        const deleteText = document.getElementById('deleteConfirmationText');
-        const deleteWarning = modal?.querySelector('.delete-modal-warning');
-        const confirmBtn = document.getElementById('confirmDeleteBtn');
-
-        if (!modal || !deleteText || !confirmBtn) return;
-
-        const items = (window.clipsStudio && window.clipsStudio.libraryItems) ? window.clipsStudio.libraryItems : [];
-        const count = items.length;
-
-        if (deleteTitle) deleteTitle.textContent = 'Clear library';
-        deleteText.textContent = count > 0
-            ? `This will permanently remove all ${count} clips from your library.`
-            : 'There are no clips in your library to remove.';
-        if (deleteWarning) deleteWarning.textContent = 'Associated files are deleted and cannot be recovered.';
-        confirmBtn.textContent = 'Clear library';
-        confirmBtn.disabled = count === 0;
-
-        modal.classList.add('show');
-
-        const newConfirmBtn = confirmBtn.cloneNode(true);
-        confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-
-        newConfirmBtn.onclick = async function() {
-            if (!window.clipsStudio || !window.clipsStudio.libraryItems || window.clipsStudio.libraryItems.length === 0) {
-                window.clipsStudio?.showNotification('No clips to delete', 'info');
-                modal.classList.remove('show');
-                return;
-            }
-
-            newConfirmBtn.disabled = true;
-            newConfirmBtn.textContent = 'Clearing…';
-
-            try {
-                const clips = [...window.clipsStudio.libraryItems];
-                const totalClips = clips.length;
-                let deletedCount = 0;
-                const headers = (typeof getAuthHeaders === 'function')
-                    ? getAuthHeaders()
-                    : { 'Content-Type': 'application/json' };
-                const apiBase = (typeof API_BASE_URL !== 'undefined' && API_BASE_URL)
-                    ? API_BASE_URL
-                    : '/api';
-
-                for (const clip of clips) {
-                    const projectId = clip.projectId || clip.project_id;
-                    if (!projectId) continue;
-                    try {
-                        const response = await fetch(`${apiBase}/clips/project/${encodeURIComponent(projectId)}`, {
-                            method: 'DELETE',
-                            headers,
-                            credentials: 'include',
-                        });
-                        if (response.ok) deletedCount++;
-                    } catch (error) {
-                        console.error(`Failed to delete clip ${projectId}:`, error);
-                    }
-                }
-
-                window.clipsStudio.libraryItems = [];
-                window.clipsStudio.processingItems = [];
-                window.clipsStudio.saveLibraryItems();
-                if (typeof window.clipsStudio.saveProcessingItems === 'function') {
-                    window.clipsStudio.saveProcessingItems();
-                }
-                window.clipsStudio.updateLibraryView();
-                if (typeof window.clipsStudio.updateProcessingView === 'function') {
-                    window.clipsStudio.updateProcessingView();
-                }
-                if (typeof updateStorageBadgeDisplay === 'function') {
-                    await updateStorageBadgeDisplay();
-                }
-
-                window.clipsStudio.showNotification(
-                    deletedCount > 0
-                        ? `Cleared ${deletedCount}/${totalClips} clips from your library`
-                        : 'Library cleared',
-                    'success'
-                );
-                modal.classList.remove('show');
-
-                setTimeout(() => window.location.reload(), 600);
-            } catch (error) {
-                console.error('Error clearing library:', error);
-                window.clipsStudio?.showNotification('Error clearing library. Please try again.', 'error');
-                modal.classList.remove('show');
-            } finally {
-                newConfirmBtn.disabled = false;
-                newConfirmBtn.textContent = 'Clear library';
-            }
-        };
-    };
-
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            if (window.videoGenerationSocket) {
-                window.videoGenerationSocket.off('video_generated');
-                window.videoGenerationSocket.on('video_generated', () => {
-                    updateStorageBadgeDisplay();
-                });
-            }
-
-            if (window.solisWSClient) {
-                window.solisWSClient.on('storage_update', () => {
-                    updateStorageBadgeDisplay();
-                });
-
-                window.solisWSClient.on('video_generated', () => {
-                    updateStorageBadgeDisplay();
-                });
-            }
-
-            if (window.clipsStudio) {
-                const originalLoadLibrary = window.clipsStudio.loadLibraryItems;
-                window.clipsStudio.loadLibraryItems = async function() {
-                    const result = await originalLoadLibrary.call(this);
-                    return result;
-                };
-            }
-        }, 1000);
-    });
-
-    window.closeUpgradeModal = function() {
-        const modal = document.getElementById('upgradeModalOverlay');
-        if (modal) {
-            modal.style.display = 'none';
-        }
-    };
-
-    window.showUpgradeModal = function(title = 'Video Too Long', subtitle = 'Your video exceeds your plan limit. Upgrade to process longer videos and unlock premium features.') {
-        const modal = document.getElementById('upgradeModalOverlay');
-        const titleEl = document.getElementById('upgradeModalTitle');
-        const subtitleEl = document.getElementById('upgradeModalSubtitle');
-
-        if (modal) {
-            if (titleEl) titleEl.textContent = title;
-            if (subtitleEl) subtitleEl.textContent = subtitle;
-            modal.style.display = 'flex';
-        }
-    };
-    document.addEventListener('DOMContentLoaded', function() {
-        const paymentSuccess = sessionStorage.getItem('paymentSuccess');
-        if (paymentSuccess) {
-            try {
-                const paymentData = JSON.parse(paymentSuccess);
-                const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-                if (currentUser) {
-                    currentUser.plan = paymentData.plan;
-                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                }
-            } catch (e) {
-                console.error('Failed to parse payment success data:', e);
-            }
-            sessionStorage.removeItem('paymentSuccess');
-        }
-        async function loadUserTierInfo() {
-            try {
-                const response = await fetch('/api/tier/info', {
-                    method: 'GET',
-                    credentials: 'include'
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    const tierData = data.data;
-                    const currentTierEl = document.getElementById('currentTier');
-                    const tierInfoEl = document.getElementById('tierInfo');
-                    const tierInfoCard = document.getElementById('tierInfoCard');
-
-                    if (currentTierEl) {
-                        currentTierEl.textContent = tierData.tier_name;
-
-                        if (tierInfoCard) {
-                            tierInfoCard.classList.remove('tier-free', 'tier-basic', 'tier-prime', 'tier-elite');
-                            const planKey = String(tierData.tier_name || 'free').toLowerCase();
-                            tierInfoCard.classList.add(`tier-${planKey}`);
-                            tierInfoCard.setAttribute('data-plan', planKey);
-                        }
-                    }
-
-                    if (tierInfoEl) {
-                        const remaining = tierData.generations.remaining;
-                        tierInfoEl.textContent = `${remaining} gens left today`;
-                    }
-                }
-            } catch (error) {
-            }
-        }
-
-        loadUserTierInfo();
-        async function refreshSubscriptionOnDashboard() {
-            try {
-                const subscription = window._subCache
-                    ? await window._subCache.get()
-                    : await fetch('/api/auth/subscription', { credentials: 'include' })
-                        .then(r => r.ok ? r.json().then(d => d.subscription) : null);
-
-                if (subscription) {
-                    updateStorageBadgesFromSubscription(subscription);
-                }
-            } catch (error) {
-                console.error('Dashboard failed to get subscription:', error);
-            }
-        }
-
-        function updateStorageBadgesFromSubscription(subscription) {
-            if (!subscription) return;
-
-            const storageTotalBadge = document.getElementById('storageTotalBadge');
-            const storagePlanBadge = document.getElementById('storagePlanBadge');
-            const currentPlanDesc = document.getElementById('currentPlanDesc');
-            const videoLimit = subscription.video_limit || subscription.videos_space_limit || 2;
-            const plan = subscription.plan || 'free';
-            const planDisplayName = plan.charAt(0).toUpperCase() + plan.slice(1);
-
-            if (storageTotalBadge) {
-                storageTotalBadge.textContent = videoLimit;
-            }
-            if (storagePlanBadge) {
-                storagePlanBadge.textContent = planDisplayName;
-            }
-            if (currentPlanDesc) {
-                currentPlanDesc.textContent = planDisplayName + ' Plan';
-            }
-        }
-        refreshSubscriptionOnDashboard();
-        updateStorageBadgeDisplay();
-        const disclaimerBtn = document.getElementById('disclaimerBtn');
-        const disclaimerOverlay = document.querySelector('.url-input-overlay');
-        const urlInput = document.querySelector('.url-input');
-        const urlSubmitBtn = document.querySelector('.url-submit-btn');
-        const checkmarkIcon = document.querySelector('.checkmark-icon');
-
-        const DISCLAIMER_KEY = 'disclaimerAcceptedTime';
-        const WEEK_IN_MS = 7 * 24 * 60 * 60 * 1000;
-
-        if (disclaimerBtn && disclaimerOverlay) {
-            const lastAcceptedTime = localStorage.getItem(DISCLAIMER_KEY);
-            const now = Date.now();
-            let shouldShowDisclaimer = false;
-
-            if (!lastAcceptedTime) {
-                shouldShowDisclaimer = true;
-            } else {
-                const timeSinceAccepted = now - parseInt(lastAcceptedTime);
-                if (timeSinceAccepted > WEEK_IN_MS) {
-                    shouldShowDisclaimer = true;
-                }
-            }
-            if (!shouldShowDisclaimer) {
-                disclaimerOverlay.classList.add('hidden');
-                disclaimerBtn.classList.add('active');
-                if (checkmarkIcon) checkmarkIcon.style.display = 'block';
-                if (urlInput) urlInput.style.filter = 'none';
-                if (urlSubmitBtn) urlSubmitBtn.style.filter = 'none';
-                if (urlInput) urlInput.style.pointerEvents = 'auto';
-                if (urlSubmitBtn) urlSubmitBtn.style.pointerEvents = 'auto';
-            }
-            disclaimerBtn.addEventListener('click', function() {
-                if (!this.classList.contains('active')) {
-                    this.classList.add('active');
-                    if (checkmarkIcon) checkmarkIcon.style.display = 'block';
-                    setTimeout(() => {
-                        disclaimerOverlay.classList.add('hidden');
-                        if (urlInput) urlInput.style.filter = 'none';
-                        if (urlSubmitBtn) urlSubmitBtn.style.filter = 'none';
-                        if (urlInput) urlInput.style.pointerEvents = 'auto';
-                        if (urlSubmitBtn) urlSubmitBtn.style.pointerEvents = 'auto';
-                        localStorage.setItem(DISCLAIMER_KEY, Date.now().toString());
-                    }, 300);
-                }
-            });
-        }
-    });
-
-    function switchClipsTab(tabName, buttonElement) {
-        const buttons = document.querySelectorAll('.clips-sub-item');
-        buttons.forEach(btn => btn.classList.remove('active'));
-        buttonElement.classList.add('active');
-        const sections = document.querySelectorAll('.clips-section');
-        sections.forEach(section => {
-            section.classList.remove('active');
-            section.style.display = 'none';
-        });
-        const tabToSection = {
-            'templates': 'templatesSection',
-            'create': 'createSection',
-            'library': 'librarySection'
-        };
-
-        const targetSection = document.getElementById(tabToSection[tabName]);
-        if (targetSection) {
-            targetSection.classList.add('active');
-            targetSection.style.display = 'block';
-        }
-
-        if (tabName === 'library') {
-            const studio = window.clipsStudio;
-            if (studio) {
-                const STALE_MS = 30_000;
-                const isStale = !studio._libraryLastLoaded || (Date.now() - studio._libraryLastLoaded) > STALE_MS;
-                const isEmpty = !studio.libraryItems || studio.libraryItems.length === 0;
-                if (isStale || isEmpty) {
-                    studio.showLibrarySkeleton(4);
-                    studio.loadLibraryItems().then(() => {
-                        studio._libraryLastLoaded = Date.now();
-                    });
-                }
-            }
-        }
-
-        const indicator = document.getElementById('clipsSubPane');
-        if (indicator) {
-            const buttonIndex = Array.from(buttons).indexOf(buttonElement);
-            const pill = document.querySelector('.clips-sub-pill');
-            const pillRect = pill.getBoundingClientRect();
-            const buttonRect = buttonElement.getBoundingClientRect();
-            const relativeLeft = buttonRect.left - pillRect.left;
-
-            indicator.style.left = relativeLeft + 'px';
-        }
-
+window.addEventListener("load", () => {
+  const e = document.querySelector(".input-section");
+  const t = document.querySelector(".input-container");
+  const o = parseInt(localStorage.getItem("sidebarActiveIndex") || "0");
+  if (e && t) {
+    if (o === 0) {
+      e.classList.add("active");
+      t.classList.remove("hidden");
+      e.style.cssText = "display: flex !important; visibility: visible !important; opacity: 1 !important; pointer-events: all !important; z-index: 1000 !important;";
+    } else {
+      e.classList.remove("active");
+      t.classList.add("hidden");
+      e.style.cssText = "display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; z-index: -10000 !important;";
     }
+  }
+});
+
+window.handleDeleteAllClips = async function() {
+  const e = document.getElementById("deleteConfirmationModal");
+  const t = document.getElementById("deleteModalTitle");
+  const o = document.getElementById("deleteConfirmationText");
+  const i = e?.querySelector(".delete-modal-warning");
+  const n = document.getElementById("confirmDeleteBtn");
+  if (!e || !o || !n) return;
+  const s = window.clipsStudio && window.clipsStudio.libraryItems ? window.clipsStudio.libraryItems : [];
+  const a = s.length;
+  if (t) t.textContent = "Clear library";
+  o.textContent = a > 0 ? `This will permanently remove all ${a} clips from your library.` : "There are no clips in your library to remove.";
+  if (i) i.textContent = "Associated files are deleted and cannot be recovered.";
+  n.textContent = "Clear library";
+  n.disabled = a === 0;
+  e.classList.add("show");
+  const r = n.cloneNode(true);
+  n.parentNode.replaceChild(r, n);
+  r.onclick = async function() {
+    if (!window.clipsStudio || !window.clipsStudio.libraryItems || window.clipsStudio.libraryItems.length === 0) {
+      window.clipsStudio?.showNotification("No clips to delete", "info");
+      e.classList.remove("show");
+      return;
+    }
+    r.disabled = true;
+    r.textContent = "Clearing…";
+    try {
+      const t = [ ...window.clipsStudio.libraryItems ];
+      const o = t.length;
+      let i = 0;
+      const n = typeof getAuthHeaders === "function" ? getAuthHeaders() : {
+        "Content-Type": "application/json"
+      };
+      const s = typeof API_BASE_URL !== "undefined" && API_BASE_URL ? API_BASE_URL : "/api";
+      for (const e of t) {
+        const t = e.projectId || e.project_id;
+        if (!t) continue;
+        try {
+          const e = await fetch(`${s}/clips/project/${encodeURIComponent(t)}`, {
+            method: "DELETE",
+            headers: n,
+            credentials: "include"
+          });
+          if (e.ok) i++;
+        } catch (e) {
+          console.error(`Failed to delete clip ${t}:`, e);
+        }
+      }
+      window.clipsStudio.libraryItems = [];
+      window.clipsStudio.processingItems = [];
+      window.clipsStudio.saveLibraryItems();
+      if (typeof window.clipsStudio.saveProcessingItems === "function") {
+        window.clipsStudio.saveProcessingItems();
+      }
+      window.clipsStudio.updateLibraryView();
+      if (typeof window.clipsStudio.updateProcessingView === "function") {
+        window.clipsStudio.updateProcessingView();
+      }
+      if (typeof updateStorageBadgeDisplay === "function") {
+        await updateStorageBadgeDisplay();
+      }
+      window.clipsStudio.showNotification(i > 0 ? `Cleared ${i}/${o} clips from your library` : "Library cleared", "success");
+      e.classList.remove("show");
+      setTimeout(() => window.location.reload(), 600);
+    } catch (t) {
+      console.error("Error clearing library:", t);
+      window.clipsStudio?.showNotification("Error clearing library. Please try again.", "error");
+      e.classList.remove("show");
+    } finally {
+      r.disabled = false;
+      r.textContent = "Clear library";
+    }
+  };
+};
+
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    if (window.videoGenerationSocket) {
+      window.videoGenerationSocket.off("video_generated");
+      window.videoGenerationSocket.on("video_generated", () => {
+        updateStorageBadgeDisplay();
+      });
+    }
+    if (window.solisWSClient) {
+      window.solisWSClient.on("storage_update", () => {
+        updateStorageBadgeDisplay();
+      });
+      window.solisWSClient.on("video_generated", () => {
+        updateStorageBadgeDisplay();
+      });
+    }
+    if (window.clipsStudio) {
+      const e = window.clipsStudio.loadLibraryItems;
+      window.clipsStudio.loadLibraryItems = async function() {
+        const t = await e.call(this);
+        return t;
+      };
+    }
+  }, 1e3);
+});
+
+window.closeUpgradeModal = function() {
+  const e = document.getElementById("upgradeModalOverlay");
+  if (e) {
+    e.style.display = "none";
+  }
+};
+
+window.showUpgradeModal = function(e = "Video Too Long", t = "Your video exceeds your plan limit. Upgrade to process longer videos and unlock premium features.") {
+  const o = document.getElementById("upgradeModalOverlay");
+  const i = document.getElementById("upgradeModalTitle");
+  const n = document.getElementById("upgradeModalSubtitle");
+  if (o) {
+    if (i) i.textContent = e;
+    if (n) n.textContent = t;
+    o.style.display = "flex";
+  }
+};
+
+document.addEventListener("DOMContentLoaded", function() {
+  const e = sessionStorage.getItem("paymentSuccess");
+  if (e) {
+    try {
+      const t = JSON.parse(e);
+      const o = JSON.parse(localStorage.getItem("currentUser") || "{}");
+      if (o) {
+        o.plan = t.plan;
+        localStorage.setItem("currentUser", JSON.stringify(o));
+      }
+    } catch (e) {
+      console.error("Failed to parse payment success data:", e);
+    }
+    sessionStorage.removeItem("paymentSuccess");
+  }
+  async function loadUserTierInfo() {
+    try {
+      const e = await fetch("/api/tier/info", {
+        method: "GET",
+        credentials: "include"
+      });
+      if (e.ok) {
+        const t = await e.json();
+        const o = t.data;
+        const i = document.getElementById("currentTier");
+        const n = document.getElementById("tierInfo");
+        const s = document.getElementById("tierInfoCard");
+        if (i) {
+          i.textContent = o.tier_name;
+          if (s) {
+            s.classList.remove("tier-free", "tier-basic", "tier-prime", "tier-elite");
+            const e = String(o.tier_name || "free").toLowerCase();
+            s.classList.add(`tier-${e}`);
+            s.setAttribute("data-plan", e);
+          }
+        }
+        if (n) {
+          const e = o.generations.remaining;
+          n.textContent = `${e} gens left today`;
+        }
+      }
+    } catch (e) {}
+  }
+  loadUserTierInfo();
+  async function refreshSubscriptionOnDashboard() {
+    try {
+      const e = window._subCache ? await window._subCache.get() : await fetch("/api/auth/subscription", {
+        credentials: "include"
+      }).then(e => e.ok ? e.json().then(e => e.subscription) : null);
+      if (e) {
+        updateStorageBadgesFromSubscription(e);
+      }
+    } catch (e) {
+      console.error("Dashboard failed to get subscription:", e);
+    }
+  }
+  function updateStorageBadgesFromSubscription(e) {
+    if (!e) return;
+    const t = document.getElementById("storageTotalBadge");
+    const o = document.getElementById("storagePlanBadge");
+    const i = document.getElementById("currentPlanDesc");
+    const n = e.video_limit || e.videos_space_limit || 2;
+    const s = e.plan || "free";
+    const a = s.charAt(0).toUpperCase() + s.slice(1);
+    if (t) {
+      t.textContent = n;
+    }
+    if (o) {
+      o.textContent = a;
+    }
+    if (i) {
+      i.textContent = a + " Plan";
+    }
+  }
+  refreshSubscriptionOnDashboard();
+  updateStorageBadgeDisplay();
+  const t = document.getElementById("disclaimerBtn");
+  const o = document.querySelector(".url-input-overlay");
+  const i = document.querySelector(".url-input");
+  const n = document.querySelector(".url-submit-btn");
+  const s = document.querySelector(".checkmark-icon");
+  const a = "disclaimerAcceptedTime";
+  const r = 7 * 24 * 60 * 60 * 1e3;
+  if (t && o) {
+    const e = localStorage.getItem(a);
+    const c = Date.now();
+    let l = false;
+    if (!e) {
+      l = true;
+    } else {
+      const t = c - parseInt(e);
+      if (t > r) {
+        l = true;
+      }
+    }
+    if (!l) {
+      o.classList.add("hidden");
+      t.classList.add("active");
+      if (s) s.style.display = "block";
+      if (i) i.style.filter = "none";
+      if (n) n.style.filter = "none";
+      if (i) i.style.pointerEvents = "auto";
+      if (n) n.style.pointerEvents = "auto";
+    }
+    t.addEventListener("click", function() {
+      if (!this.classList.contains("active")) {
+        this.classList.add("active");
+        if (s) s.style.display = "block";
+        setTimeout(() => {
+          o.classList.add("hidden");
+          if (i) i.style.filter = "none";
+          if (n) n.style.filter = "none";
+          if (i) i.style.pointerEvents = "auto";
+          if (n) n.style.pointerEvents = "auto";
+          localStorage.setItem(a, Date.now().toString());
+        }, 300);
+      }
+    });
+  }
+});
+
+function switchClipsTab(e, t) {
+  const o = document.querySelectorAll(".clips-sub-item");
+  o.forEach(e => e.classList.remove("active"));
+  t.classList.add("active");
+  const i = document.querySelectorAll(".clips-section");
+  i.forEach(e => {
+    e.classList.remove("active");
+    e.style.display = "none";
+  });
+  const n = {
+    templates: "templatesSection",
+    create: "createSection",
+    library: "librarySection"
+  };
+  const s = document.getElementById(n[e]);
+  if (s) {
+    s.classList.add("active");
+    s.style.display = "block";
+  }
+  if (e === "library") {
+    const e = window.clipsStudio;
+    if (e) {
+      const t = 3e4;
+      const o = !e._libraryLastLoaded || Date.now() - e._libraryLastLoaded > t;
+      const i = !e.libraryItems || e.libraryItems.length === 0;
+      if (o || i) {
+        e.showLibrarySkeleton(4);
+        e.loadLibraryItems().then(() => {
+          e._libraryLastLoaded = Date.now();
+        });
+      }
+    }
+  }
+  const a = document.getElementById("clipsSubPane");
+  if (a) {
+    const e = Array.from(o).indexOf(t);
+    const i = document.querySelector(".clips-sub-pill");
+    const n = i.getBoundingClientRect();
+    const s = t.getBoundingClientRect();
+    const r = s.left - n.left;
+    a.style.left = r + "px";
+  }
+}

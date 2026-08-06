@@ -1,32 +1,26 @@
-(function (global) {
-    function isExternalAvatar(url) {
-        if (!url || typeof url !== 'string') return false;
-        if (url.startsWith('/')) return false;
-        if (url.startsWith('data:')) return false;
-        return /^https?:\/\//i.test(url);
+(function(t) {
+  function isExternalAvatar(t) {
+    if (!t || typeof t !== "string") return false;
+    if (t.startsWith("/")) return false;
+    if (t.startsWith("data:")) return false;
+    return /^https?:\/\//i.test(t);
+  }
+  function resolveAvatarUrl(r, e) {
+    let a = r;
+    let n = e;
+    if (r && typeof r === "object") {
+      a = r.id || r.user_id;
+      n = n ?? r.picture ?? r.avatar ?? r.photo;
     }
-
-    function resolveAvatarUrl(userOrId, picture) {
-        let userId = userOrId;
-        let pic = picture;
-
-        if (userOrId && typeof userOrId === 'object') {
-            userId = userOrId.id || userOrId.user_id;
-            pic = pic ?? userOrId.picture ?? userOrId.avatar ?? userOrId.photo;
-        }
-
-        if (pic && pic.startsWith('/') && !pic.includes('googleusercontent.com')) {
-            return pic;
-        }
-
-        if (userId && (isExternalAvatar(pic) || !pic)) {
-            const base = (global.API_BASE_URL || '').replace(/\/api\/?$/, '') || '';
-            return `${base}/api/avatar/${encodeURIComponent(userId)}`;
-        }
-
-        return pic || null;
+    if (n && n.startsWith("/") && !n.includes("googleusercontent.com")) {
+      return n;
     }
-
-    global.resolveAvatarUrl = resolveAvatarUrl;
-    global.isExternalAvatar = isExternalAvatar;
-})(typeof window !== 'undefined' ? window : globalThis);
+    if (a && (isExternalAvatar(n) || !n)) {
+      const r = (t.API_BASE_URL || "").replace(/\/api\/?$/, "") || "";
+      return `${r}/api/avatar/${encodeURIComponent(a)}`;
+    }
+    return n || null;
+  }
+  t.resolveAvatarUrl = resolveAvatarUrl;
+  t.isExternalAvatar = isExternalAvatar;
+})(typeof window !== "undefined" ? window : globalThis);

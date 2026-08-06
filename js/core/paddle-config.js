@@ -4,129 +4,109 @@ class PaddleManager {
     this.initialized = false;
     this._checkoutInProgress = false;
   }
-
   async fetchConfig() {
     try {
-      const url = typeof window.apiUrl === 'function'
-        ? window.apiUrl('/api/payment/paddle-config')
-        : `${(window.API_BASE_URL || `${window.location.origin}/api`).replace(/\/$/, '')}/payment/paddle-config`;
-      const response = await fetch(url, {
-        method: 'GET',
-        credentials: 'include',
+      const e = typeof window.apiUrl === "function" ? window.apiUrl("/api/payment/paddle-config") : `${(window.API_BASE_URL || `${window.location.origin}/api`).replace(/\/$/, "")}/payment/paddle-config`;
+      const n = await fetch(e, {
+        method: "GET",
+        credentials: "include"
       });
-
-      if (!response.ok) {
-        console.error('Failed to fetch Paddle config:', response.status);
+      if (!n.ok) {
+        console.error("Failed to fetch Paddle config:", n.status);
         return null;
       }
-
-      this.config = await response.json();
+      this.config = await n.json();
       return this.config;
-    } catch (error) {
-      console.error('Error fetching Paddle config:', error);
+    } catch (e) {
+      console.error("Error fetching Paddle config:", e);
       return null;
     }
   }
-
-  _handlePaddleEvent(event) {
-    const name = event?.name || '';
-
-    if (name === 'checkout.completed') {
+  _handlePaddleEvent(e) {
+    const n = e?.name || "";
+    if (n === "checkout.completed") {
       window.paymentSucceeded = true;
-      window.dispatchEvent(
-        new CustomEvent('paddle:checkoutComplete', { detail: event.data || {} }),
-      );
-    } else if (name === 'checkout.closed' && !window.paymentSucceeded) {
-      window.dispatchEvent(new CustomEvent('paddle:checkoutClosed'));
-    } else if (name === 'checkout.error') {
-      const err = event.data?.error || event.data || {};
-      const code = err.code || '';
-      console.error('Paddle checkout.error:', err);
-      window.dispatchEvent(
-        new CustomEvent('paddle:checkoutError', { detail: err }),
-      );
-      if (code === 'transaction_default_checkout_url_not_set') {
-        const origin = window.location.origin;
-        const hint = this.config?.defaultPaymentUrl || origin;
-        alert(
-          `Paddle sandbox is not configured yet.\n\n` +
-          `1. Open https://sandbox-vendors.paddle.com/checkout-settings\n` +
-          `2. Set Default payment link to exactly:\n   ${hint}\n` +
-          `(must include the port, e.g. :5500)\n` +
-          `3. Save and try again.`
-        );
+      window.dispatchEvent(new CustomEvent("paddle:checkoutComplete", {
+        detail: e.data || {}
+      }));
+    } else if (n === "checkout.closed" && !window.paymentSucceeded) {
+      window.dispatchEvent(new CustomEvent("paddle:checkoutClosed"));
+    } else if (n === "checkout.error") {
+      const n = e.data?.error || e.data || {};
+      const t = n.code || "";
+      console.error("Paddle checkout.error:", n);
+      window.dispatchEvent(new CustomEvent("paddle:checkoutError", {
+        detail: n
+      }));
+      if (t === "transaction_default_checkout_url_not_set") {
+        const e = window.location.origin;
+        const n = this.config?.defaultPaymentUrl || e;
+        alert(`Paddle sandbox is not configured yet.\n\n` + `1. Open https://sandbox-vendors.paddle.com/checkout-settings\n` + `2. Set Default payment link to exactly:\n   ${n}\n` + `(must include the port, e.g. :5500)\n` + `3. Save and try again.`);
       }
     }
   }
-
   async init() {
     if (this.initialized) {
       return true;
     }
-
-    if (typeof window.Paddle === 'undefined') {
-      console.error('Paddle script not loaded');
+    if (typeof window.Paddle === "undefined") {
+      console.error("Paddle script not loaded");
       return false;
     }
-
-    const config = await this.fetchConfig();
-    if (!config?.clientToken) {
-      console.error('No Paddle client token available');
+    const e = await this.fetchConfig();
+    if (!e?.clientToken) {
+      console.error("No Paddle client token available");
       return false;
     }
-
-    if (config.environment === 'sandbox' && window.Paddle.Environment?.set) {
-      window.Paddle.Environment.set('sandbox');
+    if (e.environment === "sandbox" && window.Paddle.Environment?.set) {
+      window.Paddle.Environment.set("sandbox");
     }
-
     try {
       window.Paddle.Initialize({
-        token: config.clientToken,
-        eventCallback: (event) => this._handlePaddleEvent(event),
+        token: e.clientToken,
+        eventCallback: e => this._handlePaddleEvent(e)
       });
       this.initialized = true;
       return true;
-    } catch (error) {
-      console.error('Error initializing Paddle:', error);
+    } catch (e) {
+      console.error("Error initializing Paddle:", e);
       return false;
     }
   }
-
-  async openCheckout(priceId, planName, session = {}) {
+  async openCheckout(e, n, t = {}) {
     if (!this.initialized) {
-      throw new Error('Paddle not initialized');
+      throw new Error("Paddle not initialized");
     }
     if (this._checkoutInProgress) {
-      throw new Error('Checkout already in progress');
+      throw new Error("Checkout already in progress");
     }
-
     this._checkoutInProgress = true;
     window.paymentSucceeded = false;
-    window.pendingPlanUpgrade = planName;
-
-    const checkoutOptions = {
-      items: [{ priceId, quantity: 1 }],
+    window.pendingPlanUpgrade = n;
+    const o = {
+      items: [ {
+        priceId: e,
+        quantity: 1
+      } ],
       customData: {
-        user_id: String(session.userId || ''),
-        plan: planName,
+        user_id: String(t.userId || ""),
+        plan: n
       },
       settings: {
-        displayMode: 'overlay',
-        theme: 'light',
-        successUrl: `${window.location.origin}/dashboard.html?payment=success&plan=${encodeURIComponent(planName)}`,
-      },
+        displayMode: "overlay",
+        theme: "light",
+        successUrl: `${window.location.origin}/dashboard.html?payment=success&plan=${encodeURIComponent(n)}`
+      }
     };
-
-    const defaultUrl = this.config?.defaultPaymentUrl || window.location.origin;
-    if (this.isSandbox() && defaultUrl) {
+    const i = this.config?.defaultPaymentUrl || window.location.origin;
+    if (this.isSandbox() && i) {}
+    if (t.email) {
+      o.customer = {
+        email: t.email
+      };
     }
-
-    if (session.email) {
-      checkoutOptions.customer = { email: session.email };
-    }
-
     try {
-      await window.Paddle.Checkout.open(checkoutOptions);
+      await window.Paddle.Checkout.open(o);
       return true;
     } finally {
       setTimeout(() => {
@@ -134,14 +114,12 @@ class PaddleManager {
       }, 1500);
     }
   }
-
   getConfig() {
     return this.config;
   }
-
   isSandbox() {
-    return this.config?.environment === 'sandbox';
+    return this.config?.environment === "sandbox";
   }
 }
 
-window.paddleManager = new PaddleManager();
+window.paddleManager = new PaddleManager;

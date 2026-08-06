@@ -2,12 +2,15 @@
 
 Auto-staged from the SolisAI monorepo via `python scripts/push_frontend.py`.
 
-- Site: **https://solisai.video**
+- Site: **https://solisai.video** (repo: https://github.com/ppowq67/solisai)
 - API: **https://api.solisai.video**
-- Localhost URLs rewritten; light comment-strip only (no identifier mangling)
+- Mild JS obfuscation (readable structure; locals renamed)
+- CSS/HTML comment scrub only
+- `_review/source-maps/` generated locally for security review — **gitignored, never pushed**
+- `admin/` excluded
 
 ## Deploy
-Host this folder as static files (CDN / Pages / nginx). Point DNS `solisai.video` here.
-API CORS / cookies must allow this origin.
+Vercel (or any static host) from this repo root. `_review/` must not be published.
+API CORS / cookies must allow `https://solisai.video`.
 
-Generated: 2026-08-06T20:19:27.095697+00:00
+Generated: 2026-08-06T20:38:35.596245+00:00

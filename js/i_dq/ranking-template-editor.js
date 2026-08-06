@@ -1,382 +1,363 @@
 class RankingTemplateEditor {
-    constructor(previewContainer) {
-        this.container = previewContainer;
-        this._abort = new AbortController();
-        this.init();
+  constructor(e) {
+    this.container = e;
+    this._abort = new AbortController;
+    this.init();
+  }
+  destroy() {
+    try {
+      this._abort?.abort();
+    } catch (e) {}
+    this._abort = null;
+  }
+  init() {
+    window.RankingTextPill?.init();
+    window.RankingTextPill?.resetSession?.();
+    this.ensureZones();
+    this.setupTextElements();
+    this.attachEventListeners();
+  }
+  ensureZones() {
+    const e = this.container.querySelector("h1.title, h1");
+    const t = this.container.querySelector('[data-template-element-id="title_channel"]');
+    let n = this.container.querySelector(".ranking-editor-zone-header");
+    if (!n && e) {
+      n = document.createElement("div");
+      n.className = "ranking-editor-zone ranking-editor-zone-header";
+      e.parentNode.insertBefore(n, e);
     }
-
-    destroy() {
-        try { this._abort?.abort(); } catch (_) { /* ignore */ }
-        this._abort = null;
+    if (n) {
+      if (e && e.parentNode !== n) n.insertBefore(e, n.firstChild);
+      if (t && t.parentNode !== n) n.appendChild(t);
+      if (e && t && t.previousElementSibling !== e) {
+        n.appendChild(t);
+      }
     }
-
-    init() {
-        window.RankingTextPill?.init();
-        window.RankingTextPill?.resetSession?.();
-        this.ensureZones();
-        this.setupTextElements();
-        this.attachEventListeners();
+    const i = this.container.querySelector(".ranking-list");
+    if (i) i.classList.add("ranking-editor-zone", "ranking-editor-zone-ranks");
+  }
+  isRankNumberElement(e) {
+    const t = e?.getAttribute?.("data-template-element-id") || "";
+    return t.startsWith("rank_") && t.endsWith("_number");
+  }
+  setupTextElements() {
+    this.container.querySelectorAll("[data-template-element-id]").forEach(e => {
+      e.classList.add("ranking-editor-text");
+      if (this.isRankNumberElement(e)) {
+        e.contentEditable = "false";
+        e.setAttribute("contenteditable", "false");
+        e.setAttribute("spellcheck", "false");
+        e.classList.add("rk-number-locked");
+        const t = (e.getAttribute("data-template-element-id") || "").match(/^rank_(\d+)_number$/);
+        if (t) e.textContent = `${t[1]}.`;
+      } else if (this.isRankTitleElement(e) || this.isHeaderElement(e)) {
+        e.contentEditable = "false";
+        e.setAttribute("contenteditable", "false");
+        e.setAttribute("spellcheck", "true");
+        e.style.cursor = "text";
+        e.title = e.title || "Double-click to edit";
+      }
+    });
+  }
+  isHeaderElement(e) {
+    const t = e.getAttribute("data-template-element-id") || "";
+    return t.startsWith("title_");
+  }
+  isRankTitleElement(e) {
+    const t = e.getAttribute("data-template-element-id") || "";
+    return t.startsWith("rank_") && t.endsWith("_title");
+  }
+  getZoneMode(e) {
+    return this.isHeaderElement(e) ? "group-header" : "group-ranks";
+  }
+  getGroupElements(e) {
+    const t = window.RankingTextPill;
+    if (this.isHeaderElement(e)) return t.getHeaderElements();
+    if (t.getAllRankSideElements) return t.getAllRankSideElements();
+    if (this.isRankTitleElement(e) && t.getAllRankTitles) {
+      return [ ...t.getAllRankNumbers?.() || [], ...t.getAllRankTitles() ];
     }
-
-    ensureZones() {
-        const h1 = this.container.querySelector('h1.title, h1');
-        const h2 = this.container.querySelector('[data-template-element-id="title_channel"]');
-        let zone = this.container.querySelector('.ranking-editor-zone-header');
-        if (!zone && h1) {
-            zone = document.createElement('div');
-            zone.className = 'ranking-editor-zone ranking-editor-zone-header';
-            h1.parentNode.insertBefore(zone, h1);
+    return t.getAllRankNumbers();
+  }
+  sameZone(e, t) {
+    if (!e || !t) return false;
+    return this.isHeaderElement(e) === this.isHeaderElement(t);
+  }
+  handleTextClick(e, t, n) {
+    const i = window.RankingTextPill;
+    if (!i) return;
+    const r = n ? {
+      x: n.clientX,
+      y: n.clientY
+    } : null;
+    if (t) {
+      i.toggleElement(e, true, r);
+      return;
+    }
+    const s = i.getSelectionMode();
+    const l = i.getSelectionAnchor();
+    const a = this.getZoneMode(e);
+    const o = this.getGroupElements(e);
+    if (!i.hasSelection() || s === "multi") {
+      if (s === "multi" && this.sameZone(e, l)) {
+        i.selectElements([ e ], "single", e, r);
+        return;
+      }
+      if (!i.hasSelection()) {
+        i.selectElements(o, a, e, r);
+        return;
+      }
+    }
+    if ((s === "group-header" || s === "group-ranks") && this.sameZone(e, l)) {
+      i.selectElements([ e ], "single", e, r);
+      return;
+    }
+    if ((s === "group-header" || s === "group-ranks") && !this.sameZone(e, l)) {
+      i.selectElements(o, a, e, r);
+      return;
+    }
+    if (s === "single" && e === l) {
+      i.selectElements(o, a, e, r);
+      return;
+    }
+    if (s === "single" && this.sameZone(e, l)) {
+      i.selectElements([ e ], "single", e, r);
+      return;
+    }
+    i.selectElements(o, a, e, r);
+  }
+  attachEventListeners() {
+    const e = this.container.querySelector(".ranking-editor-zone-header");
+    const t = this.container.querySelector(".ranking-editor-zone-ranks");
+    const n = this._abort.signal;
+    const onTextActivate = (e, t) => {
+      if (!e) return;
+      if (t.target.closest("#rkPillMenu, .sub-dropdown, #rkSuggestActions, .sub-resize-handle")) return;
+      if (window.RankingTextPill?.consumeRankPointerClick?.()) return;
+      t.preventDefault?.();
+      t.stopPropagation();
+      this.handleTextClick(e, !!(t.ctrlKey || t.metaKey), t);
+    };
+    this.container.querySelectorAll("[data-template-element-id]").forEach(e => {
+      e.addEventListener("pointerup", t => {
+        if (t.button != null && t.button !== 0) return;
+        onTextActivate(e, t);
+      }, {
+        signal: n
+      });
+      e.addEventListener("dblclick", t => {
+        t.stopPropagation();
+        t.preventDefault();
+        if (this.isRankNumberElement(e)) {
+          window.RankingTextPill?.selectElements([ e ], "single", e, {
+            x: t.clientX,
+            y: t.clientY
+          });
+          return;
         }
-        if (zone) {
-            if (h1 && h1.parentNode !== zone) zone.insertBefore(h1, zone.firstChild);
-            if (h2 && h2.parentNode !== zone) zone.appendChild(h2);
-            if (h1 && h2 && h2.previousElementSibling !== h1) {
-                zone.appendChild(h2);
-            }
-        }
-        const list = this.container.querySelector('.ranking-list');
-        if (list) list.classList.add('ranking-editor-zone', 'ranking-editor-zone-ranks');
-    }
-
-    isRankNumberElement(el) {
-        const id = el?.getAttribute?.('data-template-element-id') || '';
-        return id.startsWith('rank_') && id.endsWith('_number');
-    }
-
-    setupTextElements() {
-        this.container.querySelectorAll('[data-template-element-id]').forEach((el) => {
-            el.classList.add('ranking-editor-text');
-            if (this.isRankNumberElement(el)) {
-                el.contentEditable = 'false';
-                el.setAttribute('contenteditable', 'false');
-                el.setAttribute('spellcheck', 'false');
-                el.classList.add('rk-number-locked');
-                const m = (el.getAttribute('data-template-element-id') || '').match(/^rank_(\d+)_number$/);
-                if (m) el.textContent = `${m[1]}.`;
-            } else if (this.isRankTitleElement(el) || this.isHeaderElement(el)) {
-                el.contentEditable = 'false';
-                el.setAttribute('contenteditable', 'false');
-                el.setAttribute('spellcheck', 'true');
-                el.style.cursor = 'text';
-                el.title = el.title || 'Double-click to edit';
-            }
+        window.RankingTextPill?.selectElements?.([ e ], "single", e, {
+          x: t.clientX,
+          y: t.clientY
         });
-    }
-
-    isHeaderElement(el) {
-        const id = el.getAttribute('data-template-element-id') || '';
-        return id.startsWith('title_');
-    }
-
-    isRankTitleElement(el) {
-        const id = el.getAttribute('data-template-element-id') || '';
-        return id.startsWith('rank_') && id.endsWith('_title');
-    }
-
-    getZoneMode(el) {
-        return this.isHeaderElement(el) ? 'group-header' : 'group-ranks';
-    }
-
-    getGroupElements(el) {
-        const pill = window.RankingTextPill;
-        if (this.isHeaderElement(el)) return pill.getHeaderElements();
-        if (pill.getAllRankSideElements) return pill.getAllRankSideElements();
-        if (this.isRankTitleElement(el) && pill.getAllRankTitles) {
-            return [...(pill.getAllRankNumbers?.() || []), ...pill.getAllRankTitles()];
-        }
-        return pill.getAllRankNumbers();
-    }
-
-    sameZone(a, b) {
-        if (!a || !b) return false;
-        return this.isHeaderElement(a) === this.isHeaderElement(b);
-    }
-
-    handleTextClick(el, multi, e) {
-        const pill = window.RankingTextPill;
-        if (!pill) return;
-
-        const clickPoint = e ? { x: e.clientX, y: e.clientY } : null;
-
-        if (multi) {
-            pill.toggleElement(el, true, clickPoint);
-            return;
-        }
-
-        const mode = pill.getSelectionMode();
-        const anchor = pill.getSelectionAnchor();
-        const zoneMode = this.getZoneMode(el);
-        const groupEls = this.getGroupElements(el);
-
-        if (!pill.hasSelection() || mode === 'multi') {
-            if (mode === 'multi' && this.sameZone(el, anchor)) {
-                pill.selectElements([el], 'single', el, clickPoint);
-                return;
-            }
-            if (!pill.hasSelection()) {
-                pill.selectElements(groupEls, zoneMode, el, clickPoint);
-                return;
-            }
-        }
-
-        if ((mode === 'group-header' || mode === 'group-ranks') && this.sameZone(el, anchor)) {
-            pill.selectElements([el], 'single', el, clickPoint);
-            return;
-        }
-
-        if ((mode === 'group-header' || mode === 'group-ranks') && !this.sameZone(el, anchor)) {
-            pill.selectElements(groupEls, zoneMode, el, clickPoint);
-            return;
-        }
-
-        if (mode === 'single' && el === anchor) {
-            pill.selectElements(groupEls, zoneMode, el, clickPoint);
-            return;
-        }
-
-        if (mode === 'single' && this.sameZone(el, anchor)) {
-            pill.selectElements([el], 'single', el, clickPoint);
-            return;
-        }
-
-        pill.selectElements(groupEls, zoneMode, el, clickPoint);
-    }
-
-    attachEventListeners() {
-        const headerZone = this.container.querySelector('.ranking-editor-zone-header');
-        const ranksZone = this.container.querySelector('.ranking-editor-zone-ranks');
-        const signal = this._abort.signal;
-
-        const onTextActivate = (el, e) => {
-            if (!el) return;
-            if (e.target.closest('#rkPillMenu, .sub-dropdown, #rkSuggestActions, .sub-resize-handle')) return;
-            if (window.RankingTextPill?.consumeRankPointerClick?.()) return;
-            e.preventDefault?.();
-            e.stopPropagation();
-            this.handleTextClick(el, !!(e.ctrlKey || e.metaKey), e);
+        requestAnimationFrame(() => this.enableInlineEdit(e));
+      }, {
+        signal: n
+      });
+      if (this.isRankNumberElement(e)) {
+        const blockEdit = e => {
+          e.preventDefault();
+          e.stopPropagation();
         };
-
-        this.container.querySelectorAll('[data-template-element-id]').forEach((el) => {
-            el.addEventListener('pointerup', (e) => {
-                if (e.button != null && e.button !== 0) return;
-                onTextActivate(el, e);
-            }, { signal });
-
-            el.addEventListener('dblclick', (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                if (this.isRankNumberElement(el)) {
-                    window.RankingTextPill?.selectElements(
-                        [el], 'single', el, { x: e.clientX, y: e.clientY }
-                    );
-                    return;
-                }
-                window.RankingTextPill?.selectElements?.(
-                    [el], 'single', el, { x: e.clientX, y: e.clientY }
-                );
-                requestAnimationFrame(() => this.enableInlineEdit(el));
-            }, { signal });
-
-            if (this.isRankNumberElement(el)) {
-                const blockEdit = (ev) => {
-                    ev.preventDefault();
-                    ev.stopPropagation();
-                };
-                el.addEventListener('beforeinput', blockEdit, { signal });
-                el.addEventListener('input', (ev) => {
-                    const m = (el.getAttribute('data-template-element-id') || '').match(/^rank_(\d+)_number$/);
-                    if (m) el.textContent = `${m[1]}.`;
-                    blockEdit(ev);
-                }, { signal });
-                el.addEventListener('paste', blockEdit, { signal });
-                el.addEventListener('keydown', (ev) => {
-                    if (ev.ctrlKey || ev.metaKey || ev.altKey) return;
-                    if (ev.key.length === 1 || ev.key === 'Backspace' || ev.key === 'Delete' || ev.key === 'Enter') {
-                        blockEdit(ev);
-                    }
-                }, { signal });
-            }
+        e.addEventListener("beforeinput", blockEdit, {
+          signal: n
         });
-
-        headerZone?.addEventListener('pointerup', (e) => {
-            if (e.target.closest('[data-template-element-id]')) return;
-            if (e.button != null && e.button !== 0) return;
-            const el = this.container.querySelector('[data-template-element-id^="title_"]');
-            onTextActivate(el, e);
-        }, { signal });
-
-        ranksZone?.addEventListener('pointerup', (e) => {
-            if (e.target.closest('[data-template-element-id]')) return;
-            if (e.button != null && e.button !== 0) return;
-            const pill = window.RankingTextPill;
-            if (pill?.hasSelection?.() && pill.getSelectionMode() === 'group-ranks') return;
-            if (!pill?.hasSelection?.()) {
-                const el = this.container.querySelector('[data-template-element-id$="_number"]');
-                onTextActivate(el, e);
-            }
-        }, { signal });
-
-        this.container.addEventListener('pointerup', (e) => {
-            if (e.button != null && e.button !== 0) return;
-            const isText = e.target.hasAttribute?.('data-template-element-id')
-                || e.target.closest?.('[data-template-element-id]');
-            const isZone = e.target.closest?.('.ranking-editor-zone-header, .ranking-editor-zone-ranks');
-            const isSuggestUi = e.target.closest?.('#rkSuggestActions')
-                || e.target.closest?.('.rk-ghost-stack')
-                || e.target.closest?.('.rk-ghost-suggest')
-                || e.target.closest?.('#rkPillMenu')
-                || e.target.closest?.('.sub-dropdown');
-            if (!isText && !isZone && !isSuggestUi) {
-                window.RankingTextPill?.deselectAll();
-            }
-        }, { capture: true, signal });
+        e.addEventListener("input", t => {
+          const n = (e.getAttribute("data-template-element-id") || "").match(/^rank_(\d+)_number$/);
+          if (n) e.textContent = `${n[1]}.`;
+          blockEdit(t);
+        }, {
+          signal: n
+        });
+        e.addEventListener("paste", blockEdit, {
+          signal: n
+        });
+        e.addEventListener("keydown", e => {
+          if (e.ctrlKey || e.metaKey || e.altKey) return;
+          if (e.key.length === 1 || e.key === "Backspace" || e.key === "Delete" || e.key === "Enter") {
+            blockEdit(e);
+          }
+        }, {
+          signal: n
+        });
+      }
+    });
+    e?.addEventListener("pointerup", e => {
+      if (e.target.closest("[data-template-element-id]")) return;
+      if (e.button != null && e.button !== 0) return;
+      const t = this.container.querySelector('[data-template-element-id^="title_"]');
+      onTextActivate(t, e);
+    }, {
+      signal: n
+    });
+    t?.addEventListener("pointerup", e => {
+      if (e.target.closest("[data-template-element-id]")) return;
+      if (e.button != null && e.button !== 0) return;
+      const t = window.RankingTextPill;
+      if (t?.hasSelection?.() && t.getSelectionMode() === "group-ranks") return;
+      if (!t?.hasSelection?.()) {
+        const t = this.container.querySelector('[data-template-element-id$="_number"]');
+        onTextActivate(t, e);
+      }
+    }, {
+      signal: n
+    });
+    this.container.addEventListener("pointerup", e => {
+      if (e.button != null && e.button !== 0) return;
+      const t = e.target.hasAttribute?.("data-template-element-id") || e.target.closest?.("[data-template-element-id]");
+      const n = e.target.closest?.(".ranking-editor-zone-header, .ranking-editor-zone-ranks");
+      const i = e.target.closest?.("#rkSuggestActions") || e.target.closest?.(".rk-ghost-stack") || e.target.closest?.(".rk-ghost-suggest") || e.target.closest?.("#rkPillMenu") || e.target.closest?.(".sub-dropdown");
+      if (!t && !n && !i) {
+        window.RankingTextPill?.deselectAll();
+      }
+    }, {
+      capture: true,
+      signal: n
+    });
+  }
+  enableInlineEdit(e) {
+    if (this.isRankNumberElement(e)) return;
+    if (e.classList.contains("rk-inline-editing")) return;
+    const t = e.textContent;
+    const n = e.getAttribute("data-placeholder") || "";
+    if (e.classList.contains("rk-title-empty") || !t.trim() && n) {
+      e.textContent = "";
+      e.classList.remove("rk-title-empty");
+      e.removeAttribute("data-placeholder");
     }
-
-    enableInlineEdit(el) {
-        if (this.isRankNumberElement(el)) return;
-        if (el.classList.contains('rk-inline-editing')) return;
-
-        const originalText = el.textContent;
-        const placeholder = el.getAttribute('data-placeholder') || '';
-        if (el.classList.contains('rk-title-empty') || (!originalText.trim() && placeholder)) {
-            el.textContent = '';
-            el.classList.remove('rk-title-empty');
-            el.removeAttribute('data-placeholder');
+    e.contentEditable = "true";
+    e.setAttribute("contenteditable", "true");
+    e.setAttribute("spellcheck", "true");
+    e.classList.add("rk-inline-editing");
+    e.style.outline = "none";
+    e.style.setProperty("user-select", "text", "important");
+    e.style.setProperty("-webkit-user-select", "text", "important");
+    e.style.cursor = "text";
+    const i = e.closest(".preview-placeholder, #templateVideoPreview");
+    if (i) i.classList.add("rk-phone-editing");
+    e.focus();
+    try {
+      const t = document.createRange();
+      t.selectNodeContents(e);
+      const n = window.getSelection();
+      n.removeAllRanges();
+      n.addRange(t);
+    } catch (e) {}
+    const finish = n => {
+      e.removeEventListener("blur", onBlur);
+      e.removeEventListener("keydown", onKey);
+      e.removeEventListener("pointerdown", onPointerDownStop);
+      e.contentEditable = "false";
+      e.setAttribute("contenteditable", "false");
+      e.classList.remove("rk-inline-editing");
+      e.style.outline = "";
+      e.style.removeProperty("user-select");
+      e.style.removeProperty("-webkit-user-select");
+      e.style.cursor = "";
+      i?.classList.remove("rk-phone-editing");
+      let r = e.textContent.replace(/\u00a0/g, " ").trim();
+      if (!n) {
+        r = (t || "").trim();
+        e.textContent = t || "";
+      }
+      const s = e.getAttribute("data-template-element-id") || "";
+      if (!r) {
+        e.textContent = "";
+        if (/rank_.*_title/.test(s)) {
+          e.classList.add("rk-title-empty");
+          e.setAttribute("data-placeholder", "Add title…");
+          e.removeAttribute("data-rk-full-title");
+        } else if (t) {
+          e.textContent = t;
         }
-
-        el.contentEditable = 'true';
-        el.setAttribute('contenteditable', 'true');
-        el.setAttribute('spellcheck', 'true');
-        el.classList.add('rk-inline-editing');
-        el.style.outline = 'none';
-        el.style.setProperty('user-select', 'text', 'important');
-        el.style.setProperty('-webkit-user-select', 'text', 'important');
-        el.style.cursor = 'text';
-        const phone = el.closest('.preview-placeholder, #templateVideoPreview');
-        if (phone) phone.classList.add('rk-phone-editing');
-
-        el.focus();
-
-        try {
-            const range = document.createRange();
-            range.selectNodeContents(el);
-            const sel = window.getSelection();
-            sel.removeAllRanges();
-            sel.addRange(range);
-        } catch (_) { /* ignore */ }
-
-        const finish = (commit) => {
-            el.removeEventListener('blur', onBlur);
-            el.removeEventListener('keydown', onKey);
-            el.removeEventListener('pointerdown', onPointerDownStop);
-            el.contentEditable = 'false';
-            el.setAttribute('contenteditable', 'false');
-            el.classList.remove('rk-inline-editing');
-            el.style.outline = '';
-            el.style.removeProperty('user-select');
-            el.style.removeProperty('-webkit-user-select');
-            el.style.cursor = '';
-            phone?.classList.remove('rk-phone-editing');
-
-            let text = el.textContent.replace(/\u00a0/g, ' ').trim();
-            if (!commit) {
-                text = (originalText || '').trim();
-                el.textContent = originalText || '';
-            }
-            const eid = el.getAttribute('data-template-element-id') || '';
-            if (!text) {
-                el.textContent = '';
-                if (/rank_.*_title/.test(eid)) {
-                    el.classList.add('rk-title-empty');
-                    el.setAttribute('data-placeholder', 'Add title…');
-                    el.removeAttribute('data-rk-full-title');
-                } else if (originalText) {
-                    el.textContent = originalText;
-                }
-            } else {
-                el.classList.remove('rk-title-empty');
-                el.removeAttribute('data-placeholder');
-                el.setAttribute('data-rk-full-title', text);
-                el.textContent = text;
-            }
-
-            if (eid && window.rankingCustomizer) {
-                if (!window.rankingCustomizer.customizations) {
-                    window.rankingCustomizer.customizations = {};
-                }
-                window.rankingCustomizer.customizations[eid] = {
-                    ...(window.rankingCustomizer.customizations[eid] || {}),
-                    content: text || '',
-                };
-            }
-            try {
-                const m = eid.match(/^rank_(\d+)_title$/);
-                if (m && window.clipsStudio) {
-                    if (!window.clipsStudio._libraryRankingTitleByRank) {
-                        window.clipsStudio._libraryRankingTitleByRank = {};
-                    }
-                    window.clipsStudio._libraryRankingTitleByRank[Number(m[1])] = text || '';
-                }
-            } catch (_) { /* ignore */ }
-
-            window.rankingCustomizer?.syncFromDOM?.();
-            try {
-                if (typeof markLibraryRankingDirty === 'function') markLibraryRankingDirty();
-                else if (window.clipsStudio) window.clipsStudio._libraryRankingDirty = true;
-            } catch (_) { /* ignore */ }
+      } else {
+        e.classList.remove("rk-title-empty");
+        e.removeAttribute("data-placeholder");
+        e.setAttribute("data-rk-full-title", r);
+        e.textContent = r;
+      }
+      if (s && window.rankingCustomizer) {
+        if (!window.rankingCustomizer.customizations) {
+          window.rankingCustomizer.customizations = {};
+        }
+        window.rankingCustomizer.customizations[s] = {
+          ...window.rankingCustomizer.customizations[s] || {},
+          content: r || ""
         };
-
-        const onBlur = () => finish(true);
-        const onKey = (e) => {
-            if (e.key === 'Escape') {
-                e.preventDefault();
-                e.stopPropagation();
-                finish(false);
-                el.blur();
-                return;
-            }
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                e.stopPropagation();
-                el.blur();
-            }
-        };
-        const onPointerDownStop = (e) => {
-            e.stopPropagation();
-        };
-
-        el.addEventListener('blur', onBlur);
-        el.addEventListener('keydown', onKey);
-        el.addEventListener('pointerdown', onPointerDownStop);
-    }
+      }
+      try {
+        const e = s.match(/^rank_(\d+)_title$/);
+        if (e && window.clipsStudio) {
+          if (!window.clipsStudio._libraryRankingTitleByRank) {
+            window.clipsStudio._libraryRankingTitleByRank = {};
+          }
+          window.clipsStudio._libraryRankingTitleByRank[Number(e[1])] = r || "";
+        }
+      } catch (e) {}
+      window.rankingCustomizer?.syncFromDOM?.();
+      try {
+        if (typeof markLibraryRankingDirty === "function") markLibraryRankingDirty(); else if (window.clipsStudio) window.clipsStudio._libraryRankingDirty = true;
+      } catch (e) {}
+    };
+    const onBlur = () => finish(true);
+    const onKey = t => {
+      if (t.key === "Escape") {
+        t.preventDefault();
+        t.stopPropagation();
+        finish(false);
+        e.blur();
+        return;
+      }
+      if (t.key === "Enter") {
+        t.preventDefault();
+        t.stopPropagation();
+        e.blur();
+      }
+    };
+    const onPointerDownStop = e => {
+      e.stopPropagation();
+    };
+    e.addEventListener("blur", onBlur);
+    e.addEventListener("keydown", onKey);
+    e.addEventListener("pointerdown", onPointerDownStop);
+  }
 }
 
 function initializeRankingTemplateEditor() {
-    const previewContainer = document.getElementById('templateVideoPreview');
-    const rankingRoot = previewContainer?.querySelector('.ranking-preview-container');
-    if (!rankingRoot) return;
-
-    try { window.rankingTemplateEditor?.destroy?.(); } catch (_) { /* ignore */ }
-
-    window.RankingTextPill?.deselectAll();
-    window.rankingTemplateEditor = new RankingTemplateEditor(rankingRoot);
-
+  const e = document.getElementById("templateVideoPreview");
+  const t = e?.querySelector(".ranking-preview-container");
+  if (!t) return;
+  try {
+    window.rankingTemplateEditor?.destroy?.();
+  } catch (e) {}
+  window.RankingTextPill?.deselectAll();
+  window.rankingTemplateEditor = new RankingTemplateEditor(t);
+  try {
+    requestAnimationFrame(() => {
+      window.RankingTextPill?.seedDefaultSizes?.();
+    });
+  } catch (e) {}
+  const n = document.getElementById("customizer-ui-system");
+  if (n) n.style.display = "none";
+  const i = document.getElementById("pill");
+  if (i) {
+    i.style.display = "none";
+    i.classList.remove("is-expanded", "slide-in");
+  }
+  if (window.customizer && typeof window.customizer.hidePanel === "function") {
     try {
-        requestAnimationFrame(() => {
-            window.RankingTextPill?.seedDefaultSizes?.();
-        });
-    } catch (_) { /* ignore */ }
-
-    const legacyUi = document.getElementById('customizer-ui-system');
-    if (legacyUi) legacyUi.style.display = 'none';
-    const legacyPill = document.getElementById('pill');
-    if (legacyPill) {
-        legacyPill.style.display = 'none';
-        legacyPill.classList.remove('is-expanded', 'slide-in');
-    }
-    if (window.customizer && typeof window.customizer.hidePanel === 'function') {
-        try { window.customizer.hidePanel(); } catch (_) {}
-    }
+      window.customizer.hidePanel();
+    } catch (e) {}
+  }
 }
 
 window.initializeRankingTemplateEditor = initializeRankingTemplateEditor;

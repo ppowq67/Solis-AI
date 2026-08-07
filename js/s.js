@@ -2779,6 +2779,9 @@ async function verifyToken() {
       localStorage.setItem("currentUser", JSON.stringify(currentUser));
     } catch (e) {}
     updateUIForLoggedInUser();
+    if (currentUser && currentUser.plan && typeof applyPortalTierUI === "function") {
+      applyPortalTierUI(currentUser.plan);
+    }
     if (typeof updateProfileButton === "function") {
       setTimeout(() => updateProfileButton(), 0);
     }
@@ -3046,40 +3049,52 @@ window._subCache = (() => {
   };
 })();
 
+function applyPortalTierUI(e) {
+  const t = String(e || "free").toLowerCase().trim();
+  const n = t.charAt(0).toUpperCase() + t.slice(1);
+  const i = document.getElementById("currentTier");
+  const r = document.getElementById("tierInfoCard");
+  if (i) i.textContent = n;
+  if (r) {
+    r.classList.remove("tier-free", "tier-basic", "tier-prime", "tier-elite");
+    const e = [ "free", "basic", "prime", "elite" ].includes(t) ? t : "free";
+    r.classList.add(`tier-${e}`);
+    r.setAttribute("data-plan", e);
+  }
+  try {
+    if (window.currentUser) window.currentUser.plan = t;
+    if (typeof currentUser !== "undefined" && currentUser) currentUser.plan = t;
+  } catch (e) {}
+}
+
+window.applyPortalTierUI = applyPortalTierUI;
+
 async function loadTierInfo() {
   try {
-    const e = await window._subCache.get();
-    if (!e) {
+    const e = window.currentUser && window.currentUser.plan || typeof currentUser !== "undefined" && currentUser && currentUser.plan;
+    if (e) applyPortalTierUI(e);
+    const t = await window._subCache.get();
+    if (!t) {
       safeLog("⚠ï¸ Could not load tier info");
       return;
     }
-    const t = document.getElementById("currentTier");
-    const n = document.getElementById("tierInfoCard");
-    if (t) {
-      const i = e.plan_name || e.plan;
-      t.textContent = i.charAt(0).toUpperCase() + i.slice(1);
-      if (n) {
-        const t = String(e.plan || "free").toLowerCase();
-        n.classList.remove("tier-free", "tier-basic", "tier-prime", "tier-elite");
-        n.classList.add(`tier-${t}`);
-        n.setAttribute("data-plan", t);
-      }
-    }
+    const n = String(t.plan || e || "free").toLowerCase();
+    applyPortalTierUI(t.plan_name || n);
     const i = document.getElementById("currentTierExpiry");
     if (i) {
-      if (e.plan === "free") {
+      if (n === "free") {
         i.textContent = "";
-      } else if (e.plan_expires_at) {
-        const t = Math.ceil((new Date(e.plan_expires_at) - new Date) / (1e3 * 60 * 60 * 24));
-        if (t < 0) i.textContent = "Expired"; else if (t === 0) i.textContent = "Expires today"; else if (t === 1) i.textContent = "Expires tomorrow"; else i.textContent = `Expires in ${t} days`;
+      } else if (t.plan_expires_at) {
+        const e = Math.ceil((new Date(t.plan_expires_at) - new Date) / (1e3 * 60 * 60 * 24));
+        if (e < 0) i.textContent = "Expired"; else if (e === 0) i.textContent = "Expires today"; else if (e === 1) i.textContent = "Expires tomorrow"; else i.textContent = `Expires in ${e} days`;
       } else {
         i.textContent = "";
       }
     }
     if (typeof updateStorageDisplayOnDashboard === "function") {
-      updateStorageDisplayOnDashboard(e);
+      updateStorageDisplayOnDashboard(t);
     }
-    return e;
+    return t;
   } catch (e) {
     safeLog("âŒ Error loading tier info:", e);
   }

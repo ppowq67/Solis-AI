@@ -265,6 +265,9 @@ async function updateProfileDropdown() {
       } else {
         console.warn("dropdownUserPlan element not found!");
       }
+      if (typeof window.applyPortalTierUI === "function") {
+        window.applyPortalTierUI(n);
+      }
       if (window.currentUser) window.currentUser.plan = n;
     } else {
       console.warn("Profile API returned non-ok status:", e.status);

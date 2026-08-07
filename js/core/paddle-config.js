@@ -87,7 +87,7 @@ class PaddleManager {
       alert(`Checkout failed (${t}).\n\n${n || "See console for details."}` + this._originMismatchHint());
       return;
     }
-    alert(`Paddle checkout is blocked until Default payment link matches this site.\n\n` + `1. Open ${r}\n` + `2. Set Default payment link to exactly:\n   ${o}/\n` + `   (host + port must match the address bar — localhost ≠ 127.0.0.1)\n` + `3. Save, hard-refresh, try again.` + this._originMismatchHint());
+    alert(`Paddle checkout cannot open until Default payment link is set (LIVE).\n\n` + `1. Open ${r}\n` + `2. Set Default payment link to exactly:\n   https://www.solisai.video/\n` + `   (approved domain — www is fine; must match how users browse)\n` + `3. Save, hard-refresh, try again.\n\n` + `This is a Paddle dashboard setting, not a card issue.` + this._originMismatchHint());
   }
   _handlePaddleEvent(e) {
     const t = e?.name || "";
@@ -99,16 +99,25 @@ class PaddleManager {
     } else if (t === "checkout.closed" && !window.paymentSucceeded) {
       window.dispatchEvent(new CustomEvent("paddle:checkoutClosed"));
     } else if (t === "checkout.error") {
-      const t = e.data?.error || e.data || {};
+      const t = e?.data?.error || e?.data || {};
+      const n = !t || typeof t === "object" && !t.code && !t.detail && !t.message && !Object.keys(t).length;
       try {
         console.error("Paddle checkout.error:", JSON.stringify(t, null, 2));
-      } catch (e) {
-        console.error("Paddle checkout.error:", t);
+        console.error("Paddle checkout.error event:", e);
+      } catch (n) {
+        console.error("Paddle checkout.error:", t, e);
       }
       window.dispatchEvent(new CustomEvent("paddle:checkoutError", {
         detail: t
       }));
-      this._showCheckoutSetupHelp(t);
+      if (n) {
+        this._showCheckoutSetupHelp({
+          code: "transaction_default_checkout_url_not_set",
+          detail: "Live Paddle has no Default payment link. Set it before checkout can open (this is not a card problem)."
+        });
+      } else {
+        this._showCheckoutSetupHelp(t);
+      }
     }
   }
   async init() {

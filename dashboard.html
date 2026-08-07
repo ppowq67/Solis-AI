@@ -3543,16 +3543,13 @@
                             <div class="tip-setting-copy">
                                 <span class="detail-label">Watermark</span>
                                 <span class="tip-setting-hint" id="watermarkLocationHint">Show Solis mark on exports</span>
-                                <p class="tip-setting-notice" id="watermarkNotice" style="display:none;margin:8px 0 0;font-size:12px;line-height:1.45;color:#64748b;">
-                                    Free exports include a Solis mark on the <strong>middle-right</strong> of the clip (look at the preview — same place as the export).
-                                </p>
                             </div>
                             <div id="watermarkControlsWrapper" class="tip-setting-controls">
                                 <label class="stgToggle" id="watermarkToggleLabel" style="display: none;" role="switch" aria-checked="false" aria-label="Toggle watermark">
                                     <input type="checkbox" id="watermarkToggle" class="stgToggleInput" tabindex="-1">
                                     <span class="stgToggleKnob" aria-hidden="true"></span>
                                 </label>
-                                <div class="upgrade-wrap" id="watermarkUpgradeBtn">
+                                <div class="upgrade-wrap" id="watermarkUpgradeBtn" style="display:none;" hidden>
                                     <button type="button" class="upgrade-btn">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                                         Upgrade
@@ -6133,7 +6130,7 @@
 .sub-font-item{
     padding:9px 12px;cursor:var(--solis-preview-cursor, url('/style/cursor.svg?v=3') 4 4, crosshair);border-radius:10px;
     font-size:14px;color:#32261c;
-    display:flex;align-items:center;
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
     border:1px solid transparent;
     transition:background .12s ease,color .12s ease,border-color .12s ease;
 }
@@ -6142,11 +6139,16 @@
     border-color:rgba(253,186,116,.4);
 }
 .sub-font-item.on{
-    color:#ea580c;
-    background:rgba(255,237,213,.92);
-    border-color:rgba(253,186,116,.55);
+    color:#c2410c;
+    background:rgba(255,237,213,.96);
+    border-color:rgba(234,88,12,.65);
+    box-shadow:inset 3px 0 0 #ea580c;
 }
 .sub-fmark{display:none !important;}
+.sub-fcheck{
+    display:none;flex:0 0 auto;font-size:13px;font-weight:800;color:#ea580c;
+}
+.sub-font-item.on .sub-fcheck{display:inline;}
 .sub-fname{
     display:block;line-height:1.2;letter-spacing:.01em;font-weight:600;
     font-size:14px;
@@ -12894,13 +12896,23 @@
 
     function clearSubtitleMemorySuggest(opts){
         const tid=opts?.templateId||pendingSubMem?.templateId||null;
-        if(pendingSubMem?.previewApplied && opts?.revert){
+        const shouldRevert=!!(opts?.revert || opts?.persistReject);
+        if(pendingSubMem?.previewApplied && shouldRevert){
             try{
                 const cont=document.getElementById('templateVideoPreview');
                 const block=cont?.querySelector('.sub-text-block:not(.overlay-text-block)');
-                if(block&&pendingSubMem.createdBlock){
+                const backup=pendingSubMem.previewBackup;
+                if(block && pendingSubMem.createdBlock){
                     block.remove();
-                    deselect();
+                    try{ deselect(); }catch(_){}
+                } else if(block && backup){
+                    block.innerHTML=backup.html||'';
+                    if(backup.style) block.setAttribute('style', backup.style);
+                    else block.removeAttribute('style');
+                    if(backup.anim) block.dataset.subAnim=backup.anim;
+                    else delete block.dataset.subAnim;
+                    if(backup.yPct) block.dataset.yPct=backup.yPct;
+                    else delete block.dataset.yPct;
                 }
             }catch(_){}
         }
@@ -13029,9 +13041,17 @@
         text.style.fontFamily=fontStack(font);
         text.style.fontWeight=fontWeightFor(font);
         text.style.fontSize=`${previewPx}px`;
-        text.style.color='#ffffff';
+        text.style.color=style.color||'#ffffff';
         text.style.background='transparent';
-        text.style.removeProperty('text-shadow');
+        const sh=String(style.shadow||'outline').toLowerCase();
+        if(sh==='none'||sh==='off'){
+            text.style.textShadow='none';
+        }else{
+            const oc=style.outline_color||style.outlineColor||'#000';
+            text.style.textShadow=
+                `2px 0 0 ${oc},-2px 0 0 ${oc},0 2px 0 ${oc},0 -2px 0 ${oc},`+
+                `1px 1px 0 ${oc},-1px -1px 0 ${oc},1px -1px 0 ${oc},-1px 1px 0 ${oc}`;
+        }
         subMemGhost.style.background='rgba(34,197,94,.16)';
         subMemGhost.appendChild(text);
         cont.appendChild(subMemGhost);
@@ -13077,6 +13097,34 @@
         clearSubtitleMemorySuggest();
         pendingSubMem={ style:{...style}, templateId:templateId||null, stage:'ghost', createdBlock:false, previewApplied:false };
         try{ window.__solisPendingSubMem=pendingSubMem; }catch(_){}
+
+        try{
+            const cont=document.getElementById('templateVideoPreview');
+            let block=cont?.querySelector('.sub-text-block:not(.overlay-text-block)');
+            if(!block && typeof createSubtitleBlockSilent==='function'){
+                block=createSubtitleBlockSilent();
+                pendingSubMem.createdBlock=true;
+            }
+            if(block){
+                pendingSubMem.previewBackup={
+                    html:block.innerHTML,
+                    style:block.getAttribute('style')||'',
+                    anim:block.dataset.subAnim||'',
+                    yPct:block.dataset.yPct||'',
+                    existed:!pendingSubMem.createdBlock,
+                };
+                applySubtitleStyle(style,{
+                    fromMemory:true,
+                    selectAfter:false,
+                    playAnim:true,
+                    applyFill:true,
+                    applyColors:true,
+                });
+                pendingSubMem.previewApplied=true;
+                block.classList.add('sub-mem-pick');
+            }
+        }catch(_){}
+
         layoutSubtitleMemoryGhost();
         ensureSubMemActions().classList.add('open');
         try{

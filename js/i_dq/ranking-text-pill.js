@@ -50,15 +50,15 @@
   let F = false;
   let P = false;
   let T = null;
-  let B = false;
-  let A = new Map;
+  let A = false;
+  let B = new Map;
   let H = null;
   let _ = null;
   let D = 18;
   let N = 92;
   let $ = 56;
-  let I = false;
   let q = false;
+  let I = false;
   let G = false;
   let O = null;
   let V = "single";
@@ -84,8 +84,8 @@
   const de = 34;
   const ue = 120;
   const pe = 110;
-  const ge = 95;
-  const fe = pe;
+  const fe = 95;
+  const ge = pe;
   const me = 72;
   const he = 1080;
   function getRankingRoot() {
@@ -178,8 +178,10 @@
     return String(e).replace(/['"]/g, "").split(",")[0].trim().toLowerCase();
   }
   function getElFontName(e) {
-    const t = e.style.fontFamily;
+    const t = e?.getAttribute?.("data-rk-font");
     if (t) return normalizeFontName(t);
+    const n = e.style.fontFamily;
+    if (n) return normalizeFontName(n);
     return normalizeFontName(getComputedStyle(e).fontFamily);
   }
   function clearSelectionVisuals() {
@@ -226,7 +228,10 @@
     const t = String(e || b || "Luckiest Guy").trim();
     p.querySelectorAll(".sub-font-item").forEach(e => {
       const n = e.querySelector(".sub-fname")?.textContent?.trim();
-      e.classList.toggle("on", n === t);
+      const i = n === t;
+      e.classList.toggle("on", i);
+      e.setAttribute("aria-selected", i ? "true" : "false");
+      e.title = i ? `${n} (selected)` : n || "";
     });
   }
   function buildFontList(t) {
@@ -238,22 +243,24 @@
       const r = document.createElement("div");
       r.className = "sub-font-item" + (e === b ? " on" : "");
       const o = n[e] || `'${e}', sans-serif`;
-      r.innerHTML = `<span class="sub-fname" style="font-family:${o};font-weight:${t};">${e}</span>`;
+      r.innerHTML = `<span class="sub-fname" style="font-family:${o};font-weight:${t};">${e}</span>` + `<span class="sub-fcheck" aria-hidden="true">✓</span>`;
+      r.setAttribute("aria-selected", e === b ? "true" : "false");
+      r.title = e === b ? `${e} (selected)` : e;
       r.onmouseenter = () => previewFont(e);
       r.onmouseleave = e => {
-        if (q) return;
+        if (I) return;
         if (p.contains(e.relatedTarget)) return;
         resetFontPreview();
       };
       r.onmousedown = t => {
         t.preventDefault();
         t.stopPropagation();
-        q = true;
+        I = true;
         try {
           applyFont(e);
         } finally {
           requestAnimationFrame(() => {
-            q = false;
+            I = false;
           });
         }
       };
@@ -604,28 +611,28 @@
     return i;
   }
   function beginColorPreview() {
-    if (B) return;
-    B = true;
+    if (A) return;
+    A = true;
     H = z === "fill" ? v : w;
-    A.clear();
+    B.clear();
     _ = null;
     const e = z === "text" ? getInlineEditSelection() : null;
     if (e) {
-      A.set(e.editing, {
+      B.set(e.editing, {
         html: e.editing.innerHTML
       });
       return;
     }
     resolveApplyTargets().forEach(e => {
       if (z === "fill") {
-        A.set(e, {
+        B.set(e, {
           bg: e.style.backgroundColor || "",
           pad: e.style.padding || "",
           radius: e.style.borderRadius || "",
           fill: e.classList.contains("rk-has-fill")
         });
       } else {
-        A.set(e, e.style.color || getComputedStyle(e).color || "");
+        B.set(e, e.style.color || getComputedStyle(e).color || "");
       }
     });
   }
@@ -663,9 +670,9 @@
     });
   }
   function endColorPreview() {
-    if (!B) return;
-    B = false;
-    A.forEach((e, t) => {
+    if (!A) return;
+    A = false;
+    B.forEach((e, t) => {
       if (!t?.isConnected) return;
       if (e && typeof e === "object" && "html" in e) {
         t.innerHTML = e.html;
@@ -678,7 +685,7 @@
         t.style.color = e;
       }
     });
-    A.clear();
+    B.clear();
     _ = null;
     if (z === "fill") {
       if (H !== undefined) v = H;
@@ -691,8 +698,8 @@
     syncFillSwatches();
   }
   function discardColorPreview() {
-    B = false;
-    A.clear();
+    A = false;
+    B.clear();
     H = null;
     T = null;
     _ = null;
@@ -715,7 +722,7 @@
     e.classList.add("rk-has-fill");
   }
   function applyFillColor(e, t) {
-    if (B) discardColorPreview();
+    if (A) discardColorPreview();
     v = e ? normalizeHex(e) || e : null;
     if (t !== false) C = true;
     resolveApplyTargets().forEach(e => applyFillToEl(e, v));
@@ -743,6 +750,13 @@
         }
         n.onmousedown = e => {
           if (document.querySelector(".rk-inline-editing")) e.preventDefault();
+        };
+        n.onpointerenter = () => {
+          z = "text";
+          previewTextColor(t);
+        };
+        n.onpointerleave = () => {
+          endColorPreview();
         };
         n.onclick = () => {
           z = "text";
@@ -791,9 +805,33 @@
       n.onmousedown = e => {
         if (document.querySelector(".rk-inline-editing")) e.preventDefault();
       };
+      n.onpointerenter = () => previewOutlineColor(t);
+      n.onpointerleave = () => endOutlineColorPreview();
       n.onclick = () => applyOutlineColor(t);
       e.appendChild(n);
     });
+    syncOutlineColSwatches();
+  }
+  let ke = undefined;
+  function previewOutlineColor(e) {
+    if (!y.size) return;
+    if (ke === undefined) ke = S;
+    const t = normalizeHex(e) || e || "#000000";
+    resolveApplyTargets().forEach(e => {
+      const n = getElShadowType(e) === "none" ? x || "outline" : getElShadowType(e);
+      if (n === "none") return;
+      e.style.setProperty("text-shadow", shadowCss(n === "stroke" ? "outline" : n, t), "important");
+    });
+    document.querySelectorAll("#rkOCG .sub-sw").forEach(e => {
+      e.classList.toggle("on", (normalizeHex(e.dataset.color) || "") === (normalizeHex(t) || "").toLowerCase());
+    });
+  }
+  function endOutlineColorPreview() {
+    if (ke === undefined) return;
+    const e = ke;
+    ke = undefined;
+    S = e;
+    resolveApplyTargets().forEach(e => setElementShadow(e, getElShadowType(e) === "none" ? x : getElShadowType(e)));
     syncOutlineColSwatches();
   }
   function syncOutlineColSwatches() {
@@ -811,6 +849,7 @@
     return (n * 299 + i * 587 + r * 114) / 1e3 < 140;
   }
   function applyOutlineColor(e) {
+    ke = undefined;
     S = normalizeHex(e) || e || "#000000";
     if (x === "none") x = "outline";
     P = true;
@@ -829,6 +868,9 @@
     syncShadowSeg();
     if (window.rankingCustomizer) window.rankingCustomizer.syncFromDOM();
     markLibraryRankingDirty();
+    maybeOfferStyleSuggest(t, {
+      shadow: x
+    });
   }
   function buildBlankColorGrid() {
     const e = document.getElementById("rkBlankCG");
@@ -1046,21 +1088,21 @@
     t.style.setProperty("--rk-oy", `${o}px`);
     t.style.removeProperty("--rk-ox");
   }
-  let ke = 0;
+  let ye = 0;
   function markRankPointerClickSuppress(e = 480) {
-    ke = Date.now() + e;
+    ye = Date.now() + e;
   }
   function consumeRankPointerClick() {
-    if (Date.now() < ke) {
-      ke = 0;
+    if (Date.now() < ye) {
+      ye = 0;
       return true;
     }
     return false;
   }
-  let ye = null;
+  let be = null;
   function endStackDragSession(e) {
-    const t = ye;
-    ye = null;
+    const t = be;
+    be = null;
     if (!t) return;
     try {
       t.cleanup(e);
@@ -1110,7 +1152,7 @@
         if (!t) return;
       }
       if (r.ctrlKey || r.metaKey) return;
-      if (ye) {
+      if (be) {
         endStackDragSession("superseded");
       }
       const s = r.pointerId;
@@ -1136,8 +1178,8 @@
         }
         w = false;
         e.classList.remove("rk-stack-dragging");
-        if (ye && ye.pointerId === s) {
-          ye = null;
+        if (be && be.pointerId === s) {
+          be = null;
         }
       };
       const onMove = i => {
@@ -1195,7 +1237,7 @@
         if (e.pointerId != null && e.pointerId !== s) return;
         onUp(e);
       };
-      ye = {
+      be = {
         pointerId: s,
         cleanup: cleanup
       };
@@ -1770,7 +1812,7 @@
     }
     const n = previewPxFromBurn(ue);
     const i = previewPxFromBurn(pe);
-    const r = previewPxFromBurn(ge);
+    const r = previewPxFromBurn(fe);
     applyHeaderBlockSize(n);
     applyRankBlockSize(i, {
       titlePx: r
@@ -2223,7 +2265,7 @@
     }
   }
   function applyTextColor(e, t) {
-    if (B && _?.isConnected) {
+    if (A && _?.isConnected) {
       _.style.color = normalizeHex(e) || e;
       discardColorPreview();
       z = "text";
@@ -2233,7 +2275,7 @@
       if (t !== false) markLibraryRankingDirty();
       return;
     }
-    if (B) discardColorPreview();
+    if (A) discardColorPreview();
     z = "text";
     w = e;
     if (t !== false) F = true;
@@ -2264,21 +2306,21 @@
     });
   }
   function beginFontPreviewSession(e) {
-    if (!I) {
+    if (!q) {
       Y = e;
       e.forEach(e => snapshotEl(e));
-      I = true;
+      q = true;
     }
   }
   function previewFont(e) {
-    if (q || !y.size) return;
+    if (I || !y.size) return;
     const t = resolveApplyTargets();
     beginFontPreviewSession(t);
     t.forEach(t => setElementFont(t, e));
   }
   function resetFontPreview() {
-    if (q || !I) return;
-    I = false;
+    if (I || !q) return;
+    q = false;
     Y.forEach(e => restoreSnapshot(e));
     Y = [];
   }
@@ -2286,7 +2328,7 @@
     b = e;
     M = true;
     const t = resolveApplyTargets();
-    I = false;
+    q = false;
     Y = [];
     applyFontChange(e, t);
     t.forEach(e => snapshotEl(e));
@@ -2297,8 +2339,10 @@
     showMenu();
     const n = t.slice();
     requestAnimationFrame(() => {
-      maybeOfferStyleSuggest(n, {
-        font: e
+      requestAnimationFrame(() => {
+        maybeOfferStyleSuggest(n, {
+          font: e
+        });
       });
     });
     if (t.some(isHeaderEl)) syncTopPanelToHeader();
@@ -2426,7 +2470,9 @@
     const c = [ ...n ].some(isHeaderEl);
     if (t === "counterpart") {
       if ((s || l) && !c) return getHeaderElements();
-      if (c && !s && !l) return r;
+      if (c && !s && !l) {
+        return getAllRankSideElements();
+      }
       return [];
     }
     if (s) r.forEach(pushIfNeeded);
@@ -2866,34 +2912,37 @@
     const i = resizeSuggestTargets(e, "counterpart");
     const r = n.length > 0 && propsNeedApply(n, t);
     const o = i.length > 0 && propsNeedApply(i, t);
-    let a = null;
-    if (window.__SolisSG && typeof window.__SolisSG.styleOffer === "function") {
-      a = window.__SolisSG.styleOffer(n.length, r, i.length, o);
+    const a = !!(t.font || t.color || t.shadow);
+    let s = null;
+    if (a && o) {
+      s = "counterpart";
+    } else if (window.__SolisSG && typeof window.__SolisSG.styleOffer === "function") {
+      s = window.__SolisSG.styleOffer(n.length, r, i.length, o);
     } else if (r) {
-      a = "siblings";
+      s = "siblings";
     } else if (o) {
-      a = "counterpart";
+      s = "counterpart";
     }
-    if (!a) return;
-    const s = a === "counterpart" ? i : n;
-    if (!s.length) return;
-    const l = {
+    if (!s) return;
+    const l = s === "counterpart" ? i : n;
+    if (!l.length) return;
+    const c = {
       ...t
     };
-    if (a === "siblings" && o && i.length) {
-      l.chain = {
+    if (s === "siblings" && o && i.length) {
+      c.chain = {
         ...t,
         targets: i,
         fromGroup: t.fromGroup || editedSizeGroup(e)
       };
-    } else if (a === "counterpart" && r && n.length) {
-      l.chain = {
+    } else if (s === "counterpart" && r && n.length) {
+      c.chain = {
         ...t,
         targets: n,
         fromGroup: t.fromGroup || editedSizeGroup(e)
       };
     }
-    offerStyleSuggest(l, s);
+    offerStyleSuggest(c, l);
   }
   function rectsOverlap(e, t, n = 6) {
     return !(e.right + n <= t.left || e.left - n >= t.right || e.bottom + n <= t.top || e.top - n >= t.bottom);
@@ -3101,7 +3150,7 @@
       const t = p.classList.contains("open");
       closeDD();
       if (!t) {
-        I = false;
+        q = false;
         y.forEach(e => snapshotEl(e));
         const t = p.querySelector("#rkFontSearch");
         if (t) t.value = "";

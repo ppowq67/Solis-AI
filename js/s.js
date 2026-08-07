@@ -6373,79 +6373,75 @@ class ClipsStudio {
   applyWatermarkControls(e) {
     const t = document.getElementById("watermarkToggleLabel");
     const n = document.getElementById("watermarkUpgradeBtn");
-    const i = document.getElementById("watermarkNotice");
-    const r = document.getElementById("watermarkToggle");
-    if (!r) return;
-    const o = !!e?.isPremium;
-    const s = Number(e?.usedLifetime ?? e?.data?.used_lifetime ?? 0);
-    const a = !o && s === 0;
-    const l = !o && s >= 1;
-    safeLog(`ðŸ” Watermark UI — premium=${o} usedLifetime=${s} ` + `firstFree=${a} returningFree=${l}`);
-    if (o) {
+    const i = document.getElementById("watermarkToggle");
+    if (!i) return;
+    const r = !!e?.isPremium;
+    const o = Number(e?.usedLifetime ?? e?.data?.used_lifetime ?? 0);
+    const s = !r && (e?.showUpgrade === true || o >= 1);
+    const a = !r && !s;
+    document.getElementById("watermarkNotice")?.remove();
+    safeLog(`Watermark UI — premium=${r} usedLifetime=${o} ` + `firstFree=${a} returningFree=${s}`);
+    if (r) {
       const e = localStorage.getItem("watermarkEnabled");
-      r.checked = e === "true";
-      r.disabled = false;
+      i.checked = e === "true";
+      i.disabled = false;
     } else if (a) {
-      r.checked = false;
-      r.disabled = true;
+      i.checked = false;
+      i.disabled = true;
       try {
         localStorage.setItem("watermarkEnabled", "false");
       } catch (e) {}
     } else {
-      r.checked = true;
-      r.disabled = true;
+      i.checked = true;
+      i.disabled = true;
       try {
         localStorage.setItem("watermarkEnabled", "true");
       } catch (e) {}
     }
-    r.style.opacity = "";
-    r.style.cursor = "";
-    const c = o;
-    const d = l;
+    i.style.opacity = "";
+    i.style.cursor = "";
     if (t) {
-      t.style.visibility = c ? "visible" : "hidden";
-      t.style.display = c ? "inline-flex" : "none";
-      t.setAttribute("data-premium-only", !c);
-      t.classList.toggle("is-on", Boolean(r.checked));
-      t.setAttribute("aria-checked", r.checked ? "true" : "false");
+      t.style.visibility = r ? "visible" : "hidden";
+      t.style.display = r ? "inline-flex" : "none";
+      t.setAttribute("data-premium-only", !r);
+      t.classList.toggle("is-on", Boolean(i.checked));
+      t.setAttribute("aria-checked", i.checked ? "true" : "false");
     }
     if (n) {
-      n.style.visibility = d ? "visible" : "hidden";
-      n.style.display = d ? "flex" : "none";
+      n.hidden = !s;
+      n.style.visibility = s ? "visible" : "hidden";
+      n.style.display = s ? "flex" : "none";
     }
-    if (i) {
-      i.style.display = d ? "block" : "none";
-    }
-    const p = document.getElementById("watermarkLocationHint");
-    if (p) {
-      if (l) {
-        p.textContent = "Solis mark appears middle-right on exports (same as preview)";
+    const l = document.getElementById("watermarkLocationHint");
+    if (l) {
+      if (s) {
+        l.textContent = "Solis mark appears middle-right on exports (same as preview)";
       } else if (a) {
-        p.textContent = "Your first free clip has no watermark";
-      } else if (o) {
-        p.textContent = "Optional Solis mark on exports";
+        l.textContent = "Your first free clip has no watermark";
+      } else if (r) {
+        l.textContent = "Optional Solis mark on exports";
       } else {
-        p.textContent = "Show Solis mark on exports";
+        l.textContent = "Show Solis mark on exports";
       }
     }
-    if (l) {
+    if (s) {
       try {
         this.updateWatermarkDisplay?.();
       } catch (e) {}
     }
     if (this._watermarkChangeHandler) {
-      r.removeEventListener("change", this._watermarkChangeHandler);
+      i.removeEventListener("change", this._watermarkChangeHandler);
       this._watermarkChangeHandler = null;
     }
-    if (o) {
+    if (r) {
       this._watermarkChangeHandler = () => {
-        const e = r.checked;
+        const e = i.checked;
         localStorage.setItem("watermarkEnabled", e ? "true" : "false");
         t?.classList.toggle("is-on", e);
         t?.setAttribute("aria-checked", e ? "true" : "false");
         this.updateWatermarkDisplay();
       };
-      r.addEventListener("change", this._watermarkChangeHandler);
+      i.addEventListener("change", this._watermarkChangeHandler);
     }
     this.updateWatermarkDisplay();
   }

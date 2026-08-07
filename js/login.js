@@ -126,6 +126,9 @@ async function handleGoogleLogin() {
       method: "POST",
       credentials: "include"
     }).catch(() => {});
+    try {
+      localStorage.removeItem("currentUser");
+    } catch (t) {}
     sessionStorage.removeItem(SKIP_AUTH_REDIRECT_KEY);
     const e = window.apiUrl ? window.apiUrl("/api/auth/google?fresh=1") : `${t}/auth/google?fresh=1`;
     const o = await fetch(e, {

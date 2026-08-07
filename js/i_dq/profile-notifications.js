@@ -106,14 +106,6 @@ function syncProfileButton() {
   try {
     if (typeof window !== "undefined" && window.currentUser) {
       t = window.currentUser;
-    } else {
-      const e = localStorage.getItem("currentUser");
-      if (e) {
-        const i = e.trim();
-        if (i.startsWith("{") && i.endsWith("}")) {
-          t = JSON.parse(e);
-        }
-      }
     }
   } catch (e) {
     console.error("Error syncing profile:", e);
@@ -125,20 +117,12 @@ function syncProfileButton() {
     return;
   }
   const o = i.user;
-  const n = (o.auth_provider || "").toString().toLowerCase();
-  const a = o.picture || o.avatar || null;
-  const s = '<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: 100%;"><rect width="24" height="24" fill="none"/><path d="M20 4H4C2.9 4 2.01 4.9 2.01 6L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="#EA4335"/></svg>';
+  const n = typeof resolveAvatarUrl === "function" ? resolveAvatarUrl(o) : o.picture || o.avatar || null;
   while (e.firstChild) {
     e.removeChild(e.firstChild);
   }
-  if (n.includes("google")) {
-    e.innerHTML = s;
-  } else if (a && typeof a === "string") {
-    if (isValidImageUrl(a)) {
-      safeSetImage(e, a, "User Avatar");
-    } else {
-      console.warn("Invalid avatar URL");
-    }
+  if (n && typeof n === "string" && isValidImageUrl(n)) {
+    safeSetImage(e, n, "User Avatar");
   }
 }
 

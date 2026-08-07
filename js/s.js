@@ -2775,6 +2775,9 @@ async function verifyToken() {
     const t = await e.json();
     currentUser = t.user;
     window.currentUser = currentUser;
+    try {
+      localStorage.setItem("currentUser", JSON.stringify(currentUser));
+    } catch (e) {}
     updateUIForLoggedInUser();
     if (typeof updateProfileButton === "function") {
       setTimeout(() => updateProfileButton(), 0);
@@ -2793,6 +2796,9 @@ async function verifyToken() {
       safeLog("[Auth] Token is invalid, redirecting to login in 2 seconds");
       currentUser = null;
       window.currentUser = null;
+      try {
+        localStorage.removeItem("currentUser");
+      } catch (e) {}
       setTimeout(() => {
         window.location.href = "/login.html";
       }, 2e3);

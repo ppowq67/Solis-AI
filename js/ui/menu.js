@@ -204,23 +204,13 @@ function updateProfileButton() {
   }
   let t = null;
   try {
-    if (typeof window !== "undefined" && window.currentUser) {
-      t = window.currentUser;
-    } else {
-      const e = localStorage.getItem("currentUser");
-      if (e) t = JSON.parse(e);
-    }
+    t = typeof window !== "undefined" && window.currentUser ? window.currentUser : null;
   } catch (e) {
     console.error("Failed to read currentUser for profile button", e);
     return;
   }
   const n = typeof resolveAvatarUrl === "function" ? resolveAvatarUrl(t) : t?.picture || t?.avatar || t?.photo || t?.profilePicture || null;
   const r = t?.name || t?.displayName || t?.email || "User";
-  const o = t?.auth_provider || "email";
-  if (o && o.toLowerCase().includes("google")) {
-    e.innerHTML = `\n            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">\n                \x3c!-- Gmail/Google icon --\x3e\n                <rect width="24" height="24" fill="none"/>\n                <path d="M20 4H4C2.9 4 2.01 4.9 2.01 6L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="#EA4335"/>\n            </svg>\n        `;
-    return;
-  }
   if (t && n && n.trim() !== "" && isValidImageUrl(n)) {
     const t = document.createElement("img");
     t.src = n;
@@ -242,12 +232,7 @@ async function updateProfileDropdown() {
   const n = document.getElementById("dropdownUserAvatar");
   let r = null;
   try {
-    if (typeof window !== "undefined" && window.currentUser) {
-      r = window.currentUser;
-    } else {
-      const e = localStorage.getItem("currentUser");
-      if (e) r = JSON.parse(e);
-    }
+    r = typeof window !== "undefined" && window.currentUser ? window.currentUser : null;
   } catch (e) {
     console.error("Failed to read currentUser for dropdown", e);
     return;
@@ -323,12 +308,7 @@ function updateMenuUserInfo() {
   const o = document.getElementById("emailDisplay");
   let i = null;
   try {
-    if (typeof window !== "undefined" && window.currentUser) {
-      i = window.currentUser;
-    } else {
-      const e = localStorage.getItem("currentUser");
-      if (e) i = JSON.parse(e);
-    }
+    i = typeof window !== "undefined" && window.currentUser ? window.currentUser : null;
   } catch (e) {
     console.error("menu: failed to read currentUser", e);
     i = null;

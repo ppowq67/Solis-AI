@@ -44,8 +44,8 @@
   let E = undefined;
   let z = "text";
   let C = false;
-  let L = null;
-  let R = false;
+  let R = null;
+  let L = false;
   let M = false;
   let F = false;
   let P = false;
@@ -58,9 +58,9 @@
   let N = 92;
   let $ = 56;
   let I = false;
-  let q = false;
   let G = false;
-  let O = null;
+  let O = false;
+  let q = null;
   let V = "single";
   let W = null;
   let j = null;
@@ -84,8 +84,8 @@
   const de = 34;
   const ue = 120;
   const pe = 110;
-  const fe = 95;
-  const ge = pe;
+  const ge = 95;
+  const fe = pe;
   const me = 72;
   const he = 1080;
   function getRankingRoot() {
@@ -231,40 +231,39 @@
       const i = n === t;
       e.classList.toggle("on", i);
       e.setAttribute("aria-selected", i ? "true" : "false");
-      e.title = i ? `${n} (selected)` : n || "";
+      e.title = n || "";
     });
   }
-  function buildFontList(t) {
-    const i = p?.querySelector("#rkFontList") || document.getElementById("rkFontList");
-    if (!i) return;
-    i.innerHTML = "";
-    const r = String(t || "").trim().toLowerCase();
-    e.filter(([e]) => !r || e.toLowerCase().includes(r)).forEach(([e, t]) => {
+  function buildFontList() {
+    const t = p?.querySelector("#rkFontList") || document.getElementById("rkFontList") || p;
+    if (!t) return;
+    t.innerHTML = "";
+    e.forEach(([e, i]) => {
       const r = document.createElement("div");
       r.className = "sub-font-item" + (e === b ? " on" : "");
       const o = n[e] || `'${e}', sans-serif`;
-      r.innerHTML = `<span class="sub-fname" style="font-family:${o};font-weight:${t};">${e}</span>` + `<span class="sub-fcheck" aria-hidden="true">✓</span>`;
+      r.innerHTML = `<span class="sub-fname" style="font-family:${o};font-weight:${i};">${e}</span>`;
       r.setAttribute("aria-selected", e === b ? "true" : "false");
-      r.title = e === b ? `${e} (selected)` : e;
+      r.title = e;
       r.onmouseenter = () => previewFont(e);
       r.onmouseleave = e => {
-        if (q) return;
+        if (G) return;
         if (p.contains(e.relatedTarget)) return;
         resetFontPreview();
       };
       r.onmousedown = t => {
         t.preventDefault();
         t.stopPropagation();
-        q = true;
+        G = true;
         try {
           applyFont(e);
         } finally {
           setTimeout(() => {
-            q = false;
+            G = false;
           }, 450);
         }
       };
-      i.appendChild(r);
+      t.appendChild(r);
     });
     syncFontDdHighlight(b);
   }
@@ -279,8 +278,8 @@
     return [ r, o ].filter(Boolean);
   }
   function buildUI() {
-    if (G) return;
-    G = true;
+    if (O) return;
+    O = true;
     hideSubtitleGuidesOverRanking();
     u = document.createElement("div");
     u.className = "sub-pill-menu";
@@ -290,14 +289,7 @@
     p = document.createElement("div");
     p.className = "sub-dropdown sub-font-dd";
     p.id = "rkDdFont";
-    p.innerHTML = `\n            <input type="search" class="rk-font-search" id="rkFontSearch" placeholder="Search fonts…" autocomplete="off" spellcheck="false" />\n            <div class="rk-font-list" id="rkFontList"></div>\n        `;
-    buildFontList("");
-    p.querySelector("#rkFontSearch")?.addEventListener("input", e => {
-      buildFontList(e.target.value || "");
-    });
-    p.querySelector("#rkFontSearch")?.addEventListener("mousedown", e => {
-      e.stopPropagation();
-    });
+    buildFontList();
     p.addEventListener("mouseleave", e => {
       if (p.contains(e.relatedTarget) || u?.contains(e.relatedTarget)) return;
       resetFontPreview();
@@ -323,7 +315,7 @@
     injectStyles();
   }
   function injectStyles() {
-    const e = `\n            .ranking-preview-container{\n                position:relative !important;\n                overflow:visible !important;\n                padding:14px 12px 16px !important;\n                container-type:inline-size;\n                container-name:rk-phone;\n            }\n            .ranking-preview-container .ranking-list{\n                display:flex !important;\n                flex-direction:column !important;\n                gap:10px !important;\n                margin:6px 0 0 0 !important;\n                flex:0 0 auto !important;\n                flex-shrink:0 !important;\n                overflow:visible !important;\n            }\n            .ranking-preview-container .ranked-item{\n                flex:0 0 auto !important;\n                flex-shrink:0 !important;\n                line-height:1.2 !important;\n                min-height:1.2em !important;\n                margin:0 !important;\n                gap:6px !important;\n                overflow:visible !important;\n                font-size:clamp(22px, 9.2cqi, 38px);\n                font-family:'Luckiest Guy', cursive;\n            }\n            .ranking-preview-container .title,\n            .ranking-preview-container h1.title{\n                font-size:clamp(28px, 11cqi, 40px) !important;\n                line-height:1.12 !important;\n                padding-top:0 !important;\n                margin-top:0 !important;\n                overflow:visible !important;\n                max-width:calc(100% - 8px) !important;\n            }\n            .ranking-preview-container .rank-title,\n            .ranking-preview-container .rank-number{\n                font-size:inherit;\n                font-family:inherit;\n            }\n            .ranking-preview-container .rank-title.rk-sized,\n            .ranking-preview-container .rank-number.rk-sized{\n            }\n            .ranking-preview-container .ranking-editor-zone-header{\n                flex:0 0 auto !important;\n                flex-shrink:0 !important;\n                padding:0 4px 4px !important;\n            }\n            .ranking-preview-container [data-template-element-id]{\n                position:relative;display:inline-block;\n                cursor:var(--solis-preview-cursor, url('/style/cursor.svg?v=3') 4 4, crosshair);\n                transition:none!important;\n                overflow:visible !important;\n            }\n            .ranking-preview-container h1.title,\n            .ranking-preview-container h1{\n                white-space:nowrap!important;\n                max-width:100%;\n            }\n            .ranking-preview-container [data-template-element-id="title_ranking"],\n            .ranking-preview-container [data-template-element-id="title_funniest"]{\n                white-space:nowrap!important;\n            }\n            .ranking-preview-container .ranking-editor-zone-header,\n            .ranking-preview-container .ranking-editor-zone-ranks{\n                width:fit-content;max-width:100%;\n                overflow:visible !important;\n            }\n            .ranking-preview-container .ranking-editor-zone-header{\n                display:flex !important;\n                flex-direction:column !important;\n                align-items:center !important;\n                justify-content:flex-start !important;\n                gap:0;\n                margin:0 auto !important;\n                padding:2px 4px 0;\n                text-align:center;\n                position:relative;\n                z-index:6;\n                flex-shrink:0;\n                width:100% !important;\n                max-width:100% !important;\n                box-sizing:border-box;\n            }\n            .ranking-preview-container .ranking-editor-zone-header > h1.title,\n            .ranking-preview-container .ranking-editor-zone-header > h1{\n                display:block !important;\n                width:fit-content !important;\n                max-width:100% !important;\n                margin:0 auto 2px !important;\n                padding:0 !important;\n                text-align:center;\n                position:relative;\n                z-index:7;\n            }\n            .ranking-preview-container [data-template-element-id="title_channel"]{\n                display:block !important;\n                position:relative !important;\n                z-index:7;\n                width:fit-content !important;\n                max-width:calc(100% - 24px) !important;\n                margin:2px auto 8px auto !important;\n                font-size:clamp(20px, 8.5cqi, 34px) !important;\n                padding:0 !important;\n                text-align:center !important;\n                box-sizing:border-box;\n                white-space:nowrap !important;\n                overflow:visible !important;\n                overflow-wrap:normal !important;\n                word-break:normal !important;\n                float:none !important;\n                inset:auto !important;\n                top:auto !important;\n                left:auto !important;\n                right:auto !important;\n                bottom:auto !important;\n                transform:none !important;\n            }\n            .ranking-preview-container .ranking-editor-zone-member{\n                position:relative;z-index:1;\n            }\n            .ranking-preview-container .sub-resize-handle{\n                position:absolute;width:18px;height:18px;\n                background:rgba(249,115,22,.98);border:2.5px solid #fff;border-radius:50%;\n                cursor:var(--solis-preview-cursor, url('/style/cursor.svg?v=3') 4 4, crosshair)!important;\n                box-shadow:0 2px 10px rgba(194,65,12,.4);\n                bottom:0;right:0;\n                transform:translate(35%,35%);\n                z-index:120;\n                pointer-events:none;display:none;\n                opacity:0;visibility:hidden;\n                touch-action:none;\n            }\n            .ranking-preview-container .sub-resize-handle::after{\n                content:'';position:absolute;inset:-10px -12px -12px -10px;border-radius:50%;\n                cursor:var(--solis-preview-cursor, url('/style/cursor.svg?v=3') 4 4, crosshair)!important;\n            }\n            .ranking-preview-container .ranking-editor-selected > .sub-resize-handle,\n            .ranking-preview-container .ranking-editor-resize-anchor > .sub-resize-handle,\n            .ranking-preview-container .ranking-editor-zone-selected > .sub-resize-handle{\n                display:block;pointer-events:all;\n                opacity:1;visibility:visible;\n            }\n            .ranking-preview-container .ranking-editor-selected > .sub-resize-handle:hover,\n            .ranking-preview-container .ranking-editor-resize-anchor > .sub-resize-handle:hover,\n            .ranking-preview-container .ranking-editor-zone-selected > .sub-resize-handle:hover{\n                transform:translate(40%,40%) scale(1.15);\n            }\n            .ranking-editor-text{cursor:var(--solis-preview-cursor, url('/style/cursor.svg?v=3') 4 4, crosshair);}\n            .ranking-preview-container .rk-number-locked,\n            .ranking-preview-container [data-template-element-id$="_number"]{\n                -webkit-user-modify:read-only;\n                user-select:none;\n                caret-color:transparent;\n                touch-action:none;\n            }\n            .ranking-preview-container .ranking-editor-zone-ranks{\n                touch-action:none;\n            }\n            .ranking-editor-text,.ranking-editor-zone{\n                transition:none!important;\n                box-shadow:none!important;\n            }\n            .ranking-editor-zone{\n                position:relative;\n                border-radius:10px;\n            }\n            .ranking-preview-container [data-template-element-id].ranking-editor-selected{\n                position:relative;\n                z-index:6;\n                isolation:isolate;\n                box-shadow:none!important;\n            }\n            .ranking-preview-container [data-template-element-id].ranking-editor-selected::before{\n                content:'';\n                position:absolute;\n                inset:-5px -4px;\n                border-radius:8px;\n                border:1.5px solid #f97316;\n                background:transparent;\n                box-shadow:\n                    0 0 0 3px rgba(249,115,22,.32),\n                    0 0 14px rgba(249,115,22,.28);\n                pointer-events:none;\n                z-index:0;\n                animation:none;\n            }\n            .ranking-preview-container [data-template-element-id].ranking-editor-selected::after{\n                content:none;\n                display:none;\n            }\n            .ranking-preview-container .rank-number.ranking-editor-selected::before{\n                inset:-3px -2px !important;\n                border-radius:5px;\n            }\n            .ranking-preview-container .rank-number.ranking-editor-selected::after{\n                display:none !important;\n            }\n            .ranking-preview-container .rank-number{\n                display:inline-block !important;\n                width:max-content !important;\n                max-width:none !important;\n                margin-right:0.15em !important;\n                padding:0 !important;\n                letter-spacing:0 !important;\n                line-height:1.05 !important;\n                box-sizing:content-box !important;\n            }\n            .ranking-preview-container .text-stroke{\n                text-shadow:\n                    2px 0 0 #000, -2px 0 0 #000, 0 2px 0 #000, 0 -2px 0 #000,\n                    1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000 !important;\n            }\n            .ranking-editor-zone-selected{\n                position:relative;\n                z-index:5;\n                isolation:isolate;\n                box-shadow:none!important;\n            }\n            .ranking-editor-zone-selected::before{\n                content:'';\n                position:absolute;\n                inset:-6px -8px;\n                border-radius:12px;\n                border:1.5px solid #f97316;\n                background:transparent;\n                box-shadow:\n                    0 0 0 3px rgba(249,115,22,.28),\n                    0 0 14px rgba(249,115,22,.22);\n                pointer-events:none;\n                z-index:0;\n                animation:none;\n            }\n            .ranking-editor-zone-selected::after{\n                content:none;\n                display:none;\n            }\n            .ranking-editor-zone-selected > *:not(.sub-resize-handle){\n                position:relative;\n                z-index:1;\n            }\n            .ranking-preview-container .sub-guide,\n            .ranking-preview-container .sub-half-line,\n            .ranking-preview-container .rk-half-line,\n            .ranking-preview-container .rk-guide{\n                display:none !important;\n                visibility:hidden !important;\n                opacity:0 !important;\n            }\n            @keyframes rkSelInnerFade{\n                0%,100%{opacity:1;}\n                50%{opacity:.92;}\n            }\n            @keyframes rkSelWhitePulse{\n                0%,100%{opacity:.45;transform:scale(.97);}\n                50%{opacity:.95;transform:scale(1);}\n            }\n            #rkPillMenu{\n                transition:opacity .1s ease,transform .1s ease,visibility .1s!important;\n            }\n            .rk-ghost-stack{\n                position:fixed;z-index:99850;pointer-events:none;\n                display:flex;flex-direction:column;justify-content:center;align-items:flex-end;\n                gap:6px;\n                padding:6px 12px;border-radius:8px;\n                background:rgba(34,197,94,.16);\n                box-shadow:inset 0 0 0 1.5px rgba(34,197,94,.45);\n                width:max-content;height:auto;max-width:min(220px,40vw);\n                overflow:visible;\n                -webkit-user-select:none!important;user-select:none!important;\n                -webkit-user-drag:none;\n            }\n            .rk-ghost-stack .rk-ghost-line{\n                display:block;white-space:nowrap;line-height:1.05;opacity:1!important;\n                background:none!important;padding:0;margin:0;\n                position:static!important;right:auto!important;top:auto!important;\n                transform:none!important;\n                font-weight:700;\n                letter-spacing:-.015em;\n                -webkit-user-select:none!important;user-select:none!important;\n            }\n            .rk-ghost-stack .rk-ghost-title-row{\n                display:flex;flex-direction:row;align-items:baseline;justify-content:flex-end;\n                gap:6px;flex-wrap:nowrap;\n            }\n            .rk-ghost-stack .rk-ghost-title-row .rk-ghost-line{\n                display:inline-block;\n            }\n            .rk-ghost-stack .rk-ghost-channel{\n                text-align:right;\n            }\n            .rk-suggest-remove{\n                position:relative;\n                z-index:6;\n            }\n            .rk-suggest-remove::before{\n                content:'';\n                position:absolute;\n                inset:-6px -8px;\n                border-radius:10px;\n                border:2px solid rgba(239,68,68,.7);\n                background:rgba(239,68,68,.12);\n                box-shadow:0 0 0 1px rgba(239,68,68,.22);\n                pointer-events:none;\n                z-index:0;\n            }\n            .rk-suggest-remove > *{\n                position:relative;\n                z-index:1;\n            }\n            .rk-suggest-receive{\n                position:relative;\n                z-index:6;\n            }\n            .rk-suggest-receive::before{\n                content:'';\n                position:absolute;\n                inset:-6px -8px;\n                border-radius:10px;\n                border:2px solid rgba(239,68,68,.7);\n                background:rgba(239,68,68,.12);\n                box-shadow:0 0 0 1px rgba(239,68,68,.22);\n                pointer-events:none;\n                z-index:0;\n            }\n            .rk-suggest-receive > *{\n                position:relative;\n                z-index:1;\n            }\n            .rk-suggest-actions{\n                position:fixed;z-index:99870;display:flex;gap:2px;align-items:center;\n                padding:3px 4px;border-radius:999px;\n                font-family:'Plus Jakarta Sans',sans-serif;\n                isolation:isolate;\n                background:linear-gradient(\n                    145deg,\n                    rgba(255,255,255,.96) 0%,\n                    rgba(255,255,255,.9) 45%,\n                    rgba(255,252,248,.88) 100%\n                );\n                border:1px solid rgba(255,255,255,.95);\n                border-bottom-color:rgba(200,185,170,.28);\n                border-right-color:rgba(200,185,170,.2);\n                box-shadow:\n                    0 6px 18px rgba(120,90,60,.12),\n                    0 1px 4px rgba(120,90,60,.06),\n                    inset 0 1px 0 rgba(255,255,255,1);\n                backdrop-filter:blur(16px) saturate(140%);\n                -webkit-backdrop-filter:blur(16px) saturate(140%);\n                opacity:0;visibility:hidden;pointer-events:none;\n                transform:none !important;\n                left:0;top:0;\n            }\n            .rk-suggest-actions.open{\n                opacity:1;visibility:visible;pointer-events:auto;\n            }\n            .rk-sa-btn{\n                appearance:none;-webkit-appearance:none;\n                width:28px;height:28px;min-width:28px;border:none;border-radius:999px;\n                display:inline-flex;align-items:center;justify-content:center;\n                cursor:var(--solis-preview-cursor, url('/style/cursor.svg?v=3') 4 4, crosshair);\n                padding:0;box-sizing:border-box;margin:0;\n                font:inherit;\n                transition:background .12s ease,color .12s ease,border-color .12s ease,\n                    box-shadow .12s ease,transform .1s ease;\n            }\n            .rk-sa-btn:active{transform:scale(.95);}\n            .rk-sa-btn svg{display:block;flex-shrink:0;width:20px;height:20px;}\n            .rk-sa-accept{\n                background:linear-gradient(145deg,#34d399 0%,#16a34a 100%);\n                color:#ffffff !important;\n                border:1px solid rgba(21,128,61,.35);\n                box-shadow:\n                    inset 0 1px 0 rgba(255,255,255,.35),\n                    0 1px 3px rgba(22,163,74,.25);\n            }\n            .rk-sa-accept:hover{\n                background:linear-gradient(145deg,#22c55e 0%,#15803d 100%);\n                color:#ffffff !important;\n                border-color:rgba(21,128,61,.5);\n            }\n            .rk-sa-decline{\n                background:linear-gradient(145deg,rgba(255,255,255,.75),rgba(255,255,255,.4));\n                border:1px solid rgba(200,185,170,.35);\n                color:rgba(50,38,28,.72);\n                box-shadow:inset 0 1px 0 rgba(255,255,255,.9);\n            }\n            .rk-sa-decline:hover{\n                background:linear-gradient(145deg,rgba(254,226,226,.9),rgba(254,202,202,.55));\n                border-color:rgba(254,202,202,.7);\n                color:#ef4444;\n            }\n            .rk-top-line{align-items:flex-start;flex-direction:column;gap:8px;}\n            .rk-top-line .sub-clabel{flex:none;}\n            .rk-top-modes{\n                display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;width:100%;\n            }\n            .rk-top-mode{\n                appearance:none;cursor:var(--solis-preview-cursor, url('/style/cursor.svg?v=3') 4 4, crosshair);margin:0;\n                border:1.5px solid rgba(200,185,170,.4);\n                background:linear-gradient(145deg,rgba(255,255,255,.85),rgba(255,255,255,.45));\n                border-radius:10px;\n                padding:9px 6px;\n                font-family:'Plus Jakarta Sans',sans-serif;\n                font-size:11.5px;font-weight:700;letter-spacing:-.01em;\n                color:rgba(50,38,28,.78);\n                transition:border-color .12s ease,background .12s ease,color .12s ease,box-shadow .12s ease;\n            }\n            .rk-top-mode:hover{\n                border-color:rgba(249,115,22,.45);\n                color:#9a3412;\n                box-shadow:0 0 0 1px rgba(249,115,22,.12);\n            }\n            .rk-top-mode.on{\n                border-color:rgba(249,115,22,.55);\n                background:linear-gradient(145deg,rgba(255,237,213,.95),rgba(254,215,170,.55));\n                color:#9a3412;\n                box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 0 0 1px rgba(249,115,22,.15);\n            }\n            .ranking-preview-container{\n                position:relative !important;\n            }\n            .ranking-preview-container .rk-top-panel{\n                position:absolute;left:0;right:0;top:0;z-index:1;\n                height:25%;pointer-events:none;overflow:hidden;\n                background:#000;\n                margin:0;width:100%;border-radius:0;\n                box-sizing:border-box;\n            }\n            .ranking-preview-container .rk-top-handle{\n                position:absolute;left:0;right:0;bottom:0;height:14px;\n                cursor:ns-resize;pointer-events:auto;z-index:3;\n                background:linear-gradient(180deg,transparent,rgba(255,255,255,.18));\n            }\n            .ranking-preview-container .rk-top-handle::after{\n                content:'';position:absolute;left:50%;bottom:4px;\n                width:36px;height:3px;border-radius:999px;\n                transform:translateX(-50%);\n                background:rgba(255,255,255,.55);\n            }\n            .ranking-preview-container .rk-top-panel[hidden]{display:none!important;}\n            .ranking-preview-container .rk-top-panel.mode-blank{background:#000;}\n            .ranking-preview-container .rk-top-panel.mode-blur{\n                background:rgba(8,8,10,.2);\n                backdrop-filter:none;\n                -webkit-backdrop-filter:none;\n            }\n            .ranking-preview-container .rk-top-panel .rk-top-blur-vid{\n                position:absolute;inset:-50%;width:200%;height:200%;\n                object-fit:cover;object-position:center top;\n                filter:blur(36px) saturate(1.45) brightness(1.12) contrast(1.06);\n                -webkit-filter:blur(36px) saturate(1.45) brightness(1.12) contrast(1.06);\n                transform:scale(1.2);pointer-events:none;opacity:0;z-index:0;\n                transition:opacity .18s ease;\n            }\n            .ranking-preview-container .rk-top-panel.mode-blur .rk-top-blur-vid{opacity:1;}\n            .ranking-preview-container .rk-top-panel.mode-blur.has-blur-src{\n                background:transparent;\n            }\n            .ranking-preview-container .rk-top-panel.mode-blur::after{\n                content:'';position:absolute;inset:0;z-index:1;pointer-events:none;\n                background:\n                    linear-gradient(180deg,rgba(0,0,0,.12),rgba(0,0,0,.28));\n            }\n            .rk-top-line.is-hidden{display:none!important;}\n            .ranking-preview-container.has-rk-top > .ranking-editor-zone-header,\n            .ranking-preview-container.has-rk-top > .ranking-editor-zone-ranks,\n            .ranking-preview-container.has-rk-top > .ranking-list{\n                position:relative;z-index:6;\n            }\n            .ranking-preview-container.has-rk-top [data-template-element-id^="title_"],\n            .ranking-preview-container.has-rk-top h1.title,\n            .ranking-preview-container.has-rk-top .ranking-editor-zone-header{\n                position:relative;z-index:7;\n            }\n            .ranking-preview-container .ranking-editor-zone-ranks{\n                cursor:ns-resize;\n                will-change:transform;\n                touch-action:none;\n            }\n            .ranking-preview-container .ranking-editor-zone-ranks [data-template-element-id],\n            .ranking-preview-container .ranking-editor-zone-ranks .ranking-editor-text{\n                cursor:ns-resize;\n                touch-action:none;\n                pointer-events:auto;\n            }\n            .ranking-preview-container.rk-stack-dragging,\n            .ranking-preview-container.rk-stack-dragging .ranking-editor-zone-ranks,\n            .ranking-preview-container.rk-stack-dragging .ranking-editor-zone-ranks [data-template-element-id]{\n                cursor:grabbing !important;\n                transition:none !important;\n            }\n            .ranking-preview-container.rk-stack-settle .ranking-editor-zone-ranks{\n                transition:transform .18s ease !important;\n            }\n            .ranking-preview-container .ranking-editor-zone-ranks{\n                transform:translateY(var(--rk-oy, 0px));\n            }\n            .ranking-preview-container [data-template-element-id="title_ranking"],\n            .ranking-preview-container [data-template-element-id="title_funniest"]{\n                font-size:inherit;\n                display:inline-block !important;\n                vertical-align:baseline;\n                max-width:100%;\n            }\n            .ranking-preview-container [data-template-element-id="title_channel"]{\n                max-width:calc(100% - 16px)!important;\n            }\n            .ranking-preview-container h1.title,\n            .ranking-preview-container h1{\n                max-width:100% !important;\n                box-sizing:border-box !important;\n                overflow:visible !important;\n            }\n            .ranking-preview-container .ranking-editor-zone-header{\n                max-width:100% !important;\n                box-sizing:border-box !important;\n                overflow:visible !important;\n            }\n            .ranking-preview-container [data-template-element-id].rk-sized{\n                line-height:1.1;\n            }\n            #templateVideoPreview.preview-placeholder .ranking-preview-container{\n                max-width:100% !important;\n                max-height:100% !important;\n                overflow:hidden !important;\n            }\n            #templateVideoPreview.preview-placeholder .ranking-preview-container .ranking-editor-zone-header,\n            #templateVideoPreview.preview-placeholder .ranking-preview-container .ranking-editor-zone-ranks,\n            #templateVideoPreview.preview-placeholder .ranking-preview-container [data-template-element-id].ranking-editor-selected,\n            #templateVideoPreview.preview-placeholder .ranking-preview-container .ranking-editor-zone-selected,\n            #templateVideoPreview.preview-placeholder .ranking-preview-container .ranking-editor-resize-anchor{\n                overflow:visible !important;\n            }\n            #templateVideoPreview.preview-placeholder .ranking-preview-container h1.title,\n            #templateVideoPreview.preview-placeholder .ranking-preview-container [data-template-element-id^="title_"]{\n                overflow:visible !important;\n                text-overflow:clip !important;\n            }\n            #rkDdFont.sub-font-dd{\n                padding:8px;\n                max-height:min(320px,calc(100vh - 24px));\n                overflow:hidden;\n                gap:6px;\n            }\n            #rkDdFont .rk-font-search{\n                appearance:none;-webkit-appearance:none;\n                width:100%;box-sizing:border-box;\n                padding:8px 10px;border-radius:10px;\n                border:1px solid rgba(200,185,170,.35);\n                background:rgba(255,255,255,.9);\n                font:600 12px/1.2 'Plus Jakarta Sans',sans-serif;\n                color:#32261c;outline:none;\n            }\n            #rkDdFont .rk-font-search:focus{\n                border-color:rgba(249,115,22,.45);\n                box-shadow:0 0 0 2px rgba(249,115,22,.12);\n            }\n            #rkDdFont .rk-font-list{\n                display:flex;flex-direction:column;gap:3px;\n                overflow:auto;max-height:240px;min-height:0;\n            }\n            .rk-cplus-lab{\n                font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;\n                color:rgba(50,38,28,.42);margin:8px 0 4px;\n            }\n            .rk-cplus-lab:first-of-type{margin-top:0;}\n            .rk-sv-panel{\n                position:relative;height:110px;border-radius:12px;cursor:crosshair;\n                border:1px solid rgba(255,255,255,.85);\n                box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 1px 3px rgba(120,90,60,.1);\n                touch-action:none;overflow:hidden;\n            }\n            .rk-sv-thumb{\n                position:absolute;width:14px;height:14px;margin:-7px 0 0 -7px;\n                border-radius:999px;pointer-events:none;\n                border:2px solid #fff;box-shadow:0 1px 4px rgba(40,28,18,.35);\n                left:92%;top:44%;\n            }\n            .rk-sv-panel.is-dragging .rk-sv-thumb{transition:none;}\n            .rk-blank-line.is-hidden{display:none!important;}\n        `;
+    const e = `\n            .ranking-preview-container{\n                position:relative !important;\n                overflow:visible !important;\n                padding:14px 12px 16px !important;\n                container-type:inline-size;\n                container-name:rk-phone;\n            }\n            .ranking-preview-container .ranking-list{\n                display:flex !important;\n                flex-direction:column !important;\n                gap:10px !important;\n                margin:6px 0 0 0 !important;\n                flex:0 0 auto !important;\n                flex-shrink:0 !important;\n                overflow:visible !important;\n            }\n            .ranking-preview-container .ranked-item{\n                flex:0 0 auto !important;\n                flex-shrink:0 !important;\n                line-height:1.2 !important;\n                min-height:1.2em !important;\n                margin:0 !important;\n                gap:6px !important;\n                overflow:visible !important;\n                font-size:clamp(22px, 9.2cqi, 38px);\n                font-family:'Luckiest Guy', cursive;\n            }\n            .ranking-preview-container .title,\n            .ranking-preview-container h1.title{\n                font-size:clamp(28px, 11cqi, 40px) !important;\n                line-height:1.12 !important;\n                padding-top:0 !important;\n                margin-top:0 !important;\n                overflow:visible !important;\n                max-width:calc(100% - 8px) !important;\n            }\n            .ranking-preview-container .rank-title,\n            .ranking-preview-container .rank-number{\n                font-size:inherit;\n                font-family:inherit;\n            }\n            .ranking-preview-container .rank-title.rk-sized,\n            .ranking-preview-container .rank-number.rk-sized{\n            }\n            .ranking-preview-container .ranking-editor-zone-header{\n                flex:0 0 auto !important;\n                flex-shrink:0 !important;\n                padding:0 4px 4px !important;\n            }\n            .ranking-preview-container [data-template-element-id]{\n                position:relative;display:inline-block;\n                cursor:var(--solis-preview-cursor, url('/style/cursor.svg?v=3') 4 4, crosshair);\n                transition:none!important;\n                overflow:visible !important;\n            }\n            .ranking-preview-container h1.title,\n            .ranking-preview-container h1{\n                white-space:nowrap!important;\n                max-width:100%;\n            }\n            .ranking-preview-container [data-template-element-id="title_ranking"],\n            .ranking-preview-container [data-template-element-id="title_funniest"]{\n                white-space:nowrap!important;\n            }\n            .ranking-preview-container .ranking-editor-zone-header,\n            .ranking-preview-container .ranking-editor-zone-ranks{\n                width:fit-content;max-width:100%;\n                overflow:visible !important;\n            }\n            .ranking-preview-container .ranking-editor-zone-header{\n                display:flex !important;\n                flex-direction:column !important;\n                align-items:center !important;\n                justify-content:flex-start !important;\n                gap:0;\n                margin:0 auto !important;\n                padding:2px 4px 0;\n                text-align:center;\n                position:relative;\n                z-index:6;\n                flex-shrink:0;\n                width:100% !important;\n                max-width:100% !important;\n                box-sizing:border-box;\n            }\n            .ranking-preview-container .ranking-editor-zone-header > h1.title,\n            .ranking-preview-container .ranking-editor-zone-header > h1{\n                display:block !important;\n                width:fit-content !important;\n                max-width:100% !important;\n                margin:0 auto 2px !important;\n                padding:0 !important;\n                text-align:center;\n                position:relative;\n                z-index:7;\n            }\n            .ranking-preview-container [data-template-element-id="title_channel"]{\n                display:block !important;\n                position:relative !important;\n                z-index:7;\n                width:fit-content !important;\n                max-width:calc(100% - 24px) !important;\n                margin:2px auto 8px auto !important;\n                font-size:clamp(20px, 8.5cqi, 34px) !important;\n                padding:0 !important;\n                text-align:center !important;\n                box-sizing:border-box;\n                white-space:nowrap !important;\n                overflow:visible !important;\n                overflow-wrap:normal !important;\n                word-break:normal !important;\n                float:none !important;\n                inset:auto !important;\n                top:auto !important;\n                left:auto !important;\n                right:auto !important;\n                bottom:auto !important;\n                transform:none !important;\n            }\n            .ranking-preview-container .ranking-editor-zone-member{\n                position:relative;z-index:1;\n            }\n            .ranking-preview-container .sub-resize-handle{\n                position:absolute;width:18px;height:18px;\n                background:rgba(249,115,22,.98);border:2.5px solid #fff;border-radius:50%;\n                cursor:var(--solis-preview-cursor, url('/style/cursor.svg?v=3') 4 4, crosshair)!important;\n                box-shadow:0 2px 10px rgba(194,65,12,.4);\n                bottom:0;right:0;\n                transform:translate(35%,35%);\n                z-index:120;\n                pointer-events:none;display:none;\n                opacity:0;visibility:hidden;\n                touch-action:none;\n            }\n            .ranking-preview-container .sub-resize-handle::after{\n                content:'';position:absolute;inset:-10px -12px -12px -10px;border-radius:50%;\n                cursor:var(--solis-preview-cursor, url('/style/cursor.svg?v=3') 4 4, crosshair)!important;\n            }\n            .ranking-preview-container .ranking-editor-selected > .sub-resize-handle,\n            .ranking-preview-container .ranking-editor-resize-anchor > .sub-resize-handle,\n            .ranking-preview-container .ranking-editor-zone-selected > .sub-resize-handle{\n                display:block;pointer-events:all;\n                opacity:1;visibility:visible;\n            }\n            .ranking-preview-container .ranking-editor-selected > .sub-resize-handle:hover,\n            .ranking-preview-container .ranking-editor-resize-anchor > .sub-resize-handle:hover,\n            .ranking-preview-container .ranking-editor-zone-selected > .sub-resize-handle:hover{\n                transform:translate(40%,40%) scale(1.15);\n            }\n            .ranking-editor-text{cursor:var(--solis-preview-cursor, url('/style/cursor.svg?v=3') 4 4, crosshair);}\n            .ranking-preview-container .rk-number-locked,\n            .ranking-preview-container [data-template-element-id$="_number"]{\n                -webkit-user-modify:read-only;\n                user-select:none;\n                caret-color:transparent;\n                touch-action:none;\n            }\n            .ranking-preview-container .ranking-editor-zone-ranks{\n                touch-action:none;\n            }\n            .ranking-editor-text,.ranking-editor-zone{\n                transition:none!important;\n                box-shadow:none!important;\n            }\n            .ranking-editor-zone{\n                position:relative;\n                border-radius:10px;\n            }\n            .ranking-preview-container [data-template-element-id].ranking-editor-selected{\n                position:relative;\n                z-index:6;\n                isolation:isolate;\n                box-shadow:none!important;\n            }\n            .ranking-preview-container [data-template-element-id].ranking-editor-selected::before{\n                content:'';\n                position:absolute;\n                inset:-5px -4px;\n                border-radius:8px;\n                border:1.5px solid #f97316;\n                background:transparent;\n                box-shadow:\n                    0 0 0 3px rgba(249,115,22,.32),\n                    0 0 14px rgba(249,115,22,.28);\n                pointer-events:none;\n                z-index:0;\n                animation:none;\n            }\n            .ranking-preview-container [data-template-element-id].ranking-editor-selected::after{\n                content:none;\n                display:none;\n            }\n            .ranking-preview-container .rank-number.ranking-editor-selected::before{\n                inset:-3px -2px !important;\n                border-radius:5px;\n            }\n            .ranking-preview-container .rank-number.ranking-editor-selected::after{\n                display:none !important;\n            }\n            .ranking-preview-container .rank-number{\n                display:inline-block !important;\n                width:max-content !important;\n                max-width:none !important;\n                margin-right:0.15em !important;\n                padding:0 !important;\n                letter-spacing:0 !important;\n                line-height:1.05 !important;\n                box-sizing:content-box !important;\n            }\n            .ranking-preview-container .text-stroke{\n                text-shadow:\n                    2px 0 0 #000, -2px 0 0 #000, 0 2px 0 #000, 0 -2px 0 #000,\n                    1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000 !important;\n            }\n            .ranking-editor-zone-selected{\n                position:relative;\n                z-index:5;\n                isolation:isolate;\n                box-shadow:none!important;\n            }\n            .ranking-editor-zone-selected::before{\n                content:'';\n                position:absolute;\n                inset:-6px -8px;\n                border-radius:12px;\n                border:1.5px solid #f97316;\n                background:transparent;\n                box-shadow:\n                    0 0 0 3px rgba(249,115,22,.28),\n                    0 0 14px rgba(249,115,22,.22);\n                pointer-events:none;\n                z-index:0;\n                animation:none;\n            }\n            .ranking-editor-zone-selected::after{\n                content:none;\n                display:none;\n            }\n            .ranking-editor-zone-selected > *:not(.sub-resize-handle){\n                position:relative;\n                z-index:1;\n            }\n            .ranking-preview-container .sub-guide,\n            .ranking-preview-container .sub-half-line,\n            .ranking-preview-container .rk-half-line,\n            .ranking-preview-container .rk-guide{\n                display:none !important;\n                visibility:hidden !important;\n                opacity:0 !important;\n            }\n            @keyframes rkSelInnerFade{\n                0%,100%{opacity:1;}\n                50%{opacity:.92;}\n            }\n            @keyframes rkSelWhitePulse{\n                0%,100%{opacity:.45;transform:scale(.97);}\n                50%{opacity:.95;transform:scale(1);}\n            }\n            #rkPillMenu{\n                transition:opacity .1s ease,transform .1s ease,visibility .1s!important;\n            }\n            .rk-ghost-stack{\n                position:fixed;z-index:99850;pointer-events:none;\n                display:flex;flex-direction:column;justify-content:center;align-items:flex-end;\n                gap:6px;\n                padding:6px 12px;border-radius:8px;\n                background:rgba(34,197,94,.16);\n                box-shadow:inset 0 0 0 1.5px rgba(34,197,94,.45);\n                width:max-content;height:auto;max-width:min(220px,40vw);\n                overflow:visible;\n                -webkit-user-select:none!important;user-select:none!important;\n                -webkit-user-drag:none;\n            }\n            .rk-ghost-stack .rk-ghost-line{\n                display:block;white-space:nowrap;line-height:1.05;opacity:1!important;\n                background:none!important;padding:0;margin:0;\n                position:static!important;right:auto!important;top:auto!important;\n                transform:none!important;\n                font-weight:700;\n                letter-spacing:-.015em;\n                -webkit-user-select:none!important;user-select:none!important;\n            }\n            .rk-ghost-stack .rk-ghost-title-row{\n                display:flex;flex-direction:row;align-items:baseline;justify-content:flex-end;\n                gap:6px;flex-wrap:nowrap;\n            }\n            .rk-ghost-stack .rk-ghost-title-row .rk-ghost-line{\n                display:inline-block;\n            }\n            .rk-ghost-stack .rk-ghost-channel{\n                text-align:right;\n            }\n            .rk-suggest-remove{\n                position:relative;\n                z-index:6;\n            }\n            .rk-suggest-remove::before{\n                content:'';\n                position:absolute;\n                inset:-6px -8px;\n                border-radius:10px;\n                border:2px solid rgba(239,68,68,.7);\n                background:rgba(239,68,68,.12);\n                box-shadow:0 0 0 1px rgba(239,68,68,.22);\n                pointer-events:none;\n                z-index:0;\n            }\n            .rk-suggest-remove > *{\n                position:relative;\n                z-index:1;\n            }\n            .rk-suggest-receive{\n                position:relative;\n                z-index:6;\n            }\n            .rk-suggest-receive::before{\n                content:'';\n                position:absolute;\n                inset:-6px -8px;\n                border-radius:10px;\n                border:2px solid rgba(239,68,68,.7);\n                background:rgba(239,68,68,.12);\n                box-shadow:0 0 0 1px rgba(239,68,68,.22);\n                pointer-events:none;\n                z-index:0;\n            }\n            .rk-suggest-receive > *{\n                position:relative;\n                z-index:1;\n            }\n            .rk-suggest-actions{\n                position:fixed;z-index:99870;display:flex;gap:2px;align-items:center;\n                padding:3px 4px;border-radius:999px;\n                font-family:'Plus Jakarta Sans',sans-serif;\n                isolation:isolate;\n                background:linear-gradient(\n                    145deg,\n                    rgba(255,255,255,.96) 0%,\n                    rgba(255,255,255,.9) 45%,\n                    rgba(255,252,248,.88) 100%\n                );\n                border:1px solid rgba(255,255,255,.95);\n                border-bottom-color:rgba(200,185,170,.28);\n                border-right-color:rgba(200,185,170,.2);\n                box-shadow:\n                    0 6px 18px rgba(120,90,60,.12),\n                    0 1px 4px rgba(120,90,60,.06),\n                    inset 0 1px 0 rgba(255,255,255,1);\n                backdrop-filter:blur(16px) saturate(140%);\n                -webkit-backdrop-filter:blur(16px) saturate(140%);\n                opacity:0;visibility:hidden;pointer-events:none;\n                transform:none !important;\n                left:0;top:0;\n            }\n            .rk-suggest-actions.open{\n                opacity:1;visibility:visible;pointer-events:auto;\n            }\n            .rk-sa-btn{\n                appearance:none;-webkit-appearance:none;\n                width:28px;height:28px;min-width:28px;border:none;border-radius:999px;\n                display:inline-flex;align-items:center;justify-content:center;\n                cursor:var(--solis-preview-cursor, url('/style/cursor.svg?v=3') 4 4, crosshair);\n                padding:0;box-sizing:border-box;margin:0;\n                font:inherit;\n                transition:background .12s ease,color .12s ease,border-color .12s ease,\n                    box-shadow .12s ease,transform .1s ease;\n            }\n            .rk-sa-btn:active{transform:scale(.95);}\n            .rk-sa-btn svg{display:block;flex-shrink:0;width:20px;height:20px;}\n            .rk-sa-accept{\n                background:linear-gradient(145deg,#34d399 0%,#16a34a 100%);\n                color:#ffffff !important;\n                border:1px solid rgba(21,128,61,.35);\n                box-shadow:\n                    inset 0 1px 0 rgba(255,255,255,.35),\n                    0 1px 3px rgba(22,163,74,.25);\n            }\n            .rk-sa-accept:hover{\n                background:linear-gradient(145deg,#22c55e 0%,#15803d 100%);\n                color:#ffffff !important;\n                border-color:rgba(21,128,61,.5);\n            }\n            .rk-sa-decline{\n                background:linear-gradient(145deg,rgba(255,255,255,.75),rgba(255,255,255,.4));\n                border:1px solid rgba(200,185,170,.35);\n                color:rgba(50,38,28,.72);\n                box-shadow:inset 0 1px 0 rgba(255,255,255,.9);\n            }\n            .rk-sa-decline:hover{\n                background:linear-gradient(145deg,rgba(254,226,226,.9),rgba(254,202,202,.55));\n                border-color:rgba(254,202,202,.7);\n                color:#ef4444;\n            }\n            .rk-top-line{align-items:flex-start;flex-direction:column;gap:8px;}\n            .rk-top-line .sub-clabel{flex:none;}\n            .rk-top-modes{\n                display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;width:100%;\n            }\n            .rk-top-mode{\n                appearance:none;cursor:var(--solis-preview-cursor, url('/style/cursor.svg?v=3') 4 4, crosshair);margin:0;\n                border:1.5px solid rgba(200,185,170,.4);\n                background:linear-gradient(145deg,rgba(255,255,255,.85),rgba(255,255,255,.45));\n                border-radius:10px;\n                padding:9px 6px;\n                font-family:'Plus Jakarta Sans',sans-serif;\n                font-size:11.5px;font-weight:700;letter-spacing:-.01em;\n                color:rgba(50,38,28,.78);\n                transition:border-color .12s ease,background .12s ease,color .12s ease,box-shadow .12s ease;\n            }\n            .rk-top-mode:hover{\n                border-color:rgba(249,115,22,.45);\n                color:#9a3412;\n                box-shadow:0 0 0 1px rgba(249,115,22,.12);\n            }\n            .rk-top-mode.on{\n                border-color:rgba(249,115,22,.55);\n                background:linear-gradient(145deg,rgba(255,237,213,.95),rgba(254,215,170,.55));\n                color:#9a3412;\n                box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 0 0 1px rgba(249,115,22,.15);\n            }\n            .ranking-preview-container{\n                position:relative !important;\n            }\n            .ranking-preview-container .rk-top-panel{\n                position:absolute;left:0;right:0;top:0;z-index:1;\n                height:25%;pointer-events:none;overflow:hidden;\n                background:#000;\n                margin:0;width:100%;border-radius:0;\n                box-sizing:border-box;\n            }\n            .ranking-preview-container .rk-top-handle{\n                position:absolute;left:0;right:0;bottom:0;height:14px;\n                cursor:ns-resize;pointer-events:auto;z-index:3;\n                background:linear-gradient(180deg,transparent,rgba(255,255,255,.18));\n            }\n            .ranking-preview-container .rk-top-handle::after{\n                content:'';position:absolute;left:50%;bottom:4px;\n                width:36px;height:3px;border-radius:999px;\n                transform:translateX(-50%);\n                background:rgba(255,255,255,.55);\n            }\n            .ranking-preview-container .rk-top-panel[hidden]{display:none!important;}\n            .ranking-preview-container .rk-top-panel.mode-blank{background:#000;}\n            .ranking-preview-container .rk-top-panel.mode-blur{\n                background:rgba(8,8,10,.2);\n                backdrop-filter:none;\n                -webkit-backdrop-filter:none;\n            }\n            .ranking-preview-container .rk-top-panel .rk-top-blur-vid{\n                position:absolute;inset:-50%;width:200%;height:200%;\n                object-fit:cover;object-position:center top;\n                filter:blur(36px) saturate(1.45) brightness(1.12) contrast(1.06);\n                -webkit-filter:blur(36px) saturate(1.45) brightness(1.12) contrast(1.06);\n                transform:scale(1.2);pointer-events:none;opacity:0;z-index:0;\n                transition:opacity .18s ease;\n            }\n            .ranking-preview-container .rk-top-panel.mode-blur .rk-top-blur-vid{opacity:1;}\n            .ranking-preview-container .rk-top-panel.mode-blur.has-blur-src{\n                background:transparent;\n            }\n            .ranking-preview-container .rk-top-panel.mode-blur::after{\n                content:'';position:absolute;inset:0;z-index:1;pointer-events:none;\n                background:\n                    linear-gradient(180deg,rgba(0,0,0,.12),rgba(0,0,0,.28));\n            }\n            .rk-top-line.is-hidden{display:none!important;}\n            .ranking-preview-container.has-rk-top > .ranking-editor-zone-header,\n            .ranking-preview-container.has-rk-top > .ranking-editor-zone-ranks,\n            .ranking-preview-container.has-rk-top > .ranking-list{\n                position:relative;z-index:6;\n            }\n            .ranking-preview-container.has-rk-top [data-template-element-id^="title_"],\n            .ranking-preview-container.has-rk-top h1.title,\n            .ranking-preview-container.has-rk-top .ranking-editor-zone-header{\n                position:relative;z-index:7;\n            }\n            .ranking-preview-container .ranking-editor-zone-ranks{\n                cursor:ns-resize;\n                will-change:transform;\n                touch-action:none;\n            }\n            .ranking-preview-container .ranking-editor-zone-ranks [data-template-element-id],\n            .ranking-preview-container .ranking-editor-zone-ranks .ranking-editor-text{\n                cursor:ns-resize;\n                touch-action:none;\n                pointer-events:auto;\n            }\n            .ranking-preview-container.rk-stack-dragging,\n            .ranking-preview-container.rk-stack-dragging .ranking-editor-zone-ranks,\n            .ranking-preview-container.rk-stack-dragging .ranking-editor-zone-ranks [data-template-element-id]{\n                cursor:grabbing !important;\n                transition:none !important;\n            }\n            .ranking-preview-container.rk-stack-settle .ranking-editor-zone-ranks{\n                transition:transform .18s ease !important;\n            }\n            .ranking-preview-container .ranking-editor-zone-ranks{\n                transform:translateY(var(--rk-oy, 0px));\n            }\n            .ranking-preview-container [data-template-element-id="title_ranking"],\n            .ranking-preview-container [data-template-element-id="title_funniest"]{\n                font-size:inherit;\n                display:inline-block !important;\n                vertical-align:baseline;\n                max-width:100%;\n            }\n            .ranking-preview-container [data-template-element-id="title_channel"]{\n                max-width:calc(100% - 16px)!important;\n            }\n            .ranking-preview-container h1.title,\n            .ranking-preview-container h1{\n                max-width:100% !important;\n                box-sizing:border-box !important;\n                overflow:visible !important;\n            }\n            .ranking-preview-container .ranking-editor-zone-header{\n                max-width:100% !important;\n                box-sizing:border-box !important;\n                overflow:visible !important;\n            }\n            .ranking-preview-container [data-template-element-id].rk-sized{\n                line-height:1.1;\n            }\n            #templateVideoPreview.preview-placeholder .ranking-preview-container{\n                max-width:100% !important;\n                max-height:100% !important;\n                overflow:hidden !important;\n            }\n            #templateVideoPreview.preview-placeholder .ranking-preview-container .ranking-editor-zone-header,\n            #templateVideoPreview.preview-placeholder .ranking-preview-container .ranking-editor-zone-ranks,\n            #templateVideoPreview.preview-placeholder .ranking-preview-container [data-template-element-id].ranking-editor-selected,\n            #templateVideoPreview.preview-placeholder .ranking-preview-container .ranking-editor-zone-selected,\n            #templateVideoPreview.preview-placeholder .ranking-preview-container .ranking-editor-resize-anchor{\n                overflow:visible !important;\n            }\n            #templateVideoPreview.preview-placeholder .ranking-preview-container h1.title,\n            #templateVideoPreview.preview-placeholder .ranking-preview-container [data-template-element-id^="title_"]{\n                overflow:visible !important;\n                text-overflow:clip !important;\n            }\n            #rkDdFont.sub-font-dd{\n                padding:8px;\n                min-width:200px;\n                max-width:min(240px,calc(100vw - 24px));\n                max-height:min(320px,calc(100vh - 24px));\n                overflow:auto;\n                gap:3px;\n            }\n            #rkDdFont .rk-font-search,\n            #rkDdFont .sub-fcheck{\n                display:none !important;\n            }\n            .rk-cplus-lab{\n                font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;\n                color:rgba(50,38,28,.42);margin:8px 0 4px;\n            }\n            .rk-cplus-lab:first-of-type{margin-top:0;}\n            .rk-sv-panel{\n                position:relative;height:110px;border-radius:12px;cursor:crosshair;\n                border:1px solid rgba(255,255,255,.85);\n                box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 1px 3px rgba(120,90,60,.1);\n                touch-action:none;overflow:hidden;\n            }\n            .rk-sv-thumb{\n                position:absolute;width:14px;height:14px;margin:-7px 0 0 -7px;\n                border-radius:999px;pointer-events:none;\n                border:2px solid #fff;box-shadow:0 1px 4px rgba(40,28,18,.35);\n                left:92%;top:44%;\n            }\n            .rk-sv-panel.is-dragging .rk-sv-thumb{transition:none;}\n            .rk-blank-line.is-hidden{display:none!important;}\n        `;
     let t = document.getElementById("rk-pill-styles");
     if (!t) {
       t = document.createElement("style");
@@ -908,7 +900,7 @@
   function syncBlankBgVisibility() {
     const e = document.getElementById("rkBlankLine");
     if (!e) return;
-    const t = O != null ? O : getRankingLayout().top_panel || "none";
+    const t = q != null ? q : getRankingLayout().top_panel || "none";
     const n = t === "blank" && selectionAllowsTopBg();
     e.classList.toggle("is-hidden", !n);
     e.setAttribute("aria-hidden", n ? "false" : "true");
@@ -1278,7 +1270,7 @@
       ...t,
       ...e
     };
-    O = null;
+    q = null;
     storeRankingLayout(n);
     applyRankingTopPanel(n);
     applyStackOffset(n);
@@ -1503,7 +1495,7 @@
     applyStackOffset(e);
   }
   function syncTopModeButtons() {
-    const e = O != null ? O : getRankingLayout().top_panel || "none";
+    const e = q != null ? q : getRankingLayout().top_panel || "none";
     document.querySelectorAll("#rkTopModes .rk-top-mode").forEach(t => {
       t.classList.toggle("on", (t.dataset.top || "none") === e);
     });
@@ -1512,7 +1504,7 @@
   }
   function previewTopMode(e) {
     const t = e === "blank" || e === "blank_blur" ? e : "none";
-    O = t;
+    q = t;
     applyRankingTopPanel({
       ...getRankingLayout(),
       top_panel: t
@@ -1520,8 +1512,8 @@
     syncTopModeButtons();
   }
   function resetTopModePreview() {
-    if (O == null) return;
-    O = null;
+    if (q == null) return;
+    q = null;
     applyRankingTopPanel(getRankingLayout());
     syncTopModeButtons();
   }
@@ -1534,7 +1526,7 @@
       if (!t) return;
       e.preventDefault();
       e.stopPropagation();
-      O = null;
+      q = null;
       const n = t.dataset.top || "none";
       const i = {
         top_panel: n
@@ -1594,13 +1586,13 @@
       e.preventDefault();
       const n = resolveApplyTargets();
       if (!n.length) return;
-      R = true;
+      L = true;
       let i = true;
       const r = e.clientX;
       const o = e.clientY;
       const a = e.pointerId;
       const s = V === "group-header" ? getPrimaryHeaderEl() || n[0] : W && document.contains(W) ? W : n[0];
-      const l = L != null ? L : getEffectiveFontSize(s);
+      const l = R != null ? R : getEffectiveFontSize(s);
       const c = V === "group-header";
       const d = V === "group-ranks";
       const p = c || V !== "single" && n.every(e => isHeaderEl(e));
@@ -1616,14 +1608,14 @@
         if (Math.abs(s - l) < 1 && Math.abs(t) < 2) return;
         b = true;
         if (c || p) {
-          L = applyHeaderBlockSize(s, {
+          R = applyHeaderBlockSize(s, {
             resizing: true
           });
           syncTopPanelToHeader({
             liveOnly: true
           });
         } else if (d) {
-          L = applyRankBlockSize(s, {
+          R = applyRankBlockSize(s, {
             resizing: true
           });
         } else {
@@ -1638,7 +1630,7 @@
               if (e) setElementFontSize(e, s);
             }
           });
-          L = e;
+          R = e;
           if (n.every(e => isHeaderEl(e))) {
             syncTopPanelToHeader({
               liveOnly: true
@@ -1659,7 +1651,7 @@
           syncTopPanelToHeader();
           const e = getRankingRoot();
           if (e && !headerLineFits(e)) {
-            const e = Math.max(le, L != null ? L : l);
+            const e = Math.max(le, R != null ? R : l);
             applyHeaderBlockSize(e, {
               resizing: false
             });
@@ -1668,14 +1660,14 @@
         if (d) {
           const e = getRankingRoot();
           if (e && !ranksListFits(e)) {
-            applyRankBlockSize(L != null ? L : l, {
+            applyRankBlockSize(R != null ? R : l, {
               resizing: false
             });
           }
         } else if (n.some(e => isRankEl(e))) {
           const e = getRankingRoot();
-          if (e && !ranksListFits(e) && L != null) {
-            let t = L;
+          if (e && !ranksListFits(e) && R != null) {
+            let t = R;
             let i = 40;
             while (i-- > 0 && t > ce && !ranksListFits(e)) {
               t -= 1;
@@ -1689,14 +1681,14 @@
                 }
               });
             }
-            L = t;
+            R = t;
           }
         }
         if (window.rankingCustomizer) window.rankingCustomizer.syncFromDOM();
         markLibraryRankingDirty();
         if (b) markRankPointerClickSuppress();
-        if (L != null && Math.abs(L - l) >= 1) {
-          scheduleResizeSuggest(n, l, L);
+        if (R != null && Math.abs(R - l) >= 1) {
+          scheduleResizeSuggest(n, l, R);
         }
         if (y.size) {
           showMenu();
@@ -1779,11 +1771,11 @@
     const o = getEffectiveFontSize(e);
     if (r && r !== "inherit" && !r.includes("clamp")) {
       const e = Math.round(parseFloat(r));
-      L = Number.isFinite(e) ? e : o;
-      R = true;
+      R = Number.isFinite(e) ? e : o;
+      L = true;
     } else {
-      L = o;
-      R = false;
+      R = o;
+      L = false;
     }
   }
   function rgbToHex(e) {
@@ -1812,7 +1804,7 @@
     }
     const n = previewPxFromBurn(ue);
     const i = previewPxFromBurn(pe);
-    const r = previewPxFromBurn(fe);
+    const r = previewPxFromBurn(ge);
     applyHeaderBlockSize(n);
     applyRankBlockSize(i, {
       titlePx: r
@@ -2215,10 +2207,10 @@
     const r = t.length > 1 && (n || i);
     if (r) {
       const i = n ? getPrimaryHeaderEl() || t.find(e => !isChannelEl(e)) || t[0] : t[0];
-      const r = R && L != null ? L : getEffectiveFontSize(i);
+      const r = L && R != null ? R : getEffectiveFontSize(i);
       t.forEach(t => setElementFont(t, e));
-      L = applyBoundedGroupSize(t, r);
-      R = true;
+      R = applyBoundedGroupSize(t, r);
+      L = true;
       return;
     }
     t.forEach(t => {
@@ -2228,8 +2220,8 @@
     });
     const o = t[0];
     if (o) {
-      L = getEffectiveFontSize(o);
-      R = true;
+      R = getEffectiveFontSize(o);
+      L = true;
     }
   }
   function setElementShadow(e, t) {
@@ -2259,7 +2251,7 @@
     const t = resolveApplyTargets();
     t.forEach(e => {
       if (M) setElementFont(e, b);
-      if (R && L) setElementFontSize(e, L);
+      if (L && R) setElementFontSize(e, R);
       if (F) e.style.color = w;
       if (P) setElementShadow(e, x);
     });
@@ -2317,13 +2309,13 @@
     }
   }
   function previewFont(e) {
-    if (q || !y.size) return;
+    if (G || !y.size) return;
     const t = resolveApplyTargets();
     beginFontPreviewSession(t);
     t.forEach(t => paintFontDom(t, e));
   }
   function resetFontPreview() {
-    if (q || !I) return;
+    if (G || !I) return;
     I = false;
     Y.forEach(e => restoreSnapshot(e));
     Y = [];
@@ -2861,7 +2853,7 @@
       x = e.shadow;
     }
     if (e.size != null) {
-      R = true;
+      L = true;
       const t = e.fromGroup || editedSizeGroup(i);
       if (e.comfortable) {
         i.forEach(n => {
@@ -2869,12 +2861,12 @@
           setElementFontSize(n, i);
         });
         const n = i.find(e => isHeaderEl(e) && !isChannelEl(e)) || i.find(isRankEl) || i[0];
-        L = n ? getEffectiveFontSize(n) : e.size;
+        R = n ? getEffectiveFontSize(n) : e.size;
       } else if (i.every(e => isRankEl(e)) || i.every(e => isHeaderEl(e))) {
-        L = applyBoundedGroupSize(i, e.size);
+        R = applyBoundedGroupSize(i, e.size);
       } else {
         i.forEach(t => setElementFontSize(t, e.size));
-        L = e.size;
+        R = e.size;
       }
     }
     clearSuggest();
@@ -3154,13 +3146,10 @@
       if (!t) {
         I = false;
         y.forEach(e => snapshotEl(e));
-        const t = p.querySelector("#rkFontSearch");
-        if (t) t.value = "";
-        buildFontList("");
+        buildFontList();
         openDD(p, e.currentTarget);
         syncFontDdHighlight(b);
         e.currentTarget.classList.add("sub-active");
-        requestAnimationFrame(() => t?.focus?.());
       } else {
         resetFontPreview();
       }
@@ -3266,7 +3255,7 @@
     F = false;
     C = false;
     P = false;
-    R = false;
+    L = false;
     syncColorSwatches();
     syncFillSwatches();
     syncTopBgVisibility();

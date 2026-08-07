@@ -9788,10 +9788,13 @@ class ClipsStudio {
         const e = t === "splitscreen" && typeof window.getSplitscreenConfig === "function" ? {
           secondaryType: window.getSplitscreenConfig().splitscreen_secondary_type
         } : {};
-        const n = y?.message || (y?.queue?.queue_status === "waiting" ? "Queued — waiting for an open slot..." : "Queued — starting shortly...");
-        o.startGeneration(y.project_id, n, t, e);
+        const n = y?.queue?.queue_status;
+        const i = Number(y?.queue?.users_ahead);
+        const r = n === "waiting" || Number.isFinite(i) && i > 0;
+        const s = y?.message || (r ? "Queued — waiting for an open slot..." : "Starting generation...");
+        o.startGeneration(y.project_id, s, t, e);
         if (y?.queue) {
-          o.updateProgress(y.project_id, 1, n, true, y.queue);
+          o.updateProgress(y.project_id, r ? 1 : 3, s, true, y.queue);
         }
       } else {
         console.warn("[GENERATION] Spinner not initialized! Trying fallback wrapper...");

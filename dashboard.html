@@ -1890,7 +1890,7 @@
        <div class="main-content">
             <div class="dashboard-container" id="dashboardContainer">
                 <div class="dashboard-header">
-                    <h1 class="dashboard-title"><img src="/assets/SolisAI-analytics-dark.png" alt=""></h1>
+                    <h1 class="dashboard-title">Analytics</h1>
                 </div>
 
         <div class="analytics-lock-overlay" id="analyticsLockOverlay">
@@ -1999,7 +1999,7 @@
 
 <div class="portal-container" id="portalContainer">
     <div class="portal-header">
-        <h1 class="portal-title"><img src="/assets/+.png" alt=""></h1>
+        <h1 class="portal-title">Solis</h1>
     </div>
 
     <div class="portal-content-grid">
@@ -2445,6 +2445,15 @@
                             nf_render();
                         } catch (error) {
                             console.error('[ERROR] Failed to load news feed:', error);
+                            const avatar = document.getElementById('header-avatar');
+                            if (avatar) {
+                                avatar.removeAttribute('src');
+                                avatar.style.display = 'none';
+                            }
+                            const author = document.getElementById('header-author');
+                            if (author) author.textContent = '';
+                            const timeEl = document.getElementById('header-time');
+                            if (timeEl) timeEl.textContent = '';
                             nf_mainText.textContent = 'Error loading feed. Please refresh.';
                         }
                     }
@@ -3282,7 +3291,7 @@
 <div class="clips-container" id="clipsContainer">
     <div class="clips-header">
         <div class="clips-header-left">
-            <h1 class="clips-title"><img src="/assets/solis-clips.png" alt=""></h1>
+            <h1 class="clips-title">Clips</h1>
         </div>
         <div class="clips-header-right">
             <button class="clips-btn-primary" id="headerNewClipBtn" type="button"

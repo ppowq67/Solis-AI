@@ -111,29 +111,22 @@
 }
 
 .portal-title {
-    font-size: 3rem;
-    font-weight: 900;
-    margin-bottom: 0;
-    color: white;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 800;
+    margin: 0 0 0.35rem;
+    color: #1a1f2e;
     line-height: 1.1;
-    letter-spacing: -1px;
+    letter-spacing: -0.04em;
     position: relative;
 }
 
-.portal-title img {
-    width: 300px;
-    height: auto;
-    position: absolute;
-    top: -50px;
-    left: -30px;
+[data-theme="dark"] .portal-title {
+    color: #f4f6fb;
 }
 
 .portal-subtitle {
     display: none;
-}
-
-[data-theme="dark"] .portal-title img {
-    content: url('/frontend/assets/SolisAI-portal-dark.png');
 }
 
 .NEWfeature{
@@ -2304,12 +2297,6 @@
 
     .portal-title {
         font-size: 2rem;
-    }
-
-    .portal-title img {
-        width: 200px;
-        top: -35px;
-        left: -15px;
     }
 
     .quick-actions-grid {

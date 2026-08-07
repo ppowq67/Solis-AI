@@ -639,7 +639,7 @@
     if (!e && isCacheFresh()) return l;
     if (!e && c) return c;
     c = (async () => {
-      const e = typeof window.apiUrl === "function" ? window.apiUrl("/api/tier/info") : `${window.API_BASE_URL || "/api"}/tier/info`;
+      const e = typeof window.apiUrl === "function" ? window.apiUrl("/api/tier/info") : `${window.API_BASE_URL || "https://api.solisai.video/api"}/tier/info`;
       const t = typeof getAuthHeaders === "function" ? getAuthHeaders() : {
         "Content-Type": "application/json"
       };

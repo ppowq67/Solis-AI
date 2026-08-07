@@ -517,6 +517,17 @@
     transition: border-color 0.3s ease;
 }
 
+.nf-header-avatar:not([src]),
+.nf-header-avatar[src=""],
+.nf-header-avatar[src="about:blank"] {
+    display: none;
+}
+
+.nf-header-avatar-wrapper:has(.nf-header-avatar:not([src])),
+.nf-header-avatar-wrapper:has(.nf-header-avatar[src=""]) {
+    display: none;
+}
+
 .nf-header-trigger:hover .nf-header-avatar {
     border-color: #f3f4f6;
 }

@@ -176,21 +176,18 @@ body {
 }
 
 .dashboard-title {
-    font-size: 3.5rem;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-size: clamp(2rem, 4vw, 2.75rem);
     font-weight: 800;
-    margin-bottom: 0;
-    color: #1a1a1a;
-    line-height: 1.2;
-    letter-spacing: -1.5px;
+    margin: 0 0 0.35rem;
+    color: #1a1f2e;
+    line-height: 1.1;
+    letter-spacing: -0.04em;
     position: relative;
 }
 
-.dashboard-title img {
-    width: 280px;
-    height: auto;
-    position: absolute;
-    top: -80px;
-    left: -20px;
+[data-theme="dark"] .dashboard-title {
+    color: #f4f6fb;
 }
 
 .dashboard-subtitle {
@@ -1026,12 +1023,6 @@ body {
     .dashboard-title {
         font-size: 2rem;
         letter-spacing: -1px;
-    }
-
-    .dashboard-title img {
-        width: 200px;
-        top: -55px;
-        left: -10px;
     }
 
     .dashboard-subtitle {

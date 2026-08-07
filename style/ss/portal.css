@@ -100,25 +100,30 @@
 }
 
 .portal-header {
-    margin-bottom: 40px;
-    padding-bottom: 0;
-    border-bottom: none;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    position: relative;
-    z-index: 1;
+    margin: 0;
+    padding: 0;
+    border: none;
+    display: block;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: -1;
 }
 
 .portal-title {
     font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
     font-size: clamp(2rem, 4vw, 2.75rem);
     font-weight: 800;
-    margin: 0 0 0.35rem;
+    margin: 0;
     color: #1a1f2e;
     line-height: 1.1;
     letter-spacing: -0.04em;
     position: relative;
+    visibility: hidden;
 }
 
 [data-theme="dark"] .portal-title {

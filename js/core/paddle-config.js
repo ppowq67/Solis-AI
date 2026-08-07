@@ -3,6 +3,8 @@ class PaddleManager {
     this.config = null;
     this.initialized = false;
     this._checkoutInProgress = false;
+    this._lastCheckoutArgs = null;
+    this._customerRetryUsed = false;
   }
   async fetchConfig() {
     try {
@@ -73,21 +75,47 @@ class PaddleManager {
   _originMismatchHint() {
     const e = this._expectedCheckoutOrigin();
     const t = window.location.origin;
-    if (!e || e === t) return "";
+    if (!e || this._originsCompatible(e, t)) return "";
     return `\n\nOrigin mismatch:\n` + `  You are on: ${t}\n` + `  Paddle default payment link should be: ${e}\n` + `Open that exact origin (including host + port), or update Checkout settings.`;
+  }
+  _clearStalePaddleClientState() {
+    try {
+      const kill = e => {
+        if (!e) return;
+        const t = [];
+        for (let n = 0; n < e.length; n++) {
+          const o = e.key(n);
+          if (o && /paddle|pdl_|ctm_/i.test(o)) t.push(o);
+        }
+        t.forEach(t => e.removeItem(t));
+      };
+      kill(window.localStorage);
+      kill(window.sessionStorage);
+    } catch (e) {}
+  }
+  _isMissingCustomerError(e) {
+    const t = String(e?.detail || e?.message || "");
+    return /customer\s+ctm_[a-z0-9]+\s+not found/i.test(t);
   }
   _showCheckoutSetupHelp(e) {
     const t = e?.code || "";
     const n = e?.detail || e?.message || "";
-    const o = this._expectedCheckoutOrigin();
-    const i = this.isSandbox();
-    const r = i ? "https://sandbox-vendors.paddle.com/checkout-settings" : "https://vendors.paddle.com/checkout-settings";
-    const a = t === "transaction_default_checkout_url_not_set" || /default (payment|checkout) (link|url)/i.test(String(n)) || /frame-ancestors/i.test(String(n));
-    if (!a && t && t !== "checkout_error") {
+    const o = this.isSandbox();
+    const i = o ? "https://sandbox-vendors.paddle.com/checkout-settings" : "https://vendors.paddle.com/checkout-settings";
+    if (this._isMissingCustomerError(e)) {
+      alert(`Checkout hit a stale Paddle customer record.\n\n` + `${n}\n\n` + `We cleared local Paddle cache — click your plan again to retry without that customer id.`);
+      return;
+    }
+    const r = t === "transaction_default_checkout_url_not_set" || /default (payment|checkout) (link|url)/i.test(String(n)) || /frame-ancestors/i.test(String(n));
+    if (!r && t && t !== "checkout_error" && t !== "front-end_error") {
       alert(`Checkout failed (${t}).\n\n${n || "See console for details."}` + this._originMismatchHint());
       return;
     }
-    alert(`Paddle checkout cannot open until Default payment link is set (LIVE).\n\n` + `1. Open ${r}\n` + `2. Set Default payment link to exactly:\n   https://www.solisai.video/\n` + `   (approved domain — www is fine; must match how users browse)\n` + `3. Save, hard-refresh, try again.\n\n` + `This is a Paddle dashboard setting, not a card issue.` + this._originMismatchHint());
+    if (r || !n) {
+      alert(`Paddle checkout cannot open until Default payment link is set (LIVE).\n\n` + `1. Open ${i}\n` + `2. Set Default payment link to exactly:\n   https://www.solisai.video/\n` + `3. Save, hard-refresh, try again.\n\n` + `This is a Paddle dashboard setting, not a card issue.` + this._originMismatchHint());
+      return;
+    }
+    alert(`Checkout failed.\n\n${n}`);
   }
   _handlePaddleEvent(e) {
     const t = e?.name || "";
@@ -99,13 +127,29 @@ class PaddleManager {
     } else if (t === "checkout.closed" && !window.paymentSucceeded) {
       window.dispatchEvent(new CustomEvent("paddle:checkoutClosed"));
     } else if (t === "checkout.error") {
-      const t = e?.data?.error || e?.data || {};
+      const t = e?.data?.error || e?.data || e || {};
       const n = !t || typeof t === "object" && !t.code && !t.detail && !t.message && !Object.keys(t).length;
       try {
         console.error("Paddle checkout.error:", JSON.stringify(t, null, 2));
         console.error("Paddle checkout.error event:", e);
       } catch (n) {
         console.error("Paddle checkout.error:", t, e);
+      }
+      if (this._isMissingCustomerError(t) && !this._customerRetryUsed && this._lastCheckoutArgs) {
+        this._customerRetryUsed = true;
+        this._clearStalePaddleClientState();
+        const {priceId: e, planName: t, session: n} = this._lastCheckoutArgs;
+        const o = {
+          ...n || {}
+        };
+        delete o.email;
+        delete o.customerId;
+        this._checkoutInProgress = false;
+        console.warn("[Paddle] Retrying checkout without customer (stale ctm_ cleared)");
+        this.openCheckout(e, t, o).catch(e => {
+          console.error("[Paddle] Retry failed:", e);
+        });
+        return;
       }
       window.dispatchEvent(new CustomEvent("paddle:checkoutError", {
         detail: t
@@ -158,8 +202,8 @@ class PaddleManager {
     const o = this._expectedCheckoutOrigin();
     const i = this._allowedCheckoutOrigins();
     const r = window.location.origin;
-    const a = i.some(e => this._originsCompatible(e, r));
-    if (!a && o && !this._originsCompatible(o, r)) {
+    const s = i.some(e => this._originsCompatible(e, r));
+    if (!s && o && !this._originsCompatible(o, r)) {
       console.error(`Paddle checkout origin mismatch: page=${r} expected=${o}`);
       this._showCheckoutSetupHelp({
         code: "transaction_default_checkout_url_not_set",
@@ -167,10 +211,17 @@ class PaddleManager {
       });
       throw new Error("Paddle default payment link origin mismatch");
     }
+    this._lastCheckoutArgs = {
+      priceId: e,
+      planName: t,
+      session: {
+        ...n
+      }
+    };
     this._checkoutInProgress = true;
     window.paymentSucceeded = false;
     window.pendingPlanUpgrade = t;
-    const s = {
+    const a = {
       items: [ {
         priceId: e,
         quantity: 1
@@ -185,13 +236,13 @@ class PaddleManager {
         successUrl: `${window.location.origin}/dashboard.html?payment=success&plan=${encodeURIComponent(t)}`
       }
     };
-    if (n.email) {
-      s.customer = {
-        email: n.email
+    if (n.email && !this._customerRetryUsed) {
+      a.customer = {
+        email: String(n.email)
       };
     }
     try {
-      await window.Paddle.Checkout.open(s);
+      await window.Paddle.Checkout.open(a);
       return true;
     } finally {
       setTimeout(() => {

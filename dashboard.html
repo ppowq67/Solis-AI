@@ -2361,9 +2361,7 @@
                     }
 
                     function nf_authorAvatarUrl(item) {
-                        if (!item) return 'https://api.dicebear.com/7.x/avataaars/svg?seed=solis';
-                        const seed = encodeURIComponent(String(item.user_id || item.handle || item.name || 'solis'));
-                        const fallback = `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`;
+                        if (!item) return null;
                         try {
                             if (typeof resolveAvatarUrl === 'function') {
                                 const resolved = resolveAvatarUrl({
@@ -2374,7 +2372,13 @@
                                 if (resolved) return resolved;
                             }
                         } catch (_) { /* ignore */ }
-                        return item.picture || fallback;
+                        if (item.user_id) {
+                            const origin = (typeof window.apiUrl === 'function')
+                                ? String(window.apiUrl('/')).replace(/\/api\/?$/, '')
+                                : ((window.API_BASE_URL || '').replace(/\/api\/?$/, '') || '');
+                            return `${origin}/api/avatar/${encodeURIComponent(item.user_id)}`;
+                        }
+                        return item.picture || null;
                     }
 
                     function nf_paintAuthorProfile(item) {
@@ -2384,11 +2388,11 @@
                         const handle = item.handle ? (String(item.handle).startsWith('@') ? item.handle : `@${item.handle}`) : '';
 
                         if (nf_headerAvatar) {
-                            nf_headerAvatar.src = avatarUrl;
+                            nf_headerAvatar.src = avatarUrl || '';
                             nf_headerAvatar.alt = name;
                             nf_headerAvatar.onerror = () => {
                                 nf_headerAvatar.onerror = null;
-                                nf_headerAvatar.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(String(item.user_id || name))}`;
+                                nf_headerAvatar.removeAttribute('src');
                             };
                         }
                         if (nf_headerAuthor) nf_headerAuthor.textContent = name;
@@ -2400,11 +2404,11 @@
                         const followersEl = document.getElementById('p-followers');
 
                         if (pAvatar) {
-                            pAvatar.src = avatarUrl;
+                            pAvatar.src = avatarUrl || '';
                             pAvatar.alt = name;
                             pAvatar.onerror = () => {
                                 pAvatar.onerror = null;
-                                pAvatar.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(String(item.user_id || name))}`;
+                                pAvatar.removeAttribute('src');
                             };
                         }
                         if (pAuthor) pAuthor.textContent = name;

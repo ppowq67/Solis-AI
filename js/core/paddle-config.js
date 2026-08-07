@@ -106,6 +106,10 @@ class PaddleManager {
       alert(`Checkout hit a stale Paddle customer record.\n\n` + `${n}\n\n` + `We cleared local Paddle cache — click your plan again to retry without that customer id.`);
       return;
     }
+    if (/price_ids? could not be found|provided price_ids/i.test(String(n))) {
+      alert(`Paddle does not recognize this plan's price ID.\n\n` + `${n}\n\n` + `In https://vendors.paddle.com → Catalog → each product (Basic/Prime/Elite) → Prices,\n` + `copy the real price id (starts with pri_) and set on Railway:\n` + `  PADDLE_PRICE_BASIC / PADDLE_PRICE_PRIME / PADDLE_PRICE_ELITE\n\n` + `Do not reuse product ids (pro_…) as price ids.`);
+      return;
+    }
     const r = t === "transaction_default_checkout_url_not_set" || /default (payment|checkout) (link|url)/i.test(String(n)) || /frame-ancestors/i.test(String(n));
     if (!r && t && t !== "checkout_error" && t !== "front-end_error") {
       alert(`Checkout failed (${t}).\n\n${n || "See console for details."}` + this._originMismatchHint());

@@ -2339,13 +2339,99 @@
                         return { ...base, ...extra };
                     }
 
+                    function nf_sameUserId(a, b) {
+                        const na = Number(a);
+                        const nb = Number(b);
+                        return Number.isFinite(na) && Number.isFinite(nb) && na === nb;
+                    }
+
                     function nf_normalizePost(post) {
                         if (!post) return post;
                         post.likes = Number(post.likes) || 0;
                         post.views = Number(post.views) || 0;
                         post.liked_by_user = !!post.liked_by_user;
                         post.is_following_author = !!post.is_following_author;
+                        post.author_followers = Number(post.author_followers);
+                        if (!Number.isFinite(post.author_followers)) post.author_followers = 0;
+                        post.user_id = post.user_id != null ? Number(post.user_id) : post.user_id;
+                        post.name = post.name || post.handle || 'User';
+                        post.handle = post.handle || '';
+                        post.bio = post.bio || '';
                         return post;
+                    }
+
+                    function nf_authorAvatarUrl(item) {
+                        if (!item) return 'https://api.dicebear.com/7.x/avataaars/svg?seed=solis';
+                        const seed = encodeURIComponent(String(item.user_id || item.handle || item.name || 'solis'));
+                        const fallback = `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`;
+                        try {
+                            if (typeof resolveAvatarUrl === 'function') {
+                                const resolved = resolveAvatarUrl({
+                                    id: item.user_id,
+                                    picture: item.picture,
+                                    avatar: item.picture,
+                                });
+                                if (resolved) return resolved;
+                            }
+                        } catch (_) { /* ignore */ }
+                        return item.picture || fallback;
+                    }
+
+                    function nf_paintAuthorProfile(item) {
+                        if (!item) return;
+                        const avatarUrl = nf_authorAvatarUrl(item);
+                        const name = item.name || item.handle || 'User';
+                        const handle = item.handle ? (String(item.handle).startsWith('@') ? item.handle : `@${item.handle}`) : '';
+
+                        if (nf_headerAvatar) {
+                            nf_headerAvatar.src = avatarUrl;
+                            nf_headerAvatar.alt = name;
+                            nf_headerAvatar.onerror = () => {
+                                nf_headerAvatar.onerror = null;
+                                nf_headerAvatar.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(String(item.user_id || name))}`;
+                            };
+                        }
+                        if (nf_headerAuthor) nf_headerAuthor.textContent = name;
+
+                        const pAvatar = document.getElementById('p-avatar');
+                        const pAuthor = document.getElementById('p-author');
+                        const pHandle = document.getElementById('p-handle');
+                        const bioEl = document.getElementById('p-bio');
+                        const followersEl = document.getElementById('p-followers');
+
+                        if (pAvatar) {
+                            pAvatar.src = avatarUrl;
+                            pAvatar.alt = name;
+                            pAvatar.onerror = () => {
+                                pAvatar.onerror = null;
+                                pAvatar.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(String(item.user_id || name))}`;
+                            };
+                        }
+                        if (pAuthor) pAuthor.textContent = name;
+                        if (pHandle) pHandle.textContent = handle;
+                        if (bioEl) {
+                            const bioText = String(item.bio || '').trim();
+                            bioEl.textContent = bioText;
+                            bioEl.dataset.empty = bioText ? '0' : '1';
+                        }
+                        if (followersEl) {
+                            const n = Number(item.author_followers);
+                            followersEl.textContent = Number.isFinite(n) ? n.toLocaleString() : '0';
+                        }
+                    }
+
+                    function nf_setFollowerCountDisplay(count, forUserId) {
+                        const n = Number(count);
+                        const safe = Number.isFinite(n) ? Math.max(0, n) : 0;
+                        newsFeedData.forEach((post) => {
+                            if (nf_sameUserId(post.user_id, forUserId)) {
+                                post.author_followers = safe;
+                            }
+                        });
+                        const item = newsFeedData[newsFeedIdx];
+                        if (!item || !nf_sameUserId(item.user_id, forUserId)) return;
+                        const el = document.getElementById('p-followers');
+                        if (el) el.textContent = safe.toLocaleString();
                     }
 
                     function nf_applyPostCounts(item, post) {
@@ -2376,26 +2462,10 @@
                         });
                     }
 
-                    function nf_sameUserId(a, b) {
-                        const na = Number(a);
-                        const nb = Number(b);
-                        return Number.isFinite(na) && Number.isFinite(nb) && na === nb;
-                    }
-
                     function nf_canModerateFeed() {
                         if (window.currentUserIsOfficial) return true;
                         const uid = Number(window.currentUser?.id || window.currentUser?.user_id || 0);
                         return uid === 1;
-                    }
-
-                    function nf_setFollowerCountDisplay(count, forUserId) {
-                        const item = newsFeedData[newsFeedIdx];
-                        if (!item || !nf_sameUserId(item.user_id, forUserId)) return;
-                        const n = Number(count);
-                        const safe = Number.isFinite(n) ? Math.max(0, n) : 0;
-                        item.author_followers = safe;
-                        const el = document.getElementById('p-followers');
-                        if (el) el.textContent = safe.toLocaleString();
                     }
 
                     function nf_refreshFollowerCount(userId) {
@@ -2513,7 +2583,7 @@
 
                         try {
                             const headers = typeof getAuthHeaders === 'function' ? getAuthHeaders() : {};
-                            const response = await fetch(`/api/badges/display/${userId}`, {
+                            const response = await fetch(nf_api(`/api/badges/display/${userId}`), {
                                 method: 'GET',
                                 credentials: 'include',
                                 headers
@@ -2745,10 +2815,8 @@
                         if (newsFeedData.length === 0) return;
 
                         const item = newsFeedData[newsFeedIdx];
-
+                        nf_paintAuthorProfile(item);
                         nf_mainText.textContent = item.content;
-                        nf_headerAvatar.src = item.picture || 'https://api.dicebear.com/7.x/avataaars/svg?seed=user';
-                        nf_headerAuthor.textContent = item.name || item.handle || 'User';
                         nf_headerTime.textContent = formatTime(item.created_at);
                         nf_viewCount.textContent = (item.views || 0).toLocaleString();
 
@@ -2768,23 +2836,6 @@
                                 .catch(e => console.warn('View tracking failed:', e));
                         }
 
-                        document.getElementById('p-avatar').src = item.picture || 'https://api.dicebear.com/7.x/avataaars/svg?seed=user';
-                        document.getElementById('p-author').textContent = item.name || item.handle || 'User';
-                        document.getElementById('p-handle').textContent = item.handle ? `@${item.handle}` : '';
-                        const bioEl = document.getElementById('p-bio');
-                        const bioText = String(item.bio || '').trim();
-                        if (bioEl) {
-                            bioEl.textContent = bioText;
-                            bioEl.dataset.empty = bioText ? '0' : '1';
-                        }
-
-                        const followersEl = document.getElementById('p-followers');
-                        if (followersEl) {
-                            const cached = Number(item.author_followers);
-                            followersEl.textContent = Number.isFinite(cached)
-                                ? cached.toLocaleString()
-                                : '…';
-                        }
                         if (item.user_id) {
                             nf_refreshFollowerCount(item.user_id);
                         }
@@ -3062,7 +3113,14 @@
 
                     document.getElementById('header-trigger').onclick = (e) => {
                         e.stopPropagation();
+                        const opening = nf_profilePopover.classList.contains('hidden');
                         nf_profilePopover.classList.toggle('hidden');
+                        if (opening && newsFeedData[newsFeedIdx]) {
+                            const item = newsFeedData[newsFeedIdx];
+                            nf_paintAuthorProfile(item);
+                            nf_setFollowButton(item.is_following_author);
+                            if (item.user_id) nf_refreshFollowerCount(item.user_id);
+                        }
                     };
 
                     document.getElementById('admin-delete-btn').onclick = async () => {
@@ -3139,7 +3197,7 @@
                                                 notifItem.className = 'notif-item unread';
                                                 notifItem.innerHTML = `
                                                     <div class="notif-left">
-                                                        <img src="${data.post.picture || 'https://api.dicebear.com/7.x/avataaars/svg?seed=user'}" class="notif-avatar">
+                                                        <img src="${nf_authorAvatarUrl(data.post)}" class="notif-avatar">
                                                     </div>
                                                     <div class="notif-content">
                                                         <div class="notif-title">${data.post.name || data.post.handle || 'User'} posted</div>

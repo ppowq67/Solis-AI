@@ -697,13 +697,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const b = Math.max(0, Number(g.used ?? 0) || 0);
       setText("stgVideosUsed", b + " / " + h);
       setQuotaFill(document.getElementById("stgVideosFill"), b, h);
-      let E = Math.max(0, Number(p.used) || 0) * 1024 * 1024;
-      let v = Math.max(1, Number(p.total) || 512) * 1024 * 1024;
+      let v = Math.max(0, Number(p.used) || 0) * 1024 * 1024;
+      let E = Math.max(1, Number(p.total) || 512) * 1024 * 1024;
       if (Number(f.plan?.storage_gb) > 0 && (!p.total || p.total <= 0)) {
-        v = Number(f.plan.storage_gb) * 1024 * 1024 * 1024;
+        E = Number(f.plan.storage_gb) * 1024 * 1024 * 1024;
       }
-      setText("stgStorage", formatStoragePair(E, v));
-      setQuotaFill(document.getElementById("stgStorageFill"), E, v);
+      setText("stgStorage", formatStoragePair(v, E));
+      setQuotaFill(document.getElementById("stgStorageFill"), v, E);
       const S = Math.max(0, Number(m.limit ?? f.plan?.videos_per_day ?? 0) || 0);
       const C = Math.max(0, Number(m.used ?? 0) || 0);
       if (S > 0) {
@@ -734,13 +734,13 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       const x = Number(y.limit ?? 0);
       const M = Number(y.used ?? 0);
-      const L = y.remaining;
+      const U = y.remaining;
       if (x > 0) {
         setText("stgMaxEffort", M + " / " + x + " used");
         setQuotaFill(document.getElementById("stgMaxFill"), M, x);
         const e = document.getElementById("stgMaxHint");
         if (e) {
-          const t = Math.max(0, Number(L ?? x - M));
+          const t = Math.max(0, Number(U ?? x - M));
           e.textContent = t > 0 ? t + " Premium Request" + (t === 1 ? "" : "s") + " left in this window." : "Premium Requests locked until reset.";
         }
       } else {
@@ -749,8 +749,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const e = document.getElementById("stgMaxHint");
         if (e) e.textContent = "Upgrade to Prime or Elite for Premium Requests.";
       }
-      const U = formatRenewalLabel(t.subscription_end_date || t.plan_expires_at, t.plan_status);
-      if (U) setText("stgRenewalDate", U); else if (!u) setText("stgRenewalDate", "Active subscription"); else setText("stgRenewalDate", "No active subscription");
+      const L = formatRenewalLabel(t.subscription_end_date || t.plan_expires_at, t.plan_status);
+      if (L) setText("stgRenewalDate", L); else if (!u) setText("stgRenewalDate", "Active subscription"); else setText("stgRenewalDate", "No active subscription");
       syncBillingCancelUI({
         plan: c,
         planStatus: t.plan_status || t.subscription_status,
@@ -920,16 +920,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
   const b = document.getElementById("pfpFileInput");
-  const E = document.getElementById("stgAvatarContainer");
-  const v = document.getElementById("stgCropBackdrop");
+  const v = document.getElementById("stgAvatarContainer");
+  const E = document.getElementById("stgCropBackdrop");
   const S = document.getElementById("stgCropModal");
   const C = document.getElementById("stgCropImg");
   const I = document.getElementById("stgCropViewport");
   const B = document.getElementById("stgCropStage");
   const x = document.getElementById("stgCropZoom");
   const M = document.getElementById("stgCropSave");
-  let L = false;
-  let U = 0;
+  let U = false;
+  let L = 0;
   const P = 4e3;
   const T = 5 * 1024 * 1024;
   const A = 512;
@@ -984,9 +984,9 @@ document.addEventListener("DOMContentLoaded", () => {
   function closeCropModal() {
     _.open = false;
     _.dragging = false;
-    v?.classList.remove("is-open");
+    E?.classList.remove("is-open");
     S?.classList.remove("is-open");
-    if (v) v.hidden = true;
+    if (E) E.hidden = true;
     if (S) S.hidden = true;
     if (_.objectUrl) {
       URL.revokeObjectURL(_.objectUrl);
@@ -1036,9 +1036,9 @@ document.addEventListener("DOMContentLoaded", () => {
       _.offsetY = 0;
       applyCropTransform();
       _.open = true;
-      if (v) {
-        v.hidden = false;
-        v.classList.add("is-open");
+      if (E) {
+        E.hidden = false;
+        E.classList.add("is-open");
       }
       S.hidden = false;
       S.classList.add("is-open");
@@ -1082,21 +1082,38 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   function applyAvatarEverywhere(e) {
     if (!e) return;
-    const t = e + (e.includes("?") ? "&" : "?") + "t=" + Date.now();
+    let t = e;
+    try {
+      if (typeof resolveAvatarUrl === "function" && window.currentUser) {
+        t = resolveAvatarUrl(window.currentUser.id || window.currentUser, e) || e;
+      } else if (typeof resolveAvatarUrl === "function") {
+        t = resolveAvatarUrl(null, e) || e;
+      }
+    } catch (e) {}
+    if (t.startsWith("/") && typeof window.apiUrl === "function") {
+      try {
+        const e = String(window.apiUrl("/")).replace(/\/api\/?$/, "");
+        if (e) t = e + t;
+      } catch (e) {}
+    } else if (t.startsWith("/") && window.API_BASE_URL) {
+      const e = String(window.API_BASE_URL).replace(/\/api\/?$/, "");
+      if (e) t = e + t;
+    }
+    const n = t + (t.includes("?") ? "&" : "?") + "t=" + Date.now();
     const setImg = e => {
       if (!e) return;
-      let n = e.tagName === "IMG" ? e : e.querySelector("img");
-      if (!n) {
-        n = document.createElement("img");
-        n.alt = "Profile";
-        n.decoding = "async";
-        n.referrerPolicy = "no-referrer";
+      let t = e.tagName === "IMG" ? e : e.querySelector("img");
+      if (!t) {
+        t = document.createElement("img");
+        t.alt = "Profile";
+        t.decoding = "async";
+        t.referrerPolicy = "no-referrer";
         if (e.tagName !== "IMG") {
           e.innerHTML = "";
-          e.appendChild(n);
+          e.appendChild(t);
         }
       }
-      n.src = t;
+      t.src = n;
     };
     setImg(document.getElementById("stgAvatar"));
     setImg(document.querySelector(".user-avatar"));
@@ -1105,8 +1122,8 @@ document.addEventListener("DOMContentLoaded", () => {
     setImg(document.getElementById("menuUserAvatar"));
   }
   async function uploadProfilePicture(e) {
-    if (L || !e) return;
-    L = true;
+    if (U || !e) return;
+    U = true;
     const t = document.getElementById("stgAvatar");
     try {
       if (t) t.style.opacity = "0.55";
@@ -1151,7 +1168,7 @@ document.addEventListener("DOMContentLoaded", () => {
         window.apiCache.userProfile = null;
         window.apiCache.userProfileTime = 0;
       }
-      U = Date.now();
+      L = Date.now();
       closeCropModal();
       if (typeof window.showNotification === "function") {
         window.showNotification("Profile picture updated", "success");
@@ -1169,12 +1186,12 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } finally {
       if (t) t.style.opacity = "1";
-      L = false;
+      U = false;
       if (b) b.value = "";
     }
   }
   async function saveCroppedAvatar() {
-    if (!_.open || L) return;
+    if (!_.open || U) return;
     try {
       const e = await exportCroppedAvatarFile();
       await uploadProfilePicture(e);
@@ -1244,7 +1261,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   document.getElementById("stgCropCancel")?.addEventListener("click", () => closeCropModal());
   document.getElementById("stgCropClose")?.addEventListener("click", () => closeCropModal());
-  v?.addEventListener("click", () => closeCropModal());
+  E?.addEventListener("click", () => closeCropModal());
   S?.addEventListener("click", e => {
     if (e.target === S) closeCropModal();
   });
@@ -1252,11 +1269,11 @@ document.addEventListener("DOMContentLoaded", () => {
     saveCroppedAvatar();
   });
   S?.querySelector(".stgCropCard")?.addEventListener("click", e => e.stopPropagation());
-  if (E && b) {
-    E.addEventListener("click", e => {
+  if (v && b) {
+    v.addEventListener("click", e => {
       e.preventDefault();
       e.stopPropagation();
-      if (L || _.open) return;
+      if (U || _.open) return;
       b.click();
     });
   }
@@ -1265,7 +1282,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const e = b.files && b.files[0];
       if (!e) return;
       const t = Date.now();
-      if (t - U < P) {
+      if (t - L < P) {
         if (typeof window.showNotification === "function") {
           window.showNotification("Please wait before uploading another picture", "warning");
         }

@@ -1284,9 +1284,10 @@
     return e;
   }
   function authHeaders() {
-    if (typeof getAuthHeaders === "function") return getAuthHeaders();
+    const e = typeof getAuthHeaders === "function" ? getAuthHeaders() : {};
     return {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      ...e
     };
   }
   async function pushServerMemory() {
@@ -1389,10 +1390,22 @@
             action: "get"
           })
         });
-        if (!e.ok) return;
+        if (!e.ok) {
+          if (typeof window.solisLog === "function") {
+            window.solisLog("Memory API", `pull failed HTTP ${e.status}`);
+          } else {
+            console.warn("[SolisMemory] server pull failed:", e.status);
+          }
+          return null;
+        }
         const t = await e.json();
         const n = t?.memory;
-        if (!n || typeof n !== "object") return;
+        if (!n || typeof n !== "object") {
+          if (typeof window.solisLog === "function") {
+            window.solisLog("Memory API", "empty remote memory");
+          }
+          return null;
+        }
         const s = k;
         k = false;
         const i = mergeMemoryStates(readState(), n, {
@@ -1403,7 +1416,15 @@
         });
         h = true;
         syncSettingsUI();
-      } catch (e) {} finally {
+        if (typeof window.solisLog === "function") {
+          const e = Object.keys(i.templates || {}).length;
+          window.solisLog("Memory API", `loaded ${e} template profile(s)`);
+        }
+        return i;
+      } catch (e) {
+        console.warn("[SolisMemory] pull error:", e?.message || e);
+        return null;
+      } finally {
         b = null;
       }
     })();

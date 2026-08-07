@@ -9324,6 +9324,18 @@ class ClipsStudio {
     showNotification("Cannot start a new generation right now. Try again shortly.", "warning");
   }
   async startClipProcessingWithSlots(e, t) {
+    try {
+      const t = !(Number.isFinite(this._lastVideoDurationSeconds) && this._lastVideoDurationSeconds > 0);
+      if (t && e) {
+        const t = await this._getCachedDurationCheck(e);
+        if (t && t.allowed === false) {
+          return;
+        }
+        this._rememberVideoDuration(t);
+      }
+    } catch (e) {
+      safeLog("Duration preflight failed (continuing):", e?.message || e);
+    }
     if (this._generationStartInFlight) return;
     let n = null;
     try {

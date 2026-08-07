@@ -59,6 +59,21 @@
       enumerable: false
     });
   } catch (e) {}
+  (function patchFetchForApiHost() {
+    const e = window.fetch.bind(window);
+    window.fetch = function fetchWithApiHost(t, i) {
+      let n = typeof t === "string" ? t : t instanceof Request ? t.url : String(t || "");
+      if (n.startsWith("/api/") || n === "/api") {
+        const e = window.apiUrl(n);
+        if (typeof t === "string") {
+          t = e;
+        } else if (t instanceof Request) {
+          t = new Request(e, t);
+        }
+      }
+      return e(t, i);
+    };
+  })();
   if (!t) {
     try {
       delete window.__SOLIS_DEBUG__;

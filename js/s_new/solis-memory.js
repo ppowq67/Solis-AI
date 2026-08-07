@@ -1,15 +1,18 @@
 (function() {
   const e = "solis_template_memory";
   const t = "solis_caption_by_template";
-  const n = 5;
-  const s = 900;
-  const i = 999;
-  const o = 40;
-  const l = 1200;
-  const r = 45 * 1e3;
-  const a = 18 * 1e3;
-  const c = 20 * 1e3;
-  const u = new Set;
+  const n = "solis_memory_owner_id";
+  const s = "solis_template_memory";
+  const i = "solis_caption_by_template";
+  const o = 5;
+  const l = 900;
+  const r = 999;
+  const a = 40;
+  const c = 1200;
+  const u = 45 * 1e3;
+  const f = 18 * 1e3;
+  const g = 20 * 1e3;
+  const p = new Set;
   function isRankingTemplate(e) {
     const t = String(e || "").toLowerCase();
     return t === "ranked_compilation" || t === "ranking" || t.includes("rank");
@@ -69,19 +72,22 @@
   }
   function readCaptionMap() {
     try {
-      const e = localStorage.getItem(t) || sessionStorage.getItem(t);
-      if (!e) return {};
-      const n = JSON.parse(e);
-      return n && typeof n === "object" ? n : {};
+      const e = _storageKey(t);
+      const n = _resolveUserId();
+      const s = localStorage.getItem(e) || sessionStorage.getItem(e) || (!n ? localStorage.getItem(i) : null) || (!n ? sessionStorage.getItem(i) : null);
+      if (!s) return {};
+      const o = JSON.parse(s);
+      return o && typeof o === "object" ? o : {};
     } catch (e) {
       return {};
     }
   }
   function writeCaptionMap(e) {
     try {
-      const n = JSON.stringify(e || {});
-      localStorage.setItem(t, n);
-      sessionStorage.setItem(t, n);
+      const n = _storageKey(t);
+      const s = JSON.stringify(e || {});
+      localStorage.setItem(n, s);
+      sessionStorage.setItem(n, s);
     } catch (e) {}
   }
   function rememberCaptionSnap(e, t) {
@@ -113,20 +119,74 @@
       ...n
     } : null;
   }
-  let f = null;
-  let p = 0;
-  let g = false;
   let y = null;
-  let d = null;
+  let d = 0;
   let m = false;
   let S = null;
+  let w = null;
+  let h = false;
+  let b = null;
+  let _ = null;
+  let k = false;
+  function _resolveUserId(e) {
+    if (e != null && String(e).trim()) return String(e).trim();
+    if (_) return _;
+    try {
+      const e = window.currentUser?.id ?? window.currentUser?.user_id;
+      if (e != null && String(e).trim()) return String(e).trim();
+    } catch (e) {}
+    try {
+      const e = localStorage.getItem(n);
+      if (e) return e;
+    } catch (e) {}
+    return null;
+  }
+  function _storageKey(e) {
+    const t = _resolveUserId();
+    return t ? `${e}:u${t}` : e;
+  }
+  function _purgeLegacyGlobalKeys() {
+    try {
+      localStorage.removeItem(s);
+      localStorage.removeItem(i);
+      sessionStorage.removeItem(i);
+    } catch (e) {}
+  }
+  function setUserId(e, {clearLocal: t = false} = {}) {
+    const s = _resolveUserId(e);
+    const i = !!(_ && s && _ !== s);
+    _ = s;
+    h = false;
+    if (s) {
+      try {
+        localStorage.setItem(n, s);
+      } catch (e) {}
+    } else {
+      try {
+        localStorage.removeItem(n);
+      } catch (e) {}
+    }
+    _purgeLegacyGlobalKeys();
+    if (t || i) {
+      try {
+        writeState(defaultState(), {
+          sync: false
+        });
+      } catch (e) {}
+      k = true;
+    }
+    return {
+      switched: i,
+      userId: s
+    };
+  }
   function fontAnimHint(e) {
     try {
       if (window.__SolisSG?.animFor) return window.__SolisSG.animFor(e);
     } catch (e) {}
     return null;
   }
-  const w = {
+  const M = {
     karaoke: {
       color: "#FFFFFF",
       fill: null
@@ -154,7 +214,7 @@
   };
   function defaultState() {
     return {
-      version: n,
+      version: o,
       enabled: true,
       suggestEnabled: true,
       templates: {},
@@ -163,20 +223,22 @@
   }
   function readState() {
     try {
-      const t = localStorage.getItem(e);
-      if (!t) return defaultState();
-      const s = JSON.parse(t);
-      if (!s || typeof s !== "object") return defaultState();
-      const i = {
+      const t = _storageKey(e);
+      const n = _resolveUserId();
+      const i = localStorage.getItem(t) || (!n ? localStorage.getItem(s) : null);
+      if (!i) return defaultState();
+      const l = JSON.parse(i);
+      if (!l || typeof l !== "object") return defaultState();
+      const r = {
         ...defaultState(),
-        ...s,
-        version: n,
-        templates: s.templates && typeof s.templates === "object" ? s.templates : {},
-        usageLog: Array.isArray(s.usageLog) ? s.usageLog : []
+        ...l,
+        version: o,
+        templates: l.templates && typeof l.templates === "object" ? l.templates : {},
+        usageLog: Array.isArray(l.usageLog) ? l.usageLog : []
       };
-      let o = s.version !== n;
-      Object.keys(i.templates).forEach(e => {
-        const t = i.templates[e];
+      let a = l.version !== o;
+      Object.keys(r.templates).forEach(e => {
+        const t = r.templates[e];
         if (!t || typeof t !== "object") return;
         const n = sanitizeForTemplate(e, {
           styles: t.styles,
@@ -184,29 +246,29 @@
           layout: t.layout
         });
         const s = JSON.stringify(t.styles || null) !== JSON.stringify(n.styles || null);
-        const l = JSON.stringify(t.layout || null) !== JSON.stringify(n.layout || null);
-        const r = JSON.stringify(t.captions || null) !== JSON.stringify(n.captions || null);
-        if (s || l || r) {
+        const i = JSON.stringify(t.layout || null) !== JSON.stringify(n.layout || null);
+        const o = JSON.stringify(t.captions || null) !== JSON.stringify(n.captions || null);
+        if (s || i || o) {
           t.styles = n.styles;
           t.layout = n.layout;
           t.captions = n.captions;
           t.fingerprint = fingerprint(n.styles, n.captions, n.layout);
-          o = true;
+          a = true;
         }
       });
-      if (o) {
+      if (a) {
         try {
-          localStorage.setItem(e, JSON.stringify(i));
+          localStorage.setItem(_storageKey(e), JSON.stringify(r));
         } catch (e) {}
       }
-      return i;
+      return r;
     } catch (e) {
       return defaultState();
     }
   }
   function writeState(t, {sync: n = false} = {}) {
     try {
-      localStorage.setItem(e, JSON.stringify(t));
+      localStorage.setItem(_storageKey(e), JSON.stringify(t));
     } catch (e) {}
     if (n) scheduleServerSync();
   }
@@ -260,7 +322,7 @@
     return "Previous styles";
   }
   function collectLiveLayout(e) {
-    const t = String(e || y || "").toLowerCase();
+    const t = String(e || S || "").toLowerCase();
     if (t && t !== "splitscreen" && !t.includes("split")) return null;
     try {
       if (typeof window.getSplitscreenConfig === "function") {
@@ -341,7 +403,7 @@
     }
     if (n.anim === "center") n.anim = "fade";
     const o = String(n.anim || "").toLowerCase();
-    const l = w[o];
+    const l = M[o];
     if (l) {
       if (!n.color) n.color = l.color;
       if (!("fill" in n) && l.fill) n.fill = l.fill;
@@ -432,7 +494,7 @@
         }
       }
     } catch (e) {}
-    if (t) return recallCaptionSnap(e || y);
+    if (t) return recallCaptionSnap(e || S);
     return null;
   }
   function applyStyles(e, t) {
@@ -564,63 +626,63 @@
   function recordFromGeneration(e, t, n, s) {
     if (!e || !isEnabled()) return;
     const i = templateMemoryProfile(e);
-    const l = readState();
-    const r = l.templates[e] || {};
-    let a = i.styles ? t || collectLiveStyles(e) : null;
+    const o = readState();
+    const l = o.templates[e] || {};
+    let r = i.styles ? t || collectLiveStyles(e) : null;
     let c = i.captions ? n || collectLiveCaptions(e, {
       allowSnap: true
     }) : null;
-    let f = i.layout ? mergeLayouts(r.layout, s || collectLiveLayout(e)) : null;
+    let u = i.layout ? mergeLayouts(l.layout, s || collectLiveLayout(e)) : null;
     if (i.captions && (!c || !Object.keys(c).length)) {
       c = recallCaptionSnap(e);
     }
-    const g = sanitizeForTemplate(e, {
-      styles: a,
+    const f = sanitizeForTemplate(e, {
+      styles: r,
       captions: c,
-      layout: f
+      layout: u
     });
-    a = g.styles;
-    c = g.captions;
-    f = g.layout;
-    if (i.layout && !f && layoutUseful(r.layout)) {
-      f = normalizeLayout(r.layout);
+    r = f.styles;
+    c = f.captions;
+    u = f.layout;
+    if (i.layout && !u && layoutUseful(l.layout)) {
+      u = normalizeLayout(l.layout);
     }
-    if (!(a && Object.keys(a).length) && !(c && Object.keys(c).length) && !layoutUseful(f)) {
+    if (!(r && Object.keys(r).length) && !(c && Object.keys(c).length) && !layoutUseful(u)) {
       return;
     }
-    const y = fingerprint(a, c, f);
-    const d = r.fingerprint === y;
-    l.templates[e] = {
+    const g = fingerprint(r, c, u);
+    const y = l.fingerprint === g;
+    o.templates[e] = {
       updatedAt: (new Date).toISOString(),
-      styles: a ? JSON.parse(JSON.stringify(a)) : null,
+      styles: r ? JSON.parse(JSON.stringify(r)) : null,
       captions: c ? JSON.parse(JSON.stringify(c)) : null,
-      lastGeneratedCaptions: c ? JSON.parse(JSON.stringify(c)) : r.lastGeneratedCaptions || null,
-      lastGeneratedStyles: a ? JSON.parse(JSON.stringify(a)) : r.lastGeneratedStyles || null,
-      layout: f ? JSON.parse(JSON.stringify(f)) : null,
-      fingerprint: y,
-      rejectCount: d ? r.rejectCount || 0 : 0,
-      lastRejectedFingerprint: d ? r.lastRejectedFingerprint || null : null,
-      lastRejectedAt: d ? r.lastRejectedAt || null : null,
-      lastSuggestedAt: d ? r.lastSuggestedAt : null,
+      lastGeneratedCaptions: c ? JSON.parse(JSON.stringify(c)) : l.lastGeneratedCaptions || null,
+      lastGeneratedStyles: r ? JSON.parse(JSON.stringify(r)) : l.lastGeneratedStyles || null,
+      layout: u ? JSON.parse(JSON.stringify(u)) : null,
+      fingerprint: g,
+      rejectCount: y ? l.rejectCount || 0 : 0,
+      lastRejectedFingerprint: y ? l.lastRejectedFingerprint || null : null,
+      lastRejectedAt: y ? l.lastRejectedAt || null : null,
+      lastSuggestedAt: y ? l.lastSuggestedAt : null,
       source: "generate"
     };
-    l.usageLog.unshift({
+    o.usageLog.unshift({
       templateId: e,
       at: (new Date).toISOString(),
-      fingerprint: y
+      fingerprint: g
     });
-    l.usageLog = l.usageLog.slice(0, o);
+    o.usageLog = o.usageLog.slice(0, a);
     if (c) rememberCaptionSnap(e, c);
-    writeState(l, {
+    writeState(o, {
       sync: true
     });
-    p = 0;
-    u.delete(e);
+    d = 0;
+    p.delete(e);
     syncSettingsUI();
   }
   function recordLayout(e, t) {
     if (!isEnabled()) return;
-    const n = e || y || window.clipsStudio?.currentTemplateForPreview?.id;
+    const n = e || S || window.clipsStudio?.currentTemplateForPreview?.id;
     if (!n || !isSplitscreenTemplate(n)) return;
     const s = t || collectLiveLayout(n);
     if (!layoutUseful(s)) return;
@@ -631,7 +693,7 @@
   }
   function recordCaptions(e, t) {
     if (!isEnabled()) return;
-    const n = e || y || window.clipsStudio?.currentTemplateForPreview?.id;
+    const n = e || S || window.clipsStudio?.currentTemplateForPreview?.id;
     if (!n) return;
     const s = t || collectLiveCaptions(n);
     if (!s || !Object.keys(s).length) return;
@@ -642,23 +704,23 @@
   }
   function noteEdit(e) {
     if (!isEnabled()) return;
-    const t = e || y || window.clipsStudio?.currentTemplateForPreview?.id;
+    const t = e || S || window.clipsStudio?.currentTemplateForPreview?.id;
     if (!t) return;
-    p += 1;
-    y = t;
+    d += 1;
+    S = t;
   }
   function scheduleSuggest(e) {
-    if (f) {
-      clearTimeout(f);
-      f = null;
+    if (y) {
+      clearTimeout(y);
+      y = null;
     }
     if (!e || !shouldSuggest(e)) {
       flushDeferredRankingCustoms();
       return;
     }
     const t = 40 + Math.floor(Math.random() * 80);
-    f = setTimeout(() => {
-      f = null;
+    y = setTimeout(() => {
+      y = null;
       const t = document.getElementById("templatePreviewModal");
       if (!t || !t.classList.contains("active")) return;
       if (!shouldSuggest(e)) {
@@ -666,15 +728,15 @@
         return;
       }
       showSuggestion(e);
-    }, s + t);
+    }, l + t);
   }
   function captionsDiffer(e, t) {
     return fingerprint(null, e) !== fingerprint(null, t);
   }
   function shouldSuggest(e) {
     if (!isSuggestEnabled() || !e) return false;
-    if (g) return false;
-    if (u.has(e)) return false;
+    if (m) return false;
+    if (p.has(e)) return false;
     const t = getTemplateMemory(e);
     if (!t) return false;
     const n = stylesForSuggest(t);
@@ -685,8 +747,8 @@
     if (!s && !o && !l) return false;
     if (t.lastRejectedFingerprint && t.lastRejectedFingerprint === t.fingerprint) {
       const n = Date.parse(t.lastRejectedAt || 0);
-      if (Number.isFinite(n) && Date.now() - n < r) return false;
-      if (!Number.isFinite(n) || Date.now() - n >= r) {
+      if (Number.isFinite(n) && Date.now() - n < u) return false;
+      if (!Number.isFinite(n) || Date.now() - n >= u) {
         try {
           const t = readState();
           if (t.templates[e]) {
@@ -698,11 +760,11 @@
       }
     }
     if (isLibraryPreviewOpen() && !l) return false;
-    const f = collectLiveStyles(e);
-    const p = collectLiveCaptions(e);
-    const y = collectLiveLayout(e);
-    const d = !!(p && Object.keys(p).length);
-    const m = !!(f && Object.keys(f).length);
+    const r = collectLiveStyles(e);
+    const a = collectLiveCaptions(e);
+    const c = collectLiveLayout(e);
+    const y = !!(a && Object.keys(a).length);
+    const d = !!(r && Object.keys(r).length);
     const S = templateMemoryProfile(e);
     const w = o && S.captions && !isLibraryPreviewOpen();
     const h = s && S.styles;
@@ -710,31 +772,31 @@
     if (!w && !h && !b) return false;
     const _ = Date.parse(t.lastSuggestedAt || 0);
     if (Number.isFinite(_)) {
-      const n = isRankingTemplate(e) ? c : a;
+      const n = isRankingTemplate(e) ? g : f;
       if (Date.now() - _ < n) {
-        const e = b && layoutDiffers(t.layout, y);
+        const e = b && layoutDiffers(t.layout, c);
         if (!e) return false;
       }
     }
-    if (b && layoutDiffers(t.layout, y)) return true;
+    if (b && layoutDiffers(t.layout, c)) return true;
     if (h && isRankingTemplate(e)) {
       if (window.__solisRankingDeferCustoms) return true;
       const e = stylesForSuggest(t);
-      if (fingerprint(f, null) !== fingerprint(e, null)) return true;
+      if (fingerprint(r, null) !== fingerprint(e, null)) return true;
     }
-    if (w && !d) return true;
-    if (h && !m && !d) return true;
+    if (w && !y) return true;
+    if (h && !d && !y) return true;
     const k = smarterCaptions(i, e);
-    const M = fingerprint(f, p, y) === t.fingerprint;
-    const C = !k || fingerprint(null, p) === fingerprint(null, k);
-    if (M && C) return false;
+    const M = fingerprint(r, a, c) === t.fingerprint;
+    const v = !k || fingerprint(null, a) === fingerprint(null, k);
+    if (M && v) return false;
     return true;
   }
   function flushDeferredRankingCustoms() {
     if (!window.__solisRankingDeferCustoms) return;
     window.__solisRankingDeferCustoms = false;
     try {
-      const e = y || "ranked_compilation";
+      const e = S || "ranked_compilation";
       const t = getTemplateMemory(e);
       const n = stylesForSuggest(t);
       if (n && Object.keys(n).length && isRankingTemplate(e)) {
@@ -948,7 +1010,7 @@
       flushDeferredRankingCustoms();
       return;
     }
-    g = true;
+    m = true;
     const l = readState();
     if (l.templates[e]) {
       l.templates[e].lastSuggestedAt = (new Date).toISOString();
@@ -1027,46 +1089,46 @@
     return true;
   }
   function continueSuggestAfterCaption(e) {
-    const t = e || y;
+    const t = e || S;
     if (!t || !isSuggestEnabled()) return;
-    if (u.has(t)) return;
+    if (p.has(t)) return;
     const n = getTemplateMemory(t);
     if (!n) return;
     if (n.lastRejectedFingerprint && n.lastRejectedFingerprint === n.fingerprint) return;
     setTimeout(() => {
       const e = document.getElementById("templatePreviewModal");
       if (!e || !e.classList.contains("active")) return;
-      if (u.has(t)) return;
+      if (p.has(t)) return;
       if (!isSplitscreenTemplate(t) && wantsLayoutSuggest(t, n) && offerLayoutSuggest(t, n)) return;
       offerRankingStylesSuggest(t, n);
     }, 180);
   }
   function continueSuggestAfterLayout(e) {
-    const t = e || y;
+    const t = e || S;
     if (!t || !isSuggestEnabled()) return;
-    if (u.has(t)) return;
+    if (p.has(t)) return;
     const n = getTemplateMemory(t);
     if (!n) return;
     setTimeout(() => {
       const e = document.getElementById("templatePreviewModal");
       if (!e || !e.classList.contains("active")) return;
-      if (u.has(t)) return;
+      if (p.has(t)) return;
       if (!isRankingTemplate(t) && offerCaptionSuggest(t, n)) {
-        g = true;
+        m = true;
         return;
       }
       offerRankingStylesSuggest(t, n);
       if (document.getElementById("solisMemorySuggest") && !document.getElementById("solisMemorySuggest").hidden) {
-        g = true;
+        m = true;
       }
     }, 160);
   }
   function acceptSuggestion() {
     const e = ensureSuggestEl();
-    const t = e.dataset.templateId || y;
+    const t = e.dataset.templateId || S;
     const n = e.dataset.mode || "all";
     hideSuggest();
-    if (t) u.delete(t);
+    if (t) p.delete(t);
     const s = getTemplateMemory(t);
     if (!s) return;
     if (n === "layout-only") {
@@ -1086,8 +1148,8 @@
         e.templates[t].lastRejectedFingerprint = null;
         writeState(e);
       }
-      p = 0;
-      g = false;
+      d = 0;
+      m = false;
       try {
         document.querySelectorAll(".gp-mem-pick").forEach(e => e.classList.remove("gp-mem-pick"));
         document.getElementById("subPillMenu")?.classList.remove("active");
@@ -1129,7 +1191,7 @@
       i.templates[t].lastRejectedFingerprint = null;
       writeState(i);
     }
-    p = 0;
+    d = 0;
     if (typeof window.clearSubtitleMemorySuggest === "function") {
       window.clearSubtitleMemorySuggest();
     }
@@ -1145,7 +1207,7 @@
   }
   function rejectSuggestion() {
     const e = ensureSuggestEl();
-    const t = e.dataset.templateId || y;
+    const t = e.dataset.templateId || S;
     const n = e.dataset.mode || "all";
     if (n === "layout-only") {
       try {
@@ -1157,15 +1219,15 @@
         if (typeof window.hideGameplayPillMenu === "function") window.hideGameplayPillMenu();
       } catch (e) {}
       hideSuggest();
-      g = false;
-      p = 0;
+      m = false;
+      d = 0;
       setTimeout(() => {
-        if (!t || u.has(t)) return;
+        if (!t || p.has(t)) return;
         if (isRankingTemplate(t)) return;
         const e = getTemplateMemory(t);
         if (!e) return;
         if (offerCaptionSuggest(t, e)) {
-          g = true;
+          m = true;
         }
       }, 280);
       return;
@@ -1192,14 +1254,14 @@
     }
   }
   function markSuggestionRejected(e) {
-    const t = e || y;
+    const t = e || S;
     if (!t) return;
-    u.add(t);
-    g = true;
-    p = 0;
-    if (f) {
-      clearTimeout(f);
-      f = null;
+    p.add(t);
+    m = true;
+    d = 0;
+    if (y) {
+      clearTimeout(y);
+      y = null;
     }
     const n = readState();
     const s = n.templates[t];
@@ -1211,11 +1273,11 @@
     }
   }
   function scheduleServerSync() {
-    if (d) clearTimeout(d);
-    d = setTimeout(() => {
-      d = null;
+    if (w) clearTimeout(w);
+    w = setTimeout(() => {
+      w = null;
       pushServerMemory();
-    }, l);
+    }, c);
   }
   function apiUrl(e) {
     if (typeof window.apiUrl === "function") return window.apiUrl(e);
@@ -1228,6 +1290,7 @@
     };
   }
   async function pushServerMemory() {
+    if (!_resolveUserId()) return;
     try {
       const e = readState();
       const t = await fetch(apiUrl("/api/clips/memory"), {
@@ -1259,8 +1322,22 @@
       fingerprint: fingerprint(n.styles, n.captions, n.layout)
     };
   }
-  function mergeMemoryStates(e, t) {
-    const n = {
+  function mergeMemoryStates(e, t, {preferRemote: n = false} = {}) {
+    if (n) {
+      const e = {
+        ...defaultState(),
+        enabled: t.enabled !== undefined ? t.enabled : true,
+        suggestEnabled: t.suggestEnabled !== undefined ? t.suggestEnabled : true,
+        templates: {},
+        usageLog: Array.isArray(t.usageLog) ? t.usageLog : []
+      };
+      Object.entries(t.templates || {}).forEach(([t, n]) => {
+        const s = _sanitizeRemoteTemplate(t, n);
+        if (s) e.templates[t] = s;
+      });
+      return e;
+    }
+    const s = {
       ...defaultState(),
       ...e,
       enabled: e.enabled !== undefined ? e.enabled : t.enabled,
@@ -1271,37 +1348,38 @@
       },
       usageLog: Array.isArray(e.usageLog) && e.usageLog.length ? e.usageLog : Array.isArray(t.usageLog) ? t.usageLog : []
     };
-    const s = t.templates || {};
-    Object.keys(s).forEach(e => {
-      const t = n.templates[e];
-      const i = _sanitizeRemoteTemplate(e, s[e]);
+    const i = t.templates || {};
+    Object.keys(i).forEach(e => {
+      const t = s.templates[e];
+      const n = _sanitizeRemoteTemplate(e, i[e]);
       if (!t) {
-        if (i) n.templates[e] = i;
+        if (n) s.templates[e] = n;
         return;
       }
-      if (!i) return;
+      if (!n) return;
       const o = Date.parse(t.updatedAt || 0) || 0;
-      const l = Date.parse(i.updatedAt || 0) || 0;
-      if (l > o) n.templates[e] = i; else if (l === o) {
-        const s = {
+      const l = Date.parse(n.updatedAt || 0) || 0;
+      if (l > o) s.templates[e] = n; else if (l === o) {
+        const i = {
           ...t,
-          captions: t.captions || i.captions || null,
-          styles: t.styles || i.styles || null,
-          layout: t.layout || i.layout || null
+          captions: t.captions || n.captions || null,
+          styles: t.styles || n.styles || null,
+          layout: t.layout || n.layout || null
         };
-        n.templates[e] = _sanitizeRemoteTemplate(e, s) || s;
+        s.templates[e] = _sanitizeRemoteTemplate(e, i) || i;
       } else {
-        n.templates[e] = _sanitizeRemoteTemplate(e, t) || t;
+        s.templates[e] = _sanitizeRemoteTemplate(e, t) || t;
       }
     });
-    Object.keys(n.templates).forEach(e => {
-      n.templates[e] = _sanitizeRemoteTemplate(e, n.templates[e]) || n.templates[e];
+    Object.keys(s.templates).forEach(e => {
+      s.templates[e] = _sanitizeRemoteTemplate(e, s.templates[e]) || s.templates[e];
     });
-    return n;
+    return s;
   }
   async function pullServerMemory() {
-    if (S) return S;
-    S = (async () => {
+    if (!_resolveUserId()) return null;
+    if (b) return b;
+    b = (async () => {
       try {
         const e = await fetch(apiUrl("/api/clips/memory"), {
           method: "POST",
@@ -1315,30 +1393,34 @@
         const t = await e.json();
         const n = t?.memory;
         if (!n || typeof n !== "object") return;
-        const s = mergeMemoryStates(readState(), n);
-        writeState(s, {
+        const s = k;
+        k = false;
+        const i = mergeMemoryStates(readState(), n, {
+          preferRemote: s
+        });
+        writeState(i, {
           sync: false
         });
-        m = true;
+        h = true;
         syncSettingsUI();
       } catch (e) {} finally {
-        S = null;
+        b = null;
       }
     })();
-    return S;
+    return b;
   }
   async function onTemplatePreviewOpen(e) {
-    y = e || null;
-    g = false;
-    p = 0;
+    S = e || null;
+    m = false;
+    d = 0;
     hideSuggest();
     try {
-      u.delete(e);
+      p.delete(e);
       const t = getTemplateMemory(e);
       if (t?.lastRejectedAt && t?.lastRejectedFingerprint && t.lastRejectedFingerprint === t.fingerprint) {
         const n = Date.parse(t.lastRejectedAt);
-        if (Number.isFinite(n) && Date.now() - n < r) {
-          u.add(e);
+        if (Number.isFinite(n) && Date.now() - n < u) {
+          p.add(e);
         } else {
           const t = readState();
           if (t.templates[e]) {
@@ -1350,26 +1432,26 @@
       }
     } catch (e) {}
     scheduleSuggest(e);
-    if (!m) {
+    if (!h) {
       pullServerMemory().then(() => {
-        if (!g) scheduleSuggest(e);
+        if (!m) scheduleSuggest(e);
       }).catch(() => {});
     }
-    setTimeout(() => flushDeferredRankingCustoms(), s + 400);
+    setTimeout(() => flushDeferredRankingCustoms(), l + 400);
   }
   function onTemplatePreviewClose() {
-    if (f) {
-      clearTimeout(f);
-      f = null;
+    if (y) {
+      clearTimeout(y);
+      y = null;
     }
     hideSuggest();
-    g = false;
+    m = false;
     try {
-      if (y) {
-        const e = templateMemoryProfile(y);
-        const t = e.captions ? collectLiveCaptions(y) : null;
-        const n = e.styles && !isRankingTemplate(y) ? collectLiveStyles(y) : undefined;
-        upsertTemplateMemory(y, {
+      if (S) {
+        const e = templateMemoryProfile(S);
+        const t = e.captions ? collectLiveCaptions(S) : null;
+        const n = e.styles && !isRankingTemplate(S) ? collectLiveStyles(S) : undefined;
+        upsertTemplateMemory(S, {
           styles: n || undefined,
           captions: t || undefined,
           source: "close"
@@ -1400,7 +1482,7 @@
         window.RankingTextPill.deselectAll();
       }
     } catch (e) {}
-    y = null;
+    S = null;
   }
   function generateFromUsage() {
     const e = readState();
@@ -1525,7 +1607,6 @@
       clearTemplate(t.getAttribute("data-clear-mem"));
     });
     syncSettingsUI();
-    pullServerMemory();
   }
   window.SolisMemory = {
     recordFromGeneration: recordFromGeneration,
@@ -1549,12 +1630,13 @@
     continueSuggestAfterCaption: continueSuggestAfterCaption,
     continueSuggestAfterLayout: continueSuggestAfterLayout,
     pullServerMemory: pullServerMemory,
+    setUserId: setUserId,
     markSuggestionRejected: markSuggestionRejected,
     rejectSuggestion: rejectSuggestion,
     acceptSuggestion: acceptSuggestion,
     rememberCaptionSnap: rememberCaptionSnap,
     recallCaptionSnap: recallCaptionSnap,
-    getCurrentTemplateId: () => y,
+    getCurrentTemplateId: () => S,
     isRankingTemplate: isRankingTemplate,
     isSplitscreenTemplate: isSplitscreenTemplate,
     _applying: false

@@ -2789,6 +2789,13 @@ async function verifyToken() {
       updateProfileDropdown(currentUser).catch(e => console.warn("Profile dropdown update error:", e));
     }
     checkYouTubeConnection();
+    const n = currentUser?.id ?? currentUser?.user_id;
+    if (window.SolisMemory?.setUserId) {
+      window.SolisMemory.setUserId(n);
+    }
+    if (window.SolisMemory?.pullServerMemory) {
+      await window.SolisMemory.pullServerMemory();
+    }
     await loadTierInfo();
   } catch (e) {
     safeLog("[Auth] Verification error:", e.message);

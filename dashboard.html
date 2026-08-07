@@ -12,7 +12,7 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.socket.io https://cdn.paddle.com https://sandbox-cdn.paddle.com https://api.solisai.video https://api.solisai.video; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.paddle.com; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' https://api.solisai.video wss://api.solisai.video https://api.solisai.video wss://api.solisai.video https:; img-src 'self' data: https:; frame-src 'self' https://checkout.paddle.com https://buy.paddle.com https://sandbox-buy.paddle.com https://sandbox-checkout-service.paddle.com https://checkout-service.paddle.com;">
     <script src="/js/core/init.js?v=7"></script>
     <script src="/js/core/api-client.js?v=3"></script>
-    <script src="/js/core/avatar-url.js?v=1"></script>
+    <script src="/js/core/avatar-url.js?v=2"></script>
     <script src="/js/core/auth-validator.js?v=2"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -38,7 +38,7 @@
     <link rel="stylesheet" href="/style/ss/customize.css?v=27">
     <link rel="stylesheet" href="/style/ss/clips.css?v=27">
     <link rel="stylesheet" href="/style/ss/profile.css?v=27">
-    <link rel="stylesheet" href="/style/ss/newsfeed-widget.css?v=27">
+    <link rel="stylesheet" href="/style/ss/newsfeed-widget.css?v=28">
     <script src="/js/ui/navigation.js?v=3"></script>
     <script src="/js/ui/menu.js?v=6"></script>
     <script src="/js/i_dq/profile-notifications.js?t=20260323000009"></script>
@@ -51,7 +51,7 @@
     <script src="/js/ui/generation-progress-spinner.js?v=40"></script>
     <script src="/js/generation-recovery.js?v=3"></script>
     <script src="/js/i_dq/ranking-customizer.js?v=23"></script>
-    <script src="/js/s_new/solis-memory.js?v=37"></script>
+    <script src="/js/s_new/solis-memory.js?v=38"></script>
     <script src="/js/settings/settings-manager.js?v=2"></script>
     <script src="/js/payment/payment-flow.js?v=1"></script>
     <script src="/js/payment/premium-logic.js?v=2"></script>
@@ -60,7 +60,7 @@
     <script src="/js/payment/platform-connections.js?v=3"></script>
     <script src="/js/ui/plan-selector.js?v=62"></script>
     <script src="/js/core/video-preview-system.js?v=2"></script>
-    <script src="/js/s.js?v=238"></script>
+    <script src="/js/s.js?v=239"></script>
     <script src="/js/s_new/procc.js?v=2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -2362,23 +2362,58 @@
 
                     function nf_authorAvatarUrl(item) {
                         if (!item) return null;
-                        try {
-                            if (typeof resolveAvatarUrl === 'function') {
-                                const resolved = resolveAvatarUrl({
-                                    id: item.user_id,
-                                    picture: item.picture,
-                                    avatar: item.picture,
-                                });
-                                if (resolved) return resolved;
-                            }
-                        } catch (_) { /* ignore */ }
-                        if (item.user_id) {
-                            const origin = (typeof window.apiUrl === 'function')
-                                ? String(window.apiUrl('/')).replace(/\/api\/?$/, '')
-                                : ((window.API_BASE_URL || '').replace(/\/api\/?$/, '') || '');
-                            return `${origin}/api/avatar/${encodeURIComponent(item.user_id)}`;
+                        const uid = item.user_id != null ? item.user_id : item.id;
+                        if (uid != null && String(uid).trim() !== '') {
+                            const path = `/api/avatar/${encodeURIComponent(uid)}`;
+                            try {
+                                if (typeof resolveAvatarUrl === 'function') {
+                                    const resolved = resolveAvatarUrl({ id: uid, picture: path });
+                                    if (resolved) return resolved;
+                                }
+                            } catch (_) { /* ignore */ }
+                            return nf_api(path);
                         }
-                        return item.picture || null;
+                        if (item.picture) {
+                            try {
+                                if (typeof resolveAvatarUrl === 'function') {
+                                    const resolved = resolveAvatarUrl(null, item.picture);
+                                    if (resolved) return resolved;
+                                }
+                            } catch (_) { /* ignore */ }
+                            if (String(item.picture).startsWith('/')) return nf_api(item.picture);
+                            return item.picture;
+                        }
+                        return null;
+                    }
+
+                    function nf_avatarPlaceholder(name) {
+                        const initial = String(name || '?').trim().charAt(0).toUpperCase() || '?';
+                        const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80">`
+                            + `<rect width="80" height="80" rx="18" fill="#27272a"/>`
+                            + `<text x="40" y="46" text-anchor="middle" font-family="system-ui,sans-serif" font-size="32" font-weight="700" fill="#fafafa">${initial}</text>`
+                            + `</svg>`;
+                        return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+                    }
+
+                    function nf_setAvatarImg(img, url, name) {
+                        if (!img) return;
+                        img.style.display = '';
+                        img.style.visibility = 'visible';
+                        img.style.opacity = '1';
+                        img.alt = name || '';
+                        img.referrerPolicy = 'no-referrer';
+                        img.decoding = 'async';
+                        const fallback = nf_avatarPlaceholder(name);
+                        const finalUrl = url || fallback;
+                        img.onerror = () => {
+                            img.onerror = null;
+                            if (img.src !== fallback) img.src = fallback;
+                        };
+                        if (finalUrl.startsWith('data:')) {
+                            img.src = finalUrl;
+                        } else {
+                            img.src = finalUrl + (finalUrl.includes('?') ? '&' : '?') + 'v=' + (Date.now() % 1e8);
+                        }
                     }
 
                     function nf_paintAuthorProfile(item) {
@@ -2387,14 +2422,7 @@
                         const name = item.name || item.handle || 'User';
                         const handle = item.handle ? (String(item.handle).startsWith('@') ? item.handle : `@${item.handle}`) : '';
 
-                        if (nf_headerAvatar) {
-                            nf_headerAvatar.src = avatarUrl || '';
-                            nf_headerAvatar.alt = name;
-                            nf_headerAvatar.onerror = () => {
-                                nf_headerAvatar.onerror = null;
-                                nf_headerAvatar.removeAttribute('src');
-                            };
-                        }
+                        nf_setAvatarImg(nf_headerAvatar, avatarUrl, name);
                         if (nf_headerAuthor) nf_headerAuthor.textContent = name;
 
                         const pAvatar = document.getElementById('p-avatar');
@@ -2403,14 +2431,7 @@
                         const bioEl = document.getElementById('p-bio');
                         const followersEl = document.getElementById('p-followers');
 
-                        if (pAvatar) {
-                            pAvatar.src = avatarUrl || '';
-                            pAvatar.alt = name;
-                            pAvatar.onerror = () => {
-                                pAvatar.onerror = null;
-                                pAvatar.removeAttribute('src');
-                            };
-                        }
+                        nf_setAvatarImg(pAvatar, avatarUrl, name);
                         if (pAuthor) pAuthor.textContent = name;
                         if (pHandle) pHandle.textContent = handle;
                         if (bioEl) {
@@ -2549,8 +2570,7 @@
                             console.error('[ERROR] Failed to load news feed:', error);
                             const avatar = document.getElementById('header-avatar');
                             if (avatar) {
-                                avatar.removeAttribute('src');
-                                avatar.style.display = 'none';
+                                nf_setAvatarImg(avatar, null, '?');
                             }
                             const author = document.getElementById('header-author');
                             if (author) author.textContent = '';

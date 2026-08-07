@@ -52,7 +52,7 @@
     padding: 90px 48px 120px var(--nav-shell-padding, 150px);
     overflow-y: auto;
     overflow-x: hidden;
-    background: var(--clips-bg) url('/frontend/assets/bg2.png') center/cover fixed no-repeat;
+    background: var(--clips-bg) url('/assets/bg2.png') center/cover fixed no-repeat;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
     z-index: 2;
     -webkit-font-smoothing: antialiased;

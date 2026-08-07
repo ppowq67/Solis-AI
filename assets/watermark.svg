@@ -1,0 +1,36 @@
+<svg viewBox="0 0 300 100" xmlns="http://www.w3.org/2000/svg" width="300" height="100">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+      .watermark-text { font-family: 'Plus Jakarta Sans', sans-serif; fill: white; user-select: none; }
+      .brand-name { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; text-transform: uppercase; }
+      .ai-text { opacity: 0.85; font-weight: 700; }
+      .coming-soon { font-size: 10px; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; opacity: 0.6; }
+      .logo-svg { filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.5)); }
+    </style>
+    <filter id="drop-shadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+      <feOffset dx="0" dy="2" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.5"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Logo -->
+  <g filter="url(#drop-shadow)">
+    <circle cx="35" cy="35" r="12" fill="white"/>
+    <ellipse rx="22" ry="9" cx="35" cy="35" stroke="white" stroke-width="3" transform="rotate(45 35 35)" fill="none"/>
+    <ellipse rx="22" ry="9" cx="35" cy="35" stroke="white" stroke-width="3" transform="rotate(-45 35 35)" fill="none"/>
+  </g>
+  
+  <!-- Brand Text -->
+  <text x="50" y="40" class="watermark-text brand-name">Solis <tspan class="ai-text">AI</tspan></text>
+  
+  <!-- Coming Soon -->
+  <text x="80" y="60" class="watermark-text coming-soon">Coming Soon</text>
+</svg>

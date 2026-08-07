@@ -58,7 +58,7 @@
     padding: 50px 40px 40px 40px;
     min-height: calc(100vh - 80px);
     max-height: calc(100vh - 80px);
-    background: url('/frontend/assets/bg2.png') center/cover fixed no-repeat !important;
+    background: url('/assets/bg2.png') center/cover fixed no-repeat !important;
     font-family: 'Inter', sans-serif;
     position: relative;
     transition: background 0.3s ease;

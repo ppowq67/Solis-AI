@@ -5147,11 +5147,10 @@
 
        function startCaptionTeach() {
            activeKind = 'captions';
-           try {
-               if (typeof window.clearSubtitleMemorySuggest === 'function') {
-                   window.clearSubtitleMemorySuggest({ cooldown: false });
-               }
-           } catch (_) {}
+           if (window.__solisPendingSubMem || document.querySelector('.sub-mem-ghost')) {
+               showTeachLabel('Captions');
+               return;
+           }
            showTeachLabel('Captions');
            if (typeof window.solisTeachCycleFonts === 'function') {
                window.solisTeachCycleFonts(true);
@@ -5168,11 +5167,10 @@
 
        function startAnimationsTeach() {
            activeKind = 'animations';
-           try {
-               if (typeof window.clearSubtitleMemorySuggest === 'function') {
-                   window.clearSubtitleMemorySuggest({ cooldown: false });
-               }
-           } catch (_) {}
+           if (window.__solisPendingSubMem || document.querySelector('.sub-mem-ghost')) {
+               showTeachLabel('Animations');
+               return;
+           }
            document.querySelectorAll('.sub-mem-actions,.sub-mem-ghost,.solis-memory-suggest').forEach((el) => {
                el.classList.remove('open');
                if (el.classList.contains('sub-mem-ghost') || el.classList.contains('solis-memory-suggest')) {
@@ -8061,7 +8059,7 @@
                 window.__subApplyingFont=true;
                 try{ subApplyFont(f); }
                 finally{
-                    requestAnimationFrame(()=>{ window.__subApplyingFont=false; });
+                    setTimeout(()=>{ window.__subApplyingFont=false; }, 450);
                 }
             };
             ddFont.appendChild(d);
@@ -8956,19 +8954,29 @@
             if(String(c).toLowerCase()==='#ffffff') s.style.boxShadow='0 1px 3px rgba(120,90,60,.12), inset 0 0 0 1px rgba(0,0,0,.12)';
             s.onmouseenter=()=>{
                 if(!active)return;
+                if(window.__subApplyingColor) return;
                 saveHoverOrigin();
                 applyTextColor(c, {preview:true});
             };
             s.onmouseleave=(e)=>{
+                if(window.__subApplyingColor) return;
                 const to=e.relatedTarget;
                 if(to && tg.contains(to)) return;
                 restoreHoverOrigin();
             };
-            s.onclick=()=>{
-                previewTextCol=null;
-                previewHighlightCol=undefined;
-                applyTextColor(c, isAiHook(active)?{force:true}:{});
-                closePlusPop();
+            s.onmousedown=(e)=>{
+                e.preventDefault();
+                e.stopPropagation();
+                window.__subApplyingColor=true;
+                try{
+                    ensureSubtitleActiveForStyle();
+                    previewTextCol=null;
+                    previewHighlightCol=undefined;
+                    applyTextColor(c, isAiHook(active)?{force:true}:{});
+                    closePlusPop();
+                }finally{
+                    setTimeout(()=>{ window.__subApplyingColor=false; }, 450);
+                }
             };
             tg.appendChild(s);
         });
@@ -8976,12 +8984,29 @@
         if(!tg._colorHoverBound){
             tg._colorHoverBound=true;
             tg.addEventListener('pointerleave',(e)=>{
+                if(window.__subApplyingColor) return;
                 if(e.relatedTarget && tg.contains(e.relatedTarget)) return;
                 restoreHoverOrigin();
             });
         }
         syncTextColorSwatches();
         wireSpectrum();
+    }
+
+    function ensureSubtitleActiveForStyle(){
+        const cont=document.getElementById('templateVideoPreview');
+        if(!cont) return null;
+        let block=active;
+        if(!block || !block.isConnected || !block.classList.contains('sub-text-block')){
+            block=cont.querySelector('.sub-text-block:not(.overlay-text-block)');
+        }
+        if(!block && typeof createSubtitleBlockSilent==='function'){
+            block=createSubtitleBlockSilent();
+        }
+        if(block && typeof select==='function'){
+            try{ select(block); }catch(_){ active=block; }
+        }
+        return block||active;
     }
 
     function syncShadowSeg(id){
@@ -12437,7 +12462,20 @@
 
     window.addSubtitleBlock=function(){
         const cont=document.getElementById('templateVideoPreview'); if(!cont)return;
-        clearSubtitleMemorySuggest({cooldown:true, persistReject:true});
+        if(pendingSubMem){
+            try{
+                window.__solisCaptionsOptedIn=true;
+                window.__solisCaptionsClearedForGenerate=false;
+            }catch(_){}
+            const existing=cont.querySelector('.sub-text-block:not(.overlay-text-block)');
+            if(existing){
+                select(existing);
+            }else{
+                const block=createSubtitleBlockSilent();
+                if(block) select(block);
+            }
+            return;
+        }
         try{
             window.__solisCaptionsOptedIn=true;
             window.__solisCaptionsClearedForGenerate=false;
@@ -13560,7 +13598,14 @@
             }
             const rawStyle=JSON.stringify(window.__solisLastCaptionStyle);
             sessionStorage.setItem('solis_last_caption_style', rawStyle);
-            localStorage.setItem('solis_last_caption_style', rawStyle);
+            try{
+                const uid=window.currentUser?.id||window.currentUser?.user_id||null;
+                const key=uid!=null?`solis_last_caption_style:u${uid}`:'solis_last_caption_style';
+                localStorage.setItem(key, rawStyle);
+                if(key!=='solis_last_caption_style') localStorage.removeItem('solis_last_caption_style');
+            }catch(_){
+                localStorage.setItem('solis_last_caption_style', rawStyle);
+            }
         }catch(_){}
 
         if(fromMemory&&window.SolisMemory) window.SolisMemory._applying=false;
@@ -13574,6 +13619,10 @@
     function dismissOpenSuggestsFromPreview(e){
         if(!e?.target) return;
         if(e.target.closest('#subMemActions,#rkSuggestActions,#solisMemorySuggest,[data-mem-act],.rk-sa-btn,.sub-mem-btn')) return;
+        if(e.target.closest('.sub-mem-ghost,.sub-mem-pick')){
+            try{ acceptSubtitleMemorySuggest(); }catch(_){}
+            return;
+        }
 
         const solisEl=document.getElementById('solisMemorySuggest');
         const solisOpen=!!(solisEl && !solisEl.hidden && solisEl.style.visibility!=='hidden' && solisEl.style.opacity!=='0');

@@ -5,8 +5,8 @@
   const s = "solis_template_memory";
   const i = "solis_caption_by_template";
   const o = 5;
-  const l = 900;
-  const r = 999;
+  const r = 900;
+  const l = 999;
   const a = 40;
   const c = 1200;
   const u = 45 * 1e3;
@@ -127,7 +127,7 @@
   let h = false;
   let b = null;
   let _ = null;
-  let k = false;
+  let M = false;
   function _resolveUserId(e) {
     if (e != null && String(e).trim()) return String(e).trim();
     if (_) return _;
@@ -173,7 +173,7 @@
           sync: false
         });
       } catch (e) {}
-      k = true;
+      M = true;
     }
     return {
       switched: i,
@@ -186,7 +186,7 @@
     } catch (e) {}
     return null;
   }
-  const M = {
+  const k = {
     karaoke: {
       color: "#FFFFFF",
       fill: null
@@ -227,18 +227,18 @@
       const n = _resolveUserId();
       const i = localStorage.getItem(t) || (!n ? localStorage.getItem(s) : null);
       if (!i) return defaultState();
-      const l = JSON.parse(i);
-      if (!l || typeof l !== "object") return defaultState();
-      const r = {
+      const r = JSON.parse(i);
+      if (!r || typeof r !== "object") return defaultState();
+      const l = {
         ...defaultState(),
-        ...l,
+        ...r,
         version: o,
-        templates: l.templates && typeof l.templates === "object" ? l.templates : {},
-        usageLog: Array.isArray(l.usageLog) ? l.usageLog : []
+        templates: r.templates && typeof r.templates === "object" ? r.templates : {},
+        usageLog: Array.isArray(r.usageLog) ? r.usageLog : []
       };
-      let a = l.version !== o;
-      Object.keys(r.templates).forEach(e => {
-        const t = r.templates[e];
+      let a = r.version !== o;
+      Object.keys(l.templates).forEach(e => {
+        const t = l.templates[e];
         if (!t || typeof t !== "object") return;
         const n = sanitizeForTemplate(e, {
           styles: t.styles,
@@ -258,10 +258,10 @@
       });
       if (a) {
         try {
-          localStorage.setItem(_storageKey(e), JSON.stringify(r));
+          localStorage.setItem(_storageKey(e), JSON.stringify(l));
         } catch (e) {}
       }
-      return r;
+      return l;
     } catch (e) {
       return defaultState();
     }
@@ -403,10 +403,10 @@
     }
     if (n.anim === "center") n.anim = "fade";
     const o = String(n.anim || "").toLowerCase();
-    const l = M[o];
-    if (l) {
-      if (!n.color) n.color = l.color;
-      if (!("fill" in n) && l.fill) n.fill = l.fill;
+    const r = k[o];
+    if (r) {
+      if (!n.color) n.color = r.color;
+      if (!("fill" in n) && r.fill) n.fill = r.fill;
     }
     if (!n.font_size || n.font_size < 28) n.font_size = n.font_size || 68;
     if (n.y_pct == null || !Number.isFinite(Number(n.y_pct))) {
@@ -589,14 +589,14 @@
   function upsertTemplateMemory(e, {styles: t, captions: n, layout: s, source: i} = {}) {
     if (!e || !isEnabled()) return;
     const o = readState();
-    const l = o.templates[e] || {};
-    const r = templateMemoryProfile(e);
-    let a = t !== undefined ? t : l.styles || null;
-    let c = n !== undefined ? n : l.captions || null;
-    let u = s !== undefined ? mergeLayouts(l.layout, s) : l.layout || null;
-    if (!r.styles) a = null;
-    if (!r.layout) u = null;
-    if (!r.captions) c = null;
+    const r = o.templates[e] || {};
+    const l = templateMemoryProfile(e);
+    let a = t !== undefined ? t : r.styles || null;
+    let c = n !== undefined ? n : r.captions || null;
+    let u = s !== undefined ? mergeLayouts(r.layout, s) : r.layout || null;
+    if (!l.styles) a = null;
+    if (!l.layout) u = null;
+    if (!l.captions) c = null;
     if (a && !(typeof a === "object" && Object.keys(a).length)) a = null;
     if (c && !(typeof c === "object" && Object.keys(c).length)) c = null;
     if (u && !layoutUseful(u)) u = null;
@@ -608,14 +608,14 @@
       updatedAt: (new Date).toISOString(),
       styles: a ? JSON.parse(JSON.stringify(a)) : null,
       captions: c ? JSON.parse(JSON.stringify(c)) : null,
-      lastGeneratedCaptions: l.lastGeneratedCaptions ? JSON.parse(JSON.stringify(l.lastGeneratedCaptions)) : null,
-      lastGeneratedStyles: l.lastGeneratedStyles ? JSON.parse(JSON.stringify(l.lastGeneratedStyles)) : null,
+      lastGeneratedCaptions: r.lastGeneratedCaptions ? JSON.parse(JSON.stringify(r.lastGeneratedCaptions)) : null,
+      lastGeneratedStyles: r.lastGeneratedStyles ? JSON.parse(JSON.stringify(r.lastGeneratedStyles)) : null,
       layout: u ? JSON.parse(JSON.stringify(u)) : null,
       fingerprint: f,
-      rejectCount: l.rejectCount || 0,
-      lastRejectedFingerprint: l.fingerprint === f ? l.lastRejectedFingerprint || null : null,
-      lastSuggestedAt: l.fingerprint === f ? l.lastSuggestedAt : null,
-      source: i || l.source || "edit"
+      rejectCount: r.rejectCount || 0,
+      lastRejectedFingerprint: r.fingerprint === f ? r.lastRejectedFingerprint || null : null,
+      lastSuggestedAt: r.fingerprint === f ? r.lastSuggestedAt : null,
+      source: i || r.source || "edit"
     };
     if (c) rememberCaptionSnap(e, c);
     writeState(o, {
@@ -627,43 +627,43 @@
     if (!e || !isEnabled()) return;
     const i = templateMemoryProfile(e);
     const o = readState();
-    const l = o.templates[e] || {};
-    let r = i.styles ? t || collectLiveStyles(e) : null;
+    const r = o.templates[e] || {};
+    let l = i.styles ? t || collectLiveStyles(e) : null;
     let c = i.captions ? n || collectLiveCaptions(e, {
       allowSnap: true
     }) : null;
-    let u = i.layout ? mergeLayouts(l.layout, s || collectLiveLayout(e)) : null;
+    let u = i.layout ? mergeLayouts(r.layout, s || collectLiveLayout(e)) : null;
     if (i.captions && (!c || !Object.keys(c).length)) {
       c = recallCaptionSnap(e);
     }
     const f = sanitizeForTemplate(e, {
-      styles: r,
+      styles: l,
       captions: c,
       layout: u
     });
-    r = f.styles;
+    l = f.styles;
     c = f.captions;
     u = f.layout;
-    if (i.layout && !u && layoutUseful(l.layout)) {
-      u = normalizeLayout(l.layout);
+    if (i.layout && !u && layoutUseful(r.layout)) {
+      u = normalizeLayout(r.layout);
     }
-    if (!(r && Object.keys(r).length) && !(c && Object.keys(c).length) && !layoutUseful(u)) {
+    if (!(l && Object.keys(l).length) && !(c && Object.keys(c).length) && !layoutUseful(u)) {
       return;
     }
-    const g = fingerprint(r, c, u);
-    const y = l.fingerprint === g;
+    const g = fingerprint(l, c, u);
+    const y = r.fingerprint === g;
     o.templates[e] = {
       updatedAt: (new Date).toISOString(),
-      styles: r ? JSON.parse(JSON.stringify(r)) : null,
+      styles: l ? JSON.parse(JSON.stringify(l)) : null,
       captions: c ? JSON.parse(JSON.stringify(c)) : null,
-      lastGeneratedCaptions: c ? JSON.parse(JSON.stringify(c)) : l.lastGeneratedCaptions || null,
-      lastGeneratedStyles: r ? JSON.parse(JSON.stringify(r)) : l.lastGeneratedStyles || null,
+      lastGeneratedCaptions: c ? JSON.parse(JSON.stringify(c)) : r.lastGeneratedCaptions || null,
+      lastGeneratedStyles: l ? JSON.parse(JSON.stringify(l)) : r.lastGeneratedStyles || null,
       layout: u ? JSON.parse(JSON.stringify(u)) : null,
       fingerprint: g,
-      rejectCount: y ? l.rejectCount || 0 : 0,
-      lastRejectedFingerprint: y ? l.lastRejectedFingerprint || null : null,
-      lastRejectedAt: y ? l.lastRejectedAt || null : null,
-      lastSuggestedAt: y ? l.lastSuggestedAt : null,
+      rejectCount: y ? r.rejectCount || 0 : 0,
+      lastRejectedFingerprint: y ? r.lastRejectedFingerprint || null : null,
+      lastRejectedAt: y ? r.lastRejectedAt || null : null,
+      lastSuggestedAt: y ? r.lastSuggestedAt : null,
       source: "generate"
     };
     o.usageLog.unshift({
@@ -714,7 +714,7 @@
       clearTimeout(y);
       y = null;
     }
-    if (!e || !shouldSuggest(e)) {
+    if (!e || !shouldSuggest(e) && !canOfferFirstAnimTip(e)) {
       flushDeferredRankingCustoms();
       return;
     }
@@ -723,12 +723,12 @@
       y = null;
       const t = document.getElementById("templatePreviewModal");
       if (!t || !t.classList.contains("active")) return;
-      if (!shouldSuggest(e)) {
+      if (!shouldSuggest(e) && !canOfferFirstAnimTip(e)) {
         flushDeferredRankingCustoms();
         return;
       }
       showSuggestion(e);
-    }, l + t);
+    }, r + t);
   }
   function captionsDiffer(e, t) {
     return fingerprint(null, e) !== fingerprint(null, t);
@@ -743,8 +743,8 @@
     const s = !!(n && Object.keys(n).length);
     const i = captionsForSuggest(t);
     const o = !!(i && Object.keys(i).length);
-    const l = layoutUseful(t.layout);
-    if (!s && !o && !l) return false;
+    const r = layoutUseful(t.layout);
+    if (!s && !o && !r) return false;
     if (t.lastRejectedFingerprint && t.lastRejectedFingerprint === t.fingerprint) {
       const n = Date.parse(t.lastRejectedAt || 0);
       if (Number.isFinite(n) && Date.now() - n < u) return false;
@@ -759,16 +759,16 @@
         } catch (e) {}
       }
     }
-    if (isLibraryPreviewOpen() && !l) return false;
-    const r = collectLiveStyles(e);
+    if (isLibraryPreviewOpen() && !r) return false;
+    const l = collectLiveStyles(e);
     const a = collectLiveCaptions(e);
     const c = collectLiveLayout(e);
     const y = !!(a && Object.keys(a).length);
-    const d = !!(r && Object.keys(r).length);
+    const d = !!(l && Object.keys(l).length);
     const S = templateMemoryProfile(e);
     const w = o && S.captions && !isLibraryPreviewOpen();
     const h = s && S.styles;
-    const b = l && S.layout;
+    const b = r && S.layout;
     if (!w && !h && !b) return false;
     const _ = Date.parse(t.lastSuggestedAt || 0);
     if (Number.isFinite(_)) {
@@ -782,14 +782,14 @@
     if (h && isRankingTemplate(e)) {
       if (window.__solisRankingDeferCustoms) return true;
       const e = stylesForSuggest(t);
-      if (fingerprint(r, null) !== fingerprint(e, null)) return true;
+      if (fingerprint(l, null) !== fingerprint(e, null)) return true;
     }
     if (w && !y) return true;
     if (h && !d && !y) return true;
-    const k = smarterCaptions(i, e);
-    const M = fingerprint(r, a, c) === t.fingerprint;
-    const v = !k || fingerprint(null, a) === fingerprint(null, k);
-    if (M && v) return false;
+    const M = smarterCaptions(i, e);
+    const k = fingerprint(l, a, c) === t.fingerprint;
+    const v = !M || fingerprint(null, a) === fingerprint(null, M);
+    if (k && v) return false;
     return true;
   }
   function flushDeferredRankingCustoms() {
@@ -869,12 +869,12 @@
       return;
     }
     const o = n.getBoundingClientRect();
-    let l = Math.round(o.right - s - 6);
-    let r = Math.round(o.top + 8);
-    l = Math.min(window.innerWidth - s - 8, Math.max(8, l));
-    r = Math.min(window.innerHeight - i - 8, Math.max(8, r));
-    e.style.left = `${l}px`;
-    e.style.top = `${r}px`;
+    let r = Math.round(o.right - s - 6);
+    let l = Math.round(o.top + 8);
+    r = Math.min(window.innerWidth - s - 8, Math.max(8, r));
+    l = Math.min(window.innerHeight - i - 8, Math.max(8, l));
+    e.style.left = `${r}px`;
+    e.style.top = `${l}px`;
     e.style.transform = "none";
   }
   function hideSuggest() {
@@ -931,19 +931,12 @@
     if (!e || typeof e !== "object") return null;
     const t = e.lastGeneratedCaptions;
     if (t && typeof t === "object" && Object.keys(t).length) return t;
-    const n = e.captions;
-    if (n && typeof n === "object" && Object.keys(n).length) return n;
     return null;
   }
   function stylesForSuggest(e) {
     if (!e || typeof e !== "object") return null;
     const t = e.lastGeneratedStyles;
     if (t && typeof t === "object" && Object.keys(t).length) return t;
-    if (e.source === "generate" && e.styles && Object.keys(e.styles).length) {
-      return e.styles;
-    }
-    const n = e.styles;
-    if (n && typeof n === "object" && Object.keys(n).length) return n;
     return null;
   }
   function isLibraryPreviewOpen() {
@@ -958,19 +951,37 @@
     if (isLibraryPreviewOpen()) return false;
     t = t || getTemplateMemory(e);
     const n = captionsForSuggest(t);
-    let s = smarterCaptions(n, e);
-    if (!s) {
-      s = smarterCaptions({
+    if (!n) {
+      const t = collectLiveCaptions(e);
+      const n = !!(t && Object.keys(t).length);
+      const s = String(t?.anim || "").toLowerCase();
+      const i = !n || !s || s === "none" || s === "static";
+      if (!i || typeof window.offerSubtitleMemorySuggest !== "function") return false;
+      const o = smarterCaptions({
         anim: "karaoke",
-        font: "Montserrat",
-        color: "#ffffff",
-        highlight: "#FFFFFF",
-        shadow: "outline",
-        font_size: 96,
-        font_size_ratio: .058,
-        y_pct: .55,
-        enabled: true
+        font: String(t?.font || "Montserrat"),
+        color: t?.color || "#ffffff",
+        highlight: t?.highlight || "#FFFFFF",
+        shadow: t?.shadow || "outline",
+        font_size: t?.font_size || 96,
+        font_size_ratio: t?.font_size_ratio || .058,
+        y_pct: t?.y_pct != null ? t.y_pct : .55,
+        enabled: true,
+        __tip: "animations"
       }, e);
+      window.offerSubtitleMemorySuggest(o, e);
+      return !!document.getElementById("subMemActions")?.classList.contains("open") || !!document.querySelector(".sub-mem-ghost");
+    }
+    let s = smarterCaptions(n, e);
+    if (s) {
+      const e = String(s.anim || "").toLowerCase();
+      if (!e || e === "center" || e === "fade" || e === "none") {
+        s = {
+          ...s,
+          anim: "karaoke",
+          __tip: "animations"
+        };
+      }
     }
     if (!s || typeof window.offerSubtitleMemorySuggest !== "function") return false;
     const i = collectLiveCaptions(e);
@@ -980,18 +991,21 @@
     return !!document.getElementById("subMemActions")?.classList.contains("open") || !!document.querySelector(".sub-mem-ghost");
   }
   function showSuggestion(e) {
-    if (!shouldSuggest(e)) return;
+    if (!shouldSuggest(e) && !canOfferFirstAnimTip(e)) return;
     const t = getTemplateMemory(e);
-    if (!t) return;
     let n = false;
     if (isSplitscreenTemplate(e)) {
-      if (wantsLayoutSuggest(e, t)) {
+      if (t && wantsLayoutSuggest(e, t)) {
         n = offerLayoutSuggest(e, t);
       }
       if (!n) {
         n = offerCaptionSuggest(e, t);
       }
     } else if (isRankingTemplate(e)) {
+      if (!t) {
+        flushDeferredRankingCustoms();
+        return;
+      }
       const s = stylesForSuggest(t);
       if (s && Object.keys(s).length) {
         n = !!offerRankingStylesSuggest(e, t);
@@ -1011,11 +1025,23 @@
       return;
     }
     m = true;
-    const l = readState();
-    if (l.templates[e]) {
-      l.templates[e].lastSuggestedAt = (new Date).toISOString();
-      writeState(l);
+    if (t) {
+      const t = readState();
+      if (t.templates[e]) {
+        t.templates[e].lastSuggestedAt = (new Date).toISOString();
+        writeState(t);
+      }
     }
+  }
+  function canOfferFirstAnimTip(e) {
+    if (!isSuggestEnabled() || !e) return false;
+    if (m) return false;
+    if (p.has(e)) return false;
+    if (isRankingTemplate(e)) return false;
+    if (isLibraryPreviewOpen()) return false;
+    const t = getTemplateMemory(e);
+    if (captionsForSuggest(t)) return false;
+    return true;
   }
   function offerLayoutSuggest(e, t) {
     t = t || getTemplateMemory(e);
@@ -1049,8 +1075,8 @@
     });
     if (!i) return false;
     const o = collectLiveStyles(e);
-    const l = !!window.__solisRankingDeferCustoms;
-    if (!l && fingerprint(o, null) === fingerprint(n, null)) return false;
+    const r = !!window.__solisRankingDeferCustoms;
+    if (!r && fingerprint(o, null) === fingerprint(n, null)) return false;
     try {
       if (window.RankingTextPill) {
         if (typeof window.RankingTextPill.hide === "function") window.RankingTextPill.hide();
@@ -1059,33 +1085,33 @@
       document.getElementById("subPillMenu")?.classList.remove("active");
     } catch (e) {}
     window.__solisRankingDeferCustoms = false;
-    const r = ensureSuggestEl();
-    const a = r.querySelector("#solisMemorySuggestTitle");
+    const l = ensureSuggestEl();
+    const a = l.querySelector("#solisMemorySuggestTitle");
     if (a) {
       a.hidden = false;
       a.removeAttribute("hidden");
       a.textContent = "Apply last ranking style?";
       a.style.display = "";
     }
-    const c = r.querySelector("#solisMemorySuggestSub");
+    const c = l.querySelector("#solisMemorySuggestSub");
     if (c) c.textContent = "";
-    r.dataset.templateId = e;
-    r.dataset.mode = "styles-only";
-    r.classList.add("solis-memory-suggest--ranking");
+    l.dataset.templateId = e;
+    l.dataset.mode = "styles-only";
+    l.classList.add("solis-memory-suggest--ranking");
     try {
-      r._solisMemStyles = JSON.parse(JSON.stringify(n));
+      l._solisMemStyles = JSON.parse(JSON.stringify(n));
     } catch (e) {
-      r._solisMemStyles = n;
+      l._solisMemStyles = n;
     }
     try {
-      r._solisMemStylesBackup = o ? JSON.parse(JSON.stringify(o)) : JSON.parse(JSON.stringify(window.rankingCustomizer?.customizations || {}));
+      l._solisMemStylesBackup = o ? JSON.parse(JSON.stringify(o)) : JSON.parse(JSON.stringify(window.rankingCustomizer?.customizations || {}));
       applyStyles(e, n);
-      r._solisMemStylesPreviewed = true;
+      l._solisMemStylesPreviewed = true;
     } catch (e) {
-      r._solisMemStylesPreviewed = false;
+      l._solisMemStylesPreviewed = false;
     }
     placeSuggestNearPreview();
-    revealSuggestEl(r);
+    revealSuggestEl(l);
     return true;
   }
   function continueSuggestAfterCaption(e) {
@@ -1359,8 +1385,8 @@
       }
       if (!n) return;
       const o = Date.parse(t.updatedAt || 0) || 0;
-      const l = Date.parse(n.updatedAt || 0) || 0;
-      if (l > o) s.templates[e] = n; else if (l === o) {
+      const r = Date.parse(n.updatedAt || 0) || 0;
+      if (r > o) s.templates[e] = n; else if (r === o) {
         const i = {
           ...t,
           captions: t.captions || n.captions || null,
@@ -1406,8 +1432,8 @@
           }
           return null;
         }
-        const s = k;
-        k = false;
+        const s = M;
+        M = false;
         const i = mergeMemoryStates(readState(), n, {
           preferRemote: s
         });
@@ -1458,7 +1484,7 @@
         if (!m) scheduleSuggest(e);
       }).catch(() => {});
     }
-    setTimeout(() => flushDeferredRankingCustoms(), l + 400);
+    setTimeout(() => flushDeferredRankingCustoms(), r + 400);
   }
   function onTemplatePreviewClose() {
     if (y) {
@@ -1506,32 +1532,7 @@
     S = null;
   }
   function generateFromUsage() {
-    const e = readState();
-    let t = 0;
-    try {
-      const n = localStorage.getItem("rankingCustomizations");
-      if (n) {
-        const s = JSON.parse(n);
-        if (s && Object.keys(s).length) {
-          const n = fingerprint(s, null, null);
-          e.templates.ranked_compilation = {
-            ...e.templates.ranked_compilation || {},
-            updatedAt: (new Date).toISOString(),
-            styles: s,
-            captions: null,
-            layout: null,
-            fingerprint: n,
-            rejectCount: 0,
-            lastRejectedFingerprint: null,
-            source: "usage"
-          };
-          t += 1;
-        }
-      }
-    } catch (e) {}
-    writeState(e);
-    syncSettingsUI();
-    return t;
+    return 0;
   }
   function clearTemplate(e) {
     const t = readState();
@@ -1582,14 +1583,14 @@
       o.classList.toggle("is-on", !!e.enabled);
       o.setAttribute("aria-checked", e.enabled ? "true" : "false");
     }
-    const l = document.getElementById("stgMemoryList");
-    if (!l) return;
-    const r = listMemories();
-    if (!r.length) {
-      l.innerHTML = `<p class="stgMemoryEmpty">No saved styles yet. Customize a preview and generate a clip. Memory will learn from that.</p>`;
+    const r = document.getElementById("stgMemoryList");
+    if (!r) return;
+    const l = listMemories();
+    if (!l.length) {
+      r.innerHTML = `<p class="stgMemoryEmpty">No saved styles yet. Customize a preview and generate a clip. Memory will learn from that.</p>`;
       return;
     }
-    l.innerHTML = r.map(e => `\n            <div class="stgMemoryItem" data-mem-id="${e.templateId}">\n                <div class="stgMemoryItemBody">\n                    <div class="stgMemoryItemTitle">${escapeHtml(prettyTemplateName(e.templateId))}${e.hasCaptions ? " · Captions" : ""}${e.hasLayout ? " · Layout" : ""}</div>\n                    <div class="stgMemoryItemMeta">${escapeHtml(e.summary)}${e.updatedAt ? ` · ${formatRelative(e.updatedAt)}` : ""}</div>\n                </div>\n                <button type="button" class="stgMemoryClearOne" data-clear-mem="${e.templateId}" title="Clear">Clear</button>\n            </div>\n        `).join("");
+    r.innerHTML = l.map(e => `\n            <div class="stgMemoryItem" data-mem-id="${e.templateId}">\n                <div class="stgMemoryItemBody">\n                    <div class="stgMemoryItemTitle">${escapeHtml(prettyTemplateName(e.templateId))}${e.hasCaptions ? " · Captions" : ""}${e.hasLayout ? " · Layout" : ""}</div>\n                    <div class="stgMemoryItemMeta">${escapeHtml(e.summary)}${e.updatedAt ? ` · ${formatRelative(e.updatedAt)}` : ""}</div>\n                </div>\n                <button type="button" class="stgMemoryClearOne" data-clear-mem="${e.templateId}" title="Clear">Clear</button>\n            </div>\n        `).join("");
   }
   function prettyTemplateName(e) {
     return String(e || "template").replace(/_/g, " ").replace(/\b\w/g, e => e.toUpperCase());

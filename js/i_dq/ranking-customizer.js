@@ -111,14 +111,41 @@ class RankingCustomizer {
         this.setElementContent(e, n);
       }
     });
-    const t = localStorage.getItem("rankingCustomizations");
-    if (t) {
-      try {
-        this.customizations = this._sanitizeCustoms(JSON.parse(t));
-        this.applyCustomizations();
-      } catch (t) {
-        console.warn("Failed to load saved customizations:", t);
+    this._loadStoredCustomizations();
+  }
+  _storageKey() {
+    try {
+      const t = window.currentUser?.id || window.currentUser?.user_id || window.SolisMemory?._resolveUserId?.() || null;
+      if (t != null && String(t).trim() !== "") {
+        return `rankingCustomizations:u${t}`;
       }
+    } catch (t) {}
+    return "rankingCustomizations";
+  }
+  _loadStoredCustomizations() {
+    const t = this._storageKey();
+    let e = null;
+    try {
+      e = localStorage.getItem(t);
+    } catch (t) {
+      e = null;
+    }
+    if (!e && t !== "rankingCustomizations") {
+      try {
+        const n = localStorage.getItem("rankingCustomizations");
+        if (n) {
+          e = n;
+          localStorage.setItem(t, n);
+          localStorage.removeItem("rankingCustomizations");
+        }
+      } catch (t) {}
+    }
+    if (!e) return;
+    try {
+      this.customizations = this._sanitizeCustoms(JSON.parse(e));
+      this.applyCustomizations();
+    } catch (t) {
+      console.warn("Failed to load saved customizations:", t);
     }
   }
   _sanitizeCustoms(t) {
@@ -256,7 +283,13 @@ class RankingCustomizer {
     this.saveCustomizations();
   }
   saveCustomizations() {
-    localStorage.setItem("rankingCustomizations", JSON.stringify(this.customizations));
+    const t = typeof this._storageKey === "function" ? this._storageKey() : "rankingCustomizations";
+    try {
+      localStorage.setItem(t, JSON.stringify(this.customizations));
+      if (t !== "rankingCustomizations") {
+        localStorage.removeItem("rankingCustomizations");
+      }
+    } catch (t) {}
     try {
       sessionStorage.setItem("solisPendingRankingCustoms", JSON.stringify(this.customizations || {}));
     } catch (t) {}
@@ -756,7 +789,7 @@ class RankingCustomizer {
         }
       });
       try {
-        localStorage.setItem("rankingCustomizations", JSON.stringify(this.customizations));
+        this.saveCustomizations();
         sessionStorage.setItem("solisPendingRankingCustoms", JSON.stringify(t));
         sessionStorage.setItem("solisRankingStyleLock", JSON.stringify(t));
       } catch (t) {}
@@ -776,7 +809,7 @@ class RankingCustomizer {
       }
     });
     try {
-      localStorage.setItem("rankingCustomizations", JSON.stringify(this.customizations));
+      this.saveCustomizations();
       sessionStorage.setItem("solisPendingRankingCustoms", JSON.stringify(e));
       if (this.countFonts(e) > 0) {
         sessionStorage.setItem("solisRankingStyleLock", JSON.stringify(e));
@@ -871,7 +904,8 @@ class RankingCustomizer {
     const s = {};
     const r = [ t, this.customizations, (() => {
       try {
-        return JSON.parse(localStorage.getItem("rankingCustomizations") || "null");
+        const t = typeof this._storageKey === "function" ? this._storageKey() : "rankingCustomizations";
+        return JSON.parse(localStorage.getItem(t) || "null");
       } catch (t) {
         return null;
       }
@@ -950,15 +984,6 @@ class RankingCustomizer {
       }
     });
     try {
-      localStorage.setItem("rankingCustomizations", JSON.stringify({
-        ...this.customizations || {},
-        ...s
-      }));
-      sessionStorage.setItem("solisPendingRankingCustoms", JSON.stringify(s));
-      if (this.countFonts(s) > 0) {
-        sessionStorage.setItem("solisRankingStyleLock", JSON.stringify(s));
-      }
-      window.__solisRankingStyleLock = s;
       Object.entries(s).forEach(([t, e]) => {
         if (e && typeof e === "object" && !Array.isArray(e)) {
           this.customizations[t] = {
@@ -967,6 +992,12 @@ class RankingCustomizer {
           };
         }
       });
+      this.saveCustomizations();
+      sessionStorage.setItem("solisPendingRankingCustoms", JSON.stringify(s));
+      if (this.countFonts(s) > 0) {
+        sessionStorage.setItem("solisRankingStyleLock", JSON.stringify(s));
+      }
+      window.__solisRankingStyleLock = s;
     } catch (t) {}
     return JSON.parse(JSON.stringify(s));
   }

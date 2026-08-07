@@ -1096,8 +1096,8 @@ class GenerationProgressSpinner {
     this.updateProgress(e, 0, t);
     this.startPolling();
     this.verifyWebSocketAccess(e, t => {
-      if (!t && this.activeGenerations.has(e)) {
-        this.failGeneration(e);
+      if (!t) {
+        console.warn("[GENERATION] WebSocket verify soft-failed; continuing with polling", e);
       }
     });
   }
@@ -1110,7 +1110,23 @@ class GenerationProgressSpinner {
       method: "GET",
       credentials: "include",
       headers: this._requestHeaders()
-    }).then(e => e.json()).then(e => t(!!e.allowed)).catch(() => t(false));
+    }).then(async e => {
+      let s = null;
+      try {
+        s = await e.json();
+      } catch (e) {
+        s = null;
+      }
+      if (!e.ok) {
+        console.warn("[GENERATION] verify HTTP", e.status, s);
+        t(false);
+        return;
+      }
+      t(!!s?.allowed);
+    }).catch(e => {
+      console.warn("[GENERATION] verify network error", e);
+      t(false);
+    });
   }
   updateProgress(e, t, s = "", i = false, r = null) {
     if (!this._isValidProjectId(e)) return;

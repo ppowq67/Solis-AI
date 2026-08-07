@@ -9495,7 +9495,12 @@ class ClipsStudio {
         }
         let n = null;
         try {
-          n = JSON.parse(localStorage.getItem("rankingCustomizations") || "null");
+          const e = window.currentUser?.id || window.currentUser?.user_id || null;
+          const t = e != null ? `rankingCustomizations:u${e}` : "rankingCustomizations";
+          n = JSON.parse(localStorage.getItem(t) || "null");
+          if (!n && t !== "rankingCustomizations") {
+            n = JSON.parse(localStorage.getItem("rankingCustomizations") || "null");
+          }
         } catch (e) {
           n = null;
         }

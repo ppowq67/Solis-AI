@@ -57,8 +57,8 @@
   let D = 18;
   let N = 92;
   let $ = 56;
-  let q = false;
   let I = false;
+  let q = false;
   let G = false;
   let O = null;
   let V = "single";
@@ -248,20 +248,20 @@
       r.title = e === b ? `${e} (selected)` : e;
       r.onmouseenter = () => previewFont(e);
       r.onmouseleave = e => {
-        if (I) return;
+        if (q) return;
         if (p.contains(e.relatedTarget)) return;
         resetFontPreview();
       };
       r.onmousedown = t => {
         t.preventDefault();
         t.stopPropagation();
-        I = true;
+        q = true;
         try {
           applyFont(e);
         } finally {
-          requestAnimationFrame(() => {
-            I = false;
-          });
+          setTimeout(() => {
+            q = false;
+          }, 450);
         }
       };
       i.appendChild(r);
@@ -2174,20 +2174,24 @@
     }
     return o;
   }
-  function setElementFont(e, i) {
+  function paintFontDom(e, i) {
+    if (!e) return;
     const r = n[i] || `'${i}', sans-serif`;
     e.style.setProperty("font-family", r, "important");
     e.style.setProperty("font-weight", t[i] || "400", "important");
     e.setAttribute("data-rk-font", i);
-    const o = e.getAttribute("data-template-element-id");
-    if (o && window.rankingCustomizer?.setElementFontFile) {
-      window.rankingCustomizer.setElementFontFile(o, i);
-    } else if (o && window.rankingCustomizer) {
+  }
+  function setElementFont(e, t) {
+    paintFontDom(e, t);
+    const n = e.getAttribute("data-template-element-id");
+    if (n && window.rankingCustomizer?.setElementFontFile) {
+      window.rankingCustomizer.setElementFontFile(n, t);
+    } else if (n && window.rankingCustomizer) {
       if (!window.rankingCustomizer.customizations) {
         window.rankingCustomizer.customizations = {};
       }
-      if (!window.rankingCustomizer.customizations[o]) {
-        window.rankingCustomizer.customizations[o] = {};
+      if (!window.rankingCustomizer.customizations[n]) {
+        window.rankingCustomizer.customizations[n] = {};
       }
       const e = {
         "Luckiest Guy": "LuckiestGuy-Regular.ttf",
@@ -2198,7 +2202,7 @@
         Roboto: "Roboto-Bold.ttf",
         Fredoka: "Fredoka-Bold.ttf"
       };
-      window.rankingCustomizer.customizations[o].font = e[i] || i;
+      window.rankingCustomizer.customizations[n].font = e[t] || t;
     }
     try {
       window.rankingCustomizer?.persistElementStyles?.(e);
@@ -2306,21 +2310,21 @@
     });
   }
   function beginFontPreviewSession(e) {
-    if (!q) {
+    if (!I) {
       Y = e;
       e.forEach(e => snapshotEl(e));
-      q = true;
+      I = true;
     }
   }
   function previewFont(e) {
-    if (I || !y.size) return;
+    if (q || !y.size) return;
     const t = resolveApplyTargets();
     beginFontPreviewSession(t);
-    t.forEach(t => setElementFont(t, e));
+    t.forEach(t => paintFontDom(t, e));
   }
   function resetFontPreview() {
-    if (I || !q) return;
-    q = false;
+    if (q || !I) return;
+    I = false;
     Y.forEach(e => restoreSnapshot(e));
     Y = [];
   }
@@ -2328,7 +2332,7 @@
     b = e;
     M = true;
     const t = resolveApplyTargets();
-    q = false;
+    I = false;
     Y = [];
     applyFontChange(e, t);
     t.forEach(e => snapshotEl(e));
@@ -3150,7 +3154,7 @@
       const t = p.classList.contains("open");
       closeDD();
       if (!t) {
-        q = false;
+        I = false;
         y.forEach(e => snapshotEl(e));
         const t = p.querySelector("#rkFontSearch");
         if (t) t.value = "";

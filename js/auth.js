@@ -22,7 +22,8 @@ async function refreshTokenSilently() {
       credentials: "include",
       headers: {
         "Content-Type": "application/json"
-      }
+      },
+      body: "{}"
     });
     if (e.ok) {
       const t = await e.json();

@@ -25,7 +25,8 @@ window.fetch = async function(...e) {
       credentials: "include",
       headers: {
         "Content-Type": "application/json"
-      }
+      },
+      body: "{}"
     });
     if (e.ok) {
       i = await originalFetch(t, r);
@@ -2832,7 +2833,8 @@ async function refreshAuthToken() {
       headers: {
         "Content-Type": "application/json"
       },
-      credentials: "include"
+      credentials: "include",
+      body: "{}"
     });
     if (e.ok) {
       safeLog("[Auth] Token refreshed successfully");

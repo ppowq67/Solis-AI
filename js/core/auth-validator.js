@@ -7,7 +7,8 @@ window.AuthValidator = (() => {
         credentials: "include",
         headers: {
           "Content-Type": "application/json"
-        }
+        },
+        body: "{}"
       });
       return t.ok;
     } catch (t) {

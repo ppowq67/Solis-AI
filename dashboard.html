@@ -2256,6 +2256,9 @@
                                     <div id="admin-delete-btn" class="nf-admin-delete" style="display: none; cursor: pointer; padding: 4px 8px; color: #ef4444; font-size: 14px; font-weight: 500; border-radius: 4px; transition: all 0.2s;">
                                         Delete
                                     </div>
+                                    <button type="button" id="admin-create-btn" class="nf-admin-create" style="display:none;cursor:pointer;padding:4px 8px;color:#10b981;font-size:14px;font-weight:600;border:none;background:transparent;border-radius:4px;">
+                                        Post
+                                    </button>
                                     <div id="dots" class="nf-dots"></div>
                                 </div>
 
@@ -2367,17 +2370,32 @@
 
                     function nf_syncAuthorFollowState(authorId, following) {
                         newsFeedData.forEach((post) => {
-                            if (post.user_id === authorId) {
+                            if (nf_sameUserId(post.user_id, authorId)) {
                                 post.is_following_author = !!following;
                             }
                         });
                     }
 
+                    function nf_sameUserId(a, b) {
+                        const na = Number(a);
+                        const nb = Number(b);
+                        return Number.isFinite(na) && Number.isFinite(nb) && na === nb;
+                    }
+
+                    function nf_canModerateFeed() {
+                        if (window.currentUserIsOfficial) return true;
+                        const uid = Number(window.currentUser?.id || window.currentUser?.user_id || 0);
+                        return uid === 1;
+                    }
+
                     function nf_setFollowerCountDisplay(count, forUserId) {
                         const item = newsFeedData[newsFeedIdx];
-                        if (!item || item.user_id !== forUserId) return;
+                        if (!item || !nf_sameUserId(item.user_id, forUserId)) return;
+                        const n = Number(count);
+                        const safe = Number.isFinite(n) ? Math.max(0, n) : 0;
+                        item.author_followers = safe;
                         const el = document.getElementById('p-followers');
-                        if (el) el.textContent = Number(count || 0).toLocaleString();
+                        if (el) el.textContent = safe.toLocaleString();
                     }
 
                     function nf_refreshFollowerCount(userId) {
@@ -2400,7 +2418,7 @@
                     function nf_applyFollowState(authorId, following, followers) {
                         nf_syncAuthorFollowState(authorId, following);
                         const item = newsFeedData[newsFeedIdx];
-                        if (item && item.user_id === authorId) {
+                        if (item && nf_sameUserId(item.user_id, authorId)) {
                             nf_setFollowButton(following);
                         }
                         if (followers != null) {
@@ -2419,7 +2437,18 @@
                                 });
                                 if (profileResponse.ok) {
                                     const profile = await profileResponse.json();
-                                    window.currentUserIsOfficial = profile.is_official || false;
+                                    window.currentUserIsOfficial = !!(
+                                        profile.is_official
+                                        || Number(profile.id || profile.user_id) === 1
+                                    );
+                                    if (profile.id != null && !window.currentUser) {
+                                        window.currentUser = { id: profile.id, ...(window.currentUser || {}) };
+                                    } else if (profile.id != null && window.currentUser) {
+                                        window.currentUser.id = profile.id;
+                                        if (profile.is_official != null) {
+                                            window.currentUser.is_official = profile.is_official;
+                                        }
+                                    }
                                 }
                             } catch (error) {
                                 window.currentUserIsOfficial = false;
@@ -2799,8 +2828,13 @@
                         nf_setFollowButton(item.is_following_author);
 
                         const adminDeleteBtn = document.getElementById('admin-delete-btn');
-                        if (window.currentUserIsOfficial && adminDeleteBtn) {
-                            adminDeleteBtn.style.display = 'block';
+                        const adminCreateBtn = document.getElementById('admin-create-btn');
+                        const canMod = nf_canModerateFeed();
+                        if (adminDeleteBtn) {
+                            adminDeleteBtn.style.display = canMod && newsFeedData.length ? 'block' : 'none';
+                        }
+                        if (adminCreateBtn) {
+                            adminCreateBtn.style.display = canMod ? 'block' : 'none';
                         }
                     }
 
@@ -2823,6 +2857,15 @@
 
                     if (closePostModalBtn) closePostModalBtn.onclick = () => postModal.style.display = 'none';
                     if (postCancelBtn) postCancelBtn.onclick = () => postModal.style.display = 'none';
+
+                    const adminCreateBtn = document.getElementById('admin-create-btn');
+                    if (adminCreateBtn && postModal) {
+                        adminCreateBtn.onclick = (e) => {
+                            e.stopPropagation();
+                            if (!nf_canModerateFeed()) return;
+                            postModal.style.display = 'flex';
+                        };
+                    }
 
                     if (postSubmitBtn) {
                         postSubmitBtn.onclick = async () => {
@@ -3148,12 +3191,16 @@
                     if (typeof io !== 'undefined') {
                         initializeNewsSocket();
                     } else {
+                        let sockTries = 0;
                         const checkSocket = setInterval(() => {
+                            sockTries += 1;
                             if (typeof io !== 'undefined') {
                                 clearInterval(checkSocket);
                                 initializeNewsSocket();
+                            } else if (sockTries >= 40) {
+                                clearInterval(checkSocket);
                             }
-                        }, 100);
+                        }, 250);
                     }
 
                     nf_loadFeed();

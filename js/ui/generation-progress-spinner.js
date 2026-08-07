@@ -909,10 +909,12 @@ class GenerationProgressSpinner {
   async _fetchProjectStatus(e) {
     if (!this._isValidProjectId(e)) return null;
     try {
+      if (window.solisApiGate && !window.solisApiGate.allowPoll()) return null;
       const t = await fetch(this._statusUrl(e), {
         method: "GET",
         credentials: "include",
-        headers: this._requestHeaders()
+        headers: this._requestHeaders(),
+        solisOptionalPoll: true
       });
       if (t.status === 401 || t.status === 403 || t.status === 404) {
         this.removeFromLocalStorage(e);
@@ -1535,7 +1537,12 @@ class GenerationProgressSpinner {
       try {
         t = !!(typeof solisWSClient !== "undefined" && solisWSClient && (solisWSClient.isConnected?.() || solisWSClient.connected));
       } catch (e) {}
-      const s = t ? this.POLLING_INTERVAL_WS : this.POLLING_INTERVAL;
+      let s = t ? this.POLLING_INTERVAL_WS : this.POLLING_INTERVAL;
+      try {
+        if (window.solisApiGate && !window.solisApiGate.allowPoll()) {
+          s = Math.max(s, 2e4);
+        }
+      } catch (e) {}
       this.pollingTimer = setTimeout(poll, s);
     };
     poll();

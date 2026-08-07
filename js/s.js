@@ -10927,8 +10927,11 @@ class ClipsStudio {
     safeLog(`🔄 Starting smart polling for ${this.processingItems.length} processing item(s)`);
     this.libraryPollingInterval = setInterval(async () => {
       try {
+        if (window.solisApiGate && !window.solisApiGate.allowPoll()) {
+          return;
+        }
         if (this.processingItems.length === 0) {
-          safeLog("ðŸ“ All items processed - stopping polling");
+          safeLog("No processing items - stopping polling");
           this.stopLibraryPolling();
           return;
         }
@@ -10946,7 +10949,7 @@ class ClipsStudio {
             const i = await fetch(`${API_BASE_URL}/clips/status/${t.projectId}`, {
               headers: n,
               credentials: "include",
-              timeout: 3e3
+              solisOptionalPoll: true
             });
             if (i.ok) {
               const n = await i.json();
@@ -10973,13 +10976,15 @@ class ClipsStudio {
                 this.moveToLibrary(t);
                 this.stopMonitoring?.(t.id);
               } else {
-                safeLog(`🧹 Removing stale card during polling: ${t.name} (status: ${n.status})`);
+                safeLog(`Removing stale card during polling: ${t.name} (status: ${n.status})`);
               }
+            } else if (i.status >= 500) {
+              e.push(t);
             } else {
-              safeLog(`🧹 Backend check failed for ${t.name}, removing from processing`);
+              safeLog(`Backend check failed for ${t.name}, removing from processing`);
             }
-          } catch (e) {
-            safeLog(`⚠ï¸ Error validating ${t.name} during polling - removing: ${e.message}`);
+          } catch (n) {
+            e.push(t);
           }
         }
         if (e.length !== this.processingItems.length) {

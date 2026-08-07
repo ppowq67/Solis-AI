@@ -2458,13 +2458,16 @@ function syncUseTemplateFab() {
   const e = document.getElementById("confirmUseTemplateBtn");
   const t = document.getElementById("confirmUseTemplateFab");
   if (!e || !t) return;
-  t.disabled = !!e.disabled;
+  const n = e.style.display === "none" || e.getAttribute("data-pro-locked") === "1" || window.getComputedStyle(e).display === "none";
+  t.style.display = n ? "none" : "";
+  t.hidden = n;
+  t.disabled = !!e.disabled || n;
   t.classList.toggle("library-download-mode", e.classList.contains("library-download-mode"));
-  const n = t.querySelector(".template-use-fab-label");
-  const i = (e.textContent || "").trim() || "Use Template";
-  if (n) n.textContent = i;
-  t.setAttribute("aria-label", i);
-  t.title = i;
+  const i = t.querySelector(".template-use-fab-label");
+  const r = (e.textContent || "").trim() || "Use Template";
+  if (i) i.textContent = r;
+  t.setAttribute("aria-label", r);
+  t.title = r;
 }
 
 window.syncUseTemplateFab = syncUseTemplateFab;
@@ -6145,24 +6148,55 @@ class ClipsStudio {
     const updateTemplatePreviewButtons = async () => {
       const t = document.getElementById("confirmUseTemplateBtn");
       const n = document.getElementById("templatePreviewProFooter");
+      const i = new Set([ "basic", "prime", "elite", "pro" ]);
+      const normalizePlan = e => String(e || "free").trim().toLowerCase();
       try {
-        const i = await window._subCache.get();
-        const r = i?.plan || "free";
+        let r = "free";
+        try {
+          const e = await window._subCache.get();
+          r = normalizePlan(e?.plan || e?.plan_type);
+        } catch (e) {
+          r = normalizePlan(window.currentUser?.plan || window.currentUser?.plan_type);
+        }
         const o = [ "splitscreen" ].includes(e);
-        const s = r === "free";
+        const s = !i.has(r);
         if (o && s) {
-          if (t) t.style.display = "none";
-          if (n) n.style.display = "flex";
+          if (t) {
+            t.style.display = "none";
+            t.setAttribute("data-pro-locked", "1");
+            t.disabled = true;
+          }
+          if (n) {
+            n.style.display = "flex";
+            n.style.visibility = "visible";
+          }
         } else {
-          if (t) t.style.display = "block";
+          if (t) {
+            t.style.display = "";
+            t.removeAttribute("data-pro-locked");
+            t.disabled = false;
+          }
           if (n) n.style.display = "none";
         }
-      } catch (e) {
-        safeLog("⚠ï¸ Could not check plan:", e);
-        if (t) t.style.display = "block";
-        if (n) n.style.display = "none";
+      } catch (i) {
+        safeLog("Could not check plan:", i);
+        if ([ "splitscreen" ].includes(e)) {
+          if (t) {
+            t.style.display = "none";
+            t.setAttribute("data-pro-locked", "1");
+            t.disabled = true;
+          }
+          if (n) {
+            n.style.display = "flex";
+            n.style.visibility = "visible";
+          }
+        } else {
+          if (t) t.style.display = "";
+          if (n) n.style.display = "none";
+        }
       }
       this.syncTemplateConfirmButton();
+      if (typeof window.syncUseTemplateFab === "function") window.syncUseTemplateFab();
     };
     updateTemplatePreviewButtons();
     setTimeout(() => {
@@ -6381,6 +6415,23 @@ class ClipsStudio {
     }
     if (i) {
       i.style.display = d ? "block" : "none";
+    }
+    const p = document.getElementById("watermarkLocationHint");
+    if (p) {
+      if (l) {
+        p.textContent = "Solis mark appears middle-right on exports (same as preview)";
+      } else if (a) {
+        p.textContent = "Your first free clip has no watermark";
+      } else if (o) {
+        p.textContent = "Optional Solis mark on exports";
+      } else {
+        p.textContent = "Show Solis mark on exports";
+      }
+    }
+    if (l) {
+      try {
+        this.updateWatermarkDisplay?.();
+      } catch (e) {}
     }
     if (this._watermarkChangeHandler) {
       r.removeEventListener("change", this._watermarkChangeHandler);
@@ -8808,6 +8859,10 @@ class ClipsStudio {
   async confirmTemplateUse() {
     const e = document.getElementById("confirmUseTemplateBtn");
     if (e?.dataset.applying === "1") return;
+    if (e?.getAttribute("data-pro-locked") === "1") {
+      window.location.href = "/premium.html";
+      return;
+    }
     if (!this.currentTemplateForPreview) {
       console.warn("No template selected");
       showNotification("Please select a template", "error");
@@ -8821,6 +8876,30 @@ class ClipsStudio {
     const n = this.currentTemplateForPreview.isLibraryPreview || false;
     const i = this.currentTemplateForPreview.projectId;
     const r = this.templates[t];
+    if (t === "splitscreen" && !n) {
+      const t = new Set([ "basic", "prime", "elite", "pro" ]);
+      let n = "free";
+      try {
+        const e = await window._subCache.get();
+        n = String(e?.plan || e?.plan_type || "free").toLowerCase();
+      } catch (e) {
+        n = String(window.currentUser?.plan || window.currentUser?.plan_type || "free").toLowerCase();
+      }
+      if (!t.has(n)) {
+        const t = document.getElementById("templatePreviewProFooter");
+        if (e) {
+          e.style.display = "none";
+          e.setAttribute("data-pro-locked", "1");
+        }
+        if (t) {
+          t.style.display = "flex";
+          t.style.visibility = "visible";
+        }
+        if (typeof window.syncUseTemplateFab === "function") window.syncUseTemplateFab();
+        window.location.href = "/premium.html";
+        return;
+      }
+    }
     safeLog("ðŸ” confirmTemplateUse:", {
       templateId: t,
       isLibraryPreview: n,

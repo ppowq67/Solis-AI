@@ -13520,7 +13520,7 @@
             e.preventDefault();
             e.stopPropagation();
             const tid=pendingSubMem?.templateId||null;
-            clearSubtitleMemorySuggest({cooldown:true, persistReject:true, templateId:tid});
+            clearSubtitleMemorySuggest({cooldown:true, revert:true, persistReject:true, templateId:tid});
             closeDD();
         }
     }, true);

@@ -1,13 +1,13 @@
 (function() {
   const e = {
     basic: {
-      priceId: "pri_01kbavpdvztyny35d5jzbxdb3j"
+      priceId: "pri_01kbavyh2vxwy5z8pdzrwb5eqq"
     },
     prime: {
-      priceId: "pri_01kbds38r5h1ranax74yv92sps"
+      priceId: "pri_01kbds6nnbv1hj5vef6nxgpha4"
     },
     elite: {
-      priceId: "pri_01kbjpgwz7v6pdn2jggt0zhq6k"
+      priceId: "pri_01kbjphsvy40kypjk2nxh0qdzk"
     }
   };
   function apiBase() {

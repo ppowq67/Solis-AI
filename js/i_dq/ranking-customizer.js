@@ -201,8 +201,14 @@ class RankingCustomizer {
     const o = (t.textContent || "").trim() || String(t.getAttribute("data-rk-full-title") || "").trim();
     if (e.endsWith("_number") && e.startsWith("rank_")) {
       delete n.content;
+      delete n.contentHtml;
     } else if (o) {
       n.content = o;
+      if (t.querySelector('span[style*="color"]')) {
+        n.contentHtml = t.innerHTML.replace(/<script[\s\S]*?<\/script>/gi, "");
+      } else {
+        delete n.contentHtml;
+      }
     }
     n.font = this._resolvePersistFont(t, e, n);
     try {
@@ -473,6 +479,11 @@ class RankingCustomizer {
         }
       } else if (n) {
         this.customizations[e].content = n;
+        if (t.querySelector('span[style*="color"]')) {
+          this.customizations[e].contentHtml = t.innerHTML.replace(/<script[\s\S]*?<\/script>/gi, "");
+        } else {
+          delete this.customizations[e].contentHtml;
+        }
       }
       const o = this._colorToRgba(t.style.color || getComputedStyle(t).color);
       if (o) this.customizations[e].color = o;
@@ -541,6 +552,8 @@ class RankingCustomizer {
           const t = e.match(/^rank_(\d+)_number$/);
           if (t) o.textContent = `${t[1]}.`;
           o.contentEditable = "false";
+        } else if (n.contentHtml) {
+          o.innerHTML = String(n.contentHtml).replace(/<script[\s\S]*?<\/script>/gi, "");
         } else if (n.content) {
           o.textContent = n.content;
         }
@@ -656,8 +669,14 @@ class RankingCustomizer {
         const i = (t.textContent || "").trim() || String(t.getAttribute("data-rk-full-title") || "").trim();
         if (n.endsWith("_number") && n.startsWith("rank_")) {
           delete o.content;
+          delete o.contentHtml;
         } else if (i && !/^add title/i.test(i)) {
           o.content = i;
+          if (t.querySelector('span[style*="color"]')) {
+            o.contentHtml = t.innerHTML.replace(/<script[\s\S]*?<\/script>/gi, "");
+          } else {
+            delete o.contentHtml;
+          }
         }
         o.font = this._resolvePersistFont(t, n, o);
         const s = t.style.color || t.style.getPropertyValue("color") || getComputedStyle(t).color;

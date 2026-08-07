@@ -2436,7 +2436,7 @@
                             newsFeedIdx = 0;
 
                             if (newsFeedData.length === 0) {
-                                nf_mainText.textContent = 'No posts yet. Follow official accounts to see their posts!';
+                                nf_mainText.textContent = 'No posts yet — Solis will share updates here soon.';
                                 nf_contentBlock.style.display = 'block';
                                 return;
                             }
@@ -2838,9 +2838,10 @@
                                 postSubmitBtn.disabled = true;
                                 postSubmitBtn.textContent = 'Posting...';
 
-                                const response = await fetch('/api/admin/news/create', {
+                                const response = await fetch(nf_api('/api/admin/news/create'), {
                                     method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
+                                    credentials: 'include',
+                                    headers: nf_authHeaders({ 'Content-Type': 'application/json' }),
                                     body: JSON.stringify({
                                         content: content,
                                         image_url: imageUrl || null

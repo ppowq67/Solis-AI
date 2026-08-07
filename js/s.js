@@ -6568,10 +6568,14 @@ class ClipsStudio {
         } else if (window.rankingCustomizer) {
           window.__solisRankingDeferCustoms = false;
           window.rankingCustomizer.applyCustomizations();
+          try {
+            window.RankingTextPill?.seedDefaultSizes?.();
+          } catch (e) {}
+        } else {
+          try {
+            window.RankingTextPill?.seedDefaultSizes?.();
+          } catch (e) {}
         }
-        try {
-          window.RankingTextPill?.seedDefaultSizes?.();
-        } catch (e) {}
       }, 50);
     }
     if (t?.id === "splitscreen") {

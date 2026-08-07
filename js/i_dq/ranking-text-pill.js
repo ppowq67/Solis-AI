@@ -19,68 +19,75 @@
     Roboto: "'Roboto', sans-serif"
   };
   const i = [ "#ffffff", "#FF6A3D", "#facc15", "#60a5fa", "#80DE4A" ];
-  const r = [ "#ffffff", "#FF6A3D", "#111827", "#0f172a" ];
-  const o = "solis_sub_custom_cols";
-  const a = "__ranking_layout";
-  const s = .25;
-  const l = .1;
-  const c = .45;
-  const d = {
-    none: "none",
-    outline: "2px 0 0 #000,-2px 0 0 #000,0 2px 0 #000,0 -2px 0 #000," + "1px 1px 0 #000,-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000",
-    stroke: "2px 0 0 #000,-2px 0 0 #000,0 2px 0 #000,0 -2px 0 #000," + "1px 1px 0 #000,-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000",
-    "thick-outline": "3px 0 0 #000,-3px 0 0 #000,0 3px 0 #000,0 -3px 0 #000," + "2px 2px 0 #000,-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000"
-  };
+  const r = [ "#ffffff", "#FF6A3D", "#111827", "#0f172a", "#000000" ];
+  const o = [ "#ffffff", "#000000", "#FF6A3D", "#facc15", "#60a5fa" ];
+  const a = "solis_sub_custom_cols";
+  const s = "__ranking_layout";
+  const l = .25;
+  const c = .1;
+  const d = .45;
+  function shadowCss(e, t) {
+    const n = normalizeHex(t) || t || "#000";
+    if (!e || e === "none") return "none";
+    if (e === "thick-outline") {
+      return `3px 0 0 ${n},-3px 0 0 ${n},0 3px 0 ${n},0 -3px 0 ${n},` + `2px 2px 0 ${n},-2px -2px 0 ${n},2px -2px 0 ${n},-2px 2px 0 ${n}`;
+    }
+    return `2px 0 0 ${n},-2px 0 0 ${n},0 2px 0 ${n},0 -2px 0 ${n},` + `1px 1px 0 ${n},-1px -1px 0 ${n},1px -1px 0 ${n},-1px 1px 0 ${n}`;
+  }
   let u, p, g, m;
   let y = new Set;
   let b = "Luckiest Guy";
   let w = "#ffffff";
   let v = null;
   let x = "outline";
-  let S = undefined;
-  let E = "text";
-  let z = false;
-  let C = null;
+  let S = "#000000";
+  let E = undefined;
+  let z = "text";
+  let C = false;
+  let L = null;
   let R = false;
   let M = false;
-  let L = false;
   let F = false;
-  let P = null;
-  let T = false;
+  let P = false;
+  let T = null;
+  let B = false;
   let A = new Map;
-  let B = null;
-  let _ = 18;
-  let H = false;
-  let N = false;
-  let D = false;
-  let G = null;
-  let $ = "single";
-  let q = null;
-  let I = null;
-  const O = new Map;
-  let V = [];
-  let W = 0;
-  let j = [];
-  let Z = null;
-  let Y = 0;
+  let H = null;
+  let _ = null;
+  let D = 18;
+  let N = 92;
+  let $ = 56;
+  let I = false;
+  let q = false;
+  let G = false;
+  let O = null;
+  let V = "single";
+  let W = null;
+  let j = null;
+  const Z = new Map;
+  let Y = [];
   let U = 0;
-  let X = 0;
-  const J = 6e3;
-  const K = 2200;
-  const Q = 3500;
-  const ee = 420;
-  const te = .82;
-  const ne = 40;
-  const ie = 38;
-  const re = 18;
-  const oe = 16;
-  const ae = 34;
-  const se = 120;
-  const le = 110;
-  const ce = 95;
-  const de = le;
-  const ue = 72;
-  const pe = 1080;
+  let X = [];
+  let J = null;
+  let K = 0;
+  let Q = 0;
+  let ee = 0;
+  const te = 6e3;
+  const ne = 2200;
+  const ie = 3500;
+  const re = 420;
+  const oe = .82;
+  const ae = 40;
+  const se = 38;
+  const le = 18;
+  const ce = 16;
+  const de = 34;
+  const ue = 120;
+  const pe = 110;
+  const ge = 95;
+  const fe = pe;
+  const me = 72;
+  const he = 1080;
   function getRankingRoot() {
     const e = document.getElementById("templateVideoPreview");
     return e?.querySelector(".ranking-preview-container.library-ranking-layer") || e?.querySelector(".ranking-preview-container") || document.querySelector(".ranking-preview-container.library-ranking-layer") || document.querySelector(".ranking-preview-container");
@@ -156,7 +163,7 @@
       return i;
     }
     if (isChannelEl(e)) {
-      const n = Math.round(t * te);
+      const n = Math.round(t * oe);
       const i = getHardSizeCap(e);
       let r = Math.max(12, Math.min(i, n));
       const o = getRankingRoot();
@@ -192,12 +199,12 @@
   }
   function applySelectionVisuals() {
     clearSelectionVisuals();
-    if ($ === "group-header") {
+    if (V === "group-header") {
       getHeaderZone()?.classList.add("ranking-editor-zone-selected");
       getHeaderElements().forEach(e => e.classList.add("ranking-editor-zone-member"));
       return;
     }
-    if ($ === "group-ranks") {
+    if (V === "group-ranks") {
       getRanksZone()?.classList.add("ranking-editor-zone-selected");
       getAllRankSideElements().forEach(e => e.classList.add("ranking-editor-zone-member"));
       return;
@@ -205,14 +212,54 @@
     y.forEach(e => e.classList.add("ranking-editor-selected"));
   }
   function resolveApplyTargets() {
-    if ($ === "group-header") return getHeaderElements();
-    if ($ === "group-ranks") return getAllRankSideElements();
-    if ($ === "group-all") return getAllTextElements();
+    if (V === "group-header") return getHeaderElements();
+    if (V === "group-ranks") return getAllRankSideElements();
+    if (V === "group-all") return getAllTextElements();
     const e = [ ...y ];
     if (e.length === 1 && isRankSideEl(e[0])) {
       return expandRankPair(e[0]);
     }
     return e;
+  }
+  function syncFontDdHighlight(e) {
+    if (!p) return;
+    const t = String(e || b || "Luckiest Guy").trim();
+    p.querySelectorAll(".sub-font-item").forEach(e => {
+      const n = e.querySelector(".sub-fname")?.textContent?.trim();
+      e.classList.toggle("on", n === t);
+    });
+  }
+  function buildFontList(t) {
+    const i = p?.querySelector("#rkFontList") || document.getElementById("rkFontList");
+    if (!i) return;
+    i.innerHTML = "";
+    const r = String(t || "").trim().toLowerCase();
+    e.filter(([e]) => !r || e.toLowerCase().includes(r)).forEach(([e, t]) => {
+      const r = document.createElement("div");
+      r.className = "sub-font-item" + (e === b ? " on" : "");
+      const o = n[e] || `'${e}', sans-serif`;
+      r.innerHTML = `<span class="sub-fname" style="font-family:${o};font-weight:${t};">${e}</span>`;
+      r.onmouseenter = () => previewFont(e);
+      r.onmouseleave = e => {
+        if (q) return;
+        if (p.contains(e.relatedTarget)) return;
+        resetFontPreview();
+      };
+      r.onmousedown = t => {
+        t.preventDefault();
+        t.stopPropagation();
+        q = true;
+        try {
+          applyFont(e);
+        } finally {
+          requestAnimationFrame(() => {
+            q = false;
+          });
+        }
+      };
+      i.appendChild(r);
+    });
+    syncFontDdHighlight(b);
   }
   function expandRankPair(e) {
     const t = e?.getAttribute?.("data-template-element-id") || "";
@@ -225,8 +272,8 @@
     return [ r, o ].filter(Boolean);
   }
   function buildUI() {
-    if (D) return;
-    D = true;
+    if (G) return;
+    G = true;
     hideSubtitleGuidesOverRanking();
     u = document.createElement("div");
     u.className = "sub-pill-menu";
@@ -236,30 +283,13 @@
     p = document.createElement("div");
     p.className = "sub-dropdown sub-font-dd";
     p.id = "rkDdFont";
-    e.forEach(([e, t]) => {
-      const i = document.createElement("div");
-      i.className = "sub-font-item";
-      const r = n[e] || `'${e}', sans-serif`;
-      i.innerHTML = `<span class="sub-fname" style="font-family:${r};font-weight:${t};">${e}</span>`;
-      i.onmouseenter = () => previewFont(e);
-      i.onmouseleave = e => {
-        if (N) return;
-        if (p.contains(e.relatedTarget)) return;
-        resetFontPreview();
-      };
-      i.onmousedown = t => {
-        t.preventDefault();
-        t.stopPropagation();
-        N = true;
-        try {
-          applyFont(e);
-        } finally {
-          requestAnimationFrame(() => {
-            N = false;
-          });
-        }
-      };
-      p.appendChild(i);
+    p.innerHTML = `\n            <input type="search" class="rk-font-search" id="rkFontSearch" placeholder="Search fonts…" autocomplete="off" spellcheck="false" />\n            <div class="rk-font-list" id="rkFontList"></div>\n        `;
+    buildFontList("");
+    p.querySelector("#rkFontSearch")?.addEventListener("input", e => {
+      buildFontList(e.target.value || "");
+    });
+    p.querySelector("#rkFontSearch")?.addEventListener("mousedown", e => {
+      e.stopPropagation();
     });
     p.addEventListener("mouseleave", e => {
       if (p.contains(e.relatedTarget) || u?.contains(e.relatedTarget)) return;
@@ -269,7 +299,11 @@
     g = document.createElement("div");
     g.className = "sub-dropdown sub-color-dd";
     g.id = "rkDdColor";
-    g.innerHTML = `\n            <div class="sub-color-line"><span class="sub-clabel">Text</span><div class="sub-cgrid" id="rkTCG"></div></div>\n            <div class="sub-color-line"><span class="sub-clabel">Outline</span><div class="sub-edge" id="rkSHG"></div></div>\n            <div class="sub-color-line rk-top-line"><span class="sub-clabel">Background</span>\n                <div class="rk-top-modes" id="rkTopModes" role="group" aria-label="Ranking background">\n                    <button type="button" class="rk-top-mode" data-top="none" title="No background">None</button>\n                    <button type="button" class="rk-top-mode" data-top="blank" title="Solid black behind titles">Blank</button>\n                    <button type="button" class="rk-top-mode" data-top="blank_blur" title="Blurred video behind titles">Blur</button>\n                </div>\n            </div>\n            <div class="sub-cplus-pop" id="rkCPlusPop" aria-hidden="true">\n                <div class="sub-cplus-head">\n                    <span class="sub-cplus-title" id="rkCPlusTitle">Custom text</span>\n                    <button type="button" class="sub-cplus-close" id="rkCPlusClose" aria-label="Close">\n                        <svg viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3L3 9"/></svg>\n                    </button>\n                </div>\n                <div class="sub-spectrum" id="rkSpectrum" title="Drag to pick a color">\n                    <div class="sub-spectrum-thumb" id="rkSpectrumThumb"></div>\n                </div>\n                <div class="sub-cplus-recents" id="rkCPlusRecents"></div>\n            </div>\n        `;
+    g.innerHTML = `\n            <div class="sub-color-line"><span class="sub-clabel">Text</span><div class="sub-cgrid" id="rkTCG"></div></div>\n            <div class="sub-color-line"><span class="sub-clabel">Outline</span><div class="sub-edge" id="rkSHG"></div></div>\n            <div class="sub-color-line"><span class="sub-clabel">Edge</span><div class="sub-cgrid" id="rkOCG"></div></div>\n            <div class="sub-color-line rk-top-line"><span class="sub-clabel">Background</span>\n                <div class="rk-top-modes" id="rkTopModes" role="group" aria-label="Ranking background">\n                    <button type="button" class="rk-top-mode" data-top="none" title="No background">None</button>\n                    <button type="button" class="rk-top-mode" data-top="blank" title="Solid color behind titles">Blank</button>\n                    <button type="button" class="rk-top-mode" data-top="blank_blur" title="Blurred video behind titles">Blur</button>\n                </div>\n            </div>\n            <div class="sub-color-line rk-blank-line is-hidden" id="rkBlankLine">\n                <span class="sub-clabel">Blank</span><div class="sub-cgrid" id="rkBlankCG"></div>\n            </div>\n            <div class="sub-cplus-pop" id="rkCPlusPop" aria-hidden="true">\n                <div class="sub-cplus-head">\n                    <span class="sub-cplus-title" id="rkCPlusTitle">Custom text</span>\n                    <button type="button" class="sub-cplus-close" id="rkCPlusClose" aria-label="Close">\n                        <svg viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3L3 9"/></svg>\n                    </button>\n                </div>\n                <div class="rk-cplus-lab">Hue</div>\n                <div class="sub-spectrum" id="rkSpectrum" title="Drag to pick hue">\n                    <div class="sub-spectrum-thumb" id="rkSpectrumThumb"></div>\n                </div>\n                <div class="rk-cplus-lab">Saturation · Tone</div>\n                <div class="rk-sv-panel" id="rkSvPanel" title="Saturation (X) · Tone / lightness (Y)">\n                    <div class="rk-sv-thumb" id="rkSvThumb"></div>\n                </div>\n                <div class="sub-cplus-recents" id="rkCPlusRecents"></div>\n            </div>\n        `;
+    g.addEventListener("mousedown", e => {
+      if (e.target.closest?.('input, textarea, [contenteditable="true"]')) return;
+      if (document.querySelector(".rk-inline-editing")) e.preventDefault();
+    });
     document.body.appendChild(g);
     m = document.createElement("div");
     m.className = "rk-suggest-actions solis-nocopy";
@@ -282,7 +316,7 @@
     injectStyles();
   }
   function injectStyles() {
-    const e = `\n            .ranking-preview-container{\n                position:relative !important;\n                overflow:visible !important;\n                padding:14px 12px 16px !important;\n                container-type:inline-size;\n                container-name:rk-phone;\n            }\n            .ranking-preview-container .ranking-list{\n                display:flex !important;\n                flex-direction:column !important;\n                gap:10px !important;\n                margin:6px 0 0 0 !important;\n                flex:0 0 auto !important;\n                flex-shrink:0 !important;\n                overflow:visible !important;\n            }\n            .ranking-preview-container .ranked-item{\n                flex:0 0 auto !important;\n                flex-shrink:0 !important;\n                line-height:1.2 !important;\n                min-height:1.2em !important;\n                margin:0 !important;\n                gap:6px !important;\n                overflow:visible !important;\n                font-size:clamp(22px, 9.2cqi, 38px);\n                font-family:'Luckiest Guy', cursive;\n            }\n            .ranking-preview-container .title,\n            .ranking-preview-container h1.title{\n                font-size:clamp(28px, 11cqi, 40px) !important;\n                line-height:1.12 !important;\n                padding-top:0 !important;\n                margin-top:0 !important;\n                overflow:visible !important;\n                max-width:calc(100% - 8px) !important;\n            }\n            .ranking-preview-container .rank-title,\n            .ranking-preview-container .rank-number{\n                font-size:inherit;\n                font-family:inherit;\n            }\n            .ranking-preview-container .rank-title.rk-sized,\n            .ranking-preview-container .rank-number.rk-sized{\n            }\n            .ranking-preview-container .ranking-editor-zone-header{\n                flex:0 0 auto !important;\n                flex-shrink:0 !important;\n                padding:0 4px 4px !important;\n            }\n            .ranking-preview-container [data-template-element-id]{\n                position:relative;display:inline-block;\n                cursor:var(--solis-preview-cursor, url('/style/cursor.svg?v=3') 4 4, crosshair);\n                transition:none!important;\n                overflow:visible !important;\n            }\n            .ranking-preview-container h1.title,\n            .ranking-preview-container h1{\n                white-space:nowrap!important;\n                max-width:100%;\n            }\n            .ranking-preview-container [data-template-element-id="title_ranking"],\n            .ranking-preview-container [data-template-element-id="title_funniest"]{\n                white-space:nowrap!important;\n            }\n            .ranking-preview-container .ranking-editor-zone-header,\n            .ranking-preview-container .ranking-editor-zone-ranks{\n                width:fit-content;max-width:100%;\n                overflow:visible !important;\n            }\n            .ranking-preview-container .ranking-editor-zone-header{\n                display:flex !important;\n                flex-direction:column !important;\n                align-items:center !important;\n                justify-content:flex-start !important;\n                gap:0;\n                margin:0 auto !important;\n                padding:2px 4px 0;\n                text-align:center;\n                position:relative;\n                z-index:6;\n                flex-shrink:0;\n                width:100% !important;\n                max-width:100% !important;\n                box-sizing:border-box;\n            }\n            .ranking-preview-container .ranking-editor-zone-header > h1.title,\n            .ranking-preview-container .ranking-editor-zone-header > h1{\n                display:block !important;\n                width:fit-content !important;\n                max-width:100% !important;\n                margin:0 auto 2px !important;\n                padding:0 !important;\n                text-align:center;\n                position:relative;\n                z-index:7;\n            }\n            .ranking-preview-container [data-template-element-id="title_channel"]{\n                display:block !important;\n                position:relative !important;\n                z-index:7;\n                width:fit-content !important;\n                max-width:calc(100% - 24px) !important;\n                margin:2px auto 8px auto !important;\n                font-size:clamp(20px, 8.5cqi, 34px) !important;\n                padding:0 !important;\n                text-align:center !important;\n                box-sizing:border-box;\n                white-space:nowrap !important;\n                overflow:visible !important;\n                overflow-wrap:normal !important;\n                word-break:normal !important;\n                float:none !important;\n                inset:auto !important;\n                top:auto !important;\n                left:auto !important;\n                right:auto !important;\n                bottom:auto !important;\n                transform:none !important;\n            }\n            .ranking-preview-container .ranking-editor-zone-member{\n                position:relative;z-index:1;\n            }\n            .ranking-preview-container .sub-resize-handle{\n                position:absolute;width:18px;height:18px;\n                background:rgba(249,115,22,.98);border:2.5px solid #fff;border-radius:50%;\n                cursor:var(--solis-preview-cursor, url('/style/cursor.svg?v=3') 4 4, crosshair)!important;\n                box-shadow:0 2px 10px rgba(194,65,12,.4);\n                bottom:0;right:0;\n                transform:translate(35%,35%);\n                z-index:120;\n                pointer-events:none;display:none;\n                opacity:0;visibility:hidden;\n                touch-action:none;\n            }\n            .ranking-preview-container .sub-resize-handle::after{\n                content:'';position:absolute;inset:-10px -12px -12px -10px;border-radius:50%;\n                cursor:var(--solis-preview-cursor, url('/style/cursor.svg?v=3') 4 4, crosshair)!important;\n            }\n            .ranking-preview-container .ranking-editor-selected > .sub-resize-handle,\n            .ranking-preview-container .ranking-editor-resize-anchor > .sub-resize-handle,\n            .ranking-preview-container .ranking-editor-zone-selected > .sub-resize-handle{\n                display:block;pointer-events:all;\n                opacity:1;visibility:visible;\n            }\n            .ranking-preview-container .ranking-editor-selected > .sub-resize-handle:hover,\n            .ranking-preview-container .ranking-editor-resize-anchor > .sub-resize-handle:hover,\n            .ranking-preview-container .ranking-editor-zone-selected > .sub-resize-handle:hover{\n                transform:translate(40%,40%) scale(1.15);\n            }\n            .ranking-editor-text{cursor:var(--solis-preview-cursor, url('/style/cursor.svg?v=3') 4 4, crosshair);}\n            .ranking-preview-container .rk-number-locked,\n            .ranking-preview-container [data-template-element-id$="_number"]{\n                -webkit-user-modify:read-only;\n                user-select:none;\n                caret-color:transparent;\n                touch-action:none;\n            }\n            .ranking-preview-container .ranking-editor-zone-ranks{\n                touch-action:none;\n            }\n            .ranking-editor-text,.ranking-editor-zone{\n                transition:none!important;\n                box-shadow:none!important;\n            }\n            .ranking-editor-zone{\n                position:relative;\n                border-radius:10px;\n            }\n            .ranking-preview-container [data-template-element-id].ranking-editor-selected{\n                position:relative;\n                z-index:6;\n                isolation:isolate;\n                box-shadow:none!important;\n            }\n            .ranking-preview-container [data-template-element-id].ranking-editor-selected::before{\n                content:'';\n                position:absolute;\n                inset:-5px -4px;\n                border-radius:8px;\n                border:1.5px solid #f97316;\n                background:transparent;\n                box-shadow:\n                    0 0 0 3px rgba(249,115,22,.32),\n                    0 0 14px rgba(249,115,22,.28);\n                pointer-events:none;\n                z-index:0;\n                animation:none;\n            }\n            .ranking-preview-container [data-template-element-id].ranking-editor-selected::after{\n                content:none;\n                display:none;\n            }\n            .ranking-preview-container .rank-number.ranking-editor-selected::before{\n                inset:-3px -2px !important;\n                border-radius:5px;\n            }\n            .ranking-preview-container .rank-number.ranking-editor-selected::after{\n                display:none !important;\n            }\n            .ranking-preview-container .rank-number{\n                display:inline-block !important;\n                width:max-content !important;\n                max-width:none !important;\n                margin-right:0.15em !important;\n                padding:0 !important;\n                letter-spacing:0 !important;\n                line-height:1.05 !important;\n                box-sizing:content-box !important;\n            }\n            .ranking-preview-container .text-stroke{\n                text-shadow:\n                    2px 0 0 #000, -2px 0 0 #000, 0 2px 0 #000, 0 -2px 0 #000,\n                    1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000 !important;\n            }\n            .ranking-editor-zone-selected{\n                position:relative;\n                z-index:5;\n                isolation:isolate;\n                box-shadow:none!important;\n            }\n            .ranking-editor-zone-selected::before{\n                content:'';\n                position:absolute;\n                inset:-6px -8px;\n                border-radius:12px;\n                border:1.5px solid #f97316;\n                background:transparent;\n                box-shadow:\n                    0 0 0 3px rgba(249,115,22,.28),\n                    0 0 14px rgba(249,115,22,.22);\n                pointer-events:none;\n                z-index:0;\n                animation:none;\n            }\n            .ranking-editor-zone-selected::after{\n                content:none;\n                display:none;\n            }\n            .ranking-editor-zone-selected > *:not(.sub-resize-handle){\n                position:relative;\n                z-index:1;\n            }\n            .ranking-preview-container .sub-guide,\n            .ranking-preview-container .sub-half-line,\n            .ranking-preview-container .rk-half-line,\n            .ranking-preview-container .rk-guide{\n                display:none !important;\n                visibility:hidden !important;\n                opacity:0 !important;\n            }\n            @keyframes rkSelInnerFade{\n                0%,100%{opacity:1;}\n                50%{opacity:.92;}\n            }\n            @keyframes rkSelWhitePulse{\n                0%,100%{opacity:.45;transform:scale(.97);}\n                50%{opacity:.95;transform:scale(1);}\n            }\n            #rkPillMenu{\n                transition:opacity .1s ease,transform .1s ease,visibility .1s!important;\n            }\n            .rk-ghost-stack{\n                position:fixed;z-index:99850;pointer-events:none;\n                display:flex;flex-direction:column;justify-content:center;align-items:flex-end;\n                gap:6px;\n                padding:6px 12px;border-radius:8px;\n                background:rgba(34,197,94,.16);\n                box-shadow:inset 0 0 0 1.5px rgba(34,197,94,.45);\n                width:max-content;height:auto;max-width:min(220px,40vw);\n                overflow:visible;\n                -webkit-user-select:none!important;user-select:none!important;\n                -webkit-user-drag:none;\n            }\n            .rk-ghost-stack .rk-ghost-line{\n                display:block;white-space:nowrap;line-height:1.05;opacity:1!important;\n                background:none!important;padding:0;margin:0;\n                position:static!important;right:auto!important;top:auto!important;\n                transform:none!important;\n                font-weight:700;\n                letter-spacing:-.015em;\n                -webkit-user-select:none!important;user-select:none!important;\n            }\n            .rk-ghost-stack .rk-ghost-title-row{\n                display:flex;flex-direction:row;align-items:baseline;justify-content:flex-end;\n                gap:6px;flex-wrap:nowrap;\n            }\n            .rk-ghost-stack .rk-ghost-title-row .rk-ghost-line{\n                display:inline-block;\n            }\n            .rk-ghost-stack .rk-ghost-channel{\n                text-align:right;\n            }\n            .rk-suggest-remove{\n                position:relative;\n                z-index:6;\n            }\n            .rk-suggest-remove::before{\n                content:'';\n                position:absolute;\n                inset:-6px -8px;\n                border-radius:10px;\n                border:2px solid rgba(239,68,68,.7);\n                background:rgba(239,68,68,.12);\n                box-shadow:0 0 0 1px rgba(239,68,68,.22);\n                pointer-events:none;\n                z-index:0;\n            }\n            .rk-suggest-remove > *{\n                position:relative;\n                z-index:1;\n            }\n            .rk-suggest-receive{\n                position:relative;\n                z-index:6;\n            }\n            .rk-suggest-receive::before{\n                content:'';\n                position:absolute;\n                inset:-6px -8px;\n                border-radius:10px;\n                border:2px solid rgba(239,68,68,.7);\n                background:rgba(239,68,68,.12);\n                box-shadow:0 0 0 1px rgba(239,68,68,.22);\n                pointer-events:none;\n                z-index:0;\n            }\n            .rk-suggest-receive > *{\n                position:relative;\n                z-index:1;\n            }\n            .rk-suggest-actions{\n                position:fixed;z-index:99870;display:flex;gap:2px;align-items:center;\n                padding:3px 4px;border-radius:999px;\n                font-family:'Plus Jakarta Sans',sans-serif;\n                isolation:isolate;\n                background:linear-gradient(\n                    145deg,\n                    rgba(255,255,255,.96) 0%,\n                    rgba(255,255,255,.9) 45%,\n                    rgba(255,252,248,.88) 100%\n                );\n                border:1px solid rgba(255,255,255,.95);\n                border-bottom-color:rgba(200,185,170,.28);\n                border-right-color:rgba(200,185,170,.2);\n                box-shadow:\n                    0 6px 18px rgba(120,90,60,.12),\n                    0 1px 4px rgba(120,90,60,.06),\n                    inset 0 1px 0 rgba(255,255,255,1);\n                backdrop-filter:blur(16px) saturate(140%);\n                -webkit-backdrop-filter:blur(16px) saturate(140%);\n                opacity:0;visibility:hidden;pointer-events:none;\n                transform:none !important;\n                left:0;top:0;\n            }\n            .rk-suggest-actions.open{\n                opacity:1;visibility:visible;pointer-events:auto;\n            }\n            .rk-sa-btn{\n                appearance:none;-webkit-appearance:none;\n                width:28px;height:28px;min-width:28px;border:none;border-radius:999px;\n                display:inline-flex;align-items:center;justify-content:center;\n                cursor:var(--solis-preview-cursor, url('/style/cursor.svg?v=3') 4 4, crosshair);\n                padding:0;box-sizing:border-box;margin:0;\n                font:inherit;\n                transition:background .12s ease,color .12s ease,border-color .12s ease,\n                    box-shadow .12s ease,transform .1s ease;\n            }\n            .rk-sa-btn:active{transform:scale(.95);}\n            .rk-sa-btn svg{display:block;flex-shrink:0;width:20px;height:20px;}\n            .rk-sa-accept{\n                background:linear-gradient(145deg,#34d399 0%,#16a34a 100%);\n                color:#ffffff !important;\n                border:1px solid rgba(21,128,61,.35);\n                box-shadow:\n                    inset 0 1px 0 rgba(255,255,255,.35),\n                    0 1px 3px rgba(22,163,74,.25);\n            }\n            .rk-sa-accept:hover{\n                background:linear-gradient(145deg,#22c55e 0%,#15803d 100%);\n                color:#ffffff !important;\n                border-color:rgba(21,128,61,.5);\n            }\n            .rk-sa-decline{\n                background:linear-gradient(145deg,rgba(255,255,255,.75),rgba(255,255,255,.4));\n                border:1px solid rgba(200,185,170,.35);\n                color:rgba(50,38,28,.72);\n                box-shadow:inset 0 1px 0 rgba(255,255,255,.9);\n            }\n            .rk-sa-decline:hover{\n                background:linear-gradient(145deg,rgba(254,226,226,.9),rgba(254,202,202,.55));\n                border-color:rgba(254,202,202,.7);\n                color:#ef4444;\n            }\n            .rk-top-line{align-items:flex-start;flex-direction:column;gap:8px;}\n            .rk-top-line .sub-clabel{flex:none;}\n            .rk-top-modes{\n                display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;width:100%;\n            }\n            .rk-top-mode{\n                appearance:none;cursor:var(--solis-preview-cursor, url('/style/cursor.svg?v=3') 4 4, crosshair);margin:0;\n                border:1.5px solid rgba(200,185,170,.4);\n                background:linear-gradient(145deg,rgba(255,255,255,.85),rgba(255,255,255,.45));\n                border-radius:10px;\n                padding:9px 6px;\n                font-family:'Plus Jakarta Sans',sans-serif;\n                font-size:11.5px;font-weight:700;letter-spacing:-.01em;\n                color:rgba(50,38,28,.78);\n                transition:border-color .12s ease,background .12s ease,color .12s ease,box-shadow .12s ease;\n            }\n            .rk-top-mode:hover{\n                border-color:rgba(249,115,22,.45);\n                color:#9a3412;\n                box-shadow:0 0 0 1px rgba(249,115,22,.12);\n            }\n            .rk-top-mode.on{\n                border-color:rgba(249,115,22,.55);\n                background:linear-gradient(145deg,rgba(255,237,213,.95),rgba(254,215,170,.55));\n                color:#9a3412;\n                box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 0 0 1px rgba(249,115,22,.15);\n            }\n            .ranking-preview-container{\n                position:relative !important;\n            }\n            .ranking-preview-container .rk-top-panel{\n                position:absolute;left:0;right:0;top:0;z-index:1;\n                height:25%;pointer-events:none;overflow:hidden;\n                background:#000;\n                margin:0;width:100%;border-radius:0;\n                box-sizing:border-box;\n            }\n            .ranking-preview-container .rk-top-handle{\n                position:absolute;left:0;right:0;bottom:0;height:14px;\n                cursor:ns-resize;pointer-events:auto;z-index:3;\n                background:linear-gradient(180deg,transparent,rgba(255,255,255,.18));\n            }\n            .ranking-preview-container .rk-top-handle::after{\n                content:'';position:absolute;left:50%;bottom:4px;\n                width:36px;height:3px;border-radius:999px;\n                transform:translateX(-50%);\n                background:rgba(255,255,255,.55);\n            }\n            .ranking-preview-container .rk-top-panel[hidden]{display:none!important;}\n            .ranking-preview-container .rk-top-panel.mode-blank{background:#000;}\n            .ranking-preview-container .rk-top-panel.mode-blur{\n                background:rgba(8,8,10,.2);\n                backdrop-filter:none;\n                -webkit-backdrop-filter:none;\n            }\n            .ranking-preview-container .rk-top-panel .rk-top-blur-vid{\n                position:absolute;inset:-50%;width:200%;height:200%;\n                object-fit:cover;object-position:center top;\n                filter:blur(36px) saturate(1.45) brightness(1.12) contrast(1.06);\n                -webkit-filter:blur(36px) saturate(1.45) brightness(1.12) contrast(1.06);\n                transform:scale(1.2);pointer-events:none;opacity:0;z-index:0;\n                transition:opacity .18s ease;\n            }\n            .ranking-preview-container .rk-top-panel.mode-blur .rk-top-blur-vid{opacity:1;}\n            .ranking-preview-container .rk-top-panel.mode-blur.has-blur-src{\n                background:transparent;\n            }\n            .ranking-preview-container .rk-top-panel.mode-blur::after{\n                content:'';position:absolute;inset:0;z-index:1;pointer-events:none;\n                background:\n                    linear-gradient(180deg,rgba(0,0,0,.12),rgba(0,0,0,.28));\n            }\n            .rk-top-line.is-hidden{display:none!important;}\n            .ranking-preview-container.has-rk-top > .ranking-editor-zone-header,\n            .ranking-preview-container.has-rk-top > .ranking-editor-zone-ranks,\n            .ranking-preview-container.has-rk-top > .ranking-list{\n                position:relative;z-index:6;\n            }\n            .ranking-preview-container.has-rk-top [data-template-element-id^="title_"],\n            .ranking-preview-container.has-rk-top h1.title,\n            .ranking-preview-container.has-rk-top .ranking-editor-zone-header{\n                position:relative;z-index:7;\n            }\n            .ranking-preview-container .ranking-editor-zone-ranks{\n                cursor:ns-resize;\n                will-change:transform;\n                touch-action:none;\n            }\n            .ranking-preview-container .ranking-editor-zone-ranks [data-template-element-id],\n            .ranking-preview-container .ranking-editor-zone-ranks .ranking-editor-text{\n                cursor:ns-resize;\n                touch-action:none;\n                pointer-events:auto;\n            }\n            .ranking-preview-container.rk-stack-dragging,\n            .ranking-preview-container.rk-stack-dragging .ranking-editor-zone-ranks,\n            .ranking-preview-container.rk-stack-dragging .ranking-editor-zone-ranks [data-template-element-id]{\n                cursor:grabbing !important;\n                transition:none !important;\n            }\n            .ranking-preview-container.rk-stack-settle .ranking-editor-zone-ranks{\n                transition:transform .18s ease !important;\n            }\n            .ranking-preview-container .ranking-editor-zone-ranks{\n                transform:translateY(var(--rk-oy, 0px));\n            }\n            .ranking-preview-container [data-template-element-id="title_ranking"],\n            .ranking-preview-container [data-template-element-id="title_funniest"]{\n                font-size:inherit;\n                display:inline-block !important;\n                vertical-align:baseline;\n                max-width:100%;\n            }\n            .ranking-preview-container [data-template-element-id="title_channel"]{\n                max-width:calc(100% - 16px)!important;\n            }\n            .ranking-preview-container h1.title,\n            .ranking-preview-container h1{\n                max-width:100% !important;\n                box-sizing:border-box !important;\n                overflow:visible !important;\n            }\n            .ranking-preview-container .ranking-editor-zone-header{\n                max-width:100% !important;\n                box-sizing:border-box !important;\n                overflow:visible !important;\n            }\n            .ranking-preview-container [data-template-element-id].rk-sized{\n                line-height:1.1;\n            }\n            #templateVideoPreview.preview-placeholder .ranking-preview-container{\n                max-width:100% !important;\n                max-height:100% !important;\n                overflow:hidden !important;\n            }\n            #templateVideoPreview.preview-placeholder .ranking-preview-container .ranking-editor-zone-header,\n            #templateVideoPreview.preview-placeholder .ranking-preview-container .ranking-editor-zone-ranks,\n            #templateVideoPreview.preview-placeholder .ranking-preview-container [data-template-element-id].ranking-editor-selected,\n            #templateVideoPreview.preview-placeholder .ranking-preview-container .ranking-editor-zone-selected,\n            #templateVideoPreview.preview-placeholder .ranking-preview-container .ranking-editor-resize-anchor{\n                overflow:visible !important;\n            }\n            #templateVideoPreview.preview-placeholder .ranking-preview-container h1.title,\n            #templateVideoPreview.preview-placeholder .ranking-preview-container [data-template-element-id^="title_"]{\n                overflow:visible !important;\n                text-overflow:clip !important;\n            }\n        `;
+    const e = `\n            .ranking-preview-container{\n                position:relative !important;\n                overflow:visible !important;\n                padding:14px 12px 16px !important;\n                container-type:inline-size;\n                container-name:rk-phone;\n            }\n            .ranking-preview-container .ranking-list{\n                display:flex !important;\n                flex-direction:column !important;\n                gap:10px !important;\n                margin:6px 0 0 0 !important;\n                flex:0 0 auto !important;\n                flex-shrink:0 !important;\n                overflow:visible !important;\n            }\n            .ranking-preview-container .ranked-item{\n                flex:0 0 auto !important;\n                flex-shrink:0 !important;\n                line-height:1.2 !important;\n                min-height:1.2em !important;\n                margin:0 !important;\n                gap:6px !important;\n                overflow:visible !important;\n                font-size:clamp(22px, 9.2cqi, 38px);\n                font-family:'Luckiest Guy', cursive;\n            }\n            .ranking-preview-container .title,\n            .ranking-preview-container h1.title{\n                font-size:clamp(28px, 11cqi, 40px) !important;\n                line-height:1.12 !important;\n                padding-top:0 !important;\n                margin-top:0 !important;\n                overflow:visible !important;\n                max-width:calc(100% - 8px) !important;\n            }\n            .ranking-preview-container .rank-title,\n            .ranking-preview-container .rank-number{\n                font-size:inherit;\n                font-family:inherit;\n            }\n            .ranking-preview-container .rank-title.rk-sized,\n            .ranking-preview-container .rank-number.rk-sized{\n            }\n            .ranking-preview-container .ranking-editor-zone-header{\n                flex:0 0 auto !important;\n                flex-shrink:0 !important;\n                padding:0 4px 4px !important;\n            }\n            .ranking-preview-container [data-template-element-id]{\n                position:relative;display:inline-block;\n                cursor:var(--solis-preview-cursor, url('/style/cursor.svg?v=3') 4 4, crosshair);\n                transition:none!important;\n                overflow:visible !important;\n            }\n            .ranking-preview-container h1.title,\n            .ranking-preview-container h1{\n                white-space:nowrap!important;\n                max-width:100%;\n            }\n            .ranking-preview-container [data-template-element-id="title_ranking"],\n            .ranking-preview-container [data-template-element-id="title_funniest"]{\n                white-space:nowrap!important;\n            }\n            .ranking-preview-container .ranking-editor-zone-header,\n            .ranking-preview-container .ranking-editor-zone-ranks{\n                width:fit-content;max-width:100%;\n                overflow:visible !important;\n            }\n            .ranking-preview-container .ranking-editor-zone-header{\n                display:flex !important;\n                flex-direction:column !important;\n                align-items:center !important;\n                justify-content:flex-start !important;\n                gap:0;\n                margin:0 auto !important;\n                padding:2px 4px 0;\n                text-align:center;\n                position:relative;\n                z-index:6;\n                flex-shrink:0;\n                width:100% !important;\n                max-width:100% !important;\n                box-sizing:border-box;\n            }\n            .ranking-preview-container .ranking-editor-zone-header > h1.title,\n            .ranking-preview-container .ranking-editor-zone-header > h1{\n                display:block !important;\n                width:fit-content !important;\n                max-width:100% !important;\n                margin:0 auto 2px !important;\n                padding:0 !important;\n                text-align:center;\n                position:relative;\n                z-index:7;\n            }\n            .ranking-preview-container [data-template-element-id="title_channel"]{\n                display:block !important;\n                position:relative !important;\n                z-index:7;\n                width:fit-content !important;\n                max-width:calc(100% - 24px) !important;\n                margin:2px auto 8px auto !important;\n                font-size:clamp(20px, 8.5cqi, 34px) !important;\n                padding:0 !important;\n                text-align:center !important;\n                box-sizing:border-box;\n                white-space:nowrap !important;\n                overflow:visible !important;\n                overflow-wrap:normal !important;\n                word-break:normal !important;\n                float:none !important;\n                inset:auto !important;\n                top:auto !important;\n                left:auto !important;\n                right:auto !important;\n                bottom:auto !important;\n                transform:none !important;\n            }\n            .ranking-preview-container .ranking-editor-zone-member{\n                position:relative;z-index:1;\n            }\n            .ranking-preview-container .sub-resize-handle{\n                position:absolute;width:18px;height:18px;\n                background:rgba(249,115,22,.98);border:2.5px solid #fff;border-radius:50%;\n                cursor:var(--solis-preview-cursor, url('/style/cursor.svg?v=3') 4 4, crosshair)!important;\n                box-shadow:0 2px 10px rgba(194,65,12,.4);\n                bottom:0;right:0;\n                transform:translate(35%,35%);\n                z-index:120;\n                pointer-events:none;display:none;\n                opacity:0;visibility:hidden;\n                touch-action:none;\n            }\n            .ranking-preview-container .sub-resize-handle::after{\n                content:'';position:absolute;inset:-10px -12px -12px -10px;border-radius:50%;\n                cursor:var(--solis-preview-cursor, url('/style/cursor.svg?v=3') 4 4, crosshair)!important;\n            }\n            .ranking-preview-container .ranking-editor-selected > .sub-resize-handle,\n            .ranking-preview-container .ranking-editor-resize-anchor > .sub-resize-handle,\n            .ranking-preview-container .ranking-editor-zone-selected > .sub-resize-handle{\n                display:block;pointer-events:all;\n                opacity:1;visibility:visible;\n            }\n            .ranking-preview-container .ranking-editor-selected > .sub-resize-handle:hover,\n            .ranking-preview-container .ranking-editor-resize-anchor > .sub-resize-handle:hover,\n            .ranking-preview-container .ranking-editor-zone-selected > .sub-resize-handle:hover{\n                transform:translate(40%,40%) scale(1.15);\n            }\n            .ranking-editor-text{cursor:var(--solis-preview-cursor, url('/style/cursor.svg?v=3') 4 4, crosshair);}\n            .ranking-preview-container .rk-number-locked,\n            .ranking-preview-container [data-template-element-id$="_number"]{\n                -webkit-user-modify:read-only;\n                user-select:none;\n                caret-color:transparent;\n                touch-action:none;\n            }\n            .ranking-preview-container .ranking-editor-zone-ranks{\n                touch-action:none;\n            }\n            .ranking-editor-text,.ranking-editor-zone{\n                transition:none!important;\n                box-shadow:none!important;\n            }\n            .ranking-editor-zone{\n                position:relative;\n                border-radius:10px;\n            }\n            .ranking-preview-container [data-template-element-id].ranking-editor-selected{\n                position:relative;\n                z-index:6;\n                isolation:isolate;\n                box-shadow:none!important;\n            }\n            .ranking-preview-container [data-template-element-id].ranking-editor-selected::before{\n                content:'';\n                position:absolute;\n                inset:-5px -4px;\n                border-radius:8px;\n                border:1.5px solid #f97316;\n                background:transparent;\n                box-shadow:\n                    0 0 0 3px rgba(249,115,22,.32),\n                    0 0 14px rgba(249,115,22,.28);\n                pointer-events:none;\n                z-index:0;\n                animation:none;\n            }\n            .ranking-preview-container [data-template-element-id].ranking-editor-selected::after{\n                content:none;\n                display:none;\n            }\n            .ranking-preview-container .rank-number.ranking-editor-selected::before{\n                inset:-3px -2px !important;\n                border-radius:5px;\n            }\n            .ranking-preview-container .rank-number.ranking-editor-selected::after{\n                display:none !important;\n            }\n            .ranking-preview-container .rank-number{\n                display:inline-block !important;\n                width:max-content !important;\n                max-width:none !important;\n                margin-right:0.15em !important;\n                padding:0 !important;\n                letter-spacing:0 !important;\n                line-height:1.05 !important;\n                box-sizing:content-box !important;\n            }\n            .ranking-preview-container .text-stroke{\n                text-shadow:\n                    2px 0 0 #000, -2px 0 0 #000, 0 2px 0 #000, 0 -2px 0 #000,\n                    1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000 !important;\n            }\n            .ranking-editor-zone-selected{\n                position:relative;\n                z-index:5;\n                isolation:isolate;\n                box-shadow:none!important;\n            }\n            .ranking-editor-zone-selected::before{\n                content:'';\n                position:absolute;\n                inset:-6px -8px;\n                border-radius:12px;\n                border:1.5px solid #f97316;\n                background:transparent;\n                box-shadow:\n                    0 0 0 3px rgba(249,115,22,.28),\n                    0 0 14px rgba(249,115,22,.22);\n                pointer-events:none;\n                z-index:0;\n                animation:none;\n            }\n            .ranking-editor-zone-selected::after{\n                content:none;\n                display:none;\n            }\n            .ranking-editor-zone-selected > *:not(.sub-resize-handle){\n                position:relative;\n                z-index:1;\n            }\n            .ranking-preview-container .sub-guide,\n            .ranking-preview-container .sub-half-line,\n            .ranking-preview-container .rk-half-line,\n            .ranking-preview-container .rk-guide{\n                display:none !important;\n                visibility:hidden !important;\n                opacity:0 !important;\n            }\n            @keyframes rkSelInnerFade{\n                0%,100%{opacity:1;}\n                50%{opacity:.92;}\n            }\n            @keyframes rkSelWhitePulse{\n                0%,100%{opacity:.45;transform:scale(.97);}\n                50%{opacity:.95;transform:scale(1);}\n            }\n            #rkPillMenu{\n                transition:opacity .1s ease,transform .1s ease,visibility .1s!important;\n            }\n            .rk-ghost-stack{\n                position:fixed;z-index:99850;pointer-events:none;\n                display:flex;flex-direction:column;justify-content:center;align-items:flex-end;\n                gap:6px;\n                padding:6px 12px;border-radius:8px;\n                background:rgba(34,197,94,.16);\n                box-shadow:inset 0 0 0 1.5px rgba(34,197,94,.45);\n                width:max-content;height:auto;max-width:min(220px,40vw);\n                overflow:visible;\n                -webkit-user-select:none!important;user-select:none!important;\n                -webkit-user-drag:none;\n            }\n            .rk-ghost-stack .rk-ghost-line{\n                display:block;white-space:nowrap;line-height:1.05;opacity:1!important;\n                background:none!important;padding:0;margin:0;\n                position:static!important;right:auto!important;top:auto!important;\n                transform:none!important;\n                font-weight:700;\n                letter-spacing:-.015em;\n                -webkit-user-select:none!important;user-select:none!important;\n            }\n            .rk-ghost-stack .rk-ghost-title-row{\n                display:flex;flex-direction:row;align-items:baseline;justify-content:flex-end;\n                gap:6px;flex-wrap:nowrap;\n            }\n            .rk-ghost-stack .rk-ghost-title-row .rk-ghost-line{\n                display:inline-block;\n            }\n            .rk-ghost-stack .rk-ghost-channel{\n                text-align:right;\n            }\n            .rk-suggest-remove{\n                position:relative;\n                z-index:6;\n            }\n            .rk-suggest-remove::before{\n                content:'';\n                position:absolute;\n                inset:-6px -8px;\n                border-radius:10px;\n                border:2px solid rgba(239,68,68,.7);\n                background:rgba(239,68,68,.12);\n                box-shadow:0 0 0 1px rgba(239,68,68,.22);\n                pointer-events:none;\n                z-index:0;\n            }\n            .rk-suggest-remove > *{\n                position:relative;\n                z-index:1;\n            }\n            .rk-suggest-receive{\n                position:relative;\n                z-index:6;\n            }\n            .rk-suggest-receive::before{\n                content:'';\n                position:absolute;\n                inset:-6px -8px;\n                border-radius:10px;\n                border:2px solid rgba(239,68,68,.7);\n                background:rgba(239,68,68,.12);\n                box-shadow:0 0 0 1px rgba(239,68,68,.22);\n                pointer-events:none;\n                z-index:0;\n            }\n            .rk-suggest-receive > *{\n                position:relative;\n                z-index:1;\n            }\n            .rk-suggest-actions{\n                position:fixed;z-index:99870;display:flex;gap:2px;align-items:center;\n                padding:3px 4px;border-radius:999px;\n                font-family:'Plus Jakarta Sans',sans-serif;\n                isolation:isolate;\n                background:linear-gradient(\n                    145deg,\n                    rgba(255,255,255,.96) 0%,\n                    rgba(255,255,255,.9) 45%,\n                    rgba(255,252,248,.88) 100%\n                );\n                border:1px solid rgba(255,255,255,.95);\n                border-bottom-color:rgba(200,185,170,.28);\n                border-right-color:rgba(200,185,170,.2);\n                box-shadow:\n                    0 6px 18px rgba(120,90,60,.12),\n                    0 1px 4px rgba(120,90,60,.06),\n                    inset 0 1px 0 rgba(255,255,255,1);\n                backdrop-filter:blur(16px) saturate(140%);\n                -webkit-backdrop-filter:blur(16px) saturate(140%);\n                opacity:0;visibility:hidden;pointer-events:none;\n                transform:none !important;\n                left:0;top:0;\n            }\n            .rk-suggest-actions.open{\n                opacity:1;visibility:visible;pointer-events:auto;\n            }\n            .rk-sa-btn{\n                appearance:none;-webkit-appearance:none;\n                width:28px;height:28px;min-width:28px;border:none;border-radius:999px;\n                display:inline-flex;align-items:center;justify-content:center;\n                cursor:var(--solis-preview-cursor, url('/style/cursor.svg?v=3') 4 4, crosshair);\n                padding:0;box-sizing:border-box;margin:0;\n                font:inherit;\n                transition:background .12s ease,color .12s ease,border-color .12s ease,\n                    box-shadow .12s ease,transform .1s ease;\n            }\n            .rk-sa-btn:active{transform:scale(.95);}\n            .rk-sa-btn svg{display:block;flex-shrink:0;width:20px;height:20px;}\n            .rk-sa-accept{\n                background:linear-gradient(145deg,#34d399 0%,#16a34a 100%);\n                color:#ffffff !important;\n                border:1px solid rgba(21,128,61,.35);\n                box-shadow:\n                    inset 0 1px 0 rgba(255,255,255,.35),\n                    0 1px 3px rgba(22,163,74,.25);\n            }\n            .rk-sa-accept:hover{\n                background:linear-gradient(145deg,#22c55e 0%,#15803d 100%);\n                color:#ffffff !important;\n                border-color:rgba(21,128,61,.5);\n            }\n            .rk-sa-decline{\n                background:linear-gradient(145deg,rgba(255,255,255,.75),rgba(255,255,255,.4));\n                border:1px solid rgba(200,185,170,.35);\n                color:rgba(50,38,28,.72);\n                box-shadow:inset 0 1px 0 rgba(255,255,255,.9);\n            }\n            .rk-sa-decline:hover{\n                background:linear-gradient(145deg,rgba(254,226,226,.9),rgba(254,202,202,.55));\n                border-color:rgba(254,202,202,.7);\n                color:#ef4444;\n            }\n            .rk-top-line{align-items:flex-start;flex-direction:column;gap:8px;}\n            .rk-top-line .sub-clabel{flex:none;}\n            .rk-top-modes{\n                display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;width:100%;\n            }\n            .rk-top-mode{\n                appearance:none;cursor:var(--solis-preview-cursor, url('/style/cursor.svg?v=3') 4 4, crosshair);margin:0;\n                border:1.5px solid rgba(200,185,170,.4);\n                background:linear-gradient(145deg,rgba(255,255,255,.85),rgba(255,255,255,.45));\n                border-radius:10px;\n                padding:9px 6px;\n                font-family:'Plus Jakarta Sans',sans-serif;\n                font-size:11.5px;font-weight:700;letter-spacing:-.01em;\n                color:rgba(50,38,28,.78);\n                transition:border-color .12s ease,background .12s ease,color .12s ease,box-shadow .12s ease;\n            }\n            .rk-top-mode:hover{\n                border-color:rgba(249,115,22,.45);\n                color:#9a3412;\n                box-shadow:0 0 0 1px rgba(249,115,22,.12);\n            }\n            .rk-top-mode.on{\n                border-color:rgba(249,115,22,.55);\n                background:linear-gradient(145deg,rgba(255,237,213,.95),rgba(254,215,170,.55));\n                color:#9a3412;\n                box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 0 0 1px rgba(249,115,22,.15);\n            }\n            .ranking-preview-container{\n                position:relative !important;\n            }\n            .ranking-preview-container .rk-top-panel{\n                position:absolute;left:0;right:0;top:0;z-index:1;\n                height:25%;pointer-events:none;overflow:hidden;\n                background:#000;\n                margin:0;width:100%;border-radius:0;\n                box-sizing:border-box;\n            }\n            .ranking-preview-container .rk-top-handle{\n                position:absolute;left:0;right:0;bottom:0;height:14px;\n                cursor:ns-resize;pointer-events:auto;z-index:3;\n                background:linear-gradient(180deg,transparent,rgba(255,255,255,.18));\n            }\n            .ranking-preview-container .rk-top-handle::after{\n                content:'';position:absolute;left:50%;bottom:4px;\n                width:36px;height:3px;border-radius:999px;\n                transform:translateX(-50%);\n                background:rgba(255,255,255,.55);\n            }\n            .ranking-preview-container .rk-top-panel[hidden]{display:none!important;}\n            .ranking-preview-container .rk-top-panel.mode-blank{background:#000;}\n            .ranking-preview-container .rk-top-panel.mode-blur{\n                background:rgba(8,8,10,.2);\n                backdrop-filter:none;\n                -webkit-backdrop-filter:none;\n            }\n            .ranking-preview-container .rk-top-panel .rk-top-blur-vid{\n                position:absolute;inset:-50%;width:200%;height:200%;\n                object-fit:cover;object-position:center top;\n                filter:blur(36px) saturate(1.45) brightness(1.12) contrast(1.06);\n                -webkit-filter:blur(36px) saturate(1.45) brightness(1.12) contrast(1.06);\n                transform:scale(1.2);pointer-events:none;opacity:0;z-index:0;\n                transition:opacity .18s ease;\n            }\n            .ranking-preview-container .rk-top-panel.mode-blur .rk-top-blur-vid{opacity:1;}\n            .ranking-preview-container .rk-top-panel.mode-blur.has-blur-src{\n                background:transparent;\n            }\n            .ranking-preview-container .rk-top-panel.mode-blur::after{\n                content:'';position:absolute;inset:0;z-index:1;pointer-events:none;\n                background:\n                    linear-gradient(180deg,rgba(0,0,0,.12),rgba(0,0,0,.28));\n            }\n            .rk-top-line.is-hidden{display:none!important;}\n            .ranking-preview-container.has-rk-top > .ranking-editor-zone-header,\n            .ranking-preview-container.has-rk-top > .ranking-editor-zone-ranks,\n            .ranking-preview-container.has-rk-top > .ranking-list{\n                position:relative;z-index:6;\n            }\n            .ranking-preview-container.has-rk-top [data-template-element-id^="title_"],\n            .ranking-preview-container.has-rk-top h1.title,\n            .ranking-preview-container.has-rk-top .ranking-editor-zone-header{\n                position:relative;z-index:7;\n            }\n            .ranking-preview-container .ranking-editor-zone-ranks{\n                cursor:ns-resize;\n                will-change:transform;\n                touch-action:none;\n            }\n            .ranking-preview-container .ranking-editor-zone-ranks [data-template-element-id],\n            .ranking-preview-container .ranking-editor-zone-ranks .ranking-editor-text{\n                cursor:ns-resize;\n                touch-action:none;\n                pointer-events:auto;\n            }\n            .ranking-preview-container.rk-stack-dragging,\n            .ranking-preview-container.rk-stack-dragging .ranking-editor-zone-ranks,\n            .ranking-preview-container.rk-stack-dragging .ranking-editor-zone-ranks [data-template-element-id]{\n                cursor:grabbing !important;\n                transition:none !important;\n            }\n            .ranking-preview-container.rk-stack-settle .ranking-editor-zone-ranks{\n                transition:transform .18s ease !important;\n            }\n            .ranking-preview-container .ranking-editor-zone-ranks{\n                transform:translateY(var(--rk-oy, 0px));\n            }\n            .ranking-preview-container [data-template-element-id="title_ranking"],\n            .ranking-preview-container [data-template-element-id="title_funniest"]{\n                font-size:inherit;\n                display:inline-block !important;\n                vertical-align:baseline;\n                max-width:100%;\n            }\n            .ranking-preview-container [data-template-element-id="title_channel"]{\n                max-width:calc(100% - 16px)!important;\n            }\n            .ranking-preview-container h1.title,\n            .ranking-preview-container h1{\n                max-width:100% !important;\n                box-sizing:border-box !important;\n                overflow:visible !important;\n            }\n            .ranking-preview-container .ranking-editor-zone-header{\n                max-width:100% !important;\n                box-sizing:border-box !important;\n                overflow:visible !important;\n            }\n            .ranking-preview-container [data-template-element-id].rk-sized{\n                line-height:1.1;\n            }\n            #templateVideoPreview.preview-placeholder .ranking-preview-container{\n                max-width:100% !important;\n                max-height:100% !important;\n                overflow:hidden !important;\n            }\n            #templateVideoPreview.preview-placeholder .ranking-preview-container .ranking-editor-zone-header,\n            #templateVideoPreview.preview-placeholder .ranking-preview-container .ranking-editor-zone-ranks,\n            #templateVideoPreview.preview-placeholder .ranking-preview-container [data-template-element-id].ranking-editor-selected,\n            #templateVideoPreview.preview-placeholder .ranking-preview-container .ranking-editor-zone-selected,\n            #templateVideoPreview.preview-placeholder .ranking-preview-container .ranking-editor-resize-anchor{\n                overflow:visible !important;\n            }\n            #templateVideoPreview.preview-placeholder .ranking-preview-container h1.title,\n            #templateVideoPreview.preview-placeholder .ranking-preview-container [data-template-element-id^="title_"]{\n                overflow:visible !important;\n                text-overflow:clip !important;\n            }\n            #rkDdFont.sub-font-dd{\n                padding:8px;\n                max-height:min(320px,calc(100vh - 24px));\n                overflow:hidden;\n                gap:6px;\n            }\n            #rkDdFont .rk-font-search{\n                appearance:none;-webkit-appearance:none;\n                width:100%;box-sizing:border-box;\n                padding:8px 10px;border-radius:10px;\n                border:1px solid rgba(200,185,170,.35);\n                background:rgba(255,255,255,.9);\n                font:600 12px/1.2 'Plus Jakarta Sans',sans-serif;\n                color:#32261c;outline:none;\n            }\n            #rkDdFont .rk-font-search:focus{\n                border-color:rgba(249,115,22,.45);\n                box-shadow:0 0 0 2px rgba(249,115,22,.12);\n            }\n            #rkDdFont .rk-font-list{\n                display:flex;flex-direction:column;gap:3px;\n                overflow:auto;max-height:240px;min-height:0;\n            }\n            .rk-cplus-lab{\n                font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;\n                color:rgba(50,38,28,.42);margin:8px 0 4px;\n            }\n            .rk-cplus-lab:first-of-type{margin-top:0;}\n            .rk-sv-panel{\n                position:relative;height:110px;border-radius:12px;cursor:crosshair;\n                border:1px solid rgba(255,255,255,.85);\n                box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 1px 3px rgba(120,90,60,.1);\n                touch-action:none;overflow:hidden;\n            }\n            .rk-sv-thumb{\n                position:absolute;width:14px;height:14px;margin:-7px 0 0 -7px;\n                border-radius:999px;pointer-events:none;\n                border:2px solid #fff;box-shadow:0 1px 4px rgba(40,28,18,.35);\n                left:92%;top:44%;\n            }\n            .rk-sv-panel.is-dragging .rk-sv-thumb{transition:none;}\n            .rk-blank-line.is-hidden{display:none!important;}\n        `;
     let t = document.getElementById("rk-pill-styles");
     if (!t) {
       t = document.createElement("style");
@@ -303,7 +337,7 @@
   }
   function loadCustomCols() {
     try {
-      const e = JSON.parse(localStorage.getItem(o) || "[]");
+      const e = JSON.parse(localStorage.getItem(a) || "[]");
       if (!Array.isArray(e)) return [];
       return e.map(e => normalizeHex(e)).filter(Boolean).slice(0, 6);
     } catch (e) {
@@ -315,7 +349,7 @@
     if (!e) return;
     const t = [ e, ...loadCustomCols().filter(t => t !== e) ].slice(0, 6);
     try {
-      localStorage.setItem(o, JSON.stringify(t));
+      localStorage.setItem(a, JSON.stringify(t));
     } catch (e) {}
     return t;
   }
@@ -346,18 +380,57 @@
     e.classList.add("open");
     e.setAttribute("aria-hidden", "false");
     const t = document.getElementById("rkCPlusTitle");
-    if (t) t.textContent = "Custom text";
-    E = "text";
-    g?.querySelectorAll(".sub-sw-add").forEach(e => {
-      e.classList.toggle("on", (e.dataset.target || "text") === "text");
-    });
-    const n = document.getElementById("rkSpectrumThumb");
-    if (n) {
-      n.style.left = `${Math.max(0, Math.min(100, _ / 3.6))}%`;
-      n.style.background = hslToHex(_, 92, 56);
+    if (t) {
+      t.textContent = z === "blank" ? "Custom blank" : z === "fill" ? "Custom fill" : "Custom text";
     }
+    g?.querySelectorAll(".sub-sw-add").forEach(e => {
+      e.classList.toggle("on", (e.dataset.target || "text") === z);
+    });
+    syncSpectrumUI();
     renderPlusRecents();
     wireSpectrum();
+    wireSvPanel();
+  }
+  function spectrumHex() {
+    return hslToHex(D, N, $);
+  }
+  function syncSpectrumUI() {
+    const e = spectrumHex();
+    const t = document.getElementById("rkSpectrumThumb");
+    if (t) {
+      t.style.left = `${Math.max(0, Math.min(100, D / 3.6))}%`;
+      t.style.background = e;
+    }
+    const n = document.getElementById("rkSvPanel");
+    if (n) {
+      const e = `hsl(${D},100%,50%)`;
+      n.style.background = `linear-gradient(to bottom, rgba(0,0,0,0), #000),` + `linear-gradient(to right, #fff, ${e})`;
+    }
+    const i = document.getElementById("rkSvThumb");
+    if (i) {
+      i.style.left = `${Math.max(0, Math.min(100, N))}%`;
+      i.style.top = `${Math.max(0, Math.min(100, 100 - $))}%`;
+      i.style.background = e;
+    }
+  }
+  function commitSpectrumColor(e, t) {
+    if (t) {
+      if (z === "blank") previewBlankColor(e); else if (z === "fill") previewTextColor(e); else previewTextColor(e);
+      return;
+    }
+    if (z === "blank") {
+      applyBlankColor(e, true);
+      saveCustomCol(e);
+      renderPlusRecents();
+    } else if (z === "fill") {
+      applyFillColor(e, true);
+      saveCustomCol(e);
+      renderPlusRecents();
+    } else {
+      applyTextColor(e, true);
+      saveCustomCol(e);
+      renderPlusRecents();
+    }
   }
   function renderPlusRecents() {
     const e = document.getElementById("rkCPlusRecents");
@@ -373,8 +446,11 @@
       if (t === "#ffffff") {
         n.style.boxShadow = "0 1px 2px rgba(120,90,60,.12), inset 0 0 0 1px rgba(0,0,0,.12)";
       }
+      n.onmousedown = e => {
+        if (document.querySelector(".rk-inline-editing")) e.preventDefault();
+      };
       n.onclick = () => {
-        if (E === "fill") applyFillColor(t, true); else applyTextColor(t, true);
+        if (z === "blank") applyBlankColor(t, true); else if (z === "fill") applyFillColor(t, true); else applyTextColor(t, true);
         closePlusPop();
       };
       e.appendChild(n);
@@ -387,24 +463,10 @@
     const pick = (t, n) => {
       const i = e.getBoundingClientRect();
       const r = Math.max(0, Math.min(1, (t - i.left) / Math.max(1, i.width)));
-      _ = Math.round(r * 360);
-      const o = hslToHex(_, 92, 56);
-      const a = document.getElementById("rkSpectrumThumb");
-      if (a) {
-        a.style.left = `${r * 100}%`;
-        a.style.background = o;
-      }
-      if (n) {
-        previewTextColor(o);
-      } else if (E === "fill") {
-        applyFillColor(o, true);
-        saveCustomCol(o);
-        renderPlusRecents();
-      } else {
-        applyTextColor(o, true);
-        saveCustomCol(o);
-        renderPlusRecents();
-      }
+      D = Math.round(r * 360);
+      const o = spectrumHex();
+      syncSpectrumUI();
+      commitSpectrumColor(o, n);
     };
     e.addEventListener("pointerdown", t => {
       if (t.button != null && t.button !== 0) return;
@@ -431,21 +493,61 @@
       closePlusPop();
     });
   }
+  function wireSvPanel() {
+    const e = document.getElementById("rkSvPanel");
+    if (!e || e._wired) return;
+    e._wired = true;
+    const pick = (t, n, i) => {
+      const r = e.getBoundingClientRect();
+      const o = Math.max(0, Math.min(1, (t - r.left) / Math.max(1, r.width)));
+      const a = Math.max(0, Math.min(1, (n - r.top) / Math.max(1, r.height)));
+      N = Math.round(o * 100);
+      $ = Math.round((1 - a) * 100);
+      const s = spectrumHex();
+      syncSpectrumUI();
+      commitSpectrumColor(s, i);
+    };
+    e.addEventListener("pointerdown", t => {
+      if (t.button != null && t.button !== 0) return;
+      t.preventDefault();
+      t.stopPropagation();
+      e.classList.add("is-dragging");
+      e.setPointerCapture?.(t.pointerId);
+      pick(t.clientX, t.clientY, true);
+      const onMove = e => pick(e.clientX, e.clientY, true);
+      const onUp = t => {
+        e.classList.remove("is-dragging");
+        e.releasePointerCapture?.(t.pointerId);
+        e.removeEventListener("pointermove", onMove);
+        e.removeEventListener("pointerup", onUp);
+        e.removeEventListener("pointercancel", onUp);
+        pick(t.clientX, t.clientY, false);
+      };
+      e.addEventListener("pointermove", onMove);
+      e.addEventListener("pointerup", onUp);
+      e.addEventListener("pointercancel", onUp);
+    });
+  }
   function makeAddSwatch(e) {
     const t = document.createElement("button");
     t.type = "button";
     t.className = "sub-sw sub-sw-add";
-    t.dataset.target = e === "fill" ? "fill" : "text";
-    t.title = e === "fill" ? "Custom fill" : "Custom text";
-    t.setAttribute("aria-label", e === "fill" ? "Custom fill color" : "Custom text color");
+    t.dataset.target = e === "fill" ? "fill" : e === "blank" ? "blank" : "text";
+    t.title = e === "blank" ? "Custom blank" : e === "fill" ? "Custom fill" : "Custom text";
+    t.setAttribute("aria-label", t.title);
     t.innerHTML = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 3.25v9.5M3.25 8h9.5"/></svg>';
-    t.onclick = n => {
-      n.stopPropagation();
-      E = e === "fill" ? "fill" : "text";
-      const i = document.getElementById("rkCPlusTitle");
-      if (i) i.textContent = E === "fill" ? "Custom fill" : "Custom text";
+    t.onmousedown = e => {
+      if (document.querySelector(".rk-inline-editing")) e.preventDefault();
+    };
+    t.onclick = e => {
+      e.stopPropagation();
+      z = t.dataset.target || "text";
+      const n = document.getElementById("rkCPlusTitle");
+      if (n) {
+        n.textContent = z === "blank" ? "Custom blank" : z === "fill" ? "Custom fill" : "Custom text";
+      }
       g?.querySelectorAll(".sub-sw-add").forEach(e => {
-        e.classList.toggle("on", e.dataset.target === E && isPlusPopOpen());
+        e.classList.toggle("on", e.dataset.target === z && isPlusPopOpen());
       });
       if (isPlusPopOpen() && t.classList.contains("on")) {
         closePlusPop();
@@ -456,13 +558,66 @@
     };
     return t;
   }
+  function getInlineEditSelection() {
+    const e = window.getSelection();
+    if (!e || e.rangeCount === 0 || e.isCollapsed) return null;
+    const t = e.getRangeAt(0);
+    let n = t.commonAncestorContainer;
+    if (n.nodeType === 3) n = n.parentElement;
+    const i = n?.closest?.(".rk-inline-editing");
+    if (!i || !i.hasAttribute("data-template-element-id")) return null;
+    if (!i.contains(t.startContainer) || !i.contains(t.endContainer)) return null;
+    return {
+      range: t,
+      editing: i,
+      sel: e
+    };
+  }
+  function colorSelectionRange(e, t) {
+    const n = normalizeHex(t) || t;
+    try {
+      const t = e.startContainer;
+      const i = e.endContainer;
+      const r = t.nodeType === 3 ? t.parentElement : t;
+      const o = i.nodeType === 3 ? i.parentElement : i;
+      if (r && r === o && r.tagName === "SPAN" && r.style.color && e.toString() === r.textContent) {
+        r.style.color = n;
+        return r;
+      }
+    } catch (e) {}
+    const i = document.createElement("span");
+    i.style.color = n;
+    try {
+      e.surroundContents(i);
+    } catch (t) {
+      const n = e.extractContents();
+      i.appendChild(n);
+      e.insertNode(i);
+    }
+    try {
+      const e = window.getSelection();
+      const t = document.createRange();
+      t.selectNodeContents(i);
+      e.removeAllRanges();
+      e.addRange(t);
+    } catch (e) {}
+    return i;
+  }
   function beginColorPreview() {
-    if (T) return;
-    T = true;
-    B = E === "fill" ? v : w;
+    if (B) return;
+    B = true;
+    H = z === "fill" ? v : w;
     A.clear();
+    _ = null;
+    const e = z === "text" ? getInlineEditSelection() : null;
+    if (e) {
+      A.set(e.editing, {
+        html: e.editing.innerHTML
+      });
+      return;
+    }
     resolveApplyTargets().forEach(e => {
-      if (E === "fill") {
+      if (z === "fill") {
         A.set(e, {
           bg: e.style.backgroundColor || "",
           pad: e.style.padding || "",
@@ -475,27 +630,46 @@
     });
   }
   function previewTextColor(e) {
-    if (!y.size) return;
+    if (!y.size && z !== "blank") return;
+    if (z === "blank") {
+      previewBlankColor(e);
+      return;
+    }
     beginColorPreview();
-    if (E === "fill") {
+    if (z === "fill") {
       resolveApplyTargets().forEach(t => applyFillToEl(t, e));
       syncFillSwatches(e);
-    } else {
-      resolveApplyTargets().forEach(t => {
-        t.style.color = e;
-      });
+      return;
+    }
+    const t = getInlineEditSelection();
+    if (t || _) {
+      if (_?.isConnected) {
+        _.style.color = e;
+      } else if (t) {
+        _ = colorSelectionRange(t.range, e);
+      }
       document.querySelectorAll("#rkTCG .sub-sw").forEach(t => {
         if (t.classList.contains("sub-sw-add") || t.classList.contains("nocolor")) return;
         t.classList.toggle("on", (normalizeHex(t.dataset.color) || "") === normalizeHex(e));
       });
+      return;
     }
+    resolveApplyTargets().forEach(t => {
+      t.style.color = e;
+    });
+    document.querySelectorAll("#rkTCG .sub-sw").forEach(t => {
+      if (t.classList.contains("sub-sw-add") || t.classList.contains("nocolor")) return;
+      t.classList.toggle("on", (normalizeHex(t.dataset.color) || "") === normalizeHex(e));
+    });
   }
   function endColorPreview() {
-    if (!T) return;
-    T = false;
+    if (!B) return;
+    B = false;
     A.forEach((e, t) => {
       if (!t?.isConnected) return;
-      if (e && typeof e === "object" && "bg" in e) {
+      if (e && typeof e === "object" && "html" in e) {
+        t.innerHTML = e.html;
+      } else if (e && typeof e === "object" && "bg" in e) {
         t.style.backgroundColor = e.bg;
         t.style.padding = e.pad;
         t.style.borderRadius = e.radius;
@@ -505,15 +679,23 @@
       }
     });
     A.clear();
-    if (E === "fill") {
-      if (B !== undefined) v = B;
-    } else if (B != null) {
-      w = B;
+    _ = null;
+    if (z === "fill") {
+      if (H !== undefined) v = H;
+    } else if (H != null) {
+      w = H;
     }
-    B = null;
-    P = null;
+    H = null;
+    T = null;
     syncColorSwatches();
     syncFillSwatches();
+  }
+  function discardColorPreview() {
+    B = false;
+    A.clear();
+    H = null;
+    T = null;
+    _ = null;
   }
   function applyFillToEl(e, t) {
     if (!e) return;
@@ -533,9 +715,9 @@
     e.classList.add("rk-has-fill");
   }
   function applyFillColor(e, t) {
-    if (T) discardColorPreview();
+    if (B) discardColorPreview();
     v = e ? normalizeHex(e) || e : null;
-    if (t !== false) z = true;
+    if (t !== false) C = true;
     resolveApplyTargets().forEach(e => applyFillToEl(e, v));
     syncFillSwatches();
     if (t !== false && window.rankingCustomizer) window.rankingCustomizer.syncFromDOM();
@@ -559,8 +741,11 @@
         if (String(t).toLowerCase() === "#ffffff") {
           n.style.boxShadow = "0 1px 3px rgba(120,90,60,.12), inset 0 0 0 1px rgba(0,0,0,.12)";
         }
+        n.onmousedown = e => {
+          if (document.querySelector(".rk-inline-editing")) e.preventDefault();
+        };
         n.onclick = () => {
-          E = "text";
+          z = "text";
           applyTextColor(t, true);
           closePlusPop();
         };
@@ -568,6 +753,8 @@
       });
       e.appendChild(makeAddSwatch("text"));
     }
+    buildOutlineColorGrid();
+    buildBlankColorGrid();
     try {
       document.querySelectorAll(".ranking-preview-container .rk-has-fill").forEach(e => {
         e.classList.remove("rk-has-fill");
@@ -578,12 +765,132 @@
       });
     } catch (e) {}
     syncColorSwatches();
+    syncOutlineColSwatches();
     wireTopModes();
     wireSpectrum();
+    wireSvPanel();
     syncTopBgVisibility();
+    syncBlankBgVisibility();
     applyRankingTopPanel(getRankingLayout());
     wireStackDrag(getRankingRoot());
     applyStackOffset();
+  }
+  function buildOutlineColorGrid() {
+    const e = document.getElementById("rkOCG");
+    if (!e) return;
+    e.innerHTML = "";
+    o.forEach(t => {
+      const n = document.createElement("div");
+      n.className = "sub-sw";
+      n.dataset.color = t;
+      n.style.background = t;
+      if (String(t).toLowerCase() === "#ffffff") {
+        n.style.boxShadow = "0 1px 3px rgba(120,90,60,.12), inset 0 0 0 1px rgba(0,0,0,.12)";
+      }
+      n.title = `Outline ${t}`;
+      n.onmousedown = e => {
+        if (document.querySelector(".rk-inline-editing")) e.preventDefault();
+      };
+      n.onclick = () => applyOutlineColor(t);
+      e.appendChild(n);
+    });
+    syncOutlineColSwatches();
+  }
+  function syncOutlineColSwatches() {
+    const e = (normalizeHex(S) || "#000000").toLowerCase();
+    document.querySelectorAll("#rkOCG .sub-sw").forEach(t => {
+      t.classList.toggle("on", (normalizeHex(t.dataset.color) || "") === e);
+    });
+  }
+  function isDarkHex(e) {
+    const t = normalizeHex(e);
+    if (!t) return true;
+    const n = parseInt(t.slice(1, 3), 16);
+    const i = parseInt(t.slice(3, 5), 16);
+    const r = parseInt(t.slice(5, 7), 16);
+    return (n * 299 + i * 587 + r * 114) / 1e3 < 140;
+  }
+  function applyOutlineColor(e) {
+    S = normalizeHex(e) || e || "#000000";
+    if (x === "none") x = "outline";
+    P = true;
+    const t = resolveApplyTargets();
+    t.forEach(e => {
+      setElementShadow(e, x);
+      const t = e.getAttribute("data-template-element-id");
+      if (t && window.rankingCustomizer?.customizations) {
+        const e = window.rankingCustomizer.customizations[t] || (window.rankingCustomizer.customizations[t] = {});
+        const n = window.rankingCustomizer._colorToRgba?.(S);
+        if (n) e.outline_color = n;
+      }
+      snapshotEl(e);
+    });
+    syncOutlineColSwatches();
+    syncShadowSeg();
+    if (window.rankingCustomizer) window.rankingCustomizer.syncFromDOM();
+    markLibraryRankingDirty();
+  }
+  function buildBlankColorGrid() {
+    const e = document.getElementById("rkBlankCG");
+    if (!e) return;
+    e.innerHTML = "";
+    r.forEach(t => {
+      const n = document.createElement("div");
+      n.className = "sub-sw";
+      n.dataset.color = t;
+      n.style.background = t;
+      if (String(t).toLowerCase() === "#ffffff") {
+        n.style.boxShadow = "0 1px 3px rgba(120,90,60,.12), inset 0 0 0 1px rgba(0,0,0,.12)";
+      }
+      n.onmousedown = e => {
+        if (document.querySelector(".rk-inline-editing")) e.preventDefault();
+      };
+      n.onclick = () => {
+        z = "blank";
+        applyBlankColor(t, true);
+        closePlusPop();
+      };
+      e.appendChild(n);
+    });
+    e.appendChild(makeAddSwatch("blank"));
+    syncBlankColSwatches();
+  }
+  function syncBlankColSwatches() {
+    const e = getRankingLayout();
+    const t = (normalizeHex(e.top_panel_color) || "#000000").toLowerCase();
+    document.querySelectorAll("#rkBlankCG .sub-sw").forEach(e => {
+      if (e.classList.contains("sub-sw-add")) return;
+      e.classList.toggle("on", (normalizeHex(e.dataset.color) || "") === t);
+    });
+  }
+  function syncBlankBgVisibility() {
+    const e = document.getElementById("rkBlankLine");
+    if (!e) return;
+    const t = O != null ? O : getRankingLayout().top_panel || "none";
+    const n = t === "blank" && selectionAllowsTopBg();
+    e.classList.toggle("is-hidden", !n);
+    e.setAttribute("aria-hidden", n ? "false" : "true");
+  }
+  function previewBlankColor(e) {
+    const t = getRankingRoot();
+    const n = t?.querySelector(":scope > .rk-top-panel");
+    if (!n || n.hidden) return;
+    n.style.background = normalizeHex(e) || e || "#000";
+  }
+  function applyBlankColor(e, t) {
+    const n = normalizeHex(e) || e || "#000000";
+    const i = {
+      top_panel: "blank",
+      top_panel_color: n
+    };
+    setRankingLayout(i);
+    if (t !== false && isDarkHex(n) && isDarkHex(S)) {
+      applyOutlineColor("#ffffff");
+    } else if (t !== false && !isDarkHex(n) && !isDarkHex(S)) {
+      applyOutlineColor("#000000");
+    }
+    syncBlankColSwatches();
+    syncBlankBgVisibility();
   }
   function syncShadowSeg(e) {
     const t = document.getElementById("rkSHG");
@@ -607,20 +914,20 @@
       i.title = n === "Off" ? "No outline" : n === "Thick" ? "Thick outline" : "Outline";
       i.innerHTML = `<span class="sub-edge-sample" aria-hidden="true"><span class="sub-edge-aa">Aa</span></span>` + `<span class="sub-edge-label">${n}</span>`;
       i.addEventListener("pointerenter", () => {
-        if (!y.size && $ === "single") return;
-        if (S === undefined) S = x;
+        if (!y.size && V === "single") return;
+        if (E === undefined) E = x;
         applyOutlinePreview(t);
         syncShadowSeg(t);
       });
       i.addEventListener("pointerleave", () => {
-        if (S === undefined) return;
-        const e = S;
-        S = undefined;
+        if (E === undefined) return;
+        const e = E;
+        E = undefined;
         applyOutlinePreview(e);
         syncShadowSeg();
       });
       i.addEventListener("click", () => {
-        S = undefined;
+        E = undefined;
         applyShadow(t);
       });
       e.appendChild(i);
@@ -631,8 +938,8 @@
     resolveApplyTargets().forEach(t => setElementShadow(t, e));
   }
   function selectionAllowsTopBg() {
-    if ($ === "group-ranks") return false;
-    if ($ === "group-header") return true;
+    if (V === "group-ranks") return false;
+    if (V === "group-header") return true;
     const e = [ ...y ];
     if (!e.length) return true;
     if (e.some(isRankEl) && !e.some(isHeaderEl)) return false;
@@ -644,6 +951,7 @@
     const t = selectionAllowsTopBg();
     e.classList.toggle("is-hidden", !t);
     e.setAttribute("aria-hidden", t ? "false" : "true");
+    syncBlankBgVisibility();
   }
   function syncColorSwatches() {
     const e = (normalizeHex(w) || "").toLowerCase();
@@ -655,18 +963,19 @@
   function syncFillSwatches(e) {}
   function getRankingLayout() {
     const e = window.rankingCustomizer?.customizations || {};
-    const t = e[a] || window.__solisRankingLayout || {};
+    const t = e[s] || window.__solisRankingLayout || {};
     let n = Number(t.top_ratio);
     if (t.v !== 2) {
       if (!Number.isFinite(n) || n >= .32) {
-        n = s;
+        n = l;
       }
     } else if (!Number.isFinite(n)) {
-      n = s;
+      n = l;
     }
     return {
       top_panel: t.top_panel === "blank" || t.top_panel === "blank_blur" ? t.top_panel : "none",
-      top_ratio: Math.max(l, Math.min(c, n)),
+      top_panel_color: normalizeHex(t.top_panel_color) || "#000000",
+      top_ratio: Math.max(c, Math.min(d, n)),
       offset_x_pct: 0,
       offset_y_pct: (() => {
         const e = Number(t.offset_y_pct);
@@ -737,21 +1046,21 @@
     t.style.setProperty("--rk-oy", `${o}px`);
     t.style.removeProperty("--rk-ox");
   }
-  let ge = 0;
+  let ke = 0;
   function markRankPointerClickSuppress(e = 480) {
-    ge = Date.now() + e;
+    ke = Date.now() + e;
   }
   function consumeRankPointerClick() {
-    if (Date.now() < ge) {
-      ge = 0;
+    if (Date.now() < ke) {
+      ke = 0;
       return true;
     }
     return false;
   }
-  let fe = null;
+  let ye = null;
   function endStackDragSession(e) {
-    const t = fe;
-    fe = null;
+    const t = ye;
+    ye = null;
     if (!t) return;
     try {
       t.cleanup(e);
@@ -801,7 +1110,7 @@
         if (!t) return;
       }
       if (r.ctrlKey || r.metaKey) return;
-      if (fe) {
+      if (ye) {
         endStackDragSession("superseded");
       }
       const s = r.pointerId;
@@ -827,8 +1136,8 @@
         }
         w = false;
         e.classList.remove("rk-stack-dragging");
-        if (fe && fe.pointerId === s) {
-          fe = null;
+        if (ye && ye.pointerId === s) {
+          ye = null;
         }
       };
       const onMove = i => {
@@ -886,7 +1195,7 @@
         if (e.pointerId != null && e.pointerId !== s) return;
         onUp(e);
       };
-      fe = {
+      ye = {
         pointerId: s,
         cleanup: cleanup
       };
@@ -915,7 +1224,7 @@
       if (!window.rankingCustomizer.customizations) {
         window.rankingCustomizer.customizations = {};
       }
-      window.rankingCustomizer.customizations[a] = t;
+      window.rankingCustomizer.customizations[s] = t;
       if (typeof window.rankingCustomizer.saveCustomizations === "function") {
         window.rankingCustomizer.saveCustomizations();
       }
@@ -927,7 +1236,7 @@
       ...t,
       ...e
     };
-    G = null;
+    O = null;
     storeRankingLayout(n);
     applyRankingTopPanel(n);
     applyStackOffset(n);
@@ -958,14 +1267,14 @@
         const r = Math.max(1, i.getBoundingClientRect().height || 1);
         const o = getRankingLayout();
         const a = n.clientY;
-        const d = Number(o.top_ratio) || s;
+        const s = Number(o.top_ratio) || l;
         const u = n.pointerId;
         try {
           e.setPointerCapture(u);
         } catch (e) {}
         const onMove = e => {
           const n = e.clientY - a;
-          const i = Math.max(l, Math.min(c, d + n / r));
+          const i = Math.max(c, Math.min(d, s + n / r));
           t.style.height = `${Math.round(i * 1e3) / 10}%`;
           t._rkPendingRatio = i;
         };
@@ -976,7 +1285,7 @@
           try {
             e.releasePointerCapture(u);
           } catch (e) {}
-          const n = Number.isFinite(t._rkPendingRatio) ? t._rkPendingRatio : d;
+          const n = Number.isFinite(t._rkPendingRatio) ? t._rkPendingRatio : s;
           delete t._rkPendingRatio;
           setRankingLayout({
             top_ratio: n
@@ -992,7 +1301,7 @@
   }
   function measureHeaderBandRatio(e) {
     e = e || getRankingRoot();
-    if (!e) return s;
+    if (!e) return l;
     const t = e.getBoundingClientRect();
     const n = Math.max(1, t.height || 1);
     let i = 0;
@@ -1006,9 +1315,9 @@
       const n = e.getBoundingClientRect();
       if (n.height > 0) i = Math.max(i, n.bottom - t.top);
     });
-    if (i <= 4) return s;
+    if (i <= 4) return l;
     const o = Math.max(6, Math.round(n * .01));
-    return Math.max(l, Math.min(c, (i + o) / n));
+    return Math.max(c, Math.min(d, (i + o) / n));
   }
   function syncTopPanelToHeader(e) {
     e = e || {};
@@ -1020,18 +1329,18 @@
     if (!i || i.hidden) return null;
     const r = measureHeaderBandRatio(t);
     const o = Number(n.top_ratio);
-    const a = Number.isFinite(o) ? o : s;
-    const d = Math.max(l, Math.min(c, Math.max(a, r)));
-    i.style.height = `${Math.round(d * 1e3) / 10}%`;
-    if (!e.liveOnly && Math.abs(a - d) > .004) {
+    const a = Number.isFinite(o) ? o : l;
+    const s = Math.max(c, Math.min(d, Math.max(a, r)));
+    i.style.height = `${Math.round(s * 1e3) / 10}%`;
+    if (!e.liveOnly && Math.abs(a - s) > .004) {
       storeRankingLayout({
         ...n,
-        top_ratio: d,
+        top_ratio: s,
         v: 2
       });
       markLibraryRankingDirty();
     }
-    return d;
+    return s;
   }
   function findRankingSourceVideo() {
     const e = document.getElementById("templateVideoPreview");
@@ -1069,10 +1378,10 @@
     i.classList.toggle("mode-blank", n === "blank");
     const r = measureHeaderBandRatio(t);
     const o = Number(e.top_ratio);
-    const a = Math.max(l, Math.min(c, Math.max(Number.isFinite(o) ? o : s, r)));
+    const a = Math.max(c, Math.min(d, Math.max(Number.isFinite(o) ? o : l, r)));
     i.style.height = `${Math.round(a * 1e3) / 10}%`;
-    const d = Number(e.top_ratio);
-    if (!Number.isFinite(d) || Math.abs(d - a) > .004) {
+    const s = Number(e.top_ratio);
+    if (!Number.isFinite(s) || Math.abs(s - a) > .004) {
       storeRankingLayout({
         ...e,
         top_panel: n,
@@ -1081,7 +1390,17 @@
       });
     }
     const u = i.querySelector(".rk-top-blur-vid");
-    if (n === "blank_blur") {
+    if (n === "blank") {
+      i.classList.remove("has-blur-src");
+      i.style.background = e.top_panel_color || "#000";
+      if (u) {
+        try {
+          u.pause();
+          u.removeAttribute("src");
+        } catch (e) {}
+      }
+    } else if (n === "blank_blur") {
+      i.style.background = "";
       const e = findRankingSourceVideo();
       if (u && e && (e.currentSrc || e.src)) {
         const t = e.currentSrc || e.src;
@@ -1092,7 +1411,6 @@
           } catch (e) {}
         }
         i.classList.add("has-blur-src");
-        i.style.background = "";
         const sync = () => {
           try {
             u.currentTime = e.currentTime || 0;
@@ -1143,14 +1461,16 @@
     applyStackOffset(e);
   }
   function syncTopModeButtons() {
-    const e = G != null ? G : getRankingLayout().top_panel || "none";
+    const e = O != null ? O : getRankingLayout().top_panel || "none";
     document.querySelectorAll("#rkTopModes .rk-top-mode").forEach(t => {
       t.classList.toggle("on", (t.dataset.top || "none") === e);
     });
+    syncBlankBgVisibility();
+    syncBlankColSwatches();
   }
   function previewTopMode(e) {
     const t = e === "blank" || e === "blank_blur" ? e : "none";
-    G = t;
+    O = t;
     applyRankingTopPanel({
       ...getRankingLayout(),
       top_panel: t
@@ -1158,8 +1478,8 @@
     syncTopModeButtons();
   }
   function resetTopModePreview() {
-    if (G == null) return;
-    G = null;
+    if (O == null) return;
+    O = null;
     applyRankingTopPanel(getRankingLayout());
     syncTopModeButtons();
   }
@@ -1172,7 +1492,7 @@
       if (!t) return;
       e.preventDefault();
       e.stopPropagation();
-      G = null;
+      O = null;
       const n = t.dataset.top || "none";
       const i = {
         top_panel: n
@@ -1181,11 +1501,12 @@
         const e = getRankingLayout();
         const t = Number(e.top_ratio);
         if (!Number.isFinite(t) || t < .2 || e.top_panel === "none") {
-          i.top_ratio = s;
+          i.top_ratio = l;
         }
       }
       setRankingLayout(i);
       syncTopModeButtons();
+      syncBlankBgVisibility();
     });
     e.addEventListener("pointerover", t => {
       if (t.pointerType && t.pointerType !== "mouse") return;
@@ -1236,11 +1557,11 @@
       const r = e.clientX;
       const o = e.clientY;
       const a = e.pointerId;
-      const s = $ === "group-header" ? getPrimaryHeaderEl() || n[0] : q && document.contains(q) ? q : n[0];
-      const l = C != null ? C : getEffectiveFontSize(s);
-      const c = $ === "group-header";
-      const d = $ === "group-ranks";
-      const p = c || $ !== "single" && n.every(e => isHeaderEl(e));
+      const s = V === "group-header" ? getPrimaryHeaderEl() || n[0] : W && document.contains(W) ? W : n[0];
+      const l = L != null ? L : getEffectiveFontSize(s);
+      const c = V === "group-header";
+      const d = V === "group-ranks";
+      const p = c || V !== "single" && n.every(e => isHeaderEl(e));
       const g = getHardSizeCap(d || n.every(e => isRankEl(e)) ? "ranks" : "header");
       const m = g;
       let b = false;
@@ -1248,19 +1569,19 @@
         if (!i) return;
         if (e.cancelable) e.preventDefault();
         const t = (e.clientX - r + (e.clientY - o)) * .55;
-        const a = d || n.every(e => isRankEl(e)) ? oe : re;
+        const a = d || n.every(e => isRankEl(e)) ? ce : le;
         const s = Math.max(a, Math.min(m, Math.round(l + t)));
         if (Math.abs(s - l) < 1 && Math.abs(t) < 2) return;
         b = true;
         if (c || p) {
-          C = applyHeaderBlockSize(s, {
+          L = applyHeaderBlockSize(s, {
             resizing: true
           });
           syncTopPanelToHeader({
             liveOnly: true
           });
         } else if (d) {
-          C = applyRankBlockSize(s, {
+          L = applyRankBlockSize(s, {
             resizing: true
           });
         } else {
@@ -1275,7 +1596,7 @@
               if (e) setElementFontSize(e, s);
             }
           });
-          C = e;
+          L = e;
           if (n.every(e => isHeaderEl(e))) {
             syncTopPanelToHeader({
               liveOnly: true
@@ -1296,7 +1617,7 @@
           syncTopPanelToHeader();
           const e = getRankingRoot();
           if (e && !headerLineFits(e)) {
-            const e = Math.max(re, C != null ? C : l);
+            const e = Math.max(le, L != null ? L : l);
             applyHeaderBlockSize(e, {
               resizing: false
             });
@@ -1305,16 +1626,16 @@
         if (d) {
           const e = getRankingRoot();
           if (e && !ranksListFits(e)) {
-            applyRankBlockSize(C != null ? C : l, {
+            applyRankBlockSize(L != null ? L : l, {
               resizing: false
             });
           }
         } else if (n.some(e => isRankEl(e))) {
           const e = getRankingRoot();
-          if (e && !ranksListFits(e) && C != null) {
-            let t = C;
+          if (e && !ranksListFits(e) && L != null) {
+            let t = L;
             let i = 40;
-            while (i-- > 0 && t > oe && !ranksListFits(e)) {
+            while (i-- > 0 && t > ce && !ranksListFits(e)) {
               t -= 1;
               n.forEach(n => {
                 setElementFontSize(n, t);
@@ -1326,14 +1647,14 @@
                 }
               });
             }
-            C = t;
+            L = t;
           }
         }
         if (window.rankingCustomizer) window.rankingCustomizer.syncFromDOM();
         markLibraryRankingDirty();
         if (b) markRankPointerClickSuppress();
-        if (C != null && Math.abs(C - l) >= 1) {
-          scheduleResizeSuggest(n, l, C);
+        if (L != null && Math.abs(L - l) >= 1) {
+          scheduleResizeSuggest(n, l, L);
         }
         if (y.size) {
           showMenu();
@@ -1361,21 +1682,21 @@
       e.classList.remove("ranking-editor-resize-anchor");
     });
     if (!y.size) return;
-    if ($ === "group-header" || $ === "group-ranks") {
-      const e = $ === "group-header" ? getHeaderZone() : getRanksZone();
+    if (V === "group-header" || V === "group-ranks") {
+      const e = V === "group-header" ? getHeaderZone() : getRanksZone();
       if (!e) return;
       e.classList.add("ranking-editor-resize-anchor");
       ensureResizeHandle(e);
       return;
     }
-    const e = q && document.contains(q) ? q : y.values().next().value;
+    const e = W && document.contains(W) ? W : y.values().next().value;
     if (!e) return;
     e.classList.add("ranking-editor-selected");
     ensureResizeHandle(e);
     e.style.zIndex = "8";
   }
   function snapshotEl(e) {
-    O.set(e, {
+    Z.set(e, {
       fontFamily: e.style.fontFamily,
       fontWeight: e.style.fontWeight,
       fontSize: e.style.fontSize,
@@ -1385,7 +1706,7 @@
     });
   }
   function restoreSnapshot(e) {
-    const t = O.get(e);
+    const t = Z.get(e);
     if (!t) return;
     e.style.fontFamily = t.fontFamily;
     e.style.fontWeight = t.fontWeight;
@@ -1416,10 +1737,10 @@
     const o = getEffectiveFontSize(e);
     if (r && r !== "inherit" && !r.includes("clamp")) {
       const e = Math.round(parseFloat(r));
-      C = Number.isFinite(e) ? e : o;
+      L = Number.isFinite(e) ? e : o;
       R = true;
     } else {
-      C = o;
+      L = o;
       R = false;
     }
   }
@@ -1433,7 +1754,7 @@
     const t = getRankingRoot();
     const n = document.getElementById("templateVideoPreview");
     const i = n?.clientWidth || t?.clientWidth || 280;
-    return Math.max(14, Math.round(Number(e || 0) * (i / pe)));
+    return Math.max(14, Math.round(Number(e || 0) * (i / he)));
   }
   function seedDefaultPreviewSizes() {
     const e = getRankingRoot();
@@ -1447,16 +1768,16 @@
     } else if (e.querySelector(".rk-sized")) {
       return false;
     }
-    const n = previewPxFromBurn(se);
-    const i = previewPxFromBurn(le);
-    const r = previewPxFromBurn(ce);
+    const n = previewPxFromBurn(ue);
+    const i = previewPxFromBurn(pe);
+    const r = previewPxFromBurn(ge);
     applyHeaderBlockSize(n);
     applyRankBlockSize(i, {
       titlePx: r
     });
     const o = e.querySelector('[data-template-element-id="title_channel"]');
     if (o && !o.classList.contains("rk-sized")) {
-      const e = Math.min(ae, previewPxFromBurn(ue));
+      const e = Math.min(de, previewPxFromBurn(me));
       o.style.setProperty("font-size", `${e}px`, "important");
       o.classList.add("rk-sized");
     }
@@ -1470,11 +1791,11 @@
   }
   function getHardSizeCap(e) {
     if (e && isChannelEl(e)) {
-      return ae;
+      return de;
     }
     const t = e === "ranks" || e === "header" ? e : isHeaderEl(e) ? "header" : isRankEl(e) ? "ranks" : "header";
-    if (t === "ranks") return ie;
-    return ne;
+    if (t === "ranks") return se;
+    return ae;
   }
   function measureChannelWidthAt(e, t) {
     if (!e) return 0;
@@ -1606,7 +1927,7 @@
   }
   function setElementFontSize(e, t) {
     const n = resolveFontSizeForEl(e, t, {
-      headerGroup: $ === "group-header"
+      headerGroup: V === "group-header"
     });
     const i = clampFontSizeToBounds(e, n);
     e.style.setProperty("font-size", `${i}px`, "important");
@@ -1622,7 +1943,7 @@
     const n = getRankingRoot();
     const i = getHeaderElements();
     const r = getHardSizeCap("header");
-    let o = Math.max(re, Math.min(r, Math.round(e)));
+    let o = Math.max(le, Math.min(r, Math.round(e)));
     if (!n || !i.length) return o;
     const applyHeaders = e => {
       i.forEach(t => {
@@ -1641,7 +1962,7 @@
     applyHeaders(o);
     if (t.resizing) {
       let e = 40;
-      while (e-- > 0 && o > re && !headerLineFits(n)) {
+      while (e-- > 0 && o > le && !headerLineFits(n)) {
         o -= 1;
         applyHeaders(o);
       }
@@ -1649,7 +1970,7 @@
     }
     {
       let e = 50;
-      while (e-- > 0 && o > re && !headerLineFits(n)) {
+      while (e-- > 0 && o > le && !headerLineFits(n)) {
         o -= 1;
         applyHeaders(o);
       }
@@ -1685,8 +2006,8 @@
     const i = getAllRankNumbers();
     const r = getAllRankTitles();
     const o = getHardSizeCap("ranks");
-    let a = Math.max(oe, Math.min(o, Math.round(e)));
-    let s = t.titlePx != null ? Math.max(oe, Math.min(o, Math.round(t.titlePx))) : Math.max(oe, Math.round(a * .88));
+    let a = Math.max(ce, Math.min(o, Math.round(e)));
+    let s = t.titlePx != null ? Math.max(ce, Math.min(o, Math.round(t.titlePx))) : Math.max(ce, Math.round(a * .88));
     if (!n || !i.length) return a;
     const applyRanks = (e, t) => {
       i.forEach(t => {
@@ -1701,18 +2022,18 @@
     applyRanks(a, s);
     if (t.resizing) {
       let e = 40;
-      while (e-- > 0 && a > oe && !ranksListFits(n)) {
+      while (e-- > 0 && a > ce && !ranksListFits(n)) {
         a -= 1;
-        s = Math.max(oe, Math.round(a * .88));
+        s = Math.max(ce, Math.round(a * .88));
         applyRanks(a, s);
       }
       return a;
     }
     {
       let e = 50;
-      while (e-- > 0 && a > oe && !ranksListFits(n)) {
+      while (e-- > 0 && a > ce && !ranksListFits(n)) {
         a -= 1;
-        s = Math.max(oe, Math.round(a * .88));
+        s = Math.max(ce, Math.round(a * .88));
         applyRanks(a, s);
       }
       if (!t.skipStackFit) ensureRankingStackFits();
@@ -1739,7 +2060,7 @@
       const e = getAllRankNumbers();
       if (!e.length) break;
       const t = getEffectiveFontSize(e[0]);
-      if (t <= oe) break;
+      if (t <= ce) break;
       applyRankBlockSize(t - 1, {
         skipStackFit: true
       });
@@ -1750,7 +2071,7 @@
       const t = getPrimaryHeaderEl() || e[0];
       if (!t) break;
       const n = getEffectiveFontSize(t);
-      if (n <= re) break;
+      if (n <= le) break;
       applyHeaderBlockSize(n - 1, {
         skipStackFit: true
       });
@@ -1792,7 +2113,7 @@
   function clampFontSizeToBounds(e, t) {
     const n = getRankingRoot();
     const i = getHardSizeCap(e);
-    const r = isChannelEl(e) ? 12 : isHeaderEl(e) ? re : oe;
+    const r = isChannelEl(e) ? 12 : isHeaderEl(e) ? le : ce;
     let o = Math.max(r, Math.min(i, Math.round(t)));
     if (!n || !e) return o;
     e.style.setProperty("font-size", `${o}px`, "important");
@@ -1802,7 +2123,7 @@
       let t = contentFitsFrame(e, n);
       if (t && isChannelEl(e) && !channelFitsAtSize(e, o, n)) t = false;
       if (t && isHeaderEl(e) && !isChannelEl(e) && !headerLineFits(n)) t = false;
-      if (t && isRankEl(e) && $ !== "group-ranks" && y.size <= 1) {} else if (t && isRankEl(e) && !ranksListFits(n)) {
+      if (t && isRankEl(e) && V !== "group-ranks" && y.size <= 1) {} else if (t && isRankEl(e) && !ranksListFits(n)) {
         t = false;
       }
       if (t) break;
@@ -1848,9 +2169,9 @@
     const r = t.length > 1 && (n || i);
     if (r) {
       const i = n ? getPrimaryHeaderEl() || t.find(e => !isChannelEl(e)) || t[0] : t[0];
-      const r = R && C != null ? C : getEffectiveFontSize(i);
+      const r = R && L != null ? L : getEffectiveFontSize(i);
       t.forEach(t => setElementFont(t, e));
-      C = applyBoundedGroupSize(t, r);
+      L = applyBoundedGroupSize(t, r);
       R = true;
       return;
     }
@@ -1861,7 +2182,7 @@
     });
     const o = t[0];
     if (o) {
-      C = getEffectiveFontSize(o);
+      L = getEffectiveFontSize(o);
       R = true;
     }
   }
@@ -1872,12 +2193,17 @@
     } else {
       const n = t === "stroke" ? "outline" : t;
       e.classList.add("text-stroke");
-      e.style.setProperty("text-shadow", d[n] || d.outline, "important");
+      e.style.setProperty("text-shadow", shadowCss(n, S), "important");
     }
     const n = e.getAttribute("data-template-element-id");
     if (n && window.rankingCustomizer?.setElementStrokeStyle) {
       const e = t === "stroke" ? "outline" : t || "outline";
       window.rankingCustomizer.setElementStrokeStyle(n, e);
+      try {
+        const t = window.rankingCustomizer.customizations?.[n];
+        const i = window.rankingCustomizer._colorToRgba?.(S);
+        if (t && i && e !== "none") t.outline_color = i;
+      } catch (e) {}
     }
     try {
       window.rankingCustomizer?.persistElementStyles?.(e);
@@ -1887,26 +2213,37 @@
     const t = resolveApplyTargets();
     t.forEach(e => {
       if (M) setElementFont(e, b);
-      if (R && C) setElementFontSize(e, C);
-      if (L) e.style.color = w;
-      if (F) setElementShadow(e, x);
+      if (R && L) setElementFontSize(e, L);
+      if (F) e.style.color = w;
+      if (P) setElementShadow(e, x);
     });
     syncColorSwatches();
     if (e !== false && window.rankingCustomizer) {
       window.rankingCustomizer.syncFromDOM();
     }
   }
-  function discardColorPreview() {
-    T = false;
-    A.clear();
-    B = null;
-    P = null;
-  }
   function applyTextColor(e, t) {
-    if (T) discardColorPreview();
-    E = "text";
+    if (B && _?.isConnected) {
+      _.style.color = normalizeHex(e) || e;
+      discardColorPreview();
+      z = "text";
+      w = e;
+      if (t !== false) F = true;
+      syncColorSwatches();
+      if (t !== false) markLibraryRankingDirty();
+      return;
+    }
+    if (B) discardColorPreview();
+    z = "text";
     w = e;
-    if (t !== false) L = true;
+    if (t !== false) F = true;
+    const n = getInlineEditSelection();
+    if (n) {
+      colorSelectionRange(n.range, e);
+      syncColorSwatches();
+      if (t !== false) markLibraryRankingDirty();
+      return;
+    }
     resolveApplyTargets().forEach(n => {
       n.style.color = e;
       const i = n.getAttribute("data-template-element-id");
@@ -1927,32 +2264,33 @@
     });
   }
   function beginFontPreviewSession(e) {
-    if (!H) {
-      V = e;
+    if (!I) {
+      Y = e;
       e.forEach(e => snapshotEl(e));
-      H = true;
+      I = true;
     }
   }
   function previewFont(e) {
-    if (N || !y.size) return;
+    if (q || !y.size) return;
     const t = resolveApplyTargets();
     beginFontPreviewSession(t);
     t.forEach(t => setElementFont(t, e));
   }
   function resetFontPreview() {
-    if (N || !H) return;
-    H = false;
-    V.forEach(e => restoreSnapshot(e));
-    V = [];
+    if (q || !I) return;
+    I = false;
+    Y.forEach(e => restoreSnapshot(e));
+    Y = [];
   }
   function applyFont(e) {
     b = e;
     M = true;
     const t = resolveApplyTargets();
-    H = false;
-    V = [];
+    I = false;
+    Y = [];
     applyFontChange(e, t);
     t.forEach(e => snapshotEl(e));
+    syncFontDdHighlight(e);
     if (window.rankingCustomizer) window.rankingCustomizer.syncFromDOM();
     markLibraryRankingDirty();
     closeDD();
@@ -1967,7 +2305,7 @@
   }
   function applyShadow(e) {
     x = e || "outline";
-    F = true;
+    P = true;
     const t = resolveApplyTargets();
     t.forEach(e => {
       setElementShadow(e, x);
@@ -1981,14 +2319,14 @@
     markLibraryRankingDirty();
   }
   function clearSuggest(e) {
-    j.forEach(e => e.remove());
-    j = [];
-    Z = null;
-    if (U) {
-      clearTimeout(U);
-      U = 0;
+    X.forEach(e => e.remove());
+    X = [];
+    J = null;
+    if (Q) {
+      clearTimeout(Q);
+      Q = 0;
     }
-    X += 1;
+    ee += 1;
     if (m) {
       m.classList.remove("open");
       m.style.visibility = "";
@@ -2017,11 +2355,11 @@
       textShadow: t.shadow ? getShadowCssForType(t.shadow) : r === "none" ? "-1.5px -1.5px 0 #000,1.5px -1.5px 0 #000,-1.5px 1.5px 0 #000,1.5px 1.5px 0 #000" : r
     };
   }
-  function startSuggestCooldown(e = J) {
-    Y = Date.now() + e;
+  function startSuggestCooldown(e = te) {
+    K = Date.now() + e;
   }
   function canOfferSuggest() {
-    if (Date.now() < Y) return false;
+    if (Date.now() < K) return false;
     try {
       if (window.SolisMemory?.isSuggestEnabled && !window.SolisMemory.isSuggestEnabled()) {
         return false;
@@ -2031,7 +2369,7 @@
   }
   function getShadowCssForType(e) {
     if (e === "none") return "none";
-    return d[e] || d.stroke;
+    return shadowCss(e === "stroke" ? "outline" : e, S);
   }
   function getElShadowType(e) {
     const t = e.style.textShadow;
@@ -2106,12 +2444,12 @@
   function comfortableSizeForTarget(e, t, n) {
     const i = isRankEl(e) ? "ranks" : "header";
     const r = getHardSizeCap(e || i);
-    const clamp = t => Math.max(isChannelEl(e) ? 12 : i === "ranks" ? oe : re, Math.min(r, Math.round(t)));
+    const clamp = t => Math.max(isChannelEl(e) ? 12 : i === "ranks" ? ce : le, Math.min(r, Math.round(t)));
     if (!e) return clamp(t);
     if (n === "header") {
       if (isRankEl(e)) return clamp(t * .92);
       if (isChannelEl(e)) {
-        let n = clamp(t * te);
+        let n = clamp(t * oe);
         const i = getRankingRoot();
         let r = 24;
         while (r-- > 0 && n > 12 && !channelFitsAtSize(e, n, i)) n -= 1;
@@ -2121,7 +2459,7 @@
     }
     if (isRankEl(e)) return clamp(t);
     if (isChannelEl(e)) {
-      let n = clamp(t * te);
+      let n = clamp(t * oe);
       const i = getRankingRoot();
       let r = 24;
       while (r-- > 0 && n > 12 && !channelFitsAtSize(e, n, i)) n -= 1;
@@ -2155,13 +2493,13 @@
     if (!e?.length || n == null) return;
     if (Math.abs(n - t) < 1) return;
     if (!canOfferSuggest()) return;
-    if (U) clearTimeout(U);
-    const i = ++X;
+    if (Q) clearTimeout(Q);
+    const i = ++ee;
     const r = e.filter(e => e?.isConnected);
     const o = n;
-    U = setTimeout(() => {
-      U = 0;
-      if (i !== X) return;
+    Q = setTimeout(() => {
+      Q = 0;
+      if (i !== ee) return;
       if (!canOfferSuggest()) return;
       const e = r.filter(e => e?.isConnected);
       if (!e.length) return;
@@ -2191,13 +2529,13 @@
         comfortable: true,
         fromGroup: n
       }, a);
-    }, ee);
+    }, re);
   }
   function layoutGhosts() {
-    if (!Z) return;
-    const {props: e, targets: i} = Z;
-    j.forEach(e => e.remove());
-    j = [];
+    if (!J) return;
+    const {props: e, targets: i} = J;
+    X.forEach(e => e.remove());
+    X = [];
     const r = i.filter(e => e.isConnected);
     if (!r.length) return;
     document.querySelectorAll(".rk-suggest-receive,.rk-suggest-remove").forEach(e => {
@@ -2235,7 +2573,7 @@
       i.style.fontFamily = n[a] || `'${a}', sans-serif`;
       i.style.fontWeight = t[a] || t[w] || "700";
       const s = e.size != null ? e.comfortable ? comfortableSizeForTarget(r, e.size, v) : e.size : Math.round(parseFloat(getComputedStyle(r).fontSize) || 22);
-      i.style.fontSize = `${Math.max(11, Math.min(s, ne))}px`;
+      i.style.fontSize = `${Math.max(11, Math.min(s, ae))}px`;
       i.style.color = o.color;
       i.style.background = "transparent";
       i.style.textShadow = o.textShadow;
@@ -2284,7 +2622,7 @@
       });
     }
     document.body.appendChild(y);
-    j.push(y);
+    X.push(y);
     try {
       if (window.__SolisSG?.harden) window.__SolisSG.harden(y);
       if (m && window.__SolisSG?.harden) window.__SolisSG.harden(m);
@@ -2298,7 +2636,7 @@
     y.style.left = `${E}px`;
     y.style.top = `${z}px`;
     requestAnimationFrame(() => {
-      if (!Z || !y.isConnected) return;
+      if (!J || !y.isConnected) return;
       posSuggestActions(y);
     });
   }
@@ -2441,7 +2779,7 @@
     try {
       closeDD();
     } catch (e) {}
-    Z = {
+    J = {
       props: {
         ...e
       },
@@ -2456,8 +2794,8 @@
     }
   }
   function acceptSuggest() {
-    if (!Z) return;
-    const {props: e, targets: t} = Z;
+    if (!J) return;
+    const {props: e, targets: t} = J;
     const n = e.chain || null;
     const i = t.filter(e => e?.isConnected);
     if (e.font) {
@@ -2469,12 +2807,12 @@
       i.forEach(t => {
         t.style.color = e.color;
       });
-      L = true;
+      F = true;
       w = e.color;
     }
     if (e.shadow) {
       i.forEach(t => setElementShadow(t, e.shadow));
-      F = true;
+      P = true;
       x = e.shadow;
     }
     if (e.size != null) {
@@ -2486,12 +2824,12 @@
           setElementFontSize(n, i);
         });
         const n = i.find(e => isHeaderEl(e) && !isChannelEl(e)) || i.find(isRankEl) || i[0];
-        C = n ? getEffectiveFontSize(n) : e.size;
+        L = n ? getEffectiveFontSize(n) : e.size;
       } else if (i.every(e => isRankEl(e)) || i.every(e => isHeaderEl(e))) {
-        C = applyBoundedGroupSize(i, e.size);
+        L = applyBoundedGroupSize(i, e.size);
       } else {
         i.forEach(t => setElementFontSize(t, e.size));
-        C = e.size;
+        L = e.size;
       }
     }
     clearSuggest();
@@ -2511,7 +2849,7 @@
         return;
       }
     }
-    startSuggestCooldown(K);
+    startSuggestCooldown(ne);
     if (y.size) {
       try {
         showMenu();
@@ -2561,7 +2899,7 @@
     return !(e.right + n <= t.left || e.left - n >= t.right || e.bottom + n <= t.top || e.top - n >= t.bottom);
   }
   function getAnchorBounds() {
-    const e = q && q.isConnected ? q : y.values().next().value;
+    const e = W && W.isConnected ? W : y.values().next().value;
     if (e?.isConnected) {
       const t = e.getBoundingClientRect();
       if (t.width > 0 || t.height > 0) {
@@ -2575,7 +2913,7 @@
         };
       }
     }
-    const t = $ === "group-header" || q && isHeaderEl(q) ? getHeaderZone() : getRanksZone();
+    const t = V === "group-header" || W && isHeaderEl(W) ? getHeaderZone() : getRanksZone();
     if (t?.isConnected) {
       const e = t.getBoundingClientRect();
       if (e.width > 0 || e.height > 0) {
@@ -2683,16 +3021,16 @@
     e.style.left = `${Math.round(c)}px`;
   }
   function schedulePosMenu() {
-    if (W) return;
-    W = requestAnimationFrame(() => {
-      W = 0;
+    if (U) return;
+    U = requestAnimationFrame(() => {
+      U = 0;
       if (u?.classList.contains("active")) posMenu();
       try {
         syncTopPanelToHeader({
           liveOnly: true
         });
       } catch (e) {}
-      if (Z && j[0]) {
+      if (J && X[0]) {
         layoutGhosts();
       }
     });
@@ -2763,10 +3101,15 @@
       const t = p.classList.contains("open");
       closeDD();
       if (!t) {
-        H = false;
+        I = false;
         y.forEach(e => snapshotEl(e));
+        const t = p.querySelector("#rkFontSearch");
+        if (t) t.value = "";
+        buildFontList("");
         openDD(p, e.currentTarget);
+        syncFontDdHighlight(b);
         e.currentTarget.classList.add("sub-active");
+        requestAnimationFrame(() => t?.focus?.());
       } else {
         resetFontPreview();
       }
@@ -2780,7 +3123,9 @@
         e.currentTarget.classList.add("sub-active");
         syncFillSwatches();
         syncTopBgVisibility();
+        syncBlankBgVisibility();
         syncTopModeButtons();
+        syncOutlineColSwatches();
         applyRankingTopPanel();
       }
     });
@@ -2797,7 +3142,7 @@
       });
     });
     document.addEventListener("keydown", e => {
-      if (!Z) return;
+      if (!J) return;
       if (e.key === "Tab" && !e.shiftKey) {
         e.preventDefault();
         acceptSuggest();
@@ -2829,10 +3174,10 @@
       e.contentEditable = "false";
     });
     y.clear();
-    O.clear();
-    $ = "single";
-    q = null;
-    I = null;
+    Z.clear();
+    V = "single";
+    W = null;
+    j = null;
     clearSelectionVisuals();
     syncResizeHandles();
     hideMenu();
@@ -2845,17 +3190,17 @@
   function selectElements(e, t = "single", n = null, i = null) {
     buildUI();
     const r = normalizeSelectionElements(e, t);
-    if (Z) {
+    if (J) {
       clearSuggest();
     }
     y.forEach(e => {
       e.contentEditable = "false";
     });
     y.clear();
-    O.clear();
-    $ = t;
-    q = n || (r.length === 1 ? r[0] : null);
-    if (i) I = i;
+    Z.clear();
+    V = t;
+    W = n || (r.length === 1 ? r[0] : null);
+    if (i) j = i;
     r.forEach(e => {
       if (!e?.isConnected) return;
       y.add(e);
@@ -2864,12 +3209,12 @@
     applySelectionVisuals();
     syncResizeHandles();
     hideSubtitleGuidesOverRanking();
-    const o = t === "group-header" ? getPrimaryHeaderEl() || q || r[0] : q || r[0];
+    const o = t === "group-header" ? getPrimaryHeaderEl() || W || r[0] : W || r[0];
     if (o) readStateFromEl(o);
     M = false;
-    L = false;
-    z = false;
     F = false;
+    C = false;
+    P = false;
     R = false;
     syncColorSwatches();
     syncFillSwatches();
@@ -2878,29 +3223,29 @@
     showMenu();
   }
   function finishMultiSelection(e) {
-    $ = y.size > 1 ? "multi" : "single";
-    q = e || y.values().next().value || null;
+    V = y.size > 1 ? "multi" : "single";
+    W = e || y.values().next().value || null;
     applySelectionVisuals();
     syncResizeHandles();
     hideSubtitleGuidesOverRanking();
     syncTopBgVisibility();
     showMenu();
-    return q;
+    return W;
   }
   function toggleElement(e, t, n) {
     buildUI();
-    if (Z) {
+    if (J) {
       clearSuggest();
     }
-    if (n) I = n;
+    if (n) j = n;
     if (!t) {
-      if (y.has(e) && y.size === 1 && $ === "single") return e;
+      if (y.has(e) && y.size === 1 && V === "single") return e;
       selectElements([ e ], "single", e, n);
       return e;
     }
-    if ($ === "group-ranks" || $ === "group-header") {
+    if (V === "group-ranks" || V === "group-header") {
       y.clear();
-      O.clear();
+      Z.clear();
       y.add(e);
       snapshotEl(e);
       return finishMultiSelection(e);
@@ -2932,9 +3277,9 @@
     seedDefaultSizes: seedDefaultPreviewSizes,
     isActive: e => y.has(e),
     hasSelection: () => y.size > 0,
-    getSelectionMode: () => $,
-    getSelectionAnchor: () => q,
-    getGroupAnchor: () => q,
+    getSelectionMode: () => V,
+    getSelectionAnchor: () => W,
+    getGroupAnchor: () => W,
     consumeRankPointerClick: consumeRankPointerClick,
     getAllRankNumbers: getAllRankNumbers,
     getAllRankTitles: getAllRankTitles,

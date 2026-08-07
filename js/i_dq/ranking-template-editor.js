@@ -228,8 +228,9 @@ class RankingTemplateEditor {
     if (this.isRankNumberElement(e)) return;
     if (e.classList.contains("rk-inline-editing")) return;
     const t = e.textContent;
-    const n = e.getAttribute("data-placeholder") || "";
-    if (e.classList.contains("rk-title-empty") || !t.trim() && n) {
+    const n = e.innerHTML;
+    const i = e.getAttribute("data-placeholder") || "";
+    if (e.classList.contains("rk-title-empty") || !t.trim() && i) {
       e.textContent = "";
       e.classList.remove("rk-title-empty");
       e.removeAttribute("data-placeholder");
@@ -242,8 +243,8 @@ class RankingTemplateEditor {
     e.style.setProperty("user-select", "text", "important");
     e.style.setProperty("-webkit-user-select", "text", "important");
     e.style.cursor = "text";
-    const i = e.closest(".preview-placeholder, #templateVideoPreview");
-    if (i) i.classList.add("rk-phone-editing");
+    const r = e.closest(".preview-placeholder, #templateVideoPreview");
+    if (r) r.classList.add("rk-phone-editing");
     e.focus();
     try {
       const t = document.createRange();
@@ -252,7 +253,9 @@ class RankingTemplateEditor {
       n.removeAllRanges();
       n.addRange(t);
     } catch (e) {}
-    const finish = n => {
+    const stripScripts = e => String(e || "").replace(/<script[\s\S]*?<\/script>/gi, "");
+    const hasColoredSpans = e => !!e?.querySelector?.('span[style*="color"]');
+    const finish = i => {
       e.removeEventListener("blur", onBlur);
       e.removeEventListener("keydown", onKey);
       e.removeEventListener("pointerdown", onPointerDownStop);
@@ -263,44 +266,54 @@ class RankingTemplateEditor {
       e.style.removeProperty("user-select");
       e.style.removeProperty("-webkit-user-select");
       e.style.cursor = "";
-      i?.classList.remove("rk-phone-editing");
-      let r = e.textContent.replace(/\u00a0/g, " ").trim();
-      if (!n) {
-        r = (t || "").trim();
-        e.textContent = t || "";
+      r?.classList.remove("rk-phone-editing");
+      let s = e.textContent.replace(/\u00a0/g, " ").trim();
+      if (!i) {
+        s = (t || "").trim();
+        e.innerHTML = n || "";
       }
-      const s = e.getAttribute("data-template-element-id") || "";
-      if (!r) {
+      const l = e.getAttribute("data-template-element-id") || "";
+      if (!s) {
         e.textContent = "";
-        if (/rank_.*_title/.test(s)) {
+        if (/rank_.*_title/.test(l)) {
           e.classList.add("rk-title-empty");
           e.setAttribute("data-placeholder", "Add title…");
           e.removeAttribute("data-rk-full-title");
         } else if (t) {
-          e.textContent = t;
+          e.innerHTML = n || t;
         }
       } else {
         e.classList.remove("rk-title-empty");
         e.removeAttribute("data-placeholder");
-        e.setAttribute("data-rk-full-title", r);
-        e.textContent = r;
+        e.setAttribute("data-rk-full-title", s);
+        if (hasColoredSpans(e)) {
+          e.innerHTML = stripScripts(e.innerHTML);
+        } else {
+          e.textContent = s;
+        }
       }
-      if (s && window.rankingCustomizer) {
+      if (l && window.rankingCustomizer) {
         if (!window.rankingCustomizer.customizations) {
           window.rankingCustomizer.customizations = {};
         }
-        window.rankingCustomizer.customizations[s] = {
-          ...window.rankingCustomizer.customizations[s] || {},
-          content: r || ""
+        const t = {
+          content: s || ""
+        };
+        if (hasColoredSpans(e)) {
+          t.contentHtml = stripScripts(e.innerHTML);
+        }
+        window.rankingCustomizer.customizations[l] = {
+          ...window.rankingCustomizer.customizations[l] || {},
+          ...t
         };
       }
       try {
-        const e = s.match(/^rank_(\d+)_title$/);
+        const e = l.match(/^rank_(\d+)_title$/);
         if (e && window.clipsStudio) {
           if (!window.clipsStudio._libraryRankingTitleByRank) {
             window.clipsStudio._libraryRankingTitleByRank = {};
           }
-          window.clipsStudio._libraryRankingTitleByRank[Number(e[1])] = r || "";
+          window.clipsStudio._libraryRankingTitleByRank[Number(e[1])] = s || "";
         }
       } catch (e) {}
       window.rankingCustomizer?.syncFromDOM?.();

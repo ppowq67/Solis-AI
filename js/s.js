@@ -6556,10 +6556,13 @@ class ClipsStudio {
       setTimeout(() => {
         window.initializeRankingTemplateEditor();
         const e = !!this.currentTemplateForPreview?.isLibraryPreview;
-        const t = window.SolisMemory?.getTemplateMemory?.("ranked_compilation");
-        const n = window.SolisMemory?.isSuggestEnabled?.() !== false;
-        const i = !e && n && t?.styles && Object.keys(t.styles).length;
-        if (i) {
+        const t = window.SolisMemory?.isSuggestEnabled?.() !== false;
+        const n = !e && t && (typeof window.SolisMemory?.rankingStylesReady === "function" && window.SolisMemory.rankingStylesReady("ranked_compilation") || (() => {
+          const e = window.SolisMemory?.getTemplateMemory?.("ranked_compilation");
+          const t = e?.lastGeneratedStyles || e?.styles;
+          return !!(t && Object.keys(t).length);
+        })());
+        if (n) {
           window.__solisRankingDeferCustoms = true;
         } else if (window.rankingCustomizer) {
           window.__solisRankingDeferCustoms = false;

@@ -2386,12 +2386,7 @@
     });
     document.querySelectorAll(".rk-ghost-stack").forEach(e => e.remove());
     if (e?.persistReject) {
-      startSuggestCooldown(36e5);
-      try {
-        if (window.SolisMemory && typeof window.SolisMemory.markSuggestionRejected === "function") {
-          window.SolisMemory.markSuggestionRejected(e.templateId);
-        }
-      } catch (e) {}
+      startSuggestCooldown(Math.max(te, 12e3));
     }
   }
   function sampleStyleFromLive(e, t) {
@@ -2912,6 +2907,9 @@
   function maybeOfferStyleSuggest(e, t) {
     if (!e?.length || !t || !Object.keys(t).length) return;
     if (!canOfferSuggest()) return;
+    try {
+      buildUI();
+    } catch (e) {}
     const n = resizeSuggestTargets(e, "siblings");
     const i = resizeSuggestTargets(e, "counterpart");
     const r = n.length > 0 && propsNeedApply(n, t);
@@ -2920,12 +2918,12 @@
     let s = null;
     if (a && o) {
       s = "counterpart";
-    } else if (window.__SolisSG && typeof window.__SolisSG.styleOffer === "function") {
-      s = window.__SolisSG.styleOffer(n.length, r, i.length, o);
     } else if (r) {
       s = "siblings";
     } else if (o) {
       s = "counterpart";
+    } else if (window.__SolisSG && typeof window.__SolisSG.styleOffer === "function") {
+      s = window.__SolisSG.styleOffer(n.length, r, i.length, o);
     }
     if (!s) return;
     const l = s === "counterpart" ? i : n;

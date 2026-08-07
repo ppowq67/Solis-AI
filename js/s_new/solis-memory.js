@@ -779,11 +779,7 @@
       }
     }
     if (b && layoutDiffers(t.layout, c)) return true;
-    if (h && isRankingTemplate(e)) {
-      if (window.__solisRankingDeferCustoms) return true;
-      const e = stylesForSuggest(t);
-      if (fingerprint(l, null) !== fingerprint(e, null)) return true;
-    }
+    if (h && isRankingTemplate(e)) return true;
     if (w && !y) return true;
     if (h && !d && !y) return true;
     const M = smarterCaptions(i, e);
@@ -937,7 +933,19 @@
     if (!e || typeof e !== "object") return null;
     const t = e.lastGeneratedStyles;
     if (t && typeof t === "object" && Object.keys(t).length) return t;
+    const n = e.styles;
+    if (n && typeof n === "object" && Object.keys(n).length) return n;
     return null;
+  }
+  function rankingStylesReady(e) {
+    const t = getTemplateMemory(e || "ranked_compilation");
+    const n = stylesForSuggest(t);
+    if (!n || !Object.keys(n).length) return false;
+    return Object.keys(n).some(e => {
+      if (e === "__ranking_layout") return false;
+      const t = n[e];
+      return t && typeof t === "object" && (t.font || t.font_size || t.color);
+    });
   }
   function isLibraryPreviewOpen() {
     try {
@@ -1074,9 +1082,10 @@
       return t && typeof t === "object" && (t.font || t.font_size || t.color);
     });
     if (!i) return false;
-    const o = collectLiveStyles(e);
-    const r = !!window.__solisRankingDeferCustoms;
-    if (!r && fingerprint(o, null) === fingerprint(n, null)) return false;
+    const o = document.getElementById("solisMemorySuggest");
+    if (o && !o.hidden && o.classList.contains("open") && o.dataset.mode === "styles-only" && o.dataset.templateId === String(e)) {
+      return true;
+    }
     try {
       if (window.RankingTextPill) {
         if (typeof window.RankingTextPill.hide === "function") window.RankingTextPill.hide();
@@ -1085,33 +1094,34 @@
       document.getElementById("subPillMenu")?.classList.remove("active");
     } catch (e) {}
     window.__solisRankingDeferCustoms = false;
-    const l = ensureSuggestEl();
-    const a = l.querySelector("#solisMemorySuggestTitle");
-    if (a) {
-      a.hidden = false;
-      a.removeAttribute("hidden");
-      a.textContent = "Apply last ranking style?";
-      a.style.display = "";
+    const r = ensureSuggestEl();
+    const l = r.querySelector("#solisMemorySuggestTitle");
+    if (l) {
+      l.hidden = false;
+      l.removeAttribute("hidden");
+      l.textContent = "Apply last ranking style?";
+      l.style.display = "";
     }
-    const c = l.querySelector("#solisMemorySuggestSub");
-    if (c) c.textContent = "";
-    l.dataset.templateId = e;
-    l.dataset.mode = "styles-only";
-    l.classList.add("solis-memory-suggest--ranking");
+    const a = r.querySelector("#solisMemorySuggestSub");
+    if (a) a.textContent = "";
+    r.dataset.templateId = e;
+    r.dataset.mode = "styles-only";
+    r.classList.add("solis-memory-suggest--ranking");
     try {
-      l._solisMemStyles = JSON.parse(JSON.stringify(n));
+      r._solisMemStyles = JSON.parse(JSON.stringify(n));
     } catch (e) {
-      l._solisMemStyles = n;
+      r._solisMemStyles = n;
     }
     try {
-      l._solisMemStylesBackup = o ? JSON.parse(JSON.stringify(o)) : JSON.parse(JSON.stringify(window.rankingCustomizer?.customizations || {}));
+      const t = collectLiveStyles(e);
+      r._solisMemStylesBackup = t ? JSON.parse(JSON.stringify(t)) : JSON.parse(JSON.stringify(window.rankingCustomizer?.customizations || {}));
       applyStyles(e, n);
-      l._solisMemStylesPreviewed = true;
+      r._solisMemStylesPreviewed = true;
     } catch (e) {
-      l._solisMemStylesPreviewed = false;
+      r._solisMemStylesPreviewed = false;
     }
     placeSuggestNearPreview();
-    revealSuggestEl(l);
+    revealSuggestEl(r);
     return true;
   }
   function continueSuggestAfterCaption(e) {
@@ -1647,6 +1657,8 @@
     syncSettingsUI: syncSettingsUI,
     readState: readState,
     getTemplateMemory: getTemplateMemory,
+    stylesForSuggest: stylesForSuggest,
+    rankingStylesReady: rankingStylesReady,
     applyCaptions: applyCaptions,
     smarterCaptions: smarterCaptions,
     continueSuggestAfterCaption: continueSuggestAfterCaption,

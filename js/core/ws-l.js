@@ -5,18 +5,18 @@
   const updateIndicator = e => {};
   function initSidebarState() {
     try {
-      const t = document.getElementById("i1xn");
+      const t = document.getElementById("navContainer");
       if (!t) return;
       const i = localStorage.getItem("sidebarActiveIndex");
-      const n = t.querySelectorAll(".cmo");
+      const n = t.querySelectorAll(".nav-item");
       const o = i !== null ? parseInt(i, 10) : -1;
-      const s = o >= 0 ? n[o] : null;
-      if (s && !s.classList.contains("disabled")) {
+      const a = o >= 0 ? n[o] : null;
+      if (a && !a.classList.contains("disabled")) {
         e = o;
         n.forEach(e => e.classList.remove("active"));
-        s.classList.add("active");
-        setTimeout(() => updateIndicator(s), 0);
-        const t = s.getAttribute("data-target");
+        a.classList.add("active");
+        setTimeout(() => updateIndicator(a), 0);
+        const t = a.getAttribute("data-target");
         if (t) switchSection(t);
       } else {
         const t = Array.from(n).find(e => !e.classList.contains("disabled"));
@@ -28,7 +28,7 @@
           const i = t.getAttribute("data-target");
           if (i) switchSection(i);
         }
-        if (s && s.classList.contains("disabled")) {
+        if (a && a.classList.contains("disabled")) {
           localStorage.removeItem("sidebarActiveIndex");
         }
       }
@@ -37,9 +37,9 @@
     }
   }
   function initIndicatorTracking() {
-    const e = document.getElementById("i1xn");
+    const e = document.getElementById("navContainer");
     if (!e) return;
-    const t = e.querySelector(".cmo.active");
+    const t = e.querySelector(".nav-item.active");
     if (t) {
       updateIndicator(t);
     }
@@ -54,7 +54,7 @@
         }
       });
     });
-    e.querySelectorAll(".cmo").forEach(e => {
+    e.querySelectorAll(".nav-item").forEach(e => {
       i.observe(e, {
         attributes: true,
         attributeFilter: [ "class" ]
@@ -66,12 +66,12 @@
       window.__solisShowNotification(e, t);
       return;
     }
-    const i = document.getElementById("i1y0") || createNotificationContainer();
+    const i = document.getElementById("notificationContainer") || createNotificationContainer();
     const n = document.createElement("div");
     const o = [ "success", "error", "warning", "info" ].includes(t) ? t : "info";
     n.className = `notification notification-${o} ${o}`;
     n.innerHTML = `\n                <div class="notification-content">\n                    <span class="notification-message"></span>\n                </div>\n            `;
-    n.querySelector(".cpl").textContent = String(e || "");
+    n.querySelector(".notification-message").textContent = String(e || "");
     i.appendChild(n);
     requestAnimationFrame(() => {
       requestAnimationFrame(() => n.classList.add("show"));
@@ -198,8 +198,8 @@
           console.error("Error handling video_generation_progress event:", e);
         }
       });
-      let s = 0;
-      const a = 5e3;
+      let a = 0;
+      const s = 5e3;
       o.on("connect_error", e => {
         console.error("Socket.IO connection error:", e);
       });
@@ -226,8 +226,8 @@
   function navigate(t, i) {
     if (t.classList.contains("disabled")) return;
     if (i === e) return;
-    const n = document.getElementById("i1xn");
-    const o = n.querySelectorAll(".cmo");
+    const n = document.getElementById("navContainer");
+    const o = n.querySelectorAll(".nav-item");
     o.forEach(e => e.classList.remove("active"));
     t.classList.add("active");
     e = i;
@@ -237,9 +237,9 @@
     } catch (e) {
       console.error("Failed to save sidebar state:", e);
     }
-    const s = t.getAttribute("data-target");
-    if (s) {
-      switchSection(s);
+    const a = t.getAttribute("data-target");
+    if (a) {
+      switchSection(a);
     }
   }
   window.navigate = navigate;
@@ -247,22 +247,22 @@
   function switchSection(e, t) {
     const i = t || {};
     const n = i.keepVisible || null;
-    const o = document.getElementById("i1qm");
-    const s = document.getElementById("i1z1");
-    const a = document.getElementById("i1pl");
-    const c = document.getElementById("i1q8");
-    const r = document.querySelector(".ci4");
-    [ o, s, a, c ].forEach(e => {
+    const o = document.getElementById("dashboardContainer");
+    const a = document.getElementById("portalContainer");
+    const s = document.getElementById("clipsContainer");
+    const r = document.getElementById("customEditorContainer");
+    const l = document.querySelector(".input-section");
+    [ o, a, s, r ].forEach(e => {
       if (!e) return;
       if (n && e === n) return;
       e.style.display = "none";
       e.classList.remove("active");
     });
-    if (r) {
-      r.classList.remove("active");
-      r.style.cssText = "display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; z-index: -10000 !important;";
+    if (l) {
+      l.classList.remove("active");
+      l.style.cssText = "display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; z-index: -10000 !important;";
     }
-    const l = document.getElementById("i1pm");
+    const c = document.getElementById("clipsSubNav");
     const d = window.innerWidth <= 768;
     const u = e === "Portal";
     document.body.classList.toggle("mnav-on-portal", d && u);
@@ -270,25 +270,25 @@
       o.style.display = "block";
       o.classList.add("active");
       if (window.analyticsManager) window.analyticsManager.updateCharts();
-      if (l && !d) l.style.display = "none";
-    } else if (e === "Portal" && s) {
-      s.style.display = "block";
-      s.classList.add("active");
-      if (l && !d) l.style.display = "none";
-    } else if (e === "clips" && a) {
+      if (c && !d) c.style.display = "none";
+    } else if (e === "Portal" && a) {
       a.style.display = "block";
       a.classList.add("active");
-      if (l) {
-        l.style.display = "";
-        l.style.removeProperty("display");
+      if (c && !d) c.style.display = "none";
+    } else if (e === "clips" && s) {
+      s.style.display = "block";
+      s.classList.add("active");
+      if (c) {
+        c.style.display = "";
+        c.style.removeProperty("display");
       }
       if (window.clipsStudio && !window.clipsStudio.initialized) {
         window.clipsStudio.init();
       }
     }
-    if (d && l) {
-      l.style.display = "";
-      l.style.removeProperty("display");
+    if (d && c) {
+      c.style.display = "";
+      c.style.removeProperty("display");
     }
   }
   function _clearMnavAnimClasses(e) {
@@ -304,7 +304,7 @@
           localStorage.setItem("currentNavigationTarget", "Portal");
         } catch (e) {}
         const e = document.querySelector('.nav-item[data-target="Portal"]');
-        document.querySelectorAll(".cmo[data-target]").forEach(e => e.classList.remove("active"));
+        document.querySelectorAll(".nav-item[data-target]").forEach(e => e.classList.remove("active"));
         e?.classList.add("active");
         switchSection("Portal");
       } else {
@@ -313,39 +313,39 @@
       return;
     }
     if (n) return;
-    const t = document.getElementById("i1z1");
-    const i = document.getElementById("i1pl");
+    const t = document.getElementById("portalContainer");
+    const i = document.getElementById("clipsContainer");
     if (!t || !i) return;
     const o = e ? t : i;
-    const s = e ? i : t;
-    const a = e ? document.body.classList.contains("mnav-on-portal") : !document.body.classList.contains("mnav-on-portal") && i.classList.contains("active");
-    if (a && !e) {
+    const a = e ? i : t;
+    const s = e ? document.body.classList.contains("mnav-on-portal") : !document.body.classList.contains("mnav-on-portal") && i.classList.contains("active");
+    if (s && !e) {
       goMobileClipsTab("templates");
       return;
     }
-    if (a && e) return;
+    if (s && e) return;
     n = true;
     o.style.display = "block";
     o.classList.add("active", "mnav-section-anim");
-    s.classList.add("mnav-section-anim");
+    a.classList.add("mnav-section-anim");
     void o.offsetWidth;
     o.classList.add(e ? "mnav-enter-from-left" : "mnav-enter-from-right");
-    s.classList.add(e ? "mnav-exit-to-right" : "mnav-exit-to-left");
+    a.classList.add(e ? "mnav-exit-to-right" : "mnav-exit-to-left");
     document.body.classList.toggle("mnav-on-portal", e);
     if (e) {
       try {
         localStorage.setItem("currentNavigationTarget", "Portal");
       } catch (e) {}
       const e = document.querySelector('.nav-item[data-target="Portal"]');
-      document.querySelectorAll(".cmo[data-target]").forEach(e => e.classList.remove("active"));
+      document.querySelectorAll(".nav-item[data-target]").forEach(e => e.classList.remove("active"));
       e?.classList.add("active");
-      document.querySelectorAll(".c69").forEach(e => e.classList.remove("active"));
+      document.querySelectorAll(".clips-sub-item").forEach(e => e.classList.remove("active"));
     } else {
       try {
         localStorage.setItem("currentNavigationTarget", "clips");
       } catch (e) {}
       const e = document.querySelector('.nav-item[data-target="clips"]');
-      document.querySelectorAll(".cmo[data-target]").forEach(e => e.classList.remove("active"));
+      document.querySelectorAll(".nav-item[data-target]").forEach(e => e.classList.remove("active"));
       e?.classList.add("active");
       if (typeof window.switchClipsTab === "function") {
         const e = document.querySelector('.clips-sub-item[data-tab="templates"]');
@@ -355,12 +355,12 @@
     }
     const finish = () => {
       _clearMnavAnimClasses(o);
-      _clearMnavAnimClasses(s);
-      s.style.display = "none";
-      s.classList.remove("active");
+      _clearMnavAnimClasses(a);
+      a.style.display = "none";
+      a.classList.remove("active");
       o.style.display = "block";
       o.classList.add("active");
-      const t = document.getElementById("i1pm");
+      const t = document.getElementById("clipsSubNav");
       if (t) {
         t.style.display = "";
         t.style.removeProperty("display");
@@ -381,16 +381,16 @@
     transitionPortalTemplates(false);
   }
   function updateMobileClipsPillIndicator(e) {
-    const t = document.getElementById("i1pn");
-    const i = document.querySelector(".c6b");
+    const t = document.getElementById("clipsSubPane");
+    const i = document.querySelector(".clips-sub-pill");
     if (!t || !i || window.innerWidth > 768) return;
-    const n = e || document.querySelector(".c69.active")?.getAttribute("data-tab") || localStorage.getItem("clipsActiveTab") || "templates";
+    const n = e || document.querySelector(".clips-sub-item.active")?.getAttribute("data-tab") || localStorage.getItem("clipsActiveTab") || "templates";
     const o = document.querySelector(`.clips-sub-item[data-tab="${n}"]`);
     if (!o) return;
-    const s = i.getBoundingClientRect();
-    const a = o.getBoundingClientRect();
-    t.style.width = `${a.width}px`;
-    t.style.transform = `translateX(${a.left - s.left - 5}px)`;
+    const a = i.getBoundingClientRect();
+    const s = o.getBoundingClientRect();
+    t.style.width = `${s.width}px`;
+    t.style.transform = `translateX(${s.left - a.left - 5}px)`;
     t.style.left = "5px";
   }
   function goMobileClipsTab(e, t) {
@@ -402,45 +402,45 @@
       return;
     }
     const i = [ "templates", "create", "library" ];
-    const n = document.querySelector(".c69.active")?.getAttribute("data-tab") || localStorage.getItem("clipsActiveTab") || "templates";
+    const n = document.querySelector(".clips-sub-item.active")?.getAttribute("data-tab") || localStorage.getItem("clipsActiveTab") || "templates";
     const o = i.indexOf(n);
-    const s = i.indexOf(e);
-    const a = s > o ? "left" : s < o ? "right" : null;
+    const a = i.indexOf(e);
+    const s = a > o ? "left" : a < o ? "right" : null;
     switchSection("clips");
-    const c = t || document.querySelector(`.clips-sub-item[data-tab="${e}"]`);
+    const r = t || document.querySelector(`.clips-sub-item[data-tab="${e}"]`);
     if (typeof window.switchClipsTab === "function") {
-      window.switchClipsTab(e, c);
+      window.switchClipsTab(e, r);
     }
-    const r = document.getElementById(`${e}Section`);
-    if (r && a) {
-      r.classList.remove("clips-slide-from-left", "clips-slide-from-right");
-      void r.offsetWidth;
-      r.classList.add(a === "left" ? "clips-slide-from-right" : "clips-slide-from-left");
-      clearTimeout(r._clipsSlideT);
-      r._clipsSlideT = setTimeout(() => {
-        r.classList.remove("clips-slide-from-left", "clips-slide-from-right");
+    const l = document.getElementById(`${e}Section`);
+    if (l && s) {
+      l.classList.remove("clips-slide-from-left", "clips-slide-from-right");
+      void l.offsetWidth;
+      l.classList.add(s === "left" ? "clips-slide-from-right" : "clips-slide-from-left");
+      clearTimeout(l._clipsSlideT);
+      l._clipsSlideT = setTimeout(() => {
+        l.classList.remove("clips-slide-from-left", "clips-slide-from-right");
       }, 400);
     }
     requestAnimationFrame(() => updateMobileClipsPillIndicator(e));
     if (window.navigator.vibrate) window.navigator.vibrate(8);
   }
   function initMobileClipsSwipe() {
-    const e = document.getElementById("i1pl") || document.querySelector(".cki");
+    const e = document.getElementById("clipsContainer") || document.querySelector(".main-content");
     if (!e || e.dataset.clipsSwipeBound === "1") return;
     e.dataset.clipsSwipeBound = "1";
     const t = [ "templates", "create", "library" ];
     const i = 12;
     const n = 72;
     const o = .28;
-    let s = 0;
     let a = 0;
-    let c = 0;
-    let r = false;
-    let l = null;
+    let s = 0;
+    let r = 0;
+    let l = false;
+    let c = null;
     let d = null;
     let u = 0;
     function activeSectionEl() {
-      return document.querySelector("#i1pl .c67.active") || document.querySelector(".c67.active");
+      return document.querySelector("#clipsContainer .clips-section.active") || document.querySelector(".clips-section.active");
     }
     function clearDragStyles(e, t) {
       if (!e) return;
@@ -463,7 +463,7 @@
       }
     }
     function currentTabIndex() {
-      const e = document.querySelector(".c69.active");
+      const e = document.querySelector(".clips-sub-item.active");
       const i = e?.getAttribute("data-tab") || localStorage.getItem("clipsActiveTab") || "templates";
       return t.indexOf(i);
     }
@@ -472,79 +472,79 @@
       if (!e.touches || e.touches.length !== 1) return;
       const t = e.target;
       if (t && t.closest && t.closest('input, textarea, select, [contenteditable="true"],' + ".preview-placeholder, .sub-text-block, .url-input-wrapper," + ".preview-timeline-wrap, .template-preview-modal, .stgModal," + ".mobile-clips-bar, .clips-sub-nav")) {
-        r = false;
+        l = false;
         return;
       }
-      s = e.touches[0].clientX;
-      a = e.touches[0].clientY;
-      c = Date.now();
-      r = true;
-      l = null;
+      a = e.touches[0].clientX;
+      s = e.touches[0].clientY;
+      r = Date.now();
+      l = true;
+      c = null;
       u = 0;
       d = activeSectionEl();
     }, {
       passive: true
     });
     e.addEventListener("touchmove", e => {
-      if (!r || window.innerWidth > 768) return;
+      if (!l || window.innerWidth > 768) return;
       if (!e.touches || e.touches.length !== 1) return;
       const n = e.touches[0];
-      const o = n.clientX - s;
-      const c = n.clientY - a;
-      if (!l) {
-        if (Math.abs(o) < i && Math.abs(c) < i) return;
-        if (Math.abs(c) >= Math.abs(o)) {
-          l = "y";
-          r = false;
+      const o = n.clientX - a;
+      const r = n.clientY - s;
+      if (!c) {
+        if (Math.abs(o) < i && Math.abs(r) < i) return;
+        if (Math.abs(r) >= Math.abs(o)) {
+          c = "y";
+          l = false;
           clearDragStyles(d, false);
           d = null;
           return;
         }
-        l = "x";
+        c = "x";
         if (d) {
           d.classList.add("clips-drag");
           d.classList.remove("clips-drag-snap", "clips-slide-from-left", "clips-slide-from-right");
         }
       }
-      if (l !== "x") return;
+      if (c !== "x") return;
       if (e.cancelable) e.preventDefault();
       const m = currentTabIndex();
-      let f = o;
-      if (m <= 0 && o > 0) f = o * .62;
-      if (m >= t.length - 1 && o < 0) f = o * .28;
-      u = f;
+      let p = o;
+      if (m <= 0 && o > 0) p = o * .62;
+      if (m >= t.length - 1 && o < 0) p = o * .28;
+      u = p;
       if (d) {
-        const e = Math.max(.72, 1 - Math.abs(f) / (window.innerWidth * 1.4));
-        d.style.transform = `translate3d(${f}px, 0, 0)`;
+        const e = Math.max(.72, 1 - Math.abs(p) / (window.innerWidth * 1.4));
+        d.style.transform = `translate3d(${p}px, 0, 0)`;
         d.style.opacity = String(e);
       }
     }, {
       passive: false
     });
     function finishSwipe(e) {
-      if (!r && l !== "x") {
-        l = null;
+      if (!l && c !== "x") {
+        c = null;
         d = null;
         return;
       }
-      const i = l === "x";
-      r = false;
-      l = null;
+      const i = c === "x";
+      l = false;
+      c = null;
       if (!i) {
         clearDragStyles(d, false);
         d = null;
         return;
       }
-      const a = e.changedTouches && e.changedTouches[0];
-      const m = a ? a.clientX - s : u;
-      const f = Math.max(16, Date.now() - c);
-      const p = Math.abs(m) / f;
+      const s = e.changedTouches && e.changedTouches[0];
+      const m = s ? s.clientX - a : u;
+      const p = Math.max(16, Date.now() - r);
+      const f = Math.abs(m) / p;
       const v = Math.max(n, window.innerWidth * o);
-      const g = Math.abs(m) >= v || Math.abs(m) > 42 && p > .55;
-      const w = currentTabIndex();
-      let h = w;
+      const w = Math.abs(m) >= v || Math.abs(m) > 42 && f > .55;
+      const g = currentTabIndex();
+      let h = g;
       const y = document.body.classList.contains("mnav-on-portal");
-      if (g) {
+      if (w) {
         if (y) {
           if (m < 0) {
             clearDragStyles(d, false);
@@ -556,15 +556,15 @@
           d = null;
           return;
         }
-        if (w === 0 && m > 0) {
+        if (g === 0 && m > 0) {
           clearDragStyles(d, false);
           d = null;
           goMobilePortal();
           return;
         }
-        h = m < 0 ? Math.min(t.length - 1, w + 1) : Math.max(0, w - 1);
+        h = m < 0 ? Math.min(t.length - 1, g + 1) : Math.max(0, g - 1);
       }
-      if (h !== w) {
+      if (h !== g) {
         clearDragStyles(d, false);
         d = null;
         goMobileClipsTab(t[h]);
@@ -592,7 +592,7 @@
       return;
     }
     localStorage.setItem("activeNavIndex", t);
-    document.querySelectorAll(".cmo[data-target]").forEach(e => e.classList.remove("active"));
+    document.querySelectorAll(".nav-item[data-target]").forEach(e => e.classList.remove("active"));
     e.classList.add("active");
     if (i) switchSection(i);
   };
@@ -604,99 +604,99 @@
   document.addEventListener("DOMContentLoaded", function() {
     initMobileClipsSwipe();
     function syncMobileProfileInNav() {
-      const e = document.getElementById("i207");
-      const t = document.getElementById("i20b");
-      const i = document.getElementById("i1xz") || document.querySelector(".cx8 > .cpg") || document.getElementById("i1p6")?.closest(".cpg");
-      const n = document.getElementById("i1xs");
-      const o = document.querySelector(".cxy");
+      const e = document.getElementById("profileActionCluster");
+      const t = document.getElementById("profileDropdownWr");
+      const i = document.getElementById("notifWrapper") || document.querySelector(".profile-action-cluster > .notif-wrapper") || document.getElementById("bellBtn")?.closest(".notif-wrapper");
+      const n = document.getElementById("navWrapper");
+      const o = document.querySelector(".profile-notif-wrapper");
       if (!n || !o) return;
-      const s = window.innerWidth <= 768;
-      let a = document.getElementById("i1xb") || n.querySelector(".ckw");
-      if (s) {
-        if (!a) {
-          a = document.createElement("div");
-          a.className = "mnav-side-actions";
-          a.id = "mnavSideActions";
-          n.appendChild(a);
-        } else if (a.parentElement !== n) {
-          n.appendChild(a);
+      const a = window.innerWidth <= 768;
+      let s = document.getElementById("mnavSideActions") || n.querySelector(".mnav-side-actions");
+      if (a) {
+        if (!s) {
+          s = document.createElement("div");
+          s.className = "mnav-side-actions";
+          s.id = "mnavSideActions";
+          n.appendChild(s);
+        } else if (s.parentElement !== n) {
+          n.appendChild(s);
         }
-        if (e && e.parentElement !== a) {
-          a.appendChild(e);
-          document.getElementById("i1y1")?.classList.remove("open");
-          document.getElementById("i20a")?.classList.remove("open");
+        if (e && e.parentElement !== s) {
+          s.appendChild(e);
+          document.getElementById("notificationsDropdown")?.classList.remove("open");
+          document.getElementById("profileDropdown")?.classList.remove("open");
         } else {
-          if (i && i.parentElement !== a && !e) {
-            a.appendChild(i);
-            document.getElementById("i1y1")?.classList.remove("open");
+          if (i && i.parentElement !== s && !e) {
+            s.appendChild(i);
+            document.getElementById("notificationsDropdown")?.classList.remove("open");
           }
-          if (t && t.parentElement !== a && !e) {
-            a.appendChild(t);
-            document.getElementById("i20a")?.classList.remove("open");
+          if (t && t.parentElement !== s && !e) {
+            s.appendChild(t);
+            document.getElementById("profileDropdown")?.classList.remove("open");
           }
         }
       } else {
         if (e && e.parentElement !== o) {
           o.appendChild(e);
-          document.getElementById("i20a")?.classList.remove("open");
-          document.getElementById("i1y1")?.classList.remove("open");
+          document.getElementById("profileDropdown")?.classList.remove("open");
+          document.getElementById("notificationsDropdown")?.classList.remove("open");
         } else {
           if (i && i.parentElement !== o && !e) {
-            const e = o.querySelector(".cem");
+            const e = o.querySelector(".generation-progress-wrapper");
             if (e && e.nextSibling) o.insertBefore(i, e.nextSibling); else if (t && t.parentElement === o) o.insertBefore(i, t); else o.appendChild(i);
           }
           if (t && t.parentElement !== o && !e) {
             o.appendChild(t);
-            document.getElementById("i20a")?.classList.remove("open");
+            document.getElementById("profileDropdown")?.classList.remove("open");
           }
         }
-        if (a && !a.children.length) a.remove();
+        if (s && !s.children.length) s.remove();
       }
     }
     syncMobileProfileInNav();
     window.addEventListener("resize", syncMobileProfileInNav);
     window.syncMobileProfileInNav = syncMobileProfileInNav;
-    const e = document.getElementById("i1z1");
+    const e = document.getElementById("portalContainer");
     if (e && !e.dataset.portalSwipeBound) {
       e.dataset.portalSwipeBound = "1";
-      let t = 0, i = 0, o = 0, s = false, a = null;
+      let t = 0, i = 0, o = 0, a = false, s = null;
       e.addEventListener("touchstart", e => {
         if (window.innerWidth > 768 || !document.body.classList.contains("mnav-on-portal")) return;
         if (n) return;
         if (!e.touches || e.touches.length !== 1) return;
-        const c = e.target;
-        if (c && c.closest && c.closest('input, textarea, select, [contenteditable="true"],' + ".stgModal, .mobile-clips-bar, .clips-sub-nav, .profile-dropdown-wr," + ".mnav-side-actions, .notif-wrapper")) {
-          s = false;
+        const r = e.target;
+        if (r && r.closest && r.closest('input, textarea, select, [contenteditable="true"],' + ".stgModal, .mobile-clips-bar, .clips-sub-nav, .profile-dropdown-wr," + ".mnav-side-actions, .notif-wrapper")) {
+          a = false;
           return;
         }
         t = e.touches[0].clientX;
         i = e.touches[0].clientY;
         o = Date.now();
-        s = true;
-        a = null;
+        a = true;
+        s = null;
       }, {
         passive: true
       });
       e.addEventListener("touchmove", e => {
-        if (!s) return;
+        if (!a) return;
         const n = e.touches[0].clientX - t;
         const o = e.touches[0].clientY - i;
-        if (!a) {
+        if (!s) {
           if (Math.abs(n) < 12 && Math.abs(o) < 12) return;
-          a = Math.abs(n) >= Math.abs(o) ? "x" : "y";
+          s = Math.abs(n) >= Math.abs(o) ? "x" : "y";
         }
-        if (a === "x" && Math.abs(n) > 16) e.preventDefault();
+        if (s === "x" && Math.abs(n) > 16) e.preventDefault();
       }, {
         passive: false
       });
       e.addEventListener("touchend", e => {
-        if (!s) return;
-        s = false;
-        if (a !== "x") return;
+        if (!a) return;
+        a = false;
+        if (s !== "x") return;
         const i = (e.changedTouches?.[0]?.clientX ?? t) - t;
         const n = Math.max(16, Date.now() - o);
-        const c = Math.abs(i) / n;
-        if (i < -72 || i < -42 && c > .55) {
+        const r = Math.abs(i) / n;
+        if (i < -72 || i < -42 && r > .55) {
           goMobileTemplatesFromPortal();
         }
       }, {

@@ -58,13 +58,13 @@
   let q = null;
   let I = null;
   const O = new Map;
-  let W = [];
-  let V = 0;
+  let V = [];
+  let W = 0;
   let j = [];
   let Z = null;
   let Y = 0;
-  let X = 0;
   let U = 0;
+  let X = 0;
   const J = 6e3;
   const K = 2200;
   const Q = 3500;
@@ -82,13 +82,13 @@
   const ue = 72;
   const pe = 1080;
   function getRankingRoot() {
-    const e = document.getElementById("i24g");
-    return e?.querySelector(".cyr.library-ranking-layer") || e?.querySelector(".cyr") || document.querySelector(".cyr.library-ranking-layer") || document.querySelector(".cyr");
+    const e = document.getElementById("templateVideoPreview");
+    return e?.querySelector(".ranking-preview-container.library-ranking-layer") || e?.querySelector(".ranking-preview-container") || document.querySelector(".ranking-preview-container.library-ranking-layer") || document.querySelector(".ranking-preview-container");
   }
   function hideSubtitleGuidesOverRanking() {
-    const e = document.getElementById("i24g");
+    const e = document.getElementById("templateVideoPreview");
     if (!e) return;
-    e.querySelectorAll(".c1da, .c1db, .rk-half-line, .rk-guide").forEach(e => {
+    e.querySelectorAll(".sub-guide, .sub-half-line, .rk-half-line, .rk-guide").forEach(e => {
       e.style.display = "none";
       e.style.visibility = "hidden";
       e.style.opacity = "0";
@@ -114,7 +114,7 @@
     return e ? Array.from(e.querySelectorAll('[data-template-element-id^="title_"]')) : [];
   }
   function getHeaderZone() {
-    return getRankingRoot()?.querySelector(".cyp") || null;
+    return getRankingRoot()?.querySelector(".ranking-editor-zone-header") || null;
   }
   function getRanksZone() {
     return getRankingRoot()?.querySelector(".ranking-editor-zone-ranks") || null;
@@ -484,7 +484,7 @@
       resolveApplyTargets().forEach(t => {
         t.style.color = e;
       });
-      document.querySelectorAll("#rkTCG .c1du").forEach(t => {
+      document.querySelectorAll("#rkTCG .sub-sw").forEach(t => {
         if (t.classList.contains("sub-sw-add") || t.classList.contains("nocolor")) return;
         t.classList.toggle("on", (normalizeHex(t.dataset.color) || "") === normalizeHex(e));
       });
@@ -569,7 +569,7 @@
       e.appendChild(makeAddSwatch("text"));
     }
     try {
-      document.querySelectorAll(".cyr .rk-has-fill").forEach(e => {
+      document.querySelectorAll(".ranking-preview-container .rk-has-fill").forEach(e => {
         e.classList.remove("rk-has-fill");
         e.style.background = "transparent";
         e.style.backgroundColor = "transparent";
@@ -589,7 +589,7 @@
     const t = document.getElementById("rkSHG");
     if (!t) return;
     const n = e || x;
-    t.querySelectorAll(".c1d4").forEach(e => {
+    t.querySelectorAll(".sub-edge-opt").forEach(e => {
       e.classList.toggle("on", e.dataset.sh === n);
     });
   }
@@ -647,7 +647,7 @@
   }
   function syncColorSwatches() {
     const e = (normalizeHex(w) || "").toLowerCase();
-    document.querySelectorAll("#rkTCG .c1du").forEach(t => {
+    document.querySelectorAll("#rkTCG .sub-sw").forEach(t => {
       if (t.classList.contains("sub-sw-add") || t.classList.contains("nocolor")) return;
       t.classList.toggle("on", (normalizeHex(t.dataset.color) || "") === e);
     });
@@ -936,7 +936,7 @@
   }
   function ensureRankingTopPanel(e) {
     if (!e) return null;
-    let t = e.querySelector(":scope > .czk");
+    let t = e.querySelector(":scope > .rk-top-panel");
     if (!t) {
       t = document.createElement("div");
       t.className = "rk-top-panel";
@@ -1034,9 +1034,9 @@
     return d;
   }
   function findRankingSourceVideo() {
-    const e = document.getElementById("i24g");
+    const e = document.getElementById("templateVideoPreview");
     if (!e) return null;
-    return e.querySelector("video.cj8") || e.querySelector("#i20s") || Array.from(e.querySelectorAll("video")).find(e => !e.classList.contains("rk-top-blur-vid") && !e.classList.contains("cfh")) || null;
+    return e.querySelector("video.library-preview-video") || e.querySelector("#splitscreenContentVideo") || Array.from(e.querySelectorAll("video")).find(e => !e.classList.contains("rk-top-blur-vid") && !e.classList.contains("gp-blank-blur-vid")) || null;
   }
   function applyRankingTopPanel(e) {
     const t = getRankingRoot();
@@ -1214,7 +1214,7 @@
       if (!e?.currentTemplateForPreview?.isLibraryPreview) return;
       if (!e._libraryRankingEditable) return;
       e._libraryRankingDirty = true;
-      const t = document.getElementById("i1pz");
+      const t = document.getElementById("confirmUseTemplateBtn");
       if (t) {
         t.textContent = "Apply & Download";
         t.classList.add("library-download-mode");
@@ -1223,7 +1223,7 @@
     } catch (e) {}
   }
   function ensureResizeHandle(e) {
-    if (!e || Array.from(e.children).some(e => e.classList.contains("c1do"))) return;
+    if (!e || Array.from(e.children).some(e => e.classList.contains("sub-resize-handle"))) return;
     const t = document.createElement("div");
     t.className = "sub-resize-handle";
     t.addEventListener("pointerdown", e => {
@@ -1353,11 +1353,11 @@
   }
   function syncResizeHandles() {
     getAllTextElements().forEach(e => {
-      Array.from(e.children).filter(e => e.classList.contains("c1do")).forEach(e => e.remove());
+      Array.from(e.children).filter(e => e.classList.contains("sub-resize-handle")).forEach(e => e.remove());
     });
     [ getHeaderZone(), getRanksZone() ].forEach(e => {
       if (!e) return;
-      Array.from(e.children).filter(e => e.classList.contains("c1do")).forEach(e => e.remove());
+      Array.from(e.children).filter(e => e.classList.contains("sub-resize-handle")).forEach(e => e.remove());
       e.classList.remove("ranking-editor-resize-anchor");
     });
     if (!y.size) return;
@@ -1431,7 +1431,7 @@
   }
   function previewPxFromBurn(e) {
     const t = getRankingRoot();
-    const n = document.getElementById("i24g");
+    const n = document.getElementById("templateVideoPreview");
     const i = n?.clientWidth || t?.clientWidth || 280;
     return Math.max(14, Math.round(Number(e || 0) * (i / pe)));
   }
@@ -1498,7 +1498,7 @@
     const i = n.getBoundingClientRect();
     const r = Math.max(40, i.width - 36);
     if (measureChannelWidthAt(e, t) > r) return false;
-    const o = n.querySelector(".cyq");
+    const o = n.querySelector(".ranking-list");
     if (o) {
       const n = e.getBoundingClientRect();
       const i = o.getBoundingClientRect();
@@ -1510,7 +1510,7 @@
   }
   function getContentRect(e) {
     if (!e) return null;
-    const t = Array.from(e.querySelectorAll("[data-template-element-id]")).filter(e => !e.classList.contains("c1do"));
+    const t = Array.from(e.querySelectorAll("[data-template-element-id]")).filter(e => !e.classList.contains("sub-resize-handle"));
     if (t.length) {
       let e = Infinity;
       let n = -Infinity;
@@ -1560,7 +1560,7 @@
   }
   function contentFitsFrame(e, t) {
     if (!e || !t) return true;
-    const n = document.getElementById("i24g");
+    const n = document.getElementById("templateVideoPreview");
     const i = n && n.contains(t) ? n : t;
     const r = i.getBoundingClientRect();
     const o = isChannelEl(e);
@@ -1597,10 +1597,10 @@
     return true;
   }
   function ranksListFits(e) {
-    const t = e.querySelector(".cyq");
+    const t = e.querySelector(".ranking-list");
     if (!t) return true;
     const n = e.getBoundingClientRect();
-    const i = t.querySelector(".cyn:last-child") || t;
+    const i = t.querySelector(".ranked-item:last-child") || t;
     const r = i.getBoundingClientRect().bottom;
     return r <= n.bottom - 4;
   }
@@ -1928,7 +1928,7 @@
   }
   function beginFontPreviewSession(e) {
     if (!H) {
-      W = e;
+      V = e;
       e.forEach(e => snapshotEl(e));
       H = true;
     }
@@ -1942,15 +1942,15 @@
   function resetFontPreview() {
     if (N || !H) return;
     H = false;
-    W.forEach(e => restoreSnapshot(e));
-    W = [];
+    V.forEach(e => restoreSnapshot(e));
+    V = [];
   }
   function applyFont(e) {
     b = e;
     M = true;
     const t = resolveApplyTargets();
     H = false;
-    W = [];
+    V = [];
     applyFontChange(e, t);
     t.forEach(e => snapshotEl(e));
     if (window.rankingCustomizer) window.rankingCustomizer.syncFromDOM();
@@ -1984,11 +1984,11 @@
     j.forEach(e => e.remove());
     j = [];
     Z = null;
-    if (X) {
-      clearTimeout(X);
-      X = 0;
+    if (U) {
+      clearTimeout(U);
+      U = 0;
     }
-    U += 1;
+    X += 1;
     if (m) {
       m.classList.remove("open");
       m.style.visibility = "";
@@ -1998,7 +1998,7 @@
     document.querySelectorAll(".rk-suggest-receive,.rk-suggest-remove").forEach(e => {
       e.classList.remove("rk-suggest-receive", "rk-suggest-remove");
     });
-    document.querySelectorAll(".czh").forEach(e => e.remove());
+    document.querySelectorAll(".rk-ghost-stack").forEach(e => e.remove());
     if (e?.persistReject) {
       startSuggestCooldown(36e5);
       try {
@@ -2155,13 +2155,13 @@
     if (!e?.length || n == null) return;
     if (Math.abs(n - t) < 1) return;
     if (!canOfferSuggest()) return;
-    if (X) clearTimeout(X);
-    const i = ++U;
+    if (U) clearTimeout(U);
+    const i = ++X;
     const r = e.filter(e => e?.isConnected);
     const o = n;
-    X = setTimeout(() => {
-      X = 0;
-      if (i !== U) return;
+    U = setTimeout(() => {
+      U = 0;
+      if (i !== X) return;
       if (!canOfferSuggest()) return;
       const e = r.filter(e => e?.isConnected);
       if (!e.length) return;
@@ -2354,7 +2354,7 @@
     const a = 10;
     const s = window.innerWidth;
     const l = window.innerHeight;
-    const c = document.getElementById("i24g")?.getBoundingClientRect?.() || null;
+    const c = document.getElementById("templateVideoPreview")?.getBoundingClientRect?.() || null;
     const d = [ {
       left: n.right - i,
       top: n.top - r - o,
@@ -2663,7 +2663,7 @@
       h: window.innerHeight
     };
     const a = 10;
-    const s = document.getElementById("i24g");
+    const s = document.getElementById("templateVideoPreview");
     const l = s?.getBoundingClientRect();
     let c;
     if (l) {
@@ -2683,9 +2683,9 @@
     e.style.left = `${Math.round(c)}px`;
   }
   function schedulePosMenu() {
-    if (V) return;
-    V = requestAnimationFrame(() => {
-      V = 0;
+    if (W) return;
+    W = requestAnimationFrame(() => {
+      W = 0;
       if (u?.classList.contains("active")) posMenu();
       try {
         syncTopPanelToHeader({
@@ -2738,7 +2738,7 @@
       if (!t || t === e) return;
       t.classList.remove("open");
     });
-    u?.querySelectorAll(".c1dj").forEach(e => e.classList.remove("sub-active"));
+    u?.querySelectorAll(".sub-pill-btn").forEach(e => e.classList.remove("sub-active"));
   }
   function showMenu() {
     if (!y.size) return;
@@ -2809,13 +2809,13 @@
       }
     });
     document.addEventListener("mousedown", e => {
-      if (e.target.closest("#i20d")) return;
+      if (e.target.closest("#rkSuggestActions")) return;
       if (!u?.classList.contains("active")) return;
-      if (e.target.closest(".c1do")) return;
+      if (e.target.closest(".sub-resize-handle")) return;
       if (u.contains(e.target) || p.contains(e.target) || g.contains(e.target)) return;
       if (e.target.closest("[data-template-element-id]")) return;
-      if (e.target.closest(".cyp, .ranking-editor-zone-ranks")) return;
-      if (e.target.closest(".cyr")) {
+      if (e.target.closest(".ranking-editor-zone-header, .ranking-editor-zone-ranks")) return;
+      if (e.target.closest(".ranking-preview-container")) {
         deselectAll();
         return;
       }

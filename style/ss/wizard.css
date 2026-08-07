@@ -49,59 +49,59 @@
     }
 }
 
-#i1ot {
+#automationWizard {
     animation: slideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.c1lh {
+.wizard-step {
     animation: fadeInUp 0.4s ease-out;
 }
 
-#i1ov button {
+#automationWizardOverlay button {
     transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-#i1ov button:hover {
+#automationWizardOverlay button:hover {
     transform: none;
 }
 
-#i1ov button:active {
+#automationWizardOverlay button:active {
     transform: scale(0.98);
 }
 
-#i1xx {
+#nextButton {
     box-shadow: 0 4px 16px rgba(255, 122, 80, 0.3);
 }
 
-#i1xx:hover {
-    background: linear-gradient(135deg, #i1ur 0%, #i1uk 100%);
+#nextButton:hover {
+    background: linear-gradient(135deg, #ff8566 0%, #ff7a4a 100%);
     box-shadow: 0 6px 20px rgba(255, 122, 80, 0.4);
 }
 
-#i1xx:active {
+#nextButton:active {
     transform: scale(0.98);
 }
 
-#i1wj {
+#getStartedButton {
     box-shadow: 0 4px 16px rgba(255, 122, 80, 0.3);
 }
 
-#i1wj:hover {
-    background: linear-gradient(135deg, #i1ur 0%, #i1uk 100%);
+#getStartedButton:hover {
+    background: linear-gradient(135deg, #ff8566 0%, #ff7a4a 100%);
     box-shadow: 0 6px 20px rgba(255, 122, 80, 0.4);
 }
 
-#i1wj:active {
+#getStartedButton:active {
     transform: scale(0.98);
 }
 
-#i1z7:hover {
+#prevButton:hover {
     background: rgba(255, 122, 80, 0.1);
     box-shadow: 0 4px 12px rgba(255, 122, 80, 0.2);
 }
 
-#i1pq:hover {
-    color: #i1ul;
+#closeAutomationWizard:hover {
+    color: #ff7a50;
     background: rgba(255, 122, 80, 0.1);
 }
 
@@ -123,15 +123,15 @@
     }
 }
 
-.cpu {
+.orbit {
     transform-origin: 50px 50px;
 }
 
-.cpv {
+.orbit-1 {
     animation: rotateOrbit 3s linear infinite;
 }
 
-.cpw {
+.orbit-2 {
     animation: rotateOrbit 2.5s linear infinite reverse;
 }
 
@@ -144,89 +144,89 @@
     }
 }
 
-#i1ou {
+#automationWizardContent {
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 107, 53, 0.4) transparent;
 }
 
-#i1ou::-webkit-scrollbar {
+#automationWizardContent::-webkit-scrollbar {
     width: 8px;
 }
 
-#i1ou::-webkit-scrollbar-track {
+#automationWizardContent::-webkit-scrollbar-track {
     background: transparent;
 }
 
-#i1ou::-webkit-scrollbar-thumb {
+#automationWizardContent::-webkit-scrollbar-thumb {
     background: rgba(0, 0, 0, 0.12);
     border-radius: 4px;
     border: 2px solid transparent;
     background-clip: padding-box;
 }
 
-#i1ou::-webkit-scrollbar-thumb:hover {
+#automationWizardContent::-webkit-scrollbar-thumb:hover {
     background: rgba(0, 0, 0, 0.2);
     background-clip: padding-box;
 }
 
 @media (max-width: 1200px) {
-    #i1ot {
+    #automationWizard {
         max-width: 95%;
     }
 
-    #i1ou {
+    #automationWizardContent {
         padding: 48px 40px;
     }
 }
 
 @media (max-width: 768px) {
-    #i1ov {
+    #automationWizardOverlay {
         padding: 10px;
     }
 
-    #i1ot {
+    #automationWizard {
         max-width: 100%;
         max-height: 95vh;
     }
 
-    #i1ot > div:first-child {
+    #automationWizard > div:first-child {
         padding: 40px 32px 28px !important;
     }
 
-    #i1ou {
+    #automationWizardContent {
         padding: 40px 32px;
     }
 
-    #i1ot > div:last-child {
+    #automationWizard > div:last-child {
         padding: 24px 32px !important;
         flex-direction: column;
     }
 
-    #i1ot > div:last-child > div:first-child {
+    #automationWizard > div:last-child > div:first-child {
         display: none;
     }
 
-    #i1ot > div:last-child > div:last-child {
+    #automationWizard > div:last-child > div:last-child {
         width: 100%;
     }
 
-    #i1ot button {
+    #automationWizard button {
         width: 100%;
     }
 
-    #i1z7 {
+    #prevButton {
         width: 100%;
     }
 
-    #i1xx {
+    #nextButton {
         width: 100%;
     }
 
-    #i1wj {
+    #getStartedButton {
         width: 100%;
     }
 
-    #i1pq {
+    #closeAutomationWizard {
         width: 40px;
         height: 40px;
         font-size: 22px;
@@ -234,21 +234,21 @@
 }
 
 @media (max-width: 480px) {
-    #i1ou {
+    #automationWizardContent {
         padding: 32px 24px;
     }
 
-    #i1ot > div:first-child {
+    #automationWizard > div:first-child {
         padding: 32px 24px 20px !important;
         flex-direction: column;
         align-items: flex-start;
     }
 
-    #i1ot h2 {
+    #automationWizard h2 {
         font-size: 28px !important;
     }
 
-    #i1ot > div:last-child {
+    #automationWizard > div:last-child {
         padding: 20px 24px !important;
     }
 }

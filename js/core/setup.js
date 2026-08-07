@@ -456,7 +456,7 @@ window.addEventListener("visibilitychange", () => {
   if (!document.hidden) {
     setTimeout(() => {
       handleUpgradeCardVisibility();
-      const e = document.querySelector(".ci4");
+      const e = document.querySelector(".input-section");
       if (e) {
         e.style.display = "none";
         setTimeout(() => {
@@ -489,9 +489,9 @@ function handleUpgradeCardVisibility() {
       }
       const n = [ "free", "prime", "elite", "basic" ];
       const t = typeof e.plan === "string" && n.includes(e.plan.toLowerCase()) ? e.plan.toLowerCase() : "free";
-      const o = document.querySelector(".cuk");
-      const a = document.querySelectorAll(".c1ia");
-      const i = document.querySelector(".c1hm");
+      const o = document.querySelector(".premium-card");
+      const a = document.querySelectorAll(".upgrade-unlock-card");
+      const i = document.querySelector(".upgrade-container");
       if (t === "elite" || t === "prime") {
         if (i) {
           i.style.display = "none !important";
@@ -529,21 +529,21 @@ function handleUpgradeCardVisibility() {
         if (t === "basic" && o) {
           o.style.display = "flex";
           o.style.visibility = "visible";
-          const e = o.querySelector(".c48");
+          const e = o.querySelector(".card-content");
           if (e && e.querySelector("h2")) {
             e.querySelector("h2").textContent = "Unlock Even More Power?";
             const n = e.querySelector(".card-subtitle") || document.createElement("p");
             if (!e.querySelector(".card-subtitle")) {
               n.className = "card-subtitle";
               n.style.cssText = "font-size: 14px; color: #666; margin-top: 8px; margin-bottom: 16px;";
-              e.insertBefore(n, e.querySelector(".cd9"));
+              e.insertBefore(n, e.querySelector(".features-list"));
             }
             n.textContent = "Upgrade to Prime or Elite for unlimited access, advanced automation, and exclusive features.";
           }
         } else if (t === "free" && o) {
           o.style.display = "flex";
           o.style.visibility = "visible";
-          const e = o.querySelector(".c48");
+          const e = o.querySelector(".card-content");
           if (e && e.querySelector("h2")) {
             e.querySelector("h2").textContent = "Reveal Your Earning Potential";
           }
@@ -557,7 +557,7 @@ function handleUpgradeCardVisibility() {
       }
     } catch (e) {
       console.error("Error fetching user plan for card management:", e);
-      const n = document.querySelectorAll(".c1ia");
+      const n = document.querySelectorAll(".upgrade-unlock-card");
       n.forEach(e => {
         e.style.display = "flex";
         e.style.visibility = "visible";

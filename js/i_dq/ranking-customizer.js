@@ -302,7 +302,7 @@ class RankingCustomizer {
     window.__solisRankingStyleLock = n;
   }
   _getActiveRankingContainer() {
-    return document.querySelector("#i24g .cyr") || document.querySelector(".cyr");
+    return document.querySelector("#templateVideoPreview .ranking-preview-container") || document.querySelector(".ranking-preview-container");
   }
   _scaleFontSize(t) {
     const e = this._getActiveRankingContainer();
@@ -767,7 +767,7 @@ class RankingCustomizer {
   }
   flushRankingStylesForGenerate() {
     try {
-      document.querySelectorAll("#i24g .czi").forEach(t => {
+      document.querySelectorAll("#templateVideoPreview .rk-inline-editing").forEach(t => {
         try {
           t.blur();
         } catch (t) {}

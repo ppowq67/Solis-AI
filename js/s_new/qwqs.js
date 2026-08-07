@@ -89,7 +89,7 @@ window.openPaddleCheckout = async function(e, n, t) {
   }
   checkoutRetryCount = 0;
   const a = t?.currentTarget || t?.target;
-  const i = a?.textContent;
+  const r = a?.textContent;
   if (a) {
     a.disabled = true;
     a.textContent = "Opening checkout…";
@@ -102,7 +102,7 @@ window.openPaddleCheckout = async function(e, n, t) {
   } finally {
     if (a) {
       a.disabled = false;
-      if (i) a.textContent = i;
+      if (r) a.textContent = r;
     }
   }
 };
@@ -129,12 +129,12 @@ function createConfetti() {
   };
   for (let o = 0; o < n; o++) {
     const a = document.createElement("div");
-    const i = o / n * Math.PI * 2;
-    const r = Math.random() * 8 + 6;
+    const r = o / n * Math.PI * 2;
+    const i = Math.random() * 8 + 6;
     const c = Math.random() * 8 + 4;
     const s = 150;
-    const d = Math.cos(i) * s * r;
-    const l = Math.sin(i) * s * r + 100;
+    const d = Math.cos(r) * s * i;
+    const l = Math.sin(r) * s * i + 100;
     a.style.cssText = `\n                    position: fixed;\n                    width: ${c}px;\n                    height: ${c}px;\n                    background-color: ${e[Math.floor(Math.random() * e.length)]};\n                    left: ${t.x}px;\n                    top: ${t.y}px;\n                    pointer-events: none;\n                    z-index: 99999;\n                    border-radius: 50%;\n                    animation: confetti-burst 2.5s ease-out forwards;\n                    --endX: ${d}px;\n                    --endY: ${l}px;\n                    animation-delay: ${Math.random() * .1}s;\n                `;
     document.body.appendChild(a);
     setTimeout(() => a.remove(), 2700);
@@ -200,7 +200,7 @@ async function checkAuthenticationAndInit() {
 
 function showAuthError() {
   console.warn("User not authenticated on pricing page");
-  document.querySelector(".cmq")?.style && (document.querySelector(".cmq").style.display = "block");
+  document.querySelector(".nav-login")?.style && (document.querySelector(".nav-login").style.display = "block");
 }
 
 const DEFAULT_AVATAR_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>';
@@ -222,9 +222,9 @@ function setProfileAvatar(e, n, t) {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-  const e = document.getElementById("i208");
-  const n = document.getElementById("i20a");
-  const t = document.getElementById("i20b");
+  const e = document.getElementById("profileAvatarBtn");
+  const n = document.getElementById("profileDropdown");
+  const t = document.getElementById("profileDropdownWr");
   if (e) {
     e.addEventListener("click", function(e) {
       e.stopPropagation();
@@ -239,27 +239,27 @@ document.addEventListener("DOMContentLoaded", function() {
 
 function loadUserProfile(e) {
   try {
-    const n = document.getElementById("i20b");
-    const t = document.querySelector(".cmq");
-    const o = document.querySelector(".cmn");
+    const n = document.getElementById("profileDropdownWr");
+    const t = document.querySelector(".nav-login");
+    const o = document.querySelector(".nav-cta");
     if (e && e.email) {
       if (n) n.style.display = "flex";
       if (t) t.style.display = "none";
       if (o) o.style.display = "none";
       const a = e.username || e.name || e.email.split("@")[0] || "User";
-      const i = (e.plan || "free").toString();
-      const r = i.charAt(0).toUpperCase() + i.slice(1).toLowerCase() + " Plan";
+      const r = (e.plan || "free").toString();
+      const i = r.charAt(0).toUpperCase() + r.slice(1).toLowerCase() + " Plan";
       const c = typeof resolveAvatarUrl === "function" ? resolveAvatarUrl(e) : e.picture || e.avatar || null;
       const s = c || `https://ui-avatars.com/api/?name=${encodeURIComponent(a)}&background=ea580c&color=fff&bold=true`;
-      setProfileAvatar(document.getElementById("i208"), s, a);
-      setProfileAvatar(document.getElementById("i1rc"), s, a);
-      const d = document.getElementById("i1rd");
+      setProfileAvatar(document.getElementById("profileAvatarBtn"), s, a);
+      setProfileAvatar(document.getElementById("dropdownUserAvatar"), s, a);
+      const d = document.getElementById("dropdownUserName");
       if (d) {
-        const e = d.querySelector(".c1kj");
+        const e = d.querySelector(".username-text");
         if (e) e.textContent = a;
       }
-      const l = document.getElementById("i1re");
-      if (l) l.textContent = r;
+      const l = document.getElementById("dropdownUserPlan");
+      if (l) l.textContent = i;
     } else {
       if (n) n.style.display = "none";
       if (t) t.style.display = "";
@@ -293,12 +293,12 @@ function handleLogout() {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-  const e = document.getElementById("i1r7");
+  const e = document.getElementById("dropdownLogout");
   if (e) {
     e.addEventListener("click", function(e) {
       e.preventDefault();
       e.stopPropagation();
-      const n = document.getElementById("i20a");
+      const n = document.getElementById("profileDropdown");
       if (n) n.classList.remove("open");
       handleLogout();
     });

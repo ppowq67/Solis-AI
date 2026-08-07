@@ -1,4 +1,4 @@
-.cjh {
+.limit-overlay {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.3);
@@ -17,7 +17,7 @@
     to { opacity: 1; }
 }
 
-.cjg {
+.limit-modal {
     background: #fff;
     border-radius: 28px;
     width: 100%;
@@ -35,19 +35,19 @@
     to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.cjg .cqf {
+.limit-modal .panel-left {
     width: 52%;
-    background: #i1md;
+    background: #FDF6F3;
     padding: 44px 40px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     position: relative;
-    border-right: 1px solid #i1m0;
+    border-right: 1px solid #EBEBEB;
     overflow: hidden;
 }
 
-.cjg .cqf::before {
+.limit-modal .panel-left::before {
     content: '';
     position: absolute;
     bottom: -70px;
@@ -55,12 +55,12 @@
     width: 240px;
     height: 240px;
     border-radius: 50%;
-    background: #i1n7;
+    background: #FFD0C2;
     opacity: 0.25;
     pointer-events: none;
 }
 
-.cjg .cqf::after {
+.limit-modal .panel-left::after {
     content: '';
     position: absolute;
     top: -50px;
@@ -68,17 +68,17 @@
     width: 160px;
     height: 160px;
     border-radius: 50%;
-    background: #i1n7;
+    background: #FFD0C2;
     opacity: 0.2;
     pointer-events: none;
 }
 
-.cjg .cik {
+.limit-modal .left-top {
     position: relative;
     z-index: 1;
 }
 
-.cjg .cjm {
+.limit-modal .limit-wrap {
     width: 64px;
     height: 64px;
     background: #fff;
@@ -98,7 +98,7 @@
     100% { transform: scale(1) rotate(0deg); opacity: 1; }
 }
 
-.cjg h1 {
+.limit-modal h1 {
     font-family: 'Instrument Serif', serif;
     font-size: 30px;
     color: #111;
@@ -109,7 +109,7 @@
     animation: limitFadeUp 0.35s ease 0.55s forwards;
 }
 
-.cjg .subtitle {
+.limit-modal .subtitle {
     font-size: 14px;
     color: #555;
     line-height: 1.65;
@@ -123,7 +123,7 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
-.cjg .c1jj {
+.limit-modal .usage-box {
     position: relative;
     z-index: 1;
     background: rgba(255, 255, 255, 0.7);
@@ -134,14 +134,14 @@
     animation: limitFadeUp 0.35s ease 0.71s forwards;
 }
 
-.cjg .c1jl {
+.limit-modal .usage-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
 }
 
-.cjg .c1jm {
+.limit-modal .usage-label {
     display: flex;
     align-items: center;
     gap: 6px;
@@ -150,13 +150,13 @@
     font-weight: 500;
 }
 
-.cjg .c1jk {
+.limit-modal .usage-count {
     font-size: 13px;
     font-weight: 600;
-    color: #i1mj;
+    color: #FF6A3D;
 }
 
-.cjg .c1ji {
+.limit-modal .usage-bar-track {
     background: rgba(0, 0, 0, 0.06);
     border-radius: 8px;
     height: 6px;
@@ -164,25 +164,25 @@
     margin-bottom: 8px;
 }
 
-.cjg .c1jh {
-    background: linear-gradient(to right, #i1mj, #i1mu);
+.limit-modal .usage-bar-fill {
+    background: linear-gradient(to right, #FF6A3D, #FF9166);
     height: 100%;
     border-radius: 8px;
     transition: width 0.3s ease;
 }
 
-.cjg .c1jn {
+.limit-modal .usage-note {
     font-size: 12px;
-    color: #i1lj;
+    color: #AAA;
     text-align: center;
 }
 
-.cjg .c1jn span {
-    color: #i1mj;
+.limit-modal .usage-note span {
+    color: #FF6A3D;
     font-weight: 600;
 }
 
-.cjg .cqg {
+.limit-modal .panel-right {
     flex: 1;
     padding: 32px 40px;
     display: flex;
@@ -191,7 +191,7 @@
     position: relative;
 }
 
-.cjg .c6k {
+.limit-modal .close-btn {
     position: absolute;
     top: 20px;
     right: 20px;
@@ -203,35 +203,35 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    color: #i1lj;
+    color: #AAA;
     transition: color 0.2s;
     border-radius: 10px;
 }
 
-.cjg .c6k:hover {
+.limit-modal .close-btn:hover {
     color: #555;
     background: rgba(0, 0, 0, 0.04);
 }
 
-.cjg .cti {
+.limit-modal .plans-label {
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #i1lj;
+    color: #AAA;
     margin-bottom: 16px;
 }
 
-.cjg .cs8 {
+.limit-modal .plan-options {
     display: grid;
     grid-template-columns: 1fr;
     gap: 12px;
     margin-bottom: 24px;
 }
 
-.cjg .cqx {
+.limit-modal .plan-card {
     position: relative;
-    border: 1px solid #i1m0;
+    border: 1px solid #EBEBEB;
     border-radius: 16px;
     padding: 16px;
     display: flex;
@@ -239,25 +239,25 @@
     gap: 12px;
     cursor: pointer;
     transition: all 0.2s;
-    background: #i1ni;
+    background: #FFF;
 }
 
-.cjg .cqx:hover {
-    border-color: #i1lt;
-    background: #i1mb;
+.limit-modal .plan-card:hover {
+    border-color: #DDD;
+    background: #FAFAFA;
 }
 
-.cjg .cqx.highlighted {
-    border-color: #i1mj;
-    background: #i1nj;
+.limit-modal .plan-card.highlighted {
+    border-color: #FF6A3D;
+    background: #FFF3EF;
 }
 
-.cjg .cqx.current-plan {
-    border-color: #i1lt;
+.limit-modal .plan-card.current-plan {
+    border-color: #DDD;
     opacity: 0.6;
 }
 
-.cjg .cqx.current-plan::after {
+.limit-modal .plan-card.current-plan::after {
     content: 'Current';
     position: absolute;
     top: 8px;
@@ -269,11 +269,11 @@
     text-transform: uppercase;
 }
 
-.cjg .ctw {
+.limit-modal .popular-tag {
     position: absolute;
     top: -8px;
     right: 16px;
-    background: #i1mj;
+    background: #FF6A3D;
     color: white;
     font-size: 10px;
     font-weight: 700;
@@ -283,7 +283,7 @@
     text-transform: uppercase;
 }
 
-.cjg .cqz {
+.limit-modal .plan-card-icon {
     width: 40px;
     height: 40px;
     display: flex;
@@ -292,44 +292,44 @@
     flex-shrink: 0;
 }
 
-.cjg .cqz svg {
+.limit-modal .plan-card-icon svg {
     width: 100%;
     height: 100%;
 }
 
-.cjg .cqy {
+.limit-modal .plan-card-body {
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 2px;
 }
 
-.cjg .cqy strong {
+.limit-modal .plan-card-body strong {
     font-size: 14px;
     color: #111;
     font-weight: 600;
 }
 
-.cjg .cqy span {
+.limit-modal .plan-card-body span {
     font-size: 12px;
-    color: #i1lj;
+    color: #AAA;
 }
 
-.cjg .cr0 {
+.limit-modal .plan-card-price {
     font-size: 13px;
     font-weight: 600;
     color: #111;
     white-space: nowrap;
 }
 
-.cjg .czg {
+.limit-modal .right-footer {
     padding-top: 16px;
-    border-top: 1px solid #i1m0;
+    border-top: 1px solid #EBEBEB;
 }
 
-.cjg .c7w {
+.limit-modal .cta-btn {
     width: 100%;
-    background: linear-gradient(135deg, #i1mj 0%, #i1mh 100%);
+    background: linear-gradient(135deg, #FF6A3D 0%, #FF5219 100%);
     color: white;
     border: none;
     padding: 13px 24px;
@@ -345,37 +345,37 @@
     transition: all 0.2s;
 }
 
-.cjg .c7w:hover {
+.limit-modal .cta-btn:hover {
     transform: translateY(-1px);
     box-shadow: 0 8px 20px rgba(255, 106, 61, 0.25);
 }
 
-.cjg .c7w:active {
+.limit-modal .cta-btn:active {
     transform: translateY(0);
 }
 
 @media (max-width: 640px) {
-    .cjg {
+    .limit-modal {
         flex-direction: column;
         min-height: auto;
     }
 
-    .cjg .cqf {
+    .limit-modal .panel-left {
         width: 100%;
         border-right: none;
-        border-bottom: 1px solid #i1m0;
+        border-bottom: 1px solid #EBEBEB;
         padding: 32px 24px;
     }
 
-    .cjg .cqg {
+    .limit-modal .panel-right {
         padding: 24px;
     }
 
-    .cjg h1 {
+    .limit-modal h1 {
         font-size: 24px;
     }
 
-    .cjg .cs8 {
+    .limit-modal .plan-options {
         grid-template-columns: 1fr;
     }
 }

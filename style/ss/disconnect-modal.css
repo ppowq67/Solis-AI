@@ -1,4 +1,4 @@
-.ca1 {
+.disconnect-confirmation-modal {
     display: none !important;
     position: fixed;
     top: 0;
@@ -11,11 +11,11 @@
     justify-content: center;
 }
 
-.ca1.show {
+.disconnect-confirmation-modal.show {
     display: flex !important;
 }
 
-.ca5 {
+.disconnect-modal-content {
     background: white;
     border-radius: 12px;
     width: 90%;
@@ -24,22 +24,22 @@
     animation: slideUp 0.3s ease;
 }
 
-.ca7 {
+.disconnect-modal-header {
     padding: 24px;
-    border-bottom: 1px solid #i1se;
+    border-bottom: 1px solid #f0f0f0;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.ca7 h2 {
+.disconnect-modal-header h2 {
     margin: 0;
     font-size: 18px;
     font-weight: 600;
     color: #1a1a1a;
 }
 
-.ca4 {
+.disconnect-modal-close {
     background: none;
     border: none;
     font-size: 24px;
@@ -55,45 +55,45 @@
     transition: all 0.2s;
 }
 
-.ca4:hover {
-    background: #i1t1;
+.disconnect-modal-close:hover {
+    background: #f5f5f5;
     color: #1a1a1a;
 }
 
-.ca2 {
+.disconnect-modal-body {
     padding: 32px 24px;
     text-align: center;
 }
 
-.ca8 {
+.disconnect-modal-icon {
     font-size: 48px;
-    color: #i1uf;
+    color: #ff6b35;
     margin-bottom: 16px;
     display: block;
 }
 
-.ca2 p {
+.disconnect-modal-body p {
     margin: 0 0 12px 0;
     font-size: 14px;
     color: #666;
     line-height: 1.5;
 }
 
-.ca9 {
+.disconnect-modal-warning {
     font-size: 13px;
     color: #999;
     margin: 12px 0 0 0 !important;
 }
 
-.ca6 {
+.disconnect-modal-footer {
     padding: 20px 24px;
-    border-top: 1px solid #i1se;
+    border-top: 1px solid #f0f0f0;
     display: flex;
     gap: 12px;
     justify-content: flex-end;
 }
 
-.ca3 {
+.disconnect-modal-btn {
     padding: 10px 20px;
     border: none;
     border-radius: 8px;
@@ -105,22 +105,22 @@
     max-width: 150px;
 }
 
-.ca3.c41 {
-    background: #i1t1;
+.disconnect-modal-btn.cancel-btn {
+    background: #f5f5f5;
     color: #1a1a1a;
 }
 
-.ca3.c41:hover {
-    background: #i1ru;
+.disconnect-modal-btn.cancel-btn:hover {
+    background: #e8e8e8;
 }
 
-.ca3.ca0 {
-    background: #i1uf;
+.disconnect-modal-btn.disconnect-btn {
+    background: #ff6b35;
     color: white;
 }
 
-.ca3.ca0:hover {
-    background: #i1ub;
+.disconnect-modal-btn.disconnect-btn:hover {
+    background: #ff5a1f;
     box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
 }
 

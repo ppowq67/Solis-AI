@@ -11,7 +11,7 @@
             top: 0;
         }
 
-.chf {
+.header-logo {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -35,7 +35,7 @@
   display: block;
 }
 
-.cki {
+.main-content {
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -50,7 +50,7 @@
   min-height: calc(100vh - 80px);
 }
 
-.c51 {
+.chat-container {
   width: 100%;
   max-width: 800px;
   display: flex;
@@ -60,13 +60,13 @@
   z-index: 1;
 }
 
-.c51.active {
+.chat-container.active {
   visibility: visible;
   opacity: 1;
   pointer-events: all;
 }
 
-.c1lc {
+.welcome-card {
   background: rgba(255, 255, 255, 0.4);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08),
               inset 0 1px 1px rgba(255, 255, 255, 0.8);
@@ -83,24 +83,24 @@
   -webkit-backdrop-filter: blur(40px) saturate(200%);
 }
 
-.c1lc::before {
+.welcome-card::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #i1up 0%, #i1v9 100%);
+  background: linear-gradient(90deg, #ff814a 0%, #ffb088 100%);
   border-radius: 16px 16px 0 0;
 }
 
-.c1lc:hover {
+.welcome-card:hover {
   box-shadow: 0 12px 48px rgba(255, 125, 66, 0.18),
               0 4px 12px rgba(0, 0, 0, 0.06);
   transform: translateY(-2px);
 }
 
-.c1lf {
+.welcome-title {
   font-size: 1.65rem;
   font-weight: 700;
   color: var(--text-primary);
@@ -108,8 +108,8 @@
   letter-spacing: -0.5px;
 }
 
-.czq {
-  background: linear-gradient(135deg, #i1up 0%, #i1ua 100%);
+.scope-logo {
+  background: linear-gradient(135deg, #ff814a 0%, #ff5722 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -117,7 +117,7 @@
   position: relative;
 }
 
-.c1ld {
+.welcome-description {
   font-size: 0.95rem;
   color: var(--text-secondary);
   margin-bottom: 18px;
@@ -125,16 +125,16 @@
   font-weight: 400;
 }
 
-.c1e7 {
+.suggestion-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 12px;
   margin-bottom: 20px;
 }
 
-.c1e9 {
-  background: linear-gradient(135deg, #i1w0 0%, #i1w5 100%);
-  border: 1.5px solid #i1vh;
+.suggestion-pill {
+  background: linear-gradient(135deg, #fff9f6 0%, #ffffff 100%);
+  border: 1.5px solid #ffd9c8;
   border-radius: 10px;
   padding: 14px 12px;
   font-size: 0.88rem;
@@ -148,7 +148,7 @@
   overflow: hidden;
 }
 
-.c1e9::before {
+.suggestion-pill::before {
   content: '';
   position: absolute;
   top: 0;
@@ -159,24 +159,24 @@
   transition: left 0.5s ease;
 }
 
-.c1e9:hover::before {
+.suggestion-pill:hover::before {
   left: 100%;
 }
 
-.c1e9 i {
+.suggestion-pill i {
   font-size: 1.1rem;
-  color: #i1uo;
+  color: #ff7d42;
   filter: drop-shadow(0 2px 4px rgba(255, 125, 66, 0.2));
 }
 
-.c1e9:hover {
-  background: linear-gradient(135deg, #i1vp 0%, #i1w0 100%);
-  border-color: #i1v9;
+.suggestion-pill:hover {
+  background: linear-gradient(135deg, #ffede5 0%, #fff9f6 100%);
+  border-color: #ffb088;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(255, 125, 66, 0.15);
 }
 
-.c1le {
+.welcome-footer-hint {
   border-top: 1px solid rgba(255, 125, 66, 0.1);
   padding-top: 16px;
   margin-top: 10px;
@@ -185,7 +185,7 @@
   padding: 16px 12px 8px;
 }
 
-.c1le h2 {
+.welcome-footer-hint h2 {
   font-size: 0.95rem;
   color: #1a1a1a;
   margin-bottom: 12px;
@@ -195,18 +195,18 @@
   gap: 8px;
 }
 
-.c1le h2::before {
+.welcome-footer-hint h2::before {
   content: '✨';
   font-size: 1rem;
 }
 
-.cp {
+.activity-list {
   list-style: none;
   padding-left: 0;
   margin: 0;
 }
 
-.cp li {
+.activity-list li {
   font-size: 0.88rem;
   color: #444;
   margin-bottom: 6px;
@@ -218,30 +218,30 @@
   transition: background 0.2s ease;
 }
 
-.cp li:hover {
+.activity-list li:hover {
   background: rgba(255, 125, 66, 0.05);
 }
 
-.cp li i {
-  color: #i1up;
+.activity-list li i {
+  color: #ff814a;
   font-size: 0.9rem;
   min-width: 16px;
 }
 
-.cy7 {
+.prompt-section {
   display: none;
 }
 
 @media (max-width: 768px) {
-  .c1lc {
+  .welcome-card {
     padding: 16px;
     max-height: 400px;
     margin-left: 10px;
   }
-  .c1lf {
+  .welcome-title {
     font-size: 1.3rem;
   }
-  .c1e7 {
+  .suggestion-grid {
     grid-template-columns: 1fr;
     gap: 10px;
   }

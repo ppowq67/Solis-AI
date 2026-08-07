@@ -26,27 +26,27 @@
     }
 }
 
-.ck3 {
+.loading-spinner {
     display: inline-block;
     width: 16px;
     height: 16px;
     border: 2px solid rgba(255, 107, 61, 0.3);
-    border-top-color: #i1ug;
+    border-top-color: #ff6b3d;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
 }
 
-.c5y {
+.clips-carousel {
     animation: slideIn 0.4s ease;
 }
 
-.c5d:hover {
+.clip-box:hover {
     border-color: rgba(255, 107, 61, 0.8) !important;
     transform: translateY(-4px);
     box-shadow: 0 8px 24px rgba(255, 107, 61, 0.2);
 }
 
-.c5c:hover {
+.clip-action:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }

@@ -178,7 +178,7 @@ class CustomizerPro {
     }
   }
   updateFontUI() {
-    const t = document.querySelectorAll(".c8l");
+    const t = document.querySelectorAll(".customizer-font-item");
     t.forEach(t => t.classList.remove("customizer-active"));
     const e = this.state.font.replace(/['"]/g, "").split(",")[0].trim();
     t.forEach(t => {
@@ -188,7 +188,7 @@ class CustomizerPro {
     });
   }
   updateColorUI() {
-    const t = document.querySelectorAll(".c8g");
+    const t = document.querySelectorAll(".customizer-color-dot");
     t.forEach(t => t.classList.remove("customizer-active"));
     if (this.mixedProperties?.textColor) {
       return;
@@ -210,7 +210,7 @@ class CustomizerPro {
     }
   }
   ensureDOM() {
-    if (document.getElementById("i1q9")) return;
+    if (document.getElementById("customizer-ui-system")) return;
     if (!document.querySelector('link[href*="fonts.googleapis.com"]')) {
       const t = document.createElement("link");
       t.href = "https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Plus+Jakarta+Sans:wght@200..800&family=Space+Grotesk:wght@300..700&family=Inter:wght@100..900&family=Playfair+Display:wght@400..900&family=Fraunces:wght@100..900&family=Syne:wght@400..800&family=Bricolage+Grotesque:wght@200..800&family=Outfit:wght@100..900&family=Montserrat:wght@100..900&family=DM+Serif+Display&family=Abril+Fatface&family=Bebas+Neue&family=Urbanist:wght@400..700&family=Poppins:wght@400..700&family=Manrope:wght@400..700&family=Raleway:wght@400..700&family=Quicksand:wght@400..700&display=swap";
@@ -226,9 +226,9 @@ class CustomizerPro {
   setupPanel() {
     this.panel = document.getElementById("customizer-panel");
     this.titleEl = document.getElementById("customizer-panel-title");
-    this.navBtns = document.querySelectorAll(".c8r");
-    this.views = document.querySelectorAll(".c9c");
-    this.uiSystem = document.getElementById("i1q9");
+    this.navBtns = document.querySelectorAll(".customizer-nav-btn");
+    this.views = document.querySelectorAll(".customizer-view");
+    this.uiSystem = document.getElementById("customizer-ui-system");
     this.closeTimeout = null;
     this.expandTimeout = null;
     this.isAnimating = false;
@@ -248,8 +248,8 @@ class CustomizerPro {
     const i = 60;
     const r = 12;
     const n = window.innerWidth;
-    const a = window.innerHeight;
-    let o, l;
+    const o = window.innerHeight;
+    let a, l;
     if (t.right + r + e < n) {
       l = t.right + r;
     } else if (t.left - r - e > 0) {
@@ -258,18 +258,18 @@ class CustomizerPro {
       l = (n - e) / 2;
     }
     if (t.top - r - s > 0) {
-      o = t.top - r - s;
-    } else if (t.bottom + r + s < a) {
-      o = t.bottom + r;
+      a = t.top - r - s;
+    } else if (t.bottom + r + s < o) {
+      a = t.bottom + r;
     } else {
-      o = (a - s) / 2;
+      a = (o - s) / 2;
     }
     l = Math.max(12, Math.min(l, n - e - 12));
-    o = Math.max(12, Math.min(o, a - s - i - 12));
-    this.panel.style.cssText = `\n            position: fixed !important;\n            left: ${l}px !important;\n            top: ${o}px !important;\n            bottom: auto !important;\n            right: auto !important;\n            transform: none !important;\n        `;
-    const c = document.querySelector(".c8j");
+    a = Math.max(12, Math.min(a, o - s - i - 12));
+    this.panel.style.cssText = `\n            position: fixed !important;\n            left: ${l}px !important;\n            top: ${a}px !important;\n            bottom: auto !important;\n            right: auto !important;\n            transform: none !important;\n        `;
+    const c = document.querySelector(".customizer-dock");
     if (c) {
-      c.style.cssText = `\n                position: fixed !important;\n                left: ${l}px !important;\n                top: ${o + s + r}px !important;\n                bottom: auto !important;\n                right: auto !important;\n                transform: none !important;\n            `;
+      c.style.cssText = `\n                position: fixed !important;\n                left: ${l}px !important;\n                top: ${a + s + r}px !important;\n                bottom: auto !important;\n                right: auto !important;\n                transform: none !important;\n            `;
     }
   }
   repositionPanel() {
@@ -333,7 +333,7 @@ class CustomizerPro {
   clearEmptyState() {
     const t = document.getElementById("customizer-panel");
     if (!t) return;
-    const e = t.querySelector(".c8k");
+    const e = t.querySelector(".customizer-empty-state");
     if (e) {
       e.remove();
     }
@@ -395,11 +395,11 @@ class CustomizerPro {
         this.applyStyles();
       }
     });
-    const a = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ];
+    const o = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ];
     this.scrubbers.shadowSpread = this.createScrubber({
       container: document.getElementById("customizer-scrubber-shadow-spread"),
       label: "Shadow Thickness",
-      presets: a,
+      presets: o,
       defaultValue: 0,
       onChange: t => {
         this.state.textShadowSpread = t;
@@ -409,13 +409,13 @@ class CustomizerPro {
   }
   createScrubber({container: t, label: e, presets: s, defaultValue: i, onChange: r}) {
     const n = s.length;
-    let a = s.indexOf(i);
-    if (a < 0) a = 0;
-    let o = a / (n - 1) * 100;
-    let l = o;
+    let o = s.indexOf(i);
+    if (o < 0) o = 0;
+    let a = o / (n - 1) * 100;
+    let l = a;
     let c = false;
     let u = "right";
-    let d = s[a];
+    let d = s[o];
     const m = document.createElement("div");
     m.className = "customizer-scrubber-block";
     m.style.userSelect = "none";
@@ -458,8 +458,8 @@ class CustomizerPro {
     m.appendChild(p);
     m.appendChild(f);
     t.appendChild(m);
-    const S = y;
-    const z = f;
+    const z = y;
+    const S = f;
     const C = g;
     const P = b;
     const B = v;
@@ -471,7 +471,7 @@ class CustomizerPro {
       P.appendChild(s);
     });
     const updateUI = () => {
-      const t = c ? o : a / (n - 1) * 100;
+      const t = c ? a : o / (n - 1) * 100;
       B.style.left = `${t}%`;
       B.style.transform = `translate(-${t}%, -50%) scale(${c ? 1.08 : 1})`;
       if (c && t > 2 && t < 98) {
@@ -485,44 +485,44 @@ class CustomizerPro {
       C.style.background = `radial-gradient(80% 120% at ${t}%, rgba(0,0,0,0.05), transparent)`;
       s.forEach((t, e) => {
         const s = P.children[e];
-        s.classList.toggle("customizer-active", e <= a);
-        s.classList.toggle("customizer-current", e === a);
+        s.classList.toggle("customizer-active", e <= o);
+        s.classList.toggle("customizer-current", e === o);
       });
       if (c) {
-        z.classList.add("customizer-active");
+        S.classList.add("customizer-active");
         B.classList.add("customizer-dragging");
       } else {
-        z.classList.remove("customizer-active");
+        S.classList.remove("customizer-active");
         B.classList.remove("customizer-dragging");
       }
     };
     const animateNum = () => {
-      const t = s[a];
+      const t = s[o];
       if (Math.abs(d - t) > .15) {
         d += (t - d) * .22;
-        S.textContent = Math.round(d);
+        z.textContent = Math.round(d);
       } else {
         d = t;
-        S.textContent = t;
+        z.textContent = t;
       }
       requestAnimationFrame(animateNum);
     };
     const handleMove = t => {
-      const e = z.getBoundingClientRect();
+      const e = S.getBoundingClientRect();
       const i = 20;
       let c = (t - e.left - i) / (e.width - i * 2) * 100;
       c = Math.max(0, Math.min(100, c));
       if (c > l + .1) u = "right"; else if (c < l - .1) u = "left";
       l = c;
-      o = c;
-      const d = Math.round(o / 100 * (n - 1));
-      if (d !== a) {
-        a = d;
-        r(s[a]);
+      a = c;
+      const d = Math.round(a / 100 * (n - 1));
+      if (d !== o) {
+        o = d;
+        r(s[o]);
       }
       updateUI();
     };
-    z.addEventListener("mousedown", t => {
+    S.addEventListener("mousedown", t => {
       t.preventDefault();
       c = true;
       handleMove(t.clientX);
@@ -536,7 +536,7 @@ class CustomizerPro {
         updateUI();
       }
     });
-    z.addEventListener("touchstart", t => {
+    S.addEventListener("touchstart", t => {
       t.preventDefault();
       c = true;
       handleMove(t.touches[0].clientX);
@@ -560,11 +560,11 @@ class CustomizerPro {
     updateUI();
     animateNum();
     return {
-      getValue: () => s[a],
+      getValue: () => s[o],
       setIndex: t => {
-        a = Math.max(0, Math.min(t, n - 1));
-        o = a / (n - 1) * 100;
-        l = o;
+        o = Math.max(0, Math.min(t, n - 1));
+        a = o / (n - 1) * 100;
+        l = a;
         updateUI();
       }
     };
@@ -658,7 +658,7 @@ class CustomizerPro {
           e.preventDefault();
           const i = this.validateFont(t.family);
           this.state.font = i;
-          document.querySelectorAll(".c8l").forEach(t => t.classList.remove("customizer-active"));
+          document.querySelectorAll(".customizer-font-item").forEach(t => t.classList.remove("customizer-active"));
           s.classList.add("customizer-active");
           this.applyStyles();
           this.updateFontUI();
@@ -706,7 +706,7 @@ class CustomizerPro {
           this.state.textBgBlur = false;
           this.hideBlurScrubber();
         }
-        r.querySelectorAll(".c8g").forEach(t => t.classList.remove("customizer-active"));
+        r.querySelectorAll(".customizer-color-dot").forEach(t => t.classList.remove("customizer-active"));
         s.classList.add("customizer-active");
         if (e === "textColor") this.userSetTextColor = true;
         if (e === "textBg") {
@@ -722,27 +722,27 @@ class CustomizerPro {
     n.className = "customizer-color-dot";
     n.style.cssText = "background:linear-gradient(135deg,#ff6b3d 0%,#ff9500 50%,#ffd700 100%);display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;user-select:none;-webkit-user-select:none;border:2px solid rgba(255,255,255,0.3);";
     n.title = "Custom Color";
-    const a = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    a.setAttribute("width", "16");
-    a.setAttribute("height", "16");
-    a.setAttribute("viewBox", "0 0 24 24");
-    a.setAttribute("fill", "none");
-    a.setAttribute("stroke", "white");
-    a.setAttribute("stroke-width", "2.5");
-    a.style.pointerEvents = "none";
-    const o = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    o.setAttribute("x1", "12");
-    o.setAttribute("y1", "5");
-    o.setAttribute("x2", "12");
-    o.setAttribute("y2", "19");
-    a.appendChild(o);
+    const o = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    o.setAttribute("width", "16");
+    o.setAttribute("height", "16");
+    o.setAttribute("viewBox", "0 0 24 24");
+    o.setAttribute("fill", "none");
+    o.setAttribute("stroke", "white");
+    o.setAttribute("stroke-width", "2.5");
+    o.style.pointerEvents = "none";
+    const a = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    a.setAttribute("x1", "12");
+    a.setAttribute("y1", "5");
+    a.setAttribute("x2", "12");
+    a.setAttribute("y2", "19");
+    o.appendChild(a);
     const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
     l.setAttribute("x1", "5");
     l.setAttribute("y1", "12");
     l.setAttribute("x2", "19");
     l.setAttribute("y2", "12");
-    a.appendChild(l);
-    n.appendChild(a);
+    o.appendChild(l);
+    n.appendChild(o);
     n.addEventListener("click", t => {
       t.preventDefault();
       t.stopPropagation();
@@ -770,7 +770,7 @@ class CustomizerPro {
         if (e === "textColor") {
           this.userSetTextColor = true;
         }
-        r.querySelectorAll(".c8g").forEach(t => t.classList.remove("customizer-active"));
+        r.querySelectorAll(".customizer-color-dot").forEach(t => t.classList.remove("customizer-active"));
         n.classList.add("customizer-active");
         this.applyStyles();
         this.updateColorUI();
@@ -817,7 +817,7 @@ class CustomizerPro {
         e.stopPropagation();
         this.state.textBg = "transparent";
         this.state.textBgBlur = false;
-        r.querySelectorAll(".c8g").forEach(t => t.classList.remove("customizer-active"));
+        r.querySelectorAll(".customizer-color-dot").forEach(t => t.classList.remove("customizer-active"));
         t.classList.add("customizer-active");
         this.hideBlurScrubber();
         this.applyStyles();
@@ -827,38 +827,38 @@ class CustomizerPro {
       const n = document.createElement("div");
       n.className = "customizer-color-dot";
       n.style.cssText = "background:linear-gradient(135deg,rgba(255,255,255,0.55) 60%,rgba(200,220,255,0.25) 100%);border:2px solid #b3c6e0;box-shadow:0 2px 12px rgba(120,160,220,0.18);position:relative;cursor:pointer;user-select:none;-webkit-user-select:none;";
-      const a = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-      a.setAttribute("width", "16");
-      a.setAttribute("height", "16");
-      a.setAttribute("viewBox", "0 0 18 18");
-      a.setAttribute("fill", "none");
-      a.setAttribute("stroke", "#7fa7d9");
-      a.setAttribute("stroke-width", "2");
-      a.style.position = "absolute";
-      a.style.inset = "0";
-      a.style.margin = "auto";
-      a.style.display = "block";
-      a.style.pointerEvents = "none";
-      const o = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
-      o.setAttribute("cx", "9");
-      o.setAttribute("cy", "9");
-      o.setAttribute("rx", "6");
-      o.setAttribute("ry", "6");
-      a.appendChild(o);
+      const o = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      o.setAttribute("width", "16");
+      o.setAttribute("height", "16");
+      o.setAttribute("viewBox", "0 0 18 18");
+      o.setAttribute("fill", "none");
+      o.setAttribute("stroke", "#7fa7d9");
+      o.setAttribute("stroke-width", "2");
+      o.style.position = "absolute";
+      o.style.inset = "0";
+      o.style.margin = "auto";
+      o.style.display = "block";
+      o.style.pointerEvents = "none";
+      const a = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+      a.setAttribute("cx", "9");
+      a.setAttribute("cy", "9");
+      a.setAttribute("rx", "6");
+      a.setAttribute("ry", "6");
+      o.appendChild(a);
       const l = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
       l.setAttribute("cx", "9");
       l.setAttribute("cy", "9");
       l.setAttribute("rx", "3");
       l.setAttribute("ry", "3");
-      a.appendChild(l);
-      n.appendChild(a);
+      o.appendChild(l);
+      n.appendChild(o);
       n.addEventListener("click", t => {
         t.preventDefault();
         t.stopPropagation();
         this.state.textBg = "rgba(255,255,255,0.55)";
         this.state.textBgBlur = true;
         if (!this.userSetTextColor) this.state.textColor = "#1d1d1f";
-        r.querySelectorAll(".c8g").forEach(t => t.classList.remove("customizer-active"));
+        r.querySelectorAll(".customizer-color-dot").forEach(t => t.classList.remove("customizer-active"));
         n.classList.add("customizer-active");
         this.ensureBlurScrubber();
         this.applyStyles();
@@ -876,7 +876,7 @@ class CustomizerPro {
   }
   syncTextColorDot() {
     const t = document.getElementById("customizer-text-colors");
-    t.querySelectorAll(".c8g").forEach(t => {
+    t.querySelectorAll(".customizer-color-dot").forEach(t => {
       let e = t.style.background.trim().toLowerCase();
       if (e.startsWith("rgb")) {
         const t = e.match(/\d+/g);
@@ -909,14 +909,14 @@ class CustomizerPro {
   setupNavigation() {
     const closeHandler = t => {
       const e = document.getElementById("customizer-panel");
-      const s = document.querySelector(".c8j");
+      const s = document.querySelector(".customizer-dock");
       if (!e || !s) return;
       if (e.contains(t.target) || s.contains(t.target)) {
         return;
       }
       if (e.classList.contains("active")) {
         try {
-          const t = s.querySelector(".c8r.active");
+          const t = s.querySelector(".customizer-nav-btn.active");
           if (t && !this.isAnimating) {
             this.toggleView(t);
           }
@@ -1053,7 +1053,7 @@ class CustomizerPro {
         this.updateFontUI();
         this.updateColorUI();
         this.updateScrubberUI();
-        document.querySelectorAll(".c8w").forEach(t => t.classList.remove("customizer-active"));
+        document.querySelectorAll(".customizer-preset-card").forEach(t => t.classList.remove("customizer-active"));
         i.classList.add("customizer-active");
       });
       e.appendChild(i);
@@ -1066,8 +1066,8 @@ class CustomizerPro {
     const i = this.validateNumber(this.state.size, 8, 200, 40);
     const r = this.validateNumber(this.state.spacing, -50, 50, 0);
     const n = this.validateColor(this.state.textColor, "#1d1d1f");
-    const a = this.validateColor(this.state.textBg, "transparent");
-    const o = this.validateNumber(this.state.radius, 0, 500, 20);
+    const o = this.validateColor(this.state.textBg, "transparent");
+    const a = this.validateNumber(this.state.radius, 0, 500, 20);
     const l = this.validateNumber(this.state.padding, 0, 100, 4);
     const c = this.validateNumber(this.state.textBgBlurStrength, 0, 50, 6);
     const u = this.validateNumber(this.state.textShadowSpread, 0, 10, 0);
@@ -1086,11 +1086,11 @@ class CustomizerPro {
         t.style.setProperty("letter-spacing", `${r}px`, "important");
         t.style.setProperty("color", n, "important");
         t.style.setProperty("text-shadow", d, "important");
-        if (this.state.textBgBlur || a !== "transparent") {
+        if (this.state.textBgBlur || o !== "transparent") {
           t.style.setProperty("display", "inline-block", "important");
           t.style.setProperty("white-space", "nowrap", "important");
           t.style.setProperty("box-sizing", "border-box", "important");
-          t.style.setProperty("border-radius", `${o}px`, "important");
+          t.style.setProperty("border-radius", `${a}px`, "important");
           t.style.setProperty("padding", `${l / 2}px ${l}px`, "important");
           if (this.state.textBgBlur) {
             t.style.setProperty("background-color", "rgba(255,255,255,0.55)", "important");
@@ -1099,7 +1099,7 @@ class CustomizerPro {
             t.style.setProperty("border", "1.5px solid #b3c6e0", "important");
             t.style.setProperty("box-shadow", "0 2px 24px rgba(120,160,220,0.18)", "important");
           } else {
-            t.style.setProperty("background-color", a, "important");
+            t.style.setProperty("background-color", o, "important");
             t.style.removeProperty("backdrop-filter");
             t.style.removeProperty("-webkit-backdrop-filter");
             t.style.removeProperty("border");
@@ -1140,14 +1140,14 @@ class CustomizerPro {
       this.currentElement.style.setProperty("-webkit-backdrop-filter", `blur(${c}px)`, "important");
       this.currentElement.style.setProperty("border", "1.5px solid #b3c6e0", "important");
       this.currentElement.style.setProperty("box-shadow", "0 2px 24px rgba(120,160,220,0.18)", "important");
-      this.currentElement.style.setProperty("border-radius", `${o}px`, "important");
+      this.currentElement.style.setProperty("border-radius", `${a}px`, "important");
       this.currentElement.style.setProperty("padding", `${l / 2}px ${l}px`, "important");
-    } else if (a !== "transparent") {
+    } else if (o !== "transparent") {
       this.currentElement.style.setProperty("display", "inline-block", "important");
       this.currentElement.style.setProperty("white-space", "nowrap", "important");
       this.currentElement.style.setProperty("box-sizing", "border-box", "important");
-      this.currentElement.style.setProperty("background-color", a, "important");
-      this.currentElement.style.setProperty("border-radius", `${o}px`, "important");
+      this.currentElement.style.setProperty("background-color", o, "important");
+      this.currentElement.style.setProperty("border-radius", `${a}px`, "important");
       this.currentElement.style.setProperty("padding", `${l / 2}px ${l}px`, "important");
     } else {
       this.currentElement.style.setProperty("background-color", "transparent", "important");

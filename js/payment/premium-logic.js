@@ -7,8 +7,8 @@ const subscriptionCache = {
 window.addEventListener("message", function(n) {
   if (n.origin !== window.location.origin) return;
   if (n.data && n.data.type === "PAYMENT_SUCCESS") {
-    const {plan: t} = n.data;
-    handlePaymentSuccessOnDashboard(t);
+    const {plan: e} = n.data;
+    handlePaymentSuccessOnDashboard(e);
   }
 });
 
@@ -25,18 +25,18 @@ async function handlePaymentSuccessOnDashboard(n) {
         }
       });
       if (n.ok) {
-        const t = await n.json();
-        if (!t || typeof t !== "object" || !t.subscription) {
+        const e = await n.json();
+        if (!e || typeof e !== "object" || !e.subscription) {
           throw new Error("Invalid subscription response");
         }
-        subscriptionCache.data = t.subscription;
+        subscriptionCache.data = e.subscription;
         subscriptionCache.timestamp = Date.now();
-        if (t.subscription && t.subscription.plan && typeof t.subscription.plan === "string") {
+        if (e.subscription && e.subscription.plan && typeof e.subscription.plan === "string") {
           const n = JSON.parse(localStorage.getItem("currentUser") || "{}");
-          n.plan = t.subscription.plan.toLowerCase();
+          n.plan = e.subscription.plan.toLowerCase();
           localStorage.setItem("currentUser", JSON.stringify(n));
         }
-        updateStorageDisplayOnDashboard(t.subscription);
+        updateStorageDisplayOnDashboard(e.subscription);
       } else {
         throw new Error(`HTTP ${n.status}`);
       }
@@ -50,12 +50,12 @@ async function handlePaymentSuccessOnDashboard(n) {
 
 function createConfettiEffect() {
   const n = [ "#FF9671", "#FFD4C4", "#FF7A50", "#FF6B9D", "#C44569", "#6DDCCF", "#4ECDC4", "#B8A9E5", "#FFD700", "#FF69B4", "#00CED1", "#FF4500" ];
-  const t = [ "circle", "square", "triangle" ];
-  const e = 100;
-  for (let o = 0; o < e; o++) {
-    const e = document.createElement("div");
-    e.className = "confetti-particle";
-    const o = t[Math.floor(Math.random() * t.length)];
+  const e = [ "circle", "square", "triangle" ];
+  const t = 100;
+  for (let o = 0; o < t; o++) {
+    const t = document.createElement("div");
+    t.className = "confetti-particle";
+    const o = e[Math.floor(Math.random() * e.length)];
     const a = n[Math.floor(Math.random() * n.length)];
     const i = Math.random() * 12 + 6;
     let r, s, d, c;
@@ -82,9 +82,9 @@ function createConfettiEffect() {
     } else if (o === "triangle") {
       p = `clip-path: polygon(50% 0%, 0% 100%, 100% 100%);`;
     }
-    e.style.cssText = `\n            position: fixed;\n            width: ${i}px;\n            height: ${i}px;\n            background-color: ${a};\n            ${p}\n            left: ${r}%;\n            top: ${s}%;\n            pointer-events: none;\n            z-index: 9999;\n            animation: confetti-explosion 2.5s ease-out forwards;\n            animation-delay: ${Math.random() * .5}s;\n            --end-left: ${d}%;\n            --end-top: ${c}%;\n        `;
-    document.body.appendChild(e);
-    setTimeout(() => e.remove(), 3e3);
+    t.style.cssText = `\n            position: fixed;\n            width: ${i}px;\n            height: ${i}px;\n            background-color: ${a};\n            ${p}\n            left: ${r}%;\n            top: ${s}%;\n            pointer-events: none;\n            z-index: 9999;\n            animation: confetti-explosion 2.5s ease-out forwards;\n            animation-delay: ${Math.random() * .5}s;\n            --end-left: ${d}%;\n            --end-top: ${c}%;\n        `;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 3e3);
   }
 }
 
@@ -93,21 +93,21 @@ function showPaymentSuccessModalOnDashboard(n) {
     console.warn("Invalid plan name for modal");
     n = "your plan";
   }
-  const t = document.getElementById("dashboard-payment-success-modal");
-  if (t) {
-    t.remove();
+  const e = document.getElementById("dashboard-payment-success-modal");
+  if (e) {
+    e.remove();
   }
-  const e = n.charAt(0).toUpperCase() + n.slice(1);
+  const t = n.charAt(0).toUpperCase() + n.slice(1);
   const o = document.createElement("div");
   o.id = "dashboard-payment-success-modal";
   o.style.cssText = `\n        position: fixed;\n        top: 0;\n        left: 0;\n        right: 0;\n        bottom: 0;\n        background: rgba(0, 0, 0, 0.85);\n        display: flex;\n        align-items: center;\n        justify-content: center;\n        z-index: 999999;\n        animation: fadeIn 0.3s ease;\n        backdrop-filter: blur(8px);\n    `;
-  o.innerHTML = `\n        <div style="\n            background: white;\n            border-radius: 24px;\n            padding: 60px 40px;\n            text-align: center;\n            max-width: 550px;\n            max-height: 90vh;\n            overflow-y: auto;\n            animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);\n        ">\n            <button style="\n                position: absolute;\n                top: 15px;\n                right: 15px;\n                z-index: 1000;\n                background: none;\n                border: none;\n                font-size: 1.5rem;\n                color: #718096;\n                cursor: pointer;\n            " onclick="document.getElementById('dashboard-payment-success-modal').remove();">\n                <i class="fas fa-times"></i>\n            </button>\n\n            <div style="\n                width: 100px;\n                height: 100px;\n                border-radius: 50%;\n                background: linear-gradient(135deg, #6DDCCF, #4ECDC4);\n                display: flex;\n                align-items: center;\n                justify-content: center;\n                margin: 0 auto 30px;\n                font-size: 3rem;\n                color: white;\n            ">\n                <i class="fas fa-check"></i>\n            </div>\n\n            <h2 style="\n                font-size: 2rem;\n                font-weight: 900;\n                color: #1A1A2E;\n                margin-bottom: 8px;\n            ">Thank You!</h2>\n\n            <p style="\n                font-size: 1rem;\n                color: #718096;\n                margin-bottom: 24px;\n            ">Your payment was successful</p>\n\n            <div style="\n                text-align: left;\n                padding: 24px;\n                background: #f7f7f7;\n                border-radius: 16px;\n                margin: 24px 0;\n            ">\n                <p style="font-size: 0.9rem; margin-bottom: 12px;">🎉 Congratulations!</p>\n                <p style="font-size: 1.1rem; font-weight: 800; margin-bottom: 8px;">You've upgraded to the</p>\n                <div style="font-size: 1.5rem; margin: 8px 0; font-weight: bold; color: #FF9671;">${e} Plan</div>\n\n                <div style="text-align: left; margin-top: 16px; padding-top: 16px; border-top: 2px solid rgba(255, 150, 113, 0.2);">\n                    <p style="font-size: 0.9rem; font-weight: 700; margin-bottom: 12px;">✨ What's Included:</p>\n                    <ul style="\n                        font-size: 0.85rem;\n                        line-height: 1.8;\n                        margin-left: 0;\n                        list-style: none;\n                        color: #2D3748;\n                    ">\n                        <li>✓ Priority access to new features</li>\n                        <li>✓ Enhanced video generation capabilities</li>\n                        <li>✓ Premium templates and customization</li>\n                        <li>✓ Advanced AI-powered hashtag generation</li>\n                        <li>✓ Priority customer support</li>\n                        <li>✓ Exclusive automation tools</li>\n                        <li>✓ Extended storage capacity</li>\n                    </ul>\n                </div>\n\n                <p style="\n                    font-size: 0.9rem;\n                    margin-top: 16px;\n                    padding-top: 16px;\n                    border-top: 2px solid rgba(255, 150, 113, 0.2);\n                    color: #718096;\n                ">\n                    💡 Your ${e} plan features are now active and ready to use!\n                </p>\n            </div>\n\n            <button onclick="document.getElementById('dashboard-payment-success-modal').remove();" style="\n                background: linear-gradient(135deg, #FF9671, #FF7A50);\n                color: white;\n                border: none;\n                padding: 14px 32px;\n                border-radius: 12px;\n                font-weight: 700;\n                font-size: 1rem;\n                cursor: pointer;\n                transition: all 0.3s ease;\n                margin-top: 24px;\n            " onmouseover="this.style.background = 'linear-gradient(135deg, #FF7A50, #FF5533)'" onmouseout="this.style.background = 'linear-gradient(135deg, #FF9671, #FF7A50)'">\n                Continue to Dashboard\n            </button>\n        </div>\n    `;
+  o.innerHTML = `\n        <div style="\n            background: white;\n            border-radius: 24px;\n            padding: 60px 40px;\n            text-align: center;\n            max-width: 550px;\n            max-height: 90vh;\n            overflow-y: auto;\n            animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);\n        ">\n            <button style="\n                position: absolute;\n                top: 15px;\n                right: 15px;\n                z-index: 1000;\n                background: none;\n                border: none;\n                font-size: 1.5rem;\n                color: #718096;\n                cursor: pointer;\n            " onclick="document.getElementById('dashboard-payment-success-modal').remove();">\n                <i class="fas fa-times"></i>\n            </button>\n\n            <div style="\n                width: 100px;\n                height: 100px;\n                border-radius: 50%;\n                background: linear-gradient(135deg, #6DDCCF, #4ECDC4);\n                display: flex;\n                align-items: center;\n                justify-content: center;\n                margin: 0 auto 30px;\n                font-size: 3rem;\n                color: white;\n            ">\n                <i class="fas fa-check"></i>\n            </div>\n\n            <h2 style="\n                font-size: 2rem;\n                font-weight: 900;\n                color: #1A1A2E;\n                margin-bottom: 8px;\n            ">Thank You!</h2>\n\n            <p style="\n                font-size: 1rem;\n                color: #718096;\n                margin-bottom: 24px;\n            ">Your payment was successful</p>\n\n            <div style="\n                text-align: left;\n                padding: 24px;\n                background: #f7f7f7;\n                border-radius: 16px;\n                margin: 24px 0;\n            ">\n                <p style="font-size: 0.9rem; margin-bottom: 12px;">🎉 Congratulations!</p>\n                <p style="font-size: 1.1rem; font-weight: 800; margin-bottom: 8px;">You've upgraded to the</p>\n                <div style="font-size: 1.5rem; margin: 8px 0; font-weight: bold; color: #FF9671;">${t} Plan</div>\n\n                <div style="text-align: left; margin-top: 16px; padding-top: 16px; border-top: 2px solid rgba(255, 150, 113, 0.2);">\n                    <p style="font-size: 0.9rem; font-weight: 700; margin-bottom: 12px;">✨ What's Included:</p>\n                    <ul style="\n                        font-size: 0.85rem;\n                        line-height: 1.8;\n                        margin-left: 0;\n                        list-style: none;\n                        color: #2D3748;\n                    ">\n                        <li>✓ Priority access to new features</li>\n                        <li>✓ Enhanced video generation capabilities</li>\n                        <li>✓ Premium templates and customization</li>\n                        <li>✓ Advanced AI-powered hashtag generation</li>\n                        <li>✓ Priority customer support</li>\n                        <li>✓ Exclusive automation tools</li>\n                        <li>✓ Extended storage capacity</li>\n                    </ul>\n                </div>\n\n                <p style="\n                    font-size: 0.9rem;\n                    margin-top: 16px;\n                    padding-top: 16px;\n                    border-top: 2px solid rgba(255, 150, 113, 0.2);\n                    color: #718096;\n                ">\n                    💡 Your ${t} plan features are now active and ready to use!\n                </p>\n            </div>\n\n            <button onclick="document.getElementById('dashboard-payment-success-modal').remove();" style="\n                background: linear-gradient(135deg, #FF9671, #FF7A50);\n                color: white;\n                border: none;\n                padding: 14px 32px;\n                border-radius: 12px;\n                font-weight: 700;\n                font-size: 1rem;\n                cursor: pointer;\n                transition: all 0.3s ease;\n                margin-top: 24px;\n            " onmouseover="this.style.background = 'linear-gradient(135deg, #FF7A50, #FF5533)'" onmouseout="this.style.background = 'linear-gradient(135deg, #FF9671, #FF7A50)'">\n                Continue to Dashboard\n            </button>\n        </div>\n    `;
   document.body.appendChild(o);
 }
 
 function updateStorageDisplayOnDashboard(n) {
   if (!n) return;
-  const t = {
+  const e = {
     free: {
       videosStorage: 2,
       storage: "2GB",
@@ -133,22 +133,22 @@ function updateStorageDisplayOnDashboard(n) {
       videosPerDay: 10
     }
   };
-  const e = n.plan || "free";
-  const o = t[e] || t.free;
-  const a = document.getElementById("i23k");
-  const i = document.getElementById("i23j");
-  const r = document.getElementById("i23i");
+  const t = n.plan || "free";
+  const o = e[t] || e.free;
+  const a = document.getElementById("storageUsedBadge");
+  const i = document.getElementById("storageTotalBadge");
+  const r = document.getElementById("storagePlanBadge");
   let s = 0;
   if (window.clipsStudio && window.clipsStudio.libraryItems) {
     s = window.clipsStudio.libraryItems.length;
   }
   const d = n.video_limit || o.videosStorage;
-  const c = n.plan_name || e.charAt(0).toUpperCase() + e.slice(1);
+  const c = n.plan_name || t.charAt(0).toUpperCase() + t.slice(1);
   if (typeof window.applyStorageBadgeUI === "function") {
     window.applyStorageBadgeUI({
       used: s,
       limit: d,
-      plan: e
+      plan: t
     });
   } else {
     if (a) a.textContent = s;
@@ -173,13 +173,13 @@ async function refreshUserSubscriptionInfo() {
       }
     });
     if (n.ok) {
-      const t = await n.json();
-      if (t && t.subscription && typeof t.subscription.plan === "string") {
+      const e = await n.json();
+      if (e && e.subscription && typeof e.subscription.plan === "string") {
         const n = JSON.parse(localStorage.getItem("currentUser") || "{}");
-        n.plan = t.subscription.plan;
+        n.plan = e.subscription.plan;
         localStorage.setItem("currentUser", JSON.stringify(n));
       }
-      return t.subscription;
+      return e.subscription;
     }
   } catch (n) {
     console.error("Error refreshing subscription:", n);

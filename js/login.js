@@ -58,8 +58,8 @@ async function initializeCSRFToken() {
 
 async function setupLoginPage() {
   await waitForInitialization();
-  googleLoginBtn = document.getElementById("i1wl");
-  googleBtnText = document.getElementById("i1wk");
+  googleLoginBtn = document.getElementById("googleLoginBtn");
+  googleBtnText = document.getElementById("googleBtnText");
   if (isPostLogoutLanding()) {
     finishLogoutLanding();
     if (googleLoginBtn && googleBtnText) {

@@ -236,7 +236,7 @@ class YouTubeAnalyticsManager {
     }
   }
   showNotification(e, t = "info") {
-    const o = document.getElementById("i1y0");
+    const o = document.getElementById("notificationContainer");
     if (!o) {
       return;
     }

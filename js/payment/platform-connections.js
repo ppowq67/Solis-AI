@@ -142,9 +142,9 @@ document.addEventListener("DOMContentLoaded", function() {
       console.error("Invalid platform name");
       return;
     }
-    const t = document.getElementById("i1qw");
-    const n = document.getElementById("i1px");
-    const s = document.getElementById("i1qx");
+    const t = document.getElementById("disconnectConfirmationModal");
+    const n = document.getElementById("confirmDisconnectBtn");
+    const s = document.getElementById("disconnectConfirmationText");
     const c = e.replace(/[<>"']/g, "");
     s.textContent = `Are you sure you want to disconnect ${c}?`;
     t.classList.add("show");
@@ -178,7 +178,7 @@ document.addEventListener("DOMContentLoaded", function() {
   }
   if (e) {
     e.addEventListener("click", e => {
-      const t = e.target.closest(".ca0");
+      const t = e.target.closest(".disconnect-btn");
       const n = e.target.closest(".platform-connection-item");
       if (t) {
         disconnectPlatform(t.dataset.platform);
@@ -195,8 +195,8 @@ document.addEventListener("DOMContentLoaded", function() {
     c.addEventListener("click", function(e) {
       e.preventDefault();
       e.stopPropagation();
-      const t = document.getElementById("i259");
-      const n = document.getElementById("i258");
+      const t = document.getElementById("userMenuPanel");
+      const n = document.getElementById("userMenuBackdrop");
       if (t) {
         t.classList.remove("active");
       }
@@ -229,7 +229,7 @@ document.addEventListener("DOMContentLoaded", function() {
   if (a) {
     a.addEventListener("click", () => {
       const e = document.getElementById("processingList");
-      const t = e.querySelectorAll(".cwv:not(.processing)");
+      const t = e.querySelectorAll(".processing-item:not(.processing)");
       if (t.length === 0) {
         alert("No completed or failed items to delete.");
         return;
@@ -238,7 +238,7 @@ document.addEventListener("DOMContentLoaded", function() {
         t.forEach(e => {
           e.remove();
         });
-        const n = e.querySelectorAll(".cwv");
+        const n = e.querySelectorAll(".processing-item");
         const o = document.getElementById("emptyProcessingState");
         if (n.length === 0 && o) {
           o.style.display = "block";
@@ -250,7 +250,7 @@ document.addEventListener("DOMContentLoaded", function() {
   const l = document.getElementById("emptyProcessingState");
   if (r && l) {
     const e = new MutationObserver(() => {
-      const e = r.querySelector(".cwv");
+      const e = r.querySelector(".processing-item");
       l.style.display = e ? "none" : "flex";
     });
     e.observe(r, {

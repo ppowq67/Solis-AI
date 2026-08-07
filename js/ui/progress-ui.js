@@ -38,8 +38,8 @@ class ProcessingProgressUI {
   updateProgress(e, t, s = "") {
     const n = this.taskElements.get(e);
     if (n) {
-      const e = n.querySelector(".cy3");
-      const r = n.querySelector(".c151");
+      const e = n.querySelector(".progress-bar");
+      const r = n.querySelector(".status-text");
       const o = n.querySelector(".status-step");
       if (e) {
         e.style.width = `${t}%`;
@@ -55,8 +55,8 @@ class ProcessingProgressUI {
   markComplete(e) {
     const t = this.taskElements.get(e);
     if (t) {
-      const s = t.querySelector(".cy3");
-      const n = t.querySelector(".c151");
+      const s = t.querySelector(".progress-bar");
+      const n = t.querySelector(".status-text");
       const r = t.querySelector(".status-step");
       if (s) {
         s.classList.add("complete");
@@ -75,7 +75,7 @@ class ProcessingProgressUI {
   markError(e, t = "Error occurred") {
     const s = this.taskElements.get(e);
     if (s) {
-      const n = s.querySelector(".cy3");
+      const n = s.querySelector(".progress-bar");
       const r = s.querySelector(".status-step");
       if (n) {
         n.classList.add("error");

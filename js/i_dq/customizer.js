@@ -16,7 +16,7 @@ class FloatingCustomizeBar {
     this.createPanel();
     this.attachClickListeners();
     this.isClosing = false;
-    const e = document.getElementById("i24g");
+    const e = document.getElementById("templateVideoPreview");
     if (e) {
       this.ensureCustomizationBaselines(e);
       const t = new MutationObserver(() => {
@@ -34,7 +34,7 @@ class FloatingCustomizeBar {
       const t = document.getElementById("pill");
       if (!t) return;
       if (t.contains(e.target)) return;
-      const n = document.getElementById("i24g");
+      const n = document.getElementById("templateVideoPreview");
       if (n && n.contains(e.target)) return;
       this.isClosing = true;
       this.hidePanel();
@@ -61,13 +61,13 @@ class FloatingCustomizeBar {
       undo: document.getElementById("undoTrigger"),
       redo: document.getElementById("redoTrigger")
     };
-    const s = {
+    const i = {
       text: document.getElementById("textView")
     };
-    const i = document.getElementById("colorIndicator");
+    const s = document.getElementById("colorIndicator");
     const o = document.getElementById("labelFont");
-    const l = document.getElementById("hexVal");
-    const a = document.getElementById("hexPicker");
+    const a = document.getElementById("hexVal");
+    const l = document.getElementById("hexPicker");
     const r = [ "#0f172a", "#ff6b00", "#3b82f6", "#10b981", "#ef4444", "#8b5cf6", "#f59e0b", "#6366f1" ];
     let c = null;
     const d = document.getElementById("colorGrid");
@@ -83,9 +83,9 @@ class FloatingCustomizeBar {
             value: t
           });
         });
-        l.textContent = t.toUpperCase();
-        i.style.background = t;
-        a.value = t;
+        a.textContent = t.toUpperCase();
+        s.style.background = t;
+        l.value = t;
       });
       d.appendChild(n);
     });
@@ -95,23 +95,23 @@ class FloatingCustomizeBar {
         return;
       }
       Object.keys(n).forEach(e => n[e].classList.remove("active"));
-      Object.keys(s).forEach(e => {
-        s[e].classList.remove("visible");
-        s[e].style.display = "none";
+      Object.keys(i).forEach(e => {
+        i[e].classList.remove("visible");
+        i[e].style.display = "none";
       });
       c = e;
       n[e].classList.add("active");
-      s[e].classList.add("visible");
-      s[e].style.display = "flex";
+      i[e].classList.add("visible");
+      i[e].style.display = "flex";
       t.style.display = "flex";
-      t.classList.add("ci8");
+      t.classList.add("is-expanded");
       t.classList.remove("slide-in");
       t.classList.remove("gameplay-mode");
       if (e === "text" && this.currentElement) {
         const e = window.getComputedStyle(this.currentElement);
         const t = e.fontFamily;
         const n = this.currentElement.textContent || "Sample Text";
-        const s = {
+        const i = {
           fontWeight: e.fontWeight,
           fontSize: e.fontSize,
           textShadow: e.textShadow,
@@ -136,15 +136,15 @@ class FloatingCustomizeBar {
           const t = document.getElementById(e.id);
           if (t) {
             t.textContent = n;
-            Object.keys(s).forEach(e => {
-              t.style[e] = s[e];
+            Object.keys(i).forEach(e => {
+              t.style[e] = i[e];
             });
           }
         });
-        document.querySelectorAll("#fontPreviewContainer .cps").forEach(e => {
+        document.querySelectorAll("#fontPreviewContainer .option-item").forEach(e => {
           const n = e.dataset.val.replace(/['"]/g, "");
-          const s = t.replace(/['"]/g, "").split(",")[0].trim();
-          if (s.includes(n) || t.includes(n)) {
+          const i = t.replace(/['"]/g, "").split(",")[0].trim();
+          if (i.includes(n) || t.includes(n)) {
             e.classList.add("selected");
           } else {
             e.classList.remove("selected");
@@ -154,7 +154,7 @@ class FloatingCustomizeBar {
     };
     const closePill = () => {
       c = null;
-      t.classList.remove("ci8", "slide-in", "gameplay-mode");
+      t.classList.remove("is-expanded", "slide-in", "gameplay-mode");
       t.style.position = "fixed";
       t.style.bottom = "24px";
       t.style.right = "24px";
@@ -163,9 +163,9 @@ class FloatingCustomizeBar {
       t.style.transform = "";
       t.style.display = "none";
       Object.keys(n).forEach(e => n[e].classList.remove("active"));
-      Object.keys(s).forEach(e => {
-        s[e].classList.remove("visible");
-        s[e].style.display = "none";
+      Object.keys(i).forEach(e => {
+        i[e].classList.remove("visible");
+        i[e].style.display = "none";
       });
     };
     window.closePill = closePill;
@@ -208,21 +208,21 @@ class FloatingCustomizeBar {
       m.onclick = async t => {
         t.stopPropagation();
         const n = m.querySelector("span");
-        const s = n ? n.textContent : "";
+        const i = n ? n.textContent : "";
         try {
           if (n) n.textContent = "Saving...";
           m.disabled = true;
           await e.saveCustomizations("ranking_moments");
           if (n) n.textContent = "✓ Saved";
           setTimeout(() => {
-            if (n) n.textContent = s;
+            if (n) n.textContent = i;
             m.disabled = false;
           }, 2e3);
         } catch (e) {
           if (n) n.textContent = "✗ Failed";
           console.error("[Customizer] Save failed:", e);
           setTimeout(() => {
-            if (n) n.textContent = s;
+            if (n) n.textContent = i;
             m.disabled = false;
           }, 2e3);
         }
@@ -237,25 +237,25 @@ class FloatingCustomizeBar {
     };
     if (u) {
       u.addEventListener("click", t => {
-        const n = t.target.closest(".cps");
+        const n = t.target.closest(".option-item");
         if (!n) return;
         t.stopPropagation();
         t.preventDefault();
-        const s = n.dataset.val;
+        const i = n.dataset.val;
         if (!e.selectedElements || e.selectedElements.length === 0) {
           console.warn("[Font] No selected elements!");
           return;
         }
-        const i = p[s] || `'${s}', sans-serif`;
+        const s = p[i] || `'${i}', sans-serif`;
         e.selectedElements.forEach(t => {
           e.trackChange("font", {
             oldValue: t.style.fontFamily
           });
-          t.style.setProperty("font-family", i, "important");
+          t.style.setProperty("font-family", s, "important");
         });
-        document.getElementById("labelFont").textContent = s;
+        document.getElementById("labelFont").textContent = i;
         e.updateLivePreview();
-        u.querySelectorAll(".cps").forEach(e => e.classList.remove("selected"));
+        u.querySelectorAll(".option-item").forEach(e => e.classList.remove("selected"));
         n.classList.add("selected");
       }, false);
     }
@@ -273,16 +273,16 @@ class FloatingCustomizeBar {
         });
       });
     }
-    a.addEventListener("input", t => {
+    l.addEventListener("input", t => {
       t.stopPropagation();
       const n = t.target.value;
       e.selectedElements.forEach(e => {
         e.style.setProperty("color", n, "important");
       });
-      i.style.background = n;
-      l.textContent = n.toUpperCase();
+      s.style.background = n;
+      a.textContent = n.toUpperCase();
     });
-    a.addEventListener("change", t => {
+    l.addEventListener("change", t => {
       t.stopPropagation();
       e.selectedElements.forEach(n => {
         n.style.setProperty("color", t.target.value, "important");
@@ -294,7 +294,7 @@ class FloatingCustomizeBar {
     const y = document.getElementById("colorGrid");
     if (y) {
       y.addEventListener("click", t => {
-        if (t.target.classList.contains("c1ec")) {
+        if (t.target.classList.contains("swatch")) {
           t.stopPropagation();
           t.preventDefault();
           const n = window.getComputedStyle(t.target).backgroundColor;
@@ -304,16 +304,16 @@ class FloatingCustomizeBar {
             });
             t.style.setProperty("color", n, "important");
           });
-          l.textContent = n.toUpperCase();
-          i.style.background = n;
-          a.value = n;
+          a.textContent = n.toUpperCase();
+          s.style.background = n;
+          l.value = n;
         }
       });
     }
   }
   showPanel(e) {
-    const t = document.getElementById("i24g");
-    if (t?.querySelector(".cyr") || e?.closest?.(".ranking-preview-container")) {
+    const t = document.getElementById("templateVideoPreview");
+    if (t?.querySelector(".ranking-preview-container") || e?.closest?.(".ranking-preview-container")) {
       return;
     }
     this.clearSelection();
@@ -326,8 +326,8 @@ class FloatingCustomizeBar {
     this.currentElement = e;
     this.selectedElements = [ e ];
     const n = document.getElementById("textInput");
-    const s = document.getElementById("textView");
-    if (s) s.style.display = "flex";
+    const i = document.getElementById("textView");
+    if (i) i.style.display = "flex";
     if (n) {
       n.value = e.textContent || "";
       const t = window.getComputedStyle(e);
@@ -346,7 +346,7 @@ class FloatingCustomizeBar {
     this.panel.style.top = "auto";
     this.panel.style.left = "auto";
     this.panel.style.display = "flex";
-    this.panel.classList.add("ci8");
+    this.panel.classList.add("is-expanded");
     this.updateLivePreview();
     e.style.borderRadius = "12px";
     e.style.boxShadow = "0 0 0 2px #ff6b3d";
@@ -356,7 +356,7 @@ class FloatingCustomizeBar {
   hidePanel() {
     if (this.panel) {
       this.panel.style.display = "none";
-      this.panel.classList.remove("ci8");
+      this.panel.classList.remove("is-expanded");
     }
     if (this.currentElement) {
       this.currentElement.style.boxShadow = "";
@@ -372,7 +372,7 @@ class FloatingCustomizeBar {
     const e = window.getComputedStyle(this.currentElement);
     const t = e.fontFamily;
     const n = this.currentElement.textContent || "Sample Text";
-    const s = {
+    const i = {
       fontWeight: e.fontWeight,
       fontSize: e.fontSize,
       textShadow: e.textShadow,
@@ -398,13 +398,13 @@ class FloatingCustomizeBar {
       if (t) {
         t.textContent = n;
         t.style.fontFamily = e.font;
-        Object.keys(s).forEach(e => {
-          t.style[e] = s[e];
+        Object.keys(i).forEach(e => {
+          t.style[e] = i[e];
         });
       }
     });
-    const i = document.getElementById("fontPreviewContainer");
-    if (i) {
+    const s = document.getElementById("fontPreviewContainer");
+    if (s) {
       const e = {
         "Plus Jakarta Sans": "Plus Jakarta Sans",
         "Playfair Display": "Playfair Display",
@@ -412,32 +412,32 @@ class FloatingCustomizeBar {
         "Luckiest Guy": "Luckiest Guy"
       };
       let n = false;
-      i.querySelectorAll(".cps").forEach(s => {
-        const i = s.dataset.val;
+      s.querySelectorAll(".option-item").forEach(i => {
+        const s = i.dataset.val;
         const o = t.replace(/['"]/g, "").split(",")[0].trim();
-        if (i === o || t.includes(i)) {
-          s.classList.add("selected");
-          document.getElementById("labelFont").textContent = e[i] || i;
+        if (s === o || t.includes(s)) {
+          i.classList.add("selected");
+          document.getElementById("labelFont").textContent = e[s] || s;
           n = true;
         } else {
-          s.classList.remove("selected");
+          i.classList.remove("selected");
         }
       });
       if (!n) {
         document.getElementById("labelFont").textContent = "Custom";
-        i.querySelectorAll(".cps").forEach(e => e.classList.remove("selected"));
+        s.querySelectorAll(".option-item").forEach(e => e.classList.remove("selected"));
       }
     }
     const o = document.getElementById("textInput");
     if (o) {
       o.style.fontFamily = e.fontFamily;
-      o.style.fontWeight = s.fontWeight;
-      o.style.fontSize = s.fontSize;
-      o.style.textShadow = s.textShadow;
-      o.style.letterSpacing = s.letterSpacing;
-      o.style.lineHeight = s.lineHeight;
-      o.style.textTransform = s.textTransform;
-      o.style.color = s.color;
+      o.style.fontWeight = i.fontWeight;
+      o.style.fontSize = i.fontSize;
+      o.style.textShadow = i.textShadow;
+      o.style.letterSpacing = i.letterSpacing;
+      o.style.lineHeight = i.lineHeight;
+      o.style.textTransform = i.textTransform;
+      o.style.color = i.color;
     }
   }
   isNumberedItem(e) {
@@ -556,9 +556,9 @@ class FloatingCustomizeBar {
       if (e) e.value = this.currentElement.textContent || "";
       const t = document.getElementById("colorIndicator");
       const n = document.getElementById("hexVal");
-      const s = window.getComputedStyle(this.currentElement).color || "#0f172a";
-      if (t) t.style.background = s;
-      if (n) n.textContent = this.rgbToHex(s).toUpperCase();
+      const i = window.getComputedStyle(this.currentElement).color || "#0f172a";
+      if (t) t.style.background = i;
+      if (n) n.textContent = this.rgbToHex(i).toUpperCase();
     }
   }
   rgbToHex(e) {
@@ -568,7 +568,7 @@ class FloatingCustomizeBar {
     return `#${parseInt(t[1]).toString(16).padStart(2, "0")}${parseInt(t[2]).toString(16).padStart(2, "0")}${parseInt(t[3]).toString(16).padStart(2, "0")}`;
   }
   attachClickListeners() {
-    const e = document.getElementById("i24g");
+    const e = document.getElementById("templateVideoPreview");
     if (!e) {
       setTimeout(() => this.attachClickListeners(), 1e3);
       return;
@@ -579,15 +579,15 @@ class FloatingCustomizeBar {
       const t = [ ".title", ".ranking-list", ".ranked-item", ".funniest", ".text-stroke", '[class*="rank-"]' ];
       if (t.some(t => e.querySelector(t))) return;
       const n = document.createTreeWalker(e, NodeFilter.SHOW_TEXT, null, false);
-      const s = [];
-      let i;
-      while (i = n.nextNode()) {
-        if (i.textContent.trim().length > 0 && i.parentElement !== e) {
-          if (i.parentElement.className && (i.parentElement.className.includes("funniest") || i.parentElement.className.includes("text-stroke") || i.parentElement.className && !i.parentElement.className.includes("text-node-wrapper"))) continue;
-          s.push(i);
+      const i = [];
+      let s;
+      while (s = n.nextNode()) {
+        if (s.textContent.trim().length > 0 && s.parentElement !== e) {
+          if (s.parentElement.className && (s.parentElement.className.includes("funniest") || s.parentElement.className.includes("text-stroke") || s.parentElement.className && !s.parentElement.className.includes("text-node-wrapper"))) continue;
+          i.push(s);
         }
       }
-      s.reverse().forEach(e => {
+      i.reverse().forEach(e => {
         if (e.parentElement.tagName === "SPAN" && e.parentElement.className) return;
         const t = document.createElement("span");
         t.className = "text-node-wrapper";
@@ -597,34 +597,34 @@ class FloatingCustomizeBar {
     };
     wrapTextNodes(e);
     e.addEventListener("mouseup", t => {
-      if (t.target.closest(".c13z")) return;
+      if (t.target.closest(".solis-watermark")) return;
       if (t.target.closest('[data-no-text-select="true"]')) return;
-      if (e.querySelector(".cyr") || t.target.closest(".cyr")) {
+      if (e.querySelector(".ranking-preview-container") || t.target.closest(".ranking-preview-container")) {
         return;
       }
       const n = t.shiftKey;
-      let s = t.target;
-      if (s && s !== e && !s.closest(".c13z")) {
-        if (s.textContent?.trim() && s.textContent.trim().length < 200) {
+      let i = t.target;
+      if (i && i !== e && !i.closest(".solis-watermark")) {
+        if (i.textContent?.trim() && i.textContent.trim().length < 200) {
           t.stopPropagation();
           if (n && this.currentElement) {
-            this.addToSelection(s);
+            this.addToSelection(i);
           } else {
-            this.showPanel(s);
+            this.showPanel(i);
           }
           return;
         }
       }
-      const i = window.getSelection();
-      const o = i.toString().trim();
+      const s = window.getSelection();
+      const o = s.toString().trim();
       if (o && o.length > 0) {
-        let s = i.getRangeAt(0);
-        let o = s.commonAncestorContainer;
+        let i = s.getRangeAt(0);
+        let o = i.commonAncestorContainer;
         if (o.nodeType === Node.TEXT_NODE) o = o.parentElement;
         while (o && !o.textContent?.trim() && o !== e) {
           o = o.parentElement;
         }
-        if (o && o !== e && !o.closest(".c13z")) {
+        if (o && o !== e && !o.closest(".solis-watermark")) {
           t.stopPropagation();
           if (n && this.currentElement) {
             this.addToSelection(o);
@@ -636,7 +636,7 @@ class FloatingCustomizeBar {
     }, true);
     e.addEventListener("mouseover", t => {
       const n = t.target;
-      if (n && n !== e && !n.closest(".c13z")) {
+      if (n && n !== e && !n.closest(".solis-watermark")) {
         if (n.textContent?.trim() && n.textContent.trim().length < 200) {
           n.style.cursor = "pointer";
           if (!n.style.background || n.style.background === "") {
@@ -660,9 +660,9 @@ class FloatingCustomizeBar {
     }
     return t || "";
   }
-  ensureCustomizationBaselines(e = document.getElementById("i24g")) {
+  ensureCustomizationBaselines(e = document.getElementById("templateVideoPreview")) {
     if (!e) return;
-    e.querySelectorAll("[data-template-element-id], .c1fs, [data-element-id]").forEach(e => {
+    e.querySelectorAll("[data-template-element-id], .text-node-wrapper, [data-element-id]").forEach(e => {
       if (!this.getElementCustomizationId(e)) return;
       if (e.dataset.customizerBaseText === undefined) {
         e.dataset.customizerBaseText = (e.textContent || "").trim();
@@ -691,39 +691,39 @@ class FloatingCustomizeBar {
   }
   collectCustomizations() {
     const e = JSON.parse(JSON.stringify(window.currentCustomizations?.customizations || {}));
-    const t = document.getElementById("i24g");
+    const t = document.getElementById("templateVideoPreview");
     if (!t) return e;
     this.ensureCustomizationBaselines(t);
-    t.querySelectorAll("[data-template-element-id], .c1fs, [data-element-id]").forEach(t => {
+    t.querySelectorAll("[data-template-element-id], .text-node-wrapper, [data-element-id]").forEach(t => {
       const n = this.getElementCustomizationId(t);
       if (!n) return;
-      const s = window.getComputedStyle(t);
-      const i = e[n] ? {
+      const i = window.getComputedStyle(t);
+      const s = e[n] ? {
         ...e[n]
       } : {};
       const o = t.textContent?.trim();
-      const l = t.dataset.customizerBaseText || "";
-      if (o && o.length > 0 && o.length < 500 && !o.includes("[") && !o.includes("]") && o !== l) {
-        i.content = o;
+      const a = t.dataset.customizerBaseText || "";
+      if (o && o.length > 0 && o.length < 500 && !o.includes("[") && !o.includes("]") && o !== a) {
+        s.content = o;
       } else {
-        delete i.content;
+        delete s.content;
       }
-      const a = t.dataset.customizerBaseColor || "";
-      if (s.color && s.color !== a) {
-        const e = this.colorToRgbaArray(s.color);
-        if (e) i.color = e;
+      const l = t.dataset.customizerBaseColor || "";
+      if (i.color && i.color !== l) {
+        const e = this.colorToRgbaArray(i.color);
+        if (e) s.color = e;
       } else {
-        delete i.color;
+        delete s.color;
       }
-      const r = (s.fontFamily || "").replace(/['"]/g, "").split(",")[0].trim();
+      const r = (i.fontFamily || "").replace(/['"]/g, "").split(",")[0].trim();
       const c = t.dataset.customizerBaseFont || "";
       if (r && r !== c) {
-        i.font = r;
+        s.font = r;
       } else {
-        delete i.font;
+        delete s.font;
       }
-      if (Object.keys(i).length > 0) {
-        e[n] = i;
+      if (Object.keys(s).length > 0) {
+        e[n] = s;
       } else {
         delete e[n];
       }
@@ -737,12 +737,12 @@ class FloatingCustomizeBar {
         message: "No customizations to save"
       };
       const n = window.API_BASE_URL || "https://api.solisai.video/api";
-      const s = getAuthHeaders();
-      const i = await fetch(`${n}/clips/apply-customizations`, {
+      const i = getAuthHeaders();
+      const s = await fetch(`${n}/clips/apply-customizations`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          ...s
+          ...i
         },
         credentials: "include",
         body: JSON.stringify({
@@ -750,11 +750,11 @@ class FloatingCustomizeBar {
           customizations: t
         })
       });
-      if (!i.ok) {
-        const e = await i.json();
-        throw new Error(e.error || `HTTP ${i.status}: Failed to save customizations`);
+      if (!s.ok) {
+        const e = await s.json();
+        throw new Error(e.error || `HTTP ${s.status}: Failed to save customizations`);
       }
-      const o = await i.json();
+      const o = await s.json();
       window.currentCustomizations = {
         template_id: e,
         customizations: t,
@@ -772,21 +772,21 @@ class FloatingCustomizeBar {
     try {
       const t = window.API_BASE_URL || "https://api.solisai.video/api";
       const n = getAuthHeaders();
-      const s = await fetch(`${t}/clips/get-customizations/${e}`, {
+      const i = await fetch(`${t}/clips/get-customizations/${e}`, {
         method: "GET",
         headers: n,
         credentials: "include"
       });
-      if (!s.ok) return null;
-      const i = await s.json();
-      if (!i.has_customizations) return null;
+      if (!i.ok) return null;
+      const s = await i.json();
+      if (!s.has_customizations) return null;
       window.currentCustomizations = {
         template_id: e,
-        customizations: i.customizations,
+        customizations: s.customizations,
         timestamp: Date.now(),
-        saved_at: i.saved_at
+        saved_at: s.saved_at
       };
-      return i.customizations;
+      return s.customizations;
     } catch (e) {
       console.error("[Customizer] Error loading customizations:", e);
       return null;
@@ -817,24 +817,24 @@ const customizer = (() => {
       console.error("[Gameplay Panel] Pill container not found");
       return;
     }
-    if (n.classList.contains("ci8")) {
+    if (n.classList.contains("is-expanded")) {
       return;
     }
-    const s = 20;
-    const i = 450;
+    const i = 20;
+    const s = 450;
     const o = 150;
-    let l = e + s;
-    let a = t - o / 2;
-    if (l + i > window.innerWidth) l = e - i - s;
-    a = Math.max(20, Math.min(a, window.innerHeight - o - 20));
+    let a = e + i;
+    let l = t - o / 2;
+    if (a + s > window.innerWidth) a = e - s - i;
+    l = Math.max(20, Math.min(l, window.innerHeight - o - 20));
     n.classList.remove("gameplay-mode");
     n.style.position = "fixed";
     n.style.bottom = "auto";
     n.style.right = "auto";
-    n.style.top = a + "px";
-    n.style.left = l + "px";
+    n.style.top = l + "px";
+    n.style.left = a + "px";
     n.style.transform = "none";
-    const r = n.querySelector(".cqi");
+    const r = n.querySelector(".pill-actions");
     if (r) r.style.display = "none";
     n.style.display = "flex";
     let c = document.getElementById("gameplayView");
@@ -848,14 +848,14 @@ const customizer = (() => {
       c.id = "gameplayView";
       c.className = "view";
       c.style.cssText = "display: flex; flex-direction: column; width: 100%; gap: 0;";
-      const e = n.querySelector(".c7f");
+      const e = n.querySelector(".content-inner");
       if (e) e.appendChild(c);
       c.innerHTML = `\n                <style>\n                    @keyframes loadingSpinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }\n                    .gameplay-loading { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); border-radius: 8px; opacity: 0; pointer-events: none; transition: opacity 0.2s; }\n                    .gameplay-loading.active { opacity: 1; }\n                    .gameplay-spinner { width: 20px; height: 20px; border: 2px solid rgba(255,107,0,0.3); border-top-color: #ff6b00; border-radius: 50%; animation: loadingSpinner 0.6s linear infinite; }\n                </style>\n                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%;">\n                    ${availableGameplayClips.slice(0, 4).map(e => `\n                        <div data-clip-id="${e.id}" class="gameplay-card-option"\n                             style="position: relative; width: 100%; aspect-ratio: 1; border-radius: 8px; overflow: hidden; cursor: pointer; border: 2px solid #e2e8f0; transition: all 0.3s; ${selectedGameplayClip === e.id ? "border-color: #ff6b00; box-shadow: 0 4px 12px rgba(255,107,0,0.2);" : ""}">\n                            <video style="width: 100%; height: 100%; object-fit: cover; display: block;" muted loop playsinline autoplay>\n                                <source src="/assets/${e.filename}" type="video/mp4">\n                            </video>\n                            <div class="gameplay-loading"><div class="gameplay-spinner"></div></div>\n                        </div>\n                    `).join("")}\n                </div>\n            `;
       c.querySelectorAll(".gameplay-card-option").forEach(e => {
         e.addEventListener("click", t => {
           t.stopPropagation();
           const n = e.dataset.clipId;
-          const s = availableGameplayClips.find(e => e.id === n);
+          const i = availableGameplayClips.find(e => e.id === n);
           selectGameplayClip(n);
           c.querySelectorAll(".gameplay-card-option").forEach(e => {
             e.style.borderColor = "#e2e8f0";
@@ -863,17 +863,17 @@ const customizer = (() => {
           });
           e.style.borderColor = "#ff6b00";
           e.style.boxShadow = "0 4px 12px rgba(255,107,0,0.2)";
-          const i = e.querySelector(".gameplay-loading");
-          if (i) i.classList.add("active");
+          const s = e.querySelector(".gameplay-loading");
+          if (s) s.classList.add("active");
           setTimeout(() => {
-            const e = document.getElementById("i20v");
-            if (e && s) {
+            const e = document.getElementById("splitscreenGameplayVideo");
+            if (e && i) {
               const t = e.querySelector("source");
-              if (t) t.src = `/assets/${s.filename}`; else e.src = `/assets/${s.filename}`;
+              if (t) t.src = `/assets/${i.filename}`; else e.src = `/assets/${i.filename}`;
               e.load();
               e.play().catch(() => {});
             }
-            if (i) i.classList.remove("active");
+            if (s) s.classList.remove("active");
           }, 300);
         });
       });
@@ -885,7 +885,7 @@ const customizer = (() => {
     });
     c.classList.add("visible");
     c.style.display = "flex";
-    n.classList.add("ci8", "slide-in", "gameplay-mode");
+    n.classList.add("is-expanded", "slide-in", "gameplay-mode");
     if (window.gameplayClickOutsideHandler) {
       document.removeEventListener("click", window.gameplayClickOutsideHandler);
       window.gameplayClickOutsideHandler = null;
@@ -911,13 +911,13 @@ const customizer = (() => {
       e = null;
     }
     const n = createCustomizer();
-    const s = document.getElementById("pill");
-    if (s) {
-      s.style.position = "fixed";
-      s.style.bottom = "24px";
-      s.style.right = "24px";
-      s.style.top = "auto";
-      s.style.left = "auto";
+    const i = document.getElementById("pill");
+    if (i) {
+      i.style.position = "fixed";
+      i.style.bottom = "24px";
+      i.style.right = "24px";
+      i.style.top = "auto";
+      i.style.left = "auto";
     }
     return n;
   };

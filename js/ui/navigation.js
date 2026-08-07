@@ -1,10 +1,10 @@
 function initNavigation() {
-  const t = document.querySelectorAll(".cmo[data-target]");
-  const e = document.getElementById("i1qm");
-  const i = document.getElementById("i1z1");
-  const n = document.getElementById("i1pl");
-  const o = document.getElementById("i1q8");
-  const s = document.querySelector(".ci4");
+  const t = document.querySelectorAll(".nav-item[data-target]");
+  const e = document.getElementById("dashboardContainer");
+  const i = document.getElementById("portalContainer");
+  const n = document.getElementById("clipsContainer");
+  const o = document.getElementById("customEditorContainer");
+  const s = document.querySelector(".input-section");
   function hideAll() {
     if (e) {
       e.style.display = "none";
@@ -32,13 +32,13 @@ function initNavigation() {
     });
   }
   hideAll();
-  const c = localStorage.getItem("currentNavigationTarget");
-  if (c === "dashboard") {
+  const a = localStorage.getItem("currentNavigationTarget");
+  if (a === "dashboard") {
     localStorage.removeItem("currentNavigationTarget");
   }
-  const a = c && c !== "dashboard" && [ "portal", "Portal", "clips", "custom" ].includes(c) ? c : null;
+  const c = a && a !== "dashboard" && [ "portal", "Portal", "clips", "custom" ].includes(a) ? a : null;
   const l = window.innerWidth <= 768;
-  let d = a || (l ? "clips" : "Portal");
+  let d = c || (l ? "clips" : "Portal");
   if (l && (d === "Portal" || d === "portal")) {
     d = "clips";
   }
@@ -66,19 +66,19 @@ function initNavigation() {
   }
   if (s) {
     s.style.cssText = "display: none !important; position: absolute !important; visibility: hidden !important; z-index: -10000 !important; pointer-events: none !important;";
-    s.classList.remove("ci9");
+    s.classList.remove("is-first-prompt");
   }
   t.forEach(t => {
-    t.addEventListener("click", c => {
-      c.preventDefault();
+    t.addEventListener("click", a => {
+      a.preventDefault();
       if (t.classList.contains("disabled")) return;
-      const a = t.getAttribute("data-target") || "";
-      const l = String(a).toLowerCase();
-      updateActiveNav(a);
+      const c = t.getAttribute("data-target") || "";
+      const l = String(c).toLowerCase();
+      updateActiveNav(c);
       hideAll();
       if (s) {
         s.style.cssText = "display: none !important; position: absolute !important; visibility: hidden !important; z-index: -10000 !important; pointer-events: none !important;";
-        s.classList.remove("ci9");
+        s.classList.remove("is-first-prompt");
       }
       if (l === "dashboard") {
         localStorage.setItem("currentNavigationTarget", "dashboard");
@@ -95,8 +95,8 @@ function initNavigation() {
           s.style.display = "none";
           try {
             if (typeof window.dockInputInstantly === "function") window.dockInputInstantly(true);
-          } catch (c) {
-            console.error("Error docking input:", c);
+          } catch (a) {
+            console.error("Error docking input:", a);
           }
         }
       } else if (l === "portal") {
@@ -107,11 +107,11 @@ function initNavigation() {
         }
         if (s) {
           s.style.cssText = "display: none !important; position: absolute !important; visibility: hidden !important; z-index: -10000 !important; pointer-events: none !important;";
-          s.classList.remove("ci9");
+          s.classList.remove("is-first-prompt");
           try {
             if (typeof window.dockInputInstantly === "function") window.dockInputInstantly(true);
-          } catch (c) {
-            console.error("Error docking input:", c);
+          } catch (a) {
+            console.error("Error docking input:", a);
           }
         }
       } else if (l === "clips" || l === "clips-studio" || l === "clipscontainer") {
@@ -125,11 +125,11 @@ function initNavigation() {
         }
         if (s) {
           s.style.cssText = "display: none !important; position: absolute !important; visibility: hidden !important; z-index: -10000 !important; pointer-events: none !important;";
-          s.classList.remove("ci9");
+          s.classList.remove("is-first-prompt");
           try {
             if (typeof window.dockInputInstantly === "function") window.dockInputInstantly(true);
-          } catch (c) {
-            console.error("Error docking input:", c);
+          } catch (a) {
+            console.error("Error docking input:", a);
           }
         }
       } else if (l === "custom-edit" || l === "custom") {
@@ -140,11 +140,11 @@ function initNavigation() {
         }
         if (s) {
           s.style.cssText = "display: none !important; position: absolute !important; visibility: hidden !important; z-index: -10000 !important; pointer-events: none !important;";
-          s.classList.remove("ci9");
+          s.classList.remove("is-first-prompt");
           try {
             if (typeof window.dockInputInstantly === "function") window.dockInputInstantly(true);
-          } catch (c) {
-            console.error("Error docking input:", c);
+          } catch (a) {
+            console.error("Error docking input:", a);
           }
         }
       }
@@ -160,9 +160,9 @@ function initNavigation() {
       if (e) e.classList.toggle("open");
       if (i) i.classList.toggle("rotated");
       if (!e || !e.contains(t.target)) {
-        const e = document.getElementById("i1pl");
-        const i = document.querySelector(".ci4");
-        document.querySelectorAll(".c9f, .ctz").forEach(t => {
+        const e = document.getElementById("clipsContainer");
+        const i = document.querySelector(".input-section");
+        document.querySelectorAll(".dashboard-container, .portal-container").forEach(t => {
           t.style.display = "none";
           t.classList.remove("active");
         });
@@ -185,15 +185,15 @@ function initNavigation() {
       }
     });
   }
-  const p = document.querySelectorAll(".clips-submenu .cmo");
+  const p = document.querySelectorAll(".clips-submenu .nav-item");
   p.forEach(t => {
     t.addEventListener("click", function(t) {
       t.preventDefault();
       const e = this.getAttribute("data-target");
       if (e === "clips-studio") {
-        const e = document.getElementById("i1pl");
-        const i = document.querySelector(".ci4");
-        document.querySelectorAll(".c9f, .ctz").forEach(t => {
+        const e = document.getElementById("clipsContainer");
+        const i = document.querySelector(".input-section");
+        document.querySelectorAll(".dashboard-container, .portal-container").forEach(t => {
           t.style.display = "none";
           t.classList.remove("active");
         });
@@ -233,10 +233,10 @@ function initNavigation() {
   if (u) {
     u.addEventListener("click", function(t) {
       t.preventDefault();
-      const e = document.getElementById("i1z1");
-      const i = document.getElementById("i1qm");
-      const n = document.getElementById("i1pl");
-      const o = document.querySelector(".ci4");
+      const e = document.getElementById("portalContainer");
+      const i = document.getElementById("dashboardContainer");
+      const n = document.getElementById("clipsContainer");
+      const o = document.querySelector(".input-section");
       if (i) {
         i.style.display = "none";
         i.classList.remove("active");

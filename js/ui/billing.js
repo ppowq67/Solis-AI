@@ -46,7 +46,7 @@ class BillingPanel {
       alert("❌ Error: Billing panel not initialized. Please refresh the page.");
       return;
     }
-    const e = document.getElementById("i20a");
+    const e = document.getElementById("profileDropdown");
     if (e && e.classList.contains("open")) {
       e.classList.remove("open");
     }

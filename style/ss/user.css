@@ -1,8 +1,8 @@
-.c1ka:hover {
+.user-profile:hover {
     background-color: rgba(255, 255, 255, 0.05);
 }
 
-.c1jq {
+.user-info {
     opacity: 0;
     margin-left: 0;
     width: 0;
@@ -10,26 +10,26 @@
     transition: all 0.4s ease;
 }
 
-.sidebar.expanded .c1jq {
+.sidebar.expanded .user-info {
     opacity: 1;
     margin-left: 12px;
     width: auto;
 }
 
-.c1k9 {
+.user-name {
     font-size: 14px;
     font-weight: 500;
     white-space: nowrap;
     color: #111827;
 }
 
-.c1jp {
+.user-email {
     font-size: 12px;
     color: #6B7280;
     white-space: nowrap;
 }
 
-.c1ki {
+.user-settings-btn {
     background: none;
     border: none;
     color: #6B7280;
@@ -47,7 +47,7 @@
     visibility: hidden;
 }
 
-.c1jr {
+.user-menu {
     position: absolute;
     bottom: 80px;
     left: 16px;
@@ -66,13 +66,13 @@
     z-index: 1000;
 }
 
-.c1jr.active {
+.user-menu.active {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
 }
 
-.c1jx {
+.user-menu-item {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -83,7 +83,7 @@
     color: #6B7280;
 }
 
-.c1jx:hover {
+.user-menu-item:hover {
     background-color: rgba(255, 107, 53, 0.2);
     color: #111827;
     transform: translateX(2px);

@@ -15,11 +15,11 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
 }
 
-.ckg .core {
+.lumen-icon .core {
     transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-.cmo.active .ckg .core {
+.nav-item.active .lumen-icon .core {
     fill: var(--accent);
     filter: drop-shadow(0 0 12px var(--accent));
 }

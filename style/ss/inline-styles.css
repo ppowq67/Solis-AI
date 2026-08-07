@@ -3,7 +3,7 @@ i.fas {
     display: inline-block;
 }
 
-.cbr {
+.empty-state {
     display: flex;
     flex-direction: column;
     justify-content: center;

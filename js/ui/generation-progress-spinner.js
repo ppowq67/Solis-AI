@@ -66,16 +66,16 @@ const ACTIVE_GENERATION_STATUSES = new Set([ "queued", "downloading", "processin
 
 class GenerationProgressSpinner {
   constructor() {
-    this.wrapper = document.getElementById("i1wf");
-    this.launcher = document.getElementById("i1wb");
-    this.progressCircle = document.getElementById("i20c");
-    this.progressText = document.getElementById("i1wd");
-    this.progressCheck = document.getElementById("i1wc");
-    this.progressTooltip = document.getElementById("i1we");
-    this.todoPanel = document.getElementById("i1wi");
-    this.todoList = document.getElementById("i1wh");
-    this.taskCounter = document.getElementById("i1wg");
-    this.errorBanner = document.getElementById("i1wa");
+    this.wrapper = document.getElementById("generationProgressWrapper");
+    this.launcher = document.getElementById("generationLauncher");
+    this.progressCircle = document.getElementById("progressCircle");
+    this.progressText = document.getElementById("generationProgressText");
+    this.progressCheck = document.getElementById("generationProgressCheck");
+    this.progressTooltip = document.getElementById("generationProgressTooltip");
+    this.todoPanel = document.getElementById("generationTodoPanel");
+    this.todoList = document.getElementById("generationTodoList");
+    this.taskCounter = document.getElementById("generationTaskCounter");
+    this.errorBanner = document.getElementById("generationErrorBanner");
     this.activeGenerations = new Map;
     this._projectAliases = new Map;
     this.generatingCount = 0;
@@ -121,16 +121,16 @@ class GenerationProgressSpinner {
     this._scheduleServerSync();
   }
   _ensureDomRefs() {
-    if (!this.wrapper) this.wrapper = document.getElementById("i1wf");
-    if (!this.launcher) this.launcher = document.getElementById("i1wb");
-    if (!this.progressCircle) this.progressCircle = document.getElementById("i20c");
-    if (!this.progressText) this.progressText = document.getElementById("i1wd");
-    if (!this.progressCheck) this.progressCheck = document.getElementById("i1wc");
-    if (!this.progressTooltip) this.progressTooltip = document.getElementById("i1we");
-    if (!this.todoPanel) this.todoPanel = document.getElementById("i1wi");
-    if (!this.todoList) this.todoList = document.getElementById("i1wh");
-    if (!this.taskCounter) this.taskCounter = document.getElementById("i1wg");
-    if (!this.errorBanner) this.errorBanner = document.getElementById("i1wa");
+    if (!this.wrapper) this.wrapper = document.getElementById("generationProgressWrapper");
+    if (!this.launcher) this.launcher = document.getElementById("generationLauncher");
+    if (!this.progressCircle) this.progressCircle = document.getElementById("progressCircle");
+    if (!this.progressText) this.progressText = document.getElementById("generationProgressText");
+    if (!this.progressCheck) this.progressCheck = document.getElementById("generationProgressCheck");
+    if (!this.progressTooltip) this.progressTooltip = document.getElementById("generationProgressTooltip");
+    if (!this.todoPanel) this.todoPanel = document.getElementById("generationTodoPanel");
+    if (!this.todoList) this.todoList = document.getElementById("generationTodoList");
+    if (!this.taskCounter) this.taskCounter = document.getElementById("generationTaskCounter");
+    if (!this.errorBanner) this.errorBanner = document.getElementById("generationErrorBanner");
   }
   _restoreFromLocalStorageImmediate() {
     try {
@@ -443,7 +443,7 @@ class GenerationProgressSpinner {
   }
   _resetTaskVisibility() {
     if (!this.todoList) return;
-    this.todoList.querySelectorAll(".cez").forEach(e => {
+    this.todoList.querySelectorAll(".generation-todo-item").forEach(e => {
       e.classList.remove("is-revealed", "is-instant");
       e.style.removeProperty("--reveal-delay");
     });
@@ -466,7 +466,7 @@ class GenerationProgressSpinner {
     if (!this.todoPanel || !this.launcher) return;
     this._ensureTaskList();
     this.launcher.classList.add("is-panel-open");
-    this.todoPanel.classList.add("cid");
+    this.todoPanel.classList.add("is-open");
     this.panelOpen = true;
     requestAnimationFrame(() => {
       if (!this.tasksIntroPlayed) {
@@ -480,7 +480,7 @@ class GenerationProgressSpinner {
     if (!this.todoPanel || !this.launcher) return;
     this._clearIntroRevealTimers();
     this.launcher.classList.remove("is-panel-open");
-    this.todoPanel.classList.remove("cid");
+    this.todoPanel.classList.remove("is-open");
     this.panelOpen = false;
   }
   _isQueueWaitingMessage(e = "") {
@@ -510,8 +510,8 @@ class GenerationProgressSpinner {
     const i = s.findIndex(e => e.id === "wait");
     if (i < 0) return;
     const r = document.getElementById(`generation-task-${i}`);
-    const n = r?.querySelector(".ces");
-    const a = r?.querySelector(".ceq");
+    const n = r?.querySelector(".generation-task-label");
+    const a = r?.querySelector(".generation-task-hint");
     if (!n) return;
     if (this._isQueueWaitingMessage(e) || t?.queue_status === "waiting") {
       const {label: s, hint: i} = this._queueLabelForInfo(e, t);
@@ -578,13 +578,13 @@ class GenerationProgressSpinner {
     i.forEach((t, s) => {
       const i = document.getElementById(`generation-task-${s}`);
       if (!i) return;
-      i.classList.remove("ci6", "is-done", "is-failed", "is-waiting");
+      i.classList.remove("is-active", "is-done", "is-failed", "is-waiting");
       if (e >= 100) {
         i.classList.add("is-done");
       } else if (s < n) {
         i.classList.add("is-done");
       } else if (s === n) {
-        i.classList.add("ci6");
+        i.classList.add("is-active");
         if (r) i.classList.add("is-waiting");
       }
     });
@@ -609,7 +609,7 @@ class GenerationProgressSpinner {
     const e = Math.max(0, this.currentTaskIndex);
     const t = document.getElementById(`generation-task-${e}`);
     if (t) {
-      t.classList.remove("ci6", "is-done");
+      t.classList.remove("is-active", "is-done");
       t.classList.add("is-failed");
       if (!t.classList.contains("is-revealed")) {
         t.classList.add("is-revealed", "is-instant");
@@ -663,7 +663,7 @@ class GenerationProgressSpinner {
   showLibraryBadge() {
     const e = document.querySelector('[data-tab="library"]');
     if (!e) return;
-    e.querySelector(".cj3")?.remove();
+    e.querySelector(".library-notification-badge")?.remove();
     const t = document.createElement("div");
     t.className = "library-notification-badge";
     e.style.position = "relative";
@@ -673,7 +673,7 @@ class GenerationProgressSpinner {
     document.querySelector('[data-tab="library"] .library-notification-badge')?.remove();
   }
   showVideoReadyNotification() {
-    document.querySelector(".c1l5")?.remove();
+    document.querySelector(".video-ready-notification")?.remove();
     const e = document.createElement("div");
     e.className = "video-ready-notification";
     e.innerHTML = 'Your video is ready to go! <span class="video-ready-badge">OFFICIAL</span>';
@@ -850,7 +850,7 @@ class GenerationProgressSpinner {
     this.removeFromLocalStorage(e);
   }
   _unlockUrlSubmitButton() {
-    const e = document.getElementById("i205");
+    const e = document.getElementById("processUrlBtn");
     if (e) {
       e.disabled = false;
       e.style.opacity = "1";
@@ -861,7 +861,7 @@ class GenerationProgressSpinner {
     }
     sessionStorage.removeItem("urlButtonLocked");
     sessionStorage.removeItem("urlButtonLockeduntil");
-    const t = document.getElementById("i1pz");
+    const t = document.getElementById("confirmUseTemplateBtn");
     if (t) {
       t.disabled = false;
       t.style.pointerEvents = "";
@@ -1149,7 +1149,7 @@ class GenerationProgressSpinner {
     return i.includes("building split") || i.includes("build split") || i.includes("compil") || i.includes("encoding final") || i.includes("export") || i.includes("finaliz") || i.includes("watermark") || i.includes("adding caption") || i.includes("assembling");
   }
   _syncCancelLockOnSubmitButton(e, t) {
-    const s = document.getElementById("i205");
+    const s = document.getElementById("processUrlBtn");
     if (!s || !s.classList.contains("is-generating")) return;
     const i = this._isCancelLockedStage(e, t);
     s.classList.toggle("is-cancel-locked", i);
@@ -1578,7 +1578,7 @@ window.getGenerationProgressSpinner = getGenerationProgressSpinner;
 window.initGenerationProgressSpinner = initGenerationProgressSpinner;
 
 function bootGenerationProgressSpinner() {
-  if (document.getElementById("i1wf")) {
+  if (document.getElementById("generationProgressWrapper")) {
     initGenerationProgressSpinner();
   }
 }

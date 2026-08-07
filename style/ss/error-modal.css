@@ -1,16 +1,16 @@
-.c1kn {
-    border-top: 4px solid #i1mm;
+.video-error-modal {
+    border-top: 4px solid #FF6B6B;
 }
 
-.c1ko {
-    background: linear-gradient(135deg, #i1nf 0%, #i1na 100%) !important;
-    border-bottom: 3px solid #i1mm !important;
+.video-error-top {
+    background: linear-gradient(135deg, #FFE5E5 0%, #FFD4D4 100%) !important;
+    border-bottom: 3px solid #FF6B6B !important;
 }
 
-.cca {
+.error-icon-large {
     width: 64px;
     height: 64px;
-    background: #i1mm;
+    background: #FF6B6B;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -19,7 +19,7 @@
     animation: shake 0.5s ease-in-out;
 }
 
-.cca svg {
+.error-icon-large svg {
     width: 32px;
     height: 32px;
     stroke: white;
@@ -32,37 +32,37 @@
     75% { transform: translateX(5px); }
 }
 
-.cce {
-    color: #i1mm !important;
+.error-title {
+    color: #FF6B6B !important;
 }
 
-.ccc {
-    color: #i1lo !important;
+.error-subtitle {
+    color: #C92A2A !important;
 }
 
-.cc4 {
+.error-bottom {
     padding: 32px 40px !important;
     display: flex !important;
     flex-direction: column !important;
     gap: 24px !important;
 }
 
-.cc8 {
+.error-details {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
     padding: 20px;
-    background: #i1m8;
+    background: #F8F9FA;
     border-radius: 12px;
 }
 
-.cc7 {
+.error-detail-item {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
-.c9w {
+.detail-label {
     font-size: 0.85rem;
     font-weight: 700;
     color: #718096;
@@ -70,94 +70,94 @@
     letter-spacing: 0.5px;
 }
 
-.c9x {
+.detail-value {
     font-size: 1.4rem;
     font-weight: 900;
     font-family: 'Courier New', monospace;
 }
 
-.ccg {
-    color: #i1mm;
+.error-value {
+    color: #FF6B6B;
 }
 
-.c1e4 {
+.success-value {
     color: #4ECDC4;
 }
 
-.c1i5 {
-    background: linear-gradient(135deg, #i1nm 0%, #i1ne 100%);
-    border: 2px solid #i1mv;
+.upgrade-plan-card {
+    background: linear-gradient(135deg, #FFF5F2 0%, #FFE5DC 100%);
+    border: 2px solid #FF9671;
     border-radius: 12px;
     padding: 24px;
 }
 
-.cs2 {
+.plan-header {
     margin-bottom: 20px;
 }
 
-.cth {
+.plan-title {
     font-size: 1.1rem;
     font-weight: 800;
     color: #1A1A2E;
     margin-bottom: 4px;
 }
 
-.ctf {
+.plan-subtext {
     font-size: 0.9rem;
     color: #718096;
     font-weight: 500;
 }
 
-.cs5 {
+.plan-list {
     display: flex;
     flex-direction: column;
     gap: 10px;
     margin-bottom: 20px;
 }
 
-.cs4 {
+.plan-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 12px 16px;
     background: white;
-    border: 1px solid #i1lv;
+    border: 1px solid #E2E8F0;
     border-radius: 8px;
     transition: all 0.3s ease;
 }
 
-.cs4:hover {
-    border-color: #i1mn;
-    background: #i1nm;
+.plan-item:hover {
+    border-color: #FF7A50;
+    background: #FFF5F2;
 }
 
-.cs4.highlight {
-    border-color: #i1mn;
-    background: #i1nm;
+.plan-item.highlight {
+    border-color: #FF7A50;
+    background: #FFF5F2;
     box-shadow: 0 4px 12px rgba(255, 122, 80, 0.2);
 }
 
-.cs7 {
+.plan-name {
     font-weight: 700;
     color: #1A1A2E;
 }
 
-.cr4 {
+.plan-duration {
     font-weight: 800;
-    color: #i1mn;
+    color: #FF7A50;
     font-family: 'Courier New', monospace;
 }
 
-.c1i4 {
+.upgrade-now-btn {
     width: 100%;
     margin: 0;
 }
 
-.caw {
+.duration-error-message {
     margin-top: 16px;
     padding: 16px 20px;
-    background: linear-gradient(135deg, #i1nf 0%, #i1na 100%);
-    border: 2px solid #i1mm;
+    background: linear-gradient(135deg, #FFE5E5 0%, #FFD4D4 100%);
+    border: 2px solid #FF6B6B;
     border-radius: 12px;
     animation: slideDown 0.3s ease-out;
 }
@@ -173,16 +173,16 @@
     }
 }
 
-.cc5 {
+.error-content {
     display: flex;
     align-items: center;
     gap: 16px;
 }
 
-.cc9 {
+.error-icon {
     width: 40px;
     height: 40px;
-    background: #i1mm;
+    background: #FF6B6B;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -191,7 +191,7 @@
     animation: pulse-error 2s infinite;
 }
 
-.cc9 i {
+.error-icon i {
     color: white;
     font-size: 20px;
 }
@@ -208,27 +208,27 @@
     }
 }
 
-.ccd {
+.error-text {
     flex: 1;
 }
 
-.cce {
+.error-title {
     font-size: 0.95rem;
     font-weight: 800;
-    color: #i1mm;
+    color: #FF6B6B;
     margin: 0 0 4px 0;
 }
 
-.cc6 {
+.error-desc {
     font-size: 0.85rem;
-    color: #i1lo;
+    color: #C92A2A;
     margin: 0;
     font-weight: 600;
 }
 
-.ccf {
+.error-upgrade-btn {
     padding: 10px 18px;
-    background: linear-gradient(135deg, #i1mv, #i1mn);
+    background: linear-gradient(135deg, #FF9671, #FF7A50);
     color: white;
     border: none;
     border-radius: 8px;
@@ -242,27 +242,27 @@
     flex-shrink: 0;
 }
 
-.ccf:hover {
+.error-upgrade-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 16px rgba(255, 122, 80, 0.4);
-    background: linear-gradient(135deg, #i1mn, #i1mi);
+    background: linear-gradient(135deg, #FF7A50, #FF5533);
 }
 
-.ccf:active {
+.error-upgrade-btn:active {
     transform: translateY(0);
 }
 
-.ccf i {
+.error-upgrade-btn i {
     font-size: 0.8rem;
 }
 
 @media (max-width: 600px) {
-    .cc5 {
+    .error-content {
         flex-direction: column;
         gap: 12px;
     }
 
-    .ccf {
+    .error-upgrade-btn {
         width: 100%;
         justify-content: center;
     }

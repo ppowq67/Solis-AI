@@ -5,12 +5,12 @@ Auto-staged from the SolisAI monorepo via `python scripts/push_frontend.py`.
 - Site: **https://solisai.video** (repo: https://github.com/ppowq67/solisai)
 - API: **https://api.solisai.video**
 - Mild JS obfuscation (readable structure; locals renamed)
-- CSS/HTML class + id names mangled (`c0` / `i0`…) across CSS, markup, and DOM JS
-- `_review/` (name-map + source-maps) generated locally — **gitignored, never pushed**
+- CSS/HTML comment scrub (class/id rename is opt-in via `--mangle-dom` — off by default)
+- `_review/` (source-maps) generated locally — **gitignored, never pushed**
 - `admin/` excluded
 
 ## Deploy
 Vercel (or any static host) from this repo root. `_review/` must not be published.
 API CORS / cookies must allow `https://solisai.video`.
 
-Generated: 2026-08-06T20:58:54.581878+00:00
+Generated: 2026-08-07T05:06:46.150376+00:00

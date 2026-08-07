@@ -1,4 +1,4 @@
-.c2m {
+.billing-backdrop {
     position: fixed;
     top: 0;
     left: 0;
@@ -13,12 +13,12 @@
     -webkit-backdrop-filter: blur(6px);
 }
 
-.c2m.open {
+.billing-backdrop.open {
     opacity: 1;
     visibility: visible;
 }
 
-.c2v {
+.billing-panel {
     position: fixed;
     top: 0;
     right: -420px;
@@ -37,11 +37,11 @@
     pointer-events: auto;
 }
 
-.c2v.open {
+.billing-panel.open {
     right: 0;
 }
 
-.c2p {
+.billing-header {
     padding: 32px 32px 24px;
     display: flex;
     align-items: center;
@@ -53,7 +53,7 @@
     flex-shrink: 0;
 }
 
-.c30 {
+.billing-title {
     font-size: 24px;
     font-weight: 700;
     letter-spacing: -0.5px;
@@ -61,7 +61,7 @@
     margin: 0;
 }
 
-.c6j {
+.close-billing {
     background: rgba(255, 255, 255, 0.5);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -78,29 +78,29 @@
         inset 0 1px 0 rgba(255,255,255,0.9);
 }
 
-.c6j:hover {
+.close-billing:hover {
     background: rgba(255, 122, 80, 0.15);
     border-color: rgba(255, 122, 80, 0.3);
-    color: #i1ul;
+    color: #ff7a50;
     box-shadow:
         0 2px 8px rgba(255, 122, 80, 0.15),
         inset 0 1px 0 rgba(255,255,255,0.9);
 }
 
-.c6j:active { transform: scale(0.94); }
+.close-billing:active { transform: scale(0.94); }
 
-.c2n {
+.billing-content {
     flex: 1;
     overflow-y: auto;
     padding: 24px 0;
 }
 
-.c2w {
+.billing-section {
     padding: 0 32px;
     margin-bottom: 24px;
 }
 
-.c2x {
+.billing-section-title {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -112,14 +112,14 @@
     letter-spacing: 0.5px;
 }
 
-.c2x svg {
+.billing-section-title svg {
     width: 20px;
     height: 20px;
-    color: #i1ul;
+    color: #ff7a50;
     opacity: 0.8;
 }
 
-.c2q {
+.billing-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -131,12 +131,12 @@
     transition: all 0.2s ease;
 }
 
-.c2q:hover {
+.billing-item:hover {
     background: rgba(255, 255, 255, 0.8);
     border-color: rgba(255, 180, 100, 0.4);
 }
 
-.c2r {
+.billing-item-label {
     font-size: 13px;
     font-weight: 600;
     color: #64748b;
@@ -144,13 +144,13 @@
     letter-spacing: 0.3px;
 }
 
-.c2s {
+.billing-item-value {
     font-size: 14px;
     font-weight: 700;
     color: #1a1a1a;
 }
 
-.c14n {
+.status-badge {
     display: inline-block;
     padding: 4px 12px;
     background: linear-gradient(135deg, #10b981, #059669);
@@ -162,27 +162,27 @@
     letter-spacing: 0.3px;
 }
 
-.c14n.inactive {
-    background: linear-gradient(135deg, #i1sb, #i1qp);
+.status-badge.inactive {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
 }
 
-.c14n.active {
+.status-badge.active {
     background: linear-gradient(135deg, #10b981, #059669);
 }
 
-.c2o {
+.billing-divider {
     height: 1px;
     background: linear-gradient(90deg, transparent, rgba(255, 200, 124, 0.3), transparent);
     margin: 24px 32px;
 }
 
-.c2l {
+.billing-actions {
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
 
-.c2k {
+.billing-action-btn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -198,38 +198,38 @@
     letter-spacing: 0.3px;
 }
 
-.c2k.c1hj {
-    background: linear-gradient(135deg, #i1ul, #i1ug);
+.billing-action-btn.upgrade-btn {
+    background: linear-gradient(135deg, #ff7a50, #ff6b3d);
     color: white;
     box-shadow: 0 4px 12px rgba(255, 122, 80, 0.2);
 }
 
-.c2k.c1hj:hover {
+.billing-action-btn.upgrade-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(255, 122, 80, 0.3);
 }
 
-.c2k.c1hj:active {
+.billing-action-btn.upgrade-btn:active {
     transform: translateY(0);
 }
 
-.c2k.c41 {
+.billing-action-btn.cancel-btn {
     background: rgba(239, 68, 68, 0.1);
-    color: #i1sb;
+    color: #ef4444;
     border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
-.c2k.c41:hover {
+.billing-action-btn.cancel-btn:hover {
     background: rgba(239, 68, 68, 0.2);
     border-color: rgba(239, 68, 68, 0.5);
     transform: translateY(-2px);
 }
 
-.c2k.c41:active {
+.billing-action-btn.cancel-btn:active {
     transform: translateY(0);
 }
 
-.c2u {
+.billing-notice {
     padding: 12px 16px;
     background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 152, 0, 0.1));
     border: 1px solid rgba(255, 180, 100, 0.3);
@@ -237,53 +237,53 @@
     margin-top: 12px;
 }
 
-.c2u p {
+.billing-notice p {
     margin: 0;
     font-size: 13px;
     color: #666;
     line-height: 1.4;
 }
 
-.c2n::-webkit-scrollbar {
+.billing-content::-webkit-scrollbar {
     width: 8px;
 }
 
-.c2n::-webkit-scrollbar-track {
+.billing-content::-webkit-scrollbar-track {
     background: transparent;
 }
 
-.c2n::-webkit-scrollbar-thumb {
+.billing-content::-webkit-scrollbar-thumb {
     background: rgba(255, 122, 80, 0.4);
     border-radius: 4px;
 }
 
-.c2n::-webkit-scrollbar-thumb:hover {
+.billing-content::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 122, 80, 0.6);
 }
 
 @media (max-width: 768px) {
-    .c2v {
+    .billing-panel {
         width: 100%;
         right: -100%;
     }
 
-    .c2v.open {
+    .billing-panel.open {
         right: 0;
     }
 
-    .c2p {
+    .billing-header {
         padding: 24px 24px 16px;
     }
 
-    .c2w {
+    .billing-section {
         padding: 0 24px;
     }
 
-    .c2o {
+    .billing-divider {
         margin: 20px 24px;
     }
 
-    .c30 {
+    .billing-title {
         font-size: 20px;
     }
 }

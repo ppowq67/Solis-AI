@@ -1,4 +1,4 @@
-.cmp.premium-badge {
+.nav-item-text.premium-badge {
     font-size: 0.7rem;
     font-weight: 600;
     color: var(--text-primary);
@@ -13,7 +13,7 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.cmo.tokens {
+.nav-item.tokens {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -30,12 +30,12 @@
     font-family: "Inter", sans-serif;
 }
 
-.cmo.tokens i {
+.nav-item.tokens i {
     color: var(--accent-light);
     font-size: 1rem;
 }
 
-.cmp.token-count {
+.nav-item-text.token-count {
     font-weight: 700;
     background-color: var(--accent-light);
     color: var(--bg-primary);
@@ -45,22 +45,22 @@
     letter-spacing: 0.5px;
 }
 
-.cum {
+.premium-modal {
     display: none;
 }
-.cum.open {
+.premium-modal.open {
     display: block;
     position: fixed;
     inset: 0;
     z-index: 1200;
 }
-.cun {
+.premium-modal__backdrop {
     position: fixed;
     inset: 0;
     background: rgba(17, 24, 39, 0.6);
     backdrop-filter: blur(4px);
 }
-.cup {
+.premium-modal__dialog {
     position: fixed;
     left: 50%;
     top: 50%;
@@ -78,7 +78,7 @@
     backdrop-filter: blur(40px) saturate(200%);
     border: 1px solid rgba(255, 255, 255, 0.6);
 }
-.cuo {
+.premium-modal__close {
     position: absolute;
     right: 14px;
     top: 10px;
@@ -88,7 +88,7 @@
     cursor: pointer;
     color: var(--text-dark, #111827);
 }
-.cul {
+.premium-container {
     background: transparent;
     padding: 8px 0 0 0;
 }
@@ -99,15 +99,15 @@
 }
 
 @media (max-width: 600px) {
-    .cup {
+    .premium-modal__dialog {
         width: 96vw;
         padding: 14px;
         border-radius: 10px;
         max-height: 90vh;
     }
-    .cuo { right: 8px; top: 8px; }
+    .premium-modal__close { right: 8px; top: 8px; }
 }
 
-.cll {
+.modal-open {
     overflow: hidden !important;
 }

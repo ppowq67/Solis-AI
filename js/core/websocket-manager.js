@@ -1,3 +1,18 @@
+function getSolisSocketOrigin() {
+  try {
+    const e = window.location && window.location.hostname || "";
+    if (e === "localhost" || e === "127.0.0.1") {
+      return window.location.origin;
+    }
+    const t = (window.API_BASE_URL || window.API_BASE || "https://api.solisai.video/api").toString();
+    return t.replace(/\/api\/?$/, "") || "https://api.solisai.video";
+  } catch (e) {
+    return "https://api.solisai.video";
+  }
+}
+
+window.getSolisSocketOrigin = getSolisSocketOrigin;
+
 class WebSocketManager {
   constructor() {
     this.socket = null;
@@ -39,14 +54,17 @@ class WebSocketManager {
       console.warn("[WebSocketManager] Cannot initialize Socket.IO in non-HTTP context");
       return;
     }
-    this.socket = io(window.location.origin, {
+    const e = getSolisSocketOrigin();
+    this.socket = io(e, {
       reconnection: true,
       reconnectionDelay: this.reconnectConfig.initialDelay,
       reconnectionDelayMax: this.reconnectConfig.maxDelay,
       reconnectionAttempts: this.maxReconnectAttempts,
       transports: [ "websocket", "polling" ],
       upgrade: true,
-      secure: window.location.protocol === "https:",
+      path: "/socket.io/",
+      withCredentials: true,
+      secure: String(e).startsWith("https:"),
       rejectUnauthorized: true
     });
     this.setupSocketIOListeners();
@@ -74,8 +92,8 @@ class WebSocketManager {
     });
   }
   initNativeWebSocket() {
-    const e = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const t = `${e}//${window.location.host}`;
+    const e = getSolisSocketOrigin();
+    const t = e.replace(/^http/, "ws");
     try {
       this.socket = new WebSocket(t);
       this.socket.onopen = () => this.onWebSocketOpen();
@@ -247,4 +265,13 @@ class WebSocketManager {
   }
 }
 
+WebSocketManager.connect = function() {
+  if (!window.wsManager) {
+    window.wsManager = new WebSocketManager;
+  }
+  return window.wsManager;
+};
+
 window.wsManager = new WebSocketManager;
+
+window.WebSocketManager = WebSocketManager;

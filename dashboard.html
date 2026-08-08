@@ -9,7 +9,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#ff6b3d">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.socket.io https://cdn.paddle.com https://sandbox-cdn.paddle.com https://api.solisai.video https://api.solisai.video; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.paddle.com; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' https://api.solisai.video wss://api.solisai.video https://api.solisai.video wss://api.solisai.video https:; img-src 'self' data: https:; frame-src 'self' https://checkout.paddle.com https://buy.paddle.com https://sandbox-buy.paddle.com https://sandbox-checkout-service.paddle.com https://checkout-service.paddle.com;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.socket.io https://cdn.paddle.com https://sandbox-cdn.paddle.com https://static.cloudflareinsights.com https://api.solisai.video; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.paddle.com; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' https://api.solisai.video wss://api.solisai.video https://api.solisai.video wss://api.solisai.video https://api.solisai.video wss://api.solisai.video https://cdn.socket.io https://cloudflareinsights.com https:; img-src 'self' data: https:; frame-src 'self' https://checkout.paddle.com https://buy.paddle.com https://sandbox-buy.paddle.com https://sandbox-checkout-service.paddle.com https://checkout-service.paddle.com;">
     <script src="/js/core/init.js?v=7"></script>
     <script src="/js/core/api-client.js?v=3"></script>
     <script src="/js/core/avatar-url.js?v=2"></script>
@@ -4404,41 +4404,14 @@
 </div>
 
     <script>
-        const backendPort = '5500';  // Hardcoded - NOT from localStorage
-        const backendHost = '127.0.0.1';  // Hardcoded - NOT from localStorage
-        const socketioScript = document.createElement('script');
-        let socketioLoaded = false;
-        const socketioUrl = `http://${backendHost}:${backendPort}/socket.io/socket.io.js`;
-        socketioScript.src = socketioUrl;
-        socketioScript.onload = () => {
-            socketioLoaded = true;
-        };
-        socketioScript.onerror = () => {
-            if (!socketioLoaded) {
-                console.warn('Socket.IO failed to load from backend, falling back to CDN...');
-                const cdnScript = document.createElement('script');
-                cdnScript.src = 'https://cdn.socket.io/4.7.2/socket.io.min.js';
-                cdnScript.onload = () => {
-                    socketioLoaded = true;
-                };
-                cdnScript.onerror = () => {
-                    console.error('Failed to load Socket.IO from both backend and CDN');
-                };
-                document.head.appendChild(cdnScript);
-            }
-        };
-        document.head.appendChild(socketioScript);
-        setTimeout(() => {
-            if (!socketioLoaded && typeof io === 'undefined') {
-                console.warn('Socket.IO still not loaded, forcing CDN fallback...');
-                const cdnScript = document.createElement('script');
-                cdnScript.src = 'https://cdn.socket.io/4.7.2/socket.io.min.js';
-                cdnScript.onload = () => {
-                    socketioLoaded = true;
-                };
-                document.head.appendChild(cdnScript);
-            }
-        }, 3000);
+        (function loadSocketIo() {
+            if (typeof io !== 'undefined') return;
+            const cdnScript = document.createElement('script');
+            cdnScript.src = 'https://cdn.socket.io/4.7.2/socket.io.min.js';
+            cdnScript.async = true;
+            cdnScript.onerror = () => console.error('Failed to load Socket.IO from CDN');
+            document.head.appendChild(cdnScript);
+        })();
     </script>
 
     <script>

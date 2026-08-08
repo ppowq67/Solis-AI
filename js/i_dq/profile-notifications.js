@@ -26,8 +26,8 @@ function isValidImageUrl(e) {
   try {
     const t = new URL(e);
     if (!/^https?:$/.test(t.protocol)) return false;
-    const i = e.toLowerCase();
-    if (i.includes("javascript:") || i.includes("data:") || i.includes("vbscript:")) return false;
+    const n = e.toLowerCase();
+    if (n.includes("javascript:") || n.includes("data:") || n.includes("vbscript:")) return false;
     return true;
   } catch {
     return false;
@@ -40,20 +40,20 @@ function safeSetText(e, t) {
   }
 }
 
-function safeSetImage(e, t, i = "") {
+function safeSetImage(e, t, n = "") {
   if (!e) return;
   if (!isValidImageUrl(t)) {
     console.warn("Invalid image URL");
     return;
   }
-  const o = document.createElement("img");
-  o.setAttribute("src", t);
-  o.setAttribute("alt", escapeHtml(i));
-  o.style.cssText = "width: 100%; height: 100%; object-fit: cover; border-radius: 50%;";
+  const i = document.createElement("img");
+  i.setAttribute("src", t);
+  i.setAttribute("alt", escapeHtml(n));
+  i.style.cssText = "width: 100%; height: 100%; object-fit: cover; border-radius: 50%;";
   while (e.firstChild) {
     e.removeChild(e.firstChild);
   }
-  e.appendChild(o);
+  e.appendChild(i);
 }
 
 function validateUserObject(e) {
@@ -61,8 +61,8 @@ function validateUserObject(e) {
     valid: false
   };
   const t = e.id || e.user_id || e.sub;
-  const i = e.email || e.name || e.displayName;
-  if (t || i) {
+  const n = e.email || e.name || e.displayName;
+  if (t || n) {
     return {
       valid: true,
       user: e
@@ -111,18 +111,18 @@ function syncProfileButton() {
     console.error("Error syncing profile:", e);
     t = null;
   }
-  const i = validateUserObject(t);
-  if (!i || !i.valid) {
+  const n = validateUserObject(t);
+  if (!n || !n.valid) {
     console.warn("Invalid user object");
     return;
   }
-  const o = i.user;
-  const n = typeof resolveAvatarUrl === "function" ? resolveAvatarUrl(o) : o.picture || o.avatar || null;
+  const i = n.user;
+  const o = typeof resolveAvatarUrl === "function" ? resolveAvatarUrl(i) : i.picture || i.avatar || null;
   while (e.firstChild) {
     e.removeChild(e.firstChild);
   }
-  if (n && typeof n === "string" && isValidImageUrl(n)) {
-    safeSetImage(e, n, "User Avatar");
+  if (o && typeof o === "string" && isValidImageUrl(o)) {
+    safeSetImage(e, o, "User Avatar");
   }
 }
 
@@ -131,26 +131,26 @@ function attachNotificationEventListeners() {
   const t = notificationSystem.notificationsDropdown;
   e.addEventListener("click", e => {
     e.stopPropagation();
-    const i = t.classList.contains("open");
+    const n = t.classList.contains("open");
     closeAllDropdowns();
-    if (!i) {
+    if (!n) {
       t.classList.add("open");
       clearUnreadStatus();
     }
   });
-  const i = document.getElementById("dropdownNotifications");
-  if (i && !i.dataset.bound) {
-    i.dataset.bound = "1";
-    i.addEventListener("click", e => {
+  const n = document.getElementById("dropdownNotifications");
+  if (n && !n.dataset.bound) {
+    n.dataset.bound = "1";
+    n.addEventListener("click", e => {
       e.preventDefault();
       e.stopPropagation();
       openNotificationsFromProfile();
     });
   }
   document.addEventListener("click", closeAllDropdowns);
-  const o = document.getElementById("markAsRead");
-  if (o) {
-    o.addEventListener("click", e => {
+  const i = document.getElementById("markAsRead");
+  if (i) {
+    i.addEventListener("click", e => {
       e.preventDefault();
       clearUnreadStatus();
     });
@@ -162,9 +162,9 @@ function closeAllDropdowns() {
   if (e) e.classList.remove("open");
   const t = document.getElementById("profileDropdown");
   if (t) t.classList.remove("open");
-  const i = notificationSystem.unreadCount > 0 || typeof NotificationSystemV2 !== "undefined" && NotificationSystemV2.state?.unreadCount > 0;
+  const n = notificationSystem.unreadCount > 0 || typeof NotificationSystemV2 !== "undefined" && NotificationSystemV2.state?.unreadCount > 0;
   if (typeof syncNotifBellVisibility === "function") {
-    syncNotifBellVisibility(!!i);
+    syncNotifBellVisibility(!!n);
   }
 }
 
@@ -211,8 +211,8 @@ function addNotification(e) {
     read: e.read === true,
     ...e
   };
-  const i = [ "check", "info", "warning", "error", "default" ];
-  if (!i.includes(t.icon)) {
+  const n = [ "check", "info", "warning", "error", "default" ];
+  if (!n.includes(t.icon)) {
     t.icon = "default";
   }
   notificationSystem.notifications.unshift(t);
@@ -226,15 +226,15 @@ function addNotification(e) {
 }
 
 function showVideoGeneratedNotification(e = {}) {
-  const {videoTitle: t = "Video Generated", videoUrl: i = "#", thumbnailUrl: o = null, duration: n = 0} = e;
-  showVideoGeneratedOverlay(t, i);
+  const {videoTitle: t = "Video Generated", videoUrl: n = "#", thumbnailUrl: i = null, duration: o = 0} = e;
+  showVideoGeneratedOverlay(t, n);
   addNotification({
     title: "Video Generated",
     message: `Your video "${t}" has been successfully created and is ready to download.`,
     icon: "check",
     action: {
       label: "View Video",
-      url: i
+      url: n
     }
   });
 }
@@ -248,16 +248,16 @@ function showVideoGenerated(e = {}) {
 }
 
 function showVideoGeneratedOverlay(e = "Video Ready!", t = "#") {
-  const i = document.getElementById("videoGeneratedBackdrop");
-  const o = document.getElementById("videoGeneratedOverlay");
-  if (!i || !o) {
+  const n = document.getElementById("videoGeneratedBackdrop");
+  const i = document.getElementById("videoGeneratedOverlay");
+  if (!n || !i) {
     console.warn("Video generated overlay elements not found");
     return;
   }
-  const n = o.querySelector(".video-generated-title");
-  const a = o.querySelector(".video-generated-message");
-  const s = o.querySelector('[data-action="view"]');
-  if (n) n.textContent = e;
+  const o = i.querySelector(".video-generated-title");
+  const a = i.querySelector(".video-generated-message");
+  const s = i.querySelector('[data-action="view"]');
+  if (o) o.textContent = e;
   if (a) a.textContent = "Your video has been successfully generated and is ready to download or share.";
   if (s) {
     s.onclick = () => {
@@ -267,8 +267,8 @@ function showVideoGeneratedOverlay(e = "Video Ready!", t = "#") {
       hideVideoGeneratedOverlay();
     };
   }
+  n.classList.add("show");
   i.classList.add("show");
-  o.classList.add("show");
   setTimeout(hideVideoGeneratedOverlay, 8e3);
 }
 
@@ -298,22 +298,22 @@ function isMobileNotifChrome() {
 
 function syncNotifBellVisibility(e) {
   const t = document.getElementById("notifWrapper") || document.querySelector(".notif-wrapper");
-  const i = document.getElementById("dropdownNotifBadge");
-  const o = notificationSystem.unreadCount || (typeof NotificationSystemV2 !== "undefined" ? NotificationSystemV2.state?.unreadCount || 0 : 0);
-  const n = typeof e === "boolean" ? e : o > 0;
+  const n = document.getElementById("dropdownNotifBadge");
+  const i = notificationSystem.unreadCount || (typeof NotificationSystemV2 !== "undefined" ? NotificationSystemV2.state?.unreadCount || 0 : 0);
+  const o = typeof e === "boolean" ? e : i > 0;
   const a = !!document.getElementById("notificationsDropdown")?.classList.contains("open");
-  const s = isMobileNotifChrome() ? n || a : true;
+  const s = isMobileNotifChrome() ? o || a : true;
   if (t) {
     t.classList.toggle("is-visible", s);
     t.setAttribute("aria-hidden", s ? "false" : "true");
   }
-  if (i) {
-    if (n && o > 0) {
-      i.hidden = false;
-      i.textContent = o > 9 ? "9+" : String(o);
+  if (n) {
+    if (o && i > 0) {
+      n.hidden = false;
+      n.textContent = i > 9 ? "9+" : String(i);
     } else {
-      i.hidden = true;
-      i.textContent = "";
+      n.hidden = true;
+      n.textContent = "";
     }
   }
 }
@@ -357,20 +357,20 @@ function renderNotificationsList() {
   }
   notificationSystem.notifications.forEach(t => {
     if (!t || typeof t !== "object") return;
+    const n = document.createElement("div");
+    n.className = "notif-item";
     const i = document.createElement("div");
-    i.className = "notif-item";
-    const o = document.createElement("div");
-    o.className = "notif-icon";
-    const n = document.createElement("svg");
-    n.setAttribute("width", "18");
-    n.setAttribute("height", "18");
-    n.setAttribute("viewBox", "0 0 24 24");
-    n.setAttribute("fill", "none");
-    n.setAttribute("stroke", "currentColor");
-    n.setAttribute("stroke-linecap", "round");
-    n.setAttribute("stroke-linejoin", "round");
-    n.innerHTML = getNotificationIcon(t.icon);
-    o.appendChild(n);
+    i.className = "notif-icon";
+    const o = document.createElement("svg");
+    o.setAttribute("width", "18");
+    o.setAttribute("height", "18");
+    o.setAttribute("viewBox", "0 0 24 24");
+    o.setAttribute("fill", "none");
+    o.setAttribute("stroke", "currentColor");
+    o.setAttribute("stroke-linecap", "round");
+    o.setAttribute("stroke-linejoin", "round");
+    o.innerHTML = getNotificationIcon(t.icon);
+    i.appendChild(o);
     const a = document.createElement("div");
     a.className = "notif-content";
     const s = document.createElement("div");
@@ -385,9 +385,9 @@ function renderNotificationsList() {
     a.appendChild(s);
     a.appendChild(r);
     a.appendChild(c);
-    i.appendChild(o);
-    i.appendChild(a);
-    e.appendChild(i);
+    n.appendChild(i);
+    n.appendChild(a);
+    e.appendChild(n);
   });
 }
 
@@ -414,13 +414,13 @@ function formatTime(e) {
     e = new Date(e);
   }
   const t = new Date;
-  const i = t - e;
-  const o = Math.floor(i / 1e3);
-  const n = Math.floor(o / 60);
-  const a = Math.floor(n / 60);
+  const n = t - e;
+  const i = Math.floor(n / 1e3);
+  const o = Math.floor(i / 60);
+  const a = Math.floor(o / 60);
   const s = Math.floor(a / 24);
-  if (o < 60) return "just now";
-  if (n < 60) return `${n}m ago`;
+  if (i < 60) return "just now";
+  if (o < 60) return `${o}m ago`;
   if (a < 24) return `${a}h ago`;
   if (s < 7) return `${s}d ago`;
   return e.toLocaleDateString();
@@ -429,30 +429,30 @@ function formatTime(e) {
 function updateProfileInfo() {
   const e = document.getElementById("profileNameDisplay");
   const t = document.getElementById("profilePlanDisplay");
-  const i = document.getElementById("profileAvatarDisplay");
-  let o = null;
+  const n = document.getElementById("profileAvatarDisplay");
+  let i = null;
   try {
     if (typeof window !== "undefined" && window.currentUser) {
-      o = window.currentUser;
+      i = window.currentUser;
     } else {
       const e = localStorage.getItem("currentUser");
       if (e) {
         const t = e.trim();
         if (t.startsWith("{") && t.endsWith("}")) {
-          o = JSON.parse(e);
+          i = JSON.parse(e);
         }
       }
     }
   } catch (e) {
     console.error("Error reading user data:", e);
-    o = null;
+    i = null;
   }
-  const n = validateUserObject(o);
-  if (!n || !n.valid) {
+  const o = validateUserObject(i);
+  if (!o || !o.valid) {
     console.warn("Invalid user object");
     return;
   }
-  const a = n.user;
+  const a = o.user;
   const s = escapeHtml((a.name || a.displayName || a.email || "User").toString().substring(0, 100));
   const r = escapeHtml((a.tier || a.plan || "Free Plan").toString().toUpperCase().substring(0, 50));
   const c = a.picture || a.avatar || null;
@@ -462,9 +462,9 @@ function updateProfileInfo() {
   if (t) {
     safeSetText(t, r);
   }
-  if (i && c && typeof c === "string") {
+  if (n && c && typeof c === "string") {
     if (isValidImageUrl(c)) {
-      safeSetImage(i, c, s);
+      safeSetImage(n, c, s);
     }
   }
 }
@@ -479,12 +479,12 @@ const Logger = {
 const StorageManager = {
   save: (e, t) => {
     try {
-      const i = {
+      const n = {
         version: 2,
         timestamp: Date.now(),
         data: t
       };
-      localStorage.setItem(e, JSON.stringify(i));
+      localStorage.setItem(e, JSON.stringify(n));
       Logger.success(`Storage saved: ${e}`);
       return true;
     } catch (e) {
@@ -496,19 +496,19 @@ const StorageManager = {
     try {
       const t = localStorage.getItem(e);
       if (!t) return null;
-      const i = JSON.parse(t);
-      if (!i || typeof i !== "object") {
+      const n = JSON.parse(t);
+      if (!n || typeof n !== "object") {
         Logger.warn("Invalid payload structure");
         return null;
       }
-      const o = Date.now() - i.timestamp;
-      if (o > 30 * 24 * 60 * 60 * 1e3) {
+      const i = Date.now() - n.timestamp;
+      if (i > 30 * 24 * 60 * 60 * 1e3) {
         Logger.warn("Data is stale, clearing");
         localStorage.removeItem(e);
         return null;
       }
       Logger.success(`Storage loaded: ${e}`);
-      return i.data;
+      return n.data;
     } catch (e) {
       Logger.error("Storage load failed:", e.message);
       return null;
@@ -534,8 +534,22 @@ const StorageManager = {
   }
 };
 
-if (typeof WebSocketManager === "undefined" || typeof WebSocketManager === "function") {
-  const e = {
+(function ensureWebSocketManagerConnect() {
+  const socketOrigin = () => (typeof window.getSolisSocketOrigin === "function" ? window.getSolisSocketOrigin() : (window.API_BASE_URL || "https://api.solisai.video/api").toString().replace(/\/api\/?$/, "")) || "https://api.solisai.video";
+  if (typeof WebSocketManager === "function") {
+    if (typeof WebSocketManager.connect !== "function") {
+      WebSocketManager.connect = function() {
+        if (!window.wsManager) {
+          window.wsManager = new WebSocketManager;
+        }
+        return window.wsManager;
+      };
+    }
+    WebSocketManager.connected = WebSocketManager.connected || false;
+    return;
+  }
+  if (typeof WebSocketManager !== "undefined") return;
+  window.WebSocketManager = {
     ws: null,
     io: null,
     connected: false,
@@ -545,28 +559,30 @@ if (typeof WebSocketManager === "undefined" || typeof WebSocketManager === "func
     useSocketIO: typeof io !== "undefined",
     useRawWS: false,
     connect: () => {
-      if (e.connected) return;
-      if (e.useSocketIO && typeof io !== "undefined") {
+      if (WebSocketManager.connected) return;
+      if (WebSocketManager.useSocketIO && typeof io !== "undefined") {
         try {
-          e.io = io(window.location.origin, {
+          WebSocketManager.io = io(socketOrigin(), {
             reconnection: true,
             reconnectionDelay: 3e3,
             reconnectionDelayMax: 3e4,
             reconnectionAttempts: 5,
-            transports: [ "websocket", "polling" ]
+            transports: [ "websocket", "polling" ],
+            path: "/socket.io/",
+            withCredentials: true
           });
-          e.io.on("connect", () => {
+          WebSocketManager.io.on("connect", () => {
             Logger.success("Socket.IO connected");
-            e.connected = true;
-            e.reconnectAttempts = 0;
+            WebSocketManager.connected = true;
+            WebSocketManager.reconnectAttempts = 0;
             document.body.classList.add("ws-connected");
           });
-          e.io.on("message", t => {
+          WebSocketManager.io.on("message", e => {
             try {
-              const i = typeof t === "string" ? JSON.parse(t) : t;
-              e.messageHandlers.forEach(e => {
+              const t = typeof e === "string" ? JSON.parse(e) : e;
+              WebSocketManager.messageHandlers.forEach(e => {
                 try {
-                  e(i);
+                  e(t);
                 } catch (e) {
                   Logger.error("Handler error:", e.message);
                 }
@@ -575,14 +591,14 @@ if (typeof WebSocketManager === "undefined" || typeof WebSocketManager === "func
               Logger.error("Message parse error:", e.message);
             }
           });
-          e.io.on("disconnect", () => {
+          WebSocketManager.io.on("disconnect", () => {
             Logger.warn("Socket.IO disconnected, using localStorage fallback");
-            e.connected = false;
+            WebSocketManager.connected = false;
             document.body.classList.remove("ws-connected");
           });
-          e.io.on("connect_error", t => {
+          WebSocketManager.io.on("connect_error", e => {
             Logger.warn("Socket.IO connection error, using localStorage fallback");
-            e.connected = false;
+            WebSocketManager.connected = false;
           });
           return;
         } catch (e) {
@@ -590,29 +606,33 @@ if (typeof WebSocketManager === "undefined" || typeof WebSocketManager === "func
         }
       }
       Logger.log("Using localStorage for notifications (WebSocket/Socket.IO not available)");
-      e.connected = false;
+      WebSocketManager.connected = false;
       document.body.classList.add("using-storage-fallback");
     },
     attemptReconnect: () => {},
-    send: t => {
-      if (!e.connected || !e.io) {
+    send: e => {
+      if (!WebSocketManager.connected || !WebSocketManager.io) {
         Logger.log("Using localStorage (not connected to realtime)");
         return false;
       }
       try {
-        e.io.emit("message", t);
+        WebSocketManager.io.emit("message", e);
         return true;
       } catch (e) {
         Logger.error("Send error:", e.message);
         return false;
       }
     },
-    subscribe: t => {
-      if (typeof t === "function") {
-        e.messageHandlers.push(t);
+    subscribe: e => {
+      if (typeof e === "function") {
+        WebSocketManager.messageHandlers.push(e);
       }
     }
   };
+})();
+
+if (typeof WebSocketManager !== "undefined" && WebSocketManager && typeof WebSocketManager.subscribe !== "function") {
+  WebSocketManager.subscribe = function() {};
 }
 
 if (document.readyState === "loading") {
@@ -649,19 +669,19 @@ const NotificationSystemV2 = {
     Logger.success("Notification system v2 fully initialized");
   },
   waitForElement: (e, t) => {
-    const i = document.querySelector(e);
-    if (i) {
-      t(i);
+    const n = document.querySelector(e);
+    if (n) {
+      t(n);
       return;
     }
-    const o = new MutationObserver(() => {
-      const i = document.querySelector(e);
-      if (i) {
-        o.disconnect();
-        t(i);
+    const i = new MutationObserver(() => {
+      const n = document.querySelector(e);
+      if (n) {
+        i.disconnect();
+        t(n);
       }
     });
-    o.observe(document.body, {
+    i.observe(document.body, {
       childList: true,
       subtree: true
     });
@@ -679,9 +699,9 @@ const NotificationSystemV2 = {
         credentials: "include",
         headers: e
       });
-      const i = await t.json();
-      if (i.success && i.badges) {
-        const e = i.badges;
+      const n = await t.json();
+      if (n.success && n.badges) {
+        const e = n.badges;
         if (e.badges && e.badges.length > 0) {
           Logger.success(`Loaded ${e.badges.length} badge(s) from database`);
           const t = document.querySelector(".profile-dropdown-name");
@@ -705,46 +725,46 @@ const NotificationSystemV2 = {
     }
   },
   createBadgeSvg: (e, t) => {
-    const i = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    i.setAttribute("width", "28");
-    i.setAttribute("height", "28");
-    i.setAttribute("viewBox", "0 0 24 24");
-    i.style.display = "block";
-    i.style.width = "100%";
-    i.style.height = "100%";
+    const n = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    n.setAttribute("width", "28");
+    n.setAttribute("height", "28");
+    n.setAttribute("viewBox", "0 0 24 24");
+    n.style.display = "block";
+    n.style.width = "100%";
+    n.style.height = "100%";
     switch (e) {
      case "official":
-      i.innerHTML = `<defs>\n                    <linearGradient id="bgGrad-official" x1="0%" y1="0%" x2="100%" y2="100%">\n                        <stop offset="0%" stop-color="#FF8A5C" />\n                        <stop offset="100%" stop-color="#FF5722" />\n                    </linearGradient>\n                    <radialGradient id="outerGlow-official" cx="50%" cy="50%" r="50%">\n                        <stop offset="60%" stop-color="#FF7A42" stop-opacity="0.2" />\n                        <stop offset="100%" stop-color="#FF7A42" stop-opacity="0" />\n                    </radialGradient>\n                    <linearGradient id="edgeHighlight-official" x1="50%" y1="0%" x2="50%" y2="100%">\n                        <stop offset="0%" stop-color="white" stop-opacity="0.8" />\n                        <stop offset="50%" stop-color="white" stop-opacity="0" />\n                        <stop offset="100%" stop-color="white" stop-opacity="0.3" />\n                    </linearGradient>\n                    <radialGradient id="lensShine-official" cx="50%" cy="30%" r="50%" fx="50%" fy="20%">\n                        <stop offset="0%" stop-color="white" stop-opacity="0.5" />\n                        <stop offset="100%" stop-color="white" stop-opacity="0" />\n                    </radialGradient>\n                </defs>\n                <g class="badge-content">\n                    <circle cx="12" cy="12" r="9" fill="url(#outerGlow-official)" stroke="none"/>\n                    <circle cx="12" cy="12" r="7" fill="url(#bgGrad-official)" stroke="none"/>\n                    <circle cx="12" cy="12" r="7" fill="url(#lensShine-official)" stroke="none"/>\n                    <circle cx="12" cy="12" r="6.75" stroke="url(#edgeHighlight-official)" stroke-width="0.8" stroke-opacity="0.6" fill="none"/>\n                    <path d="M8 12L10 14L15 9" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>\n                </g>`;
+      n.innerHTML = `<defs>\n                    <linearGradient id="bgGrad-official" x1="0%" y1="0%" x2="100%" y2="100%">\n                        <stop offset="0%" stop-color="#FF8A5C" />\n                        <stop offset="100%" stop-color="#FF5722" />\n                    </linearGradient>\n                    <radialGradient id="outerGlow-official" cx="50%" cy="50%" r="50%">\n                        <stop offset="60%" stop-color="#FF7A42" stop-opacity="0.2" />\n                        <stop offset="100%" stop-color="#FF7A42" stop-opacity="0" />\n                    </radialGradient>\n                    <linearGradient id="edgeHighlight-official" x1="50%" y1="0%" x2="50%" y2="100%">\n                        <stop offset="0%" stop-color="white" stop-opacity="0.8" />\n                        <stop offset="50%" stop-color="white" stop-opacity="0" />\n                        <stop offset="100%" stop-color="white" stop-opacity="0.3" />\n                    </linearGradient>\n                    <radialGradient id="lensShine-official" cx="50%" cy="30%" r="50%" fx="50%" fy="20%">\n                        <stop offset="0%" stop-color="white" stop-opacity="0.5" />\n                        <stop offset="100%" stop-color="white" stop-opacity="0" />\n                    </radialGradient>\n                </defs>\n                <g class="badge-content">\n                    <circle cx="12" cy="12" r="9" fill="url(#outerGlow-official)" stroke="none"/>\n                    <circle cx="12" cy="12" r="7" fill="url(#bgGrad-official)" stroke="none"/>\n                    <circle cx="12" cy="12" r="7" fill="url(#lensShine-official)" stroke="none"/>\n                    <circle cx="12" cy="12" r="6.75" stroke="url(#edgeHighlight-official)" stroke-width="0.8" stroke-opacity="0.6" fill="none"/>\n                    <path d="M8 12L10 14L15 9" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>\n                </g>`;
       break;
 
      case "support_team":
-      i.innerHTML = `\n                    <path d="M12 2L4 5V11C4 16.19 7.41 21.05 12 22C16.59 21.05 20 16.19 20 11V5L12 2Z" fill="${t}"/>\n                    <path d="M12 2L20 5V11C20 13 19 15 17 17L12 2V2Z" fill="white" fill-opacity="0.1"/>\n                    <path d="M9 11L11 13L15 9" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>\n                `;
+      n.innerHTML = `\n                    <path d="M12 2L4 5V11C4 16.19 7.41 21.05 12 22C16.59 21.05 20 16.19 20 11V5L12 2Z" fill="${t}"/>\n                    <path d="M12 2L20 5V11C20 13 19 15 17 17L12 2V2Z" fill="white" fill-opacity="0.1"/>\n                    <path d="M9 11L11 13L15 9" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>\n                `;
       break;
 
      case "platinum_elite":
-      i.innerHTML = `\n                    <path d="M6 4L3 9L12 21L21 9L18 4H6Z" fill="${t}"/>\n                    <path d="M3 9H21L12 21L3 9Z" fill="black" fill-opacity="0.03"/>\n                    <path d="M6 4L12 9V21L18 4H6Z" fill="black" fill-opacity="0.05"/>\n                    <path d="M12 4V21" stroke="black" stroke-width="0.6" stroke-opacity="0.1"/>\n                    <path d="M3 9H21M6 4L12 21M18 4L12 21M9 9L12 21L15 9" stroke="black" stroke-width="0.5" stroke-linejoin="round"/>\n                `;
+      n.innerHTML = `\n                    <path d="M6 4L3 9L12 21L21 9L18 4H6Z" fill="${t}"/>\n                    <path d="M3 9H21L12 21L3 9Z" fill="black" fill-opacity="0.03"/>\n                    <path d="M6 4L12 9V21L18 4H6Z" fill="black" fill-opacity="0.05"/>\n                    <path d="M12 4V21" stroke="black" stroke-width="0.6" stroke-opacity="0.1"/>\n                    <path d="M3 9H21M6 4L12 21M18 4L12 21M9 9L12 21L15 9" stroke="black" stroke-width="0.5" stroke-linejoin="round"/>\n                `;
       break;
 
      case "diamond_partner":
-      i.innerHTML = `\n                    <path d="M6 4L3 9L12 21L21 9L18 4H6Z" fill="${t}"/>\n                    <path d="M3 9H21L12 21L3 9Z" fill="black" fill-opacity="0.05"/>\n                    <path d="M12 21L9 9L12 4L15 9L12 21Z" fill="white" fill-opacity="0.2"/>\n                    <path d="M3 9H21M6 4L12 21M18 4L12 21" stroke="#003538" stroke-width="0.6" stroke-opacity="0.8"/>\n                `;
+      n.innerHTML = `\n                    <path d="M6 4L3 9L12 21L21 9L18 4H6Z" fill="${t}"/>\n                    <path d="M3 9H21L12 21L3 9Z" fill="black" fill-opacity="0.05"/>\n                    <path d="M12 21L9 9L12 4L15 9L12 21Z" fill="white" fill-opacity="0.2"/>\n                    <path d="M3 9H21M6 4L12 21M18 4L12 21" stroke="#003538" stroke-width="0.6" stroke-opacity="0.8"/>\n                `;
       break;
 
      case "bronze_partner":
-      i.innerHTML = `\n                    <path d="M6 4L3 9L12 21L21 9L18 4H6Z" fill="${t}"/>\n                    <path d="M12 21L9 9L12 4V21Z" fill="black" fill-opacity="0.15"/>\n                    <path d="M12 21L15 9L12 4V21Z" fill="white" fill-opacity="0.1"/>\n                    <path d="M3 9H21M6 4L12 21M18 4L12 21" stroke="#2a1604" stroke-width="0.6" stroke-opacity="0.6"/>\n                `;
+      n.innerHTML = `\n                    <path d="M6 4L3 9L12 21L21 9L18 4H6Z" fill="${t}"/>\n                    <path d="M12 21L9 9L12 4V21Z" fill="black" fill-opacity="0.15"/>\n                    <path d="M12 21L15 9L12 4V21Z" fill="white" fill-opacity="0.1"/>\n                    <path d="M3 9H21M6 4L12 21M18 4L12 21" stroke="#2a1604" stroke-width="0.6" stroke-opacity="0.6"/>\n                `;
       break;
 
      case "verified":
-      i.innerHTML = `\n                    <circle cx="12" cy="12" r="11" fill="${t}"/>\n                    <path d="M9 12.5L11.5 15L17 8.5" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>\n                `;
+      n.innerHTML = `\n                    <circle cx="12" cy="12" r="11" fill="${t}"/>\n                    <path d="M9 12.5L11.5 15L17 8.5" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>\n                `;
       break;
 
      case "solis_core":
-      i.innerHTML = `<defs>\n                    <linearGradient id="g-7" x1="0%" y1="0%" x2="100%" y2="100%">\n                        <stop offset="0%" stop-color="#ef4444" />\n                        <stop offset="100%" stop-color="#f87171" />\n                    </linearGradient>\n                </defs>\n                <path d="M12 1L14.47 3.94L18.27 3.23L19.33 6.94L23.08 7.73L21.84 11.44L24 14.5L20.92 16.71L20.67 20.52L16.89 21.05L14.93 24L12 22.67L9.07 24L7.11 21.05L3.33 20.52L3.08 16.71L0 14.5L2.16 11.44L0.92 7.73L4.67 6.94L5.73 3.23L9.53 3.94L12 1Z" fill="url(#g-7)" stroke="white" stroke-width="1.2" stroke-linejoin="round"/>\n                <path d="M8.5 12.5L11 15L16.5 9.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`;
+      n.innerHTML = `<defs>\n                    <linearGradient id="g-7" x1="0%" y1="0%" x2="100%" y2="100%">\n                        <stop offset="0%" stop-color="#ef4444" />\n                        <stop offset="100%" stop-color="#f87171" />\n                    </linearGradient>\n                </defs>\n                <path d="M12 1L14.47 3.94L18.27 3.23L19.33 6.94L23.08 7.73L21.84 11.44L24 14.5L20.92 16.71L20.67 20.52L16.89 21.05L14.93 24L12 22.67L9.07 24L7.11 21.05L3.33 20.52L3.08 16.71L0 14.5L2.16 11.44L0.92 7.73L4.67 6.94L5.73 3.23L9.53 3.94L12 1Z" fill="url(#g-7)" stroke="white" stroke-width="1.2" stroke-linejoin="round"/>\n                <path d="M8.5 12.5L11 15L16.5 9.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`;
       break;
 
      default:
-      i.innerHTML = `<circle cx="12" cy="12" r="4" fill="${t}"/>`;
+      n.innerHTML = `<circle cx="12" cy="12" r="4" fill="${t}"/>`;
     }
-    return i;
+    return n;
   },
   displayUserBadge: e => {
     if (!e || !e.badges || e.badges.length === 0) return;
@@ -759,55 +779,55 @@ const NotificationSystemV2 = {
       t.id = "badge-global-tooltip";
       document.body.appendChild(t);
     }
-    const i = t.querySelectorAll(".user-badge");
-    i.forEach(e => e.remove());
+    const n = t.querySelectorAll(".user-badge");
+    n.forEach(e => e.remove());
     t.style.display = "flex";
     t.style.alignItems = "center";
     t.style.gap = "8px";
-    const o = document.createElement("div");
-    o.className = "badge-container";
-    o.style.cssText = `\n            display: flex;\n            align-items: center;\n            gap: 4px;\n            flex-shrink: 0;\n        `;
+    const i = document.createElement("div");
+    i.className = "badge-container";
+    i.style.cssText = `\n            display: flex;\n            align-items: center;\n            gap: 4px;\n            flex-shrink: 0;\n        `;
     e.badges.slice(0, 2).forEach(e => {
       const t = e.badge_info;
       if (!t || !t.name) return;
-      const i = document.createElement("div");
-      i.className = "user-badge";
-      i.style.cssText = `display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:3px;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));cursor:pointer;flex-shrink:0;`;
-      const n = NotificationSystemV2.createBadgeSvg(e.badge_type, t.color);
-      i.appendChild(n);
+      const n = document.createElement("div");
+      n.className = "user-badge";
+      n.style.cssText = `display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:3px;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));cursor:pointer;flex-shrink:0;`;
+      const o = NotificationSystemV2.createBadgeSvg(e.badge_type, t.color);
+      n.appendChild(o);
       const a = e.badge_tier || t.tier || "Special";
       const s = `${t.name} • ${a}`;
-      i.addEventListener("mouseenter", e => {
+      n.addEventListener("mouseenter", e => {
         const t = document.getElementById("badge-global-tooltip");
         if (!t) return;
         t.textContent = s;
-        const o = i.getBoundingClientRect();
+        const i = n.getBoundingClientRect();
         t.style.opacity = "0";
         t.style.display = "block";
-        const n = t.offsetWidth;
-        t.style.left = o.left + o.width / 2 - n / 2 + "px";
-        t.style.top = o.top - t.offsetHeight - 6 + "px";
+        const o = t.offsetWidth;
+        t.style.left = i.left + i.width / 2 - o / 2 + "px";
+        t.style.top = i.top - t.offsetHeight - 6 + "px";
         t.style.opacity = "1";
       });
-      i.addEventListener("mouseleave", () => {
+      n.addEventListener("mouseleave", () => {
         const e = document.getElementById("badge-global-tooltip");
         if (e) e.style.opacity = "0";
       });
-      o.appendChild(i);
+      i.appendChild(n);
     });
-    t.appendChild(o);
+    t.appendChild(i);
   },
   setupNotificationHandlers: () => {
     const e = document.getElementById("bellBtn") || document.querySelector(".bell-btn");
     const t = document.getElementById("notificationsDropdown");
-    const i = document.getElementById("markAsRead");
-    const o = document.getElementById("dropdownNotifications");
+    const n = document.getElementById("markAsRead");
+    const i = document.getElementById("dropdownNotifications");
     if (e && t) {
       e.addEventListener("click", e => {
         e.stopPropagation();
-        const i = t.classList.contains("open");
+        const n = t.classList.contains("open");
         NotificationSystemV2.closeAllDropdowns();
-        if (!i) {
+        if (!n) {
           t.classList.add("open");
           NotificationSystemV2.clearUnreadStatus();
           if (typeof syncNotifBellVisibility === "function") {
@@ -816,9 +836,9 @@ const NotificationSystemV2 = {
         }
       });
     }
-    if (o && !o.dataset.v2Bound) {
-      o.dataset.v2Bound = "1";
-      o.addEventListener("click", e => {
+    if (i && !i.dataset.v2Bound) {
+      i.dataset.v2Bound = "1";
+      i.addEventListener("click", e => {
         e.preventDefault();
         e.stopPropagation();
         if (typeof openNotificationsFromProfile === "function") {
@@ -831,8 +851,8 @@ const NotificationSystemV2 = {
       });
     }
     document.addEventListener("click", () => NotificationSystemV2.closeAllDropdowns());
-    if (i) {
-      i.addEventListener("click", e => {
+    if (n) {
+      n.addEventListener("click", e => {
         e.preventDefault();
         NotificationSystemV2.clearUnreadStatus();
       });
@@ -866,8 +886,8 @@ const NotificationSystemV2 = {
       read: e.read === true,
       priority: e.priority || "normal"
     };
-    const i = [ "check", "info", "warning", "error", "default" ];
-    if (!i.includes(t.icon)) t.icon = "default";
+    const n = [ "check", "info", "warning", "error", "default" ];
+    if (!n.includes(t.icon)) t.icon = "default";
     NotificationSystemV2.state.notifications.unshift(t);
     NotificationSystemV2.state.unreadCount++;
     if (NotificationSystemV2.state.notifications.length > 50) {
@@ -896,14 +916,14 @@ const NotificationSystemV2 = {
         e.classList.toggle("is-visible", t);
         e.setAttribute("aria-hidden", t ? "false" : "true");
       }
-      const i = document.getElementById("dropdownNotifBadge");
-      if (i) {
+      const n = document.getElementById("dropdownNotifBadge");
+      if (n) {
         if (t) {
-          i.hidden = false;
+          n.hidden = false;
           const e = NotificationSystemV2.state.unreadCount;
-          i.textContent = e > 9 ? "9+" : String(e);
+          n.textContent = e > 9 ? "9+" : String(e);
         } else {
-          i.hidden = true;
+          n.hidden = true;
         }
       }
     }
@@ -923,11 +943,11 @@ const NotificationSystemV2 = {
       e.appendChild(t);
       return;
     }
-    NotificationSystemV2.state.notifications.forEach((t, i) => {
+    NotificationSystemV2.state.notifications.forEach((t, n) => {
+      const i = document.createElement("div");
+      i.className = "notif-item";
       const o = document.createElement("div");
-      o.className = "notif-item";
-      const n = document.createElement("div");
-      n.className = "notif-icon";
+      o.className = "notif-icon";
       const a = document.createElement("svg");
       a.setAttribute("width", "18");
       a.setAttribute("height", "18");
@@ -937,7 +957,7 @@ const NotificationSystemV2 = {
       a.setAttribute("stroke-linecap", "round");
       a.setAttribute("stroke-linejoin", "round");
       a.innerHTML = NotificationSystemV2.getIcon(t.icon);
-      n.appendChild(a);
+      o.appendChild(a);
       const s = document.createElement("div");
       s.className = "notif-content";
       const r = document.createElement("div");
@@ -952,9 +972,9 @@ const NotificationSystemV2 = {
       s.appendChild(r);
       s.appendChild(c);
       s.appendChild(l);
-      o.appendChild(n);
-      o.appendChild(s);
-      e.appendChild(o);
+      i.appendChild(o);
+      i.appendChild(s);
+      e.appendChild(i);
     });
   },
   getIcon: e => {
@@ -969,13 +989,13 @@ const NotificationSystemV2 = {
   },
   formatTime: e => {
     const t = typeof e === "string" ? new Date(e) : e;
-    const i = new Date;
-    const o = i - t;
-    const n = Math.floor(o / 1e3);
-    const a = Math.floor(n / 60);
+    const n = new Date;
+    const i = n - t;
+    const o = Math.floor(i / 1e3);
+    const a = Math.floor(o / 60);
     const s = Math.floor(a / 60);
     const r = Math.floor(s / 24);
-    if (n < 60) return "just now";
+    if (o < 60) return "just now";
     if (a < 60) return `${a}m ago`;
     if (s < 24) return `${s}h ago`;
     if (r < 7) return `${r}d ago`;
@@ -993,9 +1013,9 @@ const NotificationSystemV2 = {
     if (e) e.classList.remove("open");
     const t = document.getElementById("profileDropdown");
     if (t) t.classList.remove("open");
-    const i = NotificationSystemV2.state.unreadCount > 0;
+    const n = NotificationSystemV2.state.unreadCount > 0;
     if (typeof syncNotifBellVisibility === "function") {
-      syncNotifBellVisibility(i);
+      syncNotifBellVisibility(n);
     }
   },
   save: () => {
@@ -1009,8 +1029,8 @@ const NotificationSystemV2 = {
       const e = Date.now() - 7 * 24 * 60 * 60 * 1e3;
       const t = NotificationSystemV2.state.notifications.length;
       NotificationSystemV2.state.notifications = NotificationSystemV2.state.notifications.filter(t => {
-        const i = new Date(t.timestamp).getTime();
-        return i > e;
+        const n = new Date(t.timestamp).getTime();
+        return n > e;
       });
       if (NotificationSystemV2.state.notifications.length < t) {
         Logger.log(`Cleaned up ${t - NotificationSystemV2.state.notifications.length} old notifications`);
@@ -1063,9 +1083,9 @@ window.notificationSystem = {
         credentials: "include",
         headers: e
       });
-      const i = await t.json();
-      if (i.success) {
-        return i.badges;
+      const n = await t.json();
+      if (n.success) {
+        return n.badges;
       }
       return null;
     } catch (e) {

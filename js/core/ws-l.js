@@ -144,24 +144,22 @@
         setTimeout(initializeVideoGenerationSocket, 500);
         return;
       }
-      const e = window.location.host;
-      const t = window.location.protocol === "https:" ? "wss:" : "ws:";
-      const i = `${t}//${e}`;
-      let n = sessionStorage.getItem("auth_token") || sessionStorage.getItem("jwt_token") || localStorage.getItem("auth_token");
-      const o = io(i, {
+      const e = typeof window.getSolisSocketOrigin === "function" ? window.getSolisSocketOrigin() : (window.API_BASE_URL || "https://api.solisai.video/api").toString().replace(/\/api\/?$/, "") || "https://api.solisai.video";
+      let t = sessionStorage.getItem("auth_token") || sessionStorage.getItem("jwt_token") || localStorage.getItem("auth_token");
+      const i = io(e, {
         transports: [ "websocket", "polling" ],
         reconnectionDelay: 1e3,
         reconnectionAttempts: 10,
         reconnection: true,
         path: "/socket.io/",
         auth: {
-          token: n || null,
+          token: t || null,
           timestamp: Date.now()
         },
         withCredentials: true
       });
-      o.on("connect", () => {});
-      o.on("video_generated", e => {
+      i.on("connect", () => {});
+      i.on("video_generated", e => {
         try {
           showNotification(` ${e.video_title || "Your video"} has been generated successfully!`, "success");
           window.dispatchEvent(new CustomEvent("videoGenerated", {
@@ -174,7 +172,7 @@
           console.error("Error handling video_generated event:", e);
         }
       });
-      o.on("video_generation_error", e => {
+      i.on("video_generation_error", e => {
         try {
           showNotification(` ${e.message || "Video generation failed"}`, "error");
           window.dispatchEvent(new CustomEvent("videoGenerationError", {
@@ -186,7 +184,7 @@
           console.error("Error handling video_generation_error event:", e);
         }
       });
-      o.on("video_generation_progress", e => {
+      i.on("video_generation_progress", e => {
         try {
           showNotification(` ${e.message || "Processing..."}`, "info");
           window.dispatchEvent(new CustomEvent("videoGenerationProgress", {
@@ -198,13 +196,13 @@
           console.error("Error handling video_generation_progress event:", e);
         }
       });
-      let a = 0;
-      const s = 5e3;
-      o.on("connect_error", e => {
+      let n = 0;
+      const o = 5e3;
+      i.on("connect_error", e => {
         console.error("Socket.IO connection error:", e);
       });
-      o.on("disconnect", () => {});
-      window.videoGenerationSocket = o;
+      i.on("disconnect", () => {});
+      window.videoGenerationSocket = i;
     } catch (e) {
       console.error("Failed to initialize video generation socket:", e);
     }

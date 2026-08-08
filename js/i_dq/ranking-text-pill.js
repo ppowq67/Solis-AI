@@ -2921,10 +2921,14 @@
     } else if (o) {
       s = "counterpart";
     }
-    if (!s && a && i.length) {
-      s = "counterpart";
-    } else if (!s && n.length && (t.font || t.color || t.size != null)) {
-      s = "siblings";
+    if (!s && a && i.length && t.font) {
+      if (i.some(e => fontsDiffer(getElFontName(e), t.font))) {
+        s = "counterpart";
+      }
+    } else if (!s && n.length && t.font) {
+      if (n.some(e => fontsDiffer(getElFontName(e), t.font))) {
+        s = "siblings";
+      }
     }
     if (!s) return;
     const l = s === "counterpart" ? i : n;

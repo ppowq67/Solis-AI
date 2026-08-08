@@ -9549,8 +9549,9 @@ class ClipsStudio {
         if (typeof window.rankingCustomizer.ensureGeneratePayload === "function") {
           p = window.rankingCustomizer.ensureGeneratePayload(p);
         }
-      } else if (window.rankingCustomizer && typeof window.rankingCustomizer.collectCustomizations === "function") {
-        p = window.rankingCustomizer.collectCustomizations();
+      }
+      if (t !== "ranked_compilation") {
+        p = null;
       }
       if (t === "ranked_compilation" && p) {
         try {

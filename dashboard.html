@@ -60,7 +60,7 @@
     <script src="/js/payment/platform-connections.js?v=3"></script>
     <script src="/js/ui/plan-selector.js?v=62"></script>
     <script src="/js/core/video-preview-system.js?v=2"></script>
-    <script src="/js/s.js?v=241"></script>
+    <script src="/js/s.js?v=242"></script>
     <script src="/js/s_new/procc.js?v=2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -6266,14 +6266,14 @@
     transition:background .12s ease,color .12s ease,border-color .12s ease;
 }
 .sub-font-item:hover{
-    background:rgba(255,247,237,.9);
-    border-color:rgba(253,186,116,.4);
+    background:linear-gradient(145deg,rgba(255,255,255,.9) 0%,rgba(255,255,255,.55) 100%);
+    border-color:rgba(249,115,22,.35);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 4px 12px rgba(120,90,60,.1);
 }
 .sub-font-item.on{
-    color:#c2410c;
-    background:rgba(255,237,213,.96);
-    border-color:rgba(234,88,12,.65);
-    box-shadow:inset 3px 0 0 #ea580c;
+    border-color:rgba(253,186,116,.55);
+    background:linear-gradient(145deg,rgba(255,237,213,.92) 0%,rgba(254,215,170,.5) 100%);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 0 0 1px rgba(249,115,22,.18);
 }
 .sub-fmark{display:none !important;}
 .sub-fcheck{
@@ -9834,7 +9834,9 @@
                 container._inT=setTimeout(()=>container.classList.remove('sub-chunk-in'),95);
             }
             lastChunkIdx=chunkIdx;
-            if(live && block && !isCard && !block.classList.contains('is-resizing')){
+            if(live && block && !isCard
+                && !block.classList.contains('is-resizing')
+                && !block.classList.contains('selected')){
                 requestAnimationFrame(()=>{
                     if(dead || block.classList.contains('is-resizing')) return;
                     try{
@@ -10791,14 +10793,14 @@
         }
 
         lockSubtitleCenterX(block);
-        if(an.id!=='karaoke'){
+        {
             const minW=measureAnimPreviewMinWidth(block);
             if(minW>0){
                 const contW=document.getElementById('templateVideoPreview')?.clientWidth||280;
                 block.style.minWidth=`${Math.min(minW, Math.max(48, contW-16))}px`;
+            }else{
+                block.style.minWidth='';
             }
-        }else{
-            block.style.minWidth='';
         }
         lockSubtitleCenterX(block);
 
@@ -11853,6 +11855,13 @@
             syncFontDdHighlight(block.dataset.hookFontFamily||'Montserrat');
             return;
         }
+        if(!isOverlayText(block) && (
+            animLivePinned
+            || block.classList.contains('sub-anim-previewing')
+            || !!(animFullIv||animFullRunner)
+        )){
+            try{ settleSubtitleAfterAnim(block, { keepText:true }); }catch(_){}
+        }
         if(block.style.color)curTextCol=block.style.color;
         else curTextCol='#ffffff';
         if(block.style.fontFamily)curFont=block.style.fontFamily.replace(/['"]/g,'').split(',')[0].trim();
@@ -12240,15 +12249,27 @@
             touchSubtitleBlock(block);
             select(block);
             const animId=curAnim||block.dataset.subAnim||null;
-            if(animId && !isOverlayText(block)){
-                curAnim=animId;
-                block.dataset.subAnim=animId;
-                animLivePinned=true;
-                if(!block.classList.contains('sub-anim-previewing') || animPreviewActiveId!==animId){
-                    showAnimFullPreview(animId);
+            let resumeAnimId=null;
+            if(!isOverlayText(block) && (
+                animLivePinned
+                || block.classList.contains('sub-anim-previewing')
+                || !!(animFullIv||animFullRunner)
+            )){
+                resumeAnimId=animId||'karaoke';
+                try{
+                    settleSubtitleAfterAnim(block, { keepText:true, fast:true, fastMs:40 });
+                }catch(_){
+                    try{ softStopAnimPreview(); }catch(__){}
+                    animLivePinned=false;
+                    animPinnedBlock=null;
+                    block.classList.remove('sub-anim-previewing');
                 }
             }
             block.classList.add('is-resizing');
+            try{
+                const w=Math.ceil(block.getBoundingClientRect().width||block.offsetWidth||0);
+                if(w>24) block.style.minWidth=`${w}px`;
+            }catch(_){}
             let ra=true;
             const rx=clientX, ry=clientY;
             const cs=getComputedStyle(block);
@@ -12312,19 +12333,19 @@
                 }
                 setSubtitleFontSize(block, finalPx, cont);
                 if(!isOverlayText(block) && !isAiHook(block)){
-                    const newWpc=syncWordsPerChunkFromSize(block, cont);
-                    const animId2=curAnim||block.dataset.subAnim;
-                    if(animId2 && block.classList.contains('sub-anim-previewing')){
-                        if(animFullRunner && typeof animFullRunner.setWordsPerChunk==='function'){
-                            try{ animFullRunner.setWordsPerChunk(newWpc); }catch(_){}
-                        }else{
-                            animPreviewActiveId=null;
-                            showAnimFullPreview(animId2, {
+                    syncWordsPerChunkFromSize(block, cont);
+                    block.style.minWidth='';
+                    if(resumeAnimId && ddAnim?.classList.contains('open')){
+                        animLivePinned=true;
+                        animPinnedBlock=block;
+                        try{
+                            showAnimFullPreview(resumeAnimId, {
                                 noMenu: !block.classList.contains('selected'),
                                 block,
-                                wordsPerChunk: newWpc,
+                                wordsPerChunk: block.dataset.wordsPerChunk
+                                    ? Number(block.dataset.wordsPerChunk) : null,
                             });
-                        }
+                        }catch(_){}
                     }
                 }
                 if(isAiHook(block)){
@@ -13334,8 +13355,16 @@
             }
         }catch(_){}
 
-        layoutSubtitleMemoryGhost();
-        ensureSubMemActions().classList.add('open');
+        if(pendingSubMem?.previewApplied){
+            if(subMemGhost){ try{ subMemGhost.remove(); }catch(_){} subMemGhost=null; }
+            const live=document.getElementById('templateVideoPreview')
+                ?.querySelector('.sub-text-block.sub-mem-pick, .sub-text-block:not(.overlay-text-block)');
+            placeMemActionsNear(live||document.getElementById('templateVideoPreview'));
+            ensureSubMemActions().classList.add('open');
+        }else{
+            layoutSubtitleMemoryGhost();
+            ensureSubMemActions().classList.add('open');
+        }
         try{
             hideMenu();
             closeDD();

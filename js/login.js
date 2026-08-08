@@ -113,22 +113,36 @@ function disableButtonWithCountdown(e, t = 3) {
 }
 
 function resetGoogleLoginButton() {
-  if (!googleLoginBtn || !googleBtnText) return;
-  googleLoginBtn.disabled = false;
-  googleBtnText.textContent = "Continue with Google";
+  const e = document.getElementById("googleLoginBtn") || googleLoginBtn;
+  const t = document.getElementById("googleBtnText") || googleBtnText;
+  if (e) {
+    e.disabled = false;
+    e.removeAttribute("aria-busy");
+  }
+  if (t) t.textContent = "Continue with Google";
+  googleLoginBtn = e || googleLoginBtn;
+  googleBtnText = t || googleBtnText;
 }
 
 function setupEventListeners() {
   if (!googleLoginBtn) return;
+  googleLoginBtn.removeEventListener("click", handleGoogleLogin);
   googleLoginBtn.addEventListener("click", handleGoogleLogin);
 }
 
 async function handleGoogleLogin() {
   try {
-    googleBtnText.textContent = "Connecting…";
-    googleLoginBtn.disabled = true;
-    const e = window.API_BASE_URL || `${window.location.protocol}//${window.location.hostname}:5500/api`;
-    await fetch(`${e}/auth/logout`, {
+    const e = document.getElementById("googleLoginBtn");
+    const t = document.getElementById("googleBtnText");
+    googleLoginBtn = e;
+    googleBtnText = t;
+    if (t) t.textContent = "Connecting…";
+    if (e) {
+      e.disabled = true;
+      e.setAttribute("aria-busy", "true");
+    }
+    const o = window.API_BASE_URL || `${window.location.protocol}//${window.location.hostname}:5500/api`;
+    await fetch(`${o}/auth/logout`, {
       method: "POST",
       credentials: "include"
     }).catch(() => {});
@@ -139,16 +153,16 @@ async function handleGoogleLogin() {
       localStorage.removeItem("solis_memory_owner_id");
     } catch (e) {}
     sessionStorage.removeItem(SKIP_AUTH_REDIRECT_KEY);
-    const t = window.apiUrl ? window.apiUrl("/api/auth/google?fresh=1") : `${e}/auth/google?fresh=1`;
-    const o = await fetch(t, {
+    const n = window.apiUrl ? window.apiUrl("/api/auth/google?fresh=1") : `${o}/auth/google?fresh=1`;
+    const i = await fetch(n, {
       method: "GET",
       credentials: "include"
     });
-    if (!o.ok) throw new Error(`Server error: ${o.status}`);
-    const n = await o.json();
-    if (n.auth_url) {
+    if (!i.ok) throw new Error(`Server error: ${i.status}`);
+    const g = await i.json();
+    if (g.auth_url) {
       resetGoogleLoginButton();
-      window.location.href = n.auth_url;
+      window.location.href = g.auth_url;
       return;
     }
     throw new Error("Authentication unavailable");
@@ -156,8 +170,8 @@ async function handleGoogleLogin() {
     sessionStorage.setItem(SKIP_AUTH_REDIRECT_KEY, "1");
     console.error("Login error:", e);
     alert("Login failed. Please check your connection and try again.");
-    googleBtnText.textContent = "Continue with Google";
-    disableButtonWithCountdown(googleLoginBtn, 3);
+    resetGoogleLoginButton();
+    if (googleLoginBtn) disableButtonWithCountdown(googleLoginBtn, 3);
   }
 }
 
@@ -172,12 +186,18 @@ async function secureFetch(e, t = {}) {
   });
 }
 
-window.addEventListener("pageshow", () => {
+function unlockGoogleLoginUi() {
   resetGoogleLoginButton();
+}
+
+window.addEventListener("pageshow", unlockGoogleLoginUi);
+
+window.addEventListener("pagehide", unlockGoogleLoginUi);
+
+window.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") unlockGoogleLoginUi();
 });
 
-window.addEventListener("pagehide", () => {
-  resetGoogleLoginButton();
-});
+window.addEventListener("focus", unlockGoogleLoginUi);
 
 document.addEventListener("DOMContentLoaded", setupLoginPage);

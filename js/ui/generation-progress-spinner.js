@@ -1182,11 +1182,26 @@ class GenerationProgressSpinner {
   _cleanMessage(e) {
     if (!e || typeof e !== "string") return "";
     let t = e.replace(/[\u{1F300}-\u{1FAFF}\u2600-\u27BF]/gu, "").replace(/\s+/g, " ").trim();
-    if (/\b\d+(\.\d+)?\s*(MB\/s|MiB\/s|KB\/s|KiB\/s|Gbps|Mbps)\b/i.test(t) || /\b\d+(\.\d+)?\s*(MB|MiB|GB|GiB)\b/i.test(t) || /\bat\s+\d+(\.\d+)?\s*(MB|KB)/i.test(t)) {
-      if (/download|install/i.test(t)) return "Installing video...";
-      return "Working...";
+    const s = t.toLowerCase();
+    const i = /\b(vast\.?ai|modal\.com|runpod|serverless|rtx\s*\d+|gtx\s*\d+|a100|h100|l40|dph|\$\/hr)\b/i.test(t) || /\b(gpu|cpu)\s+worker\b/i.test(t) || /\bqueued on (vast|modal|cloud)\b/i.test(t) || /\binstance[=\s#:]?\s*\d{5,}\b/i.test(t) || /\b\d+(\.\d+)?\s*(MB\/s|MiB\/s|KB\/s|KiB\/s|Gbps|Mbps)\b/i.test(t) || /\b\d+(\.\d+)?\s*(MB|MiB|GB|GiB)\b/i.test(t) || /\bat\s+\d+(\.\d+)?\s*(MB|KB)/i.test(t) || /\b(traceback|exception|errno|http\/?\d|status[=\s]\d{3})\b/i.test(t);
+    if (i) {
+      if (/download|install/i.test(s)) return "Installing video...";
+      if (/fail|error|crash|exception/i.test(s)) return "Something went wrong — try again";
+      if (/queue|wait|slot|priority|starting|start|worker|rent|boot|load/i.test(s)) {
+        return "Starting...";
+      }
+      return "";
     }
     t = t.replace(/\b\d+(\.\d+)?\s*(MB\/s|MiB\/s|KB\/s|KiB\/s|Gbps|Mbps)\b/gi, "").replace(/\([^)]*\.(mp4|wav|webm|mkv)[^)]*\)/gi, "").replace(/\s+/g, " ").trim();
+    return t;
+  }
+  _friendlyErrorMessage(e = "") {
+    const t = this._cleanMessage(e);
+    if (!t) return "Something went wrong — try again";
+    const s = t.toLowerCase();
+    if (/\b(vast|modal|gpu|rtx|serverless|traceback|exception|errno)\b/i.test(t) || s.includes("failed:") || s.length > 120) {
+      return "Something went wrong — try again";
+    }
     return t;
   }
   _friendlyProgressLabel(e, t = "", s = null) {
@@ -1197,13 +1212,12 @@ class GenerationProgressSpinner {
     const r = this._getActiveTasks();
     const n = this._resolveTaskIndex(e, i);
     const a = r[n]?.label;
-    if (e >= 100) return i || "Complete!";
-    if (a && i) {
-      const e = i.toLowerCase();
-      const t = r[n]?.keywords?.some(t => e.includes(t));
-      if (t) return a;
+    if (e >= 100) {
+      if (!i || /complete|done|ready|success/i.test(i)) return "Complete!";
+      return i;
     }
-    return i || a || `${e}% complete`;
+    if (a) return a;
+    return i || `${e}% complete`;
   }
   displayProgress(e, t = "", s = null) {
     this._ensureDomRefs();
@@ -1407,7 +1421,8 @@ class GenerationProgressSpinner {
     }
   }
   failGeneration(e, t = "There was an error — try again") {
-    this._notifyGenerationFailed(e, t);
+    const s = this._friendlyErrorMessage(t);
+    this._notifyGenerationFailed(e, s);
     this._clearErrorDismissTimer();
     this.optimisticPending = false;
     this._completionHandled = false;
@@ -1437,12 +1452,12 @@ class GenerationProgressSpinner {
       this.progressText.textContent = "✕";
     }
     if (this.progressTooltip) {
-      this.progressTooltip.textContent = t;
+      this.progressTooltip.textContent = s;
     }
     if (this.taskCounter) {
       this.taskCounter.textContent = "Failed";
     }
-    this._showErrorBanner(t);
+    this._showErrorBanner(s);
     this.openPanel();
     this._errorDismissTimer = setTimeout(() => {
       this._dismissErrorState();
@@ -1469,10 +1484,10 @@ class GenerationProgressSpinner {
       this.launcher.classList.remove("is-complete", "is-error");
     }
     if (this.progressTooltip) {
-      this.progressTooltip.textContent = t;
+      this.progressTooltip.textContent = "Stopped";
     }
     if (this.taskCounter) {
-      this.taskCounter.textContent = t;
+      this.taskCounter.textContent = "Stopped";
     }
     this.closePanel();
     if (this.activeGenerations.size === 0 && !this.optimisticPending) {

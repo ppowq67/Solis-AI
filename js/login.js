@@ -112,6 +112,12 @@ function disableButtonWithCountdown(e, t = 3) {
   }, 1e3);
 }
 
+function resetGoogleLoginButton() {
+  if (!googleLoginBtn || !googleBtnText) return;
+  googleLoginBtn.disabled = false;
+  googleBtnText.textContent = "Continue with Google";
+}
+
 function setupEventListeners() {
   if (!googleLoginBtn) return;
   googleLoginBtn.addEventListener("click", handleGoogleLogin);
@@ -141,6 +147,7 @@ async function handleGoogleLogin() {
     if (!o.ok) throw new Error(`Server error: ${o.status}`);
     const n = await o.json();
     if (n.auth_url) {
+      resetGoogleLoginButton();
       window.location.href = n.auth_url;
       return;
     }
@@ -164,5 +171,13 @@ async function secureFetch(e, t = {}) {
     }
   });
 }
+
+window.addEventListener("pageshow", () => {
+  resetGoogleLoginButton();
+});
+
+window.addEventListener("pagehide", () => {
+  resetGoogleLoginButton();
+});
 
 document.addEventListener("DOMContentLoaded", setupLoginPage);

@@ -25,7 +25,7 @@
   const s = "__ranking_layout";
   const l = .25;
   const c = .1;
-  const d = .45;
+  const u = .45;
   function shadowCss(e, t) {
     const n = normalizeHex(t) || t || "#000";
     if (!e || e === "none") return "none";
@@ -34,7 +34,7 @@
     }
     return `2px 0 0 ${n},-2px 0 0 ${n},0 2px 0 ${n},0 -2px 0 ${n},` + `1px 1px 0 ${n},-1px -1px 0 ${n},1px -1px 0 ${n},-1px 1px 0 ${n}`;
   }
-  let u, p, g, m;
+  let d, p, g, m;
   let y = new Set;
   let b = "Luckiest Guy";
   let w = "#ffffff";
@@ -58,9 +58,9 @@
   let N = 92;
   let $ = 56;
   let I = false;
+  let q = false;
   let G = false;
-  let O = false;
-  let q = null;
+  let O = null;
   let V = "single";
   let W = null;
   let j = null;
@@ -81,11 +81,11 @@
   const se = 38;
   const le = 18;
   const ce = 16;
-  const de = 34;
-  const ue = 120;
+  const ue = 34;
+  const de = 120;
   const pe = 110;
-  const ge = 95;
-  const fe = pe;
+  const fe = 95;
+  const ge = pe;
   const me = 72;
   const he = 1080;
   function getRankingRoot() {
@@ -247,19 +247,19 @@
       r.title = e;
       r.onmouseenter = () => previewFont(e);
       r.onmouseleave = e => {
-        if (G) return;
+        if (q) return;
         if (p.contains(e.relatedTarget)) return;
         resetFontPreview();
       };
       r.onmousedown = t => {
         t.preventDefault();
         t.stopPropagation();
-        G = true;
+        q = true;
         try {
           applyFont(e);
         } finally {
           setTimeout(() => {
-            G = false;
+            q = false;
           }, 450);
         }
       };
@@ -278,20 +278,20 @@
     return [ r, o ].filter(Boolean);
   }
   function buildUI() {
-    if (O) return;
-    O = true;
+    if (G) return;
+    G = true;
     hideSubtitleGuidesOverRanking();
-    u = document.createElement("div");
-    u.className = "sub-pill-menu";
-    u.id = "rkPillMenu";
-    u.innerHTML = `\n            <button type="button" class="sub-pill-btn" id="rkBtnFont" title="Font">\n                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>\n            </button>\n            <button type="button" class="sub-pill-btn" id="rkBtnColor" title="Color">\n                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>\n            </button>\n        `;
-    document.body.appendChild(u);
+    d = document.createElement("div");
+    d.className = "sub-pill-menu";
+    d.id = "rkPillMenu";
+    d.innerHTML = `\n            <button type="button" class="sub-pill-btn" id="rkBtnFont" title="Font">\n                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>\n            </button>\n            <button type="button" class="sub-pill-btn" id="rkBtnColor" title="Color">\n                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>\n            </button>\n        `;
+    document.body.appendChild(d);
     p = document.createElement("div");
     p.className = "sub-dropdown sub-font-dd";
     p.id = "rkDdFont";
     buildFontList();
     p.addEventListener("mouseleave", e => {
-      if (p.contains(e.relatedTarget) || u?.contains(e.relatedTarget)) return;
+      if (p.contains(e.relatedTarget) || d?.contains(e.relatedTarget)) return;
       resetFontPreview();
     });
     document.body.appendChild(p);
@@ -900,7 +900,7 @@
   function syncBlankBgVisibility() {
     const e = document.getElementById("rkBlankLine");
     if (!e) return;
-    const t = q != null ? q : getRankingLayout().top_panel || "none";
+    const t = O != null ? O : getRankingLayout().top_panel || "none";
     const n = t === "blank" && selectionAllowsTopBg();
     e.classList.toggle("is-hidden", !n);
     e.setAttribute("aria-hidden", n ? "false" : "true");
@@ -1009,7 +1009,7 @@
     return {
       top_panel: t.top_panel === "blank" || t.top_panel === "blank_blur" ? t.top_panel : "none",
       top_panel_color: normalizeHex(t.top_panel_color) || "#000000",
-      top_ratio: Math.max(c, Math.min(d, n)),
+      top_ratio: Math.max(c, Math.min(u, n)),
       offset_x_pct: 0,
       offset_y_pct: (() => {
         const e = Number(t.offset_y_pct);
@@ -1049,10 +1049,10 @@
     const s = i.getBoundingClientRect();
     const l = s.top - o - r;
     const c = s.bottom - o - r;
-    const d = Math.max(6, t * .012);
-    const u = Math.max(4, t * .01);
-    let p = (a + d - l) / t;
-    let g = (t - u - c) / t;
+    const u = Math.max(6, t * .012);
+    const d = Math.max(4, t * .01);
+    let p = (a + u - l) / t;
+    let g = (t - d - c) / t;
     p = Math.max(-.35, Math.min(.45, p));
     g = Math.max(-.35, Math.min(.45, g));
     if (g < p) {
@@ -1150,7 +1150,7 @@
       const s = r.pointerId;
       const l = getRankingLayout();
       const c = r.clientY;
-      const d = r.clientX;
+      const u = r.clientX;
       const p = Number(l.offset_y_pct) || 0;
       const g = Math.max(1, e.getBoundingClientRect().height || 1);
       const m = computeStackOffsetBounds(e);
@@ -1178,7 +1178,7 @@
         if (v) return;
         if (i.pointerId != null && i.pointerId !== s) return;
         const r = i.clientY - c;
-        const o = i.clientX - d;
+        const o = i.clientX - u;
         if (!b && Math.hypot(o, r) < n) return;
         if (!b) {
           b = true;
@@ -1190,8 +1190,8 @@
         if (i.cancelable) i.preventDefault();
         e.classList.add("rk-stack-dragging");
         e.classList.remove("rk-stack-settle");
-        if (y.size && u?.classList) {
-          u.classList.add("active");
+        if (y.size && d?.classList) {
+          d.classList.add("active");
           schedulePosMenu();
         }
         const a = p + r / g;
@@ -1270,7 +1270,7 @@
       ...t,
       ...e
     };
-    q = null;
+    O = null;
     storeRankingLayout(n);
     applyRankingTopPanel(n);
     applyStackOffset(n);
@@ -1302,13 +1302,13 @@
         const o = getRankingLayout();
         const a = n.clientY;
         const s = Number(o.top_ratio) || l;
-        const u = n.pointerId;
+        const d = n.pointerId;
         try {
-          e.setPointerCapture(u);
+          e.setPointerCapture(d);
         } catch (e) {}
         const onMove = e => {
           const n = e.clientY - a;
-          const i = Math.max(c, Math.min(d, s + n / r));
+          const i = Math.max(c, Math.min(u, s + n / r));
           t.style.height = `${Math.round(i * 1e3) / 10}%`;
           t._rkPendingRatio = i;
         };
@@ -1317,7 +1317,7 @@
           document.removeEventListener("pointerup", onUp);
           document.removeEventListener("pointercancel", onUp);
           try {
-            e.releasePointerCapture(u);
+            e.releasePointerCapture(d);
           } catch (e) {}
           const n = Number.isFinite(t._rkPendingRatio) ? t._rkPendingRatio : s;
           delete t._rkPendingRatio;
@@ -1351,7 +1351,7 @@
     });
     if (i <= 4) return l;
     const o = Math.max(6, Math.round(n * .01));
-    return Math.max(c, Math.min(d, (i + o) / n));
+    return Math.max(c, Math.min(u, (i + o) / n));
   }
   function syncTopPanelToHeader(e) {
     e = e || {};
@@ -1364,7 +1364,7 @@
     const r = measureHeaderBandRatio(t);
     const o = Number(n.top_ratio);
     const a = Number.isFinite(o) ? o : l;
-    const s = Math.max(c, Math.min(d, Math.max(a, r)));
+    const s = Math.max(c, Math.min(u, Math.max(a, r)));
     i.style.height = `${Math.round(s * 1e3) / 10}%`;
     if (!e.liveOnly && Math.abs(a - s) > .004) {
       storeRankingLayout({
@@ -1412,7 +1412,7 @@
     i.classList.toggle("mode-blank", n === "blank");
     const r = measureHeaderBandRatio(t);
     const o = Number(e.top_ratio);
-    const a = Math.max(c, Math.min(d, Math.max(Number.isFinite(o) ? o : l, r)));
+    const a = Math.max(c, Math.min(u, Math.max(Number.isFinite(o) ? o : l, r)));
     i.style.height = `${Math.round(a * 1e3) / 10}%`;
     const s = Number(e.top_ratio);
     if (!Number.isFinite(s) || Math.abs(s - a) > .004) {
@@ -1423,67 +1423,67 @@
         v: 2
       });
     }
-    const u = i.querySelector(".rk-top-blur-vid");
+    const d = i.querySelector(".rk-top-blur-vid");
     if (n === "blank") {
       i.classList.remove("has-blur-src");
       i.style.background = e.top_panel_color || "#000";
-      if (u) {
+      if (d) {
         try {
-          u.pause();
-          u.removeAttribute("src");
+          d.pause();
+          d.removeAttribute("src");
         } catch (e) {}
       }
     } else if (n === "blank_blur") {
       i.style.background = "";
       const e = findRankingSourceVideo();
-      if (u && e && (e.currentSrc || e.src)) {
+      if (d && e && (e.currentSrc || e.src)) {
         const t = e.currentSrc || e.src;
-        if (u.getAttribute("src") !== t && u.src !== t) {
-          u.src = t;
+        if (d.getAttribute("src") !== t && d.src !== t) {
+          d.src = t;
           try {
-            u.load();
+            d.load();
           } catch (e) {}
         }
         i.classList.add("has-blur-src");
         const sync = () => {
           try {
-            u.currentTime = e.currentTime || 0;
+            d.currentTime = e.currentTime || 0;
           } catch (e) {}
-          u.muted = true;
-          u.playsInline = true;
-          const t = u.play();
+          d.muted = true;
+          d.playsInline = true;
+          const t = d.play();
           if (t && typeof t.catch === "function") t.catch(() => {});
         };
-        if (!u._rkBlurBound) {
-          u._rkBlurBound = true;
+        if (!d._rkBlurBound) {
+          d._rkBlurBound = true;
           e.addEventListener("play", sync);
           e.addEventListener("seeked", sync);
           e.addEventListener("timeupdate", () => {
-            if (Math.abs((u.currentTime || 0) - (e.currentTime || 0)) > .45) {
+            if (Math.abs((d.currentTime || 0) - (e.currentTime || 0)) > .45) {
               try {
-                u.currentTime = e.currentTime || 0;
+                d.currentTime = e.currentTime || 0;
               } catch (e) {}
             }
           });
-          u.addEventListener("loadeddata", sync);
+          d.addEventListener("loadeddata", sync);
         }
-        if (u.readyState >= 2) sync(); else {
-          u.addEventListener("loadeddata", sync, {
+        if (d.readyState >= 2) sync(); else {
+          d.addEventListener("loadeddata", sync, {
             once: true
           });
           sync();
         }
-      } else if (u) {
+      } else if (d) {
         try {
-          u.pause();
-          u.removeAttribute("src");
+          d.pause();
+          d.removeAttribute("src");
         } catch (e) {}
         i.classList.remove("has-blur-src");
         i.style.background = "";
       }
-    } else if (u) {
+    } else if (d) {
       try {
-        u.pause();
+        d.pause();
       } catch (e) {}
       i.classList.remove("has-blur-src");
       i.style.background = "";
@@ -1495,7 +1495,7 @@
     applyStackOffset(e);
   }
   function syncTopModeButtons() {
-    const e = q != null ? q : getRankingLayout().top_panel || "none";
+    const e = O != null ? O : getRankingLayout().top_panel || "none";
     document.querySelectorAll("#rkTopModes .rk-top-mode").forEach(t => {
       t.classList.toggle("on", (t.dataset.top || "none") === e);
     });
@@ -1504,7 +1504,7 @@
   }
   function previewTopMode(e) {
     const t = e === "blank" || e === "blank_blur" ? e : "none";
-    q = t;
+    O = t;
     applyRankingTopPanel({
       ...getRankingLayout(),
       top_panel: t
@@ -1512,8 +1512,8 @@
     syncTopModeButtons();
   }
   function resetTopModePreview() {
-    if (q == null) return;
-    q = null;
+    if (O == null) return;
+    O = null;
     applyRankingTopPanel(getRankingLayout());
     syncTopModeButtons();
   }
@@ -1526,7 +1526,7 @@
       if (!t) return;
       e.preventDefault();
       e.stopPropagation();
-      q = null;
+      O = null;
       const n = t.dataset.top || "none";
       const i = {
         top_panel: n
@@ -1594,16 +1594,16 @@
       const s = V === "group-header" ? getPrimaryHeaderEl() || n[0] : W && document.contains(W) ? W : n[0];
       const l = R != null ? R : getEffectiveFontSize(s);
       const c = V === "group-header";
-      const d = V === "group-ranks";
+      const u = V === "group-ranks";
       const p = c || V !== "single" && n.every(e => isHeaderEl(e));
-      const g = getHardSizeCap(d || n.every(e => isRankEl(e)) ? "ranks" : "header");
+      const g = getHardSizeCap(u || n.every(e => isRankEl(e)) ? "ranks" : "header");
       const m = g;
       let b = false;
       const onMove = e => {
         if (!i) return;
         if (e.cancelable) e.preventDefault();
         const t = (e.clientX - r + (e.clientY - o)) * .55;
-        const a = d || n.every(e => isRankEl(e)) ? ce : le;
+        const a = u || n.every(e => isRankEl(e)) ? ce : le;
         const s = Math.max(a, Math.min(m, Math.round(l + t)));
         if (Math.abs(s - l) < 1 && Math.abs(t) < 2) return;
         b = true;
@@ -1614,7 +1614,7 @@
           syncTopPanelToHeader({
             liveOnly: true
           });
-        } else if (d) {
+        } else if (u) {
           R = applyRankBlockSize(s, {
             resizing: true
           });
@@ -1637,7 +1637,7 @@
             });
           }
         }
-        if (u?.classList.contains("active")) schedulePosMenu();
+        if (d?.classList.contains("active")) schedulePosMenu();
       };
       const onUp = () => {
         i = false;
@@ -1657,7 +1657,7 @@
             });
           }
         }
-        if (d) {
+        if (u) {
           const e = getRankingRoot();
           if (e && !ranksListFits(e)) {
             applyRankBlockSize(R != null ? R : l, {
@@ -1802,16 +1802,16 @@
     } else if (e.querySelector(".rk-sized")) {
       return false;
     }
-    const n = previewPxFromBurn(ue);
+    const n = previewPxFromBurn(de);
     const i = previewPxFromBurn(pe);
-    const r = previewPxFromBurn(ge);
+    const r = previewPxFromBurn(fe);
     applyHeaderBlockSize(n);
     applyRankBlockSize(i, {
       titlePx: r
     });
     const o = e.querySelector('[data-template-element-id="title_channel"]');
     if (o && !o.classList.contains("rk-sized")) {
-      const e = Math.min(de, previewPxFromBurn(me));
+      const e = Math.min(ue, previewPxFromBurn(me));
       o.style.setProperty("font-size", `${e}px`, "important");
       o.classList.add("rk-sized");
     }
@@ -1825,7 +1825,7 @@
   }
   function getHardSizeCap(e) {
     if (e && isChannelEl(e)) {
-      return de;
+      return ue;
     }
     const t = e === "ranks" || e === "header" ? e : isHeaderEl(e) ? "header" : isRankEl(e) ? "ranks" : "header";
     if (t === "ranks") return se;
@@ -1923,14 +1923,14 @@
     const s = o ? 12 : 10;
     const l = a ? 2 : 8;
     const c = o ? 6 : 4;
-    const d = getContentRect(e);
-    if (!d || d.width <= 0) return true;
-    const u = r.width - s * 2;
-    if (d.width + c * 2 > u + 1) return false;
-    if (d.left - c < r.left + s - 1) return false;
-    if (d.right + c > r.right - s + 1) return false;
-    if (d.bottom + c > r.bottom - l + 1) return false;
-    if (!a && d.top - c < r.top + l - 1) return false;
+    const u = getContentRect(e);
+    if (!u || u.width <= 0) return true;
+    const d = r.width - s * 2;
+    if (u.width + c * 2 > d + 1) return false;
+    if (u.left - c < r.left + s - 1) return false;
+    if (u.right + c > r.right - s + 1) return false;
+    if (u.bottom + c > r.bottom - l + 1) return false;
+    if (!a && u.top - c < r.top + l - 1) return false;
     return true;
   }
   function headerLineFits(e) {
@@ -2309,13 +2309,13 @@
     }
   }
   function previewFont(e) {
-    if (G || !y.size) return;
+    if (q || !y.size) return;
     const t = resolveApplyTargets();
     beginFontPreviewSession(t);
     t.forEach(t => paintFontDom(t, e));
   }
   function resetFontPreview() {
-    if (G || !I) return;
+    if (q || !I) return;
     I = false;
     Y.forEach(e => restoreSnapshot(e));
     Y = [];
@@ -2395,11 +2395,17 @@
   }
   function canOfferSuggest() {
     if (Date.now() < K) return false;
-    try {
-      if (window.SolisMemory?.isSuggestEnabled && !window.SolisMemory.isSuggestEnabled()) {
-        return false;
-      }
-    } catch (e) {}
+    return true;
+  }
+  function fontsDiffer(e, t) {
+    if (!t) return false;
+    if (!e) return true;
+    const strip = e => String(e || "").replace(/['"]/g, "").split(",")[0].trim().toLowerCase().replace(/[^a-z0-9]/g, "").replace(/(regular|bold|semibold|medium|light|black|ttf|otf|woff2?)$/g, "");
+    const n = strip(e);
+    const i = strip(t);
+    if (!n || !i) return n !== i;
+    if (n === i) return false;
+    if (n.includes(i) || i.includes(n)) return false;
     return true;
   }
   function getShadowCssForType(e) {
@@ -2515,7 +2521,7 @@
   function propsNeedApply(e, t) {
     return e.some(e => {
       if (!e?.isConnected) return false;
-      if (t.font && getElFontName(e) !== normalizeFontName(t.font)) return true;
+      if (t.font && fontsDiffer(getElFontName(e), t.font)) return true;
       if (t.color && getElColor(e) !== normalizeColorValue(t.color)) return true;
       if (t.size != null) {
         const n = t.fromGroup || "header";
@@ -2593,9 +2599,9 @@
     }
     const l = r.map(e => e.getBoundingClientRect());
     const c = Math.min(...l.map(e => e.top));
-    const d = Math.max(...l.map(e => e.bottom));
-    const u = Math.min(...l.map(e => e.left));
-    const p = (c + d) / 2;
+    const u = Math.max(...l.map(e => e.bottom));
+    const d = Math.min(...l.map(e => e.left));
+    const p = (c + u) / 2;
     const g = 12;
     const y = document.createElement("div");
     y.className = "rk-ghost-stack";
@@ -2666,7 +2672,7 @@
     } catch (e) {}
     const x = y.offsetHeight || 40;
     const S = y.offsetWidth || 80;
-    let E = Math.round(u - S - g);
+    let E = Math.round(d - S - g);
     let z = Math.round(p - x / 2);
     z = Math.max(8, Math.min(z, window.innerHeight - x - 8));
     if (E < 8) E = 8;
@@ -2730,7 +2736,7 @@
     const s = window.innerWidth;
     const l = window.innerHeight;
     const c = document.getElementById("templateVideoPreview")?.getBoundingClientRect?.() || null;
-    const d = [ {
+    const u = [ {
       left: n.right - i,
       top: n.top - r - o,
       pref: 100
@@ -2770,43 +2776,43 @@
       const s = Math.max(0, Math.min(o.bottom, n.bottom) - Math.max(o.top, n.top));
       return a * s / Math.max(1, i * r);
     };
-    let u = null;
+    let d = null;
     let p = -Infinity;
-    d.forEach(e => {
+    u.forEach(e => {
       let t = Math.round(e.left);
       let o = Math.round(e.top);
       t = Math.max(a, Math.min(t, s - i - a));
       o = Math.max(a, Math.min(o, l - r - a));
-      let d = e.pref;
-      if (e.left < a || e.left + i > s - a) d -= 25;
-      if (e.top < a || e.top + r > l - a) d -= 25;
+      let u = e.pref;
+      if (e.left < a || e.left + i > s - a) u -= 25;
+      if (e.top < a || e.top + r > l - a) u -= 25;
       if (c) {
         const e = t + i / 2;
         const n = o + r / 2;
         const a = e >= c.left - 12 && e <= c.right + 12 && n >= c.top - 20 && n <= c.bottom + 20;
-        d += a ? 18 : -12;
+        u += a ? 18 : -12;
       }
       const g = overlapsRed(t, o);
-      d -= g * 80;
+      u -= g * 80;
       const m = t + i / 2 - (n.left + n.width / 2);
       const y = o + r / 2 - (n.top + n.height / 2);
-      d -= Math.min(40, Math.hypot(m, y) / 12);
-      if (d > p) {
-        p = d;
-        u = {
+      u -= Math.min(40, Math.hypot(m, y) / 12);
+      if (u > p) {
+        p = u;
+        d = {
           left: t,
           top: o
         };
       }
     });
-    if (!u) {
-      u = {
+    if (!d) {
+      d = {
         left: Math.max(a, Math.min(Math.round(n.right - i), s - i - a)),
         top: Math.max(a, Math.min(Math.round(n.top - r - o), l - r - a))
       };
     }
-    m.style.left = `${u.left}px`;
-    m.style.top = `${u.top}px`;
+    m.style.left = `${d.left}px`;
+    m.style.top = `${d.top}px`;
     m.style.transform = "none";
     m.style.zIndex = "99870";
   }
@@ -2914,8 +2920,11 @@
       s = "siblings";
     } else if (o) {
       s = "counterpart";
-    } else if (window.__SolisSG && typeof window.__SolisSG.styleOffer === "function") {
-      s = window.__SolisSG.styleOffer(n.length, r, i.length, o);
+    }
+    if (!s && a && i.length) {
+      s = "counterpart";
+    } else if (!s && n.length && (t.font || t.color || t.size != null)) {
+      s = "siblings";
     }
     if (!s) return;
     const l = s === "counterpart" ? i : n;
@@ -2973,9 +2982,9 @@
     return null;
   }
   function posMenu() {
-    if (!y.size || !u) return;
-    const e = u.offsetWidth || 100;
-    const t = u.offsetHeight || 44;
+    if (!y.size || !d) return;
+    const e = d.offsetWidth || 100;
+    const t = d.offsetHeight || 44;
     const n = 8;
     const i = 10;
     const r = {
@@ -2987,8 +2996,8 @@
       const t = getRankingRoot();
       const o = t?.getBoundingClientRect?.();
       if (o) {
-        u.style.left = `${Math.round(Math.max(i, Math.min(o.right + n, r.w - e - i)))}px`;
-        u.style.top = `${Math.round(Math.max(i, o.top + 24))}px`;
+        d.style.left = `${Math.round(Math.max(i, Math.min(o.right + n, r.w - e - i)))}px`;
+        d.style.top = `${Math.round(Math.max(i, o.top + 24))}px`;
       }
       return;
     }
@@ -3020,12 +3029,12 @@
       if (s < i) s = o.bottom + n;
       s = Math.max(i, Math.min(s, r.h - t - i));
     }
-    u.style.left = `${Math.round(a)}px`;
-    u.style.top = `${Math.round(s)}px`;
+    d.style.left = `${Math.round(a)}px`;
+    d.style.top = `${Math.round(s)}px`;
     placeOpenDd();
   }
   function placeOpenDd() {
-    if (!u) return;
+    if (!d) return;
     let e = null;
     let t = null;
     if (p?.classList.contains("open")) {
@@ -3036,7 +3045,7 @@
       t = document.getElementById("rkBtnColor");
     }
     if (!e || !t) return;
-    const n = u.getBoundingClientRect();
+    const n = d.getBoundingClientRect();
     const i = e.offsetWidth || 220;
     const r = e.offsetHeight || 200;
     const o = {
@@ -3057,17 +3066,17 @@
       if (c + i > o.w - 10) c = o.w - i - 10;
       if (c < 10) c = 10;
     }
-    let d = n.bottom + a;
-    if (l) d = Math.max(12, Math.min(d, l.top + 8));
-    if (d + r > o.h - 12) d = Math.max(12, o.h - r - 12);
-    e.style.top = `${Math.round(d)}px`;
+    let u = n.bottom + a;
+    if (l) u = Math.max(12, Math.min(u, l.top + 8));
+    if (u + r > o.h - 12) u = Math.max(12, o.h - r - 12);
+    e.style.top = `${Math.round(u)}px`;
     e.style.left = `${Math.round(c)}px`;
   }
   function schedulePosMenu() {
     if (U) return;
     U = requestAnimationFrame(() => {
       U = 0;
-      if (u?.classList.contains("active")) posMenu();
+      if (d?.classList.contains("active")) posMenu();
       try {
         syncTopPanelToHeader({
           liveOnly: true
@@ -3079,11 +3088,11 @@
     });
   }
   function hideMenu() {
-    u?.classList.remove("active");
-    if (u) {
-      u.style.opacity = "";
-      u.style.visibility = "";
-      u.style.pointerEvents = "";
+    d?.classList.remove("active");
+    if (d) {
+      d.style.opacity = "";
+      d.style.visibility = "";
+      d.style.pointerEvents = "";
     }
     closeDD();
   }
@@ -3093,7 +3102,7 @@
   function openDD(e, t) {
     closeDD(e);
     e.classList.add("open");
-    const n = u.getBoundingClientRect();
+    const n = d.getBoundingClientRect();
     const i = e.offsetWidth || 220;
     const r = e.offsetHeight || 200;
     const o = {
@@ -3119,23 +3128,23 @@
       if (!t || t === e) return;
       t.classList.remove("open");
     });
-    u?.querySelectorAll(".sub-pill-btn").forEach(e => e.classList.remove("sub-active"));
+    d?.querySelectorAll(".sub-pill-btn").forEach(e => e.classList.remove("sub-active"));
   }
   function showMenu() {
     if (!y.size) return;
     buildUI();
-    if (!u) return;
+    if (!d) return;
     try {
       window.solisClosePeerPreviewChrome?.("rk");
     } catch (e) {}
-    u.classList.add("active");
-    u.style.opacity = "1";
-    u.style.visibility = "visible";
-    u.style.pointerEvents = "auto";
-    u.style.zIndex = "99900";
+    d.classList.add("active");
+    d.style.opacity = "1";
+    d.style.visibility = "visible";
+    d.style.pointerEvents = "auto";
+    d.style.zIndex = "99900";
     posMenu();
     requestAnimationFrame(() => {
-      if (y.size && u?.classList.contains("active")) posMenu();
+      if (y.size && d?.classList.contains("active")) posMenu();
     });
   }
   function wireButtons() {
@@ -3195,9 +3204,9 @@
     });
     document.addEventListener("mousedown", e => {
       if (e.target.closest("#rkSuggestActions")) return;
-      if (!u?.classList.contains("active")) return;
+      if (!d?.classList.contains("active")) return;
       if (e.target.closest(".sub-resize-handle")) return;
-      if (u.contains(e.target) || p.contains(e.target) || g.contains(e.target)) return;
+      if (d.contains(e.target) || p.contains(e.target) || g.contains(e.target)) return;
       if (e.target.closest("[data-template-element-id]")) return;
       if (e.target.closest(".ranking-editor-zone-header, .ranking-editor-zone-ranks")) return;
       if (e.target.closest(".ranking-preview-container")) {

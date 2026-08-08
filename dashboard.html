@@ -19,7 +19,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet">
     <script src="/js/s_new/solis-sg.js?v=1"></script>
-    <script src="/js/i_dq/ranking-text-pill.js?v=97"></script>
+    <script src="/js/i_dq/ranking-text-pill.js?v=98"></script>
     <script src="/js/i_dq/ranking-template-editor.js?v=22"></script>
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon/genfavicon-32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon/genfavicon-16.png">
@@ -50,8 +50,8 @@
     <script src="/js/ui/progress-ui.js?v=2"></script>
     <script src="/js/ui/generation-progress-spinner.js?v=40"></script>
     <script src="/js/generation-recovery.js?v=3"></script>
-    <script src="/js/i_dq/ranking-customizer.js?v=23"></script>
-    <script src="/js/s_new/solis-memory.js?v=38"></script>
+    <script src="/js/i_dq/ranking-customizer.js?v=24"></script>
+    <script src="/js/s_new/solis-memory.js?v=39"></script>
     <script src="/js/settings/settings-manager.js?v=2"></script>
     <script src="/js/payment/payment-flow.js?v=1"></script>
     <script src="/js/payment/premium-logic.js?v=2"></script>
@@ -60,7 +60,7 @@
     <script src="/js/payment/platform-connections.js?v=3"></script>
     <script src="/js/ui/plan-selector.js?v=62"></script>
     <script src="/js/core/video-preview-system.js?v=2"></script>
-    <script src="/js/s.js?v=240"></script>
+    <script src="/js/s.js?v=241"></script>
     <script src="/js/s_new/procc.js?v=2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -3489,7 +3489,7 @@
         </div>
         <div class="template-content">
             <h3 class="template-title">Split Screen</h3>
-            <p class="template-subtitle">Video + Gameplay stacked</p>
+            <p class="template-subtitle">Dynamic layouts for any video.</p>
             <div class="template-features">
                 <div class="template-feature">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -6027,6 +6027,10 @@
 }
 .sub-text-block.sub-suggest.selected{
     animation:none;
+}
+.sub-text-block.sub-suggest.sub-anim-previewing,
+.sub-text-block.sub-mem-pick.sub-anim-previewing{
+    animation:none !important;
 }
 .overlay-text-block[data-ai-hook="1"].sub-suggest[data-hook-box="1"]{
     background:rgba(255,255,255,.92) !important;
@@ -10363,10 +10367,42 @@
                 target.style.transition='';
                 target.style.removeProperty('--sub-line-fill');
                 target.querySelectorAll('.k-line-base,.k-line-fill,.sub-preview-word,.sticker-run,.sticker-idle').forEach(el=>el.remove());
+                if(!String(target.textContent||'').trim()){
+                    target.textContent=calmSubtitleRestoreText(
+                        pinned.dataset.subPreviewSource||animPreviewSavedText||SUB_PLACEHOLDER
+                    );
+                }
             }
         }
         const cont=document.getElementById('templateVideoPreview');
         cont?.querySelectorAll('.sub-guide,.sub-half-line').forEach(el=>{el.style.visibility='';});
+    }
+
+    function paintCalmCaptionFace(block, opts){
+        if(!block||isOverlayText(block)) return;
+        const target=getAnimTarget(block);
+        if(!target) return;
+        const restore=calmSubtitleRestoreText(
+            opts?.text
+            || block.dataset.subPreviewSource
+            || animPreviewSavedText
+            || getSubtitleText(block)
+            || SUB_PLACEHOLDER
+        );
+        target.className='sub-text-inner';
+        target.classList.remove('k-line','k-running','sub-chunk-line','sub-chunk-out','sub-chunk-in','sub-merged-fill','sticker-mode','sub-static-line','sub-reaction-solo');
+        target.style.opacity='1';
+        target.style.transform='';
+        target.style.transition='';
+        target.style.removeProperty('--sub-line-fill');
+        target.style.color='';
+        target.querySelectorAll('.k-line-base,.k-line-fill,.sub-preview-word,.sticker-run,.sticker-idle,.k-line-host').forEach(el=>{
+            try{ el.remove(); }catch(_){}
+        });
+        target.textContent=restore;
+        block.classList.remove('sub-anim-previewing');
+        block.dataset.subPreviewSource=restore;
+        if(opts?.keepSaved!==false) animPreviewSavedText=restore;
     }
 
     function settleSubtitleAfterAnim(block, opts){
@@ -10891,6 +10927,11 @@
         const block=animPinnedBlock||active
             || document.getElementById('templateVideoPreview')?.querySelector('.sub-text-block:not(.overlay-text-block)');
         if(!block||isOverlayText(block)) return false;
+        if(block.classList.contains('sub-suggest')
+            || block.classList.contains('sub-mem-pick')
+            || !!pendingSubMem){
+            return false;
+        }
         const id=curAnim||block.dataset.subAnim||'karaoke';
         if(!id) return false;
         animLivePinned=true;
@@ -12926,7 +12967,8 @@
                 window.applySubtitleStyle(style,{
                     selectAfter:false,
                     applyFill:true,
-                    playAnim:o.playAnim!==false,
+                    playAnim:o.playAnim===true,
+                    markSuggest:o.markSuggest!==false,
                     previewText:o.previewText||o.captionPreviewText||null,
                 });
             }
@@ -13154,10 +13196,8 @@
                 pendingSubMem.previewApplied=true;
             }
         }
-        applySubtitleStyle(style,{ fromMemory:true, selectAfter:false, playAnim:true, applyFill:true });
+        applySubtitleStyle(style,{ fromMemory:true, selectAfter:false, playAnim:false, applyFill:true, markSuggest:true });
         try{ hideMenu(); closeDD(); }catch(_){}
-        const anim=(String(style.anim||'karaoke').toLowerCase()==='center')?'fade':String(style.anim||'karaoke').toLowerCase();
-        try{ showAnimFullPreview(anim); }catch(_){}
         placeMemActionsNear(document.getElementById('templateVideoPreview'));
         if(pendingSubMem) pendingSubMem.stage='anim';
         try{ window.__solisPendingSubMem=pendingSubMem; }catch(_){}
@@ -13169,7 +13209,7 @@
         const anim=(String(style.anim||curAnim||'karaoke').toLowerCase()==='center')?'fade':String(style.anim||curAnim||'karaoke').toLowerCase();
         curAnim=anim;
         if(active) active.dataset.subAnim=anim;
-        applySubtitleStyle({...style, anim},{ fromMemory:true, selectAfter:false, playAnim:true, applyFill:true });
+        applySubtitleStyle({...style, anim},{ fromMemory:true, selectAfter:false, playAnim:false, applyFill:true, markSuggest:true });
         try{ hideMenu(); closeDD(); }catch(_){}
         placeMemActionsNear(document.getElementById('templateVideoPreview'));
         if(pendingSubMem) pendingSubMem.stage='color';
@@ -13283,12 +13323,14 @@
                 applySubtitleStyle(style,{
                     fromMemory:true,
                     selectAfter:false,
-                    playAnim:true,
+                    playAnim:false,
                     applyFill:true,
                     applyColors:true,
+                    markSuggest:true,
                 });
                 pendingSubMem.previewApplied=true;
                 block.classList.add('sub-mem-pick');
+                markSubtitleSuggest(block);
             }
         }catch(_){}
 
@@ -13318,6 +13360,8 @@
             playAnim:true,
             applyFill:true,
             applyColors:false,
+            accepted:true,
+            markSuggest:false,
         });
         const block=document.getElementById('templateVideoPreview')
             ?.querySelector('.sub-text-block:not(.overlay-text-block)');
@@ -13325,6 +13369,10 @@
         if(inner&&(inner.textContent==='Aa'||inner.textContent==='SUBTITLES'||!String(inner.textContent||'').trim())){
             inner.textContent=SUB_PLACEHOLDER;
         }
+        try{
+            block?.classList?.remove('sub-mem-pick','sub-suggest');
+            if(block) block.dataset.subTouched='1';
+        }catch(_){}
         try{ hideMenu(); deselect(); }catch(_){}
         let appliedSnap=null;
         try{
@@ -13565,7 +13613,17 @@
             );
         }
 
-        if(opts?.playAnim!==false && !isOverlayText(block)){
+        const softApply=opts?.selectAfter===false;
+        const wantSuggest=softApply && opts?.markSuggest!==false && opts?.accepted!==true;
+        const wantAnim=!isOverlayText(block) && (
+            softApply
+                ? (opts?.playAnim===true && !wantSuggest)
+                : opts?.playAnim!==false
+        );
+
+        if(wantAnim){
+            clearSubtitleSuggest(block);
+            block.classList.remove('sub-mem-pick');
             animLivePinned=true;
             animPinnedBlock=block;
             bindSubtitleHoverSettle(block);
@@ -13573,7 +13631,7 @@
             if(animFullRunner){ try{animFullRunner.destroy();}catch(_){} animFullRunner=null; }
             if(animFullIv){ clearInterval(animFullIv); animFullIv=null; }
             showAnimFullPreview(anim, {
-                noMenu: opts?.selectAfter===false,
+                noMenu: softApply,
                 block,
                 wordsPerChunk: block.dataset.wordsPerChunk ? Number(block.dataset.wordsPerChunk) : null,
             });
@@ -13596,9 +13654,20 @@
                     placeCaptionAtYPct(block, cont, yPct);
                 }
             });
+        }else if(softApply && !isOverlayText(block)){
+            animLivePinned=false;
+            animPinnedBlock=null;
+            softStopAnimPreview();
+            paintCalmCaptionFace(block);
+            block.style.color=curTextCol||'#ffffff';
+            if(curShadow!=='none') block.style.textShadow=SH[curShadow]||'none';
+            else block.style.textShadow='none';
         }
-        if(opts?.selectAfter===false && !isOverlayText(block)){
+
+        if(wantSuggest && !isOverlayText(block)){
             requestAnimationFrame(()=>markSubtitleSuggest(block));
+        }else if(opts?.accepted===true || wantAnim){
+            clearSubtitleSuggest(block);
         }
 
         try{

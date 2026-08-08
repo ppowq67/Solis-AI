@@ -6002,7 +6002,7 @@ class ClipsStudio {
         title: "This is a Pro template",
         subtitle: "Split Screen is only available on paid plans. Upgrade to unlock it",
         templateName: "Split Screen",
-        templateDesc: "Video + Gameplay stacked"
+        templateDesc: "Single Clip Clean layouts for any video."
       }
     };
     const o = r[e] || r["splitscreen"];
@@ -7458,7 +7458,8 @@ class ClipsStudio {
             window.applySubtitleStyle(e, {
               selectAfter: false,
               applyFill: true,
-              playAnim: true,
+              playAnim: false,
+              markSuggest: true,
               softClamp: true,
               previewText: t || null
             });
@@ -7490,9 +7491,6 @@ class ClipsStudio {
       }
       await this._configureLibraryEditingUI();
       try {
-        if (s && typeof window.ensureSubtitleAnimPreview === "function") {
-          requestAnimationFrame(() => window.ensureSubtitleAnimPreview());
-        }
         requestAnimationFrame(() => {
           const e = document.getElementById("templateVideoPreview");
           if (!e || typeof window.markSubtitleSuggest !== "function") return;
@@ -7952,15 +7950,13 @@ class ClipsStudio {
           window.applySubtitleStyle(e, {
             selectAfter: false,
             applyFill: true,
-            playAnim: true,
+            playAnim: false,
+            markSuggest: true,
             softClamp: true,
             previewText: n || null
           });
         }
         requestAnimationFrame(() => {
-          if (typeof window.ensureSubtitleAnimPreview === "function") {
-            window.ensureSubtitleAnimPreview();
-          }
           const e = document.getElementById("templateVideoPreview");
           const t = e?.querySelector(".sub-text-block:not(.overlay-text-block)");
           if (t && typeof window.markSubtitleSuggest === "function") {

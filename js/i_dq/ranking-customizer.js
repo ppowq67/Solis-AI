@@ -488,7 +488,8 @@ class RankingCustomizer {
       const i = this.customizations[n];
       for (const t of [ "font", "font_size", "outline_color", "outline_offsets", "stroke_style" ]) {
         if (o[t] !== undefined) {
-          i[t] = Array.isArray(o[t]) ? o[t].map(t => [ ...t ]) : o[t];
+          const e = o[t];
+          i[t] = Array.isArray(e) ? e.map(t => Array.isArray(t) ? [ ...t ] : t) : e;
         }
       }
       if (o.color && i.color === undefined) {
@@ -749,7 +750,8 @@ class RankingCustomizer {
       if (!n || typeof n !== "object") continue;
       for (const t of [ "font", "font_size", "outline_color", "outline_offsets", "stroke_style" ]) {
         if (n[t] !== undefined) {
-          o[t] = Array.isArray(n[t]) ? n[t].map(t => [ ...t ]) : n[t];
+          const e = n[t];
+          o[t] = Array.isArray(e) ? e.map(t => Array.isArray(t) ? [ ...t ] : t) : e;
         }
       }
       if (n.color && o.color === undefined) o.color = [ ...n.color ];

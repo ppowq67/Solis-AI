@@ -14,6 +14,28 @@
   <meta property="og:title" content="Solis AI · The First Agentic AI for Content Repurposing" />
   <meta property="og:description" content="It all starts with one URL. Turn any video into platform-ready content with agentic AI." />
   <meta property="og:type" content="website" />
+  <script>
+  (function () {
+    try {
+      if (sessionStorage.getItem('solis_just_logged_out') === '1') return;
+      if (sessionStorage.getItem('solis_skip_auth_redirect') === '1') return;
+      if (/[?&]logout=/.test(location.search || '')) return;
+      var host = location.hostname;
+      var local = host === 'localhost' || host === '127.0.0.1';
+      var api = local
+        ? (location.protocol + '//' + host + ':5500/api')
+        : 'https://api.solisai.video/api';
+      fetch(api + '/auth/check', { method: 'GET', credentials: 'include' })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (d) {
+          if (d && d.authenticated && d.user) {
+            location.replace('/dashboard');
+          }
+        })
+        .catch(function () {});
+    } catch (_) {}
+  })();
+  </script>
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon/genfavicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon/genfavicon-16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
@@ -1297,7 +1319,26 @@
       });
     }    document.querySelectorAll('.pill-btn, .cta-btn').forEach(function(btn) {
       btn.addEventListener('click', function() {
-        window.location.href = '/login.html';
+        var goLogin = function() { window.location.href = '/login.html'; };
+        try {
+          var host = location.hostname;
+          var local = host === 'localhost' || host === '127.0.0.1';
+          var api = local
+            ? (location.protocol + '//' + host + ':5500/api')
+            : 'https://api.solisai.video/api';
+          fetch(api + '/auth/check', { method: 'GET', credentials: 'include' })
+            .then(function (r) { return r.ok ? r.json() : null; })
+            .then(function (d) {
+              if (d && d.authenticated && d.user) {
+                window.location.href = '/dashboard';
+              } else {
+                goLogin();
+              }
+            })
+            .catch(goLogin);
+        } catch (_) {
+          goLogin();
+        }
       });
     });
     var faqItems = document.querySelectorAll('.faq');

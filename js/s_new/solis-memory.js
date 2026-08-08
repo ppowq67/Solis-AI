@@ -127,7 +127,7 @@
   let h = false;
   let b = null;
   let _ = null;
-  let M = false;
+  let k = false;
   function _resolveUserId(e) {
     if (e != null && String(e).trim()) return String(e).trim();
     if (_) return _;
@@ -173,7 +173,7 @@
           sync: false
         });
       } catch (e) {}
-      M = true;
+      k = true;
     }
     return {
       switched: i,
@@ -186,7 +186,7 @@
     } catch (e) {}
     return null;
   }
-  const k = {
+  const M = {
     karaoke: {
       color: "#FFFFFF",
       fill: null
@@ -403,7 +403,7 @@
     }
     if (n.anim === "center") n.anim = "fade";
     const o = String(n.anim || "").toLowerCase();
-    const r = k[o];
+    const r = M[o];
     if (r) {
       if (!n.color) n.color = r.color;
       if (!("fill" in n) && r.fill) n.fill = r.fill;
@@ -566,8 +566,9 @@
         window.applySubtitleStyle(n, {
           fromMemory: true,
           selectAfter: false,
-          playAnim: true,
-          applyFill: true
+          playAnim: false,
+          applyFill: true,
+          markSuggest: true
         });
         try {
           if (typeof window.collectSubtitleStyle === "function") {
@@ -782,10 +783,10 @@
     if (h && isRankingTemplate(e)) return true;
     if (w && !y) return true;
     if (h && !d && !y) return true;
-    const M = smarterCaptions(i, e);
-    const k = fingerprint(l, a, c) === t.fingerprint;
-    const v = !M || fingerprint(null, a) === fingerprint(null, M);
-    if (k && v) return false;
+    const k = smarterCaptions(i, e);
+    const M = fingerprint(l, a, c) === t.fingerprint;
+    const v = !k || fingerprint(null, a) === fingerprint(null, k);
+    if (M && v) return false;
     return true;
   }
   function flushDeferredRankingCustoms() {
@@ -1442,8 +1443,8 @@
           }
           return null;
         }
-        const s = M;
-        M = false;
+        const s = k;
+        k = false;
         const i = mergeMemoryStates(readState(), n, {
           preferRemote: s
         });

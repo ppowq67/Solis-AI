@@ -67,11 +67,8 @@ async function setupLoginPage() {
     }
     return;
   }
-  if (shouldSkipAuthRedirect()) {
-    if (googleLoginBtn && googleBtnText) {
-      setupEventListeners();
-    }
-    return;
+  if (sessionStorage.getItem(SKIP_AUTH_REDIRECT_KEY) === "1") {
+    sessionStorage.removeItem(SKIP_AUTH_REDIRECT_KEY);
   }
   if (!googleLoginBtn || !googleBtnText) {
     return;
@@ -85,7 +82,7 @@ async function setupLoginPage() {
     if (e.ok) {
       const t = await e.json();
       if (t.authenticated && t.user) {
-        window.location.href = window.location.origin + "/dashboard.html";
+        window.location.replace("/dashboard");
         return;
       }
     }
@@ -159,10 +156,10 @@ async function handleGoogleLogin() {
       credentials: "include"
     });
     if (!i.ok) throw new Error(`Server error: ${i.status}`);
-    const g = await i.json();
-    if (g.auth_url) {
+    const a = await i.json();
+    if (a.auth_url) {
       resetGoogleLoginButton();
-      window.location.href = g.auth_url;
+      window.location.href = a.auth_url;
       return;
     }
     throw new Error("Authentication unavailable");

@@ -2429,11 +2429,29 @@
   function getElColor(e) {
     return normalizeColorValue(e.style.color || getComputedStyle(e).color);
   }
+  function isPlaceholderLabel(e) {
+    const t = String(e || "").replace(/\s+/g, " ").trim().toLowerCase();
+    return !t || t === "text" || t === "aa" || t === "#" || t === "…" || t === "...";
+  }
   function sampleLabelForEl(e) {
     const t = String(e?.textContent || "").replace(/\s+/g, " ").trim();
-    if (t) return t.length > 36 ? `${t.slice(0, 35)}…` : t;
-    if (isRankEl(e)) return "#";
-    return "Text";
+    if (t && !isPlaceholderLabel(t)) {
+      return t.length > 36 ? `${t.slice(0, 35)}…` : t;
+    }
+    if (isRankEl(e)) {
+      const t = String(e?.getAttribute?.("data-template-element-id") || "").match(/^rank_(\d+)_number$/);
+      return t ? `${t[1]}.` : "#";
+    }
+    if (isRankTitleEl(e)) return "";
+    return t && !isPlaceholderLabel(t) ? t : "";
+  }
+  function ghostSourcesForRankSide(e) {
+    const t = e.filter(isRankEl);
+    if (t.length) return t;
+    return e.filter(e => {
+      if (!isRankTitleEl(e)) return true;
+      return !isPlaceholderLabel(e?.textContent);
+    });
   }
   function counterpartFor(e) {
     if (!e.length) return null;
@@ -2655,14 +2673,17 @@
         });
       }
     } else {
-      r.forEach(e => {
-        const t = document.createElement("span");
-        t.className = "rk-ghost-line";
-        const n = sampleLabelForEl(e);
-        if (window.__SolisSG?.shieldLabel) window.__SolisSG.shieldLabel(t, n); else t.textContent = n;
-        styleGhostLine(t, e);
-        y.appendChild(t);
+      const e = o ? ghostSourcesForRankSide(r) : r;
+      e.forEach(e => {
+        const t = sampleLabelForEl(e);
+        if (!t) return;
+        const n = document.createElement("span");
+        n.className = "rk-ghost-line";
+        if (window.__SolisSG?.shieldLabel) window.__SolisSG.shieldLabel(n, t); else n.textContent = t;
+        styleGhostLine(n, e);
+        y.appendChild(n);
       });
+      if (!y.childNodes.length) return;
     }
     document.body.appendChild(y);
     X.push(y);

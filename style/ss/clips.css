@@ -103,7 +103,7 @@
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    margin-right: 112px;
+    margin-right: 84px;
     min-width: 0;
 }
 
@@ -15294,7 +15294,7 @@ body.modal-open { overflow: hidden !important; }
     }
 
     .clips-header-right {
-        margin-right: 100px;
+        margin-right: 78px;
     }
 
     .clips-btn-primary {
@@ -15325,7 +15325,7 @@ body.modal-open { overflow: hidden !important; }
     }
 
     .clips-header-right {
-        margin-right: 104px;
+        margin-right: 72px;
     }
 
     .clips-btn-primary {

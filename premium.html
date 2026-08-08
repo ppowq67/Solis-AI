@@ -121,6 +121,7 @@
     .text-solis-gradient { background: var(--solis-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
 
     .section { position: relative; z-index: 1; padding: clamp(72px, 9vw, 112px) 20px; }
+    #features, #pricing, #faq { scroll-margin-top: 96px; }
     .section-inner { max-width: var(--max-width); margin: 0 auto; }
     .section-inner-narrow { max-width: var(--max-width-narrow); margin: 0 auto; }
 
@@ -658,7 +659,7 @@
       </a>
       <div class="nav-center">
         <a href="#features">Features</a>
-        <a href="#" class="is-active">Pricing</a>
+        <a href="#pricing">Pricing</a>
         <a href="#faq">FAQ</a>
       </div>
       <div class="nav-right">
@@ -853,7 +854,7 @@
       </p>
     </section>
 
-    <section class="section reveal">
+    <section class="section reveal" id="features">
       <div class="section-inner">
         <div class="section-header">
           <h2 class="section-title">Every feature, <span class="text-solis-gradient">side by side.</span></h2>
@@ -938,7 +939,7 @@
           <p class="footer-tagline">The creator-first AI video repurposing studio. Turn long videos into platform-ready shorts in minutes.</p>
           <div class="footer-status"><span class="status-dot"></span>All systems operational</div>
         </div>
-        <div class="footer-col"><h4>Product</h4><ul><li><a href="/#_features">Features</a></li><li><a href="#pricing">Pricing</a></li><li><a href="/#_how">How it works</a></li><li><a href="/#_faq">FAQ</a></li><li><a href="/dashboard.html">Dashboard</a></li></ul></div>
+        <div class="footer-col"><h4>Product</h4><ul><li><a href="#features">Features</a></li><li><a href="#pricing">Pricing</a></li><li><a href="/#_how">How it works</a></li><li><a href="#faq">FAQ</a></li><li><a href="/dashboard.html">Dashboard</a></li></ul></div>
         <div class="footer-col"><h4>Company</h4><ul><li><a href="mailto:help@solisai.video">Contact</a></li><li><a href="mailto:help@solisai.video">Support</a></li><li><a href="https://discord.gg/SuZQBCZCKt" target="_blank" rel="noopener">Community</a></li><li><a href="https://www.instagram.com/solisaivideo/" target="_blank" rel="noopener">Instagram</a></li><li><a href="https://x.com/solisaivideo" target="_blank" rel="noopener">X / Twitter</a></li></ul></div>
         <div class="footer-col"><h4>Resources</h4><ul><li><a href="mailto:help@solisai.video">Help center</a></li><li><a href="/login.html">Sign in</a></li><li><a href="/premium.html">Plans &amp; billing</a></li><li><a href="/refund.html">Cancel &amp; refunds</a></li><li><a href="https://discord.gg/SuZQBCZCKt" target="_blank" rel="noopener">Discord</a></li></ul></div>
         <div class="footer-col"><h4>Legal</h4><ul><li><a href="/terms.html">Terms of Service</a></li><li><a href="/privacy.html">Privacy Policy</a></li><li><a href="/refund.html">Refund Policy</a></li><li><a href="mailto:copyright@solisai.video">Copyright / DMCA</a></li><li><a href="mailto:help@solisai.video">Legal contact</a></li></ul></div>
@@ -1130,9 +1131,24 @@
             if (!target) return;
             e.preventDefault();
             target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            try { history.replaceState(null, '', href); } catch (_) {}
           });
         });
       }
+      function scrollHashTarget() {
+        var hash = (location.hash || '').trim();
+        if (!hash || hash === '#') return;
+        var target = document.querySelector(hash);
+        if (!target) return;
+        requestAnimationFrame(function () {
+          target.scrollIntoView({
+            behavior: prefersReducedMotion ? 'auto' : 'smooth',
+            block: 'start',
+          });
+        });
+      }
+      scrollHashTarget();
+      window.addEventListener('hashchange', scrollHashTarget);
     })();
   </script>
   <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>

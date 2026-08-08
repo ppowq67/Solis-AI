@@ -718,6 +718,52 @@
     user-select: none;
   }
 
+  @media (min-width: 621px) and (max-width: 1300px) {
+    .uc-card {
+      max-width: 100%;
+    }
+    .uc-right {
+      width: 200px;
+      padding: 8px 10px 8px 0;
+    }
+    .uc-logo {
+      transform: scale(0.82);
+    }
+    .uc-left {
+      padding: 24px 22px;
+      gap: 14px;
+    }
+    .uc-title {
+      font-size: 22px;
+    }
+    .uc-features {
+      gap: 8px 14px;
+    }
+    .uc-features li {
+      font-size: 12.5px;
+    }
+  }
+
+  @media (min-width: 621px) and (max-width: 980px) {
+    .uc-card {
+      flex-direction: column;
+    }
+    .uc-right {
+      width: 100%;
+      padding: 0 20px 18px;
+      justify-content: flex-start;
+    }
+    .uc-logo {
+      max-height: 140px;
+      max-width: 200px;
+      margin: 0;
+      transform: scale(0.9);
+    }
+    .uc-features {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
   @media (max-width: 620px) {
     .uc-card {
       flex-direction: column;

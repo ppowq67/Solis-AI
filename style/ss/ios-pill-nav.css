@@ -369,6 +369,58 @@
     }
 }
 
+@media (min-width: 769px) and (max-width: 1300px) {
+    :root {
+        --nav-item-h: 64px;
+        --nav-item-w: 78px;
+        --nav-pad: 6px;
+        --nav-gap: 2px;
+        --nav-left: 14px;
+        --nav-shell-padding: 118px;
+    }
+
+    .pill-nav {
+        border-radius: 40px;
+    }
+
+    .nav-item svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .nav-item span {
+        font-size: 9px;
+    }
+
+    .profile-btn {
+        bottom: 18px;
+        width: var(--nav-item-w);
+        height: var(--nav-item-w);
+    }
+
+    .profile-btn svg {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+@media (min-width: 769px) and (max-height: 960px) {
+    :root {
+        --nav-item-h: 58px;
+        --nav-item-w: 72px;
+        --nav-pad: 5px;
+        --nav-shell-padding: 112px;
+    }
+
+    .ui-wrapper {
+        top: calc(50% - 18px) !important;
+    }
+
+    .profile-btn {
+        bottom: 14px;
+    }
+}
+
 @media (max-width: 768px) {
     .user-menu-panel,
     .user-menu-backdrop { display: none !important; }

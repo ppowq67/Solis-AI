@@ -3058,6 +3058,67 @@
     }
 }
 
+@media (min-width: 769px) and (max-width: 1300px) {
+    .portal-container {
+        padding: 36px 24px 32px 24px;
+    }
+
+    .portal-content-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .portal-left-column .quick-actions-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 14px;
+        align-items: stretch;
+    }
+
+    .portal-left-column .quick-action-card,
+    .portal-left-column .tier-info-card {
+        flex: none;
+        min-width: 0;
+        width: 100%;
+    }
+
+    #newClipBtn.quick-action-card,
+    #newClipBtn.quick-action-card.quick-action-create {
+        min-height: 200px !important;
+        padding: 28px 24px 24px !important;
+        border-radius: 24px !important;
+    }
+
+    #newClipBtn .quick-action-icon {
+        width: 52px !important;
+        height: 52px !important;
+        margin: 0 0 18px !important;
+        border-radius: 16px !important;
+    }
+
+    #tierInfoCard.portal-stat-card.tier-info-card,
+    #tierInfoCard.tier-info-card {
+        min-height: 200px !important;
+        padding: 22px 20px !important;
+    }
+
+    .portal-right-column {
+        min-height: 320px;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 980px) {
+    .portal-left-column .quick-actions-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    #newClipBtn.quick-action-card,
+    #newClipBtn.quick-action-card.quick-action-create,
+    #tierInfoCard.portal-stat-card.tier-info-card {
+        min-height: 160px !important;
+    }
+}
+
 @media (max-width: 480px) {
     .portal-stats-grid {
         grid-template-columns: 1fr !important;

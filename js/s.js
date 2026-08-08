@@ -5779,6 +5779,7 @@ class ClipsStudio {
         }
       });
     }
+    this._bindGlobalUrlPaste();
     this.safeAddEventListenerById("confirmTemplateBtn", "click", () => {
       this.confirmTemplateSelection();
     });
@@ -5823,6 +5824,81 @@ class ClipsStudio {
       if (document.hidden) {
         this.stopAllMonitoring();
       }
+    });
+  }
+  _bindGlobalUrlPaste() {
+    if (this._globalUrlPasteBound) return;
+    this._globalUrlPasteBound = true;
+    const isOtherEditable = e => {
+      if (!e || e === document.body || e === document.documentElement) return false;
+      const t = document.getElementById("youtubeUrlInput");
+      if (e === t) return false;
+      const n = (e.tagName || "").toUpperCase();
+      if (e.isContentEditable) return true;
+      if (n === "TEXTAREA" || n === "SELECT") return true;
+      if (n === "INPUT") {
+        const t = String(e.type || "text").toLowerCase();
+        return ![ "button", "submit", "checkbox", "radio", "file", "hidden", "reset", "image" ].includes(t);
+      }
+      return false;
+    };
+    const shouldSkipPasteSteal = () => {
+      const e = document.getElementById("templatePreviewModal");
+      if (e?.classList.contains("active")) return true;
+      if (document.querySelector(".stgModal.open, .stgModal.active, .upgrade-modal.active")) return true;
+      if (document.getElementById("customEditorContainer")?.classList.contains("active")) return true;
+      return false;
+    };
+    const applyPastedUrl = e => {
+      const t = String(e || "").trim();
+      if (!t || !this.isValidMediaUrl(t)) return false;
+      const n = document.getElementById("youtubeUrlInput");
+      if (!n) return false;
+      const i = document.getElementById("createSection");
+      const r = !!i?.classList.contains("active");
+      if (!r) {
+        try {
+          this.goToCreateUrlSubmit();
+        } catch (e) {
+          try {
+            this.switchTab("create");
+          } catch (e) {}
+        }
+      }
+      n.value = t;
+      try {
+        n.dispatchEvent(new Event("input", {
+          bubbles: true
+        }));
+      } catch (e) {}
+      try {
+        n.focus({
+          preventScroll: true
+        });
+        n.select();
+      } catch (e) {
+        try {
+          n.focus();
+        } catch (e) {}
+      }
+      const o = document.getElementById("processUrlBtn");
+      if (o) {
+        o.classList.add("needs-url-pulse");
+        clearTimeout(o._pulseT);
+        o._pulseT = setTimeout(() => o.classList.remove("needs-url-pulse"), 1600);
+      }
+      return true;
+    };
+    document.addEventListener("paste", e => {
+      try {
+        if (shouldSkipPasteSteal()) return;
+        const t = document.getElementById("youtubeUrlInput");
+        if (document.activeElement === t) return;
+        if (isOtherEditable(document.activeElement)) return;
+        const n = e.clipboardData?.getData("text/plain") || "";
+        if (!applyPastedUrl(n)) return;
+        e.preventDefault();
+      } catch (e) {}
     });
   }
   goToCreateUrlSubmit() {
@@ -6250,6 +6326,14 @@ class ClipsStudio {
       }
       Promise.resolve(this.loadVideoPreviewWithTemplate()).finally(() => {
         hideLoadingSpinner();
+        if (typeof window.syncPreviewEditorPillLayout === "function") {
+          window.syncPreviewEditorPillLayout({
+            delay: 40
+          });
+          window.syncPreviewEditorPillLayout({
+            delay: 340
+          });
+        }
         if (window.SolisMemory && typeof window.SolisMemory.onTemplatePreviewOpen === "function") {
           window.SolisMemory.onTemplatePreviewOpen(e);
         }
@@ -6538,18 +6622,22 @@ class ClipsStudio {
     if (o) {
       o.style.display = "";
       const e = o.querySelector('[data-tool="text"]');
-      const n = o.querySelector('[data-tool="captions"]');
-      const i = o.querySelector('[data-tool="animations"]');
-      const r = t?.id === "ranked_compilation";
+      const t = o.querySelector('[data-tool="captions"]');
+      const n = o.querySelector('[data-tool="animations"]');
       if (e) e.style.display = "none";
+      if (t) t.style.display = "";
       if (n) n.style.display = "";
-      if (i) i.style.display = "";
       if (typeof window.activatePreviewToolbar === "function") {
-        const e = n;
+        const e = t;
         if (e) {
           const t = Array.from(o.querySelectorAll(".tool-btn")).filter(e => e.style.display !== "none");
           window.activatePreviewToolbar(e, Math.max(0, t.indexOf(e)));
         }
+      }
+      if (typeof window.syncPreviewEditorPillLayout === "function") {
+        window.syncPreviewEditorPillLayout({
+          delay: 320
+        });
       }
     }
     if (t?.id === "ranked_compilation" && window.initializeRankingTemplateEditor) {

@@ -28,15 +28,15 @@
     <title>Solis AI</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/style/ss/consolidate.css?v=27">
+    <link rel="stylesheet" href="/style/ss/consolidate.css?v=28">
     <link rel="stylesheet" href="/style/ss/inline-styles.css?v=27">
     <link rel="stylesheet" href="/style/ss/glassmorphism.css?v=27">
     <link rel="stylesheet" href="/style/ss/badges.css?v=27">
     <link rel="stylesheet" href="/style/ss/sidebar.css?v=27">
-    <link rel="stylesheet" href="/style/ss/ios-pill-nav.css?v=27">
+    <link rel="stylesheet" href="/style/ss/ios-pill-nav.css?v=28">
     <link rel="stylesheet" href="/style/ss/mobile-nav.css?v=27">
     <link rel="stylesheet" href="/style/ss/customize.css?v=27">
-    <link rel="stylesheet" href="/style/ss/clips.css?v=27">
+    <link rel="stylesheet" href="/style/ss/clips.css?v=28">
     <link rel="stylesheet" href="/style/ss/profile.css?v=27">
     <link rel="stylesheet" href="/style/ss/newsfeed-widget.css?v=28">
     <script src="/js/ui/navigation.js?v=3"></script>
@@ -60,7 +60,7 @@
     <script src="/js/payment/platform-connections.js?v=3"></script>
     <script src="/js/ui/plan-selector.js?v=62"></script>
     <script src="/js/core/video-preview-system.js?v=2"></script>
-    <script src="/js/s.js?v=242"></script>
+    <script src="/js/s.js?v=243"></script>
     <script src="/js/s_new/procc.js?v=2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -3536,7 +3536,7 @@
         </div>
 
         <div class="template-preview-body">
-            <div class="template-preview-video" style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; border-radius: 8px; min-height: 500px; gap: 16px; padding-top: 8px;">
+            <div class="template-preview-video" style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; border-radius: 8px; min-height: 0; gap: 16px; padding-top: 8px; padding-bottom: 10px; overflow: visible;">
                 <div class="preview-placeholder" id="templateVideoPreview" style="width: 100%; max-width: 280px; aspect-ratio: 9/16; min-height: 280px; border-radius: 2rem; overflow: hidden; position: relative; display: block; background: #000;">
                     <div class="preview-video-placeholder" style="text-align: center; color: #666;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 16px; opacity: 0.5;">
@@ -4874,40 +4874,58 @@
           window.activatePreviewToolbar = function(btn, index) {
               if (!btn) return;
               requestAnimationFrame(() => {
-                  const visibleButtons = getVisibleButtons();
-                  let resolvedIndex = visibleButtons.indexOf(btn);
-                  if (resolvedIndex < 0) {
-                      resolvedIndex = typeof index === 'number' ? index : 0;
-                  }
-                  resolvedIndex = Math.max(0, Math.min(resolvedIndex, Math.max(0, visibleButtons.length - 1)));
+                  requestAnimationFrame(() => {
+                      const visibleButtons = getVisibleButtons();
+                      let resolvedIndex = visibleButtons.indexOf(btn);
+                      if (resolvedIndex < 0) {
+                          resolvedIndex = typeof index === 'number' ? index : 0;
+                      }
+                      resolvedIndex = Math.max(0, Math.min(resolvedIndex, Math.max(0, visibleButtons.length - 1)));
 
-                  pill.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
-                  btn.classList.add('active');
+                      pill.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+                      btn.classList.add('active');
 
-                  const offset = resolvedIndex * 48;
-                  const distance = Math.abs(resolvedIndex - currentPos);
-                  const stretchAmount = Math.min(distance * 6, 16);
-                  indicator.style.width = `${48 + stretchAmount}px`;
-                  indicator.style.transform = `translateX(${offset}px)`;
+                      const btnW = Math.round(btn.getBoundingClientRect().width) || 48;
+                      const padL = parseFloat(getComputedStyle(pill).paddingLeft) || 6;
+                      const offset = Math.max(0, Math.round(btn.offsetLeft - padL));
+                      const distance = Math.abs(resolvedIndex - currentPos);
+                      const stretchAmount = Math.min(distance * 6, 16);
+                      indicator.style.width = `${btnW + stretchAmount}px`;
+                      indicator.style.transform = `translateX(${offset}px)`;
 
-                  glassBg.style.opacity = '0';
-                  pill.style.transform = 'scale(1.02)';
+                      glassBg.style.opacity = '0';
+                      pill.style.transform = 'scale(1.02)';
 
-                  setTimeout(() => {
-                      pill.style.transform = 'scale(1)';
-                      glassBg.style.opacity = '1';
-                  }, 150);
+                      setTimeout(() => {
+                          pill.style.transform = 'scale(1)';
+                          glassBg.style.opacity = '1';
+                      }, 150);
 
-                  setTimeout(() => {
-                      indicator.style.width = '48px';
-                  }, 150);
+                      setTimeout(() => {
+                          indicator.style.width = `${btnW}px`;
+                      }, 150);
 
-                  currentPos = resolvedIndex;
+                      currentPos = resolvedIndex;
 
-                  if (typeof lucide !== 'undefined') {
-                      lucide.createIcons({ attrs: { 'stroke-width': 2 }, nameAttr: 'data-lucide' });
-                  }
+                      if (typeof lucide !== 'undefined') {
+                          lucide.createIcons({ attrs: { 'stroke-width': 2 }, nameAttr: 'data-lucide' });
+                      }
+                  });
               });
+           };
+
+           window.syncPreviewEditorPillLayout = function(opts) {
+               const delay = Math.max(0, Number(opts?.delay) || 0);
+               const run = () => {
+                   const active = pill.querySelector('.tool-btn.active')
+                       || pill.querySelector('.tool-btn[data-tool="captions"]')
+                       || getVisibleButtons()[0];
+                   if (!active) return;
+                   void pill.offsetWidth;
+                   window.activatePreviewToolbar(active);
+               };
+               if (delay) setTimeout(run, delay);
+               else run();
            };
 
            if (typeof lucide !== 'undefined') {

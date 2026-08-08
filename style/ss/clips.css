@@ -1790,6 +1790,27 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
     z-index: 1;
 }
 
+@media (min-width: 769px) and (max-width: 1300px) {
+    #createSection .create-content {
+        max-width: 720px;
+        margin: 0 auto;
+        width: 100%;
+        padding-left: 12px;
+        padding-right: 12px;
+        box-sizing: border-box;
+    }
+
+    #createSection .url-input-container {
+        padding: 40px 0 28px;
+    }
+
+    #createSection .uc-card {
+        max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
 @property --url-fire-angle {
     syntax: '<angle>';
     inherits: false;
@@ -10230,9 +10251,10 @@ body.modal-open { overflow: hidden !important; }
     display: grid;
     grid-template-columns: 1fr 360px;
     flex: 1;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     gap: 24px;
-    padding: 20px 24px;
+    padding: 20px 24px 24px;
     background: rgba(248, 248, 252, 0.6);
     align-items: stretch;
 }
@@ -10242,6 +10264,10 @@ body.modal-open { overflow: hidden !important; }
     width: 100%;
     align-items: center !important;
     padding-right: 0;
+    overflow: visible;
+    min-height: 0;
+    padding-bottom: 8px;
+    box-sizing: border-box;
 }
 
 .template-slot-selector {
@@ -11401,7 +11427,7 @@ body.modal-open { overflow: hidden !important; }
     max-width: 100%;
     align-self: center;
     flex: 0 0 auto;
-    overflow: hidden;
+    overflow: visible;
     isolation: isolate;
     transition: transform 0.2s ease-out;
     will-change: transform;
@@ -11471,9 +11497,11 @@ body.modal-open { overflow: hidden !important; }
     gap: 12px;
     flex-wrap: wrap;
     width: 100%;
-    padding: 0 12px;
+    padding: 0 12px 6px;
     box-sizing: border-box;
     z-index: 30;
+    flex-shrink: 0;
+    overflow: visible;
 }
 
 .template-use-fab {

@@ -1223,7 +1223,7 @@ class GenerationProgressSpinner {
     if (!t) return "Something went wrong — try again";
     const s = t.toLowerCase();
     if (s.includes("youtube") && (s.includes("proxy") || s.includes("cookie") || s.includes("bot"))) {
-      return "YouTube blocked the download — refresh cookies and set YTDLP_PROXY, then retry.";
+      return "YouTube blocked the download — refresh Chrome cookies (YTDLP_COOKIES) and retry.";
     }
     if (/\b(vast|modal|gpu|rtx|serverless|traceback|exception|errno)\b/i.test(t) || s.includes("failed:") || s.length > 140) {
       return "Something went wrong — try again";

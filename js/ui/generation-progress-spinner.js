@@ -1222,7 +1222,10 @@ class GenerationProgressSpinner {
     const t = this._cleanMessage(e);
     if (!t) return "Something went wrong — try again";
     const s = t.toLowerCase();
-    if (/\b(vast|modal|gpu|rtx|serverless|traceback|exception|errno)\b/i.test(t) || s.includes("failed:") || s.length > 120) {
+    if (s.includes("youtube") && (s.includes("proxy") || s.includes("cookie") || s.includes("bot"))) {
+      return "YouTube blocked the download — refresh cookies and set YTDLP_PROXY, then retry.";
+    }
+    if (/\b(vast|modal|gpu|rtx|serverless|traceback|exception|errno)\b/i.test(t) || s.includes("failed:") || s.length > 140) {
       return "Something went wrong — try again";
     }
     return t;
@@ -1482,9 +1485,10 @@ class GenerationProgressSpinner {
     }
     this._showErrorBanner(s);
     this.openPanel();
+    const i = /youtube|proxy|cookie/i.test(s) ? 12e3 : 2800;
     this._errorDismissTimer = setTimeout(() => {
       this._dismissErrorState();
-    }, 2800);
+    }, i);
   }
   stopGeneration(e, t = "Stopped") {
     this._clearErrorDismissTimer();

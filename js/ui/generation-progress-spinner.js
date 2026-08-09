@@ -2,61 +2,75 @@ const GENERATION_TASK_PIPELINES = {
   ranked_compilation: [ {
     id: "wait",
     label: "Free queue · Processing soon",
-    keywords: [ "queued", "queue", "ahead of you", "open slot", "starting shortly", "free queue", "priority", "processing soon" ]
+    keywords: [ "queued", "queue", "ahead of you", "open slot", "starting shortly", "free queue", "priority", "processing soon" ],
+    maxProgress: 8
   }, {
     id: "install",
     label: "Installing video",
-    keywords: [ "download", "installing", "preparing download", "starting generation" ]
+    keywords: [ "download", "installing", "preparing download", "starting generation", "starting download", "fetching" ],
+    maxProgress: 35
   }, {
     id: "clip",
     label: "Clipping moments",
-    keywords: [ "moment", "detect", "segment", "highlight", "analyz", "clip", "extract", "audio", "finding" ]
+    keywords: [ "moment", "detect", "segment", "highlight", "analyz", "extract", "audio", "finding", "post-process", "scene", "operator" ],
+    maxProgress: 62
   }, {
     id: "overlay",
     label: "Overlaying ranking",
-    keywords: [ "overlay", "ranking", "title", "progressive" ]
+    keywords: [ "overlay", "ranking", "title", "progressive", "hook text", "writing ai" ],
+    maxProgress: 78
   }, {
     id: "compile",
     label: "Compiling video",
-    keywords: [ "compil", "touch", "custom", "watermark", "9:16", "vertical", "finaliz" ]
+    keywords: [ "compil", "concat", "timeline", "master extract", "encoding master", "assembling" ],
+    maxProgress: 90
   }, {
     id: "export",
     label: "Exporting",
-    keywords: [ "exporting video", "encoding final" ]
+    keywords: [ "export", "encoding final", "finaliz", "final touch", "watermark", "caption", "ready", "complete", "done" ],
+    maxProgress: 100
   } ],
   splitscreen: [ {
     id: "wait",
     label: "Free queue · Processing soon",
-    keywords: [ "queued", "queue", "ahead of you", "open slot", "starting shortly", "free queue", "priority", "processing soon" ]
+    keywords: [ "queued", "queue", "ahead of you", "open slot", "starting shortly", "free queue", "priority", "processing soon" ],
+    maxProgress: 8
   }, {
     id: "install",
     label: "Installing video",
-    keywords: [ "download", "installing", "preparing download", "starting generation" ]
+    keywords: [ "download", "installing", "preparing download", "starting generation", "starting download" ],
+    maxProgress: 30
   }, {
     id: "moment",
     label: "Finding best moment",
-    keywords: [ "moment", "audio", "analyz", "finding", "extract", "30-second", "30 second", "adaptive" ]
+    keywords: [ "moment", "audio", "analyz", "finding", "extract", "30-second", "30 second", "adaptive" ],
+    maxProgress: 55
   }, {
     id: "secondary",
     label: "Preparing secondary panel",
-    keywords: [ "reframe", "face", "gameplay", "minecraft", "layout", "secondary", "panel" ]
+    keywords: [ "reframe", "face", "gameplay", "minecraft", "layout", "secondary", "panel" ],
+    maxProgress: 70
   }, {
     id: "compose",
     label: "Building split screen",
-    keywords: [ "split-screen", "split screen", "compos", "stack", "creating split" ]
+    keywords: [ "split-screen", "split screen", "compos", "stack", "creating split" ],
+    maxProgress: 88
   }, {
     id: "export",
     label: "Exporting",
-    keywords: [ "exporting video", "encoding final" ]
+    keywords: [ "export", "encoding final", "finaliz", "final touch", "watermark", "caption", "ready", "complete", "done" ],
+    maxProgress: 100
   } ],
   library_apply: [ {
     id: "apply",
     label: "Applying changes",
-    keywords: [ "apply", "applying", "recompose", "layout", "changes", "reframe", "split" ]
+    keywords: [ "apply", "applying", "recompose", "layout", "changes", "reframe", "split" ],
+    maxProgress: 70
   }, {
     id: "download",
     label: "Downloading",
-    keywords: [ "download", "export", "saving", "ready" ]
+    keywords: [ "download", "export", "saving", "ready", "finaliz", "complete" ],
+    maxProgress: 100
   } ]
 };
 
@@ -539,26 +553,35 @@ class GenerationProgressSpinner {
   }
   _resolveTaskIndex(e, t = "") {
     const s = this._getActiveTasks();
+    if (!s.length) return 0;
     const i = (t || "").toLowerCase();
-    if (e >= 100 || i.includes("processing complete") || i.includes("video ready")) {
-      return Math.max(0, s.length - 1);
+    const r = Math.max(0, Math.min(100, Number(e) || 0));
+    if (r >= 100 || i.includes("processing complete") || i.includes("video ready")) {
+      return s.length - 1;
     }
     if (this.showQueueWaitTask && this._isQueueWaitingMessage(i)) {
       const e = s.findIndex(e => e.id === "wait");
       return e >= 0 ? e : 0;
     }
-    for (let e = 0; e < s.length; e++) {
+    let n = -1;
+    for (let e = s.length - 1; e >= 0; e--) {
       const t = s[e];
       if (t.id === "wait") continue;
-      if (t.keywords.some(e => i.includes(e))) {
-        return e;
+      if ((t.keywords || []).some(e => i.includes(e))) {
+        n = e;
+        break;
       }
     }
-    if (s.length === 0) return 0;
-    const r = s[0]?.id === "wait" ? s.length - 1 : s.length;
-    const n = s[0]?.id === "wait" ? 1 : 0;
-    const a = Math.floor(Math.max(0, Math.min(99, e)) / 100 * Math.max(1, r));
-    return Math.min(n + a, s.length - 1);
+    let a = 0;
+    for (let e = 0; e < s.length; e++) {
+      const t = s[e];
+      if (t.id === "wait" && !this.showQueueWaitTask) continue;
+      const i = Number(t.maxProgress);
+      a = e;
+      if (Number.isFinite(i) && r <= i) break;
+    }
+    if (n < 0) return a;
+    return Math.max(n, a);
   }
   _updateTaskStates(e, t = "", s = null) {
     this._ensureTaskList();

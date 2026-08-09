@@ -185,17 +185,18 @@
     return normalizeFontName(getComputedStyle(e).fontFamily);
   }
   function clearSelectionVisuals() {
-    document.querySelectorAll(".ranking-editor-selected").forEach(e => {
+    const e = getRankingRoot() || document;
+    e.querySelectorAll(".ranking-editor-selected").forEach(e => {
       e.classList.remove("ranking-editor-selected");
       e.style.zIndex = "";
     });
-    document.querySelectorAll(".ranking-editor-zone-selected").forEach(e => {
+    e.querySelectorAll(".ranking-editor-zone-selected").forEach(e => {
       e.classList.remove("ranking-editor-zone-selected");
     });
-    document.querySelectorAll(".ranking-editor-zone-member").forEach(e => {
+    e.querySelectorAll(".ranking-editor-zone-member").forEach(e => {
       e.classList.remove("ranking-editor-zone-member");
     });
-    document.querySelectorAll(".ranking-editor-resize-anchor").forEach(e => {
+    e.querySelectorAll(".ranking-editor-resize-anchor").forEach(e => {
       e.classList.remove("ranking-editor-resize-anchor");
     });
   }
@@ -3281,20 +3282,27 @@
       snapshotEl(e);
     });
     applySelectionVisuals();
-    syncResizeHandles();
-    hideSubtitleGuidesOverRanking();
-    const o = t === "group-header" ? getPrimaryHeaderEl() || W || r[0] : W || r[0];
-    if (o) readStateFromEl(o);
+    showMenu();
     M = false;
     F = false;
     C = false;
     P = false;
     L = false;
-    syncColorSwatches();
-    syncFillSwatches();
-    syncTopBgVisibility();
-    syncTopModeButtons();
-    showMenu();
+    const finishSelectChrome = () => {
+      syncResizeHandles();
+      hideSubtitleGuidesOverRanking();
+      const e = t === "group-header" ? getPrimaryHeaderEl() || W || r[0] : W || r[0];
+      if (e) readStateFromEl(e);
+      syncColorSwatches();
+      syncFillSwatches();
+      syncTopBgVisibility();
+      syncTopModeButtons();
+    };
+    if (typeof requestAnimationFrame === "function") {
+      requestAnimationFrame(finishSelectChrome);
+    } else {
+      finishSelectChrome();
+    }
   }
   function finishMultiSelection(e) {
     V = y.size > 1 ? "multi" : "single";

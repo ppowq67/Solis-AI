@@ -2104,9 +2104,12 @@
 }
 
 #stgPanelSupport {
-    display: flex;
     flex-direction: column;
     gap: 6px;
+}
+
+#stgPanelSupport.is-active {
+    display: flex;
 }
 
 #stgPanelSupport .stgPanelLead {

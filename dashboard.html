@@ -1112,6 +1112,14 @@
                     <span>Themes</span>
                 </button>
 
+                <div class="stgNavGroup" role="group" aria-labelledby="stgNavSupportLabel">
+                    <div class="stgNavGroupLabel" id="stgNavSupportLabel">Support</div>
+                    <button type="button" class="stgNavBtn" data-stg-panel="support" aria-selected="false">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        <span>Support</span>
+                    </button>
+                </div>
+
                 <div class="stgNavGroup" role="group" aria-labelledby="stgNavCustomizeLabel">
                     <div class="stgNavGroupLabel" id="stgNavCustomizeLabel">Customize</div>
                     <button type="button" class="stgNavBtn" data-stg-panel="memory" aria-selected="false">
@@ -1148,13 +1156,6 @@
                    </svg>
                         <span>Plugins</span>
                         <span class="stgNavSoon">Coming soon</span>
-                    </button>
-                </div>
-                <div class="stgNavGroup" role="group" aria-labelledby="stgNavSupportLabel">
-                    <div class="stgNavGroupLabel" id="stgNavSupportLabel">Support</div>
-                    <button type="button" class="stgNavBtn" data-stg-panel="support" aria-selected="false">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                        <span>Support</span>
                     </button>
                 </div>
             </div>
@@ -4683,16 +4684,6 @@
        }
    });
 
-   const watermarkToggle = document.getElementById('watermarkToggle');
-   if (watermarkToggle) {
-       watermarkToggle.addEventListener('change', function() {
-           localStorage.setItem('watermarkEnabled', this.checked ? 'true' : 'false');
-           if (window.clipsStudio && typeof window.clipsStudio.updateWatermarkDisplay === 'function') {
-               window.clipsStudio.updateWatermarkDisplay();
-           }
-       });
-   }
-
    (function initMultiGenSlider() {
        const MIN = 1;
        const MAX = 5;
@@ -4881,45 +4872,30 @@
 
           window.activatePreviewToolbar = function(btn, index) {
               if (!btn) return;
-              requestAnimationFrame(() => {
+              pill.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+              btn.classList.add('active');
+
+              const paintIndicator = () => {
+                  const visibleButtons = getVisibleButtons();
+                  let resolvedIndex = visibleButtons.indexOf(btn);
+                  if (resolvedIndex < 0) {
+                      resolvedIndex = typeof index === 'number' ? index : 0;
+                  }
+                  resolvedIndex = Math.max(0, Math.min(resolvedIndex, Math.max(0, visibleButtons.length - 1)));
+
+                  const btnW = Math.round(btn.getBoundingClientRect().width) || 48;
+                  const padL = parseFloat(getComputedStyle(pill).paddingLeft) || 6;
+                  const offset = Math.max(0, Math.round(btn.offsetLeft - padL));
+                  const distance = Math.abs(resolvedIndex - currentPos);
+                  const stretchAmount = Math.min(distance * 6, 16);
+                  indicator.style.width = `${btnW + stretchAmount}px`;
+                  indicator.style.transform = `translateX(${offset}px)`;
+                  currentPos = resolvedIndex;
                   requestAnimationFrame(() => {
-                      const visibleButtons = getVisibleButtons();
-                      let resolvedIndex = visibleButtons.indexOf(btn);
-                      if (resolvedIndex < 0) {
-                          resolvedIndex = typeof index === 'number' ? index : 0;
-                      }
-                      resolvedIndex = Math.max(0, Math.min(resolvedIndex, Math.max(0, visibleButtons.length - 1)));
-
-                      pill.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
-                      btn.classList.add('active');
-
-                      const btnW = Math.round(btn.getBoundingClientRect().width) || 48;
-                      const padL = parseFloat(getComputedStyle(pill).paddingLeft) || 6;
-                      const offset = Math.max(0, Math.round(btn.offsetLeft - padL));
-                      const distance = Math.abs(resolvedIndex - currentPos);
-                      const stretchAmount = Math.min(distance * 6, 16);
-                      indicator.style.width = `${btnW + stretchAmount}px`;
-                      indicator.style.transform = `translateX(${offset}px)`;
-
-                      glassBg.style.opacity = '0';
-                      pill.style.transform = 'scale(1.02)';
-
-                      setTimeout(() => {
-                          pill.style.transform = 'scale(1)';
-                          glassBg.style.opacity = '1';
-                      }, 150);
-
-                      setTimeout(() => {
-                          indicator.style.width = `${btnW}px`;
-                      }, 150);
-
-                      currentPos = resolvedIndex;
-
-                      if (typeof lucide !== 'undefined') {
-                          lucide.createIcons({ attrs: { 'stroke-width': 2 }, nameAttr: 'data-lucide' });
-                      }
+                      indicator.style.width = `${btnW}px`;
                   });
-              });
+              };
+              requestAnimationFrame(paintIndicator);
            };
 
            window.syncPreviewEditorPillLayout = function(opts) {

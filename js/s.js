@@ -6404,21 +6404,14 @@ class ClipsStudio {
   }
   updateWatermarkDisplay() {
     const e = document.getElementById("watermarkToggle");
-    if (!e) {
-      safeLog("⚠ï¸ Watermark toggle not found");
-      return;
-    }
-    const t = document.querySelectorAll(".solis-watermark");
-    if (t.length === 0) {
-      safeLog("⚠ï¸ No watermark elements found on page");
-      return;
-    }
-    const n = this.shouldShowSolisWatermark();
-    t.forEach(e => {
-      e.classList.toggle("is-hidden", !n);
-      e.style.display = n ? "flex" : "none";
+    if (!e) return;
+    const t = document.getElementById("templateVideoPreview");
+    const n = t ? t.querySelectorAll(".solis-watermark") : document.querySelectorAll(".solis-watermark");
+    if (!n.length) return;
+    const i = this.shouldShowSolisWatermark();
+    n.forEach(e => {
+      e.classList.toggle("is-hidden", !i);
     });
-    safeLog(`✅ Updated ${t.length} watermark(s): ${n ? "VISIBLE" : "HIDDEN"} (toggle: ${n ? "ON" : "OFF"})`);
   }
   setupWatermarkToggle() {
     const e = document.getElementById("watermarkToggleLabel");

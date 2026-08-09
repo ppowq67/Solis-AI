@@ -18,15 +18,15 @@
   const a = 6e4;
   const s = [ "low", "normal", "max" ];
   let l = null;
-  let f = 0;
-  let c = null;
+  let c = 0;
+  let f = null;
   let d = "low";
   let u = "auto";
   let m = "free";
   let p = false;
   let g = "slider";
   let y = null;
-  let h = false;
+  let E = false;
   function isAutoMode() {
     return u !== "advanced";
   }
@@ -42,7 +42,7 @@
       localStorage.setItem(n, e === "advanced" ? "advanced" : "auto");
     } catch (e) {}
   }
-  let E = 0;
+  let h = 0;
   const w = 380;
   function setEffortSelection(e, {persist: t = true, animate: o = true} = {}) {
     u = e === "advanced" ? "advanced" : "auto";
@@ -56,7 +56,7 @@
   function setAdvancedBodyVisible(e, {animate: t = true} = {}) {
     const o = document.getElementById("planEffortAdvancedBody");
     if (!o) return;
-    window.clearTimeout(E);
+    window.clearTimeout(h);
     const n = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const r = t && !n;
     if (e) {
@@ -75,7 +75,7 @@
       o.setAttribute("aria-hidden", "true");
       o.classList.remove("is-expanded");
       if (r && !o.hidden) {
-        E = window.setTimeout(() => {
+        h = window.setTimeout(() => {
           o.hidden = true;
         }, w);
       } else {
@@ -115,12 +115,12 @@
     if (o) closeEffortFlyout();
   }
   function isCacheFresh() {
-    return l && Date.now() - f < a;
+    return l && Date.now() - c < a;
   }
   function invalidateTierCache() {
     l = null;
-    f = 0;
-    c = null;
+    c = 0;
+    f = null;
   }
   function formatResetLabel(e) {
     if (!e) return "";
@@ -293,13 +293,13 @@
     e.classList.remove("is-bits-live");
     void e.offsetWidth;
     requestAnimationFrame(() => {
-      if (d === "max" && !h) {
+      if (d === "max" && !E) {
         e.classList.add("is-bits-live", "is-max");
       }
     });
   }
   function syncMaxBits() {
-    if (h) {
+    if (E) {
       clearMaxBits();
       return;
     }
@@ -356,8 +356,8 @@
     const i = allowedEffortsForTier(m);
     const a = document.getElementById("planEffortSlider");
     const l = document.getElementById("planEffortSliderValue");
-    const f = document.getElementById("planEffortSliderPanel");
-    if (!h) setSliderT(r, {
+    const c = document.getElementById("planEffortSliderPanel");
+    if (!E) setSliderT(r, {
       animate: e
     });
     if (l) l.textContent = n;
@@ -367,7 +367,7 @@
       a.classList.toggle("is-single", i.length <= 1);
       a.classList.toggle("is-max", d === "max");
     }
-    if (!h) {
+    if (!E) {
       if (d === "max") {
         if (!a?.classList.contains("is-bits-live")) playMaxBitsBurst();
       } else {
@@ -376,15 +376,15 @@
     } else {
       clearMaxBits();
     }
-    if (f) {
-      f.querySelectorAll(".plan-effort-slider-dot").forEach(e => {
+    if (c) {
+      c.querySelectorAll(".plan-effort-slider-dot").forEach(e => {
         const t = Number(e.dataset.step || 0);
         const n = effortFromIndex(t);
-        const l = h ? Math.round((Number(a?.style.getPropertyValue("--effort-t")) || r) * (s.length - 1)) : o;
+        const l = E ? Math.round((Number(a?.style.getPropertyValue("--effort-t")) || r) * (s.length - 1)) : o;
         e.classList.toggle("is-passed", t <= l);
         e.classList.toggle("is-locked", !i.includes(n));
       });
-      f.querySelectorAll(".plan-effort-slider-pro").forEach(e => {
+      c.querySelectorAll(".plan-effort-slider-pro").forEach(e => {
         const t = Number(e.dataset.step || 0);
         const o = effortFromIndex(t);
         if (!i.includes(o)) e.removeAttribute("hidden"); else e.setAttribute("hidden", "");
@@ -424,14 +424,14 @@
       s.textContent = n;
       s.dataset.effort = o;
     }
-    const f = document.getElementById("planSelectorBtn");
-    if (f) {
+    const c = document.getElementById("planSelectorBtn");
+    if (c) {
       const e = r?.textContent?.trim() || "Plan";
       const t = isCompactPlanUi();
-      f.setAttribute("aria-label", t ? `${n}. ${e} usage` : `${e}, ${n}`);
+      c.setAttribute("aria-label", t ? `${n}. ${e} usage` : `${e}, ${n}`);
     }
-    const c = document.getElementById("planEffortTriggerValue");
-    if (c) c.textContent = t[d] || "Low";
+    const f = document.getElementById("planEffortTriggerValue");
+    if (f) f.textContent = t[d] || "Low";
     if (!isAutoMode()) {
       syncEffortSliderUI(e);
     }
@@ -546,9 +546,9 @@
       const i = magnetizeT(n);
       const a = i.snapped;
       const l = i.t;
-      const f = i.index;
+      const c = i.index;
       clearMaxBits();
-      if (a && r !== f) {
+      if (a && r !== c) {
         setSliderT(l, {
           magnet: true
         });
@@ -562,20 +562,20 @@
           animate: false
         });
       }
-      if (a) r = f;
-      const c = t[effortFromIndex(f)] || "Low";
-      if (o) o.textContent = c;
-      e.classList.toggle("is-max", f === s.length - 1 && isEffortSelectable("max"));
+      if (a) r = c;
+      const f = t[effortFromIndex(c)] || "Low";
+      if (o) o.textContent = f;
+      e.classList.toggle("is-max", c === s.length - 1 && isEffortSelectable("max"));
       const d = document.getElementById("planEffortSliderPanel");
       d?.querySelectorAll(".plan-effort-slider-dot").forEach(e => {
         const t = Number(e.dataset.step || 0);
-        e.classList.toggle("is-passed", t <= f);
-        e.classList.toggle("is-magnet-hot", a && t === f);
+        e.classList.toggle("is-passed", t <= c);
+        e.classList.toggle("is-magnet-hot", a && t === c);
       });
     };
     const finishDrag = t => {
       const o = magnetizeT(clientXToSliderT(t));
-      h = false;
+      E = false;
       r = null;
       e.classList.remove("is-dragging");
       e.querySelectorAll(".plan-effort-slider-dot").forEach(e => {
@@ -592,7 +592,7 @@
       t.preventDefault();
       t.stopPropagation();
       n = t.pointerId;
-      h = true;
+      E = true;
       r = null;
       clearMaxBits();
       e.classList.add("is-dragging");
@@ -606,12 +606,12 @@
       });
     });
     e.addEventListener("pointermove", e => {
-      if (!h || e.pointerId !== n) return;
+      if (!E || e.pointerId !== n) return;
       e.preventDefault();
       previewFromT(clientXToSliderT(e.clientX));
     });
     const endPointer = t => {
-      if (!h || n != null && t.pointerId !== n) return;
+      if (!E || n != null && t.pointerId !== n) return;
       t.preventDefault();
       t.stopPropagation();
       const o = t.clientX;
@@ -637,8 +637,8 @@
   }
   async function fetchTierInfo(e = false) {
     if (!e && isCacheFresh()) return l;
-    if (!e && c) return c;
-    c = (async () => {
+    if (!e && f) return f;
+    f = (async () => {
       const e = typeof window.apiUrl === "function" ? window.apiUrl("/api/tier/info") : `${window.API_BASE_URL || "https://api.solisai.video/api"}/tier/info`;
       const t = typeof getAuthHeaders === "function" ? getAuthHeaders() : {
         "Content-Type": "application/json"
@@ -652,7 +652,7 @@
       const n = await o.json();
       if (!n?.data) throw new Error("Invalid tier response");
       l = n.data;
-      f = Date.now();
+      c = Date.now();
       const r = l.library || l.saved_videos;
       if (r && typeof window.applyStorageBadgeUI === "function") {
         window.applyStorageBadgeUI({
@@ -663,9 +663,9 @@
       }
       return l;
     })().finally(() => {
-      c = null;
+      f = null;
     });
-    return c;
+    return f;
   }
   function readDismissedKind() {
     try {
@@ -687,25 +687,31 @@
   function formatQuotaUnlockWhen(e) {
     if (!e) return "";
     const t = String(e).trim();
-    const o = /[zZ]|[+-]\d{2}:?\d{2}$/.test(t) ? t : t.replace(" ", "T");
-    const n = new Date(o);
-    if (Number.isNaN(n.getTime())) return "";
-    const r = new Date;
-    const i = n.toLocaleTimeString([], {
+    const o = /[zZ]|[+-]\d{2}:?\d{2}$/.test(t);
+    const n = o ? t : t.replace(" ", "T");
+    const r = new Date(n);
+    if (Number.isNaN(r.getTime())) return "";
+    const i = new Date;
+    const a = r.toLocaleTimeString([], {
       hour: "numeric",
       minute: "2-digit"
     });
-    const a = n.toLocaleDateString([], {
+    const s = r.toLocaleDateString([], {
       weekday: "long",
       month: "short",
       day: "numeric"
     });
-    const s = new Date(r.getFullYear(), r.getMonth(), r.getDate());
-    const l = new Date(n.getFullYear(), n.getMonth(), n.getDate());
-    const f = Math.round((l - s) / 864e5);
-    if (f === 0) return `today at ${i}`;
-    if (f === 1) return `tomorrow at ${i}`;
-    return `${a} at ${i}`;
+    const l = new Date(i.getFullYear(), i.getMonth(), i.getDate());
+    const c = new Date(r.getFullYear(), r.getMonth(), r.getDate());
+    const f = Math.round((c - l) / 864e5);
+    if (f === 0) return `today at ${a}`;
+    if (f === 1) return `tomorrow at ${a}`;
+    return `${s} at ${a}`;
+  }
+  function nextLocalMidnightLabel() {
+    const e = new Date;
+    const t = new Date(e.getFullYear(), e.getMonth(), e.getDate() + 1, 0, 0, 0, 0);
+    return formatQuotaUnlockWhen(t.toISOString());
   }
   function syncQuotaRail(e, t) {
     const o = document.getElementById("urlQuotaRail");
@@ -716,42 +722,41 @@
     if (!o || !n || !r || !i) return;
     const s = e?.generations || {};
     const l = Math.max(0, Number(t?.daily?.remaining ?? s.remaining ?? 0));
-    const f = Math.max(0, Number(t?.daily?.limit ?? s.max_per_period ?? s.max_per_day ?? 0));
-    const c = Math.max(0, Number(t?.monthly?.remaining ?? s.remaining_month ?? 0));
+    const c = Math.max(0, Number(t?.daily?.limit ?? s.max_per_period ?? s.max_per_day ?? 0));
+    const f = Math.max(0, Number(t?.monthly?.remaining ?? s.remaining_month ?? 0));
     const u = Math.max(0, Number(t?.monthly?.limit ?? s.max_per_month ?? 0));
     const p = Math.max(0, Number(t?.max_effort?.limit ?? s.max_effort_per_day ?? 0));
     const g = t?.max_effort?.remaining ?? s.max_effort_remaining;
     const y = Math.max(0, Number(g ?? 0));
-    const h = t?.max_effort?.can_use ?? s.can_use_max_effort;
-    const E = p > 0 && (y <= 0 || h === false);
-    const w = f > 0 && l <= 0 || t?.daily_limit_reached === true || t?.block_reason === "daily_limit";
-    const v = u > 0 && c <= 0;
-    const S = f >= 3 && l > 0 && (l <= 1 || l / f <= .2);
-    const x = p >= 3 && !E && y === 1;
+    const E = t?.max_effort?.can_use ?? s.can_use_max_effort;
+    const h = p > 0 && (y <= 0 || E === false);
+    const w = c > 0 && l <= 0 || t?.daily_limit_reached === true || t?.block_reason === "daily_limit";
+    const v = u > 0 && f <= 0;
+    const S = c >= 3 && l > 0 && (l <= 1 || l / c <= .2);
+    const x = p >= 3 && !h && y === 1;
     let I = "";
     let L = "";
     let M = "";
     if (w) {
       I = "daily";
-      const e = Math.max(1, f || 1);
-      L = m === "free" ? `Free plan · 0 of ${e} clip${e === 1 ? "" : "s"} left today` : `Daily quota reached · 0 of ${f || e} clips left`;
-      const o = formatQuotaUnlockWhen(t?.daily?.resets_at || s.daily_resets_at || s.resets_at);
-      M = m === "free" ? o ? `You’ve used your free generation for today (1 clip). Your next clip unlocks ${o}. Upgrade anytime for more daily clips and deeper effort modes.` : "You’ve used your free generation for today (1 clip). Upgrade for more daily clips, or wait 24h after you started generating." : o ? `You’re out of daily generations. Your next clips unlock ${o}. Upgrade if you need a higher daily quota.` : "You’re out of daily generations. Upgrade for a higher daily quota, or wait 24h after you started generating.";
+      L = m === "free" ? "Free generation used" : "Daily limit reached";
+      const e = m === "free" ? nextLocalMidnightLabel() : formatQuotaUnlockWhen(t?.daily?.resets_at || s.daily_resets_at || s.resets_at);
+      M = m === "free" ? e ? `You’ve used your free generation for today. Your next clip unlocks ${e}. Upgrade anytime for more daily clips.` : "You’ve used your free generation for today. Upgrade anytime for more daily clips." : e ? `You’re out of daily generations. Your next clips unlock ${e}. Upgrade anytime for a higher daily limit.` : "You’re out of daily generations. Upgrade anytime for a higher daily limit.";
     } else if (v) {
       I = "monthly";
-      L = `Monthly quota reached · 0 of ${u} clips left`;
+      L = "Monthly limit reached";
       const e = formatQuotaUnlockWhen(t?.monthly?.resets_at || s.monthly_resets_at);
-      M = e ? `You’ve used this period’s monthly quota. New clips unlock ${e}.` : "You’ve used this period’s monthly quota. New clips unlock when your plan renews.";
+      M = e ? `You’ve used this month’s quota. New clips unlock ${e}.` : "You’ve used this month’s quota. New clips unlock when your plan renews.";
     } else if (S) {
       I = "daily-low";
-      L = `Running low · ${l} of ${f} clips left today`;
-      M = l === 1 ? "This is your last clip for today. After you use it, generation pauses until reset — or upgrade for more headroom so you don’t hit the wall mid-session." : `Only ${l} generations remain today. When you hit zero, Solis pauses new clips until your quota resets. Upgrade anytime if you need more room.`;
-    } else if (E) {
+      L = l === 1 ? "One clip left today" : `${l} clips left today`;
+      M = l === 1 ? "This is your last generation for today. Upgrade anytime if you need more room." : `Only ${l} generations remain today. Upgrade anytime if you need more room.`;
+    } else if (h) {
       I = "max-empty";
-      L = `Max effort used up · 0 of ${p} left today`;
+      L = "Max effort used up for today";
       const e = t?.max_effort?.resets_at || s.max_effort_resets_at;
       const o = formatQuotaUnlockWhen(e);
-      M = o ? `You’ve used all Max effort slots for today. Max unlocks again ${o}. You can still generate with Normal or Low — Solis won’t block the rest of your plan.` : "You’ve used all Max effort slots for today. You can still generate with Normal or Low — Solis won’t block the rest of your plan.";
+      M = o ? `Max effort unlocks again ${o}. You can still generate with Normal or Low.` : "You can still generate with Normal or Low.";
       if (readDismissedKind() === "max" || readDismissedKind() === "max-low") {
         clearQuotaDismiss();
       }
@@ -764,8 +769,8 @@
       }
     } else if (x) {
       I = "max-low";
-      L = `Max effort running low · 1 of ${p} left today`;
-      M = "You have one Max generation left. After that, Solis automatically falls back to Normal so you can keep creating without interruption.";
+      L = "One Max effort left today";
+      M = "After this, Solis falls back to Normal so you can keep creating.";
     } else {
       o.hidden = true;
       if (a) a.classList.remove("has-quota");
@@ -810,8 +815,8 @@
     const s = document.getElementById("planPopoverUpgrade");
     if (!t || !o) return;
     const l = (e?.tier || "free").toLowerCase();
-    const f = e?.tier_name || l.charAt(0).toUpperCase() + l.slice(1);
-    const c = `${f} Plan`;
+    const c = e?.tier_name || l.charAt(0).toUpperCase() + l.slice(1);
+    const f = `${c} Plan`;
     m = l;
     d = resolveEffortForTier(l);
     if (!u) u = readEffortSelection();
@@ -824,8 +829,8 @@
       p.dataset.effort = isAutoMode() ? "auto" : d;
       p.dataset.effortSelection = u;
     }
-    o.textContent = c;
-    if (n) n.textContent = c;
+    o.textContent = f;
+    if (n) n.textContent = f;
     syncAdvancedModeUI({
       animate: false
     });
@@ -902,9 +907,9 @@
       s = Math.min(s, window.innerWidth - a - r);
     }
     let l = o.bottom + (n ? 12 : 10);
-    const f = t.offsetHeight || (n ? 320 : 260);
-    if (l + f > window.innerHeight - r) {
-      l = Math.max(r, o.top - f - 10);
+    const c = t.offsetHeight || (n ? 320 : 260);
+    if (l + c > window.innerHeight - r) {
+      l = Math.max(r, o.top - c - 10);
     }
     t.style.top = `${l}px`;
     t.style.left = `${s}px`;

@@ -45,7 +45,7 @@
     <script src="/js/s_new/qwsqa.js?v=4"></script>
     <script src="/js/s_new/qwe.js?v=7"></script>
     <link rel="stylesheet" href="/style/ss/stg-modal.css?v=43">
-    <script src="/js/s_new/stg.js?v=37"></script>
+    <script src="/js/s_new/stg.js?v=38"></script>
     <script src="/js/i_dq/video-generation-hook.js?v=1"></script>
     <script src="/js/ui/progress-ui.js?v=2"></script>
     <script src="/js/ui/generation-progress-spinner.js?v=41"></script>
@@ -1668,10 +1668,6 @@
                                     </svg>
                                     <span>Upgrade to Pro</span>
                                 </button>
-                                <a class="stgPlanSeeAll" href="/premium.html">
-                                    See all plans
-                                    <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8h9M8.5 4l4 4-4 4"/></svg>
-                                </a>
                             </div>
                         </div>
                     </div>
@@ -1751,17 +1747,29 @@
                         </div>
                         <svg class="stgLinkChevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
                     </button>
-                    <button type="button" class="stgLinkRow" onclick="window.location.href='mailto:help@solisai.video'">
+                    <button type="button" class="stgLinkRow" id="stgCopyHelpEmail" data-email="help@solisai.video">
                         <div class="stgRow" style="border:none;padding:0;flex:1">
                             <div class="stgRowIcon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/></svg>
                             </div>
                             <div class="stgRowBody">
-                                <div class="stgRowLabel">Contact support</div>
-                                <div class="stgRowValue">Email the team</div>
+                                <div class="stgRowLabel">help@solisai.video</div>
+                                <div class="stgRowValue">Product help &amp; support — click to copy</div>
                             </div>
                         </div>
-                        <svg class="stgLinkChevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                        <svg class="stgLinkChevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    </button>
+                    <button type="button" class="stgLinkRow" id="stgCopyBusinessEmail" data-email="business@solisai.video">
+                        <div class="stgRow" style="border:none;padding:0;flex:1">
+                            <div class="stgRowIcon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7l9 6 9-6"/><path d="M5 5h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/></svg>
+                            </div>
+                            <div class="stgRowBody">
+                                <div class="stgRowLabel">business@solisai.video</div>
+                                <div class="stgRowValue">Partnerships &amp; business — click to copy</div>
+                            </div>
+                        </div>
+                        <svg class="stgLinkChevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
                     </button>
                 </section>
             </div>

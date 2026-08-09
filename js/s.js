@@ -6,10 +6,20 @@ if (!window.API_BASE_URL) {
 
 const originalFetch = window.fetch;
 
+let _authLogoutArmed = false;
+
 window.fetch = async function(...e) {
   const t = String(e[0]);
   const n = e[1] || {};
-  let i = await originalFetch.apply(this, e);
+  let i;
+  try {
+    i = await originalFetch.apply(this, e);
+  } catch (e) {
+    throw e;
+  }
+  if (i.status === 502 || i.status === 503 || i.status === 504) {
+    return i;
+  }
   if (i.status !== 401) return i;
   if (t.includes("/auth/logout") || t.includes("/auth/check") || t.includes("/auth/refresh")) {
     return i;
@@ -31,23 +41,43 @@ window.fetch = async function(...e) {
     if (e.ok) {
       i = await originalFetch(t, r);
       if (i.status !== 401) return i;
+    } else if (e.status >= 500 || e.status === 0) {
+      return i;
     }
-    const n = await originalFetch(`${window.API_BASE_URL}/auth/check`, {
+    await new Promise(e => setTimeout(e, 1800));
+    const n = await originalFetch(`${window.API_BASE_URL}/auth/refresh`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: "{}"
+    });
+    if (n.ok) {
+      i = await originalFetch(t, r);
+      if (i.status !== 401) return i;
+    }
+    const o = await originalFetch(`${window.API_BASE_URL}/auth/check`, {
       method: "GET",
       credentials: "include",
       headers: {
         "Content-Type": "application/json"
       }
     });
-    if (n.ok) {
-      const e = await n.json();
+    if (o.ok) {
+      const e = await o.json();
       if (e.authenticated && e.user) {
         i = await originalFetch(t, r);
         if (i.status !== 401) return i;
       }
+    } else if (o.status >= 500) {
+      return i;
     }
-  } catch (e) {}
-  if (i.status === 401 && !window.location.pathname.includes("login")) {
+  } catch (e) {
+    return i;
+  }
+  if (i.status === 401 && !_authLogoutArmed && !window.location.pathname.includes("login")) {
+    _authLogoutArmed = true;
     console.error("[GLOBAL 401 HANDLER] Session unrecoverable — redirecting to login");
     window.currentUser = null;
     localStorage.removeItem("currentUser");
@@ -6502,10 +6532,6 @@ class ClipsStudio {
         l.textContent = "Solis mark appears middle-right on exports (same as preview)";
       } else if (a) {
         l.textContent = "Your first free clip has no watermark";
-      } else if (r) {
-        l.textContent = "Optional Solis mark on exports";
-      } else {
-        l.textContent = "Show Solis mark on exports";
       }
     }
     if (s) {
@@ -6535,7 +6561,7 @@ class ClipsStudio {
     const t = this.currentTemplateForPreview?.id;
     safeLog(`📺 loadVideoPreviewWithTemplate - Loading templateId: ${t}`);
     if (!t) {
-      safeLog("⚠ï¸ No template ID available");
+      safeLog("No template ID available");
       e.innerHTML = `\n                <div class="preview-video-placeholder">\n                    <i class="fas fa-exclamation-circle"></i>\n                    <p>No template selected</p>\n                </div>\n            `;
       return;
     }
@@ -10211,8 +10237,8 @@ class ClipsStudio {
     }
   }
   openUrlSubmitUpgrade() {
-    const e = "Daily free generation used";
-    const t = "You’ve used today’s free clip. Upgrade for more daily generations, deeper effort modes, and faster GPU processing — or wait until your quota resets.";
+    const e = "Free generation used";
+    const t = "You’ve used your free generation for today. Upgrade anytime for more daily clips.";
     if (typeof window.showUpgradeModal === "function") {
       window.showUpgradeModal(e, t);
     } else if (typeof openUpgradeModal === "function") {

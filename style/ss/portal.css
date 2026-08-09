@@ -579,6 +579,45 @@
 .tier-poly polygon {
     stroke: none;
     stroke-width: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+    transition:
+        opacity 0.45s ease,
+        transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.tier-poly-set polygon:nth-child(n+10) {
+    opacity: 0.55;
+}
+
+.tier-info-card:hover .tier-poly-set polygon {
+    opacity: 1;
+}
+
+.tier-info-card:hover .tier-poly-set polygon:nth-child(3n) {
+    transform: translateY(-2px) scale(1.04);
+}
+
+.tier-info-card:hover .tier-poly-set polygon:nth-child(3n+1) {
+    transform: translate(1.5px, -1px) scale(1.03);
+}
+
+.tier-info-card:hover .tier-poly-set polygon:nth-child(3n+2) {
+    transform: translate(-1px, 1.5px) scale(1.025);
+}
+
+.tier-info-card:hover .tier-poly {
+    opacity: 1;
+    filter: saturate(1.08);
+    transition: opacity 0.35s ease, filter 0.45s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tier-poly polygon,
+    .tier-info-card:hover .tier-poly-set polygon {
+        transition: none;
+        transform: none;
+    }
 }
 
 .tier-poly-set {

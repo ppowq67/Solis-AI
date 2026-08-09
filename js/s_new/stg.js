@@ -697,13 +697,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const b = Math.max(0, Number(g.used ?? 0) || 0);
       setText("stgVideosUsed", b + " / " + h);
       setQuotaFill(document.getElementById("stgVideosFill"), b, h);
-      let v = Math.max(0, Number(p.used) || 0) * 1024 * 1024;
-      let E = Math.max(1, Number(p.total) || 512) * 1024 * 1024;
+      let E = Math.max(0, Number(p.used) || 0) * 1024 * 1024;
+      let v = Math.max(1, Number(p.total) || 512) * 1024 * 1024;
       if (Number(f.plan?.storage_gb) > 0 && (!p.total || p.total <= 0)) {
-        E = Number(f.plan.storage_gb) * 1024 * 1024 * 1024;
+        v = Number(f.plan.storage_gb) * 1024 * 1024 * 1024;
       }
-      setText("stgStorage", formatStoragePair(v, E));
-      setQuotaFill(document.getElementById("stgStorageFill"), v, E);
+      setText("stgStorage", formatStoragePair(E, v));
+      setQuotaFill(document.getElementById("stgStorageFill"), E, v);
       const S = Math.max(0, Number(m.limit ?? f.plan?.videos_per_day ?? 0) || 0);
       const C = Math.max(0, Number(m.used ?? 0) || 0);
       if (S > 0) {
@@ -920,8 +920,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
   const b = document.getElementById("pfpFileInput");
-  const v = document.getElementById("stgAvatarContainer");
-  const E = document.getElementById("stgCropBackdrop");
+  const E = document.getElementById("stgAvatarContainer");
+  const v = document.getElementById("stgCropBackdrop");
   const S = document.getElementById("stgCropModal");
   const C = document.getElementById("stgCropImg");
   const I = document.getElementById("stgCropViewport");
@@ -984,9 +984,9 @@ document.addEventListener("DOMContentLoaded", () => {
   function closeCropModal() {
     _.open = false;
     _.dragging = false;
-    E?.classList.remove("is-open");
+    v?.classList.remove("is-open");
     S?.classList.remove("is-open");
-    if (E) E.hidden = true;
+    if (v) v.hidden = true;
     if (S) S.hidden = true;
     if (_.objectUrl) {
       URL.revokeObjectURL(_.objectUrl);
@@ -1036,9 +1036,9 @@ document.addEventListener("DOMContentLoaded", () => {
       _.offsetY = 0;
       applyCropTransform();
       _.open = true;
-      if (E) {
-        E.hidden = false;
-        E.classList.add("is-open");
+      if (v) {
+        v.hidden = false;
+        v.classList.add("is-open");
       }
       S.hidden = false;
       S.classList.add("is-open");
@@ -1261,7 +1261,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   document.getElementById("stgCropCancel")?.addEventListener("click", () => closeCropModal());
   document.getElementById("stgCropClose")?.addEventListener("click", () => closeCropModal());
-  E?.addEventListener("click", () => closeCropModal());
+  v?.addEventListener("click", () => closeCropModal());
   S?.addEventListener("click", e => {
     if (e.target === S) closeCropModal();
   });
@@ -1269,8 +1269,8 @@ document.addEventListener("DOMContentLoaded", () => {
     saveCroppedAvatar();
   });
   S?.querySelector(".stgCropCard")?.addEventListener("click", e => e.stopPropagation());
-  if (v && b) {
-    v.addEventListener("click", e => {
+  if (E && b) {
+    E.addEventListener("click", e => {
       e.preventDefault();
       e.stopPropagation();
       if (U || _.open) return;
@@ -1459,5 +1459,30 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.key === "Escape" && t?.classList.contains("open")) {
       closeSettingsModal();
     }
+  });
+  async function copySupportEmail(e) {
+    const t = (e?.dataset?.email || "").trim();
+    if (!t) return;
+    try {
+      await navigator.clipboard.writeText(t);
+      const n = e.querySelector(".stgRowValue");
+      if (n) {
+        const e = n.textContent;
+        n.textContent = "Copied";
+        setTimeout(() => {
+          n.textContent = e;
+        }, 1400);
+      }
+    } catch (e) {
+      window.location.href = `mailto:${t}`;
+    }
+  }
+  document.getElementById("stgCopyHelpEmail")?.addEventListener("click", e => {
+    e.preventDefault();
+    copySupportEmail(e.currentTarget);
+  });
+  document.getElementById("stgCopyBusinessEmail")?.addEventListener("click", e => {
+    e.preventDefault();
+    copySupportEmail(e.currentTarget);
   });
 });

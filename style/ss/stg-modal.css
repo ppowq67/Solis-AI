@@ -1745,7 +1745,7 @@
     align-self: flex-start;
 }
 
-.stgPlanSeeAll {
+.stgPlanSeeAll { /* this is not used anymore but "see all plans ->" */
     display: inline-flex;
     align-items: center;
     gap: 4px;

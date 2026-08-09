@@ -1,5 +1,14 @@
 {
   "cleanUrls": true,
+  "rewrites": [
+    { "source": "/terms", "destination": "/legal/terms.html" },
+    { "source": "/terms.html", "destination": "/legal/terms.html" },
+    { "source": "/privacy", "destination": "/legal/privacy.html" },
+    { "source": "/privacy.html", "destination": "/legal/privacy.html" },
+    { "source": "/refund", "destination": "/legal/refund.html" },
+    { "source": "/refund.html", "destination": "/legal/refund.html" },
+    { "source": "/legal", "destination": "/legal/terms.html" }
+  ],
   "headers": [
     {
       "source": "/assets/(.*)",
@@ -24,6 +33,12 @@
       "source": "/favicon/(.*)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=86400, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/legal/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
       ]
     },
     {

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Privacy Policy · Solis AI</title>
+  <meta name="description" content="How Solis AI collects, uses, and protects your information." />
+  <meta name="theme-color" content="#fdf9f5" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --solis: #f97316; --solis-deep: #c2410c; --solis-bright: #ff8c42;
+      --solis-gradient: linear-gradient(135deg, #f97316, #d65a31, #ff8c42, #b84d1a);
+      --solis-light: #fed7aa; --solis-xlight: #fff7ed;
+      --ink: #18120e; --text-primary: #18120e; --text-secondary: #5c5048; --text-muted: #9e8878; --text-faint: #c4b5a8;
+      --border: rgba(200,185,170,0.3); --border-strong: rgba(200,185,170,0.55);
+      --glass-bg: linear-gradient(150deg, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.48) 50%, rgba(255,248,240,0.42) 100%);
+      --glass-shadow: 0 4px 24px rgba(120,80,40,0.08), 0 1px 4px rgba(120,80,40,0.05), inset 0 1px 0 rgba(255,255,255,0.95), inset 0 -1px 0 rgba(180,140,110,0.10);
+      --font-display: 'Plus Jakarta Sans', system-ui, sans-serif; --font-body: 'DM Sans', system-ui, sans-serif;
+      --max-width: 1140px; --ease-out: cubic-bezier(0.16,1,0.3,1);
+    }
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
+    body { min-height: 100vh; font-family: var(--font-body); background: #fdf9f5; color: var(--text-primary); overflow-x: hidden; display: flex; flex-direction: column; line-height: 1.5; }
+    ::selection { background: rgba(249,115,22,0.22); color: var(--ink); }
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(249,115,22,0.4); border-radius: 10px; border: 2px solid transparent; background-clip: content-box; }
+    a { color: inherit; text-decoration: none; } button { font-family: inherit; cursor: pointer; } ul { list-style: none; } svg { display: block; max-width: 100%; }
+
+    .bg-canvas { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+    .blob { position: absolute; border-radius: 50%; filter: blur(90px); }
+    .blob-1 { width: 600px; height: 600px; top: -200px; right: -100px; background: radial-gradient(circle, rgba(251,146,60,0.12) 0%, transparent 60%); }
+    .blob-2 { width: 440px; height: 440px; bottom: -100px; left: -100px; background: radial-gradient(circle, rgba(253,186,116,0.10) 0%, transparent 60%); }
+
+    .glass { background: var(--glass-bg); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); border: 1px solid rgba(255,255,255,0.82); border-bottom-color: rgba(200,185,170,0.35); border-right-color: rgba(200,185,170,0.25); box-shadow: var(--glass-shadow); }
+    .glass-card { background: var(--glass-bg); backdrop-filter: blur(24px) saturate(160%); -webkit-backdrop-filter: blur(24px) saturate(160%); border: 1px solid rgba(255,255,255,0.85); border-bottom-color: rgba(200,185,170,0.3); border-right-color: rgba(200,185,170,0.2); box-shadow: var(--glass-shadow); }
+
+    .nav { position: fixed; top: calc(20px + env(safe-area-inset-top,0px)); left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: var(--max-width); z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 9px 9px 9px 22px; border-radius: 9999px; transition: box-shadow 0.3s; }
+    .nav.is-scrolled { box-shadow: 0 8px 28px rgba(120,80,40,0.12), 0 2px 8px rgba(120,80,40,0.06), inset 0 1px 0 rgba(255,255,255,0.95); }
+    .nav-brand { display: flex; align-items: center; gap: 9px; color: var(--text-primary); }
+    .nav-brand svg { width: 28px; height: 28px; flex-shrink: 0; }
+    .nav-brand-name { font-family: var(--font-display); font-size: 1.1rem; font-weight: 800; letter-spacing: -0.025em; }
+    .nav-center { display: flex; gap: 4px; align-items: center; }
+    .nav-center a { color: var(--text-muted); font-size: 0.85rem; font-weight: 500; padding: 8px 14px; border-radius: 100px; transition: all 0.2s; }
+    .nav-center a:hover { color: var(--text-primary); background: rgba(255,255,255,0.5); }
+    .nav-cta { background: var(--ink); color: #fff; font-family: var(--font-display); font-size: 13px; font-weight: 700; padding: 10px 20px; border-radius: 100px; border: none; display: inline-flex; align-items: center; gap: 6px; transition: all 0.3s var(--ease-out); position: relative; overflow: hidden; }
+    .nav-cta::before { content: ''; position: absolute; inset: 0; background: var(--solis-gradient); opacity: 0; transition: opacity 0.3s; }
+    .nav-cta:hover::before { opacity: 1; }
+    .nav-cta:hover { box-shadow: 0 8px 22px rgba(249,115,22,0.35); transform: translateY(-1px); }
+    .nav-cta > * { position: relative; z-index: 1; }
+    .nav-cta svg { width: 13px; height: 13px; }
+    .nav-toggle { display: none; background: none; border: none; color: var(--text-primary); padding: 8px; margin-right: -4px; border-radius: 50%; align-items: center; justify-content: center; }
+    .nav-toggle .icon-close { display: none; }
+    .nav-toggle[aria-expanded="true"] .icon-open { display: none; }
+    .nav-toggle[aria-expanded="true"] .icon-close { display: block; }
+    .nav-mobile { margin-top: 10px; border-radius: 22px; padding: 12px; display: flex; flex-direction: column; gap: 2px; }
+    .nav-mobile[hidden] { display: none; }
+    .nav-mobile a { padding: 11px 14px; border-radius: 12px; font-size: 0.95rem; font-weight: 500; color: var(--text-secondary); }
+    .nav-mobile a:hover { background: rgba(255,255,255,0.6); }
+    .nav-mobile-cta { font-family: var(--font-display); text-align: center; font-weight: 700; color: #fff !important; background: var(--ink); margin-top: 4px; }
+    @media (max-width: 900px) { .nav-center { display: none; } }
+    @media (max-width: 768px) { .nav-cta { display: none; } .nav-toggle { display: inline-flex; } .nav { padding: 8px 12px 8px 16px; } }
+
+    main { flex: 1; position: relative; z-index: 1; padding-top: calc(110px + env(safe-area-inset-top,0px)); }
+
+    .legal-doc {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 48px 24px 96px;
+    }
+    .legal-doc h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 2.75rem);
+      font-weight: 800;
+      letter-spacing: -0.035em;
+      line-height: 1.15;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+    .legal-meta {
+      font-size: 0.9375rem;
+      color: var(--text-muted);
+      margin-bottom: 36px;
+    }
+    .legal-doc .intro,
+    .legal-doc > p,
+    .legal-section > p {
+      font-size: 1.0625rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      margin-bottom: 1.15em;
+    }
+    .legal-doc .intro strong,
+    .legal-section p strong,
+    .legal-section li strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    .legal-section {
+      margin-top: 2.75rem;
+      scroll-margin-top: 110px;
+    }
+    .legal-section h2 {
+      font-family: var(--font-display);
+      font-size: 1.375rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+    .legal-section h3 {
+      font-family: var(--font-display);
+      font-size: 1.0625rem;
+      font-weight: 650;
+      color: var(--text-primary);
+      margin: 1.5rem 0 0.65rem;
+      line-height: 1.35;
+    }
+    .legal-section ul {
+      list-style: disc;
+      margin: 0.75rem 0 1.25rem 1.35rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+    .legal-section li {
+      font-size: 1.0625rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      padding-left: 0.15rem;
+    }
+    .legal-section a[href^="mailto:"],
+    .legal-doc a[href^="mailto:"] {
+      color: var(--solis-deep);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-thickness: 1px;
+    }
+    .legal-section a[href^="mailto:"]:hover,
+    .legal-doc a[href^="mailto:"]:hover {
+      color: var(--solis);
+    }
+
+    .footer { position: relative; z-index: 1; margin-top: auto; max-width: var(--max-width); margin-left: auto; margin-right: auto; width: 100%; padding: 48px 20px 40px; }
+    .footer-card { border-radius: 28px; padding: 40px; }
+    @media (max-width: 640px) { .footer-card { padding: 28px 20px; } }
+    .footer-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 32px; }
+    @media (min-width: 768px) { .footer-grid { grid-template-columns: 2fr 1fr 1fr 1fr 1fr; } }
+    .footer-brand .nav-brand { margin-bottom: 16px; }
+    .footer-tagline { font-size: 13px; color: var(--text-muted); line-height: 1.55; max-width: 260px; }
+    .footer-status { margin-top: 20px; display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-muted); }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: #10b981; display: inline-block; box-shadow: 0 0 0 3px rgba(16,185,129,0.2); }
+    .footer-col h4 { font-family: var(--font-display); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); margin-bottom: 14px; }
+    .footer-col ul { display: flex; flex-direction: column; gap: 9px; }
+    .footer-col a { font-size: 13px; color: var(--text-muted); transition: color 0.15s; }
+    .footer-col a:hover { color: var(--text-primary); }
+    .footer-bottom { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 16px; }
+    @media (min-width: 640px) { .footer-bottom { flex-direction: row; } }
+    .footer-bottom p { font-size: 12px; color: var(--text-muted); }
+    .footer-social { display: flex; gap: 6px; }
+    .footer-social a { width: 32px; height: 32px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: var(--text-muted); transition: all 0.2s; border: 1px solid transparent; }
+    .footer-social a:hover { color: var(--solis-deep); background: rgba(249,115,22,0.08); border-color: rgba(249,115,22,0.2); }
+    .footer-social svg { width: 14px; height: 14px; }
+
+    a:focus-visible, button:focus-visible { outline: 2px solid var(--solis); outline-offset: 3px; border-radius: 6px; }
+    @media (max-width: 768px) { .blob { filter: blur(60px); } .glass, .glass-card, .nav, .nav-mobile, .footer-card { backdrop-filter: blur(12px) saturate(140%); -webkit-backdrop-filter: blur(12px) saturate(140%); } }
+  </style>
+</head>
+<body>
+  <div class="bg-canvas"><div class="blob blob-1"></div><div class="blob blob-2"></div></div>
+
+  <nav class="nav glass" id="navShell">
+    <a href="/" class="nav-brand"><svg viewBox="0 0 100 100" width="28" height="28"><circle cx="50" cy="50" r="12" fill="#ea580c"/><ellipse rx="44" ry="18" cx="50" cy="50" stroke="#ea580c" stroke-width="6" transform="rotate(45 50 50)" fill="none"/><ellipse rx="44" ry="18" cx="50" cy="50" stroke="#ea580c" stroke-width="6" transform="rotate(-45 50 50)" fill="none"/></svg><span class="nav-brand-name">Solis AI</span></a>
+    <div class="nav-center"><a href="/">Home</a><a href="/premium.html#features">Features</a><a href="/premium.html#pricing">Pricing</a><a href="mailto:help@solisai.video">Support</a></div>
+    <a href="/login.html" class="nav-cta">Start free <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg></a>
+    <button type="button" class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false"><svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg><svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button>
+  </nav>
+  <div class="nav-mobile glass-card" id="navMobile" role="menu" hidden style="position:fixed;top:calc(80px + env(safe-area-inset-top,0px));left:16px;right:16px;z-index:99;"><a href="/" role="menuitem">Home</a><a href="/premium.html#features" role="menuitem">Features</a><a href="/premium.html#pricing" role="menuitem">Pricing</a><a href="mailto:help@solisai.video" role="menuitem">Support</a><div class="nav-mobile-divider" style="height:1px;background:var(--border);margin:8px 4px;"></div><a href="/login.html" role="menuitem" class="nav-mobile-cta">Start free</a></div>
+
+  <main>
+    <article class="legal-doc">
+      <h1>Privacy Policy</h1>
+      <p class="legal-meta">Effective July 31, 2026</p>
+
+      <p class="intro">Solis AI is an agentic AI for content repurposing. It analyzes video, makes decisions across the workflow, and turns source content into platform-ready shorts, clips, and remixes. This Privacy Policy explains how we collect, use, disclose, and protect personal data when you use our website, product, and related services (the “Services”).</p>
+
+      <p class="intro">We designed Solis so you can create freely. We collect what we need to run the product well, keep accounts secure, and improve the experience, and we are open about how that works. This Policy also describes your privacy rights and how to exercise them (see Section 4).</p>
+
+      <section class="legal-section" id="s1">
+        <h2>1. Collection of Personal Data</h2>
+        <p>We collect the following categories of personal data:</p>
+
+        <h3>Personal data you provide to us directly</h3>
+        <ul>
+          <li><strong>Identity and contact data:</strong> You sign in with Google or YouTube. Through that sign-in we receive identifiers such as your name, email address, and profile picture URL. We do not offer password-based accounts and we do not store passwords.</li>
+          <li><strong>Payment information:</strong> If you purchase a paid plan, payment details are collected and processed by Paddle. We may share your account email and an internal user identifier so Paddle can complete checkout and manage your subscription. We do not receive or store your full card numbers.</li>
+          <li><strong>Inputs and outputs:</strong> Today you provide media by pasting video URLs. You can also set preferences, guide how the agent processes content, and customize results (including text, style, and related settings). We plan to support uploading private media in the future. Content you submit (“Inputs”), including URLs and any media you later upload, and the videos Solis generates or transforms (“Outputs”) are processed so we can deliver the Services. If Inputs include personal data or references to external content, that information may appear in Outputs.</li>
+          <li><strong>Optional YouTube Analytics connection:</strong> If you connect YouTube Analytics, we receive OAuth tokens and channel metrics from Google’s APIs so we can show your own analytics in the product. That connection is optional and separate from signing in to create clips.</li>
+          <li><strong>Feedback:</strong> If you send ideas, suggestions, or ratings about the Services, we may use that Feedback to improve Solis.</li>
+          <li><strong>Communication information:</strong> If you contact us (for example by email), we collect your contact details and the contents of your messages so we can respond.</li>
+        </ul>
+        <p>When you provide Inputs, including by pasting URLs or (when available) uploading private media, you are responsible for ensuring you have the rights, permissions, or authority needed to do so.</p>
+
+        <h3>Personal data we receive automatically from your use of the Services</h3>
+        <p>When you use the Services, we also receive certain technical data automatically (“Technical Information”). This includes:</p>
+        <ul>
+          <li><strong>Device and connection information:</strong> Information your browser or device sends, such as device type, operating system, browser details, IP address (and approximate location derived from it), time zone, and similar identifiers.</li>
+          <li><strong>Usage information:</strong> How you use Solis, for example when you access the product, features you use, prompts or settings related to agent runs and content generation, and general activity needed to operate accounts and plan limits.</li>
+          <li><strong>Log and troubleshooting information:</strong> Logs that help us understand performance and diagnose errors, including when an error occurred and which feature was in use.</li>
+          <li><strong>Cookies and similar technologies:</strong> We use cookies or similar technologies that are necessary to keep you signed in (for example httpOnly session cookies), remember preferences, and operate the Services securely. We do not use third-party advertising or marketing analytics cookies.</li>
+        </ul>
+      </section>
+
+      <section class="legal-section" id="s2">
+        <h2>2. How We Use Personal Data</h2>
+        <p>We use personal data for the following purposes:</p>
+        <ul>
+          <li>To provide, maintain, and improve the Services, including running the Solis AI agent, generating and transforming content, showing previews, managing accounts, and applying plan features;</li>
+          <li>To create and administer your Solis AI account;</li>
+          <li>To process payments and manage subscriptions through our payment partner;</li>
+          <li>To send service-related communications (for example updates about your account or important product notices) and, where appropriate, information about features that may interest you;</li>
+          <li>To keep the platform healthy, including preventing spam, fraud, and abuse, investigating security issues, and protecting Solis, our users, and others;</li>
+          <li>To debug, fix errors, and understand usage patterns so we can make Solis better;</li>
+          <li>To comply with applicable law and respond to valid legal requests; and</li>
+          <li>To enforce our Terms of Service and related agreements.</li>
+        </ul>
+        <p>We do not sell your personal data. We do not share your personal data with advertisers for their marketing. We do not use your pasted URLs, uploaded media (when that feature is available), or generated content to train Solis AI models. Source media is processed to deliver your results; temporary working copies (such as downloaded source files used during a job) are cleaned up after processing. Generated clips and project files you keep in your library remain available until you delete them or ask us to delete your account, subject to the retention rules in Section 5.</p>
+      </section>
+
+      <section class="legal-section" id="s3">
+        <h2>3. Recipients and Service Providers</h2>
+        <p>We share personal data only as needed to operate Solis. Third-party providers receive <strong>only the data necessary</strong> for their respective services—not your entire account, and not data unrelated to their role. Categories of recipients include:</p>
+
+        <h3>Infrastructure and operations</h3>
+        <ul>
+          <li><strong>Cloudflare:</strong> We use Cloudflare to deliver the website and protect traffic (for example CDN, DNS, and related edge security). Cloudflare processes Technical Information such as IP addresses, request metadata, and content needed to serve pages and APIs securely.</li>
+          <li><strong>Cloudflare R2:</strong> We use Cloudflare R2 to store durable project media and related files (for example generated videos, captions, and project sidecars) so you can access your library. R2 stores the files associated with your projects; it is not used to process payments or to store card numbers.</li>
+          <li><strong>Railway:</strong> We use Railway to host our API and authentication services. Railway processes account and session data needed to run the application (for example authentication cookies/sessions, account records, and API requests), along with Technical Information generated by those services.</li>
+          <li><strong>Vast.ai:</strong> We use Vast.ai for GPU compute when a job needs accelerated video processing. Vast.ai machines receive the media and job data required to process that request (and temporary access needed to read/write related project files). They do not receive your payment card details.</li>
+          <li><strong>CPU compute providers:</strong> For CPU workloads we may engage additional compute hosts we select (for example providers such as Modal or Google Cloud Run). Those providers receive only the media and job data needed to run the assigned workload. We will not send payment card numbers to compute providers.</li>
+        </ul>
+
+        <h3>Payments, identity, and AI assistance</h3>
+        <ul>
+          <li><strong>Paddle:</strong> Paddle is our Merchant of Record. Paddle receives information needed to process checkout, billing, tax, and customer payment support (such as your email, plan selection, and related order details). Card data is handled by Paddle, not stored by Solis.</li>
+          <li><strong>Google:</strong> When you sign in with Google or YouTube, or optionally connect YouTube Analytics, Google provides identity and (if connected) analytics data under Google’s terms. We store the account fields we need to operate your Solis account (such as email, name, profile picture URL, and Google account identifiers) and, if you connect Analytics, the tokens and metrics required for that feature.</li>
+          <li><strong>AI inference providers:</strong> To generate titles, hooks, rankings, and similar features, we may send limited inputs—such as short transcript excerpts, titles/metadata, or selected video frames—to AI inference providers we use for that purpose. We do not send your payment card details to those providers, and we do not use your content to train Solis’s own models.</li>
+        </ul>
+
+        <h3>Other disclosures</h3>
+        <ul>
+          <li><strong>Legal and safety:</strong> We may disclose information when we have a good-faith belief it is reasonably necessary to comply with law or legal process, protect someone’s safety or property, prevent fraud or illegal activity, or enforce our terms and protect the rights and security of Solis AI, our users, or others.</li>
+          <li><strong>Business transfers:</strong> If Solis AI is involved in a merger, acquisition, or similar transaction, personal data may be transferred as part of that event, subject to appropriate protections.</li>
+          <li><strong>With your direction:</strong> We may share information when you ask us to or give us permission to do so.</li>
+        </ul>
+        <p>Links to third-party sites or services are governed by those parties’ own policies. Enabling or following those links is your choice.</p>
+      </section>
+
+      <section class="legal-section" id="s4">
+        <h2>4. Rights and Choices</h2>
+        <p>Depending on where you live and the laws that apply to you, you may have rights regarding your personal data. We aim to honor those rights and to make exercising them straightforward. Rights can vary by jurisdiction and are not always absolute; we may need to verify your identity before fulfilling a request, and we may decline a request where the law allows.</p>
+        <p>Subject to applicable law, you may be able to:</p>
+        <ul>
+          <li><strong>Know and access:</strong> Request information about the personal data we process about you, and in some cases obtain a copy.</li>
+          <li><strong>Correct:</strong> Ask us to update inaccurate personal data we hold about you.</li>
+          <li><strong>Delete:</strong> Request deletion of your account and associated personal data by emailing <a href="mailto:help@solisai.video?subject=Account%20deletion%20request">help@solisai.video</a>. We aim to process deletion requests within 30 days. You can also delete individual projects or clips from your library in the product. Some information may be retained where required for legal, security, or operational reasons (for example records we must keep by law, or limited technical logs).</li>
+          <li><strong>Object or restrict:</strong> In certain circumstances, object to or request restriction of certain processing.</li>
+          <li><strong>Withdraw consent:</strong> Where processing is based on consent, withdraw that consent without affecting processing that occurred before withdrawal. You can disconnect optional YouTube Analytics from your account settings where available.</li>
+        </ul>
+        <p>To exercise these rights, email us at <a href="mailto:help@solisai.video">help@solisai.video</a>. We will respond within the timeframe required by the law that applies to you. We will not discriminate against you for exercising privacy rights available under applicable law.</p>
+      </section>
+
+      <section class="legal-section" id="s5">
+        <h2>5. Data Retention and Security</h2>
+        <p>We retain personal data for as long as reasonably needed for the purposes described in this Policy:</p>
+        <ul>
+          <li><strong>Account data</strong> (identity, plan, and settings) is kept while your account is active and as needed afterward for legitimate business or legal reasons.</li>
+          <li><strong>Library media</strong> (generated clips and related project files stored for you, including in Cloudflare R2) is kept until you delete the project or your account is deleted, unless a shorter period applies under your plan or we notify you otherwise.</li>
+          <li><strong>Temporary processing files</strong> (such as downloaded source video used during a job) are removed after processing according to our cleanup routines (typically within about 24 hours for cached source media, and sooner when a job finishes successfully).</li>
+          <li><strong>Billing records</strong> associated with Paddle may be retained as required for tax, accounting, and dispute resolution.</li>
+        </ul>
+        <p>When data is no longer required, we delete it, destroy it, or de-identify it as appropriate under applicable law.</p>
+        <p>We use industry-standard technical and organizational measures designed to protect personal data against loss, misuse, and unauthorized access, disclosure, alteration, or destruction, including encrypted connections (HTTPS), authentication through Google or YouTube sign-in with httpOnly session cookies, and limited internal access. No method of transmission or storage is completely secure; we work to keep Solis safe and take reasonable steps when issues arise.</p>
+      </section>
+
+      <section class="legal-section" id="s6">
+        <h2>6. Children</h2>
+        <p>The Services are not directed to children under 13, and we do not knowingly collect personal data from children under 13. If you believe a child has provided personal data to us, please contact us at <a href="mailto:help@solisai.video">help@solisai.video</a> and we will take appropriate steps.</p>
+      </section>
+
+      <section class="legal-section" id="s7">
+        <h2>7. Changes to This Privacy Policy</h2>
+        <p>We may update this Privacy Policy from time to time. When we make material changes, we will update the effective date at the top of this page and take additional steps as appropriate. Continued use of the Services after an update means you acknowledge the revised Policy.</p>
+      </section>
+
+      <section class="legal-section" id="s8">
+        <h2>8. Contact Us</h2>
+        <p>If you have questions about this Privacy Policy, or requests about your personal data, contact us at <a href="mailto:help@solisai.video">help@solisai.video</a>.</p>
+        <p>Depending on where you live, you may also have the right to lodge a complaint with a supervisory authority in your country or region.</p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-card glass-card">
+      <div class="footer-grid">
+        <div class="footer-brand"><a href="/" class="nav-brand"><svg viewBox="0 0 100 100" width="28" height="28"><circle cx="50" cy="50" r="12" fill="#ea580c"/><ellipse rx="44" ry="18" cx="50" cy="50" stroke="#ea580c" stroke-width="6" transform="rotate(45 50 50)" fill="none"/><ellipse rx="44" ry="18" cx="50" cy="50" stroke="#ea580c" stroke-width="6" transform="rotate(-45 50 50)" fill="none"/></svg><span class="nav-brand-name">Solis AI</span></a><p class="footer-tagline">Paste a link, get clips ready to post. The creator-first video clipping studio.</p><div class="footer-status"><span class="status-dot"></span>All systems operational</div></div>
+        <div class="footer-col"><h4>Product</h4><ul><li><a href="/premium.html#features">Features</a></li><li><a href="/premium.html#pricing">Pricing</a></li><li><a href="/#_how">How it works</a></li><li><a href="/#_faq">FAQ</a></li><li><a href="/dashboard.html">Dashboard</a></li></ul></div>
+        <div class="footer-col"><h4>Company</h4><ul><li><a href="mailto:help@solisai.video">Contact</a></li><li><a href="mailto:help@solisai.video">Support</a></li><li><a href="https://discord.gg/SuZQBCZCKt" target="_blank" rel="noopener">Community</a></li><li><a href="https://www.instagram.com/solisaivideo/" target="_blank" rel="noopener">Instagram</a></li><li><a href="https://x.com/solisaivideo" target="_blank" rel="noopener">X / Twitter</a></li></ul></div>
+        <div class="footer-col"><h4>Resources</h4><ul><li><a href="mailto:help@solisai.video">Help center</a></li><li><a href="/login.html">Sign in</a></li><li><a href="/premium.html">Plans &amp; billing</a></li><li><a href="/refund.html">Cancel &amp; refunds</a></li><li><a href="https://discord.gg/SuZQBCZCKt" target="_blank" rel="noopener">Discord</a></li></ul></div>
+        <div class="footer-col"><h4>Legal</h4><ul><li><a href="/terms.html">Terms of Service</a></li><li><a href="/privacy.html">Privacy Policy</a></li><li><a href="/refund.html">Refund Policy</a></li><li><a href="mailto:copyright@solisai.video">Copyright / DMCA</a></li><li><a href="mailto:help@solisai.video">Legal contact</a></li></ul></div>
+      </div>
+      <div class="footer-bottom"><p>© <span id="footerYear"></span> Solis AI, Inc. Crafted for creators, everywhere.</p><div class="footer-social"><a href="#" aria-label="Twitter"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a><a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a><a href="#" aria-label="Discord"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.331c-1.182 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg></a><a href="#" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a></div></div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      'use strict';
+      var yearEl = document.getElementById('footerYear');
+      if (yearEl) yearEl.textContent = new Date().getFullYear();
+      var navShell = document.getElementById('navShell');
+      function onScroll() { if (navShell) navShell.classList.toggle('is-scrolled', window.scrollY > 12); }
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+      var navToggle = document.getElementById('navToggle');
+      var navMobile = document.getElementById('navMobile');
+      function setMenuOpen(open) {
+        if (!navToggle || !navMobile) return;
+        navToggle.setAttribute('aria-expanded', String(open));
+        navToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+        navMobile.hidden = !open;
+      }
+      if (navToggle) navToggle.addEventListener('click', function () {
+        setMenuOpen(navToggle.getAttribute('aria-expanded') !== 'true');
+      });
+      if (navMobile) {
+        Array.prototype.forEach.call(navMobile.querySelectorAll('a'), function (a) {
+          a.addEventListener('click', function () { setMenuOpen(false); });
+        });
+      }
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setMenuOpen(false); });
+    })();
+  </script>
+</body>
+</html>

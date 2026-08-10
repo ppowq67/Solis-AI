@@ -578,6 +578,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (!e) return;
     setText("stgName", e.name || e.username || "Guest User");
+    if (window.SolisBadges?.renderCurrentUser) {
+      window.SolisBadges.renderCurrentUser("stgBadges", 20);
+    }
     setText("stgUserEmail", e.email || "unknown@email.com");
     setText("stgEmailAddress", e.email || "unknown@email.com");
     const t = document.getElementById("stgBio");
@@ -719,28 +722,28 @@ document.addEventListener("DOMContentLoaded", () => {
         setText("stgDailyGens", "—");
         setQuotaFill(document.getElementById("stgDailyFill"), 0, 1);
       }
-      const I = Math.max(0, Number(w.limit ?? f.plan?.videos_per_month ?? 0) || 0);
-      const B = Math.max(0, Number(w.used ?? 0) || 0);
-      if (I > 0) {
-        setText("stgMonthlyGens", B + " / " + I);
-        setQuotaFill(document.getElementById("stgMonthlyFill"), B, I);
+      const B = Math.max(0, Number(w.limit ?? f.plan?.videos_per_month ?? 0) || 0);
+      const I = Math.max(0, Number(w.used ?? 0) || 0);
+      if (B > 0) {
+        setText("stgMonthlyGens", I + " / " + B);
+        setQuotaFill(document.getElementById("stgMonthlyFill"), I, B);
         const e = document.getElementById("stgMonthlyHint");
         if (e) {
-          e.textContent = formatQuotaResetHint(w.resets_at, B >= I ? "Monthly quota reached. Resets {when}." : "Resets {when}.");
+          e.textContent = formatQuotaResetHint(w.resets_at, I >= B ? "Monthly quota reached. Resets {when}." : "Resets {when}.");
         }
       } else {
         setText("stgMonthlyGens", "—");
         setQuotaFill(document.getElementById("stgMonthlyFill"), 0, 1);
       }
       const x = Number(y.limit ?? 0);
-      const M = Number(y.used ?? 0);
-      const U = y.remaining;
+      const U = Number(y.used ?? 0);
+      const M = y.remaining;
       if (x > 0) {
-        setText("stgMaxEffort", M + " / " + x + " used");
-        setQuotaFill(document.getElementById("stgMaxFill"), M, x);
+        setText("stgMaxEffort", U + " / " + x + " used");
+        setQuotaFill(document.getElementById("stgMaxFill"), U, x);
         const e = document.getElementById("stgMaxHint");
         if (e) {
-          const t = Math.max(0, Number(U ?? x - M));
+          const t = Math.max(0, Number(M ?? x - U));
           e.textContent = t > 0 ? t + " Premium Request" + (t === 1 ? "" : "s") + " left in this window." : "Premium Requests locked until reset.";
         }
       } else {
@@ -924,11 +927,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const v = document.getElementById("stgCropBackdrop");
   const S = document.getElementById("stgCropModal");
   const C = document.getElementById("stgCropImg");
-  const I = document.getElementById("stgCropViewport");
-  const B = document.getElementById("stgCropStage");
+  const B = document.getElementById("stgCropViewport");
+  const I = document.getElementById("stgCropStage");
   const x = document.getElementById("stgCropZoom");
-  const M = document.getElementById("stgCropSave");
-  let U = false;
+  const U = document.getElementById("stgCropSave");
+  let M = false;
   let L = 0;
   const P = 4e3;
   const T = 5 * 1024 * 1024;
@@ -960,8 +963,8 @@ document.addEventListener("DOMContentLoaded", () => {
     return null;
   }
   function cropViewportSize() {
-    if (!I) return 280;
-    return Math.max(120, Math.round(I.getBoundingClientRect().width || 280));
+    if (!B) return 280;
+    return Math.max(120, Math.round(B.getBoundingClientRect().width || 280));
   }
   function clampCropOffsets() {
     const e = cropViewportSize();
@@ -994,13 +997,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (C) C.removeAttribute("src");
     if (b) b.value = "";
-    if (M) {
-      M.disabled = false;
-      M.classList.remove("is-busy");
+    if (U) {
+      U.disabled = false;
+      U.classList.remove("is-busy");
     }
   }
   function openCropModal(e) {
-    if (!S || !C || !I) {
+    if (!S || !C || !B) {
       uploadProfilePicture(e);
       return;
     }
@@ -1122,14 +1125,14 @@ document.addEventListener("DOMContentLoaded", () => {
     setImg(document.getElementById("menuUserAvatar"));
   }
   async function uploadProfilePicture(e) {
-    if (U || !e) return;
-    U = true;
+    if (M || !e) return;
+    M = true;
     const t = document.getElementById("stgAvatar");
     try {
       if (t) t.style.opacity = "0.55";
-      if (M) {
-        M.disabled = true;
-        M.classList.add("is-busy");
+      if (U) {
+        U.disabled = true;
+        U.classList.add("is-busy");
       }
       const n = new FormData;
       n.append("pfp", e, e.name || "avatar.webp");
@@ -1180,18 +1183,18 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         alert(e.message || "Failed to upload profile picture");
       }
-      if (M) {
-        M.disabled = false;
-        M.classList.remove("is-busy");
+      if (U) {
+        U.disabled = false;
+        U.classList.remove("is-busy");
       }
     } finally {
       if (t) t.style.opacity = "1";
-      U = false;
+      M = false;
       if (b) b.value = "";
     }
   }
   async function saveCroppedAvatar() {
-    if (!_.open || U) return;
+    if (!_.open || M) return;
     try {
       const e = await exportCroppedAvatarFile();
       await uploadProfilePicture(e);
@@ -1209,7 +1212,7 @@ document.addEventListener("DOMContentLoaded", () => {
     _.lastX = e.clientX;
     _.lastY = e.clientY;
     _.pointerId = e.pointerId;
-    B?.setPointerCapture?.(e.pointerId);
+    I?.setPointerCapture?.(e.pointerId);
   }
   function onCropPointerMove(e) {
     if (!_.dragging) return;
@@ -1226,15 +1229,15 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!_.dragging) return;
     _.dragging = false;
     try {
-      B?.releasePointerCapture?.(e.pointerId);
+      I?.releasePointerCapture?.(e.pointerId);
     } catch (e) {}
   }
-  if (B) {
-    B.addEventListener("pointerdown", onCropPointerDown);
-    B.addEventListener("pointermove", onCropPointerMove);
-    B.addEventListener("pointerup", onCropPointerUp);
-    B.addEventListener("pointercancel", onCropPointerUp);
-    B.addEventListener("wheel", e => {
+  if (I) {
+    I.addEventListener("pointerdown", onCropPointerDown);
+    I.addEventListener("pointermove", onCropPointerMove);
+    I.addEventListener("pointerup", onCropPointerUp);
+    I.addEventListener("pointercancel", onCropPointerUp);
+    I.addEventListener("wheel", e => {
       if (!_.open) return;
       e.preventDefault();
       const t = e.deltaY > 0 ? -.08 : .08;
@@ -1265,7 +1268,7 @@ document.addEventListener("DOMContentLoaded", () => {
   S?.addEventListener("click", e => {
     if (e.target === S) closeCropModal();
   });
-  M?.addEventListener("click", () => {
+  U?.addEventListener("click", () => {
     saveCroppedAvatar();
   });
   S?.querySelector(".stgCropCard")?.addEventListener("click", e => e.stopPropagation());
@@ -1273,7 +1276,7 @@ document.addEventListener("DOMContentLoaded", () => {
     E.addEventListener("click", e => {
       e.preventDefault();
       e.stopPropagation();
-      if (U || _.open) return;
+      if (M || _.open) return;
       b.click();
     });
   }

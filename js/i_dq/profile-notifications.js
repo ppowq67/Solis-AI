@@ -26,8 +26,8 @@ function isValidImageUrl(e) {
   try {
     const t = new URL(e);
     if (!/^https?:$/.test(t.protocol)) return false;
-    const n = e.toLowerCase();
-    if (n.includes("javascript:") || n.includes("data:") || n.includes("vbscript:")) return false;
+    const i = e.toLowerCase();
+    if (i.includes("javascript:") || i.includes("data:") || i.includes("vbscript:")) return false;
     return true;
   } catch {
     return false;
@@ -40,20 +40,20 @@ function safeSetText(e, t) {
   }
 }
 
-function safeSetImage(e, t, n = "") {
+function safeSetImage(e, t, i = "") {
   if (!e) return;
   if (!isValidImageUrl(t)) {
     console.warn("Invalid image URL");
     return;
   }
-  const i = document.createElement("img");
-  i.setAttribute("src", t);
-  i.setAttribute("alt", escapeHtml(n));
-  i.style.cssText = "width: 100%; height: 100%; object-fit: cover; border-radius: 50%;";
+  const n = document.createElement("img");
+  n.setAttribute("src", t);
+  n.setAttribute("alt", escapeHtml(i));
+  n.style.cssText = "width: 100%; height: 100%; object-fit: cover; border-radius: 50%;";
   while (e.firstChild) {
     e.removeChild(e.firstChild);
   }
-  e.appendChild(i);
+  e.appendChild(n);
 }
 
 function validateUserObject(e) {
@@ -61,8 +61,8 @@ function validateUserObject(e) {
     valid: false
   };
   const t = e.id || e.user_id || e.sub;
-  const n = e.email || e.name || e.displayName;
-  if (t || n) {
+  const i = e.email || e.name || e.displayName;
+  if (t || i) {
     return {
       valid: true,
       user: e
@@ -111,13 +111,13 @@ function syncProfileButton() {
     console.error("Error syncing profile:", e);
     t = null;
   }
-  const n = validateUserObject(t);
-  if (!n || !n.valid) {
+  const i = validateUserObject(t);
+  if (!i || !i.valid) {
     console.warn("Invalid user object");
     return;
   }
-  const i = n.user;
-  const o = typeof resolveAvatarUrl === "function" ? resolveAvatarUrl(i) : i.picture || i.avatar || null;
+  const n = i.user;
+  const o = typeof resolveAvatarUrl === "function" ? resolveAvatarUrl(n) : n.picture || n.avatar || null;
   while (e.firstChild) {
     e.removeChild(e.firstChild);
   }
@@ -131,26 +131,26 @@ function attachNotificationEventListeners() {
   const t = notificationSystem.notificationsDropdown;
   e.addEventListener("click", e => {
     e.stopPropagation();
-    const n = t.classList.contains("open");
+    const i = t.classList.contains("open");
     closeAllDropdowns();
-    if (!n) {
+    if (!i) {
       t.classList.add("open");
       clearUnreadStatus();
     }
   });
-  const n = document.getElementById("dropdownNotifications");
-  if (n && !n.dataset.bound) {
-    n.dataset.bound = "1";
-    n.addEventListener("click", e => {
+  const i = document.getElementById("dropdownNotifications");
+  if (i && !i.dataset.bound) {
+    i.dataset.bound = "1";
+    i.addEventListener("click", e => {
       e.preventDefault();
       e.stopPropagation();
       openNotificationsFromProfile();
     });
   }
   document.addEventListener("click", closeAllDropdowns);
-  const i = document.getElementById("markAsRead");
-  if (i) {
-    i.addEventListener("click", e => {
+  const n = document.getElementById("markAsRead");
+  if (n) {
+    n.addEventListener("click", e => {
       e.preventDefault();
       clearUnreadStatus();
     });
@@ -162,9 +162,9 @@ function closeAllDropdowns() {
   if (e) e.classList.remove("open");
   const t = document.getElementById("profileDropdown");
   if (t) t.classList.remove("open");
-  const n = notificationSystem.unreadCount > 0 || typeof NotificationSystemV2 !== "undefined" && NotificationSystemV2.state?.unreadCount > 0;
+  const i = notificationSystem.unreadCount > 0 || typeof NotificationSystemV2 !== "undefined" && NotificationSystemV2.state?.unreadCount > 0;
   if (typeof syncNotifBellVisibility === "function") {
-    syncNotifBellVisibility(!!n);
+    syncNotifBellVisibility(!!i);
   }
 }
 
@@ -211,8 +211,8 @@ function addNotification(e) {
     read: e.read === true,
     ...e
   };
-  const n = [ "check", "info", "warning", "error", "default" ];
-  if (!n.includes(t.icon)) {
+  const i = [ "check", "info", "warning", "error", "default" ];
+  if (!i.includes(t.icon)) {
     t.icon = "default";
   }
   notificationSystem.notifications.unshift(t);
@@ -226,15 +226,15 @@ function addNotification(e) {
 }
 
 function showVideoGeneratedNotification(e = {}) {
-  const {videoTitle: t = "Video Generated", videoUrl: n = "#", thumbnailUrl: i = null, duration: o = 0} = e;
-  showVideoGeneratedOverlay(t, n);
+  const {videoTitle: t = "Video Generated", videoUrl: i = "#", thumbnailUrl: n = null, duration: o = 0} = e;
+  showVideoGeneratedOverlay(t, i);
   addNotification({
     title: "Video Generated",
     message: `Your video "${t}" has been successfully created and is ready to download.`,
     icon: "check",
     action: {
       label: "View Video",
-      url: n
+      url: i
     }
   });
 }
@@ -248,15 +248,15 @@ function showVideoGenerated(e = {}) {
 }
 
 function showVideoGeneratedOverlay(e = "Video Ready!", t = "#") {
-  const n = document.getElementById("videoGeneratedBackdrop");
-  const i = document.getElementById("videoGeneratedOverlay");
-  if (!n || !i) {
+  const i = document.getElementById("videoGeneratedBackdrop");
+  const n = document.getElementById("videoGeneratedOverlay");
+  if (!i || !n) {
     console.warn("Video generated overlay elements not found");
     return;
   }
-  const o = i.querySelector(".video-generated-title");
-  const a = i.querySelector(".video-generated-message");
-  const s = i.querySelector('[data-action="view"]');
+  const o = n.querySelector(".video-generated-title");
+  const a = n.querySelector(".video-generated-message");
+  const s = n.querySelector('[data-action="view"]');
   if (o) o.textContent = e;
   if (a) a.textContent = "Your video has been successfully generated and is ready to download or share.";
   if (s) {
@@ -267,8 +267,8 @@ function showVideoGeneratedOverlay(e = "Video Ready!", t = "#") {
       hideVideoGeneratedOverlay();
     };
   }
-  n.classList.add("show");
   i.classList.add("show");
+  n.classList.add("show");
   setTimeout(hideVideoGeneratedOverlay, 8e3);
 }
 
@@ -298,22 +298,22 @@ function isMobileNotifChrome() {
 
 function syncNotifBellVisibility(e) {
   const t = document.getElementById("notifWrapper") || document.querySelector(".notif-wrapper");
-  const n = document.getElementById("dropdownNotifBadge");
-  const i = notificationSystem.unreadCount || (typeof NotificationSystemV2 !== "undefined" ? NotificationSystemV2.state?.unreadCount || 0 : 0);
-  const o = typeof e === "boolean" ? e : i > 0;
+  const i = document.getElementById("dropdownNotifBadge");
+  const n = notificationSystem.unreadCount || (typeof NotificationSystemV2 !== "undefined" ? NotificationSystemV2.state?.unreadCount || 0 : 0);
+  const o = typeof e === "boolean" ? e : n > 0;
   const a = !!document.getElementById("notificationsDropdown")?.classList.contains("open");
   const s = isMobileNotifChrome() ? o || a : true;
   if (t) {
     t.classList.toggle("is-visible", s);
     t.setAttribute("aria-hidden", s ? "false" : "true");
   }
-  if (n) {
-    if (o && i > 0) {
-      n.hidden = false;
-      n.textContent = i > 9 ? "9+" : String(i);
+  if (i) {
+    if (o && n > 0) {
+      i.hidden = false;
+      i.textContent = n > 9 ? "9+" : String(n);
     } else {
-      n.hidden = true;
-      n.textContent = "";
+      i.hidden = true;
+      i.textContent = "";
     }
   }
 }
@@ -357,10 +357,10 @@ function renderNotificationsList() {
   }
   notificationSystem.notifications.forEach(t => {
     if (!t || typeof t !== "object") return;
-    const n = document.createElement("div");
-    n.className = "notif-item";
     const i = document.createElement("div");
-    i.className = "notif-icon";
+    i.className = "notif-item";
+    const n = document.createElement("div");
+    n.className = "notif-icon";
     const o = document.createElement("svg");
     o.setAttribute("width", "18");
     o.setAttribute("height", "18");
@@ -370,7 +370,7 @@ function renderNotificationsList() {
     o.setAttribute("stroke-linecap", "round");
     o.setAttribute("stroke-linejoin", "round");
     o.innerHTML = getNotificationIcon(t.icon);
-    i.appendChild(o);
+    n.appendChild(o);
     const a = document.createElement("div");
     a.className = "notif-content";
     const s = document.createElement("div");
@@ -385,9 +385,9 @@ function renderNotificationsList() {
     a.appendChild(s);
     a.appendChild(r);
     a.appendChild(c);
-    n.appendChild(i);
-    n.appendChild(a);
-    e.appendChild(n);
+    i.appendChild(n);
+    i.appendChild(a);
+    e.appendChild(i);
   });
 }
 
@@ -414,12 +414,12 @@ function formatTime(e) {
     e = new Date(e);
   }
   const t = new Date;
-  const n = t - e;
-  const i = Math.floor(n / 1e3);
-  const o = Math.floor(i / 60);
+  const i = t - e;
+  const n = Math.floor(i / 1e3);
+  const o = Math.floor(n / 60);
   const a = Math.floor(o / 60);
   const s = Math.floor(a / 24);
-  if (i < 60) return "just now";
+  if (n < 60) return "just now";
   if (o < 60) return `${o}m ago`;
   if (a < 24) return `${a}h ago`;
   if (s < 7) return `${s}d ago`;
@@ -429,25 +429,25 @@ function formatTime(e) {
 function updateProfileInfo() {
   const e = document.getElementById("profileNameDisplay");
   const t = document.getElementById("profilePlanDisplay");
-  const n = document.getElementById("profileAvatarDisplay");
-  let i = null;
+  const i = document.getElementById("profileAvatarDisplay");
+  let n = null;
   try {
     if (typeof window !== "undefined" && window.currentUser) {
-      i = window.currentUser;
+      n = window.currentUser;
     } else {
       const e = localStorage.getItem("currentUser");
       if (e) {
         const t = e.trim();
         if (t.startsWith("{") && t.endsWith("}")) {
-          i = JSON.parse(e);
+          n = JSON.parse(e);
         }
       }
     }
   } catch (e) {
     console.error("Error reading user data:", e);
-    i = null;
+    n = null;
   }
-  const o = validateUserObject(i);
+  const o = validateUserObject(n);
   if (!o || !o.valid) {
     console.warn("Invalid user object");
     return;
@@ -462,9 +462,9 @@ function updateProfileInfo() {
   if (t) {
     safeSetText(t, r);
   }
-  if (n && c && typeof c === "string") {
+  if (i && c && typeof c === "string") {
     if (isValidImageUrl(c)) {
-      safeSetImage(n, c, s);
+      safeSetImage(i, c, s);
     }
   }
 }
@@ -479,12 +479,12 @@ const Logger = {
 const StorageManager = {
   save: (e, t) => {
     try {
-      const n = {
+      const i = {
         version: 2,
         timestamp: Date.now(),
         data: t
       };
-      localStorage.setItem(e, JSON.stringify(n));
+      localStorage.setItem(e, JSON.stringify(i));
       Logger.success(`Storage saved: ${e}`);
       return true;
     } catch (e) {
@@ -496,19 +496,19 @@ const StorageManager = {
     try {
       const t = localStorage.getItem(e);
       if (!t) return null;
-      const n = JSON.parse(t);
-      if (!n || typeof n !== "object") {
+      const i = JSON.parse(t);
+      if (!i || typeof i !== "object") {
         Logger.warn("Invalid payload structure");
         return null;
       }
-      const i = Date.now() - n.timestamp;
-      if (i > 30 * 24 * 60 * 60 * 1e3) {
+      const n = Date.now() - i.timestamp;
+      if (n > 30 * 24 * 60 * 60 * 1e3) {
         Logger.warn("Data is stale, clearing");
         localStorage.removeItem(e);
         return null;
       }
       Logger.success(`Storage loaded: ${e}`);
-      return n.data;
+      return i.data;
     } catch (e) {
       Logger.error("Storage load failed:", e.message);
       return null;
@@ -669,19 +669,19 @@ const NotificationSystemV2 = {
     Logger.success("Notification system v2 fully initialized");
   },
   waitForElement: (e, t) => {
-    const n = document.querySelector(e);
-    if (n) {
-      t(n);
+    const i = document.querySelector(e);
+    if (i) {
+      t(i);
       return;
     }
-    const i = new MutationObserver(() => {
-      const n = document.querySelector(e);
-      if (n) {
-        i.disconnect();
-        t(n);
+    const n = new MutationObserver(() => {
+      const i = document.querySelector(e);
+      if (i) {
+        n.disconnect();
+        t(i);
       }
     });
-    i.observe(document.body, {
+    n.observe(document.body, {
       childList: true,
       subtree: true
     });
@@ -690,16 +690,17 @@ const NotificationSystemV2 = {
     if (NotificationSystemV2._badgesLoaded) return;
     NotificationSystemV2._badgesLoaded = true;
     try {
-      const e = {
+      const e = (window.API_BASE_URL || "https://api.solisai.video/api").replace(/\/$/, "");
+      const t = {
         "Content-Type": "application/json"
       };
-      if (typeof getAuthHeaders === "function") Object.assign(e, getAuthHeaders());
-      const t = await fetch("/api/badges/current", {
+      if (typeof getAuthHeaders === "function") Object.assign(t, getAuthHeaders());
+      const i = await fetch(`${e}/badges/current`, {
         method: "POST",
         credentials: "include",
-        headers: e
+        headers: t
       });
-      const n = await t.json();
+      const n = await i.json();
       if (n.success && n.badges) {
         const e = n.badges;
         if (e.badges && e.badges.length > 0) {
@@ -707,8 +708,9 @@ const NotificationSystemV2 = {
           const t = document.querySelector(".profile-dropdown-name");
           if (!t) {
             Logger.warn("profile-dropdown-name disappeared after fetch, re-waiting...");
+            NotificationSystemV2._badgesLoaded = false;
             NotificationSystemV2.waitForElement(".profile-dropdown-name", () => {
-              NotificationSystemV2.displayUserBadge(e);
+              NotificationSystemV2.loadUserBadges();
             });
             return;
           }
@@ -725,109 +727,57 @@ const NotificationSystemV2 = {
     }
   },
   createBadgeSvg: (e, t) => {
-    const n = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    n.setAttribute("width", "28");
-    n.setAttribute("height", "28");
-    n.setAttribute("viewBox", "0 0 24 24");
-    n.style.display = "block";
-    n.style.width = "100%";
-    n.style.height = "100%";
-    switch (e) {
-     case "official":
-      n.innerHTML = `<defs>\n                    <linearGradient id="bgGrad-official" x1="0%" y1="0%" x2="100%" y2="100%">\n                        <stop offset="0%" stop-color="#FF8A5C" />\n                        <stop offset="100%" stop-color="#FF5722" />\n                    </linearGradient>\n                    <radialGradient id="outerGlow-official" cx="50%" cy="50%" r="50%">\n                        <stop offset="60%" stop-color="#FF7A42" stop-opacity="0.2" />\n                        <stop offset="100%" stop-color="#FF7A42" stop-opacity="0" />\n                    </radialGradient>\n                    <linearGradient id="edgeHighlight-official" x1="50%" y1="0%" x2="50%" y2="100%">\n                        <stop offset="0%" stop-color="white" stop-opacity="0.8" />\n                        <stop offset="50%" stop-color="white" stop-opacity="0" />\n                        <stop offset="100%" stop-color="white" stop-opacity="0.3" />\n                    </linearGradient>\n                    <radialGradient id="lensShine-official" cx="50%" cy="30%" r="50%" fx="50%" fy="20%">\n                        <stop offset="0%" stop-color="white" stop-opacity="0.5" />\n                        <stop offset="100%" stop-color="white" stop-opacity="0" />\n                    </radialGradient>\n                </defs>\n                <g class="badge-content">\n                    <circle cx="12" cy="12" r="9" fill="url(#outerGlow-official)" stroke="none"/>\n                    <circle cx="12" cy="12" r="7" fill="url(#bgGrad-official)" stroke="none"/>\n                    <circle cx="12" cy="12" r="7" fill="url(#lensShine-official)" stroke="none"/>\n                    <circle cx="12" cy="12" r="6.75" stroke="url(#edgeHighlight-official)" stroke-width="0.8" stroke-opacity="0.6" fill="none"/>\n                    <path d="M8 12L10 14L15 9" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>\n                </g>`;
-      break;
-
-     case "support_team":
-      n.innerHTML = `\n                    <path d="M12 2L4 5V11C4 16.19 7.41 21.05 12 22C16.59 21.05 20 16.19 20 11V5L12 2Z" fill="${t}"/>\n                    <path d="M12 2L20 5V11C20 13 19 15 17 17L12 2V2Z" fill="white" fill-opacity="0.1"/>\n                    <path d="M9 11L11 13L15 9" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>\n                `;
-      break;
-
-     case "platinum_elite":
-      n.innerHTML = `\n                    <path d="M6 4L3 9L12 21L21 9L18 4H6Z" fill="${t}"/>\n                    <path d="M3 9H21L12 21L3 9Z" fill="black" fill-opacity="0.03"/>\n                    <path d="M6 4L12 9V21L18 4H6Z" fill="black" fill-opacity="0.05"/>\n                    <path d="M12 4V21" stroke="black" stroke-width="0.6" stroke-opacity="0.1"/>\n                    <path d="M3 9H21M6 4L12 21M18 4L12 21M9 9L12 21L15 9" stroke="black" stroke-width="0.5" stroke-linejoin="round"/>\n                `;
-      break;
-
-     case "diamond_partner":
-      n.innerHTML = `\n                    <path d="M6 4L3 9L12 21L21 9L18 4H6Z" fill="${t}"/>\n                    <path d="M3 9H21L12 21L3 9Z" fill="black" fill-opacity="0.05"/>\n                    <path d="M12 21L9 9L12 4L15 9L12 21Z" fill="white" fill-opacity="0.2"/>\n                    <path d="M3 9H21M6 4L12 21M18 4L12 21" stroke="#003538" stroke-width="0.6" stroke-opacity="0.8"/>\n                `;
-      break;
-
-     case "bronze_partner":
-      n.innerHTML = `\n                    <path d="M6 4L3 9L12 21L21 9L18 4H6Z" fill="${t}"/>\n                    <path d="M12 21L9 9L12 4V21Z" fill="black" fill-opacity="0.15"/>\n                    <path d="M12 21L15 9L12 4V21Z" fill="white" fill-opacity="0.1"/>\n                    <path d="M3 9H21M6 4L12 21M18 4L12 21" stroke="#2a1604" stroke-width="0.6" stroke-opacity="0.6"/>\n                `;
-      break;
-
-     case "verified":
-      n.innerHTML = `\n                    <circle cx="12" cy="12" r="11" fill="${t}"/>\n                    <path d="M9 12.5L11.5 15L17 8.5" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>\n                `;
-      break;
-
-     case "solis_core":
-      n.innerHTML = `<defs>\n                    <linearGradient id="g-7" x1="0%" y1="0%" x2="100%" y2="100%">\n                        <stop offset="0%" stop-color="#ef4444" />\n                        <stop offset="100%" stop-color="#f87171" />\n                    </linearGradient>\n                </defs>\n                <path d="M12 1L14.47 3.94L18.27 3.23L19.33 6.94L23.08 7.73L21.84 11.44L24 14.5L20.92 16.71L20.67 20.52L16.89 21.05L14.93 24L12 22.67L9.07 24L7.11 21.05L3.33 20.52L3.08 16.71L0 14.5L2.16 11.44L0.92 7.73L4.67 6.94L5.73 3.23L9.53 3.94L12 1Z" fill="url(#g-7)" stroke="white" stroke-width="1.2" stroke-linejoin="round"/>\n                <path d="M8.5 12.5L11 15L16.5 9.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`;
-      break;
-
-     default:
-      n.innerHTML = `<circle cx="12" cy="12" r="4" fill="${t}"/>`;
+    if (window.SolisBadges?.createSvg) {
+      return window.SolisBadges.createSvg(e, t, 28);
     }
-    return n;
+    const i = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    i.setAttribute("width", "28");
+    i.setAttribute("height", "28");
+    i.setAttribute("viewBox", "0 0 24 24");
+    return i;
   },
   displayUserBadge: e => {
     if (!e || !e.badges || e.badges.length === 0) return;
     const t = document.querySelector(".profile-dropdown-name");
     if (!t) return;
-    if (!document.getElementById("badge-tooltip-styles")) {
-      const e = document.createElement("style");
-      e.id = "badge-tooltip-styles";
-      e.textContent = `\n                #badge-global-tooltip {\n                    position: fixed;\n                    background: #6b7280;\n                    color: #fff;\n                    padding: 3px 7px;\n                    border-radius: 4px;\n                    font-size: 10px;\n                    font-weight: 500;\n                    white-space: nowrap;\n                    z-index: 99999999;\n                    pointer-events: none;\n                    box-shadow: 0 2px 6px rgba(0,0,0,0.2);\n                    opacity: 0;\n                    transition: opacity 0.15s ease;\n                    font-family: 'Plus Jakarta Sans', sans-serif;\n                }\n            `;
-      document.head.appendChild(e);
-      const t = document.createElement("div");
-      t.id = "badge-global-tooltip";
-      document.body.appendChild(t);
-    }
-    const n = t.querySelectorAll(".user-badge");
-    n.forEach(e => e.remove());
     t.style.display = "flex";
     t.style.alignItems = "center";
     t.style.gap = "8px";
-    const i = document.createElement("div");
-    i.className = "badge-container";
-    i.style.cssText = `\n            display: flex;\n            align-items: center;\n            gap: 4px;\n            flex-shrink: 0;\n        `;
+    t.style.flexWrap = "nowrap";
+    let i = t.querySelector(".badge-container");
+    if (!i) {
+      i = document.createElement("span");
+      i.className = "badge-container";
+      i.style.cssText = "display:inline-flex;align-items:center;gap:4px;flex-shrink:0;";
+      t.appendChild(i);
+    }
+    if (window.SolisBadges?.renderList) {
+      window.SolisBadges.renderList(i, e.badges, 22);
+      return;
+    }
+    i.innerHTML = "";
     e.badges.slice(0, 2).forEach(e => {
       const t = e.badge_info;
       if (!t || !t.name) return;
-      const n = document.createElement("div");
+      const n = document.createElement("span");
       n.className = "user-badge";
-      n.style.cssText = `display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:3px;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));cursor:pointer;flex-shrink:0;`;
+      n.style.cssText = "display:inline-flex;width:22px;height:22px;";
       const o = NotificationSystemV2.createBadgeSvg(e.badge_type, t.color);
       n.appendChild(o);
-      const a = e.badge_tier || t.tier || "Special";
-      const s = `${t.name} • ${a}`;
-      n.addEventListener("mouseenter", e => {
-        const t = document.getElementById("badge-global-tooltip");
-        if (!t) return;
-        t.textContent = s;
-        const i = n.getBoundingClientRect();
-        t.style.opacity = "0";
-        t.style.display = "block";
-        const o = t.offsetWidth;
-        t.style.left = i.left + i.width / 2 - o / 2 + "px";
-        t.style.top = i.top - t.offsetHeight - 6 + "px";
-        t.style.opacity = "1";
-      });
-      n.addEventListener("mouseleave", () => {
-        const e = document.getElementById("badge-global-tooltip");
-        if (e) e.style.opacity = "0";
-      });
       i.appendChild(n);
     });
-    t.appendChild(i);
   },
   setupNotificationHandlers: () => {
     const e = document.getElementById("bellBtn") || document.querySelector(".bell-btn");
     const t = document.getElementById("notificationsDropdown");
-    const n = document.getElementById("markAsRead");
-    const i = document.getElementById("dropdownNotifications");
+    const i = document.getElementById("markAsRead");
+    const n = document.getElementById("dropdownNotifications");
     if (e && t) {
       e.addEventListener("click", e => {
         e.stopPropagation();
-        const n = t.classList.contains("open");
+        const i = t.classList.contains("open");
         NotificationSystemV2.closeAllDropdowns();
-        if (!n) {
+        if (!i) {
           t.classList.add("open");
           NotificationSystemV2.clearUnreadStatus();
           if (typeof syncNotifBellVisibility === "function") {
@@ -836,9 +786,9 @@ const NotificationSystemV2 = {
         }
       });
     }
-    if (i && !i.dataset.v2Bound) {
-      i.dataset.v2Bound = "1";
-      i.addEventListener("click", e => {
+    if (n && !n.dataset.v2Bound) {
+      n.dataset.v2Bound = "1";
+      n.addEventListener("click", e => {
         e.preventDefault();
         e.stopPropagation();
         if (typeof openNotificationsFromProfile === "function") {
@@ -851,8 +801,8 @@ const NotificationSystemV2 = {
       });
     }
     document.addEventListener("click", () => NotificationSystemV2.closeAllDropdowns());
-    if (n) {
-      n.addEventListener("click", e => {
+    if (i) {
+      i.addEventListener("click", e => {
         e.preventDefault();
         NotificationSystemV2.clearUnreadStatus();
       });
@@ -886,8 +836,8 @@ const NotificationSystemV2 = {
       read: e.read === true,
       priority: e.priority || "normal"
     };
-    const n = [ "check", "info", "warning", "error", "default" ];
-    if (!n.includes(t.icon)) t.icon = "default";
+    const i = [ "check", "info", "warning", "error", "default" ];
+    if (!i.includes(t.icon)) t.icon = "default";
     NotificationSystemV2.state.notifications.unshift(t);
     NotificationSystemV2.state.unreadCount++;
     if (NotificationSystemV2.state.notifications.length > 50) {
@@ -916,14 +866,14 @@ const NotificationSystemV2 = {
         e.classList.toggle("is-visible", t);
         e.setAttribute("aria-hidden", t ? "false" : "true");
       }
-      const n = document.getElementById("dropdownNotifBadge");
-      if (n) {
+      const i = document.getElementById("dropdownNotifBadge");
+      if (i) {
         if (t) {
-          n.hidden = false;
+          i.hidden = false;
           const e = NotificationSystemV2.state.unreadCount;
-          n.textContent = e > 9 ? "9+" : String(e);
+          i.textContent = e > 9 ? "9+" : String(e);
         } else {
-          n.hidden = true;
+          i.hidden = true;
         }
       }
     }
@@ -943,9 +893,9 @@ const NotificationSystemV2 = {
       e.appendChild(t);
       return;
     }
-    NotificationSystemV2.state.notifications.forEach((t, n) => {
-      const i = document.createElement("div");
-      i.className = "notif-item";
+    NotificationSystemV2.state.notifications.forEach((t, i) => {
+      const n = document.createElement("div");
+      n.className = "notif-item";
       const o = document.createElement("div");
       o.className = "notif-icon";
       const a = document.createElement("svg");
@@ -966,15 +916,15 @@ const NotificationSystemV2 = {
       const c = document.createElement("div");
       c.className = "notif-message";
       safeSetText(c, t.message);
-      const l = document.createElement("div");
-      l.className = "notif-time";
-      safeSetText(l, NotificationSystemV2.formatTime(t.timestamp));
+      const d = document.createElement("div");
+      d.className = "notif-time";
+      safeSetText(d, NotificationSystemV2.formatTime(t.timestamp));
       s.appendChild(r);
       s.appendChild(c);
-      s.appendChild(l);
-      i.appendChild(o);
-      i.appendChild(s);
-      e.appendChild(i);
+      s.appendChild(d);
+      n.appendChild(o);
+      n.appendChild(s);
+      e.appendChild(n);
     });
   },
   getIcon: e => {
@@ -989,9 +939,9 @@ const NotificationSystemV2 = {
   },
   formatTime: e => {
     const t = typeof e === "string" ? new Date(e) : e;
-    const n = new Date;
-    const i = n - t;
-    const o = Math.floor(i / 1e3);
+    const i = new Date;
+    const n = i - t;
+    const o = Math.floor(n / 1e3);
     const a = Math.floor(o / 60);
     const s = Math.floor(a / 60);
     const r = Math.floor(s / 24);
@@ -1013,9 +963,9 @@ const NotificationSystemV2 = {
     if (e) e.classList.remove("open");
     const t = document.getElementById("profileDropdown");
     if (t) t.classList.remove("open");
-    const n = NotificationSystemV2.state.unreadCount > 0;
+    const i = NotificationSystemV2.state.unreadCount > 0;
     if (typeof syncNotifBellVisibility === "function") {
-      syncNotifBellVisibility(n);
+      syncNotifBellVisibility(i);
     }
   },
   save: () => {
@@ -1029,8 +979,8 @@ const NotificationSystemV2 = {
       const e = Date.now() - 7 * 24 * 60 * 60 * 1e3;
       const t = NotificationSystemV2.state.notifications.length;
       NotificationSystemV2.state.notifications = NotificationSystemV2.state.notifications.filter(t => {
-        const n = new Date(t.timestamp).getTime();
-        return n > e;
+        const i = new Date(t.timestamp).getTime();
+        return i > e;
       });
       if (NotificationSystemV2.state.notifications.length < t) {
         Logger.log(`Cleaned up ${t - NotificationSystemV2.state.notifications.length} old notifications`);
@@ -1083,9 +1033,9 @@ window.notificationSystem = {
         credentials: "include",
         headers: e
       });
-      const n = await t.json();
-      if (n.success) {
-        return n.badges;
+      const i = await t.json();
+      if (i.success) {
+        return i.badges;
       }
       return null;
     } catch (e) {

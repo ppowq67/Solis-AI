@@ -31,7 +31,7 @@
     <link rel="stylesheet" href="/style/ss/consolidate.css?v=30">
     <link rel="stylesheet" href="/style/ss/inline-styles.css?v=27">
     <link rel="stylesheet" href="/style/ss/glassmorphism.css?v=27">
-    <link rel="stylesheet" href="/style/ss/badges.css?v=27">
+    <link rel="stylesheet" href="/style/ss/badges.css?v=28">
     <link rel="stylesheet" href="/style/ss/sidebar.css?v=27">
     <link rel="stylesheet" href="/style/ss/ios-pill-nav.css?v=29">
     <link rel="stylesheet" href="/style/ss/mobile-nav.css?v=27">
@@ -41,7 +41,8 @@
     <link rel="stylesheet" href="/style/ss/newsfeed-widget.css?v=28">
     <script src="/js/ui/navigation.js?v=3"></script>
     <script src="/js/ui/menu.js?v=6"></script>
-    <script src="/js/i_dq/profile-notifications.js?t=20260323000009"></script>
+    <script src="/js/ui/solis-badges.js?v=1"></script>
+    <script src="/js/i_dq/profile-notifications.js?t=20260323000010"></script>
     <script src="/js/s_new/qwsqa.js?v=4"></script>
     <script src="/js/s_new/qwe.js?v=7"></script>
     <link rel="stylesheet" href="/style/ss/stg-modal.css?v=44">
@@ -1203,7 +1204,10 @@
                         </button>
                         <input type="file" id="pfpFileInput" accept="image/jpeg,image/png,image/webp" hidden tabindex="-1" aria-label="Upload profile picture">
                         <div class="stgProfileMeta">
-                            <div class="stgName" id="stgName">Guest User</div>
+                            <div class="stgNameRow">
+                                <div class="stgName" id="stgName">Guest User</div>
+                                <span class="stgBadges" id="stgBadges" aria-label="Profile badges"></span>
+                            </div>
                             <input type="text" class="stgNameInput" id="stgNameInput" maxlength="50" autocomplete="nickname" spellcheck="false" aria-label="Display name" hidden>
                             <div class="stgBio" id="stgBio"></div>
                             <textarea class="stgBioInput" id="stgBioInput" maxlength="120" rows="2" placeholder="Add a short bio" aria-label="Bio" hidden></textarea>
@@ -2607,238 +2611,18 @@
                     }
 
                     async function displayUserBadges(userId, containerIds) {
-                        const targets = (Array.isArray(containerIds) ? containerIds : [containerIds])
-                            .map(id => document.getElementById(id))
-                            .filter(Boolean);
-                        if (!userId || targets.length === 0) return;
-
-                        targets.forEach(c => { c.innerHTML = ''; });
-
-                        try {
-                            const headers = typeof getAuthHeaders === 'function' ? getAuthHeaders() : {};
-                            const response = await fetch(nf_api(`/api/badges/display/${userId}`), {
-                                method: 'GET',
-                                credentials: 'include',
-                                headers
-                            });
-                            if (!response.ok) return;
-
-                            const data = await response.json();
-                            if (!data.success || !data.badges || !data.badges.badges || data.badges.badges.length === 0) return;
-
-                            if (!document.getElementById('badge-animation-styles-v2')) {
-                                document.getElementById('badge-animation-styles')?.remove();
-                                const style = document.createElement('style');
-                                style.id = 'badge-animation-styles-v2';
-                                style.textContent = `
-                                    @keyframes spinBadge {
-                                        0% { transform: rotate(0deg); }
-                                        100% { transform: rotate(360deg); }
-                                    }
-                                    .nf-badge-container {
-                                        display: inline-flex;
-                                        align-items: center;
-                                        justify-content: center;
-                                        width: 20px;
-                                        height: 20px;
-                                        border-radius: 4px;
-                                        filter: none;
-                                        flex-shrink: 0;
-                                        cursor: pointer;
-                                        margin-left: 3px;
-                                        vertical-align: middle;
-                                    }
-                                    .nf-badge-container:hover .badge-background {
-                                        animation: spinBadge 6s linear infinite;
-                                        transform-origin: center center;
-                                    }
-                                    .badge-checkmark-group {
-                                        animation: none !important;
-                                        transform: none !important;
-                                    }
-                                    .nf-badge-checkmark {
-                                        animation: none !important;
-                                        transform: none !important;
-                                    }
-                                    .nf-badge-container:hover .nf-badge-checkmark {
-                                        stroke-width: 9 !important;
-                                    }
-                                    .nf-badge-container:hover .badge-checkmark-group {
-                                        animation: none !important;
-                                        transform: none !important;
-                                    }
-                                `;
-                                document.head.appendChild(style);
-                            }
-
-                            const renderBadge = (badge) => {
-                                if (!badge.badge_info || !badge.badge_info.name) return null;
-
-                                const badgeEl = document.createElement('div');
-                                badgeEl.className = 'nf-badge-container';
-                                badgeEl.style.position = 'relative';
-
-                                badgeEl.innerHTML = `
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="20" height="20" style="width:100%;height:100%;display:block;overflow:visible;filter:none;">
-                                        <g class="badge-background" style="transform-origin:50% 50%;">
-                                            <rect x="18" y="18" width="64" height="64" rx="14" fill="#1877F2" transform="rotate(10 50 50)" />
-                                        </g>
-                                        <path class="nf-badge-checkmark" d="M 36 52 L 45 61 L 66 40" fill="none" stroke="white" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" />
-                                    </svg>`;
-
-                                const specialBadges = ['official', 'verified', 'solis_core'];
-                                let tipText;
-
-                                if (specialBadges.includes(badge.badge_type)) {
-                                    tipText = badge.badge_info.name.charAt(0).toUpperCase() + badge.badge_info.name.slice(1);
-                                } else {
-                                    const tier = badge.badge_tier || badge.badge_info.tier || 'Special';
-                                    tipText = tier !== badge.badge_info.name
-                                        ? `${badge.badge_info.name} • ${tier}`
-                                        : badge.badge_info.name.charAt(0).toUpperCase() + badge.badge_info.name.slice(1);
-                                }
-
-                                badgeEl.addEventListener('mouseenter', () => {
-                                    let tip = document.getElementById('badge-tooltip-news');
-                                    if (!tip) {
-                                        tip = document.createElement('div');
-                                        tip.id = 'badge-tooltip-news';
-                                        tip.style.cssText = `
-                                            position: fixed;
-                                            background: #6b7280;
-                                            color: #fff;
-                                            padding: 3px 7px;
-                                            border-radius: 4px;
-                                            font-size: 10px;
-                                            font-weight: 500;
-                                            white-space: nowrap;
-                                            z-index: 99999999;
-                                            pointer-events: none;
-                                            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-                                            font-family: 'Plus Jakarta Sans', sans-serif;
-                                        `;
-                                        document.body.appendChild(tip);
-                                    }
-                                    tip.textContent = tipText;
-                                    const r = badgeEl.getBoundingClientRect();
-                                    tip.style.opacity = '0';
-                                    tip.style.display = 'block';
-                                    const tw = tip.offsetWidth;
-                                    tip.style.left = (r.left + r.width / 2 - tw / 2) + 'px';
-                                    tip.style.top = (r.top - tip.offsetHeight - 6) + 'px';
-                                    tip.style.opacity = '1';
-                                });
-
-                                badgeEl.addEventListener('mouseleave', () => {
-                                    const tip = document.getElementById('badge-tooltip-news');
-                                    if (tip) tip.style.opacity = '0';
-                                });
-
-                                return badgeEl;
-                            };
-
-                            data.badges.badges.slice(0, 2).forEach((badge) => {
-                                targets.forEach(container => {
-                                    const badgeEl = renderBadge(badge);
-                                    if (badgeEl) container.appendChild(badgeEl);
-                                });
-                            });
-                        } catch (error) {
-                            console.warn('Error loading user badges:', error);
-                        }
+                        if (!userId || typeof window.SolisBadges?.fetchAndRender !== 'function') return;
+                        await window.SolisBadges.fetchAndRender(userId, containerIds, 20);
                     }
 
                     function createBadgeSvgForNews(badgeType, color = '#fbbf24') {
-                        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-                        svg.setAttribute('width', '28');
-                        svg.setAttribute('height', '28');
-                        svg.setAttribute('viewBox', '0 0 24 24');
-                        svg.style.display = 'block';
-                        svg.style.width = '100%';
-                        svg.style.height = '100%';
-                        svg.style.transition = 'transform 0.3s ease-in-out';
-
-                        switch(badgeType) {
-                            case 'official':
-                                svg.innerHTML = `<defs>
-                                    <linearGradient id="bgGrad-official-news" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stop-color="#FF8A5C" />
-                                        <stop offset="100%" stop-color="#FF5722" />
-                                    </linearGradient>
-                                    <radialGradient id="outerGlow-official-news" cx="50%" cy="50%" r="50%">
-                                        <stop offset="60%" stop-color="#FF7A42" stop-opacity="0.2" />
-                                        <stop offset="100%" stop-color="#FF7A42" stop-opacity="0" />
-                                    </radialGradient>
-                                    <linearGradient id="edgeHighlight-official-news" x1="50%" y1="0%" x2="50%" y2="100%">
-                                        <stop offset="0%" stop-color="white" stop-opacity="0.8" />
-                                        <stop offset="50%" stop-color="white" stop-opacity="0" />
-                                        <stop offset="100%" stop-color="white" stop-opacity="0.3" />
-                                    </linearGradient>
-                                    <radialGradient id="lensShine-official-news" cx="50%" cy="30%" r="50%" fx="50%" fy="20%">
-                                        <stop offset="0%" stop-color="white" stop-opacity="0.5" />
-                                        <stop offset="100%" stop-color="white" stop-opacity="0" />
-                                    </radialGradient>
-                                </defs>
-                                <g class="badge-content">
-                                    <circle cx="12" cy="12" r="9" fill="url(#outerGlow-official-news)" stroke="none"/>
-                                    <circle cx="12" cy="12" r="7" fill="url(#bgGrad-official-news)" stroke="none"/>
-                                    <circle cx="12" cy="12" r="7" fill="url(#lensShine-official-news)" stroke="none"/>
-                                    <circle cx="12" cy="12" r="6.75" stroke="url(#edgeHighlight-official-news)" stroke-width="0.8" stroke-opacity="0.6" fill="none"/>
-                                    <path d="M8 12L10 14L15 9" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                                </g>`;
-                                break;
-                            case 'support_team':
-                                svg.innerHTML = `
-                                    <path d="M12 2L4 5V11C4 16.19 7.41 21.05 12 22C16.59 21.05 20 16.19 20 11V5L12 2Z" fill="${color}"/>
-                                    <path d="M12 2L20 5V11C20 13 19 15 17 17L12 2V2Z" fill="white" fill-opacity="0.1"/>
-                                    <path d="M9 11L11 13L15 9" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                                `;
-                                break;
-                            case 'platinum_elite':
-                                svg.innerHTML = `
-                                    <path d="M6 4L3 9L12 21L21 9L18 4H6Z" fill="${color}"/>
-                                    <path d="M3 9H21L12 21L3 9Z" fill="black" fill-opacity="0.03"/>
-                                    <path d="M6 4L12 9V21L18 4H6Z" fill="black" fill-opacity="0.05"/>
-                                    <path d="M12 4V21" stroke="black" stroke-width="0.6" stroke-opacity="0.1"/>
-                                    <path d="M3 9H21M6 4L12 21M18 4L12 21M9 9L12 21L15 9" stroke="black" stroke-width="0.5" stroke-linejoin="round"/>
-                                `;
-                                break;
-                            case 'diamond_partner':
-                                svg.innerHTML = `
-                                    <path d="M6 4L3 9L12 21L21 9L18 4H6Z" fill="${color}"/>
-                                    <path d="M3 9H21L12 21L3 9Z" fill="black" fill-opacity="0.05"/>
-                                    <path d="M12 21L9 9L12 4L15 9L12 21Z" fill="white" fill-opacity="0.2"/>
-                                    <path d="M3 9H21M6 4L12 21M18 4L12 21" stroke="#003538" stroke-width="0.6" stroke-opacity="0.8"/>
-                                `;
-                                break;
-                            case 'bronze_partner':
-                                svg.innerHTML = `
-                                    <path d="M6 4L3 9L12 21L21 9L18 4H6Z" fill="${color}"/>
-                                    <path d="M12 21L9 9L12 4V21Z" fill="black" fill-opacity="0.15"/>
-                                    <path d="M12 21L15 9L12 4V21Z" fill="white" fill-opacity="0.1"/>
-                                    <path d="M3 9H21M6 4L12 21M18 4L12 21" stroke="#2a1604" stroke-width="0.6" stroke-opacity="0.6"/>
-                                `;
-                                break;
-                            case 'verified':
-                                svg.innerHTML = `
-                                    <circle cx="12" cy="12" r="11" fill="${color}"/>
-                                    <path d="M9 12.5L11.5 15L17 8.5" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                                `;
-                                break;
-                            case 'solis_core':
-                                svg.innerHTML = `<defs>
-                                    <linearGradient id="g-7-news" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stop-color="#ef4444" />
-                                        <stop offset="100%" stop-color="#f87171" />
-                                    </linearGradient>
-                                </defs>
-                                <path d="M12 1L14.47 3.94L18.27 3.23L19.33 6.94L23.08 7.73L21.84 11.44L24 14.5L20.92 16.71L20.67 20.52L16.89 21.05L14.93 24L12 22.67L9.07 24L7.11 21.05L3.33 20.52L3.08 16.71L0 14.5L2.16 11.44L0.92 7.73L4.67 6.94L5.73 3.23L9.53 3.94L12 1Z" fill="url(#g-7-news)" stroke="white" stroke-width="1.2" stroke-linejoin="round"/>
-                                <path d="M8.5 12.5L11 15L16.5 9.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`;
-                                break;
-                            default:
-                                svg.innerHTML = `<circle cx="12" cy="12" r="4" fill="${color}"/>`;
+                        if (typeof window.SolisBadges?.createSvg === 'function') {
+                            return window.SolisBadges.createSvg(badgeType, color, 24);
                         }
-
+                        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                        svg.setAttribute('width', '24');
+                        svg.setAttribute('height', '24');
+                        svg.setAttribute('viewBox', '0 0 24 24');
                         return svg;
                     }
 

@@ -1,3 +1,25 @@
+.solis-user-badge,
+.nf-profile-badges-container .solis-badge-row,
+.nf-header-badges-container .solis-badge-row,
+.badge-container .solis-user-badge {
+    vertical-align: middle;
+}
+
+.nf-profile-badges-container,
+.nf-header-badges-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 20px;
+}
+
+.profile-dropdown-name .badge-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
 .pro-badge-premium {
     background: linear-gradient(135deg,
         #ffd700 0%,

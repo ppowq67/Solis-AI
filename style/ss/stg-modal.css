@@ -409,9 +409,25 @@
     font-size: 15px;
     letter-spacing: -0.02em;
     color: var(--text-dark, #1c1917);
-    margin-bottom: 2px;
+    margin-bottom: 0;
     font-family: 'Plus Jakarta Sans', sans-serif;
     line-height: 1.25;
+}
+
+.stgNameRow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 2px;
+}
+
+.stgBadges:empty {
+    display: none;
+}
+
+.stgBadges .solis-badge-row {
+    margin-left: 1px;
 }
 
 .stgBio {

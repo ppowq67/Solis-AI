@@ -684,34 +684,42 @@
       sessionStorage.removeItem(i);
     } catch (e) {}
   }
-  function formatQuotaUnlockWhen(e) {
-    if (!e) return "";
+  function parseQuotaResetWhen(e) {
+    if (e == null || e === "") return null;
+    if (e instanceof Date) {
+      return Number.isNaN(e.getTime()) ? null : e;
+    }
     const t = String(e).trim();
+    if (!t) return null;
     const o = /[zZ]|[+-]\d{2}:?\d{2}$/.test(t);
-    const n = o ? t : t.replace(" ", "T");
+    const n = o ? t : `${t.replace(" ", "T")}Z`;
     const r = new Date(n);
-    if (Number.isNaN(r.getTime())) return "";
-    const i = new Date;
-    const a = r.toLocaleTimeString([], {
+    return Number.isNaN(r.getTime()) ? null : r;
+  }
+  function formatQuotaUnlockWhen(e) {
+    const t = parseQuotaResetWhen(e);
+    if (!t) return "";
+    const o = new Date;
+    const n = t.toLocaleTimeString([], {
       hour: "numeric",
       minute: "2-digit"
     });
-    const s = r.toLocaleDateString([], {
+    const r = t.toLocaleDateString([], {
       weekday: "long",
       month: "short",
       day: "numeric"
     });
-    const l = new Date(i.getFullYear(), i.getMonth(), i.getDate());
-    const c = new Date(r.getFullYear(), r.getMonth(), r.getDate());
-    const f = Math.round((c - l) / 864e5);
-    if (f === 0) return `today at ${a}`;
-    if (f === 1) return `tomorrow at ${a}`;
-    return `${s} at ${a}`;
+    const i = new Date(o.getFullYear(), o.getMonth(), o.getDate());
+    const a = new Date(t.getFullYear(), t.getMonth(), t.getDate());
+    const s = Math.round((a - i) / 864e5);
+    if (s === 0) return `today at ${n}`;
+    if (s === 1) return `tomorrow at ${n}`;
+    return `${r} at ${n}`;
   }
   function nextLocalMidnightLabel() {
     const e = new Date;
     const t = new Date(e.getFullYear(), e.getMonth(), e.getDate() + 1, 0, 0, 0, 0);
-    return formatQuotaUnlockWhen(t.toISOString());
+    return formatQuotaUnlockWhen(t);
   }
   function syncQuotaRail(e, t) {
     const o = document.getElementById("urlQuotaRail");
@@ -740,8 +748,9 @@
     if (w) {
       I = "daily";
       L = m === "free" ? "Free generation used" : "Daily limit reached";
-      const e = m === "free" ? nextLocalMidnightLabel() : formatQuotaUnlockWhen(t?.daily?.resets_at || s.daily_resets_at || s.resets_at);
-      M = m === "free" ? e ? `You’ve used your free generation for today. Your next clip unlocks ${e}. Upgrade anytime for more daily clips.` : "You’ve used your free generation for today. Upgrade anytime for more daily clips." : e ? `You’re out of daily generations. Your next clips unlock ${e}. Upgrade anytime for a higher daily limit.` : "You’re out of daily generations. Upgrade anytime for a higher daily limit.";
+      const e = t?.daily?.resets_at || s.daily_resets_at || s.resets_at;
+      const o = formatQuotaUnlockWhen(e) || nextLocalMidnightLabel();
+      M = m === "free" ? o ? `You’ve used your free generation for today. Your next clip unlocks ${o}. Upgrade anytime for more daily clips.` : "You’ve used your free generation for today. Upgrade anytime for more daily clips." : o ? `You’re out of daily generations. Your next clips unlock ${o}. Upgrade anytime for a higher daily limit.` : "You’re out of daily generations. Upgrade anytime for a higher daily limit.";
     } else if (v) {
       I = "monthly";
       L = "Monthly limit reached";

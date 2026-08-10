@@ -9464,10 +9464,11 @@ class ClipsStudio {
       if (e) {
         try {
           const t = String(e).trim();
-          const n = /[zZ]|[+-]\d{2}:?\d{2}$/.test(t) ? t : t.replace(" ", "T");
-          const r = new Date(n);
-          if (!Number.isNaN(r.getTime())) {
-            i = r.toLocaleString([], {
+          const n = /[zZ]|[+-]\d{2}:?\d{2}$/.test(t);
+          const r = n ? t.replace(" ", "T") : `${t.replace(" ", "T")}Z`;
+          const o = new Date(r);
+          if (!Number.isNaN(o.getTime())) {
+            i = o.toLocaleString([], {
               month: "short",
               day: "numeric",
               hour: "numeric",

@@ -548,18 +548,20 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!e || typeof e !== "string") {
       return String(t || "").replace(/\s*Resets \{when\}\.?/i, "").trim() || "Usage details unavailable.";
     }
-    const n = Date.parse(e);
-    if (Number.isNaN(n)) {
+    const n = e.trim();
+    const o = /[zZ]|[+-]\d{2}:?\d{2}$/.test(n);
+    const i = Date.parse(o ? n : `${n.replace(" ", "T")}Z`);
+    if (Number.isNaN(i)) {
       return String(t || "").replace(/\s*Resets \{when\}\.?/i, "").trim() || "Usage details unavailable.";
     }
-    const o = new Date(n);
-    const i = o.toLocaleString(undefined, {
+    const s = new Date(i);
+    const a = s.toLocaleString(undefined, {
       month: "short",
       day: "numeric",
       hour: "numeric",
       minute: "2-digit"
     });
-    return t.replace("{when}", i);
+    return t.replace("{when}", a);
   }
   async function updateSettingsModal() {
     let e = null;

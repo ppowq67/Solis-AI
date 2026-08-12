@@ -6519,14 +6519,6 @@ class ClipsStudio {
       n.style.visibility = s ? "visible" : "hidden";
       n.style.display = s ? "flex" : "none";
     }
-    const l = document.getElementById("watermarkLocationHint");
-    if (l) {
-      if (s) {
-        l.textContent = "Solis mark appears middle-right on exports (same as preview)";
-      } else if (a) {
-        l.textContent = "Your first free clip has no watermark";
-      }
-    }
     if (s) {
       try {
         this.updateWatermarkDisplay?.();

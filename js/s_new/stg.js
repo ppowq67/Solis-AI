@@ -5,8 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const o = document.getElementById("stgUpgradeBtn");
   const i = document.getElementById("dropdownSettings");
   const s = document.getElementById("stgLogoutBtn");
-  const a = document.getElementById("stgMainTitle");
-  const r = {
+  const r = document.getElementById("stgMainTitle");
+  const a = {
     profile: "Profile",
     account: "Account",
     privacy: "Privacy",
@@ -14,11 +14,16 @@ document.addEventListener("DOMContentLoaded", () => {
     themes: "Themes",
     billing: "Billing/Usage",
     subscription: "Billing/Usage",
-    support: "Support"
+    support: "Support",
+    connectors: "Connectors",
+    plugins: "Plugins"
   };
-  const l = "solis_effort_ui_mode";
-  const c = "solis_plugin_auto_captions";
-  const d = "solis_plugin_auto_sfx";
+  const c = new Set([ "connectors", "plugins" ]);
+  let l = "all";
+  let d = false;
+  const u = "solis_effort_ui_mode";
+  const f = "solis_plugin_auto_captions";
+  const g = "solis_plugin_auto_sfx";
   function readPluginFlag(e, t = false) {
     try {
       const n = localStorage.getItem(e);
@@ -30,20 +35,20 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   window.getSolisPluginPrefs = function getSolisPluginPrefs() {
     return {
-      auto_captions: readPluginFlag(c, false),
+      auto_captions: readPluginFlag(f, false),
       auto_sfx: false
     };
   };
   function readEffortUiMode() {
     try {
-      const e = localStorage.getItem(l);
+      const e = localStorage.getItem(u);
       if (e === "slider" || e === "flyout") return e;
     } catch (e) {}
     return "slider";
   }
   function persistEffortUiMode(e) {
     try {
-      localStorage.setItem(l, e);
+      localStorage.setItem(u, e);
     } catch (e) {}
   }
   function syncEffortUiToggle() {
@@ -74,10 +79,78 @@ document.addEventListener("DOMContentLoaded", () => {
       e.setAttribute("aria-checked", t ? "true" : "false");
     });
   }
+  function syncDirMainActions(e) {
+    const t = document.getElementById("stgMainActions");
+    const n = document.getElementById("stgDirBrowseBtn");
+    if (!t) return;
+    const o = c.has(e);
+    t.hidden = !o;
+    if (n) {
+      n.textContent = e === "plugins" ? "Browse" : "Browse";
+      n.disabled = e === "plugins";
+      n.title = e === "plugins" ? "Coming soon" : "";
+    }
+    const i = document.getElementById("stgConnSearchBar");
+    if (i) {
+      const t = o && e === "connectors" && d;
+      i.hidden = !t;
+    }
+  }
+  function filterConnectorRows() {
+    const e = (document.getElementById("stgConnectorsSearch")?.value || "").trim().toLowerCase();
+    const t = document.querySelectorAll("#stgConnTable .stgConnRow");
+    const n = document.querySelectorAll(".stgConnPopularCard");
+    let o = 0;
+    t.forEach(t => {
+      const n = t.getAttribute("data-conn-status") || "off";
+      const i = (t.getAttribute("data-conn-name") || t.getAttribute("data-conn-id") || "").toLowerCase();
+      const s = l === "all" || l === "connected" && n === "on" || l === "off" && n !== "on";
+      const r = !e || i.includes(e);
+      const a = s && r;
+      t.hidden = !a;
+      if (a) o += 1;
+    });
+    n.forEach(t => {
+      const n = t.getAttribute("data-conn-status") || "off";
+      const o = (t.getAttribute("data-conn-id") || "").toLowerCase();
+      const i = l === "all" || l === "connected" && n === "on" || l === "off" && n !== "on";
+      const s = !e || o.includes(e);
+      t.hidden = !(i && s);
+    });
+    const i = document.getElementById("stgConnEmpty");
+    if (i) i.hidden = o > 0;
+    const s = document.querySelector(".stgConnPopular");
+    if (s) {
+      const e = [ ...n ].some(e => !e.hidden);
+      s.hidden = !e;
+    }
+  }
+  function setConnFilter(e) {
+    l = e === "connected" || e === "off" ? e : "all";
+    document.querySelectorAll(".stgConnFilter").forEach(e => {
+      const t = e.getAttribute("data-conn-filter") === l;
+      e.classList.toggle("is-active", t);
+      e.setAttribute("aria-selected", t ? "true" : "false");
+    });
+    filterConnectorRows();
+  }
+  function filterSettingsNav(e) {
+    const t = (e || "").trim().toLowerCase();
+    document.querySelectorAll(".stgNavGroup").forEach(e => {
+      let n = false;
+      e.querySelectorAll(".stgNavBtn[data-stg-panel]").forEach(e => {
+        const o = `${e.getAttribute("data-stg-search") || ""} ${e.textContent || ""}`.toLowerCase();
+        const i = !t || o.includes(t);
+        e.hidden = !i;
+        if (i) n = true;
+      });
+      e.setAttribute("data-stg-empty", n ? "false" : "true");
+    });
+  }
   function switchSettingsPanel(e) {
     let t = e;
     if (t === "connections" || t === "connectors" || t === "plugins") return;
-    t = r[t] ? t : "profile";
+    t = a[t] ? t : "profile";
     document.querySelectorAll(".stgNavBtn[data-stg-panel]").forEach(e => {
       const n = e.getAttribute("data-stg-panel") === t;
       e.classList.toggle("is-active", n);
@@ -92,7 +165,9 @@ document.addEventListener("DOMContentLoaded", () => {
         e.classList.add("stg-panel-enter");
       }
     });
-    if (a) a.textContent = r[t] || "Settings";
+    if (r) r.textContent = a[t] || "Settings";
+    syncDirMainActions(t);
+    if (t === "connectors") filterConnectorRows();
     if (t === "memory" && window.SolisMemory && typeof window.SolisMemory.syncSettingsUI === "function") {
       window.SolisMemory.syncSettingsUI();
     }
@@ -124,7 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (i) i.hidden = n !== "panel";
     if (n === "home") {
       mountMobileSettingsHero();
-      if (a) a.textContent = "Settings";
+      if (r) r.textContent = "Settings";
     }
   }
   function mountMobileSettingsHero() {
@@ -178,24 +253,24 @@ document.addEventListener("DOMContentLoaded", () => {
       switchSettingsPanel("profile");
     }
   });
-  const u = document.getElementById("stgEffortSliderToggle");
-  if (u) {
+  const m = document.getElementById("stgEffortSliderToggle");
+  if (m) {
     syncEffortUiToggle();
     applyEffortUiMode(readEffortUiMode());
-    u.addEventListener("click", () => {
+    m.addEventListener("click", () => {
       const e = readEffortUiMode() === "slider" ? "flyout" : "slider";
       applyEffortUiMode(e);
     });
   }
-  const f = document.getElementById("stgAdvancedToggle");
-  const g = f?.closest(".stgAdvanced");
-  const p = document.getElementById("stgAdvancedBody");
-  if (f && g && p) {
-    f.addEventListener("click", () => {
-      const e = !g.classList.contains("is-open");
-      g.classList.toggle("is-open", e);
-      f.setAttribute("aria-expanded", e ? "true" : "false");
-      if (e) p.removeAttribute("hidden"); else p.setAttribute("hidden", "");
+  const p = document.getElementById("stgAdvancedToggle");
+  const w = p?.closest(".stgAdvanced");
+  const y = document.getElementById("stgAdvancedBody");
+  if (p && w && y) {
+    p.addEventListener("click", () => {
+      const e = !w.classList.contains("is-open");
+      w.classList.toggle("is-open", e);
+      p.setAttribute("aria-expanded", e ? "true" : "false");
+      if (e) y.removeAttribute("hidden"); else y.setAttribute("hidden", "");
     });
   }
   document.querySelectorAll(".stgThemeCard[data-theme-choice]").forEach(e => {
@@ -213,10 +288,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
   syncThemeCards();
-  const m = "solis_privacy_improve_product";
+  const h = "solis_privacy_improve_product";
   function readImproveSolis() {
     try {
-      const e = localStorage.getItem(m);
+      const e = localStorage.getItem(h);
       if (e === null || e === undefined) return true;
       return e === "1" || e === "true";
     } catch (e) {
@@ -225,7 +300,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   function setImproveSolis(e) {
     try {
-      localStorage.setItem(m, e ? "1" : "0");
+      localStorage.setItem(h, e ? "1" : "0");
     } catch (e) {}
     syncPrivacyToggles();
   }
@@ -288,7 +363,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.style.overflow = "hidden";
     document.getElementById("navWrapper")?.classList.add("disabled");
     if (isMobileSettings()) {
-      if (n && r[n]) {
+      if (n && a[n]) {
         document.querySelectorAll(".stgNavBtn[data-stg-panel]").forEach(e => {
           const t = e.getAttribute("data-stg-panel") === n;
           e.classList.toggle("is-active", t);
@@ -297,7 +372,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll(".stgPanel").forEach(e => {
           e.classList.toggle("is-active", e.getAttribute("data-stg-panel") === n);
         });
-        if (a) a.textContent = r[n] || "Settings";
+        if (r) r.textContent = a[n] || "Settings";
         t?.setAttribute("data-stg-view", "panel");
         const e = document.getElementById("stgMobileBack");
         if (e) e.hidden = false;
@@ -308,7 +383,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         t?.setAttribute("data-stg-view", "home");
         mountMobileSettingsHero();
-        if (a) a.textContent = "Settings";
+        if (r) r.textContent = "Settings";
         const e = document.getElementById("stgMobileBack");
         if (e) e.hidden = true;
       }
@@ -361,38 +436,38 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (!n.ok) throw new Error("Failed to load profile");
     const s = await n.json();
-    let a = null;
-    if (o && o.ok) {
-      a = await o.json();
-    }
     let r = null;
+    if (o && o.ok) {
+      r = await o.json();
+    }
+    let a = null;
     if (i && i.ok) {
       try {
-        r = await i.json();
+        a = await i.json();
       } catch (e) {
-        r = null;
+        a = null;
       }
     }
     if (!s || typeof s !== "object" || typeof s.plan !== "string") {
       throw new Error("Invalid profile response");
     }
-    if (r && typeof r === "object") {
-      if (r.paddleSubscriptionId && !s.paddle_subscription_id) {
-        s.paddle_subscription_id = r.paddleSubscriptionId;
+    if (a && typeof a === "object") {
+      if (a.paddleSubscriptionId && !s.paddle_subscription_id) {
+        s.paddle_subscription_id = a.paddleSubscriptionId;
       }
-      if (r.status && !s.plan_status) {
-        s.plan_status = r.status;
-        s.subscription_status = r.status;
+      if (a.status && !s.plan_status) {
+        s.plan_status = a.status;
+        s.subscription_status = a.status;
       }
-      if (r.nextBillingDate && !s.plan_expires_at) {
-        s.plan_expires_at = r.nextBillingDate;
-        s.subscription_end_date = r.nextBillingDate;
+      if (a.nextBillingDate && !s.plan_expires_at) {
+        s.plan_expires_at = a.nextBillingDate;
+        s.subscription_end_date = a.nextBillingDate;
       }
     }
     return {
       profile: s,
-      subscription: r,
-      clipsStatus: a,
+      subscription: a,
+      clipsStatus: r,
       storageInfo: null
     };
   }
@@ -426,10 +501,10 @@ document.addEventListener("DOMContentLoaded", () => {
       day: "numeric"
     });
     const s = Math.ceil((o - new Date) / (1e3 * 60 * 60 * 24));
-    const a = t === "cancelled" ? "Access until" : "Renews on";
+    const r = t === "cancelled" ? "Access until" : "Renews on";
     if (s < 0) return "Expired on " + i;
-    if (s === 0) return a + " " + i + " (today)";
-    return a + " " + i;
+    if (s === 0) return r + " " + i + " (today)";
+    return r + " " + i;
   }
   function setQuotaFill(e, t, n) {
     if (!e) return;
@@ -456,12 +531,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!t || !n) return;
     const i = String(e.plan || "free").toLowerCase();
     const s = String(e.status || e.planStatus || "").toLowerCase();
-    const a = i !== "free";
-    const r = s === "cancelled" || s === "canceled";
-    const l = e.canCancel === true || a && !r && e.hasPaddle !== false && s !== "inactive";
-    t.hidden = !a;
-    if (!a) return;
-    if (r) {
+    const r = i !== "free";
+    const a = s === "cancelled" || s === "canceled";
+    const c = e.canCancel === true || r && !a && e.hasPaddle !== false && s !== "inactive";
+    t.hidden = !r;
+    if (!r) return;
+    if (a) {
       n.disabled = true;
       n.textContent = "Cancelled";
       if (o) {
@@ -470,10 +545,10 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       return;
     }
-    n.disabled = !l;
+    n.disabled = !c;
     n.textContent = "Cancel subscription";
     if (o) {
-      o.textContent = l ? "Stops future renewals through Paddle. You keep access until the end of the current billing period." : "Subscription is not linked to Paddle yet. Contact support if you need to cancel.";
+      o.textContent = c ? "Stops future renewals through Paddle. You keep access until the end of the current billing period." : "Subscription is not linked to Paddle yet. Contact support if you need to cancel.";
     }
   }
   async function cancelSubscriptionViaPaddle() {
@@ -555,13 +630,13 @@ document.addEventListener("DOMContentLoaded", () => {
       return String(t || "").replace(/\s*Resets \{when\}\.?/i, "").trim() || "Usage details unavailable.";
     }
     const s = new Date(i);
-    const a = s.toLocaleString(undefined, {
+    const r = s.toLocaleString(undefined, {
       month: "short",
       day: "numeric",
       hour: "numeric",
       minute: "2-digit"
     });
-    return t.replace("{when}", a);
+    return t.replace("{when}", r);
   }
   async function updateSettingsModal() {
     let e = null;
@@ -612,16 +687,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     setSubscriptionLoading(true);
     const s = String(e.plan || "free").toLowerCase();
-    const a = document.getElementById("stgPlanBanner");
-    const r = document.getElementById("stgPlanMeta");
-    const l = document.getElementById("stgPlanCompare");
-    const c = document.getElementById("stgQuotaGrid");
+    const r = document.getElementById("stgPlanBanner");
+    const a = document.getElementById("stgPlanMeta");
+    const c = document.getElementById("stgPlanCompare");
+    const l = document.getElementById("stgQuotaGrid");
     const applyPlanBanner = e => {
-      if (a) a.setAttribute("data-plan", e);
+      if (r) r.setAttribute("data-plan", e);
       const t = e === "free";
-      if (r) r.hidden = t;
-      if (l) l.hidden = !t;
-      if (c) c.hidden = t;
+      if (a) a.hidden = t;
+      if (c) c.hidden = !t;
+      if (l) l.hidden = t;
     };
     if ([ "free", "basic", "prime", "elite" ].includes(s)) {
       setText("stgCurrentPlan", s.charAt(0).toUpperCase() + s.slice(1));
@@ -629,15 +704,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     try {
       const {profile: t, subscription: n, clipsStatus: i, storageInfo: s} = await fetchSecureSettingsData();
-      const a = document.getElementById("stgProfileHero")?.classList.contains("is-editing");
+      const r = document.getElementById("stgProfileHero")?.classList.contains("is-editing");
       if (t.name) {
         setText("stgName", t.name);
-        if (!a && window.currentUser) {
+        if (!r && window.currentUser) {
           window.currentUser.name = t.name;
           window.currentUser.displayName = t.name;
         }
       }
-      if (typeof t.bio === "string" && !a) {
+      if (typeof t.bio === "string" && !r) {
         setText("stgBio", t.bio);
         if (window.currentUser) window.currentUser.bio = t.bio;
       }
@@ -682,42 +757,42 @@ document.addEventListener("DOMContentLoaded", () => {
           e.src = i + (i.includes("?") ? "&" : "?") + "v=" + Date.now();
         }
       }
-      const r = String(t.plan || "free").toLowerCase();
-      const l = [ "free", "basic", "prime", "elite" ];
-      const c = l.includes(r) ? r : "free";
-      const d = c.charAt(0).toUpperCase() + c.slice(1);
-      const u = c === "free";
+      const a = String(t.plan || "free").toLowerCase();
+      const c = [ "free", "basic", "prime", "elite" ];
+      const l = c.includes(a) ? a : "free";
+      const d = l.charAt(0).toUpperCase() + l.slice(1);
+      const u = l === "free";
       setText("stgCurrentPlan", d);
-      applyPlanBanner(c);
+      applyPlanBanner(l);
       if (o) {
-        o.classList.toggle("hidden", c === "elite" || u);
+        o.classList.toggle("hidden", l === "elite" || u);
       }
       const f = i && typeof i === "object" ? i : {};
       const g = f.storage?.videos || {};
-      const p = f.storage?.space_mb || {};
-      const m = f.daily || {};
+      const m = f.storage?.space_mb || {};
+      const p = f.daily || {};
       const w = f.monthly || {};
       const y = f.max_effort || {};
       const h = Math.max(1, Number(g.limit ?? f.plan?.videos_space ?? 2) || 2);
-      const b = Math.max(0, Number(g.used ?? 0) || 0);
-      setText("stgVideosUsed", b + " / " + h);
-      setQuotaFill(document.getElementById("stgVideosFill"), b, h);
-      let E = Math.max(0, Number(p.used) || 0) * 1024 * 1024;
-      let v = Math.max(1, Number(p.total) || 512) * 1024 * 1024;
-      if (Number(f.plan?.storage_gb) > 0 && (!p.total || p.total <= 0)) {
+      const E = Math.max(0, Number(g.used ?? 0) || 0);
+      setText("stgVideosUsed", E + " / " + h);
+      setQuotaFill(document.getElementById("stgVideosFill"), E, h);
+      let b = Math.max(0, Number(m.used) || 0) * 1024 * 1024;
+      let v = Math.max(1, Number(m.total) || 512) * 1024 * 1024;
+      if (Number(f.plan?.storage_gb) > 0 && (!m.total || m.total <= 0)) {
         v = Number(f.plan.storage_gb) * 1024 * 1024 * 1024;
       }
-      setText("stgStorage", formatStoragePair(E, v));
-      setQuotaFill(document.getElementById("stgStorageFill"), E, v);
-      const S = Math.max(0, Number(m.limit ?? f.plan?.videos_per_day ?? 0) || 0);
-      const C = Math.max(0, Number(m.used ?? 0) || 0);
+      setText("stgStorage", formatStoragePair(b, v));
+      setQuotaFill(document.getElementById("stgStorageFill"), b, v);
+      const S = Math.max(0, Number(p.limit ?? f.plan?.videos_per_day ?? 0) || 0);
+      const C = Math.max(0, Number(p.used ?? 0) || 0);
       if (S > 0) {
         setText("stgDailyGens", C + " / " + S);
         setQuotaFill(document.getElementById("stgDailyFill"), C, S);
         const e = document.getElementById("stgDailyHint");
         if (e) {
-          if (m.resets_at) {
-            e.textContent = formatQuotaResetHint(m.resets_at, C >= S ? "Daily quota reached. Resets {when}." : "Resets {when}.");
+          if (p.resets_at) {
+            e.textContent = formatQuotaResetHint(p.resets_at, C >= S ? "Daily quota reached. Resets {when}." : "Resets {when}.");
           }
         }
       } else {
@@ -738,14 +813,14 @@ document.addEventListener("DOMContentLoaded", () => {
         setQuotaFill(document.getElementById("stgMonthlyFill"), 0, 1);
       }
       const x = Number(y.limit ?? 0);
-      const U = Number(y.used ?? 0);
+      const L = Number(y.used ?? 0);
       const M = y.remaining;
       if (x > 0) {
-        setText("stgMaxEffort", U + " / " + x + " used");
-        setQuotaFill(document.getElementById("stgMaxFill"), U, x);
+        setText("stgMaxEffort", L + " / " + x + " used");
+        setQuotaFill(document.getElementById("stgMaxFill"), L, x);
         const e = document.getElementById("stgMaxHint");
         if (e) {
-          const t = Math.max(0, Number(M ?? x - U));
+          const t = Math.max(0, Number(M ?? x - L));
           e.textContent = t > 0 ? t + " Premium Request" + (t === 1 ? "" : "s") + " left in this window." : "Premium Requests locked until reset.";
         }
       } else {
@@ -754,10 +829,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const e = document.getElementById("stgMaxHint");
         if (e) e.textContent = "Upgrade to Prime or Elite for Premium Requests.";
       }
-      const L = formatRenewalLabel(t.subscription_end_date || t.plan_expires_at, t.plan_status);
-      if (L) setText("stgRenewalDate", L); else if (!u) setText("stgRenewalDate", "Active subscription"); else setText("stgRenewalDate", "No active subscription");
+      const U = formatRenewalLabel(t.subscription_end_date || t.plan_expires_at, t.plan_status);
+      if (U) setText("stgRenewalDate", U); else if (!u) setText("stgRenewalDate", "Active subscription"); else setText("stgRenewalDate", "No active subscription");
       syncBillingCancelUI({
-        plan: c,
+        plan: l,
         planStatus: t.plan_status || t.subscription_status,
         hasPaddle: !!(t.paddle_subscription_id || n?.paddleSubscriptionId),
         canCancel: n?.canCancel,
@@ -765,7 +840,7 @@ document.addEventListener("DOMContentLoaded", () => {
         nextBillingDate: n?.nextBillingDate || t.subscription_end_date || t.plan_expires_at
       });
       window.currentUser = Object.assign({}, window.currentUser || {}, t, {
-        active_videos: b,
+        active_videos: E,
         video_limit: h
       });
       setSubscriptionLoading(false);
@@ -787,63 +862,99 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   function updateYouTubeConnectorUI(e) {
     const t = document.getElementById("stgYouTubeStatus");
-    const n = document.getElementById("stgYouTubeConnectBtn");
+    const n = [ document.getElementById("stgYouTubeConnectBtn"), document.getElementById("stgYouTubeConnectBtnPopular") ].filter(Boolean);
     const o = document.getElementById("stgYouTubeConnector");
+    const i = document.querySelector('.stgConnPopularCard[data-conn-id="youtube"]');
+    const s = e ? "on" : "off";
     if (t) {
       t.textContent = e ? "Connected" : "Not connected";
       t.classList.toggle("is-on", e);
     }
-    if (n) {
-      n.textContent = e ? "Disconnect" : "Connect";
-      n.classList.toggle("is-connected", e);
-      n.disabled = false;
-    }
-    if (o) o.classList.toggle("is-connected", e);
-  }
-  const w = document.getElementById("stgYouTubeConnectBtn");
-  if (w) {
-    w.addEventListener("click", () => {
-      const e = !!(window.currentUser && window.currentUser.youtube_connected);
-      if (e) {
-        if (typeof window.disconnectYouTube === "function") window.disconnectYouTube();
-      } else if (typeof window.connectYouTube === "function") {
-        window.connectYouTube();
-      }
+    n.forEach(t => {
+      t.textContent = e ? "Disconnect" : "Connect";
+      t.classList.toggle("is-connected", e);
+      t.disabled = false;
     });
+    if (o) {
+      o.classList.toggle("is-connected", e);
+      o.setAttribute("data-conn-status", s);
+    }
+    if (i) i.setAttribute("data-conn-status", s);
+    filterConnectorRows();
   }
+  function handleYouTubeConnectClick() {
+    const e = !!(window.currentUser && window.currentUser.youtube_connected);
+    if (e) {
+      if (typeof window.disconnectYouTube === "function") window.disconnectYouTube();
+    } else if (typeof window.connectYouTube === "function") {
+      window.connectYouTube();
+    }
+  }
+  [ "stgYouTubeConnectBtn", "stgYouTubeConnectBtnPopular" ].forEach(e => {
+    document.getElementById(e)?.addEventListener("click", handleYouTubeConnectClick);
+  });
+  document.querySelectorAll(".stgConnFilter").forEach(e => {
+    e.addEventListener("click", () => setConnFilter(e.getAttribute("data-conn-filter")));
+  });
+  document.getElementById("stgConnectorsSearch")?.addEventListener("input", filterConnectorRows);
+  document.getElementById("stgDirSearchToggle")?.addEventListener("click", () => {
+    const e = document.querySelector(".stgNavBtn.is-active[data-stg-panel]")?.getAttribute("data-stg-panel");
+    if (e !== "connectors") return;
+    d = !d;
+    const t = document.getElementById("stgConnSearchBar");
+    if (t) {
+      t.hidden = !d;
+      if (d) document.getElementById("stgConnectorsSearch")?.focus();
+    }
+  });
+  document.getElementById("stgDirBrowseBtn")?.addEventListener("click", () => {
+    const e = document.querySelector(".stgNavBtn.is-active[data-stg-panel]")?.getAttribute("data-stg-panel");
+    if (e === "connectors") {
+      d = true;
+      const e = document.getElementById("stgConnSearchBar");
+      if (e) {
+        e.hidden = false;
+        document.getElementById("stgConnectorsSearch")?.focus();
+      }
+    }
+  });
+  document.getElementById("stgDirAddBtn")?.addEventListener("click", () => {});
+  document.getElementById("stgNavSearch")?.addEventListener("input", e => {
+    filterSettingsNav(e.target.value);
+  });
   window.openSettingsModal = openSettingsModal;
   window.closeSettingsModal = closeSettingsModal;
   window.updateSettingsModal = updateSettingsModal;
   window.switchSettingsPanel = switchSettingsPanel;
-  const y = document.getElementById("stgEditHeaderBtn");
-  let h = false;
+  const E = document.getElementById("stgEditHeaderBtn");
+  let b = false;
   function setProfileEditing(e) {
     const t = document.getElementById("stgProfileHero");
     const n = document.getElementById("stgName");
     const o = document.getElementById("stgBio");
     const i = document.getElementById("stgNameInput");
     const s = document.getElementById("stgBioInput");
-    if (!t || !i || !s || !y) return;
-    h = !!e;
-    t.classList.toggle("is-editing", h);
-    i.hidden = !h;
-    s.hidden = !h;
-    if (h) {
+    if (!t || !i || !s || !E) return;
+    b = !!e;
+    t.classList.toggle("is-editing", b);
+    i.hidden = !b;
+    s.hidden = !b;
+    if (b) {
       i.value = (n?.textContent || "").trim();
       s.value = o?.textContent || "";
-      y.classList.add("editing");
-      y.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Done</span>';
+      E.classList.add("editing");
+      E.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Done</span>';
       requestAnimationFrame(() => {
         i.focus();
         i.select();
       });
     } else {
-      y.classList.remove("editing");
-      y.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg><span>Edit</span>';
+      E.classList.remove("editing");
+      E.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg><span>Edit</span>';
     }
   }
   function toggleProfileEditMode() {
-    if (!h) {
+    if (!b) {
       setProfileEditing(true);
       return;
     }
@@ -887,27 +998,27 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!i.ok) {
         throw new Error(s.error || "Failed to update profile");
       }
-      const a = s.name || n;
-      const r = typeof s.bio === "string" ? s.bio : o;
-      setText("stgName", a);
-      setText("stgBio", r);
+      const r = s.name || n;
+      const a = typeof s.bio === "string" ? s.bio : o;
+      setText("stgName", r);
+      setText("stgBio", a);
       setProfileEditing(false);
       if (window.currentUser && typeof window.currentUser === "object") {
-        window.currentUser.name = a;
-        window.currentUser.displayName = a;
-        window.currentUser.bio = r;
+        window.currentUser.name = r;
+        window.currentUser.displayName = r;
+        window.currentUser.bio = a;
       }
       try {
         const e = localStorage.getItem("currentUser");
         if (e) {
           const t = JSON.parse(e);
-          t.name = a;
-          t.bio = r;
+          t.name = r;
+          t.bio = a;
           localStorage.setItem("currentUser", JSON.stringify(t));
         }
       } catch (e) {}
       document.querySelectorAll(".user-name, #dropdownUserName, #menuUserName").forEach(e => {
-        if (e) e.textContent = a;
+        if (e) e.textContent = r;
       });
       if (typeof window.apiCache?.clearUserProfile === "function") {
         window.apiCache.clearUserProfile();
@@ -924,20 +1035,20 @@ document.addEventListener("DOMContentLoaded", () => {
       cancelProfileEdit();
     }
   }
-  const b = document.getElementById("pfpFileInput");
-  const E = document.getElementById("stgAvatarContainer");
-  const v = document.getElementById("stgCropBackdrop");
-  const S = document.getElementById("stgCropModal");
-  const C = document.getElementById("stgCropImg");
-  const B = document.getElementById("stgCropViewport");
-  const I = document.getElementById("stgCropStage");
-  const x = document.getElementById("stgCropZoom");
+  const v = document.getElementById("pfpFileInput");
+  const S = document.getElementById("stgAvatarContainer");
+  const C = document.getElementById("stgCropBackdrop");
+  const B = document.getElementById("stgCropModal");
+  const I = document.getElementById("stgCropImg");
+  const x = document.getElementById("stgCropViewport");
+  const L = document.getElementById("stgCropStage");
+  const M = document.getElementById("stgCropZoom");
   const U = document.getElementById("stgCropSave");
-  let M = false;
-  let L = 0;
-  const P = 4e3;
-  const T = 5 * 1024 * 1024;
-  const A = 512;
+  let P = false;
+  let A = 0;
+  const T = 4e3;
+  const k = 5 * 1024 * 1024;
+  const N = 512;
   const _ = {
     open: false,
     objectUrl: null,
@@ -965,8 +1076,8 @@ document.addEventListener("DOMContentLoaded", () => {
     return null;
   }
   function cropViewportSize() {
-    if (!B) return 280;
-    return Math.max(120, Math.round(B.getBoundingClientRect().width || 280));
+    if (!x) return 280;
+    return Math.max(120, Math.round(x.getBoundingClientRect().width || 280));
   }
   function clampCropOffsets() {
     const e = cropViewportSize();
@@ -979,33 +1090,33 @@ document.addEventListener("DOMContentLoaded", () => {
     _.offsetY = Math.max(-s, Math.min(s, _.offsetY));
   }
   function applyCropTransform() {
-    if (!C) return;
+    if (!I) return;
     clampCropOffsets();
     const e = _.baseScale * _.zoom;
-    C.style.width = `${_.naturalW}px`;
-    C.style.height = `${_.naturalH}px`;
-    C.style.transform = `translate(-50%, -50%) translate(${_.offsetX}px, ${_.offsetY}px) scale(${e})`;
+    I.style.width = `${_.naturalW}px`;
+    I.style.height = `${_.naturalH}px`;
+    I.style.transform = `translate(-50%, -50%) translate(${_.offsetX}px, ${_.offsetY}px) scale(${e})`;
   }
   function closeCropModal() {
     _.open = false;
     _.dragging = false;
-    v?.classList.remove("is-open");
-    S?.classList.remove("is-open");
-    if (v) v.hidden = true;
-    if (S) S.hidden = true;
+    C?.classList.remove("is-open");
+    B?.classList.remove("is-open");
+    if (C) C.hidden = true;
+    if (B) B.hidden = true;
     if (_.objectUrl) {
       URL.revokeObjectURL(_.objectUrl);
       _.objectUrl = null;
     }
-    if (C) C.removeAttribute("src");
-    if (b) b.value = "";
+    if (I) I.removeAttribute("src");
+    if (v) v.value = "";
     if (U) {
       U.disabled = false;
       U.classList.remove("is-busy");
     }
   }
   function openCropModal(e) {
-    if (!S || !C || !B) {
+    if (!B || !I || !x) {
       uploadProfilePicture(e);
       return;
     }
@@ -1015,11 +1126,11 @@ document.addEventListener("DOMContentLoaded", () => {
     _.zoom = 1;
     _.offsetX = 0;
     _.offsetY = 0;
-    if (x) x.value = "1";
+    if (M) M.value = "1";
     const onLoad = () => {
-      C.removeEventListener("load", onLoad);
-      _.naturalW = C.naturalWidth || 0;
-      _.naturalH = C.naturalHeight || 0;
+      I.removeEventListener("load", onLoad);
+      _.naturalW = I.naturalWidth || 0;
+      _.naturalH = I.naturalHeight || 0;
       if (_.naturalW < 64 || _.naturalH < 64) {
         closeCropModal();
         if (typeof window.showNotification === "function") {
@@ -1041,21 +1152,21 @@ document.addEventListener("DOMContentLoaded", () => {
       _.offsetY = 0;
       applyCropTransform();
       _.open = true;
-      if (v) {
-        v.hidden = false;
-        v.classList.add("is-open");
+      if (C) {
+        C.hidden = false;
+        C.classList.add("is-open");
       }
-      S.hidden = false;
-      S.classList.add("is-open");
+      B.hidden = false;
+      B.classList.add("is-open");
       requestAnimationFrame(() => applyCropTransform());
     };
-    C.addEventListener("load", onLoad);
-    C.src = t;
+    I.addEventListener("load", onLoad);
+    I.src = t;
   }
   async function exportCroppedAvatarFile() {
     const e = cropViewportSize();
     const t = _.baseScale * _.zoom;
-    const n = A;
+    const n = N;
     const o = document.createElement("canvas");
     o.width = n;
     o.height = n;
@@ -1066,18 +1177,18 @@ document.addEventListener("DOMContentLoaded", () => {
     i.fillStyle = "#ffffff";
     i.fillRect(0, 0, n, n);
     const s = e / t;
-    const a = _.naturalW / 2 - _.offsetX / t;
-    const r = _.naturalH / 2 - _.offsetY / t;
-    const l = a - s / 2;
+    const r = _.naturalW / 2 - _.offsetX / t;
+    const a = _.naturalH / 2 - _.offsetY / t;
     const c = r - s / 2;
-    i.drawImage(C, l, c, s, s, 0, 0, n, n);
+    const l = a - s / 2;
+    i.drawImage(I, c, l, s, s, 0, 0, n, n);
     const d = await new Promise(e => {
       o.toBlob(t => {
         if (t && t.size > 0) e(t); else o.toBlob(t => e(t), "image/jpeg", .9);
       }, "image/webp", .9);
     });
     if (!d || d.size <= 0) throw new Error("Failed to process image");
-    if (d.size > T) throw new Error("Image too large. Maximum size is 5MB.");
+    if (d.size > k) throw new Error("Image too large. Maximum size is 5MB.");
     const u = d.type === "image/webp" ? "image/webp" : "image/jpeg";
     const f = u === "image/webp" ? "webp" : "jpg";
     return new File([ d ], `avatar.${f}`, {
@@ -1127,8 +1238,8 @@ document.addEventListener("DOMContentLoaded", () => {
     setImg(document.getElementById("menuUserAvatar"));
   }
   async function uploadProfilePicture(e) {
-    if (M || !e) return;
-    M = true;
+    if (P || !e) return;
+    P = true;
     const t = document.getElementById("stgAvatar");
     try {
       if (t) t.style.opacity = "0.55";
@@ -1151,21 +1262,21 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!i.ok) {
         throw new Error(s.error || "Failed to upload profile picture");
       }
-      const a = s.avatar_url || s.pfp_url || "";
-      if (!a.startsWith("/api/avatar/")) {
+      const r = s.avatar_url || s.pfp_url || "";
+      if (!r.startsWith("/api/avatar/")) {
         throw new Error("Server returned an invalid avatar URL");
       }
-      applyAvatarEverywhere(a);
+      applyAvatarEverywhere(r);
       if (window.currentUser && typeof window.currentUser === "object") {
-        window.currentUser.picture = a;
-        window.currentUser.avatar = a;
+        window.currentUser.picture = r;
+        window.currentUser.avatar = r;
       }
       try {
         const e = localStorage.getItem("currentUser");
         if (e) {
           const t = JSON.parse(e);
-          t.picture = a;
-          t.avatar = a;
+          t.picture = r;
+          t.avatar = r;
           localStorage.setItem("currentUser", JSON.stringify(t));
         }
       } catch (e) {}
@@ -1173,7 +1284,7 @@ document.addEventListener("DOMContentLoaded", () => {
         window.apiCache.userProfile = null;
         window.apiCache.userProfileTime = 0;
       }
-      L = Date.now();
+      A = Date.now();
       closeCropModal();
       if (typeof window.showNotification === "function") {
         window.showNotification("Profile picture updated", "success");
@@ -1191,12 +1302,12 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } finally {
       if (t) t.style.opacity = "1";
-      M = false;
-      if (b) b.value = "";
+      P = false;
+      if (v) v.value = "";
     }
   }
   async function saveCroppedAvatar() {
-    if (!_.open || M) return;
+    if (!_.open || P) return;
     try {
       const e = await exportCroppedAvatarFile();
       await uploadProfilePicture(e);
@@ -1214,7 +1325,7 @@ document.addEventListener("DOMContentLoaded", () => {
     _.lastX = e.clientX;
     _.lastY = e.clientY;
     _.pointerId = e.pointerId;
-    I?.setPointerCapture?.(e.pointerId);
+    L?.setPointerCapture?.(e.pointerId);
   }
   function onCropPointerMove(e) {
     if (!_.dragging) return;
@@ -1231,79 +1342,79 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!_.dragging) return;
     _.dragging = false;
     try {
-      I?.releasePointerCapture?.(e.pointerId);
+      L?.releasePointerCapture?.(e.pointerId);
     } catch (e) {}
   }
-  if (I) {
-    I.addEventListener("pointerdown", onCropPointerDown);
-    I.addEventListener("pointermove", onCropPointerMove);
-    I.addEventListener("pointerup", onCropPointerUp);
-    I.addEventListener("pointercancel", onCropPointerUp);
-    I.addEventListener("wheel", e => {
+  if (L) {
+    L.addEventListener("pointerdown", onCropPointerDown);
+    L.addEventListener("pointermove", onCropPointerMove);
+    L.addEventListener("pointerup", onCropPointerUp);
+    L.addEventListener("pointercancel", onCropPointerUp);
+    L.addEventListener("wheel", e => {
       if (!_.open) return;
       e.preventDefault();
       const t = e.deltaY > 0 ? -.08 : .08;
       _.zoom = Math.max(1, Math.min(3, _.zoom + t));
-      if (x) x.value = String(_.zoom);
+      if (M) M.value = String(_.zoom);
       applyCropTransform();
     }, {
       passive: false
     });
   }
-  x?.addEventListener("input", () => {
-    _.zoom = Math.max(1, Math.min(3, Number(x.value) || 1));
+  M?.addEventListener("input", () => {
+    _.zoom = Math.max(1, Math.min(3, Number(M.value) || 1));
     applyCropTransform();
   });
   document.getElementById("stgCropZoomIn")?.addEventListener("click", () => {
     _.zoom = Math.min(3, _.zoom + .12);
-    if (x) x.value = String(_.zoom);
+    if (M) M.value = String(_.zoom);
     applyCropTransform();
   });
   document.getElementById("stgCropZoomOut")?.addEventListener("click", () => {
     _.zoom = Math.max(1, _.zoom - .12);
-    if (x) x.value = String(_.zoom);
+    if (M) M.value = String(_.zoom);
     applyCropTransform();
   });
   document.getElementById("stgCropCancel")?.addEventListener("click", () => closeCropModal());
   document.getElementById("stgCropClose")?.addEventListener("click", () => closeCropModal());
-  v?.addEventListener("click", () => closeCropModal());
-  S?.addEventListener("click", e => {
-    if (e.target === S) closeCropModal();
+  C?.addEventListener("click", () => closeCropModal());
+  B?.addEventListener("click", e => {
+    if (e.target === B) closeCropModal();
   });
   U?.addEventListener("click", () => {
     saveCroppedAvatar();
   });
-  S?.querySelector(".stgCropCard")?.addEventListener("click", e => e.stopPropagation());
-  if (E && b) {
-    E.addEventListener("click", e => {
+  B?.querySelector(".stgCropCard")?.addEventListener("click", e => e.stopPropagation());
+  if (S && v) {
+    S.addEventListener("click", e => {
       e.preventDefault();
       e.stopPropagation();
-      if (M || _.open) return;
-      b.click();
+      if (P || _.open) return;
+      v.click();
     });
   }
-  if (b) {
-    b.addEventListener("change", async () => {
-      const e = b.files && b.files[0];
+  if (v) {
+    v.addEventListener("change", async () => {
+      const e = v.files && v.files[0];
       if (!e) return;
       const t = Date.now();
-      if (t - L < P) {
+      if (t - A < T) {
         if (typeof window.showNotification === "function") {
           window.showNotification("Please wait before uploading another picture", "warning");
         }
-        b.value = "";
+        v.value = "";
         return;
       }
       try {
         const t = new Uint8Array(await e.slice(0, 16).arrayBuffer());
         const n = detectImageMime(t);
         if (!n) throw new Error("File is not a valid JPG, PNG, or WebP image");
-        if (e.size <= 0 || e.size > T) {
+        if (e.size <= 0 || e.size > k) {
           throw new Error("Image too large. Maximum size is 5MB.");
         }
         openCropModal(e);
       } catch (e) {
-        b.value = "";
+        v.value = "";
         if (typeof window.showNotification === "function") {
           window.showNotification(e.message || "Invalid image", "error");
         } else {
@@ -1345,18 +1456,18 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     };
     setText("stgSessionUpdated", fmt(s));
-    const a = document.getElementById("stgSessionCreated");
-    if (a && (!a.textContent || a.textContent === "—")) {
-      a.textContent = fmt(s);
+    const r = document.getElementById("stgSessionCreated");
+    if (r && (!r.textContent || r.textContent === "—")) {
+      r.textContent = fmt(s);
     }
     setText("stgSessionLocation", "…");
-    const r = typeof getAuthHeaders === "function" ? getAuthHeaders() : {
+    const a = typeof getAuthHeaders === "function" ? getAuthHeaders() : {
       "Content-Type": "application/json"
     };
-    const l = typeof window.apiUrl === "function" ? window.apiUrl("/api/user/account/sessions") : "/api/user/account/sessions";
-    fetch(l, {
+    const c = typeof window.apiUrl === "function" ? window.apiUrl("/api/user/account/sessions") : "/api/user/account/sessions";
+    fetch(c, {
       credentials: "include",
-      headers: r
+      headers: a
     }).then(e => e.ok ? e.json() : null).then(e => {
       const t = e?.sessions?.[0];
       if (!t) {
@@ -1442,11 +1553,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
   function cancelProfileEdit() {
-    if (!h) return;
+    if (!b) return;
     setProfileEditing(false);
   }
-  if (y) {
-    y.addEventListener("click", e => {
+  if (E) {
+    E.addEventListener("click", e => {
       e.stopPropagation();
       toggleProfileEditMode();
     });
@@ -1457,7 +1568,7 @@ document.addEventListener("DOMContentLoaded", () => {
       closeCropModal();
       return;
     }
-    if (e.key === "Escape" && h) {
+    if (e.key === "Escape" && b) {
       cancelProfileEdit();
       return;
     }

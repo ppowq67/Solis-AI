@@ -12,7 +12,7 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.socket.io https://cdn.paddle.com https://sandbox-cdn.paddle.com https://static.cloudflareinsights.com https://api.solisai.video; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.paddle.com; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' https://api.solisai.video wss://api.solisai.video https://api.solisai.video wss://api.solisai.video https://api.solisai.video wss://api.solisai.video https://cdn.socket.io https://cloudflareinsights.com https:; img-src 'self' data: https:; frame-src 'self' https://checkout.paddle.com https://buy.paddle.com https://sandbox-buy.paddle.com https://sandbox-checkout-service.paddle.com https://checkout-service.paddle.com;">
     <script src="/js/core/init.js?v=7"></script>
     <script src="/js/core/api-client.js?v=3"></script>
-    <script src="/js/core/avatar-url.js?v=2"></script>
+    <script src="/js/core/avatar-url.js?v=3"></script>
     <script src="/js/core/auth-validator.js?v=2"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -38,6 +38,7 @@
     <link rel="stylesheet" href="/style/ss/customize.css?v=27">
     <link rel="stylesheet" href="/style/ss/clips.css?v=30">
     <link rel="stylesheet" href="/style/ss/profile.css?v=29">
+    <link rel="stylesheet" href="/style/ss/tasks-panel-v2-demo.css?v=11">
     <link rel="stylesheet" href="/style/ss/newsfeed-widget.css?v=28">
     <script src="/js/ui/navigation.js?v=3"></script>
     <script src="/js/ui/menu.js?v=6"></script>
@@ -45,11 +46,11 @@
     <script src="/js/i_dq/profile-notifications.js?t=20260323000010"></script>
     <script src="/js/s_new/qwsqa.js?v=4"></script>
     <script src="/js/s_new/qwe.js?v=7"></script>
-    <link rel="stylesheet" href="/style/ss/stg-modal.css?v=44">
-    <script src="/js/s_new/stg.js?v=38"></script>
+    <link rel="stylesheet" href="/style/ss/stg-modal.css?v=46">
+    <script src="/js/s_new/stg.js?v=40"></script>
     <script src="/js/i_dq/video-generation-hook.js?v=1"></script>
     <script src="/js/ui/progress-ui.js?v=2"></script>
-    <script src="/js/ui/generation-progress-spinner.js?v=44"></script>
+    <script src="/js/ui/generation-progress-spinner.js?v=50"></script>
     <script src="/js/generation-recovery.js?v=3"></script>
     <script src="/js/i_dq/ranking-customizer.js?v=24"></script>
     <script src="/js/s_new/solis-memory.js?v=39"></script>
@@ -991,7 +992,7 @@
             </span>
             <div class="generation-progress-tooltip" id="generationProgressTooltip">Generating...</div>
         </div>
-        <div class="generation-todo-panel glass-panel" id="generationTodoPanel" role="dialog" aria-label="Generation tasks">
+        <div class="generation-todo-panel glass-panel solis-tasks-panel" id="generationTodoPanel" role="dialog" aria-label="Generation tasks">
             <div class="generation-error-banner" id="generationErrorBanner" hidden>
                 There was an error. Try again
             </div>
@@ -1091,31 +1092,34 @@
             <div class="stgMobileHero" id="stgMobileHero" aria-hidden="true">
                 <div class="stgMobileHeroInner" id="stgMobileHeroInner"></div>
             </div>
-            <div class="stgNavItems">
-                <button type="button" class="stgNavBtn is-active" data-stg-panel="profile" aria-selected="true">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    <span>Profile</span>
-                </button>
-                <button type="button" class="stgNavBtn" data-stg-panel="account" aria-selected="false">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
-                    <span>Account</span>
-                </button>
-                <button type="button" class="stgNavBtn" data-stg-panel="billing" aria-selected="false">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M7 16V9"/><path d="M12 16V5"/><path d="M17 16v-3"/></svg>
-                    <span>Billing/Usage</span>
-                </button>
-                <button type="button" class="stgNavBtn" data-stg-panel="privacy" aria-selected="false">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><rect x="8.5" y="10.5" width="7" height="6" rx="1.3"/><path d="M10.5 10.5V9a1.5 1.5 0 0 1 3 0v1.5"/></svg>
-                    <span>Privacy</span>
-                </button>
-                <button type="button" class="stgNavBtn" data-stg-panel="themes" aria-selected="false">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-paintbrush-icon lucide-paintbrush"><path d="m14.622 17.897-10.68-2.913"/><path d="M18.376 2.622a1 1 0 1 1 3.002 3.002L17.36 9.643a.5.5 0 0 0 0 .707l.944.944a2.41 2.41 0 0 1 0 3.408l-.944.944a.5.5 0 0 1-.707 0L8.354 7.348a.5.5 0 0 1 0-.707l.944-.944a2.41 2.41 0 0 1 3.408 0l.944.944a.5.5 0 0 0 .707 0z"/><path d="M9 8c-1.804 2.71-3.97 3.46-6.583 3.948a.507.507 0 0 0-.302.819l7.32 8.883a1 1 0 0 0 1.185.204C12.735 20.405 16 16.792 16 15"/></svg>
-                    <span>Themes</span>
-                </button>
-
-                <div class="stgNavGroup" role="group" aria-labelledby="stgNavSupportLabel">
-                    <div class="stgNavGroupLabel" id="stgNavSupportLabel">Support</div>
-                    <button type="button" class="stgNavBtn" data-stg-panel="support" aria-selected="false">
+            <div class="stgNavSearchWrap">
+                <svg class="stgNavSearchIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <input type="search" class="stgNavSearch" id="stgNavSearch" placeholder="Search" autocomplete="off" aria-label="Search settings">
+            </div>
+            <div class="stgNavItems" id="stgNavItems">
+                <div class="stgNavGroup" role="group" aria-labelledby="stgNavSettingsLabel">
+                    <div class="stgNavGroupLabel" id="stgNavSettingsLabel">Settings</div>
+                    <button type="button" class="stgNavBtn is-active" data-stg-panel="profile" data-stg-search="profile" aria-selected="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        <span>Profile</span>
+                    </button>
+                    <button type="button" class="stgNavBtn" data-stg-panel="account" data-stg-search="account" aria-selected="false">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0"/></svg>
+                        <span>Account</span>
+                    </button>
+                    <button type="button" class="stgNavBtn" data-stg-panel="privacy" data-stg-search="privacy" aria-selected="false">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><rect x="8.5" y="10.5" width="7" height="6" rx="1.3"/><path d="M10.5 10.5V9a1.5 1.5 0 0 1 3 0v1.5"/></svg>
+                        <span>Privacy</span>
+                    </button>
+                    <button type="button" class="stgNavBtn" data-stg-panel="billing" data-stg-search="billing usage" aria-selected="false">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+                        <span>Billing/Usage</span>
+                    </button>
+                    <button type="button" class="stgNavBtn" data-stg-panel="themes" data-stg-search="themes" aria-selected="false">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-paintbrush-icon lucide-paintbrush"><path d="m14.622 17.897-10.68-2.913"/><path d="M18.376 2.622a1 1 0 1 1 3.002 3.002L17.36 9.643a.5.5 0 0 0 0 .707l.944.944a2.41 2.41 0 0 1 0 3.408l-.944.944a.5.5 0 0 1-.707 0L8.354 7.348a.5.5 0 0 1 0-.707l.944-.944a2.41 2.41 0 0 1 3.408 0l.944.944a.5.5 0 0 0 .707 0z"/><path d="M9 8c-1.804 2.71-3.97 3.46-6.583 3.948a.507.507 0 0 0-.302.819l7.32 8.883a1 1 0 0 0 1.185.204C12.735 20.405 16 16.792 16 15"/></svg>
+                        <span>Themes</span>
+                    </button>
+                    <button type="button" class="stgNavBtn" data-stg-panel="support" data-stg-search="support help" aria-selected="false">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                         <span>Support</span>
                     </button>
@@ -1123,67 +1127,71 @@
 
                 <div class="stgNavGroup" role="group" aria-labelledby="stgNavCustomizeLabel">
                     <div class="stgNavGroupLabel" id="stgNavCustomizeLabel">Customize</div>
-                    <button type="button" class="stgNavBtn" data-stg-panel="memory" aria-selected="false">
+                    <button type="button" class="stgNavBtn" data-stg-panel="memory" data-stg-search="memory" aria-selected="false">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-cloud-backup-icon lucide-cloud-backup"><path d="M21 15.251A4.5 4.5 0 0 0 17.5 8h-1.79A7 7 0 1 0 3 13.607"/><path d="M7 11v4h4"/><path d="M8 19a5 5 0 0 0 9-3 4.5 4.5 0 0 0-4.5-4.5 4.82 4.82 0 0 0-3.41 1.41L7 15"/></svg>
                         <span>Memory</span>
                     </button>
-                    <button type="button" class="stgNavBtn is-disabled" data-stg-panel="customizer" aria-selected="false" disabled aria-disabled="true" title="Coming soon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-package-icon lucide-package"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><polyline points="3.29 7 12 12 20.71 7"/><path d="m7.5 4.27 9 5.15"/></svg>
-                        <span>Customize</span>
-                        <span class="stgNavSoon">Coming soon</span>
-                    </button>
-
-                    <button type="button" class="stgNavBtn is-disabled" data-stg-panel="connectors" aria-selected="false" disabled aria-disabled="true" title="Coming soon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-blocks-icon lucide-blocks"><path d="M10 22V7a1 1 0 0 0-1-1H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5a1 1 0 0 0-1-1H2"/><rect x="14" y="2" width="8" height="8" rx="1"/></svg>
+                    <button type="button" class="stgNavBtn is-disabled" data-stg-panel="connectors" data-stg-search="connectors youtube tiktok" aria-selected="false" disabled aria-disabled="true" title="Coming soon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M10 22V7a1 1 0 0 0-1-1H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5a1 1 0 0 0-1-1H2"/>
+                            <rect x="14" y="2" width="8" height="8" rx="1"/>
+                        </svg>
                         <span>Connectors</span>
                         <span class="stgNavSoon">Coming soon</span>
                     </button>
-                    <button type="button" class="stgNavBtn is-disabled" data-stg-panel="plugins" aria-selected="false" disabled aria-disabled="true" title="Coming soon">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round">
-                     <g transform="rotate(45 12 12)">
-                       <path d="M12 22v-5"/>
-                       <path d="M15 8V2"/>
-                       <path d="M17 8a1 1 0 0 1 1 1v4a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1z"/>
-                       <path d="M9 8V2"/>
-                     </g>
-                   </svg>
+                    <button type="button" class="stgNavBtn is-disabled" data-stg-panel="plugins" data-stg-search="plugins" aria-selected="false" disabled aria-disabled="true" title="Coming soon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <g transform="rotate(45 12 12)">
+                                <path d="M12 22v-5"/>
+                                <path d="M15 8V2"/>
+                                <path d="M17 8a1 1 0 0 1 1 1v4a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1z"/>
+                                <path d="M9 8V2"/>
+                            </g>
+                        </svg>
                         <span>Plugins</span>
+                        <span class="stgNavSoon">Coming soon</span>
+                    </button>
+                    <button type="button" class="stgNavBtn is-disabled" data-stg-panel="customizer" data-stg-search="customize" aria-selected="false" disabled aria-disabled="true" title="Coming soon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-package-icon lucide-package"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><polyline points="3.29 7 12 12 20.71 7"/><path d="m7.5 4.27 9 5.15"/></svg>
+                        <span>Customize</span>
                         <span class="stgNavSoon">Coming soon</span>
                     </button>
                 </div>
             </div>
             <div class="stgNavFoot">
-                <div class="stgNavSocial" aria-label="Solis social">
-                    <a class="stgNavSocialLink" href="https://discord.gg/SuZQBCZCKt" target="_blank" rel="noopener noreferrer" title="Discord" aria-label="Discord">
-                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.548-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
-                    </a>
-                    <a class="stgNavSocialLink" href="https://www.youtube.com/@solis_ai" target="_blank" rel="noopener noreferrer" title="YouTube" aria-label="YouTube">
-                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-                    </a>
-                    <a class="stgNavSocialLink" href="https://www.instagram.com/solisaivideo/" target="_blank" rel="noopener noreferrer" title="Instagram" aria-label="Instagram">
-                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
-                    </a>
-                </div>
                 <button type="button" class="stgNavBtn stgNavLogout" id="stgLogoutBtn">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                     <span>Log out</span>
                 </button>
             </div>
         </aside>
+        <div class="stgShellSocial" aria-label="Solis social">
+            <a class="stgShellSocialLink" href="https://discord.gg/SuZQBCZCKt" target="_blank" rel="noopener noreferrer" title="Discord" aria-label="Discord">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.548-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+            </a>
+            <a class="stgShellSocialLink" href="https://www.youtube.com/@solis_ai" target="_blank" rel="noopener noreferrer" title="YouTube" aria-label="YouTube">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+            <a class="stgShellSocialLink" href="https://www.instagram.com/solisaivideo/" target="_blank" rel="noopener noreferrer" title="Instagram" aria-label="Instagram">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+            </a>
+        </div>
         <div class="stgMain">
             <div class="stgMainTop">
                 <button type="button" class="stgMobileBack" id="stgMobileBack" aria-label="Back to settings" hidden>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
                 </button>
                 <h3 class="stgMainTitle" id="stgMainTitle">Profile</h3>
+                <div class="stgMainActions" id="stgMainActions" hidden>
+                    <button type="button" class="stgMainActionIcon" id="stgDirSearchToggle" aria-label="Search" title="Search">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    </button>
+                    <button type="button" class="stgMainActionBtn" id="stgDirBrowseBtn">Browse</button>
+                    <button type="button" class="stgMainActionBtn stgMainActionBtn--chev" id="stgDirAddBtn" aria-haspopup="true">
+                        Add
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                </div>
                 <button type="button" class="stgClose" id="stgClose" aria-label="Close settings"><i class="fas fa-times"></i></button>
             </div>
 
@@ -1734,9 +1742,149 @@
                     </div>
                 </section>
 
-                <section class="stgPanel" id="stgPanelConnectors" data-stg-panel="connectors" hidden aria-hidden="true"></section>
+                <section class="stgPanel" id="stgPanelConnectors" data-stg-panel="connectors">
+                    <div class="stgConn">
+                        <div class="stgConnSearchBar" id="stgConnSearchBar" hidden>
+                            <svg class="stgDirSearchIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                            <input type="search" class="stgDirSearch" id="stgConnectorsSearch" placeholder="Search connectors..." autocomplete="off" aria-label="Search connectors">
+                        </div>
 
-                <section class="stgPanel" id="stgPanelPlugins" data-stg-panel="plugins" hidden aria-hidden="true"></section>
+                        <div class="stgConnPopular">
+                            <div class="stgConnSectionLabel">Popular</div>
+                            <div class="stgConnPopularRow">
+                                <article class="stgConnPopularCard" data-conn-id="youtube" data-conn-status="off">
+                                    <div class="stgConnPopularIcon" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#FF0000" d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                                    </div>
+                                    <span class="stgConnPopularName">YouTube</span>
+                                    <button type="button" class="stgConnBtn" data-conn-action="youtube" id="stgYouTubeConnectBtnPopular">Connect</button>
+                                </article>
+                                <article class="stgConnPopularCard is-soon" data-conn-id="tiktok" data-conn-status="off">
+                                    <div class="stgConnPopularIcon" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#000000" d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+                                    </div>
+                                    <span class="stgConnPopularName">TikTok</span>
+                                    <button type="button" class="stgConnBtn" disabled title="Coming soon">Connect</button>
+                                </article>
+                                <article class="stgConnPopularCard is-soon" data-conn-id="instagram" data-conn-status="off">
+                                    <div class="stgConnPopularIcon" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#FF0069" d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.055 1.265.07 1.647.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.415 2.227-.218.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.055-1.647.07-4.849.07-3.203 0-3.585-.015-4.85-.074-1.169-.061-1.804-.256-2.226-.415-.568-.218-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.414-2.235-.055-1.266-.072-1.646-.072-4.849 0-3.203.016-3.585.072-4.85.055-1.17.25-1.805.414-2.227.22-.562.479-.96.9-1.381.419-.419.82-.679 1.379-.896.42-.164 1.065-.36 2.226-.413 1.274-.055 1.647-.07 4.849-.07zM12 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+                                    </div>
+                                    <span class="stgConnPopularName">Instagram</span>
+                                    <button type="button" class="stgConnBtn" disabled title="Coming soon">Connect</button>
+                                </article>
+                            </div>
+                        </div>
+
+                        <div class="stgConnFilters" role="tablist" aria-label="Filter connectors">
+                            <button type="button" class="stgConnFilter is-active" data-conn-filter="all" role="tab" aria-selected="true">All</button>
+                            <button type="button" class="stgConnFilter" data-conn-filter="connected" role="tab" aria-selected="false">Connected</button>
+                            <button type="button" class="stgConnFilter" data-conn-filter="off" role="tab" aria-selected="false">Not connected</button>
+                        </div>
+
+                        <div class="stgConnTable" id="stgConnTable">
+                            <div class="stgConnTableHead">
+                                <span>Connector</span>
+                                <span>Type</span>
+                                <span>Status</span>
+                            </div>
+                            <div class="stgConnRow" data-conn-id="youtube" data-conn-status="off" data-conn-name="youtube" id="stgYouTubeConnector">
+                                <div class="stgConnCell stgConnCell--name">
+                                    <span class="stgConnRowIcon" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#FF0000" d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                                    </span>
+                                    <span class="stgConnRowName">YouTube</span>
+                                </div>
+                                <div class="stgConnCell stgConnCell--type">Web</div>
+                                <div class="stgConnCell stgConnCell--status">
+                                    <span class="stgConnStatusText" id="stgYouTubeStatus" hidden>Not connected</span>
+                                    <button type="button" class="stgConnBtn" id="stgYouTubeConnectBtn">Connect</button>
+                                </div>
+                            </div>
+                            <div class="stgConnRow is-soon" data-conn-id="tiktok" data-conn-status="off" data-conn-name="tiktok">
+                                <div class="stgConnCell stgConnCell--name">
+                                    <span class="stgConnRowIcon" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#000000" d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+                                    </span>
+                                    <span class="stgConnRowName">TikTok</span>
+                                </div>
+                                <div class="stgConnCell stgConnCell--type">Web</div>
+                                <div class="stgConnCell stgConnCell--status">
+                                    <button type="button" class="stgConnBtn" disabled title="Coming soon">Connect</button>
+                                </div>
+                            </div>
+                            <div class="stgConnRow is-soon" data-conn-id="instagram" data-conn-status="off" data-conn-name="instagram">
+                                <div class="stgConnCell stgConnCell--name">
+                                    <span class="stgConnRowIcon" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#FF0069" d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.055 1.265.07 1.647.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.415 2.227-.218.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.055-1.647.07-4.849.07-3.203 0-3.585-.015-4.85-.074-1.169-.061-1.804-.256-2.226-.415-.568-.218-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.414-2.235-.055-1.266-.072-1.646-.072-4.849 0-3.203.016-3.585.072-4.85.055-1.17.25-1.805.414-2.227.22-.562.479-.96.9-1.381.419-.419.82-.679 1.379-.896.42-.164 1.065-.36 2.226-.413 1.274-.055 1.647-.07 4.849-.07zM12 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+                                    </span>
+                                    <span class="stgConnRowName">Instagram</span>
+                                </div>
+                                <div class="stgConnCell stgConnCell--type">Web</div>
+                                <div class="stgConnCell stgConnCell--status">
+                                    <button type="button" class="stgConnBtn" disabled title="Coming soon">Connect</button>
+                                </div>
+                            </div>
+                            <div class="stgConnRow is-soon" data-conn-id="discord" data-conn-status="off" data-conn-name="discord">
+                                <div class="stgConnCell stgConnCell--name">
+                                    <span class="stgConnRowIcon" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#5865F2" d="M20.317 4.3698a19.791 19.791 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.736 19.736 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.298 12.298 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></svg>
+                                    </span>
+                                    <span class="stgConnRowName">Discord</span>
+                                </div>
+                                <div class="stgConnCell stgConnCell--type">Web</div>
+                                <div class="stgConnCell stgConnCell--status">
+                                    <button type="button" class="stgConnBtn" disabled title="Coming soon">Connect</button>
+                                </div>
+                            </div>
+                            <div class="stgConnRow is-soon" data-conn-id="drive" data-conn-status="off" data-conn-name="google drive">
+                                <div class="stgConnCell stgConnCell--name">
+                                    <span class="stgConnRowIcon" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill="#0066DA" d="M4.433 22.354l4.024-6.96H0l4.433 6.96z"/>
+                                            <path fill="#00AC47" d="M15.543 22.354L24 7.696H15.81l-4.024 6.96 3.757 7.698z"/>
+                                            <path fill="#EA4335" d="M11.786 1.646L7.762 8.606l4.024 6.96 4.024-6.96-4.024-6.96z"/>
+                                            <path fill="#00832D" d="M7.762 8.606L3.738 15.566h8.048l-4.024-6.96z"/>
+                                            <path fill="#2684FC" d="M19.567 15.566H7.762l4.024 6.96h8.048l-.267-6.96z"/>
+                                            <path fill="#FFBA00" d="M15.81 7.696H7.762L11.786 1.646h8.048L15.81 7.696z"/>
+                                        </svg>
+                                    </span>
+                                    <span class="stgConnRowName">Google Drive</span>
+                                </div>
+                                <div class="stgConnCell stgConnCell--type">Web</div>
+                                <div class="stgConnCell stgConnCell--status">
+                                    <button type="button" class="stgConnBtn" disabled title="Coming soon">Connect</button>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="stgDirEmpty" id="stgConnEmpty" hidden>No connectors match this filter.</p>
+                    </div>
+                </section>
+
+                <section class="stgPanel" id="stgPanelPlugins" data-stg-panel="plugins">
+                    <div class="stgPluginEmpty">
+                        <div class="stgPluginEmptyIcon" aria-hidden="true">
+                            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <clipPath id="stgPluginSolisLeft"><rect x="0" y="0" width="45" height="100"/></clipPath>
+                                    <clipPath id="stgPluginSolisRight"><rect x="55" y="0" width="45" height="100"/></clipPath>
+                                </defs>
+                                <g clip-path="url(#stgPluginSolisLeft)" transform="translate(-4 0)">
+                                    <circle cx="50" cy="50" r="12" fill="#9a928a"/>
+                                    <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#9a928a" stroke-width="6" transform="rotate(45 50 50)"/>
+                                    <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#9a928a" stroke-width="6" transform="rotate(-45 50 50)"/>
+                                </g>
+                                <g clip-path="url(#stgPluginSolisRight)" transform="translate(4 0)">
+                                    <circle cx="50" cy="50" r="12" fill="#9a928a"/>
+                                    <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#9a928a" stroke-width="6" transform="rotate(45 50 50)"/>
+                                    <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#9a928a" stroke-width="6" transform="rotate(-45 50 50)"/>
+                                </g>
+                            </svg>
+                        </div>
+                        <p class="stgPluginEmptyText">Give Solis role-level expertise with plugins</p>
+                        <button type="button" class="stgPluginBrowseBtn" id="stgBrowsePluginsBtn" disabled title="Coming soon">Browse plugins</button>
+                    </div>
+                </section>
 
                 <section class="stgPanel" id="stgPanelSupport" data-stg-panel="support">
                     <p class="stgPanelLead">Help and ways to reach us.</p>

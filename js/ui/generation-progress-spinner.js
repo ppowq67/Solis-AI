@@ -447,7 +447,7 @@ class GenerationProgressSpinner {
   _ensureTaskList() {
     if (this.tasksInitialized || !this.todoList) return;
     const e = this._getActiveTasks();
-    this.todoList.innerHTML = e.map((e, t) => `\n            <li class="generation-todo-item" id="generation-task-${t}" data-task-id="${e.id}">\n                <div class="generation-task-indicator">\n                    <div class="generation-task-circle generation-task-pending"></div>\n                    <div class="generation-task-circle generation-task-active-wrap">\n                        <svg class="generation-task-spinner" viewBox="0 0 50 50" aria-hidden="true">\n                            <circle cx="25" cy="25" r="20" fill="none" stroke="rgba(16,185,129,0.2)" stroke-width="4.5"></circle>\n                            <circle cx="25" cy="25" r="20" fill="none" stroke="#10b981" stroke-width="4.5"\n                                stroke-linecap="round" transform="rotate(-90 25 25)"></circle>\n                        </svg>\n                    </div>\n                    <div class="generation-task-circle generation-task-done">\n                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" aria-hidden="true">\n                            <polyline points="20 6 9 17 4 12"></polyline>\n                        </svg>\n                    </div>\n                </div>\n                <div class="generation-task-label-wrap">\n                    <div class="generation-task-label">${e.label}</div>\n                    ${e.id === "wait" ? '<div class="generation-task-hint" hidden></div>' : ""}\n                    <div class="generation-task-strikethrough"></div>\n                </div>\n            </li>\n        `).join("");
+    this.todoList.innerHTML = e.map((e, t) => `\n            <li class="generation-todo-item" id="generation-task-${t}" data-task-id="${e.id}">\n                <div class="generation-task-indicator">\n                    <div class="generation-task-circle generation-task-pending"></div>\n                    <div class="generation-task-circle generation-task-active-wrap">\n                        <svg class="generation-task-spinner" viewBox="0 0 50 50" aria-hidden="true">\n                            <circle class="generation-task-spinner-track" cx="25" cy="25" r="20" fill="none" stroke="#f3f4f6" stroke-width="4"></circle>\n                            <circle class="generation-task-spinner-arc" cx="25" cy="25" r="20" fill="none" stroke="#ff6b3d" stroke-width="4"\n                                stroke-linecap="round" stroke-dasharray="80 126" transform="rotate(-90 25 25)"></circle>\n                        </svg>\n                    </div>\n                    <div class="generation-task-circle generation-task-done">\n                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" aria-hidden="true">\n                            <polyline points="20 6 9 17 4 12"></polyline>\n                        </svg>\n                    </div>\n                </div>\n                <div class="generation-task-label-wrap">\n                    <div class="generation-task-label">${e.label}</div>\n                    ${e.id === "wait" ? '<div class="generation-task-hint" hidden></div>' : ""}\n                    <div class="generation-task-strikethrough"></div>\n                </div>\n            </li>\n        `).join("");
     this.tasksInitialized = true;
     this._updateTaskCounter();
   }
@@ -474,7 +474,14 @@ class GenerationProgressSpinner {
     this._clearIntroRevealTimers();
     this._resetTaskVisibility();
     this.tasksIntroPlayed = true;
-    this._showAllTasksInstant();
+    requestAnimationFrame(() => {
+      this._getActiveTasks().forEach((e, t) => {
+        const s = document.getElementById(`generation-task-${t}`);
+        if (!s) return;
+        s.style.setProperty("--reveal-delay", `${t * 80}ms`);
+        s.classList.add("is-revealed");
+      });
+    });
   }
   openPanel() {
     if (!this.todoPanel || !this.launcher) return;
@@ -601,7 +608,9 @@ class GenerationProgressSpinner {
     i.forEach((t, s) => {
       const i = document.getElementById(`generation-task-${s}`);
       if (!i) return;
-      i.classList.remove("is-active", "is-done", "is-failed", "is-waiting");
+      const a = i.classList.contains("is-active");
+      const o = i.classList.contains("is-done");
+      i.classList.remove("is-active", "is-done", "is-failed", "is-waiting", "is-step-pulse");
       if (e >= 100) {
         i.classList.add("is-done");
       } else if (s < n) {
@@ -609,6 +618,10 @@ class GenerationProgressSpinner {
       } else if (s === n) {
         i.classList.add("is-active");
         if (r) i.classList.add("is-waiting");
+        if (!a && !o) i.classList.add("is-step-pulse");
+      }
+      if (i.classList.contains("is-done") && !o) {
+        i.classList.add("is-check-pop");
       }
     });
     this._updateQueueTaskLabel(t, s);
@@ -1208,7 +1221,7 @@ class GenerationProgressSpinner {
     const s = t.toLowerCase();
     const i = /\b(vast\.?ai|modal\.com|runpod|serverless|rtx\s*\d+|gtx\s*\d+|a100|h100|l40|dph|\$\/hr)\b/i.test(t) || /\b(gpu|cpu)\s+worker\b/i.test(t) || /\bqueued on (vast|modal|cloud)\b/i.test(t) || /\binstance[=\s#:]?\s*\d{5,}\b/i.test(t) || /\b\d+(\.\d+)?\s*(MB\/s|MiB\/s|KB\/s|KiB\/s|Gbps|Mbps)\b/i.test(t) || /\b\d+(\.\d+)?\s*(MB|MiB|GB|GiB)\b/i.test(t) || /\bat\s+\d+(\.\d+)?\s*(MB|KB)/i.test(t) || /\b(traceback|exception|errno|http\/?\d|status[=\s]\d{3})\b/i.test(t);
     if (i) {
-      if (/download|install/i.test(s)) return "Installing video...";
+      if (/download|install|fetch/i.test(s)) return "Fetching & understanding the video...";
       if (/fail|error|crash|exception/i.test(s)) return "Something went wrong — try again";
       if (/queue|wait|slot|priority|starting|start|worker|rent|boot|load/i.test(s)) {
         return "Starting...";

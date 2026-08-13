@@ -203,6 +203,8 @@ const SPLITSCREEN_COLLAPSE_SNAP = 14;
 
 const SPLITSCREEN_IMMERSIVE_ENTER = .92;
 
+const SPLITSCREEN_CANVAS_MAX = .35;
+
 const SPLITSCREEN_PEEK_EXIT = .28;
 
 const SPLITSCREEN_COLLAPSE_ANIM_MS = 180;
@@ -3392,6 +3394,38 @@ function isCanvasSelected() {
   return splitscreenSecondaryType === "blank" || splitscreenSecondaryType === "blank_blur";
 }
 
+function clampCanvasPanelHeights(e, t, n) {
+  const i = Math.max(1, Number(n) || 1);
+  let r = Number(e) || 0;
+  let o = Number(t) || 0;
+  if (!isCanvasSelected()) {
+    return {
+      contentH: r,
+      secondaryH: o,
+      avail: i
+    };
+  }
+  const s = Math.round(i * SPLITSCREEN_CANVAS_MAX);
+  if (o > s) {
+    o = s;
+    r = i - o;
+  }
+  r = Math.max(0, Math.min(i, r));
+  o = Math.max(0, i - r);
+  return {
+    contentH: r,
+    secondaryH: o,
+    avail: i
+  };
+}
+
+function clampCanvasContentRatio(e) {
+  const t = Number(e);
+  if (!Number.isFinite(t)) return .5;
+  if (!isCanvasSelected()) return Math.max(.02, Math.min(.98, t));
+  return Math.max(1 - SPLITSCREEN_CANVAS_MAX, Math.min(.98, t));
+}
+
 function isGameplayOptionSelected(e) {
   if (e === "face_track") return splitscreenSecondaryType === "face_track";
   if (e === "blank") return splitscreenSecondaryType === "blank";
@@ -3586,6 +3620,8 @@ function selectSecondaryGameplay(e) {
   } else if (e === "blank" || e === "blank_blur") {
     splitscreenSecondaryType = e;
     splitscreenCanvasMode = e;
+    splitscreenContentRatio = clampCanvasContentRatio(splitscreenContentRatio);
+    splitscreenSavedRatio = splitscreenContentRatio;
   } else {
     splitscreenSecondaryType = "gameplay";
     selectedGameplayClip = e;
@@ -3958,11 +3994,7 @@ function calcSplitscreenHeights(e, t, n) {
     a = s;
     l = r - a;
   }
-  return {
-    contentH: a,
-    secondaryH: l,
-    avail: r
-  };
+  return clampCanvasPanelHeights(a, l, r);
 }
 
 function setSplitscreenPanelHeights(e, t, n) {
@@ -3974,6 +4006,11 @@ function setSplitscreenPanelHeights(e, t, n) {
   const c = Math.max(1, Number(n) > 0 ? Number(n) : l - a);
   e = Math.max(0, Math.min(c, Number(e) || 0));
   t = Math.max(0, c - e);
+  if (isCanvasSelected() && !splitscreenSecondaryCollapsed) {
+    const n = clampCanvasPanelHeights(e, t, c);
+    e = n.contentH;
+    t = n.secondaryH;
+  }
   r.style.display = "";
   r.style.flex = "0 0 1px";
   r.style.minHeight = "1px";
@@ -4576,14 +4613,14 @@ function finishSplitscreenDrag(e, t, n) {
   }
   _splitscreenDragPending = null;
   const {contentH: r, secondaryH: o, avail: s} = calcSplitscreenHeights(e, t, n);
-  if (o <= SPLITSCREEN_COLLAPSE_SNAP) {
+  if (o <= SPLITSCREEN_COLLAPSE_SNAP && !isCanvasSelected()) {
     i?.classList.remove("is-dragging");
     collapseSplitscreenSecondary();
     notifySubtitleLayoutIdle();
     return;
   }
   const a = r / Math.max(1, s);
-  if (splitscreenSecondaryType !== "face_track" && a >= SPLITSCREEN_IMMERSIVE_ENTER) {
+  if (splitscreenSecondaryType !== "face_track" && !isCanvasSelected() && a >= SPLITSCREEN_IMMERSIVE_ENTER) {
     i?.classList.remove("is-dragging");
     collapseSplitscreenSecondary();
     notifySubtitleLayoutIdle();
@@ -4659,7 +4696,7 @@ function applySplitscreenRatio() {
   const s = Math.max(1, r - o);
   let a = Number(splitscreenContentRatio);
   if (!Number.isFinite(a) || a <= 0 || a >= 1) a = .5;
-  a = Math.max(.02, Math.min(.98, a));
+  a = clampCanvasContentRatio(a);
   splitscreenContentRatio = a;
   const l = Math.round(s * a);
   const c = Math.max(0, s - l);
@@ -4878,18 +4915,25 @@ window.applySplitscreenMemoryLayout = function(e, t) {
       splitscreenInverted = !!e.splitscreen_inverted;
     }
     if (Number.isFinite(Number(e.splitscreen_content_ratio))) {
-      splitscreenContentRatio = Math.max(.02, Math.min(.98, Number(e.splitscreen_content_ratio)));
-      splitscreenSavedRatio = splitscreenContentRatio;
+      splitscreenContentRatio = Number(e.splitscreen_content_ratio);
     }
-    const t = String(e.splitscreen_secondary_type || "").toLowerCase();
-    const i = e.gameplay_clip_id;
-    if (t === "face_track" || t === "blank" || t === "blank_blur") {
-      selectSecondaryGameplay(t);
-    } else if (t === "gameplay" || i && ![ "face_track", "blank", "blank_blur" ].includes(String(i))) {
-      const e = i && ![ "face_track", "blank", "blank_blur" ].includes(String(i)) ? i : selectedGameplayClip || "minecraft_1";
+    const t = String(e.splitscreen_secondary_type || splitscreenSecondaryType || "").toLowerCase();
+    if (t === "blank" || t === "blank_blur") {
+      splitscreenSecondaryType = t;
+      splitscreenContentRatio = clampCanvasContentRatio(splitscreenContentRatio);
+    } else {
+      splitscreenContentRatio = Math.max(.02, Math.min(.98, Number(splitscreenContentRatio) || .5));
+    }
+    splitscreenSavedRatio = splitscreenContentRatio;
+    const i = String(e.splitscreen_secondary_type || "").toLowerCase();
+    const r = e.gameplay_clip_id;
+    if (i === "face_track" || i === "blank" || i === "blank_blur") {
+      selectSecondaryGameplay(i);
+    } else if (i === "gameplay" || r && ![ "face_track", "blank", "blank_blur" ].includes(String(r))) {
+      const e = r && ![ "face_track", "blank", "blank_blur" ].includes(String(r)) ? r : selectedGameplayClip || "minecraft_1";
       selectSecondaryGameplay(e);
     }
-    if (e.splitscreen_secondary_collapsed) {
+    if (e.splitscreen_secondary_collapsed && i !== "blank" && i !== "blank_blur") {
       collapseSplitscreenSecondary();
     } else {
       splitscreenSecondaryCollapsed = false;
@@ -5791,6 +5835,9 @@ class ClipsStudio {
         if (e && this.isValidMediaUrl(e)) {
           this._getCachedDurationCheck(e);
           this._getCachedLimitCheck();
+          try {
+            window.SolisInstantRecipe?.prefetch?.(e);
+          } catch (e) {}
         }
       };
       e.addEventListener("paste", () => {
@@ -6202,15 +6249,15 @@ class ClipsStudio {
           });
         }
       } catch (e) {}
-      o.innerHTML = "";
+      o.innerHTML = `<div class="preview-skel" aria-hidden="true"></div>`;
       o.classList.remove("has-video", "library-splitscreen-preview", "library-ranking-edit");
     }
     if (i) {
-      i.classList.remove("hidden");
-      i.style.display = "flex";
-      i.style.visibility = "visible";
-      i.style.opacity = "1";
-      i.style.pointerEvents = "auto";
+      i.classList.add("hidden");
+      i.style.display = "none";
+      i.style.visibility = "hidden";
+      i.style.opacity = "0";
+      i.style.pointerEvents = "none";
     }
     const s = document.getElementById("previewTemplateName");
     const a = document.getElementById("previewTemplateDescription");
@@ -7044,15 +7091,9 @@ class ClipsStudio {
     return r.length ? `${i}?${r.join("&")}` : i;
   }
   _showLibraryPreviewLoading() {
-    const e = document.getElementById("templatePreviewLoading");
-    const t = document.querySelector(".template-preview-content");
-    if (t) t.classList.add("is-library-preview");
-    if (!e) return;
-    e.classList.remove("hidden");
-    e.style.display = "flex";
-    e.style.visibility = "visible";
-    e.style.opacity = "1";
-    e.style.pointerEvents = "auto";
+    const e = document.querySelector(".template-preview-content");
+    if (e) e.classList.add("is-library-preview");
+    this._hideLibraryPreviewLoading();
   }
   _hideLibraryPreviewLoading() {
     const e = document.getElementById("templatePreviewLoading");
@@ -7066,7 +7107,7 @@ class ClipsStudio {
   _setLibraryPreviewPlaceholder(e, t = "Loading preview...") {
     if (!e) return;
     e.classList.remove("has-video");
-    e.innerHTML = `\n            <div class="preview-video-placeholder library-preview-loading">\n                <div class="solis-arc-spinner" aria-hidden="true">\n                    <svg viewBox="0 0 48 48">\n                        <circle class="solis-arc-track" cx="24" cy="24" r="18" fill="none"/>\n                        <circle class="solis-arc-head" cx="24" cy="24" r="18" fill="none"/>\n                    </svg>\n                </div>\n                <p>${t}</p>\n            </div>\n        `;
+    e.innerHTML = `<div class="preview-skel" aria-hidden="true"></div>`;
   }
   _showLibraryPreviewError(e, t = "Could not load video preview", n = null) {
     if (!e) return;
@@ -7079,8 +7120,7 @@ class ClipsStudio {
       o.addEventListener("click", t => {
         t.preventDefault();
         t.stopPropagation();
-        this._setLibraryPreviewPlaceholder(e, "Loading preview...");
-        this._showLibraryPreviewLoading();
+        this._setLibraryPreviewPlaceholder(e);
         this.mountLibraryPreviewVideo(e, r);
       }, {
         once: true
@@ -7211,6 +7251,7 @@ class ClipsStudio {
       videoQuality: "auto"
     };
     this.toggleLibraryPreviewLayout(true);
+    this._renderPreviewViralityRail(s);
     if (typeof window.syncPreviewModifiersForTemplate === "function") {
       window.syncPreviewModifiersForTemplate("");
     }
@@ -8653,8 +8694,8 @@ class ClipsStudio {
       }
       const l = Math.min(2800, 400 + o * 450);
       safeLog(`Preview not ready (${n}) — retry ${o + 1}/${s} in ${l}ms`);
-      if (o === 0) {
-        this._setLibraryPreviewPlaceholder(e, "Preparing preview...");
+      if (o === 0 && !e.querySelector("video")) {
+        this._setLibraryPreviewPlaceholder(e);
       }
       setTimeout(() => {
         if (isStale()) return;
@@ -8689,11 +8730,17 @@ class ClipsStudio {
       i.setAttribute("playsinline", "");
       i.setAttribute("controlslist", "nodownload nofullscreen noremoteplayback noplaybackrate");
       i.disablePictureInPicture = true;
-      i.style.cssText = "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000;z-index:2;display:block;visibility:visible;opacity:1;";
+      i.style.cssText = "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:transparent;z-index:2;display:block;visibility:visible;opacity:0;";
       i.removeAttribute("crossorigin");
-      e.innerHTML = "";
+      e.querySelectorAll("video").forEach(e => e.remove());
+      if (!e.querySelector(".preview-skel")) {
+        const t = document.createElement("div");
+        t.className = "preview-skel";
+        t.setAttribute("aria-hidden", "true");
+        e.appendChild(t);
+      }
       e.appendChild(i);
-      e.classList.add("has-video");
+      e.classList.remove("has-video");
       let r = false;
       const reveal = () => {
         if (r || isStale()) return;
@@ -8705,6 +8752,8 @@ class ClipsStudio {
         i.style.setProperty("display", "block", "important");
         i.style.setProperty("visibility", "visible", "important");
         i.style.setProperty("opacity", "1", "important");
+        i.style.setProperty("background", "#000", "important");
+        e.querySelector(".preview-skel")?.remove();
         this._hideLibraryPreviewLoading();
         ensurePreviewAudioToggle(e);
         if (typeof PreviewTimeline !== "undefined") {
@@ -8768,6 +8817,23 @@ class ClipsStudio {
   async fetchSecureLibraryPreview(e, t) {
     this.mountLibraryPreviewVideo(e, t);
   }
+  _hidePreviewViralityRail() {
+    const e = document.getElementById("previewViralityRail");
+    if (!e) return;
+    e.hidden = true;
+    e.innerHTML = "";
+  }
+  _renderPreviewViralityRail(e) {
+    const t = document.getElementById("previewViralityRail");
+    if (!t) return;
+    const n = window.SolisClipCard && typeof SolisClipCard.railHTML === "function" ? SolisClipCard.railHTML(e) : "";
+    if (!n) {
+      this._hidePreviewViralityRail();
+      return;
+    }
+    t.innerHTML = n;
+    t.hidden = false;
+  }
   toggleLibraryPreviewLayout(e) {
     const t = document.getElementById("templateInfoPanel");
     const n = document.getElementById("libraryInfoPanel");
@@ -8777,6 +8843,7 @@ class ClipsStudio {
     const s = o?.querySelector('[data-tool="text"]');
     const a = this._isCurrentLibraryRanking();
     const visibleToolbarBtns = () => o ? Array.from(o.querySelectorAll(".tool-btn")).filter(e => e.style.display !== "none" && getComputedStyle(e).display !== "none") : [];
+    if (!e) this._hidePreviewViralityRail();
     if (i) {
       i.hidden = !e;
       i.style.display = e ? "" : "none";
@@ -10771,6 +10838,7 @@ class ClipsStudio {
       status: "completed",
       slotNumber: e.slotNumber,
       isSlotSystem: e.isSlotSystem,
+      virality: e.virality || null,
       _optimistic: true
     };
     const n = document.querySelector(`[data-processing-id="${e.id}"]`);
@@ -10779,32 +10847,11 @@ class ClipsStudio {
       n.style.opacity = "0.5";
       setTimeout(() => {
         n.innerHTML = "";
-        const e = sanitizeHTML(t.name);
-        const i = isValidImageUrl(t.thumbnailUrl) ? t.thumbnailUrl : "/assets/no-image-placeholder.svg";
-        const r = document.createElement("div");
-        r.className = "card-preview";
-        r.innerHTML = `\n                    <div class="status-pill">\n                        <div class="status-dot"></div>\n                        <span class="status-text">Ready</span>\n                    </div>\n                    <img src="${i}" alt="Asset Preview" onerror="this.src='/assets/no-image-placeholder.svg'">\n                    <div class="card-actions">\n                        <button class="card-action-btn library-delete-btn" title="Delete clip" tabindex="0">\n                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">\n                                <path d="M3 6h18"/>\n                                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>\n                                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>\n                                <line x1="10" y1="11" x2="10" y2="17"/>\n                                <line x1="14" y1="11" x2="14" y2="17"/>\n                            </svg>\n                        </button>\n                    </div>\n                `;
-        const o = document.createElement("div");
-        o.className = "card-content";
-        const s = document.createElement("h2");
-        s.className = "card-title";
-        s.textContent = e;
-        const a = document.createElement("div");
-        a.className = "card-footer";
-        a.innerHTML = `\n                    <div class="badge">\n                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>\n                        <span class="duration-text">${sanitizeHTML(t.duration || "—")}</span>\n                    </div>\n                `;
-        const l = document.createElement("button");
-        l.className = "export-btn library-download-btn";
-        l.type = "button";
-        l.title = "Download";
-        l.setAttribute("data-project-id", t.projectId);
-        l.innerHTML = `\n                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">\n                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>\n                        <polyline points="7 10 12 15 17 10"/>\n                        <line x1="12" y1="15" x2="12" y2="3"/>\n                    </svg>\n                    <span>Download</span>\n                `;
-        a.appendChild(l);
-        o.appendChild(s);
-        o.appendChild(a);
-        n.appendChild(r);
-        n.appendChild(o);
+        n.classList.add("solis-clip-card");
+        n.innerHTML = window.SolisClipCard && SolisClipCard.buildHTML(t) || `<div class="scc-meta"><h2 class="card-title">${sanitizeHTML(t.name)}</h2></div>`;
+        if (window.SolisClipCard) SolisClipCard.bind(n, t, this);
         n.removeAttribute("data-processing-id");
-        n.classList.add("library-card");
+        n.classList.add("library-card", "solis-clip-card");
         n.setAttribute("data-id", t.id);
         n.setAttribute("data-project-id", t.projectId);
         n.style.opacity = "0";
@@ -10851,9 +10898,9 @@ class ClipsStudio {
       return e.json();
     }).then(t => {
       if (t.duration_formatted && e) {
-        const n = e.querySelector(".duration-text");
-        if (n) {
-          n.textContent = t.duration_formatted;
+        if (window.SolisClipCard) SolisClipCard.setDuration(e, t.duration_formatted); else {
+          const n = e.querySelector(".duration-text");
+          if (n) n.textContent = t.duration_formatted;
         }
       }
     }).catch(e => safeLog("Could not fetch duration:", e));
@@ -10886,7 +10933,7 @@ class ClipsStudio {
     if (!e.dataset.previewBound) {
       e.dataset.previewBound = "1";
       e.addEventListener("click", i => {
-        if (i.target.closest(".library-download-btn, .library-delete-btn")) return;
+        if (i.target.closest(".library-download-btn, .library-delete-btn, .scc-ico, .scc-viral")) return;
         i.preventDefault();
         i.stopPropagation();
         this.openLibraryPreview(t, n, e);
@@ -10947,7 +10994,8 @@ class ClipsStudio {
           thumbnailUrl: e.thumbnail_url,
           slotNumber: e.slot_number,
           isSlotSystem: e.slots ? true : false,
-          slots: e.slots
+          slots: e.slots,
+          virality: e.virality || null
         }));
         const i = new Set(n.map(e => String(e.id)));
         const r = (this.libraryItems || []).filter(e => {
@@ -10959,6 +11007,9 @@ class ClipsStudio {
         this.hideLibrarySkeleton();
         if (this.libraryPreviewModalOpen) {
           this._libraryRefreshPending = true;
+          const e = this.currentTemplateForPreview?.projectId;
+          const t = e && this.libraryItems.find(t => String(t.projectId || t.id) === String(e));
+          if (t) this._renderPreviewViralityRail(t);
         } else {
           this.updateLibraryView();
         }
@@ -10977,7 +11028,7 @@ class ClipsStudio {
   }
   _librarySessionCacheKey() {
     const e = String(currentUser?.id || window.currentUser?.id || "");
-    return e ? `solis_lib_v1_${e}` : null;
+    return e ? `solis_lib_v2_${e}` : null;
   }
   _writeLibrarySessionCache() {
     try {
@@ -11209,35 +11260,36 @@ class ClipsStudio {
       const i = this.getSortedLibraryItems(this.libraryItems);
       let r = 0;
       const buildCard = e => {
-        const t = sanitizeHTML(e.name);
-        const n = isValidImageUrl(e.thumbnailUrl) ? e.thumbnailUrl : "/assets/no-image-placeholder.svg";
-        const i = document.createElement("div");
-        i.className = "library-card";
-        i.setAttribute("data-id", e.id);
-        i.setAttribute("data-project-id", e.projectId);
-        i.innerHTML = `\n                <div class="card-preview">\n                    <div class="status-pill">\n                        <div class="status-dot"></div>\n                        <span class="status-text">Ready</span>\n                    </div>\n                    <img src="${n}" alt="Asset Preview" loading="lazy"\n                         onerror="this.src='/assets/no-image-placeholder.svg'">\n                    <div class="card-actions">\n                        <button class="card-action-btn library-delete-btn" data-item-id="${e.id}" title="Delete clip" type="button">\n                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n                                <path d="M3 6h18"/>\n                                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>\n                                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>\n                                <line x1="10" y1="11" x2="10" y2="17"/>\n                                <line x1="14" y1="11" x2="14" y2="17"/>\n                            </svg>\n                        </button>\n                    </div>\n                </div>\n                <div class="card-content">\n                    <h2 class="card-title" title="${t}">${t}</h2>\n                    <div class="card-footer">\n                        <div class="badge">\n                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">\n                                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>\n                            </svg>\n                            <span class="duration-text">${e.duration || "—"}</span>\n                        </div>\n                        <button class="export-btn library-download-btn" data-project-id="${e.projectId}" title="Download clip" type="button">\n                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">\n                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>\n                                <polyline points="7 10 12 15 17 10"/>\n                                <line x1="12" y1="15" x2="12" y2="3"/>\n                            </svg>\n                            <span>Download</span>\n                        </button>\n                    </div>\n                </div>`;
+        const t = document.createElement("div");
+        t.className = "library-card solis-clip-card";
+        t.setAttribute("data-id", e.id);
+        t.setAttribute("data-project-id", e.projectId);
+        t.innerHTML = window.SolisClipCard && SolisClipCard.buildHTML(e) || `<div class="scc-meta"><h2 class="card-title">${sanitizeHTML(e.name)}</h2></div>`;
+        if (window.SolisClipCard) SolisClipCard.bind(t, e, this);
         if (typeof storeLibraryCard === "function") {
           storeLibraryCard(e.id, {
             id: e.id,
-            html: i.innerHTML,
-            classList: i.className,
+            html: t.innerHTML,
+            classList: t.className,
             dataAttributes: {
               "data-id": e.id
             }
           });
         }
-        const r = String(e.projectId);
-        if (r && this._durationCache[r]) {
-          const e = i.querySelector(".duration-text");
-          if (e) e.textContent = this._durationCache[r];
-        } else if (r) {
+        const n = String(e.projectId);
+        if (n && this._durationCache[n]) {
+          if (window.SolisClipCard) SolisClipCard.setDuration(t, this._durationCache[n]); else {
+            const e = t.querySelector(".duration-text");
+            if (e) e.textContent = this._durationCache[n];
+          }
+        } else if (n) {
           let e = null;
-          const t = new IntersectionObserver(n => {
-            if (n[0].isIntersecting) {
+          const i = new IntersectionObserver(r => {
+            if (r[0].isIntersecting) {
               e = setTimeout(() => {
-                t.disconnect();
+                i.disconnect();
                 if (window.__solisDownloadBusy) return;
-                fetch(`/api/clips/duration/${r}`, {
+                fetch(`/api/clips/duration/${n}`, {
                   method: "GET",
                   credentials: "include"
                 }).then(async e => {
@@ -11249,9 +11301,11 @@ class ClipsStudio {
                   }
                 }).then(e => {
                   if (e?.duration_formatted) {
-                    this._durationCache[r] = e.duration_formatted;
-                    const t = i.querySelector(".duration-text");
-                    if (t) t.textContent = e.duration_formatted;
+                    this._durationCache[n] = e.duration_formatted;
+                    if (window.SolisClipCard) SolisClipCard.setDuration(t, e.duration_formatted); else {
+                      const n = t.querySelector(".duration-text");
+                      if (n) n.textContent = e.duration_formatted;
+                    }
                   }
                 }).catch(() => {});
               }, 400);
@@ -11265,10 +11319,10 @@ class ClipsStudio {
             rootMargin: "0px",
             threshold: .1
           });
-          t.observe(i);
-          this._durationObservers.push(t);
+          i.observe(t);
+          this._durationObservers.push(i);
         }
-        return i;
+        return t;
       };
       const appendBatch = () => {
         const t = Math.min(r + n, i.length);
@@ -11380,7 +11434,7 @@ class ClipsStudio {
             return;
           }
           const i = e.target.closest(".library-card");
-          if (i && !e.target.closest(".library-download-btn, .library-delete-btn")) {
+          if (i && !e.target.closest(".library-download-btn, .library-delete-btn, .scc-ico, .scc-viral")) {
             e.preventDefault();
             e.stopPropagation();
             const t = i.getAttribute("data-id");
@@ -11838,6 +11892,7 @@ class ClipsStudio {
           duration: n?.duration || r.duration || "0s",
           timestamp: (new Date).toISOString(),
           status: "completed",
+          virality: n?.virality || r.virality || null,
           _optimistic: true
         };
         this.libraryItems = this.libraryItems.filter(e => String(e.projectId || e.id) !== String(i.projectId));

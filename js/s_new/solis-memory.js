@@ -127,7 +127,7 @@
   let h = false;
   let b = null;
   let _ = null;
-  let k = false;
+  let M = false;
   function _resolveUserId(e) {
     if (e != null && String(e).trim()) return String(e).trim();
     if (_) return _;
@@ -173,7 +173,7 @@
           sync: false
         });
       } catch (e) {}
-      k = true;
+      M = true;
     }
     return {
       switched: i,
@@ -186,7 +186,7 @@
     } catch (e) {}
     return null;
   }
-  const M = {
+  const k = {
     karaoke: {
       color: "#FFFFFF",
       fill: null
@@ -403,7 +403,7 @@
     }
     if (n.anim === "center") n.anim = "fade";
     const o = String(n.anim || "").toLowerCase();
-    const r = M[o];
+    const r = k[o];
     if (r) {
       if (!n.color) n.color = r.color;
       if (!("fill" in n) && r.fill) n.fill = r.fill;
@@ -783,10 +783,10 @@
     if (h && isRankingTemplate(e)) return true;
     if (w && !y) return true;
     if (h && !d && !y) return true;
-    const k = smarterCaptions(i, e);
-    const M = fingerprint(l, a, c) === t.fingerprint;
-    const v = !k || fingerprint(null, a) === fingerprint(null, k);
-    if (M && v) return false;
+    const M = smarterCaptions(i, e);
+    const k = fingerprint(l, a, c) === t.fingerprint;
+    const v = !M || fingerprint(null, a) === fingerprint(null, M);
+    if (k && v) return false;
     return true;
   }
   function flushDeferredRankingCustoms() {
@@ -879,7 +879,7 @@
     if (e) {
       e.hidden = true;
       e.setAttribute("hidden", "");
-      e.classList.remove("open");
+      e.classList.remove("open", "solis-memory-suggest--recipe");
       e.style.visibility = "hidden";
       e.style.opacity = "0";
       e.style.pointerEvents = "none";
@@ -1004,6 +1004,11 @@
     const t = getTemplateMemory(e);
     let n = false;
     if (isSplitscreenTemplate(e)) {
+      try {
+        if (window.SolisInstantRecipe?.willOffer?.(e) || window.SolisInstantRecipe?.didOffer?.()) {
+          return;
+        }
+      } catch (e) {}
       if (t && wantsLayoutSuggest(e, t)) {
         n = offerLayoutSuggest(e, t);
       }
@@ -1051,6 +1056,47 @@
     const t = getTemplateMemory(e);
     if (captionsForSuggest(t)) return false;
     return true;
+  }
+  function offerInstantRecipe(e, t) {
+    if (!e || !e.ok || !isSplitscreenTemplate(t)) return false;
+    const n = e.splitscreen;
+    if (!n || typeof n !== "object") return false;
+    if (typeof window.offerSplitscreenMemorySuggest !== "function") return false;
+    const s = window.offerSplitscreenMemorySuggest(n, t);
+    if (!s) return false;
+    const i = ensureSuggestEl();
+    const o = i.querySelector("#solisMemorySuggestTitle");
+    const r = String(e.why_short || e.why || "").trim();
+    if (o) {
+      o.hidden = !r;
+      o.textContent = r;
+      if (r) {
+        o.removeAttribute("hidden");
+        o.style.display = "";
+      }
+    }
+    const l = i.querySelector("#solisMemorySuggestSub");
+    if (l) l.textContent = "";
+    i.dataset.templateId = t;
+    i.dataset.mode = "instant-recipe";
+    i.classList.add("solis-memory-suggest--recipe");
+    i.classList.remove("solis-memory-suggest--ranking");
+    try {
+      i._solisInstantRecipe = JSON.parse(JSON.stringify(e));
+    } catch (t) {
+      i._solisInstantRecipe = e;
+    }
+    m = true;
+    placeSuggestNearPreview();
+    revealSuggestEl(i);
+    return true;
+  }
+  function retrySuggest(e) {
+    const t = e || S;
+    if (!t || m) return;
+    const n = document.getElementById("templatePreviewModal");
+    if (!n || !n.classList.contains("active")) return;
+    showSuggestion(t);
   }
   function offerLayoutSuggest(e, t) {
     t = t || getTemplateMemory(e);
@@ -1167,7 +1213,36 @@
     hideSuggest();
     if (t) p.delete(t);
     const s = getTemplateMemory(t);
-    if (!s) return;
+    if (!s && n !== "instant-recipe") return;
+    if (n === "instant-recipe") {
+      const n = e._solisInstantRecipe || window.SolisInstantRecipe?.get?.();
+      const s = n?.splitscreen;
+      try {
+        if (window.SolisMemory) window.SolisMemory._applying = true;
+        if (s && typeof window.applySplitscreenMemoryLayout === "function") {
+          window.applySplitscreenMemoryLayout(s, {
+            commit: true
+          });
+        }
+      } catch (e) {} finally {
+        if (window.SolisMemory) window.SolisMemory._applying = false;
+      }
+      try {
+        window.SolisInstantRecipe?.sendFeedback?.(true);
+      } catch (e) {}
+      try {
+        delete e._solisInstantRecipe;
+      } catch (e) {}
+      e.classList.remove("solis-memory-suggest--recipe");
+      d = 0;
+      m = false;
+      if (window.__solisRecipeSkipCaptions) {
+        m = true;
+        return;
+      }
+      continueSuggestAfterLayout(t);
+      return;
+    }
     if (n === "layout-only") {
       try {
         if (window.SolisMemory) window.SolisMemory._applying = true;
@@ -1246,6 +1321,33 @@
     const e = ensureSuggestEl();
     const t = e.dataset.templateId || S;
     const n = e.dataset.mode || "all";
+    if (n === "instant-recipe") {
+      try {
+        if (typeof window.revertSplitscreenMemorySuggestPreview === "function") {
+          window.revertSplitscreenMemorySuggestPreview();
+        }
+      } catch (e) {}
+      try {
+        window.SolisInstantRecipe?.sendFeedback?.(false);
+      } catch (e) {}
+      try {
+        delete e._solisInstantRecipe;
+      } catch (e) {}
+      e.classList.remove("solis-memory-suggest--recipe");
+      hideSuggest();
+      m = false;
+      d = 0;
+      if (!window.__solisRecipeSkipCaptions) {
+        setTimeout(() => {
+          if (!t || p.has(t)) return;
+          const e = getTemplateMemory(t);
+          if (e && offerCaptionSuggest(t, e)) {
+            m = true;
+          }
+        }, 280);
+      }
+      return;
+    }
     if (n === "layout-only") {
       try {
         if (typeof window.revertSplitscreenMemorySuggestPreview === "function") {
@@ -1443,8 +1545,8 @@
           }
           return null;
         }
-        const s = k;
-        k = false;
+        const s = M;
+        M = false;
         const i = mergeMemoryStates(readState(), n, {
           preferRemote: s
         });
@@ -1669,6 +1771,8 @@
     markSuggestionRejected: markSuggestionRejected,
     rejectSuggestion: rejectSuggestion,
     acceptSuggestion: acceptSuggestion,
+    offerInstantRecipe: offerInstantRecipe,
+    retrySuggest: retrySuggest,
     rememberCaptionSnap: rememberCaptionSnap,
     recallCaptionSnap: recallCaptionSnap,
     getCurrentTemplateId: () => S,

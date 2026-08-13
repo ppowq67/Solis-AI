@@ -7,17 +7,17 @@ const GENERATION_TASK_PIPELINES = {
   }, {
     id: "install",
     label: "Installing video",
-    keywords: [ "download", "installing", "preparing download", "starting generation", "starting download", "fetching" ],
+    keywords: [ "download", "installing", "preparing download", "starting generation", "starting download", "fetching", "fetch &", "source video", "video info" ],
     maxProgress: 35
   }, {
     id: "clip",
     label: "Clipping moments",
-    keywords: [ "moment", "detect", "segment", "highlight", "analyz", "extract", "audio", "finding", "post-process", "scene", "operator" ],
+    keywords: [ "moment", "detect", "segment", "highlight", "analyz", "extract", "audio", "finding", "post-process", "scene", "operator", "clipping" ],
     maxProgress: 62
   }, {
     id: "overlay",
     label: "Overlaying ranking",
-    keywords: [ "overlay", "ranking", "title", "progressive", "hook text", "writing ai" ],
+    keywords: [ "overlay", "ranking", "hook text", "writing ai", "overlaying" ],
     maxProgress: 78
   }, {
     id: "compile",
@@ -27,7 +27,7 @@ const GENERATION_TASK_PIPELINES = {
   }, {
     id: "export",
     label: "Exporting",
-    keywords: [ "export", "encoding final", "finaliz", "final touch", "watermark", "caption", "ready", "complete", "done" ],
+    keywords: [ "encoding final", "finaliz", "final touch", "watermark", "adding caption", "exporting" ],
     maxProgress: 100
   } ],
   splitscreen: [ {
@@ -38,7 +38,7 @@ const GENERATION_TASK_PIPELINES = {
   }, {
     id: "install",
     label: "Installing video",
-    keywords: [ "download", "installing", "preparing download", "starting generation", "starting download" ],
+    keywords: [ "download", "installing", "preparing download", "starting generation", "starting download", "fetching" ],
     maxProgress: 30
   }, {
     id: "moment",
@@ -58,7 +58,7 @@ const GENERATION_TASK_PIPELINES = {
   }, {
     id: "export",
     label: "Exporting",
-    keywords: [ "export", "encoding final", "finaliz", "final touch", "watermark", "caption", "ready", "complete", "done" ],
+    keywords: [ "encoding final", "finaliz", "final touch", "watermark", "adding caption", "exporting" ],
     maxProgress: 100
   } ],
   library_apply: [ {
@@ -69,7 +69,7 @@ const GENERATION_TASK_PIPELINES = {
   }, {
     id: "download",
     label: "Downloading",
-    keywords: [ "download", "export", "saving", "ready", "finaliz", "complete" ],
+    keywords: [ "download", "saving", "finaliz", "exporting" ],
     maxProgress: 100
   } ]
 };
@@ -574,10 +574,12 @@ class GenerationProgressSpinner {
     for (let e = s.length - 1; e >= 0; e--) {
       const t = s[e];
       if (t.id === "wait") continue;
-      if ((t.keywords || []).some(e => i.includes(e))) {
-        n = e;
-        break;
-      }
+      if (!(t.keywords || []).some(e => i.includes(e))) continue;
+      const a = e > 0 ? Number(s[e - 1].maxProgress) : 0;
+      const o = e <= 1 || r >= Math.max(0, a - 8);
+      if (!o) continue;
+      n = e;
+      break;
     }
     let a = 0;
     for (let e = 0; e < s.length; e++) {
@@ -588,6 +590,7 @@ class GenerationProgressSpinner {
       if (Number.isFinite(i) && r <= i) break;
     }
     if (n < 0) return a;
+    if (n > a + 1) return a;
     return Math.max(n, a);
   }
   _updateTaskStates(e, t = "", s = null) {
@@ -600,8 +603,17 @@ class GenerationProgressSpinner {
       n = e >= 0 ? e : 0;
       this.currentTaskIndex = n;
     } else if (this.currentTaskIndex >= 0 && e < 100) {
-      n = Math.max(n, this.currentTaskIndex);
-      this.currentTaskIndex = n;
+      const t = Math.max(0, Number(e) || 0);
+      if (this.currentTaskIndex > n) {
+        const e = this.currentTaskIndex > 0 ? Number(i[this.currentTaskIndex - 1]?.maxProgress) || 0 : 0;
+        if (t + 5 < e) {
+          this.currentTaskIndex = n;
+        } else {
+          n = this.currentTaskIndex;
+        }
+      } else {
+        this.currentTaskIndex = n;
+      }
     } else {
       this.currentTaskIndex = n;
     }

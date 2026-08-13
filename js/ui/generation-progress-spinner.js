@@ -1012,6 +1012,7 @@ class GenerationProgressSpinner {
       const a = this._resolveActiveProjectId(t) || t;
       const o = (s || "").toLowerCase();
       if (o === "completed") {
+        this._ensureCompletedLibraryItem(a, e || {});
         this.completeGeneration(a);
       } else if (this._isCancelledStatus(o)) {
         this.stopGeneration(a, r || "Stopped");
@@ -1042,35 +1043,13 @@ class GenerationProgressSpinner {
       if (!this._isValidProjectId(t)) return;
       if (this._wasUserCancelled(t)) return;
       const o = this._resolveActiveProjectId(t) || t;
-      try {
-        const e = window.clipsStudio;
-        if (e && Array.isArray(e.libraryItems)) {
-          const s = String(t);
-          let o = e.libraryItems.find(e => String(e.projectId || e.id) === s);
-          if (!o) {
-            o = {
-              id: t,
-              projectId: t,
-              status: "completed",
-              timestamp: new Date,
-              _optimistic: true
-            };
-            e.libraryItems.unshift(o);
-          }
-          if (i) o.name = i;
-          if (r) o.thumbnailUrl = r;
-          if (n) o.templateName = n;
-          if (a) o.template = a;
-          o.status = "completed";
-          o._optimistic = false;
-          e._libraryLastLoaded = 0;
-          if (!e.libraryPreviewModalOpen) {
-            e.updateLibraryView?.();
-          } else {
-            e._libraryRefreshPending = true;
-          }
-        }
-      } catch (e) {}
+      this._ensureCompletedLibraryItem(t, {
+        video_title: i,
+        thumbnail_url: r,
+        template_name: n,
+        template: a,
+        virality: e?.virality
+      });
       if (typeof window.notificationSystem?.showVideoGenerated === "function") {
         window.notificationSystem.showVideoGenerated({
           videoTitle: i || `Video ${String(t).substring(0, 8)}...`,
@@ -1396,11 +1375,61 @@ class GenerationProgressSpinner {
       throw t;
     }
   }
+  _ensureCompletedLibraryItem(e, t = {}) {
+    const s = window.clipsStudio;
+    if (!s) return;
+    if (!Array.isArray(s.libraryItems)) s.libraryItems = [];
+    const i = String(e || "").trim();
+    if (!i || !this._isValidProjectId(i)) return;
+    const same = e => {
+      const t = String(e?.projectId || e?.id || "");
+      return t === i || this._idsLikelySameJob(t, i);
+    };
+    let r = s.libraryItems.find(same);
+    if (!r) {
+      r = {
+        id: i,
+        projectId: i,
+        name: t.video_title || t.name || t.template_name || "Clip",
+        template: t.template || this.activeTemplateId,
+        templateName: t.template_name || t.templateName || "",
+        timestamp: t.created_at ? new Date(t.created_at) : new Date,
+        status: "completed",
+        thumbnailUrl: t.thumbnail_url || t.thumbnailUrl || null,
+        virality: t.virality || null,
+        _optimistic: true,
+        _justCompleted: true
+      };
+      s.libraryItems.unshift(r);
+    } else {
+      r.status = "completed";
+      r._justCompleted = true;
+      if (t.video_title) r.name = t.video_title;
+      if (t.thumbnail_url || t.thumbnailUrl) {
+        r.thumbnailUrl = t.thumbnail_url || t.thumbnailUrl;
+      }
+      if (t.template) r.template = t.template;
+      if (t.template_name || t.templateName) {
+        r.templateName = t.template_name || t.templateName;
+      }
+      if (t.virality) r.virality = t.virality;
+    }
+    s._libraryLastLoaded = 0;
+    try {
+      s.saveLibraryItems?.();
+    } catch (e) {}
+    if (!s.libraryPreviewModalOpen) {
+      s.updateLibraryView?.();
+    } else {
+      s._libraryRefreshPending = true;
+    }
+  }
   _refreshLibrarySoon() {
     if (this._libraryRefreshQueued) return;
     this._libraryRefreshQueued = true;
-    const run = (e = 0) => {
-      this._libraryRefreshQueued = e < 2;
+    const e = [ 400, 2e3, 6e3, 12e3 ];
+    const run = (t = 0) => {
+      this._libraryRefreshQueued = t < e.length - 1;
       if (typeof updateStorageBadgeDisplay === "function") {
         updateStorageBadgeDisplay();
       }
@@ -1410,8 +1439,8 @@ class GenerationProgressSpinner {
           soft: true,
           force: true
         }).catch(() => {}).finally(() => {
-          if (e < 1) {
-            setTimeout(() => run(e + 1), 1200);
+          if (t < e.length - 1) {
+            setTimeout(() => run(t + 1), e[t + 1]);
           } else {
             this._libraryRefreshQueued = false;
           }
@@ -1420,9 +1449,11 @@ class GenerationProgressSpinner {
         this._libraryRefreshQueued = false;
       }
     };
-    setTimeout(() => run(0), 400);
+    setTimeout(() => run(0), e[0]);
   }
   completeGeneration(e) {
+    this._ensureCompletedLibraryItem(e);
+    this._refreshLibrarySoon();
     if (this._completionHandled && this.activeGenerations.size === 0 && !this.optimisticPending) {
       return;
     }
@@ -1438,7 +1469,6 @@ class GenerationProgressSpinner {
     this.showVideoReadyNotification();
     this.displayProgress(100, "Processing complete! Video ready!");
     this._unlockUrlSubmitButton();
-    this._refreshLibrarySoon();
     if (this.activeGenerations.size === 0) {
       this.stopPolling();
       setTimeout(() => {

@@ -10864,7 +10864,10 @@ class ClipsStudio {
       }, 300);
     }
     this.processingItems = this.processingItems.filter(t => t.id !== e.id);
-    this.libraryItems.unshift(t);
+    const i = this.libraryItems.some(e => String(e.projectId || e.id) === String(t.projectId));
+    if (!i) {
+      this.libraryItems.unshift(t);
+    }
     this.saveProcessingItems();
     this.saveLibraryItems();
     if (this.processingItems.length === 0) {
@@ -10989,7 +10992,7 @@ class ClipsStudio {
       });
       if (t.ok) {
         const e = await t.json();
-        const n = e.projects.map(e => ({
+        const n = e.projects.filter(e => e && e.id).map(e => ({
           id: e.id,
           projectId: e.id,
           name: e.video_title || e.template_name || "Clip",
@@ -11001,14 +11004,24 @@ class ClipsStudio {
           slotNumber: e.slot_number,
           isSlotSystem: e.slots ? true : false,
           slots: e.slots,
-          virality: e.virality || null
+          virality: e.virality || null,
+          duration: e.duration_formatted || e.duration_seconds || null
         }));
         const i = new Set(n.map(e => String(e.id)));
         const r = (this.libraryItems || []).filter(e => {
           const t = String(e.projectId || e.id || "");
-          return e._optimistic && t && !i.has(t);
+          if (!t || i.has(t)) return false;
+          if (e._optimistic || e._justCompleted) return true;
+          return false;
         });
         this.libraryItems = [ ...r, ...n ];
+        for (const e of this.libraryItems) {
+          const t = String(e.projectId || e.id || "");
+          if (i.has(t)) {
+            e._optimistic = false;
+            e._justCompleted = false;
+          }
+        }
         this._libraryLastLoaded = Date.now();
         this.hideLibrarySkeleton();
         if (this.libraryPreviewModalOpen) {

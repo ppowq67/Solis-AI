@@ -1,42 +1,42 @@
 (function() {
-  const e = 3;
-  const t = [];
+  const t = 3;
+  const e = [];
   let n = 0;
   let r = null;
-  function esc(e) {
-    return String(e == null ? "" : e).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  function esc(t) {
+    return String(t == null ? "" : t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   }
-  function formatClock(e) {
-    if (e == null || e === "" || e === "—") return "00:00";
-    const t = String(e).trim();
-    const n = t.match(/^(\d+):(\d{2})$/);
+  function formatClock(t) {
+    if (t == null || t === "" || t === "—") return "00:00";
+    const e = String(t).trim();
+    const n = e.match(/^(\d+):(\d{2})$/);
     if (n) return `${String(n[1]).padStart(2, "0")}:${n[2]}`;
-    const r = t.match(/^(\d+(?:\.\d+)?)\s*s$/i);
+    const r = e.match(/^(\d+(?:\.\d+)?)\s*s$/i);
     if (r) {
-      const e = Math.max(0, Math.round(Number(r[1])));
-      return `${String(Math.floor(e / 60)).padStart(2, "0")}:${String(e % 60).padStart(2, "0")}`;
+      const t = Math.max(0, Math.round(Number(r[1])));
+      return `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`;
     }
-    const i = Number(t);
+    const i = Number(e);
     if (Number.isFinite(i) && i >= 0) {
-      const e = Math.round(i);
-      return `${String(Math.floor(e / 60)).padStart(2, "0")}:${String(e % 60).padStart(2, "0")}`;
+      const t = Math.round(i);
+      return `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`;
     }
-    return t;
+    return e;
   }
-  function letterFrom(e) {
-    const t = Number(e) || 0;
-    if (t <= 0) return "";
-    if (t >= .9) return "A+";
-    if (t >= .8) return "A";
-    if (t >= .7) return "B+";
-    if (t >= .6) return "B";
-    if (t >= .5) return "C+";
-    if (t >= .4) return "C";
-    if (t >= .3) return "D";
+  function letterFrom(t) {
+    const e = Number(t) || 0;
+    if (e <= 0) return "";
+    if (e >= .9) return "A+";
+    if (e >= .8) return "A";
+    if (e >= .7) return "B+";
+    if (e >= .6) return "B";
+    if (e >= .5) return "C+";
+    if (e >= .4) return "C";
+    if (e >= .3) return "D";
     return "F";
   }
-  function metric(e, t) {
-    const n = e && e[t] || {};
+  function metric(t, e) {
+    const n = t && t[e] || {};
     const r = Number(n.n);
     const i = n.available !== false && Number.isFinite(r) && r > 0;
     if (!i) return {
@@ -51,16 +51,16 @@
       n: r
     };
   }
-  function viralityOf(e) {
-    const t = e && e.virality;
-    if (!t || typeof t !== "object") return null;
-    const n = Number(t.score);
-    if (!Number.isFinite(n) || n <= 0 || t.available === false) return null;
+  function viralityOf(t) {
+    const e = t && t.virality;
+    if (!e || typeof e !== "object") return null;
+    const n = Number(e.score);
+    if (!Number.isFinite(n) || n <= 0 || e.available === false) return null;
     return {
       score: Math.round(n),
-      hook: metric(t, "hook"),
-      clip: metric(t, "clip"),
-      video: metric(t, "video")
+      hook: metric(e, "hook"),
+      clip: metric(e, "clip"),
+      video: metric(e, "video")
     };
   }
   function iconDl() {
@@ -69,147 +69,147 @@
   function iconTrash() {
     return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`;
   }
-  function tip(e) {
-    return `<span class="scc-tip">${esc(e)}</span>`;
+  function tip(t) {
+    return `<span class="scc-tip">${esc(t)}</span>`;
   }
-  function gradeRows(e, t) {
+  function gradeRows(t, e) {
     return [ [ "hook", "Hook" ], [ "clip", "Clip" ], [ "video", "Video" ] ].map(([n, r]) => {
-      const i = e[n] || {};
+      const i = t[n] || {};
       if (!(i.n > 0) || !i.grade) return "";
       const c = i.grade;
-      const o = i.note || "";
-      const s = o ? `<div class="scc-why"><strong>${esc(c)} ${r}</strong><p>${esc(o)}</p></div>` : "";
-      return `<div class="${t}" tabindex="0">\n                <b>${esc(c)}</b><span>${r}</span>\n                ${s}\n            </div>`;
+      const s = i.note || "";
+      const o = s ? `<div class="scc-why"><strong>${esc(c)} ${r}</strong><p>${esc(s)}</p></div>` : "";
+      return `<div class="${e}" tabindex="0">\n                <b>${esc(c)}</b><span>${r}</span>\n                ${o}\n            </div>`;
     }).join("");
   }
-  function previewUrl(e) {
+  function previewUrl(t) {
     if (window.clipsStudio && typeof clipsStudio.getLibraryPreviewVideoUrl === "function") {
-      return clipsStudio.getLibraryPreviewVideoUrl(e, {
+      return clipsStudio.getLibraryPreviewVideoUrl(t, {
         bust: true
       });
     }
-    const t = (window.API_BASE_URL || "/api").replace(/\/$/, "");
-    return `${t}/clips/preview/${encodeURIComponent(e)}/1`;
+    const e = (window.API_BASE_URL || "/api").replace(/\/$/, "");
+    return `${e}/clips/preview/${encodeURIComponent(t)}/1`;
   }
   function pumpQueue() {
-    while (n < e && t.length) {
-      const e = t.shift();
+    while (n < t && e.length) {
+      const t = e.shift();
       n += 1;
-      Promise.resolve().then(e).catch(() => {}).finally(() => {
+      Promise.resolve().then(t).catch(() => {}).finally(() => {
         n -= 1;
         pumpQueue();
       });
     }
   }
-  function enqueueLoad(e) {
-    t.push(e);
+  function enqueueLoad(t) {
+    e.push(t);
     pumpQueue();
   }
-  function buildHTML(e) {
-    const t = viralityOf(e);
-    const n = esc(e.name || e.video_title || "Clip");
-    const r = esc(e.projectId || e.id || "");
-    const i = formatClock(e.duration);
-    const c = t ? `<div class="scc-viral" tabindex="0">\n                    <span class="scc-viral-n">${esc(t.score)}</span>\n                    ${tip("How likely this clip is to take off on Shorts, TikTok, and Reels.")}\n               </div>` : `<div class="scc-viral scc-viral-empty"></div>`;
+  function buildHTML(t) {
+    const e = viralityOf(t);
+    const n = esc(t.name || t.video_title || "Clip");
+    const r = esc(t.projectId || t.id || "");
+    const i = formatClock(t.duration);
+    const c = e ? `<div class="scc-viral" tabindex="0">\n                    <span class="scc-viral-n">${esc(e.score)}</span>\n                    ${tip("How likely this clip is to take off on Shorts, TikTok, and Reels.")}\n               </div>` : `<div class="scc-viral scc-viral-empty"></div>`;
     return `\n            <div class="scc-preview">\n                <div class="scc-skel" aria-hidden="true"></div>\n                <video class="scc-video" muted playsinline loop preload="auto" controlslist="nodownload nofullscreen noremoteplayback" disablepictureinpicture></video>\n                <div class="scc-time"><span class="scc-t0">00:00</span> <span class="scc-t1">${esc(i)}</span></div>\n                <div class="scc-bar"><i></i></div>\n            </div>\n            <div class="scc-meta">\n                <div class="scc-meta-row">\n                    ${c}\n                    <div class="scc-actions">\n                        <button type="button" class="scc-ico library-download-btn" data-project-id="${r}" aria-label="Download">\n                            ${iconDl()}${tip("Save this clip")}\n                        </button>\n                        <button type="button" class="scc-ico library-delete-btn" aria-label="Delete">\n                            ${iconTrash()}${tip("Delete this clip")}\n                        </button>\n                    </div>\n                </div>\n                <h2 class="card-title scc-title" title="${n}">${n}</h2>\n            </div>`;
   }
-  function railHTML(e) {
-    const t = viralityOf(e);
-    if (!t) return "";
-    return `<div class="pv-head"><b>${esc(t.score)}</b><small>/100</small></div>${gradeRows(t, "pv-grade")}`;
+  function railHTML(t) {
+    const e = viralityOf(t);
+    if (!e) return "";
+    return `<div class="pv-head"><b>${esc(e.score)}</b><small>/100</small></div>${gradeRows(e, "pv-grade")}`;
   }
-  function bind(e, t, n) {
-    if (!e || e.dataset.sccBound === "1") return;
-    e.dataset.sccBound = "1";
-    const i = t.projectId || t.id;
-    const c = e.querySelector(".scc-preview");
-    const o = e.querySelector(".scc-video");
-    const s = e.querySelector(".scc-bar > i");
-    const a = e.querySelector(".scc-t0");
-    const l = e.querySelector(".scc-t1");
+  function bind(t, e, n) {
+    if (!t || t.dataset.sccBound === "1") return;
+    t.dataset.sccBound = "1";
+    const i = e.projectId || e.id;
+    const c = t.querySelector(".scc-preview");
+    const s = t.querySelector(".scc-video");
+    const o = t.querySelector(".scc-bar > i");
+    const a = t.querySelector(".scc-t0");
+    const l = t.querySelector(".scc-t1");
     let d = "";
     const tick = () => {
-      if (!o) return;
-      const e = o.duration;
-      const t = o.currentTime || 0;
-      if (a) a.textContent = formatClock(t);
-      if (Number.isFinite(e) && e > 0) {
-        if (l) l.textContent = formatClock(e);
-        if (s) s.style.width = `${Math.min(100, t / e * 100)}%`;
+      if (!s) return;
+      const t = s.duration;
+      const e = s.currentTime || 0;
+      if (a) a.textContent = formatClock(e);
+      if (Number.isFinite(t) && t > 0) {
+        if (l) l.textContent = formatClock(t);
+        if (o) o.style.width = `${Math.min(100, e / t * 100)}%`;
       }
     };
-    const hasFrame = () => o && o.videoWidth > 0 && o.videoHeight > 0;
+    const hasFrame = () => s && s.videoWidth > 0 && s.videoHeight > 0;
     const showFrame = () => {
       if (!hasFrame()) return;
       c?.classList.add("has-clip");
       tick();
     };
     const paintStill = () => {
-      if (!o) return;
-      const e = o.currentTime > .05 ? o.currentTime : .08;
+      if (!s) return;
+      const t = s.currentTime > .05 ? s.currentTime : .08;
       const afterSeek = () => {
         showFrame();
         if (!c?.matches(":hover")) {
           try {
-            o.pause();
-          } catch (e) {}
+            s.pause();
+          } catch (t) {}
         }
       };
       try {
-        o.currentTime = e;
-      } catch (e) {}
-      o.addEventListener("seeked", afterSeek, {
+        s.currentTime = t;
+      } catch (t) {}
+      s.addEventListener("seeked", afterSeek, {
         once: true
       });
-      o.play().then(() => {
+      s.play().then(() => {
         showFrame();
         if (!c?.matches(":hover")) {
-          o.pause();
+          s.pause();
           showFrame();
         }
       }).catch(() => showFrame());
     };
     const playClip = () => {
-      if (!o) return;
-      o.muted = true;
-      if (r && r !== o) {
+      if (!s) return;
+      s.muted = true;
+      if (r && r !== s) {
         try {
           r.pause();
-        } catch (e) {}
+        } catch (t) {}
       }
-      r = o;
-      o.play().then(showFrame).catch(() => {});
+      r = s;
+      s.play().then(showFrame).catch(() => {});
     };
-    const attachSrc = e => {
-      o.muted = true;
-      o.playsInline = true;
-      o.setAttribute("playsinline", "");
-      o.preload = "auto";
-      o.src = e;
+    const attachSrc = t => {
+      s.muted = true;
+      s.playsInline = true;
+      s.setAttribute("playsinline", "");
+      s.preload = "auto";
+      s.src = t;
       try {
-        o.load();
-      } catch (e) {}
+        s.load();
+      } catch (t) {}
     };
-    const bindReady = e => {
-      o.addEventListener("loadeddata", e);
-      o.addEventListener("canplay", e);
-      o.addEventListener("loadedmetadata", e);
+    const bindReady = t => {
+      s.addEventListener("loadeddata", t);
+      s.addEventListener("canplay", t);
+      s.addEventListener("loadedmetadata", t);
     };
     const ensureSrc = () => {
-      if (!o || o.dataset.srcReady === "1") return;
-      o.dataset.srcReady = "1";
-      const e = previewUrl(i);
-      enqueueLoad(() => new Promise(t => {
-        if (!o.isConnected) {
-          o.dataset.srcReady = "";
-          t();
+      if (!s || s.dataset.srcReady === "1") return;
+      s.dataset.srcReady = "1";
+      const t = previewUrl(i);
+      enqueueLoad(() => new Promise(e => {
+        if (!s.isConnected) {
+          s.dataset.srcReady = "";
+          e();
           return;
         }
         let n = false;
         const finish = () => {
           if (!n) {
             n = true;
-            t();
+            e();
           }
         };
         const onReady = () => {
@@ -218,77 +218,77 @@
           finish();
         };
         bindReady(onReady);
-        o.addEventListener("error", () => {
-          if (o.dataset.blobTried === "1") {
-            finish();
-            return;
-          }
-          o.dataset.blobTried = "1";
-          const t = typeof getAuthHeaders === "function" ? getAuthHeaders() : {};
-          fetch(e, {
-            credentials: "include",
-            headers: t
-          }).then(e => e.ok ? e.blob() : Promise.reject()).then(e => {
-            if (d) try {
-              URL.revokeObjectURL(d);
-            } catch (e) {}
-            d = URL.createObjectURL(e);
-            bindReady(onReady);
-            attachSrc(d);
-          }).catch(finish);
+        s.addEventListener("error", () => {
+          const e = typeof getAuthHeaders === "function" ? getAuthHeaders() : {};
+          const tryBlob = n => {
+            fetch(t, {
+              credentials: "include",
+              headers: e
+            }).then(t => t.ok ? t.blob() : Promise.reject(new Error(String(t.status)))).then(t => {
+              if (d) try {
+                URL.revokeObjectURL(d);
+              } catch (t) {}
+              d = URL.createObjectURL(t);
+              bindReady(onReady);
+              attachSrc(d);
+            }).catch(() => {
+              if (n < 4) setTimeout(() => tryBlob(n + 1), 1600 * (n + 1)); else finish();
+            });
+          };
+          tryBlob(0);
         }, {
           once: true
         });
-        attachSrc(e);
+        attachSrc(t);
         setTimeout(finish, 1e4);
       }));
     };
-    o?.addEventListener("timeupdate", tick);
-    o?.addEventListener("loadedmetadata", tick);
-    o?.addEventListener("pause", () => {
-      if (r === o) r = null;
+    s?.addEventListener("timeupdate", tick);
+    s?.addEventListener("loadedmetadata", tick);
+    s?.addEventListener("pause", () => {
+      if (r === s) r = null;
     });
-    if (o && "IntersectionObserver" in window) {
-      const t = new IntersectionObserver(e => {
-        const t = e.some(e => e.isIntersecting);
-        if (t) ensureSrc(); else if (o && !o.paused) {
-          o.pause();
-          if (r === o) r = null;
+    if (s && "IntersectionObserver" in window) {
+      const e = new IntersectionObserver(t => {
+        const e = t.some(t => t.isIntersecting);
+        if (e) ensureSrc(); else if (s && !s.paused) {
+          s.pause();
+          if (r === s) r = null;
         }
       }, {
         rootMargin: "120px",
         threshold: .2
       });
-      t.observe(e);
+      e.observe(t);
     } else {
       ensureSrc();
     }
     c?.addEventListener("mouseenter", () => {
       ensureSrc();
-      if (o && o.paused) playClip();
+      if (s && s.paused) playClip();
     });
     c?.addEventListener("mouseleave", () => {
-      if (o) {
-        o.pause();
+      if (s) {
+        s.pause();
         showFrame();
       }
     });
-    e.addEventListener("click", r => {
+    t.addEventListener("click", r => {
       if (r.target.closest(".library-download-btn, .library-delete-btn, .scc-ico, .scc-viral")) return;
       r.preventDefault();
       r.stopPropagation();
-      if (o && !o.paused) try {
-        o.pause();
-      } catch (e) {}
-      const c = t.id || i;
+      if (s && !s.paused) try {
+        s.pause();
+      } catch (t) {}
+      const c = e.id || i;
       if (n && typeof n.openLibraryPreview === "function" && c) {
-        n.openLibraryPreview(c, i, e);
+        n.openLibraryPreview(c, i, t);
       }
     });
   }
-  function setDuration(e, t) {
-    const n = formatClock(t);
-    const r = e && e.querySelector(".scc-t1");
+  function setDuration(t, e) {
+    const n = formatClock(e);
+    const r = t && t.querySelector(".scc-t1");
     if (r) r.textContent = n;
   }
   window.SolisClipCard = {

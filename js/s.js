@@ -10890,20 +10890,26 @@ class ClipsStudio {
       return;
     }
     if (window.__solisDownloadBusy) return;
-    fetch(`/api/clips/duration/${encodeURIComponent(t)}`, {
-      method: "GET",
-      credentials: "include"
-    }).then(e => {
-      if (!e.ok) throw new Error(`HTTP ${e.status}`);
-      return e.json();
-    }).then(t => {
-      if (t.duration_formatted && e) {
-        if (window.SolisClipCard) SolisClipCard.setDuration(e, t.duration_formatted); else {
-          const n = e.querySelector(".duration-text");
-          if (n) n.textContent = t.duration_formatted;
+    const n = `${API_BASE_URL}/clips/duration/${encodeURIComponent(t)}`;
+    const attempt = t => {
+      fetch(n, {
+        method: "GET",
+        credentials: "include"
+      }).then(e => {
+        if (!e.ok) throw new Error(`HTTP ${e.status}`);
+        return e.json();
+      }).then(t => {
+        if (t.duration_formatted && e) {
+          if (window.SolisClipCard) SolisClipCard.setDuration(e, t.duration_formatted); else {
+            const n = e.querySelector(".duration-text");
+            if (n) n.textContent = t.duration_formatted;
+          }
         }
-      }
-    }).catch(e => safeLog("Could not fetch duration:", e));
+      }).catch(e => {
+        if (t < 4) setTimeout(() => attempt(t + 1), 1500 * (t + 1)); else safeLog("Could not fetch duration:", e);
+      });
+    };
+    attempt(0);
   }
   attachLibraryCardListeners(e, t, n) {
     const i = e.querySelector(".library-download-btn");
@@ -11289,11 +11295,18 @@ class ClipsStudio {
               e = setTimeout(() => {
                 i.disconnect();
                 if (window.__solisDownloadBusy) return;
-                fetch(`/api/clips/duration/${n}`, {
+                const e = `${API_BASE_URL}/clips/duration/${encodeURIComponent(n)}`;
+                const loadDur = i => fetch(e, {
                   method: "GET",
                   credentials: "include"
                 }).then(async e => {
-                  if (!e.ok) return null;
+                  if (!e.ok) {
+                    if (i < 4) {
+                      setTimeout(() => loadDur(i + 1), 1500 * (i + 1));
+                      return null;
+                    }
+                    return null;
+                  }
                   try {
                     return await e.json();
                   } catch (e) {
@@ -11308,6 +11321,7 @@ class ClipsStudio {
                     }
                   }
                 }).catch(() => {});
+                loadDur(0);
               }, 400);
             } else {
               if (e) {

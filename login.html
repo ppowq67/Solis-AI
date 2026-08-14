@@ -57,7 +57,7 @@
     touch-action: manipulation;
   }
 
-  .bg-canvas { position: fixed; inset: 0; z-index: 0; overflow: hidden; background: #ffffff; }
+  .bg-canvas { position: fixed; inset: 0; z-index: 0; overflow: hidden; background: #ffffff; isolation: isolate; }
 
   .bg-canvas::before {
     content: '';
@@ -68,6 +68,16 @@
       rgba(255, 247, 237, 0.9) 48%,
       rgba(254, 215, 170, 0.55) 72%,
       rgba(249, 115, 22, 0.18) 100%);
+  }
+
+  .bg-canvas::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("/assets/noise.png") repeat;
+    background-size: 256px 256px;
+    pointer-events: none;
+    opacity: 0.55;
   }
 
   .blob { position: absolute; border-radius: 50%; filter: blur(100px); will-change: transform; }

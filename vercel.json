@@ -1,5 +1,17 @@
 {
   "cleanUrls": true,
+  "redirects": [
+    {
+      "source": "/api/auth/tiktok/callback",
+      "destination": "https://api.solisai.video/api/auth/tiktok/callback",
+      "permanent": false
+    },
+    {
+      "source": "/api/auth/youtube/callback",
+      "destination": "https://api.solisai.video/api/auth/youtube/callback",
+      "permanent": false
+    }
+  ],
   "rewrites": [
     { "source": "/api/auth/:path*", "destination": "https://api.solisai.video/api/auth/:path*" },
     { "source": "/terms", "destination": "/legal/terms.html" },

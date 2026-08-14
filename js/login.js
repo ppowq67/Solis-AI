@@ -148,7 +148,7 @@ async function handleOAuthLogin(t) {
     });
     if (!s.ok) {
       const t = await s.json().catch(() => ({}));
-      throw new Error(t.error || `Server error: ${s.status}`);
+      throw new Error(t.error || t.message || `Server error: ${s.status}`);
     }
     const r = await s.json();
     if (r.auth_url) {

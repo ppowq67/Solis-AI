@@ -81,15 +81,6 @@
 
   ._grid { display: none; }
 
-  ._overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    pointer-events: none;
-    background: url("/assets/noise.png") repeat;
-    background-size: 256px 256px;
-    opacity: 1;
-  }
   @keyframes fadeSlideDown { from { opacity: 0; transform: translateY(-25px) translateX(-50%); } to { opacity: 1; transform: translateY(0) translateX(-50%); } }
   @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
@@ -457,8 +448,6 @@
 </style>
 </head>
 <body>
-
-<div class="_overlay"></div>
 
 <div class="bg-canvas">
   <div class="blob blob-1"></div>

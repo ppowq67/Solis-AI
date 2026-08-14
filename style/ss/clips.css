@@ -3000,7 +3000,8 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
 }
 
 .plan-effort-slider.is-bits-live .plan-effort-slider-bits {
-    display: none;
+    opacity: 1;
+    visibility: visible;
 }
 
 .plan-effort-slider.is-dragging .plan-effort-slider-bits {

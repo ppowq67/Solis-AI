@@ -3575,11 +3575,21 @@
                         </div>
                         <div class="preview-modifiers-row" role="menuitem" data-modifier-preview="smart-captions">
                             <div class="preview-modifiers-copy">
-                                <span class="preview-modifiers-label">Smart Captions</span>
-                                <span class="preview-modifiers-beta" title="Verbatim reactions &amp; fillers when on">Beta</span>
+                                <span class="preview-modifiers-label">ACCURATE-AI</span>
+                                <span class="preview-modifiers-beta" title="CrisperWhisper 2.0 · word-level timing · no manual fixes">99%+</span>
                             </div>
-                            <label class="stgToggle is-on" id="smartCaptionsToggleLabel" title="Smart Captions (verbatim mode)" role="switch" aria-checked="true" aria-label="Toggle Smart Captions">
+                            <label class="stgToggle is-on" id="smartCaptionsToggleLabel" title="ACCURATE-AI verbatim captions (CrisperWhisper 2.0)" role="switch" aria-checked="true" aria-label="Toggle ACCURATE-AI captions">
                                 <input type="checkbox" id="smartCaptionsToggle" class="stgToggleInput" tabindex="-1" checked>
+                                <span class="stgToggleKnob" aria-hidden="true"></span>
+                            </label>
+                        </div>
+                        <div class="preview-modifiers-row" role="menuitem" data-modifier-preview="remove-fillers">
+                            <div class="preview-modifiers-copy">
+                                <span class="preview-modifiers-label">Remove fillers</span>
+                                <span class="preview-modifiers-beta" title="Strip um/uh when enabled — off by default">Optional</span>
+                            </div>
+                            <label class="stgToggle" id="removeFillersToggleLabel" title="Remove filler words (um, uh) — optional, off by default" role="switch" aria-checked="false" aria-label="Toggle filler removal">
+                                <input type="checkbox" id="removeFillersToggle" class="stgToggleInput" tabindex="-1">
                                 <span class="stgToggleKnob" aria-hidden="true"></span>
                             </label>
                         </div>
@@ -4630,9 +4640,10 @@
        let MAX = 1;
        let live = 1;
        let dragging = false;
+       let activePointerId = null;
 
        function limits() {
-           return window.__solisClipLimits || { max_per_generation: 1, default_per_generation: 1, suggested: null };
+           return window.__solisClipLimits || { max_per_generation: 1, default_per_generation: 1 };
        }
 
        function tFor(n) {
@@ -4650,11 +4661,24 @@
                step.style.left = MAX === MIN
                    ? 'var(--mg-half)'
                    : `calc(var(--mg-half) + (100% - var(--mg-thumb)) * ${frac})`;
+               step.addEventListener('click', (e) => {
+                   e.stopPropagation();
+                   paint(n, { pop: true });
+               });
                rail.appendChild(step);
            }
        }
 
-       function paint(n, pop) {
+       function updateSteps(clamped) {
+           rail.querySelectorAll('.multi-gen-step').forEach((step) => {
+               const nStep = parseInt(step.dataset.n, 10);
+               step.classList.toggle('is-on', nStep === clamped);
+               step.classList.toggle('is-passed', nStep < clamped);
+           });
+       }
+
+       function paint(n, opts) {
+           const pop = !!(opts && opts.pop);
            const clamped = Math.max(MIN, Math.min(MAX, Math.round(n)));
            live = clamped;
            const t = tFor(clamped);
@@ -4668,17 +4692,30 @@
                valueEl.textContent = `${clamped}×`;
                if (pop) {
                    valueEl.classList.add('is-pop');
-                   setTimeout(() => valueEl.classList.remove('is-pop'), 180);
+                   setTimeout(() => valueEl.classList.remove('is-pop'), 120);
                }
            }
-           rail.querySelectorAll('.multi-gen-step').forEach((step) => {
-               const nStep = parseInt(step.dataset.n, 10);
-               step.classList.toggle('is-on', nStep === clamped);
-               step.classList.toggle('is-passed', nStep < clamped);
-           });
+           updateSteps(clamped);
            window.__solisMultiGenCount = clamped;
            window.getMultiGenCount = () => live;
            try { localStorage.setItem('solisMultiGenCount', String(clamped)); } catch (_) {}
+       }
+
+       function paintAtClientX(clientX, snap) {
+           const rect = rail.getBoundingClientRect();
+           const half = 10;
+           const usable = Math.max(1, rect.width - 20);
+           const x = Math.max(0, Math.min(usable, clientX - rect.left - half));
+           const t = x / usable;
+           if (snap) {
+               const n = MIN + Math.round(t * (MAX - MIN));
+               paint(n, { pop: true });
+               return;
+           }
+           slider.style.setProperty('--mg-t', String(t));
+           const preview = MIN + Math.round(t * (MAX - MIN));
+           if (valueEl) valueEl.textContent = `${preview}×`;
+           updateSteps(preview);
        }
 
        function setDisabled(disabled, reason) {
@@ -4701,7 +4738,6 @@
            const lim = limits();
            MAX = Math.max(1, parseInt(lim.max_per_generation, 10) || 1);
            MIN = 1;
-           const suggested = parseInt(lim.suggested, 10);
            let stored = 1;
            try {
                stored = parseInt(localStorage.getItem('solisMultiGenCount') || '1', 10);
@@ -4710,53 +4746,46 @@
            layoutSteps();
            paint(Math.max(MIN, Math.min(MAX, stored || def || 1)));
            if (MAX <= 1) {
-               setDisabled(true, '1 clip on Free (Modal CPU)');
+               setDisabled(true, '1 clip on Free');
            } else {
-               setDisabled(false, suggested && suggested < MAX ? `AI suggests ${suggested}` : '');
+               setDisabled(false, '');
            }
-       }
-
-       function nFromClientX(clientX) {
-           const rect = rail.getBoundingClientRect();
-           const usable = Math.max(1, rect.width - 20);
-           const x = Math.max(0, Math.min(usable, clientX - rect.left - 10));
-           const t = x / usable;
-           return MIN + Math.round(t * (MAX - MIN));
        }
 
        function onPointerDown(e) {
            if (MAX <= 1 || card.classList.contains('is-disabled')) return;
+           if (e.button !== undefined && e.button !== 0) return;
            dragging = true;
+           activePointerId = e.pointerId;
            slider.classList.add('is-dragging');
-           paint(nFromClientX(e.clientX), true);
+           try { slider.setPointerCapture(e.pointerId); } catch (_) {}
+           paintAtClientX(e.clientX, false);
            e.preventDefault();
        }
 
        function onPointerMove(e) {
-           if (!dragging) return;
-           paint(nFromClientX(e.clientX), false);
+           if (!dragging || e.pointerId !== activePointerId) return;
+           paintAtClientX(e.clientX, false);
        }
 
-       function onPointerUp() {
-           if (!dragging) return;
+       function onPointerUp(e) {
+           if (!dragging || (activePointerId != null && e.pointerId !== activePointerId)) return;
            dragging = false;
+           activePointerId = null;
            slider.classList.remove('is-dragging');
-           slider.classList.add('is-snapping');
-           paint(live, true);
-           setTimeout(() => slider.classList.remove('is-snapping'), 220);
+           try { slider.releasePointerCapture(e.pointerId); } catch (_) {}
+           paintAtClientX(e.clientX, true);
        }
 
-       slider.addEventListener('mousedown', onPointerDown);
-       slider.addEventListener('touchstart', onPointerDown, { passive: false });
-       window.addEventListener('mousemove', onPointerMove);
-       window.addEventListener('touchmove', onPointerMove, { passive: false });
-       window.addEventListener('mouseup', onPointerUp);
-       window.addEventListener('touchend', onPointerUp);
+       slider.addEventListener('pointerdown', onPointerDown);
+       slider.addEventListener('pointermove', onPointerMove);
+       slider.addEventListener('pointerup', onPointerUp);
+       slider.addEventListener('pointercancel', onPointerUp);
 
        slider.addEventListener('keydown', (e) => {
            if (MAX <= 1) return;
-           if (e.key === 'ArrowRight' || e.key === 'ArrowUp') { paint(live + 1, true); e.preventDefault(); }
-           if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') { paint(live - 1, true); e.preventDefault(); }
+           if (e.key === 'ArrowRight' || e.key === 'ArrowUp') { paint(live + 1, { pop: true }); e.preventDefault(); }
+           if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') { paint(live - 1, { pop: true }); e.preventDefault(); }
        });
 
        window.refreshMultiGenSlider = applyLimits;
@@ -4810,6 +4839,8 @@
           const AI_TITLE_KEY = 'solisAiTitleGeneration';
           const smartCaptionsToggle = document.getElementById('smartCaptionsToggle');
           const SMART_CAPTIONS_KEY = 'solisSmartCaptions';
+          const removeFillersToggle = document.getElementById('removeFillersToggle');
+          const REMOVE_FILLERS_KEY = 'solisRemoveFillers';
 
           function readAiTitleEnabled() {
               try {
@@ -4841,11 +4872,28 @@
               window.solisSmartCaptionsEnabled = !!on;
           }
 
+          function readRemoveFillersEnabled() {
+              try {
+                  const v = localStorage.getItem(REMOVE_FILLERS_KEY);
+                  if (v === null) return false; // off by default — fillers kept unless opted in
+                  return v === '1' || v === 'true';
+              } catch (_) {
+                  return false;
+              }
+          }
+
+          function writeRemoveFillersEnabled(on) {
+              try { localStorage.setItem(REMOVE_FILLERS_KEY, on ? '1' : '0'); } catch (_) {}
+              window.solisRemoveFillersEnabled = !!on;
+          }
+
           window.solisAiTitleGenerationEnabled = readAiTitleEnabled();
           window.solisSmartCaptionsEnabled = readSmartCaptionsEnabled();
+          window.solisRemoveFillersEnabled = readRemoveFillersEnabled();
           window.solisSfxEnabled = false;
           const aiTitleToggleLabel = document.getElementById('aiTitleGenerationToggleLabel');
           const smartCaptionsToggleLabel = document.getElementById('smartCaptionsToggleLabel');
+          const removeFillersToggleLabel = document.getElementById('removeFillersToggleLabel');
           function syncAiTitleToggleUi(on) {
               if (aiTitleToggle) aiTitleToggle.checked = !!on;
               if (aiTitleToggleLabel) {
@@ -4858,6 +4906,13 @@
               if (smartCaptionsToggleLabel) {
                   smartCaptionsToggleLabel.classList.toggle('is-on', !!on);
                   smartCaptionsToggleLabel.setAttribute('aria-checked', on ? 'true' : 'false');
+              }
+          }
+          function syncRemoveFillersToggleUi(on) {
+              if (removeFillersToggle) removeFillersToggle.checked = !!on;
+              if (removeFillersToggleLabel) {
+                  removeFillersToggleLabel.classList.toggle('is-on', !!on);
+                  removeFillersToggleLabel.setAttribute('aria-checked', on ? 'true' : 'false');
               }
           }
           if (aiTitleToggle) {
@@ -4879,6 +4934,16 @@
                           if (typeof window.solisHoverTeachOnSmartCaptionsToggle === 'function') {
                               window.solisHoverTeachOnSmartCaptionsToggle(!!smartCaptionsToggle.checked);
                           }
+                      } catch (_) {}
+                  });
+              }
+              if (removeFillersToggle) {
+                  syncRemoveFillersToggleUi(window.solisRemoveFillersEnabled);
+                  removeFillersToggle.addEventListener('change', () => {
+                      writeRemoveFillersEnabled(removeFillersToggle.checked);
+                      syncRemoveFillersToggleUi(removeFillersToggle.checked);
+                      try {
+                          if (typeof window.collectSubtitleStyle === 'function') window.collectSubtitleStyle();
                       } catch (_) {}
                   });
               }
@@ -13893,6 +13958,7 @@
             highlight=normalizeHex(curHighlightCol || block.dataset.subHighlight) || null;
         }
         const smartOn=window.solisSmartCaptionsEnabled !== false;
+        const removeFillers=window.solisRemoveFillersEnabled === true;
         const snap={
             anim,
             font,
@@ -13908,6 +13974,7 @@
             enabled: true,
             smart_captions: smartOn,
             crisper_mode: smartOn ? 'verbatim' : 'intended',
+            remove_fillers: removeFillers,
         };
         try{
             window.__solisLastCaptionStyle=snap;

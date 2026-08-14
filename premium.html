@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <script src="/js/core/init.js?v=7"></script>
+  <script>if ('scrollRestoration' in history) history.scrollRestoration = 'manual';</script>
   <script src="/js/core/avatar-url.js?v=1"></script>
   <title>Pricing · Solis AI</title>
   <meta name="description" content="Start free, scale when you're ready." />
@@ -331,7 +332,6 @@
 
     .ribbon { position: absolute; top: 0; right: 0; color: #fff; font-size: 10px; font-weight: 800; padding: 7px 20px; border-radius: 0 var(--radius-lg) 0 14px; text-transform: uppercase; letter-spacing: 0.1em; z-index: 3; background: var(--solis-gradient); box-shadow: 0 4px 12px rgba(249,115,22,0.4); }
 
-    .plan-icon-wrap { display: flex; align-items: center; margin-bottom: 14px; }
     .plan-name { font-family: var(--font-display); font-size: 17px; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 4px; }
     .name-basic { color: var(--text-secondary); }
     .name-prime { background: var(--solis-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
@@ -345,7 +345,6 @@
     .plan-price-dec { font-family: var(--font-numeric); font-size: 20px; font-weight: 700; color: var(--text-secondary); padding-bottom: 7px; }
     .plan-price-period { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
     .plan-price-billnote { font-size: 11.5px; color: var(--text-faint); margin-bottom: 18px; min-height: 16px; }
-    .plan-price-billnote strong { color: var(--solis-deep); font-family: var(--font-numeric); font-weight: 700; }
 
     .plan-btn { width: 100%; padding: 13px 16px; border-radius: 12px; font-family: var(--font-display); font-size: 13.5px; font-weight: 700; border: none; cursor: pointer; transition: all 0.25s; margin-bottom: 12px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
     .plan-btn svg { width: 13px; height: 13px; transition: transform 0.3s; }
@@ -717,7 +716,7 @@
   </nav>
 
   <main>
-    <section class="hero" id="pricing">
+    <section class="hero">
       <div class="hero-inner reveal">
         <h1 class="hero-title">Choose your <span class="text-solis-gradient">creator tier</span></h1>
         <p class="hero-subtitle">Start free. Upgrade when clips start paying for themselves.</p>
@@ -727,7 +726,7 @@
       </div>
     </section>
 
-    <section class="pricing-section">
+    <section class="pricing-section" id="pricing">
       <div class="pricing-grid reveal-stagger">
         <article class="plan-card" data-plan="basic">
           <h3 class="plan-name name-basic">Basic</h3>
@@ -749,17 +748,16 @@
           <div class="plan-divider"></div>
           <p class="plan-features-label">What&apos;s included</p>
           <ul class="plan-features">
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>5</b> generations / day</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>75</b> generations / month</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>10</b> saved videos max</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>5</b> uploads / day</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>75</b> uploads / month</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>3</b> clips per upload</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>10</b> saved videos</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>10 GB</b> storage</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>30 min</b> of AI processing</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Fast generation</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>30 min</b> AI processing</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>No watermark</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>PRO templates</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Split Screen + Ranking templates</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Full text customizer</li>
             <li class="disabled"><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="2.5" y1="2.5" x2="9.5" y2="9.5"/><line x1="9.5" y1="2.5" x2="2.5" y2="9.5"/></svg></span>Short-form upload</li>
-            <li class="disabled"><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="2.5" y1="2.5" x2="9.5" y2="9.5"/><line x1="9.5" y1="2.5" x2="2.5" y2="9.5"/></svg></span>Overpurpose <em style="font-style:normal;opacity:.85">coming very soon</em></li>
-            <li class="disabled"><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="2.5" y1="2.5" x2="9.5" y2="9.5"/><line x1="9.5" y1="2.5" x2="2.5" y2="9.5"/></svg></span>Priority queue</li>
           </ul>
         </article>
 
@@ -784,16 +782,15 @@
           <div class="plan-divider"></div>
           <p class="plan-features-label">Everything in Basic, plus</p>
           <ul class="plan-features">
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>10</b> generations / day</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>200</b> generations / month</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>20</b> saved videos max</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>10</b> uploads / day</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>200</b> uploads / month</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>5</b> clips per upload</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>20</b> saved videos</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>25 GB</b> storage</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>120 min</b> of AI processing</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Faster generation</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>All templates</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Short-form upload</li>
-            <li class="disabled"><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="2.5" y1="2.5" x2="9.5" y2="9.5"/><line x1="9.5" y1="2.5" x2="2.5" y2="9.5"/></svg></span>Overpurpose <em style="font-style:normal;opacity:.85">coming very soon</em></li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>5+ more</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>120 min</b> AI processing</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Short-form upload (Shorts, TikTok, Reels)</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>1440p exports</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Custom fonts &amp; overlay colors</li>
           </ul>
         </article>
 
@@ -817,13 +814,12 @@
           <div class="plan-divider"></div>
           <p class="plan-features-label">Everything in Prime, plus</p>
           <ul class="plan-features">
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>20</b> generations / day</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>400</b> generations / month</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>50</b> saved videos max</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>20</b> uploads / day</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>400</b> uploads / month</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>10</b> clips per upload</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>50</b> saved videos</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>100 GB</b> storage</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>240 min</b> of AI processing</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Fastest generation</li>
-            <li class="disabled"><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="2.5" y1="2.5" x2="9.5" y2="9.5"/><line x1="9.5" y1="2.5" x2="2.5" y2="9.5"/></svg></span>Advanced Overpurpose <em style="font-style:normal;opacity:.85">coming very soon</em></li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>240 min</b> AI processing</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Priority render queue</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Dedicated support channel</li>
           </ul>
@@ -963,6 +959,10 @@
     (function () {
       'use strict';
 
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+
       var $ = function (s, r) { return (r || document).querySelector(s); };
       var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
       var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -994,13 +994,15 @@
         stickyCtaPrice.innerHTML = '<strong>$23.99</strong>/mo · 3-day free trial';
       }
       var comparisonData = [
-        { group: 'Generation', rows: [
-          { feature: 'Daily generations',           basic: { t: 'text', v: '5 / day' },  prime: { t: 'text', v: '10 / day' }, elite: { t: 'text', v: '20 / day' } },
-          { feature: 'Monthly generations',         basic: { t: 'text', v: '75 / mo' },  prime: { t: 'text', v: '200 / mo' }, elite: { t: 'text', v: '400 / mo' } },
+        { group: 'Uploads', rows: [
+          { feature: 'Clips per upload',            basic: { t: 'text', v: 'Up to 3' },  prime: { t: 'text', v: 'Up to 5' }, elite: { t: 'text', v: 'Up to 10 (AI suggests 5)' } },
+          { feature: 'Daily uploads',               basic: { t: 'text', v: '5 / day' },  prime: { t: 'text', v: '10 / day' }, elite: { t: 'text', v: '20 / day' } },
+          { feature: 'Monthly uploads',             basic: { t: 'text', v: '75 / mo' },  prime: { t: 'text', v: '200 / mo' }, elite: { t: 'text', v: '400 / mo' } },
           { feature: 'Saved videos (max)',          basic: { t: 'text', v: '10' },       prime: { t: 'text', v: '20' },      elite: { t: 'text', v: '50' } },
           { feature: 'Library storage',             basic: { t: 'text', v: '10 GB' },    prime: { t: 'text', v: '25 GB' },  elite: { t: 'text', v: '100 GB' } },
-          { feature: 'AI processing budget',       basic: { t: 'text', v: '30 min' },   prime: { t: 'text', v: '120 min' }, elite: { t: 'text', v: '240 min' } },
-          { feature: 'URL / source length',         basic: { t: 'text', v: 'Unlimited' }, prime: { t: 'text', v: 'Unlimited' }, elite: { t: 'text', v: 'Unlimited' } },
+          { feature: 'AI processing budget',        basic: { t: 'text', v: '30 min' },   prime: { t: 'text', v: '120 min' }, elite: { t: 'text', v: '240 min' } },
+          { feature: 'Source URL length',           basic: { t: 'text', v: 'Unlimited' }, prime: { t: 'text', v: 'Unlimited' }, elite: { t: 'text', v: 'Unlimited' } },
+          { feature: 'Export resolution',           basic: { t: 'text', v: '1080p' },    prime: { t: 'text', v: '1440p' },   elite: { t: 'text', v: '1440p' } },
           { feature: 'Render speed',                basic: { t: 'text', v: 'Fast' },     prime: { t: 'text', v: 'Faster' },  elite: { t: 'text', v: 'Fastest' } },
         ]},
         { group: 'Creator tools', rows: [
@@ -1046,7 +1048,7 @@
       }
       var faqs = [
         { q: 'Can I switch tiers later?', a: "Yes, upgrade or downgrade at any time from your dashboard. Upgrades take effect immediately and we prorate the difference. Downgrades take effect at the end of your current billing cycle, so you keep the higher limits until then." },
-        { q: "What counts as a 'generation'?", a: "A generation is one clip rendered from a source video using a Solis AI template. Re-rendering the same source with a different template counts as a new generation. Failed renders caused by platform-side errors are automatically refunded to your daily quota." },
+        { q: "What counts as an upload?", a: "One upload is one source URL you submit. We analyze the video once (VideoDNA), then render the clips you chose for that run. On paid plans you can get multiple clips per upload without re-analyzing or re-downloading. Each finished clip uses one saved video slot. Submitting the same source again with a different template counts as a new upload. Failed renders caused by platform-side errors are automatically refunded to your daily quota." },
         { q: 'Do you offer refunds?', a: "If you started with a free trial, you can cancel within 5 days of your first charge and receive a full refund - no questions asked. Annual plans are refundable on a prorated basis within the first 14 days. See our <a href='#'>Terms</a> for the full policy." },
         { q: 'Is there a free trial?', a: "Currently, 'Prime' tier includes a 3-day free trial. You won't be charged until the trial ends and you can cancel anytime from your dashboard before the trial expires with no charge."},
         { q: 'What payment methods do you accept?', a: 'We accept all major credit and debit cards through Paddle, our merchant of record. Apple Pay, Google Pay, and PayPal are also supported at checkout.' },
@@ -1124,7 +1126,10 @@
       }
       function scrollHashTarget() {
         var hash = (location.hash || '').trim();
-        if (!hash || hash === '#') return;
+        if (!hash || hash === '#') {
+          window.scrollTo(0, 0);
+          return;
+        }
         var target = document.querySelector(hash);
         if (!target) return;
         requestAnimationFrame(function () {
@@ -1136,6 +1141,9 @@
       }
       scrollHashTarget();
       window.addEventListener('hashchange', scrollHashTarget);
+      window.addEventListener('pageshow', function (e) {
+        if (e.persisted) scrollHashTarget();
+      });
     })();
   </script>
   <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>

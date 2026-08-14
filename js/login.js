@@ -1,12 +1,27 @@
 (function detectLogoutLanding() {
-  const e = new URLSearchParams(window.location.search);
-  if (e.has("logout") || sessionStorage.getItem("solis_just_logged_out") === "1") {
+  const t = new URLSearchParams(window.location.search);
+  if (t.has("logout") || sessionStorage.getItem("solis_just_logged_out") === "1") {
     window.__SOLIS_FORCE_LOGIN_PAGE__ = true;
     sessionStorage.setItem("solis_skip_auth_redirect", "1");
   }
 })();
 
 const SKIP_AUTH_REDIRECT_KEY = "solis_skip_auth_redirect";
+
+const OAUTH_PROVIDERS = {
+  google: {
+    btnId: "googleLoginBtn",
+    textId: "googleBtnText",
+    label: "Continue with Google",
+    path: "/api/auth/google?fresh=1"
+  },
+  tiktok: {
+    btnId: "tiktokLoginBtn",
+    textId: "tiktokBtnText",
+    label: "Continue with TikTok",
+    path: "/api/auth/tiktok?fresh=1"
+  }
+};
 
 function isPostLogoutLanding() {
   return window.__SOLIS_FORCE_LOGIN_PAGE__ === true || new URLSearchParams(window.location.search).has("logout") || sessionStorage.getItem("solis_just_logged_out") === "1";
@@ -20,126 +35,96 @@ function finishLogoutLanding() {
   sessionStorage.setItem(SKIP_AUTH_REDIRECT_KEY, "1");
   sessionStorage.removeItem("solis_just_logged_out");
   window.__SOLIS_FORCE_LOGIN_PAGE__ = false;
-  const e = localStorage.getItem("theme");
+  const t = localStorage.getItem("theme");
   localStorage.clear();
-  if (e) localStorage.setItem("theme", e);
+  if (t) localStorage.setItem("theme", t);
   window.history.replaceState({}, document.title, "/login.html");
-  const t = window.API_BASE_URL || window.location.origin + "/api";
-  fetch(`${t}/auth/logout`, {
+  const e = window.API_BASE_URL || window.location.origin + "/api";
+  fetch(`${e}/auth/logout`, {
     method: "POST",
     credentials: "include"
   }).catch(() => {});
 }
 
 async function waitForInitialization() {
-  return new Promise(e => {
+  return new Promise(t => {
     if (window.SOLIS_INITIALIZED && window.API_BASE_URL) {
-      e();
+      t();
     } else {
-      const t = setInterval(() => {
+      const e = setInterval(() => {
         if (window.SOLIS_INITIALIZED && window.API_BASE_URL) {
-          clearInterval(t);
-          e();
+          clearInterval(e);
+          t();
         }
       }, 50);
       setTimeout(() => {
-        clearInterval(t);
-        e();
+        clearInterval(e);
+        t();
       }, 5e3);
     }
   });
 }
 
-let googleLoginBtn, googleBtnText;
-
 async function initializeCSRFToken() {
   return true;
 }
 
-async function setupLoginPage() {
-  await waitForInitialization();
-  googleLoginBtn = document.getElementById("googleLoginBtn");
-  googleBtnText = document.getElementById("googleBtnText");
-  if (isPostLogoutLanding()) {
-    finishLogoutLanding();
-    if (googleLoginBtn && googleBtnText) {
-      setupEventListeners();
-    }
-    return;
+function resetOAuthButton(t) {
+  const e = OAUTH_PROVIDERS[t];
+  if (!e) return;
+  const n = document.getElementById(e.btnId);
+  const o = document.getElementById(e.textId);
+  if (n) {
+    n.disabled = false;
+    n.removeAttribute("aria-busy");
   }
-  if (sessionStorage.getItem(SKIP_AUTH_REDIRECT_KEY) === "1") {
-    sessionStorage.removeItem(SKIP_AUTH_REDIRECT_KEY);
-  }
-  if (!googleLoginBtn || !googleBtnText) {
-    return;
-  }
-  await initializeCSRFToken();
-  try {
-    const e = await fetch(`${window.API_BASE_URL}/auth/check`, {
-      method: "GET",
-      credentials: "include"
-    });
-    if (e.ok) {
-      const t = await e.json();
-      if (t.authenticated && t.user) {
-        window.location.replace("/dashboard");
-        return;
-      }
-    }
-  } catch (e) {}
-  setupEventListeners();
+  if (o) o.textContent = e.label;
 }
 
-function getCSRFToken() {
-  return null;
+function resetAllOAuthButtons() {
+  Object.keys(OAUTH_PROVIDERS).forEach(resetOAuthButton);
 }
 
-function disableButtonWithCountdown(e, t = 3) {
-  e.disabled = true;
-  let o = t;
-  const n = e.querySelector("span").textContent;
-  const i = setInterval(() => {
-    e.querySelector("span").textContent = `Try again in ${o}s`;
-    o--;
+function disableButtonWithCountdown(t, e = 3, n) {
+  if (!t) return;
+  t.disabled = true;
+  let o = e;
+  const i = t.querySelector("span");
+  const a = n || i && i.textContent || "Try again";
+  const s = setInterval(() => {
+    if (i) i.textContent = `Try again in ${o}s`;
+    o -= 1;
     if (o < 0) {
-      clearInterval(i);
-      e.disabled = false;
-      e.querySelector("span").textContent = n;
+      clearInterval(s);
+      t.disabled = false;
+      if (i) i.textContent = a;
     }
   }, 1e3);
 }
 
-function resetGoogleLoginButton() {
-  const e = document.getElementById("googleLoginBtn") || googleLoginBtn;
-  const t = document.getElementById("googleBtnText") || googleBtnText;
-  if (e) {
-    e.disabled = false;
-    e.removeAttribute("aria-busy");
-  }
-  if (t) t.textContent = "Continue with Google";
-  googleLoginBtn = e || googleLoginBtn;
-  googleBtnText = t || googleBtnText;
-}
-
 function setupEventListeners() {
-  if (!googleLoginBtn) return;
-  googleLoginBtn.removeEventListener("click", handleGoogleLogin);
-  googleLoginBtn.addEventListener("click", handleGoogleLogin);
+  Object.entries(OAUTH_PROVIDERS).forEach(([t, e]) => {
+    const n = document.getElementById(e.btnId);
+    if (!n) return;
+    const handler = () => handleOAuthLogin(t);
+    n.removeEventListener("click", handler);
+    n.addEventListener("click", handler);
+  });
 }
 
-async function handleGoogleLogin() {
+async function handleOAuthLogin(t) {
+  const e = OAUTH_PROVIDERS[t];
+  if (!e) return;
   try {
-    const e = document.getElementById("googleLoginBtn");
-    const t = document.getElementById("googleBtnText");
-    googleLoginBtn = e;
-    googleBtnText = t;
-    if (t) t.textContent = "Connecting…";
-    if (e) {
-      e.disabled = true;
-      e.setAttribute("aria-busy", "true");
+    const n = document.getElementById(e.btnId);
+    const o = document.getElementById(e.textId);
+    if (o) o.textContent = "Connecting…";
+    if (n) {
+      n.disabled = true;
+      n.setAttribute("aria-busy", "true");
     }
-    const o = window.API_BASE_URL || `${window.location.protocol}//${window.location.hostname}:5500/api`;
-    await fetch(`${o}/auth/logout`, {
+    const i = window.API_BASE_URL || `${window.location.protocol}//${window.location.hostname}:5500/api`;
+    await fetch(`${i}/auth/logout`, {
       method: "POST",
       credentials: "include"
     }).catch(() => {});
@@ -148,53 +133,75 @@ async function handleGoogleLogin() {
       localStorage.removeItem("solis_template_memory");
       localStorage.removeItem("solis_caption_by_template");
       localStorage.removeItem("solis_memory_owner_id");
-    } catch (e) {}
+    } catch (t) {}
     sessionStorage.removeItem(SKIP_AUTH_REDIRECT_KEY);
-    const n = window.apiUrl ? window.apiUrl("/api/auth/google?fresh=1") : `${o}/auth/google?fresh=1`;
-    const i = await fetch(n, {
+    const a = window.apiUrl ? window.apiUrl(e.path) : `${i}${e.path.replace(/^\/api/, "")}`;
+    const s = await fetch(a, {
       method: "GET",
       credentials: "include"
     });
-    if (!i.ok) throw new Error(`Server error: ${i.status}`);
-    const a = await i.json();
-    if (a.auth_url) {
-      resetGoogleLoginButton();
-      window.location.href = a.auth_url;
+    if (!s.ok) {
+      const t = await s.json().catch(() => ({}));
+      throw new Error(t.error || `Server error: ${s.status}`);
+    }
+    const r = await s.json();
+    if (r.auth_url) {
+      resetOAuthButton(t);
+      window.location.href = r.auth_url;
       return;
     }
     throw new Error("Authentication unavailable");
-  } catch (e) {
+  } catch (n) {
     sessionStorage.setItem(SKIP_AUTH_REDIRECT_KEY, "1");
-    console.error("Login error:", e);
-    alert("Login failed. Please check your connection and try again.");
-    resetGoogleLoginButton();
-    if (googleLoginBtn) disableButtonWithCountdown(googleLoginBtn, 3);
+    console.error("Login error:", n);
+    alert(n.message || "Login failed. Please check your connection and try again.");
+    resetOAuthButton(t);
+    const o = document.getElementById(e.btnId);
+    disableButtonWithCountdown(o, 3, e.label);
   }
 }
 
-async function secureFetch(e, t = {}) {
-  return fetch(e, {
-    ...t,
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      ...t.headers
+async function setupLoginPage() {
+  await waitForInitialization();
+  const t = Object.values(OAUTH_PROVIDERS).some(t => document.getElementById(t.btnId));
+  if (isPostLogoutLanding()) {
+    finishLogoutLanding();
+    if (t) setupEventListeners();
+    return;
+  }
+  if (sessionStorage.getItem(SKIP_AUTH_REDIRECT_KEY) === "1") {
+    sessionStorage.removeItem(SKIP_AUTH_REDIRECT_KEY);
+  }
+  if (!t) return;
+  await initializeCSRFToken();
+  try {
+    const t = await fetch(`${window.API_BASE_URL}/auth/check`, {
+      method: "GET",
+      credentials: "include"
+    });
+    if (t.ok) {
+      const e = await t.json();
+      if (e.authenticated && e.user) {
+        window.location.replace("/dashboard");
+        return;
+      }
     }
-  });
+  } catch (t) {}
+  setupEventListeners();
 }
 
-function unlockGoogleLoginUi() {
-  resetGoogleLoginButton();
+function unlockOAuthUi() {
+  resetAllOAuthButtons();
 }
 
-window.addEventListener("pageshow", unlockGoogleLoginUi);
+window.addEventListener("pageshow", unlockOAuthUi);
 
-window.addEventListener("pagehide", unlockGoogleLoginUi);
+window.addEventListener("pagehide", unlockOAuthUi);
 
 window.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "visible") unlockGoogleLoginUi();
+  if (document.visibilityState === "visible") unlockOAuthUi();
 });
 
-window.addEventListener("focus", unlockGoogleLoginUi);
+window.addEventListener("focus", unlockOAuthUi);
 
 document.addEventListener("DOMContentLoaded", setupLoginPage);

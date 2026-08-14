@@ -36,7 +36,7 @@
     <link rel="stylesheet" href="/style/ss/ios-pill-nav.css?v=29">
     <link rel="stylesheet" href="/style/ss/mobile-nav.css?v=27">
     <link rel="stylesheet" href="/style/ss/customize.css?v=27">
-    <link rel="stylesheet" href="/style/ss/clips.css?v=45">
+    <link rel="stylesheet" href="/style/ss/clips.css?v=50">
     <link rel="stylesheet" href="/style/ss/profile.css?v=29">
     <link rel="stylesheet" href="/style/ss/tasks-panel-v2-demo.css?v=11">
     <link rel="stylesheet" href="/style/ss/newsfeed-widget.css?v=28">
@@ -63,7 +63,7 @@
     <script src="/js/payment/platform-connections.js?v=3"></script>
     <script src="/js/ui/plan-selector.js?v=63"></script>
     <script src="/js/core/video-preview-system.js?v=2"></script>
-    <script src="/js/s_new/clip-card.js?v=12"></script>
+    <script src="/js/s_new/clip-card.js?v=18"></script>
     <script src="/js/s.js?v=253"></script>
     <script src="/js/s_new/procc.js?v=2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -1494,7 +1494,7 @@
                 </section>
 
                 <section class="stgPanel" id="stgPanelBilling" data-stg-panel="billing">
-                    <p class="stgPanelLead">Plan, renewal, and generation usage.</p>
+                    <p class="stgPanelLead">Plan, renewal, and upload usage.</p>
                     <div class="stgPlanBanner" id="stgPlanBanner" data-plan="free">
                         <svg class="stgPlanPoly" viewBox="0 0 480 120" preserveAspectRatio="xMaxYMid slice" aria-hidden="true" fill="none" stroke="none">
                             <g class="stgPlanPolySet" data-poly="free">
@@ -1663,8 +1663,8 @@
                                 <p class="stgPlanCompareName">Free</p>
                                 <p class="stgPlanComparePrice">$0</p>
                                 <ul class="stgPlanCompareList">
-                                    <li>1 generation / day</li>
-                                    <li>15 generations / month</li>
+                                    <li>1 upload / day</li>
+                                    <li>15 uploads / month</li>
                                     <li>Ranking template</li>
                                     <li>Watermark on exports</li>
                                 </ul>
@@ -1675,7 +1675,7 @@
                                 <p class="stgPlanCompareName">Basic</p>
                                 <p class="stgPlanComparePrice">$9.99<span class="stgPlanComparePeriod">/mo</span></p>
                                 <ul class="stgPlanCompareList">
-                                    <li>5 generations / day</li>
+                                    <li>5 uploads / day</li>
                                     <li>No watermark</li>
                                     <li>PRO templates and more</li>
                                 </ul>
@@ -3297,7 +3297,7 @@
 
                 <div class="activity-stat" data-activity="hours-saved">
                     <div class="activity-stat-head">
-                        <div class="activity-label">Generations today</div>
+                        <div class="activity-label">Uploads today</div>
                         <div class="activity-change" data-change>Last 24h</div>
                     </div>
                     <div class="activity-val">0</div>
@@ -3485,7 +3485,8 @@
         <div class="template-preview-body">
             <div class="template-preview-video" style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; border-radius: 8px; min-height: 0; gap: 16px; padding-top: 8px; padding-bottom: 10px; overflow: visible;">
                 <div class="preview-phone-row" id="previewPhoneRow">
-                <div class="preview-placeholder" id="templateVideoPreview" style="width: 100%; max-width: 280px; aspect-ratio: 9/16; min-height: 280px; border-radius: 2rem; overflow: hidden; position: relative; display: block; background: #000;">
+                <aside class="preview-virality-rail" id="previewViralityRail" hidden></aside>
+                <div class="preview-placeholder" id="templateVideoPreview" style="width: 280px; max-width: 280px; min-width: 280px; aspect-ratio: 9/16; min-height: 280px; border-radius: 2rem; overflow: hidden; position: relative; display: block; background: #000;">
                     <div class="preview-video-placeholder" style="text-align: center; color: #666;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 16px; opacity: 0.5;">
                             <polygon points="23 7 16 12 23 17 23 7"></polygon>
@@ -3495,7 +3496,6 @@
                     <button type="button" class="preview-audio-toggle" id="previewAudioToggle" hidden
                         aria-pressed="false" title="Unmute preview" aria-label="Unmute preview"></button>
                 </div>
-                <aside class="preview-virality-rail" id="previewViralityRail" hidden></aside>
                 </div>
 
                 <div class="preview-timeline-row" id="previewTimelineRow" hidden>
@@ -3637,31 +3637,25 @@
                             </div>
                         </div>
 
-                        <div class="multi-gen-card is-disabled" id="multiGenCard" data-count="1" aria-disabled="true">
+                        <div class="multi-gen-card" id="multiGenCard" data-count="1">
                             <div class="multi-gen-head">
-                                <span class="multi-gen-title">Multi generation</span>
-                                <span class="multi-gen-soon">Coming soon</span>
+                                <span class="multi-gen-title">CLIPS</span>
+                                <span class="multi-gen-soon" id="multiGenHint" hidden></span>
                                 <span class="multi-gen-value" id="multiGenValue" aria-live="polite">1×</span>
                             </div>
                             <div
                                 class="multi-gen-slider"
                                 id="multiGenSlider"
                                 role="slider"
-                                aria-label="Number of generations"
+                                aria-label="Number of clips per upload"
                                 aria-valuemin="1"
-                                aria-valuemax="5"
+                                aria-valuemax="1"
                                 aria-valuenow="1"
-                                aria-valuetext="1 generation"
-                                aria-disabled="true"
-                                tabindex="-1"
+                                aria-valuetext="1 clip"
+                                tabindex="0"
                             >
                                 <div class="multi-gen-rail" id="multiGenRail">
                                     <div class="multi-gen-fill" id="multiGenFill"></div>
-                                    <span class="multi-gen-step is-on" data-n="1"></span>
-                                    <span class="multi-gen-step" data-n="2"></span>
-                                    <span class="multi-gen-step" data-n="3"></span>
-                                    <span class="multi-gen-step" data-n="4"></span>
-                                    <span class="multi-gen-step" data-n="5"></span>
                                     <span class="multi-gen-thumb" id="multiGenThumb"></span>
                                 </div>
                             </div>
@@ -4625,54 +4619,174 @@
    });
 
    (function initMultiGenSlider() {
-       const MIN = 1;
-       const MAX = 5;
-       const DISABLED = true;
        const card = document.getElementById('multiGenCard');
        const slider = document.getElementById('multiGenSlider');
+       const rail = document.getElementById('multiGenRail');
        const valueEl = document.getElementById('multiGenValue');
-       if (!card || !slider) return;
+       const hintEl = document.getElementById('multiGenHint');
+       if (!card || !slider || !rail) return;
 
-       const count = MIN;
+       let MIN = 1;
+       let MAX = 1;
+       let live = 1;
+       let dragging = false;
+
+       function limits() {
+           return window.__solisClipLimits || { max_per_generation: 1, default_per_generation: 1, suggested: null };
+       }
 
        function tFor(n) {
+           if (MAX <= MIN) return 0;
            return (Math.max(MIN, Math.min(MAX, n)) - MIN) / (MAX - MIN);
        }
 
-       function paint(n) {
-           const t = tFor(n);
+       function layoutSteps() {
+           rail.querySelectorAll('.multi-gen-step').forEach((el) => el.remove());
+           for (let n = MIN; n <= MAX; n++) {
+               const step = document.createElement('span');
+               step.className = 'multi-gen-step';
+               step.dataset.n = String(n);
+               const frac = MAX === MIN ? 0 : (n - MIN) / (MAX - MIN);
+               step.style.left = MAX === MIN
+                   ? 'var(--mg-half)'
+                   : `calc(var(--mg-half) + (100% - var(--mg-thumb)) * ${frac})`;
+               rail.appendChild(step);
+           }
+       }
+
+       function paint(n, pop) {
+           const clamped = Math.max(MIN, Math.min(MAX, Math.round(n)));
+           live = clamped;
+           const t = tFor(clamped);
            slider.style.setProperty('--mg-t', String(t));
-           slider.setAttribute('aria-valuenow', String(n));
-           slider.setAttribute('aria-valuetext', n === 1 ? '1 generation' : `${n} generations`);
-           card.dataset.count = String(n);
-           if (valueEl) valueEl.textContent = `${n}×`;
-           card.querySelectorAll('.multi-gen-step').forEach((step) => {
+           slider.setAttribute('aria-valuemin', String(MIN));
+           slider.setAttribute('aria-valuemax', String(MAX));
+           slider.setAttribute('aria-valuenow', String(clamped));
+           slider.setAttribute('aria-valuetext', clamped === 1 ? '1 clip' : `${clamped} clips`);
+           card.dataset.count = String(clamped);
+           if (valueEl) {
+               valueEl.textContent = `${clamped}×`;
+               if (pop) {
+                   valueEl.classList.add('is-pop');
+                   setTimeout(() => valueEl.classList.remove('is-pop'), 180);
+               }
+           }
+           rail.querySelectorAll('.multi-gen-step').forEach((step) => {
                const nStep = parseInt(step.dataset.n, 10);
-               step.classList.toggle('is-on', nStep === n);
-               step.classList.toggle('is-passed', nStep < n);
+               step.classList.toggle('is-on', nStep === clamped);
+               step.classList.toggle('is-passed', nStep < clamped);
            });
-           window.__solisMultiGenCount = n;
-           window.getMultiGenCount = () => n;
+           window.__solisMultiGenCount = clamped;
+           window.getMultiGenCount = () => live;
+           try { localStorage.setItem('solisMultiGenCount', String(clamped)); } catch (_) {}
        }
 
-       if (DISABLED) {
-           card.classList.add('is-disabled');
-           card.setAttribute('aria-disabled', 'true');
-           slider.setAttribute('aria-disabled', 'true');
-           slider.setAttribute('tabindex', '-1');
-           paint(MIN);
-           try { localStorage.setItem('solisMultiGenCount', '1'); } catch (_) {}
-           return;
+       function setDisabled(disabled, reason) {
+           card.classList.toggle('is-disabled', disabled);
+           card.setAttribute('aria-disabled', disabled ? 'true' : 'false');
+           slider.setAttribute('aria-disabled', disabled ? 'true' : 'false');
+           slider.tabIndex = disabled ? -1 : 0;
+           if (hintEl) {
+               if (reason) {
+                   hintEl.hidden = false;
+                   hintEl.textContent = reason;
+               } else {
+                   hintEl.hidden = true;
+                   hintEl.textContent = '';
+               }
+           }
        }
 
-       let live = MIN;
-       function setCount(n) {
-           live = Math.max(MIN, Math.min(MAX, Math.round(n)));
-           paint(live);
-           try { localStorage.setItem('solisMultiGenCount', String(live)); } catch (_) {}
+       function applyLimits() {
+           const lim = limits();
+           MAX = Math.max(1, parseInt(lim.max_per_generation, 10) || 1);
+           MIN = 1;
+           const suggested = parseInt(lim.suggested, 10);
+           let stored = 1;
+           try {
+               stored = parseInt(localStorage.getItem('solisMultiGenCount') || '1', 10);
+           } catch (_) {}
+           const def = Math.max(MIN, Math.min(MAX, parseInt(lim.default_per_generation, 10) || stored || 1));
+           layoutSteps();
+           paint(Math.max(MIN, Math.min(MAX, stored || def || 1)));
+           if (MAX <= 1) {
+               setDisabled(true, '1 clip on Free (Modal CPU)');
+           } else {
+               setDisabled(false, suggested && suggested < MAX ? `AI suggests ${suggested}` : '');
+           }
        }
-       paint(live);
+
+       function nFromClientX(clientX) {
+           const rect = rail.getBoundingClientRect();
+           const usable = Math.max(1, rect.width - 20);
+           const x = Math.max(0, Math.min(usable, clientX - rect.left - 10));
+           const t = x / usable;
+           return MIN + Math.round(t * (MAX - MIN));
+       }
+
+       function onPointerDown(e) {
+           if (MAX <= 1 || card.classList.contains('is-disabled')) return;
+           dragging = true;
+           slider.classList.add('is-dragging');
+           paint(nFromClientX(e.clientX), true);
+           e.preventDefault();
+       }
+
+       function onPointerMove(e) {
+           if (!dragging) return;
+           paint(nFromClientX(e.clientX), false);
+       }
+
+       function onPointerUp() {
+           if (!dragging) return;
+           dragging = false;
+           slider.classList.remove('is-dragging');
+           slider.classList.add('is-snapping');
+           paint(live, true);
+           setTimeout(() => slider.classList.remove('is-snapping'), 220);
+       }
+
+       slider.addEventListener('mousedown', onPointerDown);
+       slider.addEventListener('touchstart', onPointerDown, { passive: false });
+       window.addEventListener('mousemove', onPointerMove);
+       window.addEventListener('touchmove', onPointerMove, { passive: false });
+       window.addEventListener('mouseup', onPointerUp);
+       window.addEventListener('touchend', onPointerUp);
+
+       slider.addEventListener('keydown', (e) => {
+           if (MAX <= 1) return;
+           if (e.key === 'ArrowRight' || e.key === 'ArrowUp') { paint(live + 1, true); e.preventDefault(); }
+           if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') { paint(live - 1, true); e.preventDefault(); }
+       });
+
+       window.refreshMultiGenSlider = applyLimits;
+       window.syncMultiGenForTemplate = (templateId) => {
+           if (!card) return;
+           const show = templateId === 'splitscreen';
+           card.hidden = !show;
+           card.style.display = show ? '' : 'none';
+       };
+       applyLimits();
    })();
+
+   async function refreshSolisClipLimits() {
+       try {
+           const headers = (typeof getAuthHeaders === 'function') ? getAuthHeaders() : {};
+           const resp = await fetch(`${typeof API_BASE_URL !== 'undefined' ? API_BASE_URL : ''}/clips/status`, {
+               method: 'GET',
+               headers,
+               credentials: 'include',
+           });
+           if (resp.ok) {
+               const data = await resp.json();
+               if (data && data.clips) {
+                   window.__solisClipLimits = data.clips;
+                   if (typeof window.refreshMultiGenSlider === 'function') window.refreshMultiGenSlider();
+               }
+           }
+       } catch (_) { /* ignore */ }
+   }
+   document.addEventListener('DOMContentLoaded', () => { refreshSolisClipLimits(); });
 
    </script>
 

@@ -747,10 +747,10 @@
     let M = "";
     if (w) {
       I = "daily";
-      L = m === "free" ? "Free generation used" : "Daily limit reached";
+      L = m === "free" ? "Free upload used" : "Daily limit reached";
       const e = t?.daily?.resets_at || s.daily_resets_at || s.resets_at;
       const o = formatQuotaUnlockWhen(e) || nextLocalMidnightLabel();
-      M = m === "free" ? o ? `You’ve used your free generation for today. Your next clip unlocks ${o}. Upgrade anytime for more daily clips.` : "You’ve used your free generation for today. Upgrade anytime for more daily clips." : o ? `You’re out of daily generations. Your next clips unlock ${o}. Upgrade anytime for a higher daily limit.` : "You’re out of daily generations. Upgrade anytime for a higher daily limit.";
+      M = m === "free" ? o ? `You’ve used your free upload for today. Your next clip unlocks ${o}. Upgrade anytime for more daily clips.` : "You’ve used your free upload for today. Upgrade anytime for more daily clips." : o ? `You’re out of daily uploads. Your next clips unlock ${o}. Upgrade anytime for a higher daily limit.` : "You’re out of daily uploads. Upgrade anytime for a higher daily limit.";
     } else if (v) {
       I = "monthly";
       L = "Monthly limit reached";

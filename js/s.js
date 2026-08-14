@@ -380,15 +380,15 @@ const PreviewTimeline = (() => {
   let P = 0;
   let I = 1;
   let x = [];
-  let E = -1;
-  let T = 0;
+  let T = -1;
+  let E = 0;
   let M = 1;
   let B = null;
   let A = false;
   let R = null;
   let U = 0;
-  let D = null;
-  let F = false;
+  let F = null;
+  let D = false;
   let N = false;
   const O = 180;
   const G = 8;
@@ -514,20 +514,20 @@ const PreviewTimeline = (() => {
     return true;
   }
   function paintSegmentReorderGhost(e) {
-    if (!D || !isRankingEdit()) return;
+    if (!F || !isRankingEdit()) return;
     const t = segmentIndexAtClientX(e);
-    D.hoverIndex = t;
+    F.hoverIndex = t;
     const n = Array.from(Q?.children || []);
     n.forEach((e, n) => {
-      e.classList.toggle("is-drop-target", n === t && n !== D.index);
-      e.classList.toggle("is-dragging", n === D.index);
+      e.classList.toggle("is-drop-target", n === t && n !== F.index);
+      e.classList.toggle("is-dragging", n === F.index);
     });
-    const i = e - D.startX;
-    const r = n[D.index];
+    const i = e - F.startX;
+    const r = n[F.index];
     if (r) {
       const e = (() => {
         const e = getSegmentBounds();
-        return e[D.index] / u * I;
+        return e[F.index] / u * I;
       })();
       r.style.transform = `translate3d(${e + i}px,0,0)`;
       r.style.zIndex = "5";
@@ -691,12 +691,12 @@ const PreviewTimeline = (() => {
     x = x.filter(e => e > d + .04 && e < p - .04).sort((e, t) => e - t);
   }
   function paintSegmentMove(e) {
-    if (!D || !u || I <= 0) return;
+    if (!F || !u || I <= 0) return;
     if (isRankingEdit()) {
       paintSegmentReorderGhost(e);
       return;
     }
-    const {index: t, startX: n, startA: i, startB: r} = D;
+    const {index: t, startX: n, startA: i, startB: r} = F;
     const o = (e - n) / I * u;
     applySegmentTimes(t, i + o, r + o);
     m = Math.max(d, Math.min(p, i + o));
@@ -711,7 +711,7 @@ const PreviewTimeline = (() => {
     paintSegmentsFast();
   }
   function beginSegmentDrag() {
-    if (!D || c === "segment") return;
+    if (!F || c === "segment") return;
     clearTimeout(U);
     U = 0;
     if (isRankingEdit() && !N) return;
@@ -720,11 +720,11 @@ const PreviewTimeline = (() => {
     if (a && !a.paused) a.pause();
     W?.classList.add("is-dragging", "is-trimming");
     if (isRankingEdit()) W?.classList.add("is-reordering");
-    D.target?.classList.add("is-dragging");
-    Q?.children?.[D.index]?.classList.add("is-dragging");
-    if (D.target?.setPointerCapture && D.pointerId != null) {
+    F.target?.classList.add("is-dragging");
+    Q?.children?.[F.index]?.classList.add("is-dragging");
+    if (F.target?.setPointerCapture && F.pointerId != null) {
       try {
-        D.target.setPointerCapture(D.pointerId);
+        F.target.setPointerCapture(F.pointerId);
       } catch (e) {}
     }
   }
@@ -740,9 +740,9 @@ const PreviewTimeline = (() => {
     clearSegHold();
     const n = getSegmentBounds();
     if (e < 0 || e >= n.length - 1) return;
-    F = false;
+    D = false;
     N = false;
-    D = {
+    F = {
       index: e,
       pointerId: t.pointerId,
       startX: t.clientX,
@@ -753,16 +753,16 @@ const PreviewTimeline = (() => {
     U = setTimeout(() => {
       U = 0;
       N = true;
-      D?.target?.classList.add("is-hold-ready");
+      F?.target?.classList.add("is-hold-ready");
     }, O);
   }
   function onSegmentPointerMove(e) {
-    if (!D) return;
-    const t = Math.abs(e.clientX - D.startX);
+    if (!F) return;
+    const t = Math.abs(e.clientX - F.startX);
     if (c === "segment") {
       e.preventDefault();
-      if (t >= G) F = true;
-      if (!F) return;
+      if (t >= G) D = true;
+      if (!D) return;
       paintSegmentMove(e.clientX);
       return;
     }
@@ -770,7 +770,7 @@ const PreviewTimeline = (() => {
       if (N && t >= G) {
         beginSegmentDrag();
         if (c === "segment") {
-          F = true;
+          D = true;
           paintSegmentMove(e.clientX);
         }
       }
@@ -778,14 +778,14 @@ const PreviewTimeline = (() => {
     }
     if (t >= G) {
       beginSegmentDrag();
-      F = true;
+      D = true;
       paintSegmentMove(e.clientX);
     }
   }
   function onSegmentPointerUp(e) {
-    if (!D) return;
-    const t = D;
-    const n = F;
+    if (!F) return;
+    const t = F;
+    const n = D;
     const i = t.hoverIndex;
     clearSegHold();
     t.target?.classList.remove("is-dragging", "is-hold-ready");
@@ -794,7 +794,7 @@ const PreviewTimeline = (() => {
     W?.classList.remove("is-reordering");
     if (c === "segment" && !n) {
       c = null;
-      D = null;
+      F = null;
       W?.classList.remove("is-dragging", "is-trimming");
       if (f) a?.play().catch(() => {});
       f = false;
@@ -804,7 +804,7 @@ const PreviewTimeline = (() => {
     if (n) {
       const e = isRankingEdit() && i != null && i !== t.index && applySegmentReorder(t.index, i);
       c = null;
-      D = null;
+      F = null;
       markRankingTimelineDirty();
       scheduleSeek(m, true);
       if (f) a?.play().catch(() => {});
@@ -819,7 +819,7 @@ const PreviewTimeline = (() => {
       }
       return;
     }
-    D = null;
+    F = null;
     c = null;
     customizeSegment(t.index);
   }
@@ -903,12 +903,12 @@ const PreviewTimeline = (() => {
     }
   }
   function applyBoundTime(e) {
-    if (E === 0) {
+    if (T === 0) {
       d = e;
       return;
     }
     const t = getSegmentBounds();
-    if (E >= t.length - 1) {
+    if (T >= t.length - 1) {
       p = e;
       return;
     }
@@ -922,9 +922,9 @@ const PreviewTimeline = (() => {
     x.sort((e, t) => e - t);
   }
   function paintBoundFast(e) {
-    if (!u || I <= 0 || E < 0) return;
+    if (!u || I <= 0 || T < 0) return;
     const t = timeFromClientX(e);
-    const n = Math.max(T, Math.min(M, t));
+    const n = Math.max(E, Math.min(M, t));
     applyBoundTime(n);
     m = n;
     const i = d / u * I;
@@ -947,8 +947,8 @@ const PreviewTimeline = (() => {
     const i = getSegmentBounds();
     if (t < 0 || t >= i.length) return;
     c = "bound";
-    E = t;
-    T = t === 0 ? 0 : i[t - 1] + e;
+    T = t;
+    E = t === 0 ? 0 : i[t - 1] + e;
     M = t === i.length - 1 ? u : i[t + 1] - e;
     B = t > 0 && t < i.length - 1 ? i[t] : null;
     f = a ? !a.paused : false;
@@ -1256,7 +1256,7 @@ const PreviewTimeline = (() => {
     }
   }
   function onPointerMove(e) {
-    if (D && c !== "segment") {
+    if (F && c !== "segment") {
       onSegmentPointerMove(e);
       if (c === "segment") return;
     }
@@ -1283,7 +1283,7 @@ const PreviewTimeline = (() => {
     });
   }
   function endDrag() {
-    if (D) {
+    if (F) {
       onSegmentPointerUp();
       return;
     }
@@ -1304,7 +1304,7 @@ const PreviewTimeline = (() => {
       w = 0;
     }
     c = null;
-    E = -1;
+    T = -1;
     B = null;
     if (e === "start" || e === "end" || e === "bound") {
       m = Math.max(d, Math.min(p, m));
@@ -1511,8 +1511,8 @@ const PreviewTimeline = (() => {
     k = false;
     c = null;
     clearSegHold();
-    D = null;
-    F = false;
+    F = null;
+    D = false;
     f = false;
     x = [];
     R = null;
@@ -5625,6 +5625,8 @@ class ClipsStudio {
     this._libraryPreviewObjectUrl = null;
     this._libraryPreviewFetchController = null;
     this._libraryPreviewLoadGen = 0;
+    this._libraryPreviewRetryTimer = null;
+    this._libraryPreviewFailedId = null;
     this._libraryEditingEnabled = false;
     this._librarySplitscreenCustomize = false;
     this._librarySplitscreenDirty = false;
@@ -6201,6 +6203,9 @@ class ClipsStudio {
     }
     safeLog(`📋 Opening template preview for: ${e}`);
     this.toggleLibraryPreviewLayout(false);
+    if (typeof window.syncMultiGenForTemplate === "function") {
+      window.syncMultiGenForTemplate(e);
+    }
     this._libraryRankingEditable = false;
     this._libraryRankingDirty = false;
     this._librarySplitscreenDirty = false;
@@ -6994,6 +6999,12 @@ class ClipsStudio {
       this._libraryPreviewFetchController.abort();
       this._libraryPreviewFetchController = null;
     }
+    if (this._libraryPreviewRetryTimer) {
+      clearTimeout(this._libraryPreviewRetryTimer);
+      this._libraryPreviewRetryTimer = null;
+    }
+    this._libraryPreviewLoadGen += 1;
+    this._libraryPreviewFailedId = null;
     this._hideLibraryPreviewLoading();
     const n = document.querySelector(".template-preview-content");
     if (n) n.classList.remove("is-library-preview");
@@ -7884,6 +7895,10 @@ class ClipsStudio {
     }
   }
   mountLibraryPreviewVideo(e, t, n = {}) {
+    if (this._libraryPreviewRetryTimer) {
+      clearTimeout(this._libraryPreviewRetryTimer);
+      this._libraryPreviewRetryTimer = null;
+    }
     if (this._libraryPreviewFetchController) {
       this._libraryPreviewFetchController.abort();
       this._libraryPreviewFetchController = null;
@@ -7894,6 +7909,7 @@ class ClipsStudio {
     }
     const i = ++this._libraryPreviewLoadGen;
     this._libraryPreviewProjectId = t;
+    this._libraryPreviewFailedId = null;
     this.fetchSecureLibraryPreviewBlob(e, t, null, {
       loadGen: i,
       attempt: 0,
@@ -8649,7 +8665,7 @@ class ClipsStudio {
     const t = e?.daily;
     if (t && t.used != null && t.limit != null) {
       try {
-        showNotification(`Apply counted as 1 generation (${t.used}/${t.limit} today).`, "info");
+        showNotification(`Apply counted as 1 upload (${t.used}/${t.limit} today).`, "info");
       } catch (e) {}
     }
   }
@@ -8659,14 +8675,14 @@ class ClipsStudio {
       return new Error(e.error || "Customization window expired for this project.");
     }
     if (i === "DAILY_LIMIT_REACHED" || i === "MONTHLY_LIMIT_REACHED" || t === 429) {
-      return new Error(e.error || "Applying changes uses 1 daily generation — quota reached. Try again after reset, or upgrade.");
+      return new Error(e.error || "Applying changes uses 1 daily upload — quota reached. Try again after reset, or upgrade.");
     }
     return new Error(e?.error || `${n} (${t})`);
   }
   async fetchSecureLibraryPreviewBlob(e, t, n = null, i = {}) {
     const r = i.loadGen != null ? i.loadGen : ++this._libraryPreviewLoadGen;
     const o = Math.max(0, Number(i.attempt) || 0);
-    const s = 8;
+    const s = i.clean ? 2 : 3;
     const a = !!i.clean;
     if (this._libraryPreviewFetchController) {
       this._libraryPreviewFetchController.abort();
@@ -8675,29 +8691,39 @@ class ClipsStudio {
     const l = new AbortController;
     this._libraryPreviewFetchController = l;
     const isStale = () => r !== this._libraryPreviewLoadGen || !this.libraryPreviewModalOpen || this._libraryPreviewProjectId && String(this._libraryPreviewProjectId) !== String(t);
-    const retrySoon = n => {
+    const giveUp = n => {
       if (isStale()) return;
-      if (o + 1 >= s) {
-        if (!a && !i.cleanFallbackTried) {
-          safeLog("Preview burned path failed — trying clean master");
-          this.fetchSecureLibraryPreviewBlob(e, t, null, {
-            loadGen: r,
-            attempt: 0,
-            clean: true,
-            cleanFallbackTried: true
-          });
-          return;
-        }
-        safeLog("Preview load gave up:", n);
-        this._showLibraryPreviewError(e, "Could not load video preview", t);
+      if (!a && !i.cleanFallbackTried) {
+        safeLog("Preview burned path failed — trying clean master");
+        this.fetchSecureLibraryPreviewBlob(e, t, null, {
+          loadGen: r,
+          attempt: 0,
+          clean: true,
+          cleanFallbackTried: true
+        });
         return;
       }
-      const l = Math.min(2800, 400 + o * 450);
+      safeLog("Preview load gave up:", n);
+      this._libraryPreviewFailedId = String(t);
+      this._showLibraryPreviewError(e, "Could not load video preview", t);
+    };
+    const retrySoon = n => {
+      if (isStale()) return;
+      if (String(this._libraryPreviewFailedId) === String(t)) return;
+      if (o + 1 >= s) {
+        giveUp(n);
+        return;
+      }
+      const l = Math.min(4e3, 900 + o * 900);
       safeLog(`Preview not ready (${n}) — retry ${o + 1}/${s} in ${l}ms`);
       if (o === 0 && !e.querySelector("video")) {
         this._setLibraryPreviewPlaceholder(e);
       }
-      setTimeout(() => {
+      if (this._libraryPreviewRetryTimer) {
+        clearTimeout(this._libraryPreviewRetryTimer);
+      }
+      this._libraryPreviewRetryTimer = setTimeout(() => {
+        this._libraryPreviewRetryTimer = null;
         if (isStale()) return;
         this.fetchSecureLibraryPreviewBlob(e, t, null, {
           loadGen: r,
@@ -8709,7 +8735,7 @@ class ClipsStudio {
     };
     try {
       const n = this.getLibraryPreviewVideoUrl(t, {
-        bust: true,
+        bust: o === 0,
         clean: a
       });
       if (isStale()) return;
@@ -8742,6 +8768,12 @@ class ClipsStudio {
       e.appendChild(i);
       e.classList.remove("has-video");
       let r = false;
+      let s = false;
+      const scheduleRetry = e => {
+        if (s || r || isStale()) return;
+        s = true;
+        retrySoon(e);
+      };
       const reveal = () => {
         if (r || isStale()) return;
         const n = i.videoWidth > 0 && i.videoHeight > 0;
@@ -8772,24 +8804,23 @@ class ClipsStudio {
       i.addEventListener("canplay", reveal);
       i.addEventListener("playing", reveal);
       i.addEventListener("error", () => {
-        if (r || isStale()) return;
-        retrySoon("video decode error");
+        scheduleRetry("video decode error");
       }, {
         once: true
       });
-      let o = 0;
-      const s = setInterval(() => {
-        if (r || isStale()) {
-          clearInterval(s);
+      let l = 0;
+      const c = setInterval(() => {
+        if (r || isStale() || s) {
+          clearInterval(c);
           return;
         }
-        o += 1;
+        l += 1;
         if (i.videoWidth > 0 && i.readyState >= 1) {
-          clearInterval(s);
+          clearInterval(c);
           reveal();
           return;
         }
-        if (o >= 40) clearInterval(s);
+        if (l >= 24) clearInterval(c);
       }, 250);
       setTimeout(() => {
         if (!r && !isStale() && i.videoWidth > 0) {
@@ -8797,9 +8828,8 @@ class ClipsStudio {
         }
       }, 800);
       setTimeout(() => {
-        if (r || isStale()) return;
-        retrySoon("video stall");
-      }, 7e3);
+        scheduleRetry("video stall");
+      }, 9e3);
       i.src = n;
       i.load();
       i.play().catch(() => {});
@@ -8823,16 +8853,48 @@ class ClipsStudio {
     e.hidden = true;
     e.innerHTML = "";
   }
-  _renderPreviewViralityRail(e) {
+  async _fetchPreviewReportCard(e) {
+    if (!e) return null;
+    try {
+      const t = typeof getAuthHeaders === "function" ? getAuthHeaders() : {};
+      const n = await fetch(`${API_BASE_URL}/clips/projects/${encodeURIComponent(e)}/report-card`, {
+        credentials: "include",
+        headers: t
+      });
+      if (!n.ok) return null;
+      const i = await n.json();
+      return i && i.virality ? i.virality : null;
+    } catch (e) {
+      return null;
+    }
+  }
+  async _renderPreviewViralityRail(e) {
     const t = document.getElementById("previewViralityRail");
     if (!t) return;
-    const n = window.SolisClipCard && typeof SolisClipCard.railHTML === "function" ? SolisClipCard.railHTML(e) : "";
-    if (!n) {
+    let n = e;
+    let i = window.SolisClipCard && typeof SolisClipCard.railHTML === "function" ? SolisClipCard.railHTML(n) : "";
+    if (!i && n) {
+      const e = n.projectId || n.id;
+      const t = await this._fetchPreviewReportCard(e);
+      if (t) {
+        n = {
+          ...n,
+          virality: t
+        };
+        const r = this.libraryItems.find(t => String(t.projectId || t.id) === String(e));
+        if (r) r.virality = t;
+        i = SolisClipCard.railHTML(n);
+      }
+    }
+    if (!i) {
       this._hidePreviewViralityRail();
       return;
     }
-    t.innerHTML = n;
+    t.innerHTML = i;
     t.hidden = false;
+    if (typeof SolisClipCard.bindRail === "function") {
+      SolisClipCard.bindRail(t);
+    }
   }
   toggleLibraryPreviewLayout(e) {
     const t = document.getElementById("templateInfoPanel");
@@ -9098,7 +9160,7 @@ class ClipsStudio {
           }
           if (e.apply_consumes_quota !== false) {
             try {
-              showNotification("Applying changes uses 1 daily generation.", "info");
+              showNotification("Applying changes uses 1 daily upload.", "info");
             } catch (e) {}
           }
           await this.runLibraryApplyWithSpinner(i, {
@@ -9548,7 +9610,7 @@ class ClipsStudio {
       const e = Math.floor(u / 60);
       const t = u % 60;
       const n = e > 0 ? `${e}m ${t}s` : `${t}s`;
-      showNotification(`Please wait ${n} before your next generation.`, "warning");
+      showNotification(`Please wait ${n} before your next upload.`, "warning");
       return;
     }
     if (e?.library_limit_reached || e?.block_reason === "library_full" || t?.error_code === "VIDEO_LIMIT_REACHED") {
@@ -9566,7 +9628,7 @@ class ClipsStudio {
       showNotification("A video is already generating. Please wait for it to finish.", "warning");
       return;
     }
-    showNotification("Cannot start a new generation right now. Try again shortly.", "warning");
+    showNotification("Cannot start a new upload right now. Try again shortly.", "warning");
   }
   async startClipProcessingWithSlots(e, t) {
     try {
@@ -9830,6 +9892,9 @@ class ClipsStudio {
       if (t === "splitscreen" && typeof window.getSplitscreenConfig === "function") {
         Object.assign(u, window.getSplitscreenConfig());
       }
+      if (t === "splitscreen" && typeof window.getMultiGenCount === "function") {
+        u.clip_count = window.getMultiGenCount();
+      }
       let f = await fetch(`${API_BASE_URL}/clips/start`, {
         method: "POST",
         headers: c,
@@ -9955,7 +10020,7 @@ class ClipsStudio {
         const n = y?.queue?.queue_status;
         const i = Number(y?.queue?.users_ahead);
         const r = n === "waiting" || Number.isFinite(i) && i > 0;
-        const s = y?.message || (r ? "Queued — waiting for an open slot..." : "Starting generation...");
+        const s = y?.message || (r ? "Queued — waiting for an open slot..." : "Starting upload...");
         o.startGeneration(y.project_id, s, t, e);
         if (y?.queue) {
           o.updateProgress(y.project_id, r ? 1 : 3, s, true, y.queue);
@@ -10265,7 +10330,7 @@ class ClipsStudio {
       t.classList.add("is-upgrade-cta");
       t.disabled = false;
       t.setAttribute("aria-label", "Upgrade");
-      t.title = "Upgrade for more daily generations";
+      t.title = "Upgrade for more daily uploads";
       sessionStorage.removeItem("urlButtonLocked");
       sessionStorage.removeItem("urlButtonLockeduntil");
     };
@@ -10290,8 +10355,8 @@ class ClipsStudio {
     }
   }
   openUrlSubmitUpgrade() {
-    const e = "Free generation used";
-    const t = "You’ve used your free generation for today. Upgrade anytime for more daily clips.";
+    const e = "Free upload used";
+    const t = "You’ve used your free upload for today. Upgrade anytime for more daily clips.";
     if (typeof window.showUpgradeModal === "function") {
       window.showUpgradeModal(e, t);
     } else if (typeof openUpgradeModal === "function") {
@@ -10422,7 +10487,7 @@ class ClipsStudio {
               window.syncStorageLimitsFromStatus(i);
             }
           } else if (i.is_generating || i.block_reason === "in_progress") {
-            showNotification("A generation may still be finishing. You can pick a template — we'll retry when you confirm.", "warning");
+            showNotification("An upload may still be finishing. You can pick a template — we'll retry when you confirm.", "warning");
           } else if ((i.generation?.cooldown_remaining_seconds || 0) > 0) {
             this._notifyGenerationBlock(i);
           }
@@ -10542,6 +10607,10 @@ class ClipsStudio {
         data: e,
         at: Date.now()
       };
+      if (e && e.clips) {
+        window.__solisClipLimits = e.clips;
+        if (typeof window.refreshMultiGenSlider === "function") window.refreshMultiGenSlider();
+      }
       return e;
     }).catch(() => null);
   }
@@ -12597,7 +12666,7 @@ async function startClipCompilation(e) {
     const s = o.project_id;
     const a = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
     if (a) {
-      a.startGeneration(s, "Starting generation...", "splitscreen", {
+      a.startGeneration(s, "Starting upload...", "splitscreen", {
         secondaryType: splitscreenSecondaryType
       });
     }

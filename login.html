@@ -57,27 +57,6 @@
     touch-action: manipulation;
   }
 
-  @property --wx {
-    syntax: '<percentage>';
-    inherits: false;
-    initial-value: 50%;
-  }
-  @property --wy {
-    syntax: '<percentage>';
-    inherits: false;
-    initial-value: 0%;
-  }
-  @property --wr {
-    syntax: '<percentage>';
-    inherits: false;
-    initial-value: 18%;
-  }
-  @property --hr {
-    syntax: '<percentage>';
-    inherits: false;
-    initial-value: 12%;
-  }
-
   .bg-canvas { position: fixed; inset: 0; z-index: 0; overflow: hidden; background: #ffffff; isolation: isolate; }
 
   .bg-canvas::before {
@@ -89,13 +68,6 @@
       rgba(255, 247, 237, 0.9) 48%,
       rgba(254, 215, 170, 0.55) 72%,
       rgba(249, 115, 22, 0.18) 100%);
-    --wx: 50%;
-    --wy: 0%;
-    --wr: 18%;
-    --hr: 12%;
-    -webkit-mask-image: radial-gradient(ellipse var(--wr) var(--hr) at var(--wx) var(--wy), #000 0%, #000 28%, transparent 72%);
-    mask-image: radial-gradient(ellipse var(--wr) var(--hr) at var(--wx) var(--wy), #000 0%, #000 28%, transparent 72%);
-    animation: washFlow 3.5s cubic-bezier(0.4, 0.0, 0.18, 1) forwards;
   }
 
   .bg-canvas::after {
@@ -106,41 +78,16 @@
     background-size: 256px 256px;
     pointer-events: none;
     opacity: 0.14;
-    z-index: 2;
   }
 
-  .blob { position: absolute; border-radius: 50%; filter: blur(100px); will-change: transform, opacity; opacity: 0; }
-  .blob-1 { width: 750px; height: 750px; top: -280px; left: 50%; transform: translateX(-50%); background: radial-gradient(circle, rgba(251,146,60,0.30) 0%, rgba(249,115,22,0.12) 60%, transparent 100%); animation: blobFadeIn 1.4s cubic-bezier(0.4, 0, 0.2, 1) 1.6s forwards, float1 25s ease-in-out 3.5s infinite; }
-  .blob-2 { width: 520px; height: 520px; bottom: -160px; right: -80px; background: radial-gradient(circle, rgba(253,186,116,0.26) 0%, rgba(251,146,60,0.08) 60%, transparent 100%); animation: blobFadeIn 1.4s cubic-bezier(0.4, 0, 0.2, 1) 2.1s forwards, float2 20s ease-in-out 3.5s infinite; }
-  .blob-3 { width: 380px; height: 380px; top: 22%; right: 18%; background: radial-gradient(circle, rgba(255,237,213,0.6) 0%, transparent 70%); animation: blobFadeIn 1.4s cubic-bezier(0.4, 0, 0.2, 1) 2.3s forwards, float3 30s ease-in-out 3.5s infinite; }
-
-  @keyframes washFlow {
-    0%   { --wx: 50%; --wy: -6%; --wr: 16%; --hr: 10%; }
-    34%  { --wx: 86%; --wy: 40%; --wr: 48%; --hr: 36%; }
-    64%  { --wx: 78%; --wy: 90%; --wr: 78%; --hr: 70%; }
-    100% { --wx: 70%; --wy: 72%; --wr: 220%; --hr: 220%; }
-  }
-
-  @keyframes blobFadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
+  .blob { position: absolute; border-radius: 50%; filter: blur(100px); will-change: transform; }
+  .blob-1 { width: 750px; height: 750px; top: -280px; left: 50%; transform: translateX(-50%); background: radial-gradient(circle, rgba(251,146,60,0.30) 0%, rgba(249,115,22,0.12) 60%, transparent 100%); animation: float1 25s ease-in-out infinite; }
+  .blob-2 { width: 520px; height: 520px; bottom: -160px; right: -80px; background: radial-gradient(circle, rgba(253,186,116,0.26) 0%, rgba(251,146,60,0.08) 60%, transparent 100%); animation: float2 20s ease-in-out infinite; }
+  .blob-3 { width: 380px; height: 380px; top: 22%; right: 18%; background: radial-gradient(circle, rgba(255,237,213,0.6) 0%, transparent 70%); animation: float3 30s ease-in-out infinite; }
 
   @keyframes float1 { 0%, 100% { transform: translateX(-50%) translate(0, 0) scale(1); } 50% { transform: translateX(-50%) translate(-40px, 40px) scale(1.05); } }
   @keyframes float2 { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(40px, -50px) scale(1.08); } }
   @keyframes float3 { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(-30px, -30px) scale(0.95); } }
-
-  @media (prefers-reduced-motion: reduce) {
-    .bg-canvas::before {
-      animation: none;
-      -webkit-mask-image: none;
-      mask-image: none;
-    }
-    .blob { opacity: 1; }
-    .blob-1 { animation: float1 25s ease-in-out infinite; }
-    .blob-2 { animation: float2 20s ease-in-out infinite; }
-    .blob-3 { animation: float3 30s ease-in-out infinite; }
-  }
 
   ._grid { display: none; }
 

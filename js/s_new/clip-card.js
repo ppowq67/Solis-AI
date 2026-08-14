@@ -91,12 +91,24 @@
   function tip(e) {
     return `<span class="scc-tip">${esc(e)}</span>`;
   }
-  function dimRows(e) {
-    return [ [ "hook", "Hook" ], [ "takeaway", "Takeaway" ], [ "emotion", "Emotion" ], [ "flow", "Flow" ], [ "share", "Share Trigger" ] ].map(([t, n]) => {
+  function dimGrade(e, t) {
+    const n = t > 0 ? Number(e) / t : 0;
+    if (n <= 0) return "";
+    if (n >= .91) return "S";
+    if (n >= .73) return "A";
+    if (n >= .59) return "B";
+    if (n >= .45) return "C";
+    return "D";
+  }
+  function gradeRows(e) {
+    return [ [ "hook", "Hook" ], [ "takeaway", "Takeaway" ], [ "emotion", "Emotion" ], [ "flow", "Flow" ], [ "share", "Share" ] ].map(([t, n]) => {
       const i = e[t] || {};
-      const r = Math.round((Number(i.bar) || 0) * 100);
-      const s = i.note ? `<p class="pv-dim-note">${esc(i.note)}</p>` : "";
-      return `<div class="pv-dim">\n                <div class="pv-dim-row">\n                    <span class="pv-dim-l">${esc(n)}</span>\n                    <span class="pv-dim-bar" aria-hidden="true"><i style="width:${r}%"></i></span>\n                </div>\n                ${s}\n            </div>`;
+      if (!(i.n > 0)) return "";
+      const r = dimGrade(i.n, i.max);
+      if (!r) return "";
+      const s = i.note || "";
+      const a = s ? `<div class="scc-why"><strong class="pv-g-${esc(r)}">${esc(r)} ${esc(n)}</strong><p>${esc(s)}</p></div>` : "";
+      return `<div class="pv-grade" tabindex="0">\n                <b class="pv-g-${esc(r)}">${esc(r)}</b><span>${esc(n)}</span>\n                ${a}\n            </div>`;
     }).join("");
   }
   function previewUrl(e) {
@@ -127,17 +139,17 @@
     const n = esc(e.name || e.video_title || "Clip");
     const i = esc(e.projectId || e.id || "");
     const r = formatClock(e.duration);
-    const s = t ? `<div class="scc-viral scc-tier-${esc(t.tier)}" tabindex="0">\n                    <span class="scc-viral-n">${esc(t.tier)}</span>\n                    ${tip(`${t.tier}-tier — ${t.label}`)}\n               </div>` : `<div class="scc-viral scc-viral-empty"></div>`;
+    const s = t ? `<div class="scc-viral scc-tier-${esc(t.tier)}" tabindex="0">\n                    <span class="scc-viral-n">${esc(t.tier)}</span>\n                    ${tip(`${t.tier} tier · ${t.label}`)}\n               </div>` : `<div class="scc-viral scc-viral-empty"></div>`;
     return `\n            <div class="scc-preview">\n                <div class="scc-skel" aria-hidden="true"></div>\n                <video class="scc-video" muted playsinline loop preload="auto" controlslist="nodownload nofullscreen noremoteplayback" disablepictureinpicture></video>\n                <div class="scc-time"><span class="scc-t0">00:00</span> <span class="scc-t1">${esc(r)}</span></div>\n                <div class="scc-bar"><i></i></div>\n            </div>\n            <div class="scc-meta">\n                <div class="scc-meta-row">\n                    ${s}\n                    <div class="scc-actions">\n                        <button type="button" class="scc-ico library-download-btn" data-project-id="${i}" aria-label="Download">\n                            ${iconDl()}${tip("Save this clip")}\n                        </button>\n                        <button type="button" class="scc-ico library-delete-btn" aria-label="Delete">\n                            ${iconTrash()}${tip("Delete this clip")}\n                        </button>\n                    </div>\n                </div>\n                <h2 class="card-title scc-title" title="${n}">${n}</h2>\n            </div>`;
   }
   function railHTML(e) {
     const t = viralityOf(e);
     if (!t) return "";
-    const n = t.tier === "S" ? '<span class="pv-fire" aria-hidden="true">🔥</span>' : "";
-    const i = t.why ? `<div class="pv-why"><span>Why this works</span><p>${esc(t.why)}</p></div>` : "";
-    const r = t.tag ? `<div class="pv-tag">Tag: ${esc(t.tag.label)} ✓</div>` : "";
-    const s = t.fix ? `<div class="pv-fix">${esc(t.fix)}</div>` : "";
-    return `<div class="pv-card pv-tier-${esc(t.tier)}">\n            <div class="pv-head">${n}<b>${esc(t.tier)}</b><small>-TIER CLIP</small></div>\n            <p class="pv-label">${esc(t.label)}</p>\n            ${dimRows(t)}\n            ${i}\n            ${r}\n            ${s}\n        </div>`;
+    const n = gradeRows(t);
+    const i = t.why ? `<div class="pv-foot pv-why"><p>${esc(t.why)}</p></div>` : "";
+    const r = t.tag ? `<div class="pv-foot pv-tag">${esc(t.tag.label)} ✓</div>` : "";
+    const s = t.fix ? `<div class="pv-foot pv-fix">${esc(t.fix)}</div>` : "";
+    return `<div class="pv-card pv-tier-${esc(t.tier)}">\n            <div class="pv-head"><b>${esc(t.tier)}</b></div>\n            <p class="pv-label">${esc(t.label)}</p>\n            <div class="pv-grades">${n}</div>\n            ${i}${r}${s}\n        </div>`;
   }
   function bind(e, t, n) {
     if (!e || e.dataset.sccBound === "1") return;

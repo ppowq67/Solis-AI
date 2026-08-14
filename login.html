@@ -57,6 +57,27 @@
     touch-action: manipulation;
   }
 
+  @property --wx {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 50%;
+  }
+  @property --wy {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 0%;
+  }
+  @property --wr {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 18%;
+  }
+  @property --hr {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 12%;
+  }
+
   .bg-canvas { position: fixed; inset: 0; z-index: 0; overflow: hidden; background: #ffffff; isolation: isolate; }
 
   .bg-canvas::before {
@@ -68,8 +89,13 @@
       rgba(255, 247, 237, 0.9) 48%,
       rgba(254, 215, 170, 0.55) 72%,
       rgba(249, 115, 22, 0.18) 100%);
-    opacity: 0;
-    animation: washSettle 2.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    --wx: 50%;
+    --wy: 0%;
+    --wr: 18%;
+    --hr: 12%;
+    -webkit-mask-image: radial-gradient(ellipse var(--wr) var(--hr) at var(--wx) var(--wy), #000 0%, #000 28%, transparent 72%);
+    mask-image: radial-gradient(ellipse var(--wr) var(--hr) at var(--wx) var(--wy), #000 0%, #000 28%, transparent 72%);
+    animation: washFlow 3.5s cubic-bezier(0.4, 0.0, 0.18, 1) forwards;
   }
 
   .bg-canvas::after {
@@ -83,63 +109,16 @@
     z-index: 2;
   }
 
-  .bg-stroke {
-    position: absolute;
-    width: min(92vw, 980px);
-    height: min(58vw, 620px);
-    left: 50%;
-    top: 0;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 1;
-    background: radial-gradient(ellipse at center,
-      rgba(249, 115, 22, 0.42) 0%,
-      rgba(251, 146, 60, 0.26) 28%,
-      rgba(254, 215, 170, 0.14) 52%,
-      transparent 74%);
-    filter: blur(28px);
-    will-change: transform, opacity;
-    animation: strokeDraw 2.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  }
-
   .blob { position: absolute; border-radius: 50%; filter: blur(100px); will-change: transform, opacity; opacity: 0; }
-  .blob-1 { width: 750px; height: 750px; top: -280px; left: 50%; transform: translateX(-50%); background: radial-gradient(circle, rgba(251,146,60,0.30) 0%, rgba(249,115,22,0.12) 60%, transparent 100%); animation: blobFadeIn 1.5s cubic-bezier(0.22, 1, 0.36, 1) 1.45s forwards, float1 25s ease-in-out 2.9s infinite; }
-  .blob-2 { width: 520px; height: 520px; bottom: -160px; right: -80px; background: radial-gradient(circle, rgba(253,186,116,0.26) 0%, rgba(251,146,60,0.08) 60%, transparent 100%); animation: blobFadeIn 1.5s cubic-bezier(0.22, 1, 0.36, 1) 1.7s forwards, float2 20s ease-in-out 2.9s infinite; }
-  .blob-3 { width: 380px; height: 380px; top: 22%; right: 18%; background: radial-gradient(circle, rgba(255,237,213,0.6) 0%, transparent 70%); animation: blobFadeIn 1.5s cubic-bezier(0.22, 1, 0.36, 1) 1.85s forwards, float3 30s ease-in-out 2.9s infinite; }
+  .blob-1 { width: 750px; height: 750px; top: -280px; left: 50%; transform: translateX(-50%); background: radial-gradient(circle, rgba(251,146,60,0.30) 0%, rgba(249,115,22,0.12) 60%, transparent 100%); animation: blobFadeIn 1.4s cubic-bezier(0.4, 0, 0.2, 1) 1.6s forwards, float1 25s ease-in-out 3.5s infinite; }
+  .blob-2 { width: 520px; height: 520px; bottom: -160px; right: -80px; background: radial-gradient(circle, rgba(253,186,116,0.26) 0%, rgba(251,146,60,0.08) 60%, transparent 100%); animation: blobFadeIn 1.4s cubic-bezier(0.4, 0, 0.2, 1) 2.1s forwards, float2 20s ease-in-out 3.5s infinite; }
+  .blob-3 { width: 380px; height: 380px; top: 22%; right: 18%; background: radial-gradient(circle, rgba(255,237,213,0.6) 0%, transparent 70%); animation: blobFadeIn 1.4s cubic-bezier(0.4, 0, 0.2, 1) 2.3s forwards, float3 30s ease-in-out 3.5s infinite; }
 
-  @keyframes strokeDraw {
-    0% {
-      left: 50%;
-      top: -6%;
-      transform: translate(-50%, -50%) rotate(-12deg) scale(0.28, 0.42);
-      opacity: 0;
-    }
-    10% {
-      opacity: 1;
-    }
-    38% {
-      left: 86%;
-      top: 38%;
-      transform: translate(-50%, -50%) rotate(78deg) scale(0.78, 0.46);
-      opacity: 1;
-    }
-    68% {
-      left: 78%;
-      top: 86%;
-      transform: translate(-50%, -50%) rotate(148deg) scale(1.02, 0.58);
-      opacity: 1;
-    }
-    100% {
-      left: 72%;
-      top: 78%;
-      transform: translate(-50%, -50%) rotate(160deg) scale(1.35, 0.9);
-      opacity: 0;
-    }
-  }
-
-  @keyframes washSettle {
-    0%, 42% { opacity: 0; }
-    100% { opacity: 1; }
+  @keyframes washFlow {
+    0%   { --wx: 50%; --wy: -6%; --wr: 16%; --hr: 10%; }
+    34%  { --wx: 86%; --wy: 40%; --wr: 48%; --hr: 36%; }
+    64%  { --wx: 78%; --wy: 90%; --wr: 78%; --hr: 70%; }
+    100% { --wx: 70%; --wy: 72%; --wr: 220%; --hr: 220%; }
   }
 
   @keyframes blobFadeIn {
@@ -152,9 +131,12 @@
   @keyframes float3 { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(-30px, -30px) scale(0.95); } }
 
   @media (prefers-reduced-motion: reduce) {
-    .bg-canvas::before { animation: none; opacity: 1; }
-    .bg-stroke { animation: none; opacity: 0; }
-    .blob { opacity: 1; animation: none; }
+    .bg-canvas::before {
+      animation: none;
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+    .blob { opacity: 1; }
     .blob-1 { animation: float1 25s ease-in-out infinite; }
     .blob-2 { animation: float2 20s ease-in-out infinite; }
     .blob-3 { animation: float3 30s ease-in-out infinite; }
@@ -531,7 +513,6 @@
 <body>
 
 <div class="bg-canvas">
-  <div class="bg-stroke" aria-hidden="true"></div>
   <div class="blob blob-1"></div>
   <div class="blob blob-2"></div>
   <div class="blob blob-3"></div>

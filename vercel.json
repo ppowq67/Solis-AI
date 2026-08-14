@@ -1,6 +1,7 @@
 {
   "cleanUrls": true,
   "rewrites": [
+    { "source": "/api/auth/:path*", "destination": "https://api.solisai.video/api/auth/:path*" },
     { "source": "/terms", "destination": "/legal/terms.html" },
     { "source": "/terms.html", "destination": "/legal/terms.html" },
     { "source": "/privacy", "destination": "/legal/privacy.html" },

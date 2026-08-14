@@ -20,6 +20,12 @@ const OAUTH_PROVIDERS = {
     textId: "tiktokBtnText",
     label: "Continue with TikTok",
     path: "/api/auth/tiktok?fresh=1"
+  },
+  youtube: {
+    btnId: "youtubeLoginBtn",
+    textId: "youtubeBtnText",
+    label: "Continue with YouTube",
+    path: "/api/auth/youtube?fresh=1"
   }
 };
 

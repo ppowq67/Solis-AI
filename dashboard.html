@@ -4654,8 +4654,8 @@
            return `calc(var(--mg-half) + (100% - var(--mg-thumb)) * ${frac})`;
        }
 
-       function pulsePro(n) {
-           const badge = rail.querySelector(`.multi-gen-pro[data-n="${n}"]`);
+       function pulsePro() {
+           const badge = rail.querySelector('.multi-gen-pro');
            if (!badge) return;
            badge.classList.remove('is-pulse');
            void badge.offsetWidth;
@@ -4665,6 +4665,7 @@
 
        function layoutSteps() {
            rail.querySelectorAll('.multi-gen-step, .multi-gen-pro').forEach((el) => el.remove());
+           card.classList.toggle('has-pro', allowed < VISUAL_MAX);
            for (let n = MIN; n <= VISUAL_MAX; n++) {
                const locked = n > allowed;
                const step = document.createElement('span');
@@ -4674,21 +4675,21 @@
                step.addEventListener('click', (e) => {
                    e.stopPropagation();
                    if (n > allowed) {
-                       pulsePro(n);
+                       pulsePro();
                        paint(allowed, { pop: true });
                        return;
                    }
                    paint(n, { pop: true });
                });
                rail.appendChild(step);
-               if (locked) {
-                   const pro = document.createElement('span');
-                   pro.className = 'multi-gen-pro';
-                   pro.dataset.n = String(n);
-                   pro.textContent = 'PRO';
-                   pro.style.left = leftFor(n);
-                   rail.appendChild(pro);
-               }
+           }
+           if (allowed < VISUAL_MAX) {
+               const firstLocked = allowed + 1;
+               const pro = document.createElement('span');
+               pro.className = 'multi-gen-pro';
+               pro.textContent = 'PRO';
+               pro.style.left = leftFor(firstLocked);
+               rail.appendChild(pro);
            }
        }
 
@@ -4704,10 +4705,17 @@
            const pop = !!(opts && opts.pop);
            let next = Math.max(MIN, Math.min(VISUAL_MAX, Math.round(n)));
            if (next > allowed) {
-               pulsePro(Math.min(VISUAL_MAX, next));
+               pulsePro();
                next = allowed;
            }
            live = next;
+           if (pop && !dragging) {
+               slider.classList.add('is-snapping');
+               window.clearTimeout(paint._snapTimer);
+               paint._snapTimer = window.setTimeout(() => {
+                   slider.classList.remove('is-snapping');
+               }, 280);
+           }
            slider.style.setProperty('--mg-t', String(tFor(live)));
            slider.setAttribute('aria-valuemin', String(MIN));
            slider.setAttribute('aria-valuemax', String(allowed));
@@ -4729,8 +4737,8 @@
 
        function nFromClientX(clientX) {
            const rect = rail.getBoundingClientRect();
-           const half = 9;
-           const usable = Math.max(1, rect.width - 18);
+           const half = 11;
+           const usable = Math.max(1, rect.width - 22);
            const x = Math.max(0, Math.min(usable, clientX - rect.left - half));
            return MIN + Math.round((x / usable) * (VISUAL_MAX - MIN));
        }
@@ -4742,7 +4750,7 @@
                return;
            }
            const preview = Math.min(n, allowed);
-           if (n > allowed) pulsePro(Math.min(VISUAL_MAX, n));
+           if (n > allowed) pulsePro();
            slider.style.setProperty('--mg-t', String(tFor(preview)));
            if (valueEl) valueEl.textContent = `${preview}×`;
            updateSteps(preview);
@@ -4779,6 +4787,11 @@
            dragging = false;
            activePointerId = null;
            slider.classList.remove('is-dragging');
+           slider.classList.add('is-snapping');
+           window.clearTimeout(onPointerUp._snapTimer);
+           onPointerUp._snapTimer = window.setTimeout(() => {
+               slider.classList.remove('is-snapping');
+           }, 280);
            try { slider.releasePointerCapture(e.pointerId); } catch (_) {}
            paintAtClientX(e.clientX, true);
        }
@@ -4791,7 +4804,7 @@
        slider.addEventListener('keydown', (e) => {
            if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
                e.preventDefault();
-               if (live >= allowed) pulsePro(Math.min(VISUAL_MAX, live + 1));
+               if (live >= allowed) pulsePro();
                paint(live + 1, { pop: true });
            }
            if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {

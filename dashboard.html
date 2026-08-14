@@ -3649,8 +3649,7 @@
 
                         <div class="multi-gen-card" id="multiGenCard" data-count="1">
                             <div class="multi-gen-head">
-                                <span class="multi-gen-title">CLIPS</span>
-                                <span class="multi-gen-soon" id="multiGenHint" hidden></span>
+                                <span class="multi-gen-title">Clips</span>
                                 <span class="multi-gen-value" id="multiGenValue" aria-live="polite">1×</span>
                             </div>
                             <div
@@ -3659,7 +3658,7 @@
                                 role="slider"
                                 aria-label="Number of clips per upload"
                                 aria-valuemin="1"
-                                aria-valuemax="1"
+                                aria-valuemax="5"
                                 aria-valuenow="1"
                                 aria-valuetext="1 clip"
                                 tabindex="0"
@@ -4633,11 +4632,11 @@
        const slider = document.getElementById('multiGenSlider');
        const rail = document.getElementById('multiGenRail');
        const valueEl = document.getElementById('multiGenValue');
-       const hintEl = document.getElementById('multiGenHint');
        if (!card || !slider || !rail) return;
 
-       let MIN = 1;
-       let MAX = 1;
+       const VISUAL_MAX = 5;
+       const MIN = 1;
+       let allowed = 1;
        let live = 1;
        let dragging = false;
        let activePointerId = null;
@@ -4647,25 +4646,49 @@
        }
 
        function tFor(n) {
-           if (MAX <= MIN) return 0;
-           return (Math.max(MIN, Math.min(MAX, n)) - MIN) / (MAX - MIN);
+           return (Math.max(MIN, Math.min(VISUAL_MAX, n)) - MIN) / (VISUAL_MAX - MIN);
+       }
+
+       function leftFor(n) {
+           const frac = (n - MIN) / (VISUAL_MAX - MIN);
+           return `calc(var(--mg-half) + (100% - var(--mg-thumb)) * ${frac})`;
+       }
+
+       function pulsePro(n) {
+           const badge = rail.querySelector(`.multi-gen-pro[data-n="${n}"]`);
+           if (!badge) return;
+           badge.classList.remove('is-pulse');
+           void badge.offsetWidth;
+           badge.classList.add('is-pulse');
+           setTimeout(() => badge.classList.remove('is-pulse'), 560);
        }
 
        function layoutSteps() {
-           rail.querySelectorAll('.multi-gen-step').forEach((el) => el.remove());
-           for (let n = MIN; n <= MAX; n++) {
+           rail.querySelectorAll('.multi-gen-step, .multi-gen-pro').forEach((el) => el.remove());
+           for (let n = MIN; n <= VISUAL_MAX; n++) {
+               const locked = n > allowed;
                const step = document.createElement('span');
-               step.className = 'multi-gen-step';
+               step.className = 'multi-gen-step' + (locked ? ' is-locked' : '');
                step.dataset.n = String(n);
-               const frac = MAX === MIN ? 0 : (n - MIN) / (MAX - MIN);
-               step.style.left = MAX === MIN
-                   ? 'var(--mg-half)'
-                   : `calc(var(--mg-half) + (100% - var(--mg-thumb)) * ${frac})`;
+               step.style.left = leftFor(n);
                step.addEventListener('click', (e) => {
                    e.stopPropagation();
+                   if (n > allowed) {
+                       pulsePro(n);
+                       paint(allowed, { pop: true });
+                       return;
+                   }
                    paint(n, { pop: true });
                });
                rail.appendChild(step);
+               if (locked) {
+                   const pro = document.createElement('span');
+                   pro.className = 'multi-gen-pro';
+                   pro.dataset.n = String(n);
+                   pro.textContent = 'PRO';
+                   pro.style.left = leftFor(n);
+                   rail.appendChild(pro);
+               }
            }
        }
 
@@ -4679,81 +4702,64 @@
 
        function paint(n, opts) {
            const pop = !!(opts && opts.pop);
-           const clamped = Math.max(MIN, Math.min(MAX, Math.round(n)));
-           live = clamped;
-           const t = tFor(clamped);
-           slider.style.setProperty('--mg-t', String(t));
+           let next = Math.max(MIN, Math.min(VISUAL_MAX, Math.round(n)));
+           if (next > allowed) {
+               pulsePro(Math.min(VISUAL_MAX, next));
+               next = allowed;
+           }
+           live = next;
+           slider.style.setProperty('--mg-t', String(tFor(live)));
            slider.setAttribute('aria-valuemin', String(MIN));
-           slider.setAttribute('aria-valuemax', String(MAX));
-           slider.setAttribute('aria-valuenow', String(clamped));
-           slider.setAttribute('aria-valuetext', clamped === 1 ? '1 clip' : `${clamped} clips`);
-           card.dataset.count = String(clamped);
+           slider.setAttribute('aria-valuemax', String(allowed));
+           slider.setAttribute('aria-valuenow', String(live));
+           slider.setAttribute('aria-valuetext', live === 1 ? '1 clip' : `${live} clips`);
+           card.dataset.count = String(live);
            if (valueEl) {
-               valueEl.textContent = `${clamped}×`;
+               valueEl.textContent = `${live}×`;
                if (pop) {
                    valueEl.classList.add('is-pop');
                    setTimeout(() => valueEl.classList.remove('is-pop'), 120);
                }
            }
-           updateSteps(clamped);
-           window.__solisMultiGenCount = clamped;
+           updateSteps(live);
+           window.__solisMultiGenCount = live;
            window.getMultiGenCount = () => live;
-           try { localStorage.setItem('solisMultiGenCount', String(clamped)); } catch (_) {}
+           try { localStorage.setItem('solisMultiGenCount', String(live)); } catch (_) {}
+       }
+
+       function nFromClientX(clientX) {
+           const rect = rail.getBoundingClientRect();
+           const half = 9;
+           const usable = Math.max(1, rect.width - 18);
+           const x = Math.max(0, Math.min(usable, clientX - rect.left - half));
+           return MIN + Math.round((x / usable) * (VISUAL_MAX - MIN));
        }
 
        function paintAtClientX(clientX, snap) {
-           const rect = rail.getBoundingClientRect();
-           const half = 10;
-           const usable = Math.max(1, rect.width - 20);
-           const x = Math.max(0, Math.min(usable, clientX - rect.left - half));
-           const t = x / usable;
+           const n = nFromClientX(clientX);
            if (snap) {
-               const n = MIN + Math.round(t * (MAX - MIN));
                paint(n, { pop: true });
                return;
            }
-           slider.style.setProperty('--mg-t', String(t));
-           const preview = MIN + Math.round(t * (MAX - MIN));
+           const preview = Math.min(n, allowed);
+           if (n > allowed) pulsePro(Math.min(VISUAL_MAX, n));
+           slider.style.setProperty('--mg-t', String(tFor(preview)));
            if (valueEl) valueEl.textContent = `${preview}×`;
            updateSteps(preview);
        }
 
-       function setDisabled(disabled, reason) {
-           card.classList.toggle('is-disabled', disabled);
-           card.setAttribute('aria-disabled', disabled ? 'true' : 'false');
-           slider.setAttribute('aria-disabled', disabled ? 'true' : 'false');
-           slider.tabIndex = disabled ? -1 : 0;
-           if (hintEl) {
-               if (reason) {
-                   hintEl.hidden = false;
-                   hintEl.textContent = reason;
-               } else {
-                   hintEl.hidden = true;
-                   hintEl.textContent = '';
-               }
-           }
-       }
-
        function applyLimits() {
            const lim = limits();
-           MAX = Math.max(1, parseInt(lim.max_per_generation, 10) || 1);
-           MIN = 1;
+           allowed = Math.max(1, Math.min(VISUAL_MAX, parseInt(lim.max_per_generation, 10) || 1));
            let stored = 1;
            try {
                stored = parseInt(localStorage.getItem('solisMultiGenCount') || '1', 10);
            } catch (_) {}
-           const def = Math.max(MIN, Math.min(MAX, parseInt(lim.default_per_generation, 10) || stored || 1));
            layoutSteps();
-           paint(Math.max(MIN, Math.min(MAX, stored || def || 1)));
-           if (MAX <= 1) {
-               setDisabled(true, '1 clip on Free');
-           } else {
-               setDisabled(false, '');
-           }
+           paint(Math.max(MIN, Math.min(allowed, stored || 1)));
        }
 
        function onPointerDown(e) {
-           if (MAX <= 1 || card.classList.contains('is-disabled')) return;
            if (e.button !== undefined && e.button !== 0) return;
            dragging = true;
            activePointerId = e.pointerId;
@@ -4783,15 +4789,21 @@
        slider.addEventListener('pointercancel', onPointerUp);
 
        slider.addEventListener('keydown', (e) => {
-           if (MAX <= 1) return;
-           if (e.key === 'ArrowRight' || e.key === 'ArrowUp') { paint(live + 1, { pop: true }); e.preventDefault(); }
-           if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') { paint(live - 1, { pop: true }); e.preventDefault(); }
+           if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+               e.preventDefault();
+               if (live >= allowed) pulsePro(Math.min(VISUAL_MAX, live + 1));
+               paint(live + 1, { pop: true });
+           }
+           if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+               e.preventDefault();
+               paint(live - 1, { pop: true });
+           }
        });
 
        window.refreshMultiGenSlider = applyLimits;
        window.syncMultiGenForTemplate = (templateId) => {
            if (!card) return;
-           const show = templateId === 'splitscreen';
+           const show = templateId === 'splitscreen' || templateId === 'ranked_compilation';
            card.hidden = !show;
            card.style.display = show ? '' : 'none';
        };

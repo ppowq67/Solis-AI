@@ -9899,7 +9899,7 @@ class ClipsStudio {
       if (t === "splitscreen" && typeof window.getSplitscreenConfig === "function") {
         Object.assign(u, window.getSplitscreenConfig());
       }
-      if (t === "splitscreen" && typeof window.getMultiGenCount === "function") {
+      if ((t === "splitscreen" || t === "ranked_compilation") && typeof window.getMultiGenCount === "function") {
         u.clip_count = window.getMultiGenCount();
       }
       let f = await fetch(`${API_BASE_URL}/clips/start`, {

@@ -13,11 +13,25 @@
     min-height: 20px;
 }
 
-.profile-dropdown-name .badge-container {
-    display: inline-flex;
+.profile-dropdown-name {
+    display: flex !important;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
+.profile-dropdown-name .badge-container,
+.profile-dropdown-info .badge-container {
+    display: inline-flex !important;
     align-items: center;
     gap: 4px;
     flex-shrink: 0;
+}
+.profile-dropdown-name .badge-container svg,
+.profile-dropdown-info .badge-container svg {
+    width: 16px;
+    height: 16px;
+    display: inline-block !important;
+    overflow: visible !important;
 }
 
 .pro-badge-premium {

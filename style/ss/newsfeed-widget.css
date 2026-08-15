@@ -539,34 +539,35 @@
 }
 
 .nf-header-author-badges svg,
-.nf-header-author-badges svg * {
+.nf-header-badges-container svg,
+.nf-profile-badges-container svg {
     opacity: 1 !important;
     visibility: visible !important;
-    display: block !important;
+    display: inline-block !important;
+    overflow: visible !important;
+    flex-shrink: 0;
     pointer-events: auto !important;
     animation: none !important;
 }
 
 .nf-header-badges-container {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 4px;
     flex-shrink: 0;
+    min-width: 20px;
+    min-height: 20px;
 }
 
 .nf-header-badges-container svg {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     filter: none;
-    opacity: 1 !important;
-    visibility: visible !important;
-    display: block !important;
 }
 
 .nf-badge-checkmark {
     opacity: 1 !important;
     visibility: visible !important;
-    display: block !important;
 }
 
 .nf-header-author {

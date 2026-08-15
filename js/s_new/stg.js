@@ -814,13 +814,13 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       const x = Number(y.limit ?? 0);
       const L = Number(y.used ?? 0);
-      const M = y.remaining;
+      const U = y.remaining;
       if (x > 0) {
         setText("stgMaxEffort", L + " / " + x + " used");
         setQuotaFill(document.getElementById("stgMaxFill"), L, x);
         const e = document.getElementById("stgMaxHint");
         if (e) {
-          const t = Math.max(0, Number(M ?? x - L));
+          const t = Math.max(0, Number(U ?? x - L));
           e.textContent = t > 0 ? t + " Premium Request" + (t === 1 ? "" : "s") + " left in this window." : "Premium Requests locked until reset.";
         }
       } else {
@@ -829,8 +829,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const e = document.getElementById("stgMaxHint");
         if (e) e.textContent = "Upgrade to Prime or Elite for Premium Requests.";
       }
-      const U = formatRenewalLabel(t.subscription_end_date || t.plan_expires_at, t.plan_status);
-      if (U) setText("stgRenewalDate", U); else if (!u) setText("stgRenewalDate", "Active subscription"); else setText("stgRenewalDate", "No active subscription");
+      const M = formatRenewalLabel(t.subscription_end_date || t.plan_expires_at, t.plan_status);
+      if (M) setText("stgRenewalDate", M); else if (!u) setText("stgRenewalDate", "Active subscription"); else setText("stgRenewalDate", "No active subscription");
       syncBillingCancelUI({
         plan: l,
         planStatus: t.plan_status || t.subscription_status,
@@ -1017,9 +1017,19 @@ document.addEventListener("DOMContentLoaded", () => {
           localStorage.setItem("currentUser", JSON.stringify(t));
         }
       } catch (e) {}
-      document.querySelectorAll(".user-name, #dropdownUserName, #menuUserName").forEach(e => {
+      document.querySelectorAll(".user-name, #menuUserName").forEach(e => {
         if (e) e.textContent = r;
       });
+      const c = document.querySelector("#dropdownUserName .username-text");
+      if (c) c.textContent = r; else {
+        const e = document.getElementById("dropdownUserName");
+        if (e && !e.querySelector(".badge-container")) e.textContent = r;
+      }
+      try {
+        if (window.NotificationSystemV2?.loadUserBadges) {
+          window.NotificationSystemV2.loadUserBadges(true);
+        }
+      } catch (e) {}
       if (typeof window.apiCache?.clearUserProfile === "function") {
         window.apiCache.clearUserProfile();
       } else if (window.apiCache) {
@@ -1042,13 +1052,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const I = document.getElementById("stgCropImg");
   const x = document.getElementById("stgCropViewport");
   const L = document.getElementById("stgCropStage");
-  const M = document.getElementById("stgCropZoom");
-  const U = document.getElementById("stgCropSave");
+  const U = document.getElementById("stgCropZoom");
+  const M = document.getElementById("stgCropSave");
   let P = false;
   let A = 0;
   const T = 4e3;
-  const k = 5 * 1024 * 1024;
-  const N = 512;
+  const N = 5 * 1024 * 1024;
+  const k = 512;
   const _ = {
     open: false,
     objectUrl: null,
@@ -1110,9 +1120,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (I) I.removeAttribute("src");
     if (v) v.value = "";
-    if (U) {
-      U.disabled = false;
-      U.classList.remove("is-busy");
+    if (M) {
+      M.disabled = false;
+      M.classList.remove("is-busy");
     }
   }
   function openCropModal(e) {
@@ -1126,7 +1136,7 @@ document.addEventListener("DOMContentLoaded", () => {
     _.zoom = 1;
     _.offsetX = 0;
     _.offsetY = 0;
-    if (M) M.value = "1";
+    if (U) U.value = "1";
     const onLoad = () => {
       I.removeEventListener("load", onLoad);
       _.naturalW = I.naturalWidth || 0;
@@ -1166,7 +1176,7 @@ document.addEventListener("DOMContentLoaded", () => {
   async function exportCroppedAvatarFile() {
     const e = cropViewportSize();
     const t = _.baseScale * _.zoom;
-    const n = N;
+    const n = k;
     const o = document.createElement("canvas");
     o.width = n;
     o.height = n;
@@ -1188,7 +1198,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }, "image/webp", .9);
     });
     if (!d || d.size <= 0) throw new Error("Failed to process image");
-    if (d.size > k) throw new Error("Image too large. Maximum size is 5MB.");
+    if (d.size > N) throw new Error("Image too large. Maximum size is 5MB.");
     const u = d.type === "image/webp" ? "image/webp" : "image/jpeg";
     const f = u === "image/webp" ? "webp" : "jpg";
     return new File([ d ], `avatar.${f}`, {
@@ -1243,9 +1253,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const t = document.getElementById("stgAvatar");
     try {
       if (t) t.style.opacity = "0.55";
-      if (U) {
-        U.disabled = true;
-        U.classList.add("is-busy");
+      if (M) {
+        M.disabled = true;
+        M.classList.add("is-busy");
       }
       const n = new FormData;
       n.append("pfp", e, e.name || "avatar.webp");
@@ -1296,9 +1306,9 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         alert(e.message || "Failed to upload profile picture");
       }
-      if (U) {
-        U.disabled = false;
-        U.classList.remove("is-busy");
+      if (M) {
+        M.disabled = false;
+        M.classList.remove("is-busy");
       }
     } finally {
       if (t) t.style.opacity = "1";
@@ -1355,24 +1365,24 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
       const t = e.deltaY > 0 ? -.08 : .08;
       _.zoom = Math.max(1, Math.min(3, _.zoom + t));
-      if (M) M.value = String(_.zoom);
+      if (U) U.value = String(_.zoom);
       applyCropTransform();
     }, {
       passive: false
     });
   }
-  M?.addEventListener("input", () => {
-    _.zoom = Math.max(1, Math.min(3, Number(M.value) || 1));
+  U?.addEventListener("input", () => {
+    _.zoom = Math.max(1, Math.min(3, Number(U.value) || 1));
     applyCropTransform();
   });
   document.getElementById("stgCropZoomIn")?.addEventListener("click", () => {
     _.zoom = Math.min(3, _.zoom + .12);
-    if (M) M.value = String(_.zoom);
+    if (U) U.value = String(_.zoom);
     applyCropTransform();
   });
   document.getElementById("stgCropZoomOut")?.addEventListener("click", () => {
     _.zoom = Math.max(1, _.zoom - .12);
-    if (M) M.value = String(_.zoom);
+    if (U) U.value = String(_.zoom);
     applyCropTransform();
   });
   document.getElementById("stgCropCancel")?.addEventListener("click", () => closeCropModal());
@@ -1381,7 +1391,7 @@ document.addEventListener("DOMContentLoaded", () => {
   B?.addEventListener("click", e => {
     if (e.target === B) closeCropModal();
   });
-  U?.addEventListener("click", () => {
+  M?.addEventListener("click", () => {
     saveCroppedAvatar();
   });
   B?.querySelector(".stgCropCard")?.addEventListener("click", e => e.stopPropagation());
@@ -1409,7 +1419,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const t = new Uint8Array(await e.slice(0, 16).arrayBuffer());
         const n = detectImageMime(t);
         if (!n) throw new Error("File is not a valid JPG, PNG, or WebP image");
-        if (e.size <= 0 || e.size > k) {
+        if (e.size <= 0 || e.size > N) {
           throw new Error("Image too large. Maximum size is 5MB.");
         }
         openCropModal(e);

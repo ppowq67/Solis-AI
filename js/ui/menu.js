@@ -247,6 +247,11 @@ async function updateProfileDropdown() {
   const i = e?.querySelector(".username-text");
   if (i) i.textContent = o;
   try {
+    if (window.NotificationSystemV2?.loadUserBadges) {
+      setTimeout(() => window.NotificationSystemV2.loadUserBadges(true), 200);
+    }
+  } catch (e) {}
+  try {
     const e = await fetch(window.apiUrl("/api/user/profile"), {
       method: "POST",
       credentials: "include",

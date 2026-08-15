@@ -686,31 +686,34 @@ const NotificationSystemV2 = {
       subtree: true
     });
   },
-  loadUserBadges: async () => {
-    if (NotificationSystemV2._badgesLoaded) return;
+  loadUserBadges: async (e = false) => {
+    if (!e && NotificationSystemV2._badgesLoaded) return;
     NotificationSystemV2._badgesLoaded = true;
     try {
       const e = (window.API_BASE_URL || "https://api.solisai.video/api").replace(/\/$/, "");
       const t = {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        Accept: "application/json"
       };
       if (typeof getAuthHeaders === "function") Object.assign(t, getAuthHeaders());
       const i = await fetch(`${e}/badges/current`, {
         method: "POST",
         credentials: "include",
-        headers: t
+        headers: t,
+        body: "{}"
       });
-      const n = await i.json();
+      const n = await i.json().catch(() => ({}));
       if (n.success && n.badges) {
         const e = n.badges;
-        if (e.badges && e.badges.length > 0) {
-          Logger.success(`Loaded ${e.badges.length} badge(s) from database`);
-          const t = document.querySelector(".profile-dropdown-name");
-          if (!t) {
+        const t = e.badges || [];
+        if (t.length > 0) {
+          Logger.success(`Loaded ${t.length} badge(s) from database`);
+          const i = document.querySelector(".profile-dropdown-name");
+          if (!i) {
             Logger.warn("profile-dropdown-name disappeared after fetch, re-waiting...");
             NotificationSystemV2._badgesLoaded = false;
             NotificationSystemV2.waitForElement(".profile-dropdown-name", () => {
-              NotificationSystemV2.loadUserBadges();
+              NotificationSystemV2.loadUserBadges(true);
             });
             return;
           }
@@ -720,6 +723,7 @@ const NotificationSystemV2 = {
         }
       } else {
         Logger.log("No badge data from API");
+        NotificationSystemV2._badgesLoaded = false;
       }
     } catch (e) {
       NotificationSystemV2._badgesLoaded = false;
@@ -738,31 +742,37 @@ const NotificationSystemV2 = {
   },
   displayUserBadge: e => {
     if (!e || !e.badges || e.badges.length === 0) return;
-    const t = document.querySelector(".profile-dropdown-name");
+    const t = document.querySelector(".profile-dropdown-name") || document.querySelector(".profile-dropdown-info .profile-dropdown-name") || document.getElementById("dropdownUserName");
     if (!t) return;
     t.style.display = "flex";
     t.style.alignItems = "center";
-    t.style.gap = "8px";
+    t.style.gap = "6px";
     t.style.flexWrap = "nowrap";
     let i = t.querySelector(".badge-container");
     if (!i) {
       i = document.createElement("span");
       i.className = "badge-container";
       i.style.cssText = "display:inline-flex;align-items:center;gap:4px;flex-shrink:0;";
-      t.appendChild(i);
+      const e = t.querySelector(".username-text");
+      if (e && e.nextSibling) {
+        t.insertBefore(i, e.nextSibling);
+      } else if (e) {
+        t.appendChild(i);
+      } else {
+        t.appendChild(i);
+      }
     }
     if (window.SolisBadges?.renderList) {
-      window.SolisBadges.renderList(i, e.badges, 22);
+      window.SolisBadges.renderList(i, e.badges, 18);
       return;
     }
     i.innerHTML = "";
     e.badges.slice(0, 2).forEach(e => {
-      const t = e.badge_info;
-      if (!t || !t.name) return;
+      const t = e.badge_info || {};
       const n = document.createElement("span");
-      n.className = "user-badge";
-      n.style.cssText = "display:inline-flex;width:22px;height:22px;";
-      const o = NotificationSystemV2.createBadgeSvg(e.badge_type, t.color);
+      n.className = "user-badge solis-user-badge";
+      n.style.cssText = "display:inline-flex;width:18px;height:18px;";
+      const o = NotificationSystemV2.createBadgeSvg(e.badge_type, t.color || "#f97316");
       n.appendChild(o);
       i.appendChild(n);
     });
@@ -1002,6 +1012,8 @@ function initWhenReady() {
 
 initWhenReady();
 
+window.NotificationSystemV2 = NotificationSystemV2;
+
 window.notificationSystem = {
   add: e => NotificationSystemV2.addNotification(e),
   clearUnread: () => NotificationSystemV2.clearUnreadStatus(),
@@ -1063,7 +1075,7 @@ window.notificationSystem = {
     }
   },
   displayUserBadge: e => NotificationSystemV2.displayUserBadge(e),
-  loadUserBadges: async () => NotificationSystemV2.loadUserBadges()
+  loadUserBadges: async e => NotificationSystemV2.loadUserBadges(!!e)
 };
 
 function addVideoBadge() {

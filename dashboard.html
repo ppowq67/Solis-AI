@@ -6887,29 +6887,6 @@
         0 4px 14px rgba(34,197,94,.18) !important;
     background:linear-gradient(145deg,rgba(220,252,231,.95) 0%,rgba(187,247,208,.55) 100%) !important;
 }
-.sub-acard.is-locked{cursor:pointer;}
-.sub-acard.is-locked .sub-aprev{opacity:.88;}
-.sub-acard.is-locked:hover .sub-aprev{opacity:1;}
-.sub-acard .pro-badge{
-    position:absolute;
-    top:4px;
-    right:4px;
-    padding:2px 6px;
-    font-size:7px;
-    font-weight:800;
-    letter-spacing:.4px;
-    line-height:1.2;
-    z-index:5;
-    border-radius:100px;
-    text-transform:uppercase;
-    color:#fff;
-    white-space:nowrap;
-    font-family:'Plus Jakarta Sans',sans-serif;
-    pointer-events:none;
-    border:1px solid rgba(255,255,255,.35);
-    background:rgba(255,107,53,.85);
-    box-shadow:0 2px 8px rgba(255,107,53,.35),inset 0 1px 0 rgba(255,255,255,.3);
-}
 .sub-aprev{
     display:flex;justify-content:center;align-items:center;
     gap:4px 6px;margin:0 auto;min-height:36px;
@@ -8198,12 +8175,12 @@
         return FW[name||curFont||'Montserrat']||'700';
     }
     const ANIMS=[
-        {id:'karaoke',name:'Karaoke',anim:'karaoke',borderRadius:'12px',premium:false},
-        {id:'popcolor',name:'Pop Color',anim:'popcolor',borderRadius:'12px',premium:false},
-        {id:'sticker',name:'Sticker',anim:'sticker',borderRadius:'12px',premium:true},
-        {id:'blur',name:'Blur',anim:'blur',borderRadius:'12px',premium:true},
-        {id:'static',name:'Static',anim:'static',borderRadius:'12px',premium:false},
-        {id:'fade',name:'Fade',anim:'fade',borderRadius:'12px',premium:true},
+        {id:'karaoke',name:'Karaoke',anim:'karaoke',borderRadius:'12px'},
+        {id:'popcolor',name:'Pop Color',anim:'popcolor',borderRadius:'12px'},
+        {id:'sticker',name:'Sticker',anim:'sticker',borderRadius:'12px'},
+        {id:'blur',name:'Blur',anim:'blur',borderRadius:'12px'},
+        {id:'static',name:'Static',anim:'static',borderRadius:'12px'},
+        {id:'fade',name:'Fade',anim:'fade',borderRadius:'12px'},
     ];
     const TCOLS=['#ffffff','#FF6A3D','#facc15','#80DE4A','#3B82F6'];
     const BGCOLS=['#ffffff','#FF6A3D','#3b82f6'];
@@ -8213,11 +8190,6 @@
     let pill,ddFont,ddColor,ddAnim,posBadge,guideH,guideV,halfLine;
     let active=null,curAnim=null,animIvs=[],animFullIv=null,animFullRunner=null,animPreviewSavedText=null,animPreviewActiveId=null,animPreviewLeaveT=null,animPreviewSwapT=null,animLivePinned=false,animPinnedBlock=null,animPreviewPillFreeze=null,subPillPosFreeze=null,curFont='Montserrat',curShadow='outline',curTextCol='#ffffff',curHighlightCol=null,bgCol=null,previewTextCol=null,previewHighlightCol=undefined,previewBgCol=undefined,previewShadow=null,shadowPreviewSaved=undefined,openDdBeforeDrag=null,colorTarget='text',spectrumHue=18;
     let pendingSubMem=null,subMemGhost=null,subMemActions=null,subMemCooldownUntil=0;
-
-    function isSolisPremium(){
-        const raw=String(window.currentUser?.plan||'free').toLowerCase().trim();
-        return raw==='basic'||raw==='prime'||raw==='elite';
-    }
 
     function buildUI(){
         pill=document.createElement('div'); pill.className='sub-pill-menu'; pill.id='subPillMenu';
@@ -11279,7 +11251,6 @@
     function buildAnimDD(){
         ddAnim.innerHTML='';
         stopAnimCardLoops();
-        const premiumOk=isSolisPremium();
         const cardRuns=[];
         window._animCardRunners=[];
 
@@ -11287,14 +11258,7 @@
             const card=document.createElement('div');
             card.className='sub-acard';
             card.dataset.aid=an.id;
-            if(an.premium) card.classList.add('is-locked');
             if(curAnim===an.id) card.classList.add('on');
-            if(an.premium){
-                const badge=document.createElement('span');
-                badge.className='pro-badge';
-                badge.textContent='PRO';
-                card.appendChild(badge);
-            }
 
             const prev=document.createElement('div'); prev.className='sub-aprev';
             const nm=document.createElement('div'); nm.className='sub-aname'; nm.textContent=an.name;
@@ -11339,17 +11303,6 @@
             card.addEventListener('click',(e)=>{
                 e.preventDefault();
                 e.stopPropagation();
-                if(an.premium&&!isSolisPremium()){
-                    if(typeof window.showUpgradeModal==='function'){
-                        window.showUpgradeModal(
-                            'Unlock caption designs',
-                            'Upgrade to use premium caption styles like Sticker.'
-                        );
-                    }else{
-                        window.location.href='/premium.html';
-                    }
-                    return;
-                }
                 if(animPreviewLeaveT){ clearTimeout(animPreviewLeaveT); animPreviewLeaveT=null; }
                 if(animPreviewSwapT){ clearTimeout(animPreviewSwapT); animPreviewSwapT=null; }
 
@@ -11374,23 +11327,10 @@
             return card;
         }
 
-        function appendSection(label, items){
-            if(!items.length)return;
-            const sec=document.createElement('div');
-            sec.className='sub-anim-sec';
-            const head=document.createElement('div');
-            head.className='sub-anim-sec-label';
-            head.innerHTML=`<span>${label}</span>`;
-            const grid=document.createElement('div');
-            grid.className='sub-anim-grid';
-            items.forEach(an=>grid.appendChild(makeCard(an)));
-            sec.appendChild(head);
-            sec.appendChild(grid);
-            ddAnim.appendChild(sec);
-        }
-
-        appendSection('Free', ANIMS.filter(a=>!a.premium));
-        appendSection('Pro', ANIMS.filter(a=>a.premium));
+        const grid=document.createElement('div');
+        grid.className='sub-anim-grid';
+        ANIMS.forEach(an=>grid.appendChild(makeCard(an)));
+        ddAnim.appendChild(grid);
 
         const tick=()=>{ cardRuns.forEach(fn=>{ try{fn();}catch(_){} }); };
         setTimeout(()=>{ tick(); refitOpenAnimCards(); },40);

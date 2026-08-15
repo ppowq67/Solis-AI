@@ -13,6 +13,13 @@
     }
   ],
   "rewrites": [
+    { "source": "/preview/:id", "destination": "/shareable.html" },
+    { "source": "/preview", "destination": "/shareable.html" },
+    { "source": "/share/:id", "destination": "/shareable.html" },
+    { "source": "/share", "destination": "/shareable.html" },
+    { "source": "/u/:id", "destination": "/shareable.html" },
+    { "source": "/u", "destination": "/shareable.html" },
+    { "source": "/shareable", "destination": "/shareable.html" },
     { "source": "/api/auth/:path*", "destination": "https://api.solisai.video/api/auth/:path*" },
     { "source": "/terms", "destination": "/legal/terms.html" },
     { "source": "/terms.html", "destination": "/legal/terms.html" },

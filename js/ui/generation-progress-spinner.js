@@ -6,8 +6,8 @@ const GENERATION_TASK_PIPELINES = {
     maxProgress: 8
   }, {
     id: "install",
-    label: "Installing video",
-    keywords: [ "download", "installing", "preparing download", "starting generation", "starting download", "fetching", "fetch &", "source video", "video info" ],
+    label: "Fetch video",
+    keywords: [ "download", "installing", "preparing download", "starting generation", "starting download", "fetching", "fetch &", "source video", "video info", "streaming", "stream" ],
     maxProgress: 35
   }, {
     id: "clip",
@@ -37,8 +37,8 @@ const GENERATION_TASK_PIPELINES = {
     maxProgress: 8
   }, {
     id: "install",
-    label: "Installing video",
-    keywords: [ "download", "installing", "preparing download", "starting generation", "starting download", "fetching" ],
+    label: "Fetch video",
+    keywords: [ "download", "installing", "preparing download", "starting generation", "starting download", "fetching", "streaming", "stream" ],
     maxProgress: 30
   }, {
     id: "moment",
@@ -1212,7 +1212,7 @@ class GenerationProgressSpinner {
     const s = t.toLowerCase();
     const i = /\b(vast\.?ai|modal\.com|runpod|serverless|rtx\s*\d+|gtx\s*\d+|a100|h100|l40|dph|\$\/hr)\b/i.test(t) || /\b(gpu|cpu)\s+worker\b/i.test(t) || /\bqueued on (vast|modal|cloud)\b/i.test(t) || /\binstance[=\s#:]?\s*\d{5,}\b/i.test(t) || /\b\d+(\.\d+)?\s*(MB\/s|MiB\/s|KB\/s|KiB\/s|Gbps|Mbps)\b/i.test(t) || /\b\d+(\.\d+)?\s*(MB|MiB|GB|GiB)\b/i.test(t) || /\bat\s+\d+(\.\d+)?\s*(MB|KB)/i.test(t) || /\b(traceback|exception|errno|http\/?\d|status[=\s]\d{3})\b/i.test(t);
     if (i) {
-      if (/download|install|fetch/i.test(s)) return "Fetching & understanding the video...";
+      if (/download|install|fetch|stream/i.test(s)) return "Fetching video...";
       if (/fail|error|crash|exception/i.test(s)) return "Something went wrong — try again";
       if (/queue|wait|slot|priority|starting|start|worker|rent|boot|load/i.test(s)) {
         return "Starting...";

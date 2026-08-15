@@ -26,79 +26,86 @@
   function fmtHundred(e) {
     const t = Number(e);
     if (!Number.isFinite(t) || t <= 0) return 0;
+    if (t > 10) return Math.max(0, Math.min(100, Math.round(t)));
     return Math.max(0, Math.min(100, Math.round(t * 10)));
   }
-  function fmtTen(e) {
-    const t = Number(e);
-    if (!Number.isFinite(t) || t <= 0) return "";
-    if (t >= 9.95) return "10";
-    return (Math.round(t * 10) / 10).toFixed(1).replace(/\.0$/, "");
-  }
   const r = {
-    "S+": {
-      label: "Perfect cut. Post now."
+    high: {
+      label: "High potential."
     },
-    S: {
-      label: "Must-post. Exceptional."
+    solid: {
+      label: "Worth posting."
     },
-    A: {
-      label: "Excellent. Post this."
+    average: {
+      label: "Average."
     },
-    B: {
-      label: "Good. Worth testing."
-    },
-    C: {
-      label: "Average. Filler."
-    },
-    D: {
+    low: {
       label: "Skip it."
     }
   };
-  function scoreToTier(e) {
+  const s = {
+    "S+": 100,
+    S: 92,
+    A: 82,
+    B: 68,
+    C: 52,
+    D: 30
+  };
+  function bandOf(e) {
     const t = Number(e);
     if (!Number.isFinite(t) || t <= 0) return "";
-    if (t >= 9.95) return "S+";
-    if (t >= 9) return "S";
-    if (t >= 7.5) return "A";
-    if (t >= 6) return "B";
-    if (t >= 4.5) return "C";
-    return "D";
+    if (t >= 80) return "high";
+    if (t >= 60) return "solid";
+    if (t >= 40) return "average";
+    return "low";
+  }
+  function scoreToHundred(e, t) {
+    if (!e || typeof e !== "object") return 0;
+    if (e.n100 != null && Number.isFinite(Number(e.n100))) return fmtHundred(e.n100);
+    if (e.score_100 != null && Number.isFinite(Number(e.score_100))) return fmtHundred(e.score_100);
+    if (Number(e.score_max) === 100 && e.score != null) return fmtHundred(e.score);
+    const n = e.score_10 != null ? e.score_10 : e.n != null ? e.n : e.score;
+    if (n != null && Number.isFinite(Number(n))) return fmtHundred(n);
+    const i = String(t || e.tier || e.grade || "").toUpperCase().replace(/\s+/g, "");
+    return s[i === "S+" ? "S+" : i] || 0;
   }
   function dimOf(e, t) {
     const n = e && e[t] || {};
     const i = Number(n.n != null ? n.n : n.score);
-    const r = Number(n.max) || 10;
-    const s = n.available !== false && Number.isFinite(i) && i > 0;
-    let c = String(n.grade || "").trim().toUpperCase().replace(/\s+/g, "");
-    c = c === "S+" ? "S+" : c;
-    if (!c && s) c = scoreToTier(i);
+    const r = n.available !== false && Number.isFinite(i) && i > 0;
+    const s = r ? scoreToHundred(n, n.band || n.grade) : 0;
+    const c = n.band || bandOf(s);
     return {
-      n: s ? i : 0,
-      max: r,
-      display: s ? fmtTen(i) : "",
-      grade: c,
+      n: r ? i : 0,
+      n100: s,
+      display: s ? String(s) : "",
+      band: c,
       note: String(n.note || n.why || "").trim(),
-      available: s || !!c
+      available: r || s > 0
     };
   }
   function viralityOf(e) {
     const t = e && e.virality;
     if (!t || typeof t !== "object") return null;
     if (t.available === false) return null;
-    const n = String(t.tier || scoreToTier(t.score_10 != null ? t.score_10 : t.score) || "").toUpperCase().replace(/\s+/g, "");
-    const i = n === "S+" ? "S+" : n;
-    if (!r[i]) return null;
+    const n = scoreToHundred(t, t.tier || t.band);
+    let i = String(t.band || "").toLowerCase();
+    if (!r[i]) {
+      const e = String(t.tier || "").toLowerCase();
+      i = r[e] ? e : bandOf(n);
+    }
+    if (!r[i] || n <= 0) return null;
     const s = Array.isArray(t.clips) ? t.clips : [];
     const c = t.lone_clip === true || s.length <= 1;
-    if ((i === "C" || i === "D") && !c) return null;
+    if (n < 60 && !c) return null;
     const o = t.tag && typeof t.tag === "object" ? t.tag : null;
     const a = o ? Number(o.confidence) : 0;
-    const l = Number(t.score_10 != null ? t.score_10 : t.score);
+    const l = r[i] || r.solid;
     return {
-      tier: i,
-      score10: Number.isFinite(l) ? l : 0,
-      scoreDisplay: fmtTen(l) || "0",
-      label: String(t.label || r[i].label),
+      band: i,
+      score100: n,
+      scoreDisplay: String(n),
+      label: String(t.label || l.label),
       why: String(t.why || "").trim(),
       fix: String(t.fix || "").trim(),
       tag: o && o.label && a >= .8 ? {
@@ -114,24 +121,28 @@
   function iconDl() {
     return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`;
   }
+  function iconShare() {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>`;
+  }
   function iconTrash() {
     return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`;
   }
   function tip(e) {
     return `<span class="scc-tip">${esc(e)}</span>`;
   }
-  function dimTierClass(e) {
-    const t = String(e || "").replace("+", "plus");
-    return t ? "pv-dim-" + t : "";
+  function dimBandClass(e) {
+    const t = String(e || "");
+    return t ? "pv-band-" + t : "";
   }
   function gradeRows(e) {
     return [ [ "hook", "Hook" ], [ "clip", "Clip" ], [ "video", "Video" ] ].map(([t, n]) => {
       const i = e[t] || {};
-      const r = i.grade || scoreToTier(i.n);
+      const r = i.n100 || 0;
       if (!r) return "";
-      const s = i.note || "";
-      const c = s ? `<div class="scc-why"><p>${esc(s)}</p></div>` : "";
-      return `<div class="pv-grade" data-dim="${esc(t)}">\n                <b class="pv-dim-tier ${dimTierClass(r)}">${esc(r)}</b>\n                <span class="pv-dim-label">${esc(n)}</span>\n                ${c}\n            </div>`;
+      const s = i.band || bandOf(r);
+      const c = i.note || "";
+      const o = c ? `<div class="scc-why"><p>${esc(c)}</p></div>` : "";
+      return `<div class="pv-grade" data-dim="${esc(t)}">\n                <b class="pv-dim-tier ${dimBandClass(s)}">${esc(String(r))}</b>\n                <span class="pv-dim-label">${esc(n)}</span>\n                ${o}\n            </div>`;
     }).join("");
   }
   function previewUrl(e) {
@@ -157,23 +168,23 @@
     t.push(e);
     pumpQueue();
   }
-  function tierClass(e) {
-    return "scc-tier-" + String(e || "").replace("+", "plus");
+  function bandClass(e) {
+    return "scc-band-" + String(e || "solid");
   }
   function buildHTML(e) {
     const t = viralityOf(e);
     const n = esc(e.name || e.video_title || "Clip");
     const i = esc(e.projectId || e.id || "");
     const r = formatClock(e.duration);
-    const s = t ? `<div class="scc-viral ${tierClass(t.tier)}">\n                    <span class="scc-viral-n">${esc(t.tier)}</span>\n                    ${tip(`${t.scoreDisplay}/10 · ${t.label}`)}\n               </div>` : `<div class="scc-viral scc-viral-empty"></div>`;
-    return `\n            <div class="scc-preview">\n                <div class="scc-skel" aria-hidden="true"></div>\n                <video class="scc-video" muted playsinline loop preload="auto" controlslist="nodownload nofullscreen noremoteplayback" disablepictureinpicture></video>\n                <div class="scc-time"><span class="scc-t0">00:00</span> <span class="scc-t1">${esc(r)}</span></div>\n                <div class="scc-bar"><i></i></div>\n            </div>\n            <div class="scc-meta">\n                <div class="scc-meta-row">\n                    ${s}\n                    <div class="scc-actions">\n                        <button type="button" class="scc-ico library-download-btn" data-project-id="${i}" aria-label="Download">\n                            ${iconDl()}${tip("Save this clip")}\n                        </button>\n                        <button type="button" class="scc-ico library-delete-btn" aria-label="Delete">\n                            ${iconTrash()}${tip("Delete this clip")}\n                        </button>\n                    </div>\n                </div>\n                <h2 class="card-title scc-title" title="${n}">${n}</h2>\n            </div>`;
+    const s = t ? `<div class="scc-viral ${bandClass(t.band)}">\n                    <span class="scc-viral-n">${esc(t.scoreDisplay)}</span>\n                    ${tip(`${t.scoreDisplay}/100 · ${t.label}`)}\n               </div>` : `<div class="scc-viral scc-viral-empty"></div>`;
+    return `\n            <div class="scc-preview">\n                <div class="scc-skel" aria-hidden="true"></div>\n                <video class="scc-video" muted playsinline loop preload="auto" controlslist="nodownload nofullscreen noremoteplayback" disablepictureinpicture></video>\n                <div class="scc-time"><span class="scc-t0">00:00</span> <span class="scc-t1">${esc(r)}</span></div>\n                <div class="scc-bar"><i></i></div>\n            </div>\n            <div class="scc-meta">\n                <div class="scc-meta-row">\n                    ${s}\n                    <div class="scc-actions">\n                        <button type="button" class="scc-ico library-share-btn" data-project-id="${i}" aria-label="Share preview">\n                            ${iconShare()}${tip("Copy public preview link")}\n                        </button>\n                        <button type="button" class="scc-ico library-download-btn" data-project-id="${i}" aria-label="Download">\n                            ${iconDl()}${tip("Save this clip")}\n                        </button>\n                        <button type="button" class="scc-ico library-delete-btn" aria-label="Delete">\n                            ${iconTrash()}${tip("Delete this clip")}\n                        </button>\n                    </div>\n                </div>\n                <h2 class="card-title scc-title" title="${n}">${n}</h2>\n            </div>`;
   }
   function railHTML(e) {
     const t = viralityOf(e);
     if (!t) return "";
     const n = gradeRows(t);
     const i = t.fix ? `<div class="scc-why pv-fix-tip"><p>${esc(t.fix)}</p></div>` : "";
-    return `<div class="pv-card">\n            <div class="pv-head">\n                <div class="pv-score-line">\n                    <b class="pv-score-num">${esc(String(fmtHundred(t.score10)))}</b><span class="pv-score-max">/100</span>\n                </div>\n                ${i}\n            </div>\n            <div class="pv-grades">${n}</div>\n        </div>`;
+    return `<div class="pv-card">\n            <div class="pv-head">\n                <div class="pv-score-line">\n                    <b class="pv-score-num">${esc(String(t.score100))}</b><span class="pv-score-max">/100</span>\n                </div>\n                ${i}\n            </div>\n            <div class="pv-grades">${n}</div>\n        </div>`;
   }
   function bindRail(e) {
     if (!e) return;
@@ -367,7 +378,7 @@
       }
     });
     e.addEventListener("click", i => {
-      if (i.target.closest(".library-download-btn, .library-delete-btn, .scc-ico, .scc-viral")) return;
+      if (i.target.closest(".library-download-btn, .library-delete-btn, .library-share-btn, .scc-ico, .scc-viral")) return;
       i.preventDefault();
       i.stopPropagation();
       if (c && !c.paused) try {

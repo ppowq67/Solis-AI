@@ -379,17 +379,17 @@ const PreviewTimeline = (() => {
   let C = 0;
   let P = 0;
   let I = 1;
-  let E = [];
-  let T = -1;
-  let x = 0;
+  let x = [];
+  let E = -1;
+  let T = 0;
   let M = 1;
   let B = null;
   let A = false;
   let R = null;
   let U = 0;
-  let D = null;
+  let N = null;
+  let D = false;
   let F = false;
-  let N = false;
   const O = 180;
   const G = 8;
   let $ = [ 5, 4, 3, 2, 1 ];
@@ -484,10 +484,10 @@ const PreviewTimeline = (() => {
   function rebuildSplitsFromLengths(t) {
     if (!t.length) return;
     let i = d;
-    E = [];
+    x = [];
     for (let n = 0; n < t.length - 1; n++) {
       i += Math.max(e, Number(t[n]) || e);
-      if (i < p - .04) E.push(i);
+      if (i < p - .04) x.push(i);
     }
     const n = t.reduce((t, i) => t + Math.max(e, Number(i) || e), 0);
     const r = d + n;
@@ -514,20 +514,20 @@ const PreviewTimeline = (() => {
     return true;
   }
   function paintSegmentReorderGhost(e) {
-    if (!D || !isRankingEdit()) return;
+    if (!N || !isRankingEdit()) return;
     const t = segmentIndexAtClientX(e);
-    D.hoverIndex = t;
+    N.hoverIndex = t;
     const i = Array.from(Q?.children || []);
     i.forEach((e, i) => {
-      e.classList.toggle("is-drop-target", i === t && i !== D.index);
-      e.classList.toggle("is-dragging", i === D.index);
+      e.classList.toggle("is-drop-target", i === t && i !== N.index);
+      e.classList.toggle("is-dragging", i === N.index);
     });
-    const n = e - D.startX;
-    const r = i[D.index];
+    const n = e - N.startX;
+    const r = i[N.index];
     if (r) {
       const e = (() => {
         const e = getSegmentBounds();
-        return e[D.index] / u * I;
+        return e[N.index] / u * I;
       })();
       r.style.transform = `translate3d(${e + n}px,0,0)`;
       r.style.zIndex = "5";
@@ -622,7 +622,7 @@ const PreviewTimeline = (() => {
   }
   const ie = 6;
   function getSegmentBounds() {
-    const e = E.filter(e => e > d + .04 && e < p - .04);
+    const e = x.filter(e => e > d + .04 && e < p - .04);
     return [ d, ...e, p ];
   }
   function makeSegHandle(e, t) {
@@ -640,7 +640,7 @@ const PreviewTimeline = (() => {
       clearTimeout(U);
       U = 0;
     }
-    N = false;
+    F = false;
   }
   function customizeSegment(e) {
     const t = Math.max(1, 5 - e);
@@ -680,23 +680,23 @@ const PreviewTimeline = (() => {
     }
     if (t === 0) d = l; else {
       const e = r[t];
-      const i = E.findIndex(t => Math.abs(t - e) < .05);
-      if (i >= 0) E[i] = l; else E.push(l);
+      const i = x.findIndex(t => Math.abs(t - e) < .05);
+      if (i >= 0) x[i] = l; else x.push(l);
     }
     if (t === r.length - 2) p = c; else {
       const e = r[t + 1];
-      const i = E.findIndex(t => Math.abs(t - e) < .05);
-      if (i >= 0) E[i] = c; else E.push(c);
+      const i = x.findIndex(t => Math.abs(t - e) < .05);
+      if (i >= 0) x[i] = c; else x.push(c);
     }
-    E = E.filter(e => e > d + .04 && e < p - .04).sort((e, t) => e - t);
+    x = x.filter(e => e > d + .04 && e < p - .04).sort((e, t) => e - t);
   }
   function paintSegmentMove(e) {
-    if (!D || !u || I <= 0) return;
+    if (!N || !u || I <= 0) return;
     if (isRankingEdit()) {
       paintSegmentReorderGhost(e);
       return;
     }
-    const {index: t, startX: i, startA: n, startB: r} = D;
+    const {index: t, startX: i, startA: n, startB: r} = N;
     const o = (e - i) / I * u;
     applySegmentTimes(t, n + o, r + o);
     m = Math.max(d, Math.min(p, n + o));
@@ -711,20 +711,20 @@ const PreviewTimeline = (() => {
     paintSegmentsFast();
   }
   function beginSegmentDrag() {
-    if (!D || c === "segment") return;
+    if (!N || c === "segment") return;
     clearTimeout(U);
     U = 0;
-    if (isRankingEdit() && !N) return;
+    if (isRankingEdit() && !F) return;
     c = "segment";
     f = a ? !a.paused : false;
     if (a && !a.paused) a.pause();
     W?.classList.add("is-dragging", "is-trimming");
     if (isRankingEdit()) W?.classList.add("is-reordering");
-    D.target?.classList.add("is-dragging");
-    Q?.children?.[D.index]?.classList.add("is-dragging");
-    if (D.target?.setPointerCapture && D.pointerId != null) {
+    N.target?.classList.add("is-dragging");
+    Q?.children?.[N.index]?.classList.add("is-dragging");
+    if (N.target?.setPointerCapture && N.pointerId != null) {
       try {
-        D.target.setPointerCapture(D.pointerId);
+        N.target.setPointerCapture(N.pointerId);
       } catch (e) {}
     }
   }
@@ -740,9 +740,9 @@ const PreviewTimeline = (() => {
     clearSegHold();
     const i = getSegmentBounds();
     if (e < 0 || e >= i.length - 1) return;
+    D = false;
     F = false;
-    N = false;
-    D = {
+    N = {
       index: e,
       pointerId: t.pointerId,
       startX: t.clientX,
@@ -752,25 +752,25 @@ const PreviewTimeline = (() => {
     };
     U = setTimeout(() => {
       U = 0;
-      N = true;
-      D?.target?.classList.add("is-hold-ready");
+      F = true;
+      N?.target?.classList.add("is-hold-ready");
     }, O);
   }
   function onSegmentPointerMove(e) {
-    if (!D) return;
-    const t = Math.abs(e.clientX - D.startX);
+    if (!N) return;
+    const t = Math.abs(e.clientX - N.startX);
     if (c === "segment") {
       e.preventDefault();
-      if (t >= G) F = true;
-      if (!F) return;
+      if (t >= G) D = true;
+      if (!D) return;
       paintSegmentMove(e.clientX);
       return;
     }
     if (isRankingEdit()) {
-      if (N && t >= G) {
+      if (F && t >= G) {
         beginSegmentDrag();
         if (c === "segment") {
-          F = true;
+          D = true;
           paintSegmentMove(e.clientX);
         }
       }
@@ -778,14 +778,14 @@ const PreviewTimeline = (() => {
     }
     if (t >= G) {
       beginSegmentDrag();
-      F = true;
+      D = true;
       paintSegmentMove(e.clientX);
     }
   }
   function onSegmentPointerUp(e) {
-    if (!D) return;
-    const t = D;
-    const i = F;
+    if (!N) return;
+    const t = N;
+    const i = D;
     const n = t.hoverIndex;
     clearSegHold();
     t.target?.classList.remove("is-dragging", "is-hold-ready");
@@ -794,7 +794,7 @@ const PreviewTimeline = (() => {
     W?.classList.remove("is-reordering");
     if (c === "segment" && !i) {
       c = null;
-      D = null;
+      N = null;
       W?.classList.remove("is-dragging", "is-trimming");
       if (f) a?.play().catch(() => {});
       f = false;
@@ -804,7 +804,7 @@ const PreviewTimeline = (() => {
     if (i) {
       const e = isRankingEdit() && n != null && n !== t.index && applySegmentReorder(t.index, n);
       c = null;
-      D = null;
+      N = null;
       markRankingTimelineDirty();
       scheduleSeek(m, true);
       if (f) a?.play().catch(() => {});
@@ -819,7 +819,7 @@ const PreviewTimeline = (() => {
       }
       return;
     }
-    D = null;
+    N = null;
     c = null;
     customizeSegment(t.index);
   }
@@ -903,28 +903,28 @@ const PreviewTimeline = (() => {
     }
   }
   function applyBoundTime(e) {
-    if (T === 0) {
+    if (E === 0) {
       d = e;
       return;
     }
     const t = getSegmentBounds();
-    if (T >= t.length - 1) {
+    if (E >= t.length - 1) {
       p = e;
       return;
     }
     if (B != null) {
-      const t = E.findIndex(e => Math.abs(e - B) < .05);
-      if (t >= 0) E[t] = e; else E.push(e);
+      const t = x.findIndex(e => Math.abs(e - B) < .05);
+      if (t >= 0) x[t] = e; else x.push(e);
       B = e;
     } else {
-      E.push(e);
+      x.push(e);
     }
-    E.sort((e, t) => e - t);
+    x.sort((e, t) => e - t);
   }
   function paintBoundFast(e) {
-    if (!u || I <= 0 || T < 0) return;
+    if (!u || I <= 0 || E < 0) return;
     const t = timeFromClientX(e);
-    const i = Math.max(x, Math.min(M, t));
+    const i = Math.max(T, Math.min(M, t));
     applyBoundTime(i);
     m = i;
     const n = d / u * I;
@@ -947,8 +947,8 @@ const PreviewTimeline = (() => {
     const n = getSegmentBounds();
     if (t < 0 || t >= n.length) return;
     c = "bound";
-    T = t;
-    x = t === 0 ? 0 : n[t - 1] + e;
+    E = t;
+    T = t === 0 ? 0 : n[t - 1] + e;
     M = t === n.length - 1 ? u : n[t + 1] - e;
     B = t > 0 && t < n.length - 1 ? n[t] : null;
     f = a ? !a.paused : false;
@@ -1256,7 +1256,7 @@ const PreviewTimeline = (() => {
     }
   }
   function onPointerMove(e) {
-    if (D && c !== "segment") {
+    if (N && c !== "segment") {
       onSegmentPointerMove(e);
       if (c === "segment") return;
     }
@@ -1283,7 +1283,7 @@ const PreviewTimeline = (() => {
     });
   }
   function endDrag() {
-    if (D) {
+    if (N) {
       onSegmentPointerUp();
       return;
     }
@@ -1304,7 +1304,7 @@ const PreviewTimeline = (() => {
       w = 0;
     }
     c = null;
-    T = -1;
+    E = -1;
     B = null;
     if (e === "start" || e === "end" || e === "bound") {
       m = Math.max(d, Math.min(p, m));
@@ -1451,7 +1451,7 @@ const PreviewTimeline = (() => {
       t.stopPropagation();
       const i = Number.isFinite(a?.currentTime) ? a.currentTime : m;
       const n = splitAt(i);
-      if (!n && E.length >= 4) {
+      if (!n && x.length >= 4) {
         e?.classList.remove("is-flash");
         void e?.offsetWidth;
         e?.classList.add("is-flash");
@@ -1511,10 +1511,10 @@ const PreviewTimeline = (() => {
     _ = false;
     c = null;
     clearSegHold();
-    D = null;
-    F = false;
+    N = null;
+    D = false;
     f = false;
-    E = [];
+    x = [];
     R = null;
     A = false;
     if (j) {
@@ -1640,7 +1640,7 @@ const PreviewTimeline = (() => {
       i.push(n);
     }
     i.sort((e, t) => e - t);
-    E = i.slice(0, 4);
+    x = i.slice(0, 4);
     R = null;
     cacheTrackMetrics();
     paintChrome({
@@ -1649,7 +1649,7 @@ const PreviewTimeline = (() => {
     return true;
   }
   function clearSplits() {
-    E = [];
+    x = [];
     if (l) {
       cacheTrackMetrics();
       paintChrome({
@@ -1702,16 +1702,16 @@ const PreviewTimeline = (() => {
     cacheTrackMetrics();
     let t = Number.isFinite(e) ? e : m;
     t = Math.max(d + .05, Math.min(p - .05, t));
-    if (E.some(e => Math.abs(e - t) < .08)) {
+    if (x.some(e => Math.abs(e - t) < .08)) {
       paintSegments(t);
       return false;
     }
-    if (E.length >= 4) {
+    if (x.length >= 4) {
       paintSegments(t);
       return false;
     }
-    E.push(t);
-    E.sort((e, t) => e - t);
+    x.push(t);
+    x.sort((e, t) => e - t);
     m = t;
     paintChrome();
     paintSegments(t);
@@ -1719,7 +1719,7 @@ const PreviewTimeline = (() => {
     return true;
   }
   function getSplits() {
-    return E.slice();
+    return x.slice();
   }
   return {
     attach: attach,
@@ -5608,6 +5608,8 @@ class ClipsStudio {
     this.libraryItems = [];
     this.libraryCollections = [];
     this.openCollectionId = null;
+    this._libraryNavStack = [ null ];
+    this._libraryNavIndex = 0;
     this._dragClipId = null;
     this.librarySortMode = this._readLibrarySortMode();
     this.initialized = false;
@@ -6100,10 +6102,11 @@ class ClipsStudio {
       }
       this.updateLibraryView();
       const t = this._libraryLastLoaded && Date.now() - this._libraryLastLoaded < e;
-      const i = !this.libraryItems || this.libraryItems.length === 0;
-      if ((!t || i) && typeof this.loadLibraryItems === "function") {
+      const i = Array.isArray(this.libraryCollections) && this.libraryCollections.length > 0;
+      const n = (!this.libraryItems || this.libraryItems.length === 0) && !i;
+      if ((!t || n) && typeof this.loadLibraryItems === "function") {
         this.loadLibraryItems({
-          soft: !i
+          soft: true
         }).catch(() => {});
       }
     } else if (e === "templates") {
@@ -10163,6 +10166,14 @@ class ClipsStudio {
         this.stopMonitoring(e);
         showNotification("Clip created successfully!", "success");
         try {
+          const e = this.publicPreviewUrl(t.projectId);
+          if (e && navigator.clipboard?.writeText) {
+            navigator.clipboard.writeText(e).then(() => {
+              showNotification("Public preview link copied — share it anywhere", "info");
+            }).catch(() => {});
+          }
+        } catch (e) {}
+        try {
           this._watermarkCheckCache = null;
           const e = await this.resolveWatermarkPolicy(true);
           this.applyWatermarkControls(e);
@@ -10734,6 +10745,33 @@ class ClipsStudio {
     } ];
     return i.map((e, t) => `<div class="loader-part loader-part-${t + 1}" style="opacity: ${e.opacity}; transition: opacity 0.4s ease;"></div>`).join("");
   }
+  publicPreviewUrl(e) {
+    const t = String(e || "").trim();
+    if (!t.startsWith("prj_")) return "";
+    const i = location.hostname;
+    const n = i === "localhost" || i === "127.0.0.1" ? location.origin : "https://solisai.video";
+    return `${n}/preview/${encodeURIComponent(t)}`;
+  }
+  async copyPublicPreviewLink(e) {
+    const t = this.publicPreviewUrl(e);
+    if (!t) {
+      showNotification("Share link unavailable for this clip", "warning");
+      return false;
+    }
+    try {
+      await navigator.clipboard.writeText(t);
+      showNotification("Preview link copied", "success");
+      return true;
+    } catch (e) {
+      try {
+        prompt("Copy preview link", t);
+        return true;
+      } catch (e) {
+        showNotification("Could not copy link", "warning");
+        return false;
+      }
+    }
+  }
   async downloadClip(e, t = {}) {
     const {skipModalClose: i = false, quiet: n = false, light: r = false} = t;
     window.__solisDownloadBusy = true;
@@ -11025,9 +11063,10 @@ class ClipsStudio {
       });
     }
   }
-  showLibrarySkeleton(e = 4) {
+  showLibrarySkeleton(e = 6) {
     const t = document.getElementById("libraryGrid");
     if (!t) return;
+    if (t.querySelector(".library-card, .library-collection-folder")) return;
     const i = document.getElementById("emptyLibraryState");
     if (i) i.style.display = "none";
     Array.from(t.children).forEach(e => {
@@ -11036,8 +11075,8 @@ class ClipsStudio {
     const n = document.createDocumentFragment();
     for (let t = 0; t < e; t++) {
       const e = document.createElement("div");
-      e.className = "library-card-skeleton";
-      e.innerHTML = `\n                <div class="skeleton-block skeleton-preview"></div>\n                <div class="skeleton-block skeleton-title"></div>\n                <div class="skeleton-block skeleton-meta"></div>\n                <div class="skeleton-block skeleton-btn"></div>`;
+      e.className = "library-card-skeleton library-card-skeleton--clip";
+      e.innerHTML = `\n                <div class="skeleton-block skeleton-preview"></div>\n                <div class="skeleton-block skeleton-title"></div>\n                <div class="skeleton-block skeleton-meta"></div>`;
       n.appendChild(e);
     }
     t.appendChild(n);
@@ -11051,14 +11090,17 @@ class ClipsStudio {
     const t = e.force === true;
     const i = 5 * 60 * 1e3;
     const n = Array.isArray(this.libraryItems) && this.libraryItems.length > 0;
-    const r = this._libraryLastLoaded && Date.now() - this._libraryLastLoaded < i;
-    if (!t && n && r) {
+    const r = Array.isArray(this.libraryCollections) && this.libraryCollections.length > 0;
+    const o = this._libraryLastLoaded && Date.now() - this._libraryLastLoaded < i;
+    if (!t && n && o) {
       if (this.libraryPreviewModalOpen) this._libraryRefreshPending = true; else this.updateLibraryView();
       return;
     }
-    const o = e.soft === true || n || Array.isArray(this.processingItems) && this.processingItems.length > 0;
-    if (!o) {
-      this.showLibrarySkeleton(4);
+    const s = document.getElementById("libraryGrid");
+    const a = !!(s && s.querySelector(".library-card, .library-collection-folder"));
+    const l = e.soft === true || n || r || a || Array.isArray(this.processingItems) && this.processingItems.length > 0;
+    if (!l) {
+      this.showLibrarySkeleton(6);
     }
     try {
       const e = getAuthHeaders();
@@ -11109,7 +11151,8 @@ class ClipsStudio {
           }
         }
         this.libraryCollections.forEach(e => {
-          e.clipCount = this.libraryItems.filter(t => String(t.collectionId || "") === String(e.id)).length;
+          const t = this.libraryItems.filter(t => String(t.collectionId || "") === String(e.id)).length;
+          if (t > 0) e.clipCount = t;
         });
         this.libraryCollections = this.libraryCollections.filter(e => (e.clipCount || 0) > 0);
         this._libraryLastLoaded = Date.now();
@@ -11147,7 +11190,8 @@ class ClipsStudio {
       sessionStorage.setItem(e, JSON.stringify({
         uid: t,
         at: Date.now(),
-        items: this.libraryItems
+        items: this.libraryItems,
+        collections: this.libraryCollections || []
       }));
     } catch (e) {}
   }
@@ -11174,8 +11218,11 @@ class ClipsStudio {
         ...e,
         timestamp: e.timestamp ? new Date(e.timestamp) : new Date
       }));
+      if (Array.isArray(n.collections)) {
+        this.libraryCollections = n.collections;
+      }
       this._libraryLastLoaded = Number(n.at) || Date.now();
-      return this.libraryItems.length > 0;
+      return this.libraryItems.length > 0 || Array.isArray(this.libraryCollections) && this.libraryCollections.length > 0;
     } catch (e) {
       return false;
     }
@@ -11347,6 +11394,10 @@ class ClipsStudio {
         this._librarySentinelObserver.disconnect();
         this._librarySentinelObserver = null;
       }
+      const i = document.getElementById("libraryNavBackBtn");
+      const n = document.getElementById("libraryNavForwardBtn");
+      if (i) i.disabled = true;
+      if (n) n.disabled = true;
       return;
     }
     t.style.display = "none";
@@ -11384,12 +11435,16 @@ class ClipsStudio {
         t.setAttribute("data-collection-id", e.id);
         t.setAttribute("role", "button");
         t.tabIndex = 0;
-        const i = sanitizeHTML(e.title || "Project");
-        const n = e.clipCount || this._getCollectionClips(e.id).length;
-        const r = e.thumbnailUrl ? `<img class="scc-collection-thumb" src="${sanitizeHTML(e.thumbnailUrl)}" alt="" draggable="false" loading="lazy">` : `<div class="scc-collection-thumb scc-collection-thumb-empty"><i class="fas fa-folder"></i></div>`;
-        t.innerHTML = `\n                <div class="scc-collection-preview">\n                    ${r}\n                    <span class="scc-collection-badge">${n} clip${n !== 1 ? "s" : ""}</span>\n                </div>\n                <div class="scc-meta">\n                    <h2 class="card-title scc-title" title="${i}">${i}</h2>\n                    <p class="scc-collection-sub">Project · ${n} clip${n !== 1 ? "s" : ""}</p>\n                </div>`;
+        const i = e.title || "Project";
+        const n = sanitizeHTML(i);
+        const r = e.clipCount || this._getCollectionClips(e.id).length;
+        const o = `${r} clip${r !== 1 ? "s" : ""}`;
+        const s = sanitizeHTML(o);
+        const a = sanitizeHTML(e.planLabel || "Project");
+        const l = e.thumbnailUrl ? `<img class="scc-collection-thumb" src="${sanitizeHTML(e.thumbnailUrl)}" alt="" draggable="false" loading="lazy">` : `<div class="scc-collection-thumb scc-collection-thumb-empty"><i class="fas fa-folder"></i></div>`;
+        t.innerHTML = `\n                <div class="scc-collection-stack">\n                    <div class="scc-collection-hover-title" title="${n}">${n}</div>\n                    <span class="scc-collection-layer scc-collection-layer--2" aria-hidden="true"></span>\n                    <span class="scc-collection-layer scc-collection-layer--1" aria-hidden="true"></span>\n                    <div class="scc-collection-preview">\n                        ${l}\n                        <div class="scc-collection-expiry">${s}</div>\n                    </div>\n                </div>\n                <div class="scc-collection-meta">\n                    <div class="scc-collection-title-row">\n                        <h2 class="scc-collection-title" title="${n}">${n}</h2>\n                        <button type="button" class="scc-collection-menu" aria-label="Project options" aria-haspopup="menu" aria-expanded="false">···</button>\n                    </div>\n                    <p class="scc-collection-sub">${a}</p>\n                    <div class="scc-collection-dropdown" role="menu" hidden>\n                        <button type="button" class="scc-collection-dd-item" data-action="zip" role="menuitem">\n                            <span>Download zip</span><span class="scc-collection-dd-ext">ZIP</span>\n                        </button>\n                        <div class="scc-collection-dd-sep" aria-hidden="true"></div>\n                        <button type="button" class="scc-collection-dd-item" data-action="delete" role="menuitem">Delete</button>\n                    </div>\n                </div>`;
         t.addEventListener("click", t => {
-          if (t.target.closest(".library-delete-btn")) return;
+          if (t.target.closest(".library-delete-btn, .scc-collection-menu, .scc-collection-dropdown")) return;
           this.openLibraryCollection(e.id);
         });
         t.addEventListener("keydown", t => {
@@ -11398,30 +11453,14 @@ class ClipsStudio {
             this.openLibraryCollection(e.id);
           }
         });
+        this._bindCollectionMenu(t, e);
         this._bindCollectionDrop(t, e.id);
         return t;
       };
-      const buildCollectionBackBar = () => {
-        const e = document.createElement("div");
-        e.className = "library-collection-back";
-        e.innerHTML = `\n                <button type="button" class="library-collection-back-btn">\n                    <i class="fas fa-arrow-left"></i> All projects\n                </button>\n                <span class="library-collection-back-title">${sanitizeHTML(n?.title || "Project")}</span>\n                <span class="library-collection-drop-hint">Drop clip here to move out</span>`;
-        e.querySelector(".library-collection-back-btn")?.addEventListener("click", () => {
-          this.closeLibraryCollection();
-        });
-        e.addEventListener("dragover", t => {
-          if (!this._dragClipId) return;
-          t.preventDefault();
-          e.classList.add("is-drop-target");
-        });
-        e.addEventListener("dragleave", () => e.classList.remove("is-drop-target"));
-        e.addEventListener("drop", async t => {
-          t.preventDefault();
-          e.classList.remove("is-drop-target");
-          const i = this._dragClipId || t.dataTransfer.getData("text/plain");
-          if (i) await this.moveClipToCollection(i, null);
-        });
-        return e;
+      const syncCollectionHeader = () => {
+        this._syncLibraryNavArrows();
       };
+      syncCollectionHeader();
       const buildCard = e => {
         const t = document.createElement("div");
         t.className = "library-card solis-clip-card";
@@ -11497,29 +11536,25 @@ class ClipsStudio {
         return t;
       };
       const appendBatch = () => {
-        const t = n && a === 0;
-        const r = !n && !l && o.length > 0;
-        if (a >= s.length && !t && !r) return;
-        const c = Math.min(a + i, s.length);
-        const d = document.createDocumentFragment();
-        if (n && a === 0) {
-          d.appendChild(buildCollectionBackBar());
-        }
+        const t = !n && !l && o.length > 0;
+        if (a >= s.length && !t) return;
+        const r = Math.min(a + i, s.length);
+        const c = document.createDocumentFragment();
         if (!n && !l && o.length) {
-          o.forEach(e => d.appendChild(buildCollectionCard(e)));
+          o.forEach(e => c.appendChild(buildCollectionCard(e)));
           l = true;
         }
-        for (let e = a; e < c; e++) {
-          d.appendChild(buildCard(s[e]));
+        for (let e = a; e < r; e++) {
+          c.appendChild(buildCard(s[e]));
         }
-        a = c;
+        a = r;
         e.querySelector(".library-scroll-sentinel")?.remove();
         document.getElementById("libraryLoadMoreFab")?.remove();
         if (this._librarySentinelObserver) {
           this._librarySentinelObserver.disconnect();
           this._librarySentinelObserver = null;
         }
-        e.appendChild(d);
+        e.appendChild(c);
         if (a < s.length) {
           const t = s.length - a;
           const i = document.createElement("div");
@@ -11580,13 +11615,20 @@ class ClipsStudio {
       });
       document.getElementById("libraryLoadMoreFab")?.remove();
       if (!s.length && !o.length && !n) {
+        const i = Array.isArray(this.libraryCollections) && this.libraryCollections.length > 0;
+        if (i) {
+          t.style.display = "none";
+          e.classList.remove("is-empty");
+          appendBatch();
+          return;
+        }
         t.style.display = "block";
         e.classList.add("is-empty");
         if (!t.isConnected) e.appendChild(t);
-        const i = t.querySelector("h3");
-        const n = t.querySelector("p");
-        if (i) i.textContent = "No clips for this sort";
-        if (n) n.textContent = "Try Newest, or another filter.";
+        const n = t.querySelector("h3");
+        const r = t.querySelector("p");
+        if (n) n.textContent = "No clips for this sort";
+        if (r) r.textContent = "Try Newest, or another filter.";
         return;
       }
       if (n && !s.length) {
@@ -11608,29 +11650,37 @@ class ClipsStudio {
       if (e && !e._hasClickListener) {
         e._hasClickListener = true;
         e.addEventListener("click", e => {
-          const t = e.target.closest(".library-download-btn");
+          const t = e.target.closest(".library-share-btn");
           if (t) {
             e.preventDefault();
             e.stopPropagation();
             const i = t.getAttribute("data-project-id");
-            if (i && clipsStudio) clipsStudio.downloadClip(i);
+            if (i && clipsStudio) clipsStudio.copyPublicPreviewLink(i);
             return;
           }
-          const i = e.target.closest(".library-delete-btn");
+          const i = e.target.closest(".library-download-btn");
           if (i) {
             e.preventDefault();
             e.stopPropagation();
-            const t = i.getAttribute("data-item-id");
+            const t = i.getAttribute("data-project-id");
+            if (t && clipsStudio) clipsStudio.downloadClip(t);
+            return;
+          }
+          const n = e.target.closest(".library-delete-btn");
+          if (n) {
+            e.preventDefault();
+            e.stopPropagation();
+            const t = n.getAttribute("data-item-id");
             if (t && clipsStudio) clipsStudio.deleteClip(t);
             return;
           }
-          const n = e.target.closest(".library-card");
-          if (n && !e.target.closest(".library-download-btn, .library-delete-btn, .scc-ico, .scc-viral")) {
+          const r = e.target.closest(".library-card");
+          if (r && !e.target.closest(".library-download-btn, .library-delete-btn, .library-share-btn, .scc-ico, .scc-viral")) {
             e.preventDefault();
             e.stopPropagation();
-            const t = n.getAttribute("data-id");
-            const i = n.getAttribute("data-project-id");
-            if (t && clipsStudio) clipsStudio.openLibraryPreview(t, i, n);
+            const t = r.getAttribute("data-id");
+            const i = r.getAttribute("data-project-id");
+            if (t && clipsStudio) clipsStudio.openLibraryPreview(t, i, r);
           }
         });
       }
@@ -11764,12 +11814,69 @@ class ClipsStudio {
   _findCollection(e) {
     return (this.libraryCollections || []).find(t => String(t.id) === String(e || "")) || null;
   }
+  _syncLibraryNavArrows() {
+    const e = document.getElementById("libraryNavBackBtn");
+    const t = document.getElementById("libraryNavForwardBtn");
+    if (!Array.isArray(this._libraryNavStack) || !this._libraryNavStack.length) {
+      this._libraryNavStack = [ null ];
+      this._libraryNavIndex = 0;
+    }
+    const i = Math.max(0, Math.min(this._libraryNavIndex || 0, this._libraryNavStack.length - 1));
+    this._libraryNavIndex = i;
+    if (e) e.disabled = i <= 0;
+    if (t) t.disabled = i >= this._libraryNavStack.length - 1;
+    if (!this._libraryNavBound) {
+      this._libraryNavBound = true;
+      e?.addEventListener("click", e => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.libraryNavBack();
+      });
+      t?.addEventListener("click", e => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.libraryNavForward();
+      });
+    }
+  }
+  _pushLibraryNav(e) {
+    const t = e || null;
+    const i = (this._libraryNavStack || [ null ])[this._libraryNavIndex || 0] || null;
+    if (String(i || "") === String(t || "")) {
+      this._syncLibraryNavArrows();
+      return;
+    }
+    const n = (this._libraryNavStack || [ null ]).slice(0, (this._libraryNavIndex || 0) + 1);
+    n.push(t);
+    this._libraryNavStack = n;
+    this._libraryNavIndex = n.length - 1;
+    this._syncLibraryNavArrows();
+  }
+  libraryNavBack() {
+    if ((this._libraryNavIndex || 0) <= 0) return;
+    this._libraryNavIndex -= 1;
+    const e = this._libraryNavStack[this._libraryNavIndex] || null;
+    this.openCollectionId = e;
+    this._syncLibraryNavArrows();
+    this.updateLibraryView();
+  }
+  libraryNavForward() {
+    const e = this._libraryNavStack || [ null ];
+    if ((this._libraryNavIndex || 0) >= e.length - 1) return;
+    this._libraryNavIndex += 1;
+    const t = e[this._libraryNavIndex] || null;
+    this.openCollectionId = t;
+    this._syncLibraryNavArrows();
+    this.updateLibraryView();
+  }
   openLibraryCollection(e) {
     this.openCollectionId = e || null;
+    this._pushLibraryNav(this.openCollectionId);
     this.updateLibraryView();
   }
   closeLibraryCollection() {
     this.openCollectionId = null;
+    this._pushLibraryNav(null);
     this.updateLibraryView();
   }
   async moveClipToCollection(e, t) {
@@ -11834,6 +11941,70 @@ class ClipsStudio {
         e.classList.remove("is-drop-target");
       });
     });
+  }
+  _closeAllCollectionMenus() {
+    document.querySelectorAll(".library-collection-folder.is-menu-open").forEach(e => {
+      e.classList.remove("is-menu-open");
+      const t = e.querySelector(".scc-collection-menu");
+      const i = e.querySelector(".scc-collection-dropdown");
+      if (t) t.setAttribute("aria-expanded", "false");
+      if (i) i.hidden = true;
+    });
+  }
+  _bindCollectionMenu(e, t) {
+    if (!e || !t || e.dataset.menuBound === "1") return;
+    e.dataset.menuBound = "1";
+    const i = e.querySelector(".scc-collection-menu");
+    const n = e.querySelector(".scc-collection-dropdown");
+    if (!i || !n) return;
+    i.addEventListener("click", t => {
+      t.preventDefault();
+      t.stopPropagation();
+      const r = !n.hidden;
+      this._closeAllCollectionMenus();
+      if (!r) {
+        n.hidden = false;
+        i.setAttribute("aria-expanded", "true");
+        e.classList.add("is-menu-open");
+      }
+    });
+    n.addEventListener("click", async e => {
+      e.stopPropagation();
+      const i = e.target.closest(".scc-collection-dd-item");
+      if (!i) return;
+      const n = i.dataset.action;
+      this._closeAllCollectionMenus();
+      if (n === "zip") {
+        showNotification("Zip download coming soon", "info");
+        return;
+      }
+      if (n === "delete") {
+        const e = window.confirm(`Delete project folder "${t.title || "Project"}"? Clips stay in your library.`);
+        if (!e) return;
+        await this.dissolveCollection(t.id);
+      }
+    });
+    if (!this._collectionMenuDocBound) {
+      this._collectionMenuDocBound = true;
+      document.addEventListener("click", e => {
+        if (e.target.closest(".scc-collection-dropdown, .scc-collection-menu")) return;
+        this._closeAllCollectionMenus();
+      });
+    }
+  }
+  async dissolveCollection(e) {
+    const t = this._getCollectionClips(e);
+    for (const e of t) {
+      const t = e.projectId || e.id;
+      if (t) await this.moveClipToCollection(t, null);
+    }
+    this.libraryCollections = (this.libraryCollections || []).filter(t => String(t.id) !== String(e));
+    if (String(this.openCollectionId || "") === String(e)) {
+      this.openCollectionId = null;
+    }
+    this.saveLibraryItems();
+    this.updateLibraryView();
+    showNotification("Project folder removed", "success");
   }
   _bindCollectionDrop(e, t) {
     if (!e || e.dataset.dropBound === "1") return;

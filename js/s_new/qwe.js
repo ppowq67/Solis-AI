@@ -154,7 +154,7 @@ window.applyStorageBadgeUI = function({used: e, limit: t, plan: o}) {
   const p = document.getElementById("storagePlanBadge");
   const w = document.getElementById("storageWarnIcon");
   const f = document.getElementById("deleteAllClipsBtn");
-  const g = document.getElementById("needMoreUpgradeText");
+  const m = document.getElementById("needMoreUpgradeText");
   if (d) {
     d.textContent = String(e);
     d.style.color = "";
@@ -176,7 +176,7 @@ window.applyStorageBadgeUI = function({used: e, limit: t, plan: o}) {
     w.setAttribute("aria-hidden", c ? "false" : "true");
   }
   if (f) f.style.display = s ? "inline-flex" : "none";
-  if (g) g.style.display = a ? "inline" : "none";
+  if (m) m.style.display = a ? "inline" : "none";
 };
 
 window.pulseStorageBadgeWarning = function() {
@@ -249,7 +249,7 @@ window.closeUpgradeModal = function() {
   }
 };
 
-window.showUpgradeModal = function(e = "Video Too Long", t = "Your video exceeds your plan limit. Upgrade to process longer videos and unlock premium features.") {
+window.showUpgradeModal = function(e = "Unlock more uploads", t = "Same price for any video length. Upgrade for more uploads per day and more clips per run.") {
   const o = document.getElementById("upgradeModalOverlay");
   const n = document.getElementById("upgradeModalTitle");
   const i = document.getElementById("upgradeModalSubtitle");

@@ -122,7 +122,7 @@ window.closeUpgradeModal = function() {
   }
 };
 
-window.showUpgradeModal = function(e = "Video Too Long", t = "Your video exceeds your plan limit. Upgrade to process longer videos and unlock premium features.") {
+window.showUpgradeModal = function(e = "Unlock more uploads", t = "Same price for any video length. Upgrade for more uploads per day and more clips per run.") {
   const o = document.getElementById("upgradeModalOverlay");
   const i = document.getElementById("upgradeModalTitle");
   const n = document.getElementById("upgradeModalSubtitle");

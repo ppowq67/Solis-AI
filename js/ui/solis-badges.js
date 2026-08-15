@@ -19,12 +19,12 @@
     const t = e?.badge_info || {};
     const n = t.name || e?.badge_type || "";
     if (!n) return "";
-    const i = [ "official", "verified", "business", "team", "solis_core", "support_team" ];
-    if (i.includes(e.badge_type)) {
+    const r = [ "official", "verified", "business", "team", "solis_core", "support_team" ];
+    if (r.includes(e.badge_type)) {
       return n.charAt(0).toUpperCase() + n.slice(1);
     }
-    const r = e.badge_tier || t.tier || "Special";
-    return r !== n ? `${n} • ${r}` : n.charAt(0).toUpperCase() + n.slice(1);
+    const i = e.badge_tier || t.tier || "Special";
+    return i !== n ? `${n} • ${i}` : n.charAt(0).toUpperCase() + n.slice(1);
   }
   function uid(e) {
     return `${e}-${Math.random().toString(36).slice(2, 9)}`;
@@ -48,10 +48,10 @@
       n.textContent = t;
       n.style.opacity = "0";
       n.style.display = "block";
-      const i = e.getBoundingClientRect();
-      const r = n.offsetWidth;
-      n.style.left = `${i.left + i.width / 2 - r / 2}px`;
-      n.style.top = `${i.top - n.offsetHeight - 6}px`;
+      const r = e.getBoundingClientRect();
+      const i = n.offsetWidth;
+      n.style.left = `${r.left + r.width / 2 - i / 2}px`;
+      n.style.top = `${r.top - n.offsetHeight - 6}px`;
       n.style.opacity = "1";
     });
     e.addEventListener("mouseleave", () => {
@@ -60,131 +60,140 @@
     });
   }
   function createSvg(e, t, n) {
-    const i = Math.max(14, Number(n) || 24);
-    const r = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    r.setAttribute("width", String(i));
-    r.setAttribute("height", String(i));
-    r.setAttribute("aria-hidden", "true");
-    r.style.display = "block";
-    r.style.width = "100%";
-    r.style.height = "100%";
-    const o = String(e || "").toLowerCase();
-    if (o === "verified" || o === "business" || o === "official") {
-      const e = o === "business" || o === "official";
-      r.setAttribute("viewBox", "0 0 22 22");
-      const t = uid(e ? "gold-fill" : "orange-fill");
-      const n = uid(e ? "gold-check" : "orange-check");
-      const i = e ? `<stop offset="0" stop-color="#f4e72a"/><stop offset=".5" stop-color="#e0b420"/><stop offset="1" stop-color="#f4e72a"/>` : `<stop offset="0%" stop-color="#ff8a55"/><stop offset="42%" stop-color="#ff6b35"/><stop offset="100%" stop-color="#ff4f1a"/>`;
-      const s = e ? `<stop offset="0" stop-color="#fff6d0"/><stop offset="1" stop-color="#fff"/>` : `<stop offset="0" stop-color="#fff6ee"/><stop offset="1" stop-color="#fff"/>`;
-      r.innerHTML = `<defs>\n                <linearGradient id="${t}" x1="4.4" y1="2.5" x2="18.1" y2="21.5" gradientUnits="userSpaceOnUse">${i}</linearGradient>\n                <linearGradient id="${n}" x1="6" y1="6" x2="16" y2="16" gradientUnits="userSpaceOnUse">${s}</linearGradient>\n              </defs>\n              <path d="M 19.78 14.64 C 19.01 16.50 18.29 15.44 16.87 16.87 C 15.44 18.29 16.50 19.01 14.64 19.78 C 12.77 20.55 13.02 19.30 11.00 19.30 C 8.98 19.30 9.23 20.55 7.36 19.78 C 5.50 19.01 6.56 18.29 5.13 16.87 C 3.71 15.44 2.99 16.50 2.22 14.64 C 1.45 12.77 2.70 13.02 2.70 11.00 C 2.70 8.98 1.45 9.23 2.22 7.36 C 2.99 5.50 3.71 6.56 5.13 5.13 C 6.56 3.71 5.50 2.99 7.36 2.22 C 9.23 1.45 8.98 2.70 11.00 2.70 C 13.02 2.70 12.77 1.45 14.64 2.22 C 16.50 2.99 15.44 3.71 16.87 5.13 C 18.29 6.56 19.01 5.50 19.78 7.36 C 20.55 9.23 19.30 8.98 19.30 11.00 C 19.30 13.02 20.55 12.77 19.78 14.64 Z" fill="url(#${t})"/>\n              <path d="M6.2 11.4 L9.5 14.7 L15.6 7.9" fill="none" stroke="url(#${n})" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>`;
-      return r;
+    const r = Math.max(14, Number(n) || 24);
+    const i = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    i.setAttribute("width", String(r));
+    i.setAttribute("height", String(r));
+    i.setAttribute("aria-hidden", "true");
+    i.setAttribute("overflow", "visible");
+    i.style.display = "block";
+    i.style.width = "100%";
+    i.style.height = "100%";
+    i.style.overflow = "visible";
+    i.style.stroke = "none";
+    i.style.color = "transparent";
+    const s = String(e || "").toLowerCase();
+    if (s === "business" || s === "official") {
+      i.setAttribute("viewBox", "0 0 22 22");
+      const e = uid("biz-a");
+      const t = uid("biz-b");
+      i.innerHTML = `<g>\n              <linearGradient gradientUnits="userSpaceOnUse" id="${e}" x1="4.411" x2="18.083" y1="2.495" y2="21.508">\n                <stop offset="0" stop-color="#f4e72a"/><stop offset=".539" stop-color="#cd8105"/>\n                <stop offset=".68" stop-color="#cb7b00"/><stop offset="1" stop-color="#f4ec26"/>\n                <stop offset="1" stop-color="#f4e72a"/>\n              </linearGradient>\n              <linearGradient gradientUnits="userSpaceOnUse" id="${t}" x1="5.355" x2="16.361" y1="3.395" y2="19.133">\n                <stop offset="0" stop-color="#f9e87f"/><stop offset=".406" stop-color="#e2b719"/>\n                <stop offset=".989" stop-color="#e2b719"/>\n              </linearGradient>\n              <g clip-rule="evenodd" fill-rule="evenodd">\n                <path fill="url(#${e})" stroke="none" d="M13.324 3.848L11 1.6 8.676 3.848l-3.201-.453-.559 3.184L2.06 8.095 3.48 11l-1.42 2.904 2.856 1.516.559 3.184 3.201-.452L11 20.4l2.324-2.248 3.201.452.559-3.184 2.856-1.516L18.52 11l1.42-2.905-2.856-1.516-.559-3.184zm-7.09 7.575l3.428 3.428 5.683-6.206-1.347-1.247-4.4 4.795-2.072-2.072z"/>\n                <path fill="url(#${t})" stroke="none" d="M13.101 4.533L11 2.5 8.899 4.533l-2.895-.41-.505 2.88-2.583 1.37L4.2 11l-1.284 2.627 2.583 1.37.505 2.88 2.895-.41L11 19.5l2.101-2.033 2.895.41.505-2.88 2.583-1.37L17.8 11l1.284-2.627-2.583-1.37-.505-2.88zm-6.868 6.89l3.429 3.428 5.683-6.206-1.347-1.247-4.4 4.795-2.072-2.072z"/>\n                <path fill="#d18800" stroke="none" d="M6.233 11.423l3.429 3.428 5.65-6.17.038-.033-.005 1.398-5.683 6.206-3.429-3.429-.003-1.405.005.003z"/>\n              </g>\n            </g>`;
+      return i;
     }
-    if (o === "team" || o === "support_team" || o === "solis_core") {
-      r.setAttribute("viewBox", "0 0 100 100");
-      r.innerHTML = `\n              <circle cx="50" cy="50" r="12" fill="#ea580c"/>\n              <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#ea580c" stroke-width="8" fill="none" transform="rotate(45 50 50)"/>\n              <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#ea580c" stroke-width="8" fill="none" transform="rotate(-45 50 50)"/>\n            `;
-      return r;
+    if (s === "verified") {
+      i.setAttribute("viewBox", "0 0 22 22");
+      const e = t || "#1d9bf0";
+      i.innerHTML = `<g>\n              <path fill="${e}" stroke="none" d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"/>\n            </g>`;
+      return i;
     }
-    if (o === "platinum_elite" || o === "diamond_partner" || o === "bronze_partner") {
-      r.setAttribute("viewBox", "0 0 24 24");
+    if (s === "team" || s === "support_team" || s === "solis_core") {
+      i.style.stroke = "";
+      i.setAttribute("viewBox", "0 0 100 100");
+      i.setAttribute("fill", "none");
+      i.innerHTML = `\n              <circle cx="50" cy="50" r="12" fill="#ea580c" stroke="none"/>\n              <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#ea580c" stroke-width="6" fill="none" transform="rotate(45 50 50)"/>\n              <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#ea580c" stroke-width="6" fill="none" transform="rotate(-45 50 50)"/>\n            `;
+      return i;
+    }
+    if (s === "platinum_elite" || s === "diamond_partner" || s === "bronze_partner") {
+      i.setAttribute("viewBox", "0 0 24 24");
       const e = t || "#fbbf24";
-      r.innerHTML = `\n              <path d="M6 4L3 9L12 21L21 9L18 4H6Z" fill="${e}"/>\n              <path d="M3 9H21L12 21L3 9Z" fill="black" fill-opacity="0.06"/>\n              <path d="M3 9H21M6 4L12 21M18 4L12 21" stroke="rgba(0,0,0,0.35)" stroke-width="0.6"/>\n            `;
-      return r;
+      i.innerHTML = `\n              <path d="M6 4L3 9L12 21L21 9L18 4H6Z" fill="${e}" stroke="none"/>\n              <path d="M3 9H21L12 21L3 9Z" fill="#000" fill-opacity="0.06" stroke="none"/>\n            `;
+      return i;
     }
-    r.setAttribute("viewBox", "0 0 24 24");
-    r.innerHTML = `<circle cx="12" cy="12" r="4" fill="${t || "#fbbf24"}"/>`;
-    return r;
+    i.setAttribute("viewBox", "0 0 24 24");
+    i.innerHTML = `<circle cx="12" cy="12" r="4" fill="${t || "#fbbf24"}" stroke="none"/>`;
+    return i;
   }
   function createBadgeEl(e, t) {
     const n = e?.badge_info || {};
-    const i = e?.badge_type;
-    if (!i && !n.name) return null;
-    const r = document.createElement("span");
-    r.className = "solis-user-badge";
-    r.style.cssText = [ "display:inline-flex", "align-items:center", "justify-content:center", "width:" + (t || 20) + "px", "height:" + (t || 20) + "px", "flex-shrink:0", "line-height:0" ].join(";");
-    r.setAttribute("title", n.name || i || "Badge");
-    r.appendChild(createSvg(i, n.color || "#fbbf24", t));
-    wireTooltip(r, badgeTipText(e));
-    return r;
+    const r = e?.badge_type;
+    if (!r && !n.name) return null;
+    const i = document.createElement("span");
+    i.className = "solis-user-badge";
+    i.style.cssText = [ "display:inline-flex", "align-items:center", "justify-content:center", "width:" + (t || 20) + "px", "height:" + (t || 20) + "px", "flex-shrink:0", "line-height:0" ].join(";");
+    i.setAttribute("title", n.name || r || "Badge");
+    i.appendChild(createSvg(r, n.color || "#fbbf24", t));
+    wireTooltip(i, badgeTipText(e));
+    return i;
   }
   function renderList(e, t, n) {
     if (!e) return;
     e.innerHTML = "";
-    const i = Array.isArray(t) ? t.slice(0, 2) : [];
-    if (!i.length) return;
-    const r = document.createElement("span");
-    r.className = "solis-badge-row";
-    r.style.cssText = "display:inline-flex;align-items:center;gap:4px;flex-shrink:0;";
-    i.forEach(e => {
+    const r = Array.isArray(t) ? t.slice(0, 2) : [];
+    if (!r.length) return;
+    const i = document.createElement("span");
+    i.className = "solis-badge-row";
+    i.style.cssText = "display:inline-flex;align-items:center;gap:4px;flex-shrink:0;";
+    r.forEach(e => {
       const t = createBadgeEl(e, n);
-      if (t) r.appendChild(t);
+      if (t) i.appendChild(t);
     });
-    if (r.childElementCount) e.appendChild(r);
+    if (i.childElementCount) e.appendChild(i);
   }
   async function fetchBadges(t) {
     const n = resolveUserRef(t);
     if (!n) return null;
-    const i = {
+    const r = {
       Accept: "application/json"
     };
     if (typeof e.getAuthHeaders === "function") {
-      Object.assign(i, e.getAuthHeaders());
+      Object.assign(r, e.getAuthHeaders());
     }
-    const r = await fetch(`${apiBase()}/badges/display/${encodeURIComponent(n)}`, {
+    const i = await fetch(`${apiBase()}/badges/display/${encodeURIComponent(n)}`, {
       method: "GET",
       credentials: "include",
-      headers: i
+      headers: r
     });
-    if (!r.ok) return null;
-    const o = await r.json();
-    const s = o?.badges?.badges || o?.badges || [];
-    if (!o?.success || !Array.isArray(s) || !s.length) return null;
-    return s;
+    if (!i.ok) return null;
+    const s = await i.json();
+    const o = s?.badges?.badges || s?.badges || [];
+    if (!s?.success || !Array.isArray(o) || !o.length) return null;
+    return o;
   }
   async function fetchAndRender(e, t, n) {
-    const i = Array.isArray(t) ? t : [ t ];
-    const r = i.map(e => typeof e === "string" ? document.getElementById(e) : e).filter(Boolean);
-    if (!r.length) return;
-    r.forEach(e => {
+    const r = Array.isArray(t) ? t : [ t ];
+    const i = r.map(e => typeof e === "string" ? document.getElementById(e) : e).filter(Boolean);
+    if (!i.length) return;
+    i.forEach(e => {
       e.innerHTML = "";
     });
     try {
       const t = await fetchBadges(e);
       if (!t?.length) return;
-      r.forEach(e => renderList(e, t, n || 22));
+      i.forEach(e => renderList(e, t, n || 22));
     } catch (e) {}
   }
   async function renderCurrentUser(t, n) {
     try {
-      const i = {
+      const r = {
         Accept: "application/json",
         "Content-Type": "application/json"
       };
       if (typeof e.getAuthHeaders === "function") {
-        Object.assign(i, e.getAuthHeaders());
+        Object.assign(r, e.getAuthHeaders());
       }
-      const r = await fetch(`${apiBase()}/badges/current`, {
+      const i = await fetch(`${apiBase()}/badges/current`, {
         method: "POST",
         credentials: "include",
-        headers: i,
+        headers: r,
         body: "{}"
       });
-      if (r.ok) {
-        const e = await r.json();
-        const i = e?.badges?.badges || [];
-        if (i.length) {
+      if (i.ok) {
+        const e = await i.json();
+        const r = e?.badges?.badges || [];
+        if (r.length) {
           const e = Array.isArray(t) ? t : [ t ];
-          const r = e.map(e => typeof e === "string" ? document.getElementById(e) : e).filter(Boolean);
-          r.forEach(e => {
+          const i = e.map(e => typeof e === "string" ? document.getElementById(e) : e).filter(Boolean);
+          i.forEach(e => {
             e.innerHTML = "";
-            renderList(e, i, n || 22);
+            renderList(e, r, n || 22);
           });
           return;
         }
       }
     } catch (e) {}
-    const i = e.currentUser?.public_id || e.currentUser?.solis_id || e.currentUser?.id;
-    if (!i) return;
-    return fetchAndRender(i, t, n);
+    const r = e.currentUser?.public_id || e.currentUser?.solis_id || e.currentUser?.id;
+    if (!r) return;
+    return fetchAndRender(r, t, n);
   }
   e.SolisBadges = {
     createSvg: createSvg,

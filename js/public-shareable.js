@@ -167,7 +167,7 @@
     n.innerHTML = "";
     if (!o || !o.length) return;
     if (window.SolisBadges && typeof window.SolisBadges.renderList === "function") {
-      window.SolisBadges.renderList(n, o, 20);
+      window.SolisBadges.renderList(n, o, 24);
       return;
     }
     var r = e.creator && (e.creator.public_id || e.creator.id);

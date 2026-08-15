@@ -2759,7 +2759,7 @@
                         if (!userId) return;
                         const run = async () => {
                             if (typeof window.SolisBadges?.fetchAndRender !== 'function') return false;
-                            await window.SolisBadges.fetchAndRender(userId, containerIds, 18);
+                            await window.SolisBadges.fetchAndRender(userId, containerIds, 24);
                             return true;
                         };
                         if (await run()) return;

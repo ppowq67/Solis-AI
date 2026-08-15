@@ -763,7 +763,7 @@ const NotificationSystemV2 = {
       }
     }
     if (window.SolisBadges?.renderList) {
-      window.SolisBadges.renderList(i, e.badges, 18);
+      window.SolisBadges.renderList(i, e.badges, 22);
       return;
     }
     i.innerHTML = "";

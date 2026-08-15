@@ -565,6 +565,17 @@
     filter: none;
 }
 
+.nf-header-badges-container .solis-user-badge--team,
+.nf-profile-badges-container .solis-user-badge--team {
+    width: 18px !important;
+    height: 18px !important;
+}
+.nf-header-badges-container .solis-user-badge--team svg,
+.nf-profile-badges-container .solis-user-badge--team svg {
+    width: 18px !important;
+    height: 18px !important;
+}
+
 .nf-badge-checkmark {
     opacity: 1 !important;
     visibility: visible !important;

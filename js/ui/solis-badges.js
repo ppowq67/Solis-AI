@@ -114,7 +114,13 @@
       if (t === "team" || t === "solis_core" || t === "support_team") return 50;
       return 20;
     };
-    return [ ...Array.isArray(e) ? e : [] ].sort((e, t) => rank(e?.badge_type) - rank(t?.badge_type)).slice(0, 2);
+    return [ ...Array.isArray(e) ? e : [] ].map((e, t) => ({
+      b: e,
+      i: t
+    })).sort((e, t) => {
+      const n = rank(e.b?.badge_type) - rank(t.b?.badge_type);
+      return n !== 0 ? n : e.i - t.i;
+    }).map(e => e.b).slice(0, 2);
   }
   function createBadgeEl(e, t) {
     const n = e?.badge_type;
@@ -173,7 +179,7 @@
     try {
       const t = await fetchBadges(e);
       if (!t?.length) return;
-      i.forEach(e => renderList(e, t, n || 22));
+      i.forEach(e => renderList(e, t, n || 26));
     } catch (e) {}
   }
   async function renderCurrentUser(t, n) {
@@ -199,7 +205,7 @@
           const i = e.map(e => typeof e === "string" ? document.getElementById(e) : e).filter(Boolean);
           i.forEach(e => {
             e.innerHTML = "";
-            renderList(e, r, n || 22);
+            renderList(e, r, n || 26);
           });
           return;
         }

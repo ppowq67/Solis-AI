@@ -31,7 +31,7 @@
     <link rel="stylesheet" href="/style/ss/consolidate.css?v=30">
     <link rel="stylesheet" href="/style/ss/inline-styles.css?v=27">
     <link rel="stylesheet" href="/style/ss/glassmorphism.css?v=27">
-    <link rel="stylesheet" href="/style/ss/badges.css?v=30">
+    <link rel="stylesheet" href="/style/ss/badges.css?v=32">
     <link rel="stylesheet" href="/style/ss/sidebar.css?v=27">
     <link rel="stylesheet" href="/style/ss/ios-pill-nav.css?v=29">
     <link rel="stylesheet" href="/style/ss/mobile-nav.css?v=27">
@@ -39,12 +39,12 @@
     <link rel="stylesheet" href="/style/ss/clips.css?v=50">
     <link rel="stylesheet" href="/style/ss/profile.css?v=29">
     <link rel="stylesheet" href="/style/ss/tasks-panel-v2-demo.css?v=11">
-    <link rel="stylesheet" href="/style/ss/newsfeed-widget.css?v=29">
+    <link rel="stylesheet" href="/style/ss/newsfeed-widget.css?v=30">
     <script src="/js/ui/navigation.js?v=3"></script>
     <script src="/js/ui/menu.js?v=6"></script>
-    <script src="/js/ui/solis-badges.js?v=7"></script>
-    <script src="/js/i_dq/profile-notifications.js?t=20260815143000"></script>
-    <script src="/js/s_new/qwsqa.js?v=4"></script>
+    <script src="/js/ui/solis-badges.js?v=9"></script>
+    <script src="/js/i_dq/profile-notifications.js?t=20260815151000"></script>
+    <script src="/js/s_new/qwsqa.js?v=5"></script>
     <script src="/js/s_new/qwe.js?v=7"></script>
     <link rel="stylesheet" href="/style/ss/stg-modal.css?v=46">
     <script src="/js/s_new/stg.js?v=40"></script>
@@ -188,10 +188,36 @@
 }
 
 .profile-dropdown-avatar img { width: 100%; height: 100%; object-fit: cover; }
-.profile-dropdown-info { flex: 1; overflow: hidden; }
+.profile-dropdown-info {
+    flex: 1;
+    min-width: 0;
+    overflow: visible;
+}
 
 .profile-dropdown-name {
-    font-weight: 700; font-size: 13px; color: var(--text-dark);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--text-dark);
+    display: flex !important;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.profile-dropdown-name .username-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+
+.profile-dropdown-name .badge-container,
+#dropdown-badges {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
 }
 
 .profile-dropdown-plan {
@@ -1047,6 +1073,7 @@
                 <div class="profile-dropdown-info">
                     <div class="profile-dropdown-name" id="dropdownUserName">
                         <span class="username-text">Guest User</span>
+                        <span class="badge-container" id="dropdown-badges" aria-hidden="true"></span>
                     </div>
                     <div class="profile-dropdown-plan" id="dropdownUserPlan">Free Plan</div>
                 </div>

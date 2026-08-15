@@ -742,22 +742,21 @@ const NotificationSystemV2 = {
   },
   displayUserBadge: e => {
     if (!e || !e.badges || e.badges.length === 0) return;
-    const t = document.querySelector(".profile-dropdown-name") || document.querySelector(".profile-dropdown-info .profile-dropdown-name") || document.getElementById("dropdownUserName");
+    const t = document.getElementById("dropdownUserName") || document.querySelector(".profile-dropdown-profile .profile-dropdown-name") || document.querySelector(".profile-dropdown-info .profile-dropdown-name");
     if (!t) return;
     t.style.display = "flex";
     t.style.alignItems = "center";
     t.style.gap = "6px";
     t.style.flexWrap = "nowrap";
-    let i = t.querySelector(".badge-container");
+    let i = document.getElementById("dropdown-badges") || t.querySelector(".badge-container");
     if (!i) {
       i = document.createElement("span");
       i.className = "badge-container";
+      i.id = "dropdown-badges";
       i.style.cssText = "display:inline-flex;align-items:center;gap:4px;flex-shrink:0;";
       const e = t.querySelector(".username-text");
-      if (e && e.nextSibling) {
-        t.insertBefore(i, e.nextSibling);
-      } else if (e) {
-        t.appendChild(i);
+      if (e) {
+        e.insertAdjacentElement("afterend", i);
       } else {
         t.appendChild(i);
       }
@@ -767,14 +766,23 @@ const NotificationSystemV2 = {
       return;
     }
     i.innerHTML = "";
-    e.badges.slice(0, 2).forEach(e => {
-      const t = e.badge_info || {};
-      const n = document.createElement("span");
-      n.className = "user-badge solis-user-badge";
-      n.style.cssText = "display:inline-flex;width:18px;height:18px;";
-      const o = NotificationSystemV2.createBadgeSvg(e.badge_type, t.color || "#f97316");
-      n.appendChild(o);
-      i.appendChild(n);
+    const n = [ ...e.badges ].sort((e, t) => {
+      const rank = e => {
+        const t = String(e || "").toLowerCase();
+        if (t === "business" || t === "official") return 0;
+        if (t === "verified") return 1;
+        if (t === "team" || t === "solis_core" || t === "support_team") return 50;
+        return 20;
+      };
+      return rank(e?.badge_type) - rank(t?.badge_type);
+    }).slice(0, 2);
+    n.forEach(e => {
+      const t = document.createElement("span");
+      t.className = "user-badge solis-user-badge";
+      t.style.cssText = "display:inline-flex;width:22px;height:22px;";
+      const n = NotificationSystemV2.createBadgeSvg(e.badge_type, null);
+      t.appendChild(n);
+      i.appendChild(t);
     });
   },
   setupNotificationHandlers: () => {

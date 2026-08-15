@@ -192,6 +192,13 @@ document.addEventListener("DOMContentLoaded", () => {
       if (o) o.classList.remove("open");
       if (t) {
         t.classList.toggle("open");
+        if (t.classList.contains("open")) {
+          if (window.NotificationSystemV2?.loadUserBadges) {
+            window.NotificationSystemV2.loadUserBadges(true);
+          } else if (window.SolisBadges?.renderCurrentUser) {
+            window.SolisBadges.renderCurrentUser([ "dropdown-badges" ], 22);
+          }
+        }
       }
     });
   } else {

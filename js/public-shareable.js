@@ -172,7 +172,7 @@
     }
     var r = e.creator && (e.creator.public_id || e.creator.id);
     if (r && window.SolisBadges && window.SolisBadges.fetchAndRender) {
-      window.SolisBadges.fetchAndRender(r, [ t ], 20);
+      window.SolisBadges.fetchAndRender(r, [ t ], 24);
     }
   }
   function mixHex(e, t, o) {
@@ -338,7 +338,7 @@
       s.hidden = !!n;
     }
     if ((!r.badges || !r.badges.length) && l && window.SolisBadges) {
-      window.SolisBadges.fetchAndRender(l, [ "pBadges" ], 20);
+      window.SolisBadges.fetchAndRender(l, [ "pBadges" ], 24);
     }
   }
   async function toggleFollow() {

@@ -12816,10 +12816,14 @@ body.modal-open { overflow: hidden !important; }
     margin-top: 8px;
     padding: 12px 12px 10px;
     border-radius: 14px;
-    background: rgba(255, 255, 255, 0.72);
-    border: 1px solid rgba(180, 155, 130, 0.22);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
-    transition: background 0.2s ease, border-color 0.2s ease;
+    background: #fff;
+    border: 1px solid rgba(180, 155, 130, 0.28);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    transition: background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.multi-gen-card.is-locked {
+    opacity: 0.55;
 }
 
 .multi-gen-card.has-pro {
@@ -12827,8 +12831,8 @@ body.modal-open { overflow: hidden !important; }
 }
 
 .multi-gen-card:hover {
-    background: rgba(255, 255, 255, 0.82);
-    border-color: rgba(255, 122, 80, 0.22);
+    background: #fff;
+    border-color: rgba(255, 122, 80, 0.28);
 }
 
 .multi-gen-head {
@@ -12917,7 +12921,7 @@ body.modal-open { overflow: hidden !important; }
 }
 
 .multi-gen-slider.is-dragging .multi-gen-fill {
-    transition: width 0.1s cubic-bezier(0.33, 1, 0.68, 1);
+    transition: none;
 }
 
 .multi-gen-slider.is-snapping .multi-gen-fill {
@@ -13001,10 +13005,7 @@ body.modal-open { overflow: hidden !important; }
 }
 
 .multi-gen-slider.is-dragging .multi-gen-thumb {
-    transition:
-        left 0.1s cubic-bezier(0.33, 1, 0.68, 1),
-        transform 0.18s cubic-bezier(0.22, 1, 0.36, 1),
-        box-shadow 0.18s ease;
+    transition: none;
     transform: scale(1.08);
     box-shadow:
         0 4px 14px rgba(120, 90, 60, 0.24),

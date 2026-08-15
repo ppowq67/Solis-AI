@@ -1684,7 +1684,7 @@
                                     <li>1 upload / day</li>
                                     <li>Any video length</li>
                                     <li>1 clip per upload</li>
-                                    <li>Watermark on exports</li>
+                                    <li>Export videos in 720p</li>
                                 </ul>
                             </div>
                             <div class="stgPlanCompareRule" aria-hidden="true"></div>
@@ -1695,7 +1695,7 @@
                                 <ul class="stgPlanCompareList">
                                     <li>5 uploads / day</li>
                                     <li>Any video length</li>
-                                    <li>Up to 3 clips · no watermark</li>
+                                    <li>Up to 3 clips · 1080p export</li>
                                 </ul>
                                 <button type="button" class="stgUpgrade stgUpgrade--compare" id="stgCompareUpgradeBtn" onclick="window.location.href='/premium.html'">
                                     <svg class="stgUpgrade-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -3673,10 +3673,10 @@
                             </div>
                         </div>
 
-                        <div class="multi-gen-card" id="multiGenCard" data-count="1">
+                        <div class="multi-gen-card" id="multiGenCard" data-count="3">
                             <div class="multi-gen-head">
                                 <span class="multi-gen-title">Clips</span>
-                                <span class="multi-gen-value" id="multiGenValue" aria-live="polite">1×</span>
+                                <span class="multi-gen-value" id="multiGenValue" aria-live="polite">3×</span>
                             </div>
                             <div
                                 class="multi-gen-slider"
@@ -3685,8 +3685,8 @@
                                 aria-label="Number of clips per upload"
                                 aria-valuemin="1"
                                 aria-valuemax="5"
-                                aria-valuenow="1"
-                                aria-valuetext="1 clip"
+                                aria-valuenow="3"
+                                aria-valuetext="3 clips"
                                 tabindex="0"
                             >
                                 <div class="multi-gen-rail" id="multiGenRail">
@@ -4241,7 +4241,7 @@
                 <h2 class="uc-title">Reveal your <em>true potential</em></h2>
                 <ul class="uc-features">
                     <li><span class="uc-check"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Faster generation</li>
-                    <li><span class="uc-check"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Remove watermark</li>
+                    <li><span class="uc-check"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Export videos in 1080p+</li>
                     <li><span class="uc-check"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Premium templates</li>
                     <li><span class="uc-check"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Any video length · same price</li>
                     <li><span class="uc-check"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>More clips per upload</li>
@@ -4765,6 +4765,23 @@
            }
            updateSteps(live);
            window.__solisMultiGenCount = live;
+           if (live > 1 && allowed > 1) {
+               try {
+                   localStorage.setItem('solisSeriesMode', '1');
+               } catch (_) {}
+               window.solisSeriesModeEnabled = true;
+               const seriesToggle = document.getElementById('seriesModeToggle');
+               const seriesLabel = document.getElementById('seriesModeToggleLabel');
+               if (seriesToggle) {
+                   seriesToggle.checked = true;
+                   seriesToggle.disabled = false;
+               }
+               if (seriesLabel) {
+                   seriesLabel.classList.add('is-on');
+                   seriesLabel.setAttribute('aria-checked', 'true');
+               }
+               card.classList.remove('is-series-off');
+           }
            window.getMultiGenCount = () => {
                if (window.solisSeriesModeEnabled !== true) return 1;
                return live;
@@ -4796,12 +4813,22 @@
        function applyLimits() {
            const lim = limits();
            allowed = Math.max(1, Math.min(VISUAL_MAX, parseInt(lim.max_per_generation, 10) || 1));
-           let stored = 1;
+           const apiDefault = Math.max(1, Math.min(allowed, parseInt(lim.default_per_generation, 10) || 1));
+           const preferred = allowed >= 3 ? 3 : allowed;
+           let stored = NaN;
            try {
-               stored = parseInt(localStorage.getItem('solisMultiGenCount') || '1', 10);
+               if (allowed >= 3 && !localStorage.getItem('solisMultiGenDefaultV2')) {
+                   localStorage.setItem('solisMultiGenCount', String(preferred));
+                   localStorage.setItem('solisMultiGenDefaultV2', '1');
+               }
+               const raw = localStorage.getItem('solisMultiGenCount');
+               if (raw != null && raw !== '') stored = parseInt(raw, 10);
            } catch (_) {}
+           const start = Number.isFinite(stored) && stored >= 1
+               ? stored
+               : (apiDefault || preferred);
            layoutSteps();
-           paint(Math.max(MIN, Math.min(allowed, stored || 1)));
+           paint(Math.max(MIN, Math.min(allowed, start)));
        }
 
        function onPointerDown(e) {
@@ -4960,10 +4987,10 @@
           function readSeriesModeEnabled() {
               try {
                   const v = localStorage.getItem(SERIES_MODE_KEY);
-                  if (v === null) return false;
+                  if (v === null) return true;
                   return v === '1' || v === 'true';
               } catch (_) {
-                  return false;
+                  return true;
               }
           }
 
@@ -4974,14 +5001,15 @@
 
           function syncMultiGenForSeriesMode() {
               const card = document.getElementById('multiGenCard');
-              const on = window.solisSeriesModeEnabled === true && isPaidPlan();
+              const paid = typeof isPaidPlan === 'function' ? isPaidPlan() : false;
+              const on = window.solisSeriesModeEnabled === true && paid;
               if (card) {
-                  card.style.opacity = on ? '' : '0.45';
-                  card.style.pointerEvents = on ? '' : 'none';
+                  card.style.opacity = '';
+                  card.style.pointerEvents = paid ? '' : 'none';
                   card.classList.toggle('is-series-off', !on);
+                  card.classList.toggle('is-locked', !paid);
               }
               if (!on && typeof window.getMultiGenCount === 'function') {
-                  window.__solisMultiGenCount = 1;
               }
           }
 

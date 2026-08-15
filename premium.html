@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.paddle.com https://sandbox-cdn.paddle.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.paddle.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.solisai.video https://sandbox-api.paddle.com https://api.paddle.com https://sandbox-buy.paddle.com https://buy.paddle.com https://cloudflareinsights.com; frame-src 'self' https://checkout.paddle.com https://buy.paddle.com https://sandbox-buy.paddle.com https://sandbox-checkout-service.paddle.com https://checkout-service.paddle.com;" />
   <script src="/js/core/init.js?v=7"></script>
   <script>if ('scrollRestoration' in history) history.scrollRestoration = 'manual';</script>
   <script src="/js/core/avatar-url.js?v=1"></script>
   <title>Pricing · Solis AI</title>
-  <meta name="description" content="One price. Any length. Upload a 30-second TikTok or a 10-hour podcast — same cost, one upload, no meter running." />
+  <meta name="description" content="One price. Any length. Start free. Scale when you're ready to grow." />
   <meta name="theme-color" content="#fdf9f5" media="(prefers-color-scheme: light)" />
   <meta name="theme-color" content="#18120e" media="(prefers-color-scheme: dark)" />
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon/genfavicon-32.png" />
@@ -50,7 +51,7 @@
       --font-body: 'DM Sans', system-ui, sans-serif;
       --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
-      --max-width: 1320px;
+      --max-width: 1200px;
       --max-width-narrow: 880px;
       --radius: 16px;
       --radius-lg: 22px;
@@ -270,13 +271,13 @@
     @media (max-width: 900px) { .nav-center { display: none; } }
     @media (max-width: 768px) { .nav-right { display: none; } .nav-toggle { display: inline-flex; } .nav { padding: 8px 12px 8px 16px; } }
 
-    main { flex: 1; position: relative; z-index: 1; padding-top: calc(110px + env(safe-area-inset-top, 0px)); padding-bottom: 80px; }
+    main { flex: 1; position: relative; z-index: 1; padding-top: calc(96px + env(safe-area-inset-top, 0px)); padding-bottom: 80px; }
 
-    .hero { padding: 32px 20px 24px; }
+    .hero { padding: 12px 20px 8px; }
     .hero-inner { max-width: var(--max-width); margin: 0 auto; text-align: center; }
     .hero-eyebrow { margin-bottom: 22px; }
-    .hero-title { font-family: var(--font-display); font-size: clamp(36px, 6vw, 60px); font-weight: 800; letter-spacing: -0.04em; line-height: 1.04; margin: 0 auto 18px; max-width: 800px; }
-    .hero-subtitle { font-size: clamp(15px, 1.6vw, 17px); color: var(--text-secondary); max-width: 580px; margin: 0 auto 28px; line-height: 1.6; }
+    .hero-title { font-family: var(--font-display); font-size: clamp(36px, 6vw, 60px); font-weight: 800; letter-spacing: -0.04em; line-height: 1.04; margin: 0 auto 12px; max-width: 800px; }
+    .hero-subtitle { font-size: clamp(15px, 1.6vw, 17px); color: var(--text-secondary); max-width: 580px; margin: 0 auto 8px; line-height: 1.6; }
 
     .trust-badges { display: flex; align-items: center; justify-content: center; gap: 24px; flex-wrap: wrap; margin-bottom: 8px; }
     .trust-badge { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 600; color: var(--text-secondary); }
@@ -284,7 +285,7 @@
     .trust-badge strong { color: var(--text-primary); font-weight: 700; }
     @media (max-width: 640px) { .trust-badges { gap: 14px 18px; } .trust-badge { font-size: 11.5px; } }
 
-    .billing-wrap { display: flex; align-items: center; justify-content: center; margin-top: 28px; }
+    .billing-wrap { display: flex; align-items: center; justify-content: center; margin-top: 8px; }
 
     .billing-label { transition: color 0.2s; }
     .billing-label.is-active { color: var(--text-primary); font-weight: 700; }
@@ -301,10 +302,9 @@
     .savings-callout { text-align: center; margin-top: 14px; font-size: 12.5px; color: var(--text-muted); height: 18px; transition: opacity 0.2s; }
     .savings-callout strong { color: var(--solis-deep); font-family: var(--font-numeric); font-weight: 700; }
 
-    .pricing-section { padding: 32px 20px 64px; }
-    .pricing-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; align-items: stretch; max-width: var(--max-width); margin: 0 auto; }
-    @media (max-width: 1100px) { .pricing-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; } }
-    @media (max-width: 640px) { .pricing-grid { grid-template-columns: 1fr; gap: 14px; max-width: 480px; } }
+    .pricing-section { padding: 8px 20px 56px; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: center; max-width: var(--max-width); margin: 0 auto; }
+    @media (max-width: 860px) { .pricing-grid { grid-template-columns: 1fr; gap: 14px; max-width: 480px; } }
 
     .plan-card {
       border-radius: var(--radius-lg); padding: 28px 26px;
@@ -329,12 +329,11 @@
       transform: scale(1.03);
       z-index: 2;
     }
-    @media (max-width: 1100px) { .plan-card, .plan-card.prime { transform: none; } }
+    @media (max-width: 860px) { .plan-card, .plan-card.prime { transform: none; } }
 
     .ribbon { position: absolute; top: 0; right: 0; color: #fff; font-size: 10px; font-weight: 800; padding: 7px 20px; border-radius: 0 var(--radius-lg) 0 14px; text-transform: uppercase; letter-spacing: 0.1em; z-index: 3; background: var(--solis-gradient); box-shadow: 0 4px 12px rgba(249,115,22,0.4); }
 
     .plan-name { font-family: var(--font-display); font-size: 17px; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 4px; }
-    .name-free { color: var(--text-muted); }
     .name-basic { color: var(--text-secondary); }
     .name-prime { background: var(--solis-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
     .name-elite { color: var(--ink); }
@@ -351,15 +350,22 @@
     .plan-btn { width: 100%; padding: 13px 16px; border-radius: 12px; font-family: var(--font-display); font-size: 13.5px; font-weight: 700; border: none; cursor: pointer; transition: all 0.25s; margin-bottom: 12px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; text-decoration: none; box-sizing: border-box; }
     .plan-btn svg { width: 13px; height: 13px; transition: transform 0.3s; }
     .plan-btn:hover svg { transform: translateX(2px); }
-    .plan-btn-free { background: rgba(255,255,255,0.72); color: var(--text-primary); border: 1px dashed rgba(180,150,120,0.55); }
-    .plan-btn-free:hover { background: #fff; border-style: solid; transform: translateY(-1px); }
     .plan-btn-basic { background: rgba(255,255,255,0.9); color: var(--text-primary); border: 1px solid var(--border-strong); }
     .plan-btn-basic:hover { background: #fff; border-color: rgba(180,150,120,0.7); transform: translateY(-1px); }
-    .plan-btn-prime { background: var(--ink); color: #fff; position: relative; overflow: hidden; }
-    .plan-btn-prime::before { content: ''; position: absolute; inset: 0; background: var(--solis-gradient); opacity: 0; transition: opacity 0.3s; }
-    .plan-btn-prime:hover::before { opacity: 1; }
-    .plan-btn-prime:hover { box-shadow: 0 8px 20px rgba(249,115,22,0.35); transform: translateY(-1px); }
-    .plan-btn-prime > * { position: relative; z-index: 1; }
+    .plan-btn-prime {
+      background: var(--ink);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(24, 18, 14, 0.18);
+    }
+    .plan-btn-prime:hover {
+      background: #2a221c;
+      box-shadow: 0 4px 14px rgba(24, 18, 14, 0.22);
+      transform: translateY(-1px);
+    }
+    .plan-btn-prime:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 4px rgba(24, 18, 14, 0.16);
+    }
     .plan-btn-elite { background: rgba(24,18,14,0.04); color: var(--ink); border: 1px solid rgba(24,18,14,0.14); }
     .plan-btn-elite:hover { background: var(--ink); color: #fff; border-color: transparent; transform: translateY(-1px); }
 
@@ -381,13 +387,14 @@
 
     .comparison-card { border-radius: var(--radius-xl); overflow: hidden; max-width: var(--max-width); margin: 0 auto; }
     .comparison-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .comparison-table { width: 100%; border-collapse: collapse; min-width: 640px; }
+    .comparison-table { width: 100%; border-collapse: collapse; min-width: 760px; }
     .comparison-table thead { background: rgba(255,247,237,0.6); }
     .comparison-table thead.sticky { position: sticky; top: 0; z-index: 5; }
-    .comparison-table th { padding: 22px 20px; text-align: center; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); border-bottom: 1px solid var(--border); }
-    .comparison-table th.col-feature { text-align: left; width: 40%; }
+    .comparison-table th { padding: 22px 16px; text-align: center; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); border-bottom: 1px solid var(--border); }
+    .comparison-table th.col-feature { text-align: left; width: 28%; }
     .comparison-table th.col-plan-prime { background: rgba(249,115,22,0.05); }
     .col-plan-name { font-family: var(--font-display); font-size: 15px; font-weight: 800; text-transform: none; letter-spacing: -0.01em; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .col-plan-name.name-free { color: var(--text-muted); }
     .col-plan-name.name-prime { background: var(--solis-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
     .col-plan-name .prime-badge { font-size: 9px; padding: 2px 6px; border-radius: 4px; background: var(--solis-gradient); color: #fff; -webkit-text-fill-color: #fff; font-weight: 700; letter-spacing: 0.05em; }
     .col-plan-price { font-family: var(--font-numeric); font-size: 13px; margin-top: 4px; font-weight: 600; color: var(--text-muted); text-transform: none; letter-spacing: 0; }
@@ -723,7 +730,7 @@
     <section class="hero">
       <div class="hero-inner reveal">
         <h1 class="hero-title">One price. <span class="text-solis-gradient">Any length.</span></h1>
-        <p class="hero-subtitle">Upload a 30-second TikTok or a 10-hour podcast.<br>Same cost. One upload. No meter running.</p>
+        <p class="hero-subtitle">Start free. Scale when you&apos;re ready to grow.</p>
 
         <div class="billing-wrap">
         </div>
@@ -732,37 +739,9 @@
 
     <section class="pricing-section" id="pricing">
       <div class="pricing-grid reveal-stagger">
-        <article class="plan-card" data-plan="free">
-          <h3 class="plan-name name-free">Free</h3>
-          <p class="plan-tagline">Try Solis on any video length — no clock watching.</p>
-
-          <div class="plan-price">
-            <span class="plan-price-currency">$</span>
-            <span class="plan-price-int">0</span>
-            <span class="plan-price-dec"></span>
-            <p class="plan-price-period"></p>
-          </div>
-          <p class="plan-price-billnote">Forever free</p>
-
-          <a href="/login.html" class="plan-btn plan-btn-free">
-            Start free
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
-          </a>
-
-          <div class="plan-divider"></div>
-          <p class="plan-features-label">What&apos;s included</p>
-          <ul class="plan-features">
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>1</b> upload / day</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>Any</b> video length</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>1</b> clip per upload</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Ranking template</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Watermark on exports</li>
-          </ul>
-        </article>
-
         <article class="plan-card" data-plan="basic">
           <h3 class="plan-name name-basic">Basic</h3>
-          <p class="plan-tagline">Ship your first clips — same price for any source length.</p>
+          <p class="plan-tagline">Perfect for beginners finding their footing and shipping their first clips.</p>
 
           <div class="plan-price">
             <span class="plan-price-currency">$</span>
@@ -785,17 +764,15 @@
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>3</b> clips per upload</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>75</b> uploads / month</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>10</b> saved videos · <b>10 GB</b></li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>No watermark</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Split Screen + Ranking templates</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Full text customizer</li>
-            <li class="disabled"><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="2.5" y1="2.5" x2="9.5" y2="9.5"/><line x1="9.5" y1="2.5" x2="2.5" y2="9.5"/></svg></span>Short-form upload</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Export videos in <b>1080p</b></li>
+            <li class="disabled"><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="2.5" y1="2.5" x2="9.5" y2="9.5"/><line x1="9.5" y1="2.5" x2="2.5" y2="9.5"/></svg></span>Overpurpose <span style="opacity:0.7">· coming soon</span></li>
           </ul>
         </article>
 
         <article class="plan-card prime" data-plan="prime">
           <div class="ribbon">Most Popular</div>
           <h3 class="plan-name name-prime">Prime</h3>
-          <p class="plan-tagline">Daily viral shorts — TikTok, Shorts, or a full podcast episode.</p>
+          <p class="plan-tagline">The sweet spot for everything you need to ship daily viral shorts.</p>
 
           <div class="plan-price">
             <span class="plan-price-currency">$</span>
@@ -806,7 +783,7 @@
           <p class="plan-price-billnote">Billed monthly</p>
 
           <button type="button" class="plan-btn plan-btn-prime" data-plan-name="Prime">
-            <span>Start free trial</span>
+            Start free trial
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
           </button>
 
@@ -818,15 +795,14 @@
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>5</b> clips per upload</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>200</b> uploads / month</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>20</b> saved videos · <b>25 GB</b></li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Short-form upload (Shorts, TikTok, Reels)</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>1440p exports</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Custom fonts &amp; overlay colors</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Export videos in <b>1440p</b></li>
+            <li class="disabled"><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="2.5" y1="2.5" x2="9.5" y2="9.5"/><line x1="9.5" y1="2.5" x2="2.5" y2="9.5"/></svg></span>Overpurpose <span style="opacity:0.7">· coming soon</span></li>
           </ul>
         </article>
 
         <article class="plan-card" data-plan="elite">
           <h3 class="plan-name name-elite">Elite</h3>
-          <p class="plan-tagline">Max volume + priority queue — still one price for any length.</p>
+          <p class="plan-tagline">Everything unlocked, with priority rendering and dedicated support.</p>
 
           <div class="plan-price">
             <span class="plan-price-currency">$</span>
@@ -846,11 +822,13 @@
           <ul class="plan-features">
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>20</b> uploads / day</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>Any</b> video length</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>10</b> clips per upload</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>5</b> clips per upload</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>400</b> uploads / month</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>50</b> saved videos · <b>100 GB</b></li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Export videos in <b>1440p</b></li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Priority render queue</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Dedicated support channel</li>
+            <li class="disabled"><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="2.5" y1="2.5" x2="9.5" y2="9.5"/><line x1="9.5" y1="2.5" x2="2.5" y2="9.5"/></svg></span>Overpurpose <span style="opacity:0.7">· coming soon</span></li>
           </ul>
         </article>
       </div>
@@ -884,6 +862,10 @@
               <thead>
                 <tr>
                   <th class="col-feature">Feature</th>
+                  <th>
+                    <div class="col-plan-name name-free">Free</div>
+                    <div class="col-plan-price">$0</div>
+                  </th>
                   <th>
                     <div class="col-plan-name name-basic">Basic</div>
                     <div class="col-plan-price">$9.99/mo</div>
@@ -1024,28 +1006,27 @@
       }
       var comparisonData = [
         { group: 'Uploads', rows: [
-          { feature: 'Daily uploads',               basic: { t: 'text', v: '5 / day' },  prime: { t: 'text', v: '10 / day' }, elite: { t: 'text', v: '20 / day' } },
-          { feature: 'Video length',                basic: { t: 'text', v: 'Any length' }, prime: { t: 'text', v: 'Any length' }, elite: { t: 'text', v: 'Any length' } },
-          { feature: 'Clips per upload',            basic: { t: 'text', v: 'Up to 3' },  prime: { t: 'text', v: 'Up to 5' }, elite: { t: 'text', v: 'Up to 10' } },
-          { feature: 'Monthly uploads',             basic: { t: 'text', v: '75 / mo' },  prime: { t: 'text', v: '200 / mo' }, elite: { t: 'text', v: '400 / mo' } },
-          { feature: 'Saved videos (max)',          basic: { t: 'text', v: '10' },       prime: { t: 'text', v: '20' },      elite: { t: 'text', v: '50' } },
-          { feature: 'Library storage',             basic: { t: 'text', v: '10 GB' },    prime: { t: 'text', v: '25 GB' },  elite: { t: 'text', v: '100 GB' } },
-          { feature: 'Export resolution',           basic: { t: 'text', v: '1080p' },    prime: { t: 'text', v: '1440p' },   elite: { t: 'text', v: '1440p' } },
-          { feature: 'Render speed',                basic: { t: 'text', v: 'Fast' },     prime: { t: 'text', v: 'Faster' },  elite: { t: 'text', v: 'Fastest' } },
+          { feature: 'Daily uploads',               free: { t: 'text', v: '1 / day' }, basic: { t: 'text', v: '5 / day' },  prime: { t: 'text', v: '10 / day' }, elite: { t: 'text', v: '20 / day' } },
+          { feature: 'Video length',                free: { t: 'text', v: 'Any length' }, basic: { t: 'text', v: 'Any length' }, prime: { t: 'text', v: 'Any length' }, elite: { t: 'text', v: 'Any length' } },
+          { feature: 'Clips per upload',            free: { t: 'text', v: '1' }, basic: { t: 'text', v: 'Up to 3' },  prime: { t: 'text', v: 'Up to 5' }, elite: { t: 'text', v: 'Up to 5' } },
+          { feature: 'Monthly uploads',             free: { t: 'text', v: '15 / mo' }, basic: { t: 'text', v: '75 / mo' },  prime: { t: 'text', v: '200 / mo' }, elite: { t: 'text', v: '400 / mo' } },
+          { feature: 'Saved videos (max)',          free: { t: 'text', v: '2' }, basic: { t: 'text', v: '10' },       prime: { t: 'text', v: '20' },      elite: { t: 'text', v: '50' } },
+          { feature: 'Library storage',             free: { t: 'text', v: '1 GB' }, basic: { t: 'text', v: '10 GB' },    prime: { t: 'text', v: '25 GB' },  elite: { t: 'text', v: '100 GB' } },
+          { feature: 'Export resolution',           free: { t: 'text', v: '720p' }, basic: { t: 'text', v: '1080p' },    prime: { t: 'text', v: '1440p' },   elite: { t: 'text', v: '1440p' } },
+          { feature: 'Render speed',                free: { t: 'text', v: 'Standard' }, basic: { t: 'text', v: 'Fast' },     prime: { t: 'text', v: 'Faster' },  elite: { t: 'text', v: 'Fastest' } },
         ]},
         { group: 'Creator tools', rows: [
-          { feature: 'Watermark-free exports',      basic: { t: 'yes' }, prime: { t: 'yes' }, elite: { t: 'yes' } },
-          { feature: 'PRO templates',               basic: { t: 'yes' }, prime: { t: 'yes' }, elite: { t: 'yes' } },
-          { feature: 'All premium templates',       basic: { t: 'no' },  prime: { t: 'yes' }, elite: { t: 'yes' } },
-          { feature: 'Short-form upload',           basic: { t: 'no' },  prime: { t: 'yes' }, elite: { t: 'yes' } },
-          { feature: 'Overpurpose',                 basic: { t: 'text', v: 'Coming very soon' }, prime: { t: 'text', v: 'Coming very soon' }, elite: { t: 'text', v: 'Coming very soon' } },
-          { feature: 'Advanced Overpurpose',        basic: { t: 'text', v: 'Coming very soon' }, prime: { t: 'text', v: 'Coming very soon' }, elite: { t: 'text', v: 'Coming very soon' } },
+          { feature: 'Split Screen + Ranking',      free: { t: 'yes' }, basic: { t: 'yes' }, prime: { t: 'yes' }, elite: { t: 'yes' } },
+          { feature: 'Full text customizer',        free: { t: 'yes' }, basic: { t: 'yes' }, prime: { t: 'yes' }, elite: { t: 'yes' } },
+          { feature: 'Custom fonts & overlay colors', free: { t: 'no' }, basic: { t: 'no' }, prime: { t: 'yes' }, elite: { t: 'yes' } },
+          { feature: 'Short-form upload',           free: { t: 'no' },  basic: { t: 'no' },  prime: { t: 'yes' }, elite: { t: 'yes' } },
+          { feature: 'Overpurpose',                 free: { t: 'text', v: 'Coming soon' }, basic: { t: 'text', v: 'Coming soon' }, prime: { t: 'text', v: 'Coming soon' }, elite: { t: 'text', v: 'Coming soon' } },
         ]},
         { group: 'Workflow', rows: [
-          { feature: 'Priority render queue',       basic: { t: 'no' },  prime: { t: 'no' },  elite: { t: 'yes' } },
-          { feature: 'Dedicated support channel',   basic: { t: 'no' },  prime: { t: 'no' },  elite: { t: 'yes' } },
-          { feature: 'Cancel anytime',              basic: { t: 'yes' }, prime: { t: 'yes' }, elite: { t: 'yes' } },
-          { feature: 'Commercial usage license',    basic: { t: 'yes' }, prime: { t: 'yes' }, elite: { t: 'yes' } },
+          { feature: 'Priority render queue',       free: { t: 'no' },  basic: { t: 'no' },  prime: { t: 'no' },  elite: { t: 'yes' } },
+          { feature: 'Dedicated support channel',   free: { t: 'no' },  basic: { t: 'no' },  prime: { t: 'no' },  elite: { t: 'yes' } },
+          { feature: 'Cancel anytime',              free: { t: 'yes' }, basic: { t: 'yes' }, prime: { t: 'yes' }, elite: { t: 'yes' } },
+          { feature: 'Commercial usage license',    free: { t: 'no' },  basic: { t: 'yes' }, prime: { t: 'yes' }, elite: { t: 'yes' } },
         ]},
       ];
 
@@ -1062,10 +1043,11 @@
       if (tbody) {
         var html = '';
         comparisonData.forEach(function (group) {
-          html += '<tr class="row-group"><td colspan="4">' + group.group + '</td></tr>';
+          html += '<tr class="row-group"><td colspan="5">' + group.group + '</td></tr>';
           group.rows.forEach(function (row) {
             html += '<tr class="row-feature">' +
               '<td>' + row.feature + '</td>' +
+              '<td>' + renderCell(row.free, false) + '</td>' +
               '<td>' + renderCell(row.basic, false) + '</td>' +
               '<td class="col-prime">' + renderCell(row.prime, true) + '</td>' +
               '<td>' + renderCell(row.elite, false) + '</td>' +

@@ -2608,7 +2608,7 @@ const GP_ICON_BLANK_BLUR = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://w
 
 const SPLITSCREEN_FORMATS = [ {
   id: "inverted",
-  label: "Reframe on Top",
+  label: "AI Reframe on Top",
   desc: "Face panel above your clip"
 }, {
   id: "normal",
@@ -3143,7 +3143,7 @@ function initGameplayPillUI() {
   gpPill = document.createElement("div");
   gpPill.className = "gp-pill-menu";
   gpPill.id = "gpPillMenu";
-  gpPill.innerHTML = `\n        <button type="button" class="gp-pill-btn" id="gpBtnLayout" title="Layout" aria-label="Layout">\n            <span class="gp-pill-ico">${GP_ICON_FORMAT}</span>\n        </button>\n        <div class="gp-pill-divider" aria-hidden="true"></div>\n        <button type="button" class="gp-pill-btn" id="gpBtnClips" title="Reframe & gameplay" aria-label="Reframe and gameplay">\n            <span class="gp-pill-ico">${GP_ICON_SECONDARY}</span>\n        </button>\n        <button type="button" class="gp-pill-btn" id="gpBtnGameplay" title="Gameplay" aria-label="Gameplay">\n            <span class="gp-pill-ico">${GP_ICON_GAMEPLAY}</span>\n        </button>\n    `;
+  gpPill.innerHTML = `\n        <button type="button" class="gp-pill-btn" id="gpBtnLayout" title="Layout" aria-label="Layout">\n            <span class="gp-pill-ico">${GP_ICON_FORMAT}</span>\n        </button>\n        <div class="gp-pill-divider" aria-hidden="true"></div>\n        <button type="button" class="gp-pill-btn" id="gpBtnClips" title="AI Reframe & gameplay" aria-label="AI Reframe and gameplay">\n            <span class="gp-pill-ico">${GP_ICON_SECONDARY}</span>\n        </button>\n        <button type="button" class="gp-pill-btn" id="gpBtnGameplay" title="Gameplay" aria-label="Gameplay">\n            <span class="gp-pill-ico">${GP_ICON_GAMEPLAY}</span>\n        </button>\n    `;
   document.body.appendChild(gpPill);
   gpDdLayout = document.createElement("div");
   gpDdLayout.className = "gp-dropdown gp-layout-dd";
@@ -3217,8 +3217,8 @@ function buildSplitscreenFormatDropdown() {
     i.type = "button";
     i.className = "gp-layout-item" + (t ? " on" : "");
     const n = e.id === "inverted" ? "gp-lp--reframe-top" : "gp-lp--content-top";
-    const r = e.id === "inverted" ? "Reframe" : "Content";
-    const o = e.id === "inverted" ? "Content" : "Reframe";
+    const r = e.id === "inverted" ? "AI Reframe" : "Content";
+    const o = e.id === "inverted" ? "Content" : "AI Reframe";
     i.innerHTML = `\n            <div class="gp-layout-preview ${n}" aria-hidden="true">\n                <span class="gp-lp-a">${r}</span>\n                <span class="gp-lp-b">${o}</span>\n            </div>\n            <div class="gp-layout-text">\n                <span class="gp-layout-label">${e.label}</span>\n                <span class="gp-layout-desc">${e.desc}</span>\n            </div>\n            <span class="gp-layout-check" aria-hidden="true">\n                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>\n            </span>\n        `;
     i.addEventListener("pointerenter", () => previewGpLayoutOption(e.id === "inverted"));
     i.addEventListener("pointerleave", () => endGpLayoutPreview());
@@ -3368,8 +3368,8 @@ function buildModesRow() {
   e.className = "gp-mode-row";
   e.appendChild(buildModeTile({
     id: "face_track",
-    title: "Reframe",
-    hint: "Face crop",
+    title: "AI Reframe",
+    hint: "Smart face crop",
     previewClass: "gp-prev-reframe",
     previewHtml: `\n            <span class="gp-prev-phone">\n                <span class="gp-prev-face"></span>\n            </span>\n        `
   }));
@@ -3434,7 +3434,7 @@ function isGameplayOptionSelected(e) {
 }
 
 function fillSelectionLabel() {
-  if (splitscreenSecondaryType === "face_track") return "Reframe";
+  if (splitscreenSecondaryType === "face_track") return "AI Reframe";
   if (splitscreenSecondaryType === "gameplay") return gameplaySelectionLabel();
   if (splitscreenSecondaryType === "blank") return "Black";
   if (splitscreenSecondaryType === "blank_blur") return "Blur";
@@ -3832,7 +3832,7 @@ function ensureSplitscreenSecondaryPanels() {
     const t = document.createElement("div");
     t.id = "splitscreenFacePanel";
     t.className = "gp-secondary-panel";
-    t.innerHTML = `\n            <div class="gp-face-panel-content">\n                <div class="gp-reframe-icon">${GP_ICON_REFRAME}</div>\n                <span class="gp-panel-label">Reframe</span>\n            </div>\n        `;
+    t.innerHTML = `\n            <div class="gp-face-panel-content">\n                <div class="gp-reframe-icon">${GP_ICON_REFRAME}</div>\n                <span class="gp-panel-label">AI Reframe</span>\n            </div>\n        `;
     e.appendChild(t);
   }
   if (!e.querySelector("#splitscreenBlankPanel")) {
@@ -6310,55 +6310,14 @@ class ClipsStudio {
     const p = document.querySelector(".template-preview-sidebar");
     if (p) p.classList.remove("expanded");
     const updateTemplatePreviewButtons = async () => {
-      const t = document.getElementById("confirmUseTemplateBtn");
-      const i = document.getElementById("templatePreviewProFooter");
-      const n = new Set([ "basic", "prime", "elite", "pro" ]);
-      const normalizePlan = e => String(e || "free").trim().toLowerCase();
-      try {
-        let r = "free";
-        try {
-          const e = await window._subCache.get();
-          r = normalizePlan(e?.plan || e?.plan_type);
-        } catch (e) {
-          r = normalizePlan(window.currentUser?.plan || window.currentUser?.plan_type);
-        }
-        const o = [ "splitscreen" ].includes(e);
-        const s = !n.has(r);
-        if (o && s) {
-          if (t) {
-            t.style.display = "none";
-            t.setAttribute("data-pro-locked", "1");
-            t.disabled = true;
-          }
-          if (i) {
-            i.style.display = "flex";
-            i.style.visibility = "visible";
-          }
-        } else {
-          if (t) {
-            t.style.display = "";
-            t.removeAttribute("data-pro-locked");
-            t.disabled = false;
-          }
-          if (i) i.style.display = "none";
-        }
-      } catch (n) {
-        safeLog("Could not check plan:", n);
-        if ([ "splitscreen" ].includes(e)) {
-          if (t) {
-            t.style.display = "none";
-            t.setAttribute("data-pro-locked", "1");
-            t.disabled = true;
-          }
-          if (i) {
-            i.style.display = "flex";
-            i.style.visibility = "visible";
-          }
-        } else {
-          if (t) t.style.display = "";
-          if (i) i.style.display = "none";
-        }
+      const e = document.getElementById("confirmUseTemplateBtn");
+      const t = document.getElementById("templatePreviewProFooter");
+      if (e) {
+        e.style.display = "";
+        e.removeAttribute("data-pro-locked");
+        e.disabled = false;
       }
+      if (t) t.style.display = "none";
       this.syncTemplateConfirmButton();
       if (typeof window.syncUseTemplateFab === "function") window.syncUseTemplateFab();
     };
@@ -9109,30 +9068,6 @@ class ClipsStudio {
     const i = this.currentTemplateForPreview.isLibraryPreview || false;
     const n = this.currentTemplateForPreview.projectId;
     const r = this.templates[t];
-    if (t === "splitscreen" && !i) {
-      const t = new Set([ "basic", "prime", "elite", "pro" ]);
-      let i = "free";
-      try {
-        const e = await window._subCache.get();
-        i = String(e?.plan || e?.plan_type || "free").toLowerCase();
-      } catch (e) {
-        i = String(window.currentUser?.plan || window.currentUser?.plan_type || "free").toLowerCase();
-      }
-      if (!t.has(i)) {
-        const t = document.getElementById("templatePreviewProFooter");
-        if (e) {
-          e.style.display = "none";
-          e.setAttribute("data-pro-locked", "1");
-        }
-        if (t) {
-          t.style.display = "flex";
-          t.style.visibility = "visible";
-        }
-        if (typeof window.syncUseTemplateFab === "function") window.syncUseTemplateFab();
-        window.location.href = "/premium.html";
-        return;
-      }
-    }
     safeLog("ðŸ” confirmTemplateUse:", {
       templateId: t,
       isLibraryPreview: i,
@@ -9852,13 +9787,12 @@ class ClipsStudio {
           safeLog("Captions removed in preview — skipping burn");
         } else if (e && typeof e === "object" && o && e.enabled !== false) {
           const t = window.solisSmartCaptionsEnabled !== false;
-          const i = window.solisRemoveFillersEnabled === true;
           u.caption_style = {
             ...e,
             enabled: true,
             smart_captions: e.smart_captions !== undefined ? !!e.smart_captions : t,
             crisper_mode: (e.smart_captions !== undefined ? !!e.smart_captions : t) ? "verbatim" : "intended",
-            remove_fillers: e.remove_fillers !== undefined ? !!e.remove_fillers : i
+            remove_fillers: false
           };
           u.subtitles_enabled = true;
           safeLog("Sending caption style:", u.caption_style);
@@ -9868,7 +9802,7 @@ class ClipsStudio {
             enabled: true,
             smart_captions: window.solisSmartCaptionsEnabled !== false,
             crisper_mode: window.solisSmartCaptionsEnabled !== false ? "verbatim" : "intended",
-            remove_fillers: window.solisRemoveFillersEnabled === true
+            remove_fillers: false
           };
           u.subtitles_enabled = true;
           safeLog("Subtitle block present — sending default caption style");
@@ -9878,7 +9812,7 @@ class ClipsStudio {
             enabled: true,
             smart_captions: window.solisSmartCaptionsEnabled !== false,
             crisper_mode: window.solisSmartCaptionsEnabled !== false ? "verbatim" : "intended",
-            remove_fillers: window.solisRemoveFillersEnabled === true
+            remove_fillers: false
           };
           u.subtitles_enabled = true;
           safeLog("Plugin auto_captions on — default karaoke burn");
@@ -9903,7 +9837,9 @@ class ClipsStudio {
         Object.assign(u, window.getSplitscreenConfig());
       }
       if ((t === "splitscreen" || t === "ranked_compilation") && typeof window.getMultiGenCount === "function") {
-        u.clip_count = window.getMultiGenCount();
+        const e = window.solisSeriesModeEnabled === true;
+        u.series_mode = e;
+        u.clip_count = e ? window.getMultiGenCount() : 1;
       }
       let f = await fetch(`${API_BASE_URL}/clips/start`, {
         method: "POST",

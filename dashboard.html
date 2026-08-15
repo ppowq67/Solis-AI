@@ -3455,7 +3455,6 @@
         </div>
     </div>
     <div class="template-card" data-template="splitscreen">
-        <div class="pro-badge">PRO</div>
         <div class="template-image-placeholder">
             <svg class="template-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4m0-18h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-10m0-18v18" />
@@ -3602,21 +3601,21 @@
                         </div>
                         <div class="preview-modifiers-row" role="menuitem" data-modifier-preview="smart-captions">
                             <div class="preview-modifiers-copy">
-                                <span class="preview-modifiers-label">ACCURATE-AI</span>
-                                <span class="preview-modifiers-beta" title="CrisperWhisper 2.0 · word-level timing · no manual fixes">99%+</span>
+                                <span class="preview-modifiers-label">Smart Captions</span>
+                                <span class="preview-modifiers-beta" title="Beta">Beta</span>
                             </div>
-                            <label class="stgToggle is-on" id="smartCaptionsToggleLabel" title="ACCURATE-AI verbatim captions (CrisperWhisper 2.0)" role="switch" aria-checked="true" aria-label="Toggle ACCURATE-AI captions">
+                            <label class="stgToggle is-on" id="smartCaptionsToggleLabel" title="Smart Captions — accurate verbatim captions (CrisperWhisper 2.0)" role="switch" aria-checked="true" aria-label="Toggle Smart Captions">
                                 <input type="checkbox" id="smartCaptionsToggle" class="stgToggleInput" tabindex="-1" checked>
                                 <span class="stgToggleKnob" aria-hidden="true"></span>
                             </label>
                         </div>
-                        <div class="preview-modifiers-row" role="menuitem" data-modifier-preview="remove-fillers">
+                        <div class="preview-modifiers-row preview-modifiers-row--pro" role="menuitem" data-modifier-preview="series-mode">
                             <div class="preview-modifiers-copy">
-                                <span class="preview-modifiers-label">Remove fillers</span>
-                                <span class="preview-modifiers-beta" title="Strip um/uh when enabled — off by default">Optional</span>
+                                <span class="preview-modifiers-label">Series Mode</span>
+                                <span class="preview-modifiers-pro" title="Paid plans">PRO</span>
                             </div>
-                            <label class="stgToggle" id="removeFillersToggleLabel" title="Remove filler words (um, uh) — optional, off by default" role="switch" aria-checked="false" aria-label="Toggle filler removal">
-                                <input type="checkbox" id="removeFillersToggle" class="stgToggleInput" tabindex="-1">
+                            <label class="stgToggle" id="seriesModeToggleLabel" title="Series Mode — generate multiple clips from one video (PRO)" role="switch" aria-checked="false" aria-label="Toggle Series Mode">
+                                <input type="checkbox" id="seriesModeToggle" class="stgToggleInput" tabindex="-1">
                                 <span class="stgToggleKnob" aria-hidden="true"></span>
                             </label>
                         </div>
@@ -4766,7 +4765,10 @@
            }
            updateSteps(live);
            window.__solisMultiGenCount = live;
-           window.getMultiGenCount = () => live;
+           window.getMultiGenCount = () => {
+               if (window.solisSeriesModeEnabled !== true) return 1;
+               return live;
+           };
            try { localStorage.setItem('solisMultiGenCount', String(live)); } catch (_) {}
        }
 
@@ -4899,8 +4901,31 @@
           const AI_TITLE_KEY = 'solisAiTitleGeneration';
           const smartCaptionsToggle = document.getElementById('smartCaptionsToggle');
           const SMART_CAPTIONS_KEY = 'solisSmartCaptions';
-          const removeFillersToggle = document.getElementById('removeFillersToggle');
-          const REMOVE_FILLERS_KEY = 'solisRemoveFillers';
+          const seriesModeToggle = document.getElementById('seriesModeToggle');
+          const SERIES_MODE_KEY = 'solisSeriesMode';
+          const seriesModeRow = document.querySelector('[data-modifier-preview="series-mode"]');
+
+          function isPaidPlan() {
+              const paid = new Set(['basic', 'prime', 'elite', 'pro']);
+              const raw = String(
+                  window.currentUser?.plan
+                  || window.currentUser?.plan_type
+                  || window.__solisPlan
+                  || 'free'
+              ).toLowerCase().trim();
+              return paid.has(raw);
+          }
+
+          async function refreshPaidPlan() {
+              try {
+                  if (window._subCache?.get) {
+                      const sub = await window._subCache.get();
+                      const p = String(sub?.plan || sub?.plan_type || '').toLowerCase().trim();
+                      if (p) window.__solisPlan = p;
+                  }
+              } catch (_) {}
+              return isPaidPlan();
+          }
 
           function readAiTitleEnabled() {
               try {
@@ -4932,28 +4957,42 @@
               window.solisSmartCaptionsEnabled = !!on;
           }
 
-          function readRemoveFillersEnabled() {
+          function readSeriesModeEnabled() {
               try {
-                  const v = localStorage.getItem(REMOVE_FILLERS_KEY);
-                  if (v === null) return false; // off by default — fillers kept unless opted in
+                  const v = localStorage.getItem(SERIES_MODE_KEY);
+                  if (v === null) return false;
                   return v === '1' || v === 'true';
               } catch (_) {
                   return false;
               }
           }
 
-          function writeRemoveFillersEnabled(on) {
-              try { localStorage.setItem(REMOVE_FILLERS_KEY, on ? '1' : '0'); } catch (_) {}
-              window.solisRemoveFillersEnabled = !!on;
+          function writeSeriesModeEnabled(on) {
+              try { localStorage.setItem(SERIES_MODE_KEY, on ? '1' : '0'); } catch (_) {}
+              window.solisSeriesModeEnabled = !!on;
+          }
+
+          function syncMultiGenForSeriesMode() {
+              const card = document.getElementById('multiGenCard');
+              const on = window.solisSeriesModeEnabled === true && isPaidPlan();
+              if (card) {
+                  card.style.opacity = on ? '' : '0.45';
+                  card.style.pointerEvents = on ? '' : 'none';
+                  card.classList.toggle('is-series-off', !on);
+              }
+              if (!on && typeof window.getMultiGenCount === 'function') {
+                  window.__solisMultiGenCount = 1;
+              }
           }
 
           window.solisAiTitleGenerationEnabled = readAiTitleEnabled();
           window.solisSmartCaptionsEnabled = readSmartCaptionsEnabled();
-          window.solisRemoveFillersEnabled = readRemoveFillersEnabled();
+          window.solisSeriesModeEnabled = false;
+          window.solisRemoveFillersEnabled = false;
           window.solisSfxEnabled = false;
           const aiTitleToggleLabel = document.getElementById('aiTitleGenerationToggleLabel');
           const smartCaptionsToggleLabel = document.getElementById('smartCaptionsToggleLabel');
-          const removeFillersToggleLabel = document.getElementById('removeFillersToggleLabel');
+          const seriesModeToggleLabel = document.getElementById('seriesModeToggleLabel');
           function syncAiTitleToggleUi(on) {
               if (aiTitleToggle) aiTitleToggle.checked = !!on;
               if (aiTitleToggleLabel) {
@@ -4968,13 +5007,27 @@
                   smartCaptionsToggleLabel.setAttribute('aria-checked', on ? 'true' : 'false');
               }
           }
-          function syncRemoveFillersToggleUi(on) {
-              if (removeFillersToggle) removeFillersToggle.checked = !!on;
-              if (removeFillersToggleLabel) {
-                  removeFillersToggleLabel.classList.toggle('is-on', !!on);
-                  removeFillersToggleLabel.setAttribute('aria-checked', on ? 'true' : 'false');
+          function syncSeriesModeToggleUi(on, locked) {
+              if (seriesModeToggle) {
+                  seriesModeToggle.checked = !!on && !locked;
+                  seriesModeToggle.disabled = !!locked;
               }
+              if (seriesModeToggleLabel) {
+                  seriesModeToggleLabel.classList.toggle('is-on', !!on && !locked);
+                  seriesModeToggleLabel.setAttribute('aria-checked', on && !locked ? 'true' : 'false');
+              }
+              if (seriesModeRow) seriesModeRow.classList.toggle('is-locked', !!locked);
           }
+
+          async function initSeriesModeGate() {
+              const paid = await refreshPaidPlan();
+              const wanted = readSeriesModeEnabled();
+              const on = paid && wanted;
+              writeSeriesModeEnabled(on);
+              syncSeriesModeToggleUi(on, !paid);
+              syncMultiGenForSeriesMode();
+          }
+
           if (aiTitleToggle) {
               syncAiTitleToggleUi(window.solisAiTitleGenerationEnabled);
               aiTitleToggle.addEventListener('change', () => {
@@ -4997,18 +5050,41 @@
                       } catch (_) {}
                   });
               }
-              if (removeFillersToggle) {
-                  syncRemoveFillersToggleUi(window.solisRemoveFillersEnabled);
-                  removeFillersToggle.addEventListener('change', () => {
-                      writeRemoveFillersEnabled(removeFillersToggle.checked);
-                      syncRemoveFillersToggleUi(removeFillersToggle.checked);
-                      try {
-                          if (typeof window.collectSubtitleStyle === 'function') window.collectSubtitleStyle();
-                      } catch (_) {}
+              if (seriesModeToggle) {
+                  initSeriesModeGate();
+                  seriesModeToggle.addEventListener('click', async (e) => {
+                      const paid = await refreshPaidPlan();
+                      if (!paid) {
+                          e.preventDefault();
+                          seriesModeToggle.checked = false;
+                          syncSeriesModeToggleUi(false, true);
+                          if (typeof window.showUpgradeModal === 'function') {
+                              window.showUpgradeModal(
+                                  'Unlock Series Mode',
+                                  'Generate multiple clips from one video. Upgrade to Basic or higher.'
+                              );
+                          } else {
+                              window.location.href = '/premium.html';
+                          }
+                          return;
+                      }
+                  });
+                  seriesModeToggle.addEventListener('change', async () => {
+                      const paid = await refreshPaidPlan();
+                      if (!paid) {
+                          writeSeriesModeEnabled(false);
+                          syncSeriesModeToggleUi(false, true);
+                          syncMultiGenForSeriesMode();
+                          return;
+                      }
+                      writeSeriesModeEnabled(seriesModeToggle.checked);
+                      syncSeriesModeToggleUi(seriesModeToggle.checked, false);
+                      syncMultiGenForSeriesMode();
                   });
               }
 
           window.syncPreviewModifiersForTemplate = function(_templateId) {
+              initSeriesModeGate();
           };
 
           window.closePreviewModifiersMenu = function() {
@@ -13958,7 +14034,6 @@
             highlight=normalizeHex(curHighlightCol || block.dataset.subHighlight) || null;
         }
         const smartOn=window.solisSmartCaptionsEnabled !== false;
-        const removeFillers=window.solisRemoveFillersEnabled === true;
         const snap={
             anim,
             font,
@@ -13974,7 +14049,7 @@
             enabled: true,
             smart_captions: smartOn,
             crisper_mode: smartOn ? 'verbatim' : 'intended',
-            remove_fillers: removeFillers,
+            remove_fillers: false,
         };
         try{
             window.__solisLastCaptionStyle=snap;

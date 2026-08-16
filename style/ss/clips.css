@@ -11004,14 +11004,15 @@ body.modal-open { overflow: hidden !important; }
 
 .solis-watermark {
     position: absolute;
-    right: 10px;
-    top: 50%;
+    left: 10px;
+    right: auto;
+    top: 42%;
     bottom: auto;
     transform: translateY(-50%);
     z-index: 100;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 0;
     color: #ffffff;
     opacity: 0.85;
     pointer-events: none;
@@ -11025,10 +11026,19 @@ body.modal-open { overflow: hidden !important; }
     display: none !important;
 }
 
+.solis-watermark-mark {
+    display: block;
+    height: 36px;
+    width: auto;
+    max-width: 42%;
+    object-fit: contain;
+    object-position: left center;
+}
+
 .solis-watermark-icon {
     width: 18px;
     height: 18px;
-    display: flex;
+    display: none; /* legacy SVG stack — PNG mark preferred */
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
@@ -11042,6 +11052,7 @@ body.modal-open { overflow: hidden !important; }
 }
 
 .solis-watermark-label {
+    display: none; /* text baked into solisai-watermark.png */
     font-size: 11px;
     font-weight: 800;
     letter-spacing: 0.02em;

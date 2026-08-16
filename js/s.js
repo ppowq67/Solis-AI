@@ -6514,7 +6514,9 @@ class ClipsStudio {
     });
   }
   buildSolisWatermarkHTML() {
-    return `\n            <div class="solis-watermark" aria-hidden="true">\n                <div class="solis-watermark-icon">\n                    <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">\n                        <circle cx="50" cy="50" r="9" fill="currentColor"></circle>\n                        <ellipse rx="44" ry="18" cx="50" cy="50" stroke-width="6" transform="rotate(45 50 50)"></ellipse>\n                        <ellipse rx="44" ry="18" cx="50" cy="50" stroke-width="6" transform="rotate(-45 50 50)"></ellipse>\n                    </svg>\n                </div>\n                <div class="solis-watermark-label">SOLIS <span class="ai">AI</span></div>\n            </div>\n        `;
+    const e = String(window.API_BASE_URL || "").replace(/\/api\/?$/, "");
+    const t = e ? `${e}/assets/solisai-watermark.png` : "/assets/solisai-watermark.png";
+    return `\n            <div class="solis-watermark" aria-hidden="true">\n                <img class="solis-watermark-mark" src="${t}" alt="" draggable="false"\n                     onerror="this.style.display='none';const fb=this.nextElementSibling;if(fb)fb.style.display='flex';" />\n                <div class="solis-watermark-fallback" style="display:none;align-items:center;gap:6px;">\n                    <div class="solis-watermark-icon" style="display:flex;">\n                        <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">\n                            <circle cx="50" cy="50" r="9" fill="currentColor"></circle>\n                            <ellipse rx="44" ry="18" cx="50" cy="50" stroke-width="6" transform="rotate(45 50 50)"></ellipse>\n                            <ellipse rx="44" ry="18" cx="50" cy="50" stroke-width="6" transform="rotate(-45 50 50)"></ellipse>\n                        </svg>\n                    </div>\n                    <div class="solis-watermark-label" style="display:block;">SOLIS <span class="ai">AI</span></div>\n                </div>\n            </div>\n        `;
   }
   shouldShowSolisWatermark() {
     const e = document.getElementById("watermarkToggle");
@@ -6527,11 +6529,9 @@ class ClipsStudio {
     if (!t) {
       e.insertAdjacentHTML("beforeend", this.buildSolisWatermarkHTML());
       t = e.querySelector(".solis-watermark");
-    } else {
-      const e = t.querySelector(".solis-watermark-label");
-      if (e && !/SOLIS/i.test(e.textContent || "")) {
-        e.innerHTML = 'SOLIS <span class="ai">AI</span>';
-      }
+    } else if (!t.querySelector(".solis-watermark-mark")) {
+      t.outerHTML = this.buildSolisWatermarkHTML().trim();
+      t = e.querySelector(".solis-watermark");
     }
     if (getComputedStyle(e).position === "static") {
       e.style.position = "relative";

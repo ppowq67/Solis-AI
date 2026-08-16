@@ -185,6 +185,12 @@ let selectedGameplayClip = "minecraft_1";
 
 let availableGameplayClips = [];
 
+let _gameplayClipsFetchedAt = 0;
+
+let _gameplayClipsInflight = null;
+
+const GAMEPLAY_CLIPS_TTL_MS = 10 * 60 * 1e3;
+
 let splitscreenInverted = true;
 
 let splitscreenSecondaryType = "face_track";
@@ -3018,27 +3024,37 @@ function getHeaders() {
   return getAuthHeaders(true);
 }
 
-async function loadAvailableGameplayClips() {
-  try {
-    const e = await fetch("/api/gameplay/available", {
-      method: "GET",
-      credentials: "include",
-      headers: typeof getAuthHeaders === "function" ? getAuthHeaders(true) : {}
-    });
-    if (e.ok) {
-      const t = await e.json();
-      availableGameplayClips = t.clips || [];
-      return availableGameplayClips;
-    } else {
-      safeLog("Failed to load gameplay clips from backend");
-      availableGameplayClips = [];
-      return availableGameplayClips;
-    }
-  } catch (e) {
-    safeLog("âŒ Error loading gameplay clips:", e);
-    availableGameplayClips = [];
+async function loadAvailableGameplayClips(e = false) {
+  if (!e && availableGameplayClips.length && Date.now() - _gameplayClipsFetchedAt < GAMEPLAY_CLIPS_TTL_MS) {
     return availableGameplayClips;
   }
+  if (_gameplayClipsInflight) return _gameplayClipsInflight;
+  _gameplayClipsInflight = (async () => {
+    try {
+      const e = `${API_BASE_URL}/gameplay/available`;
+      const t = await fetch(e, {
+        method: "GET",
+        credentials: "include",
+        headers: typeof getAuthHeaders === "function" ? getAuthHeaders(true) : {}
+      });
+      if (t.ok) {
+        const e = await t.json();
+        availableGameplayClips = Array.isArray(e.clips) ? e.clips : [];
+        _gameplayClipsFetchedAt = Date.now();
+        return availableGameplayClips;
+      }
+      safeLog("Failed to load gameplay clips from backend");
+      if (!availableGameplayClips.length) availableGameplayClips = [];
+      return availableGameplayClips;
+    } catch (e) {
+      safeLog("Error loading gameplay clips:", e);
+      if (!availableGameplayClips.length) availableGameplayClips = [];
+      return availableGameplayClips;
+    } finally {
+      _gameplayClipsInflight = null;
+    }
+  })();
+  return _gameplayClipsInflight;
 }
 
 window._subCache = (() => {
@@ -3250,6 +3266,49 @@ function getGameplayClipsForUI() {
   } ];
 }
 
+function apiOriginBase() {
+  return String(window.API_BASE_URL || "").replace(/\/api\/?$/, "");
+}
+
+function resolveGameplayMediaUrl(e) {
+  const t = String(e || "").trim();
+  if (!t) return "";
+  if (/^(https?:|blob:|data:)/i.test(t)) return t;
+  const i = apiOriginBase();
+  if (t.startsWith("/")) {
+    return i ? `${i}${t}` : t;
+  }
+  return i ? `${i}/assets/${t.replace(/^\/+/, "")}` : `/assets/${t.replace(/^\/+/, "")}`;
+}
+
+function resolveGameplayClipMeta(e) {
+  const t = String(e || selectedGameplayClip || "minecraft_1");
+  const i = getGameplayClipsForUI().find(e => e.id === t);
+  if (i) return i;
+  const n = t.match(/^([a-z][a-z0-9]*)_(\d+)$/i);
+  if (n) {
+    const e = n[1];
+    const i = n[2];
+    const r = `${e.charAt(0).toUpperCase()}${e.slice(1)}_${i}.mp4`;
+    return {
+      id: t,
+      title: `${e.charAt(0).toUpperCase()}${e.slice(1)} ${i}`,
+      filename: r,
+      group: e.toLowerCase(),
+      group_label: e.charAt(0).toUpperCase() + e.slice(1),
+      preview_url: `/api/gameplay/preview/${t}`
+    };
+  }
+  return {
+    id: "minecraft_1",
+    title: "Minecraft 1",
+    filename: "Minecraft_1.mp4",
+    group: "minecraft",
+    group_label: "Minecraft",
+    preview_url: "/api/gameplay/preview/minecraft_1"
+  };
+}
+
 function gameplayGroupMeta(e) {
   const t = String(e?.group || String(e?.id || "").split("_")[0] || "gameplay").toLowerCase();
   const i = e?.group_label || {
@@ -3266,9 +3325,9 @@ function gameplayGroupMeta(e) {
 }
 
 function gameplayClipPreviewSrc(e) {
-  if (e?.preview_url) return e.preview_url;
-  if (e?.thumbnail) return e.thumbnail;
-  if (e?.id) return `/api/gameplay/preview/${e.id}`;
+  if (e?.preview_url) return resolveGameplayMediaUrl(e.preview_url);
+  if (e?.thumbnail) return resolveGameplayMediaUrl(e.thumbnail);
+  if (e?.id) return resolveGameplayMediaUrl(`/api/gameplay/preview/${e.id}`);
   return "";
 }
 
@@ -3280,7 +3339,7 @@ function buildGameplayClipCard(e) {
   t.dataset.group = gameplayGroupMeta(e).id;
   const i = e.title || e.id;
   const n = gameplayClipPreviewSrc(e);
-  const r = e.filename ? `/assets/${encodeURIComponent(e.filename)}` : "";
+  const r = e.filename ? resolveGameplayMediaUrl(`/assets/${e.filename}`) : "";
   t.innerHTML = `\n        <span class="gp-clip-media">\n            <span class="gp-clip-skel" aria-hidden="true">\n                <span class="gp-clip-skel-shine"></span>\n                <span class="gp-clip-skel-grid">\n                    <i></i><i></i><i></i><i></i><i></i><i></i>\n                    <i></i><i></i><i></i><i></i><i></i><i></i>\n                </span>\n            </span>\n            <img class="gp-clip-thumb" alt="" decoding="async" draggable="false" />\n        </span>\n        <span class="gp-clip-label">${i}</span>\n        <span class="gp-clip-check" aria-hidden="true">\n            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 13l4 4L19 7"/></svg>\n        </span>\n    `;
   const o = t.querySelector("img.gp-clip-thumb");
   const s = t.querySelector(".gp-clip-media");
@@ -4851,13 +4910,66 @@ function applySplitscreenPreview() {
   applySplitscreenRatio();
   applySecondaryVisual();
   syncSplitscreenSubtitles(getSplitscreenPreviewContainer());
+  wireSplitscreenPanelHoverHints();
+}
+
+function secondaryPanelHintLabel() {
+  if (splitscreenSecondaryType === "face_track") return "AI Reframe";
+  if (splitscreenSecondaryType === "blank") return "Black";
+  if (splitscreenSecondaryType === "blank_blur") return "Blur";
+  const e = resolveGameplayClipMeta(selectedGameplayClip);
+  return e?.title || e?.group_label || "Gameplay";
+}
+
+function ensureSplitscreenPanelHint(e, t) {
+  if (!e) return null;
+  let i = e.querySelector(":scope > .ss-panel-hover-hint");
+  if (!i) {
+    i = document.createElement("span");
+    i.className = "ss-panel-hover-hint";
+    i.setAttribute("aria-hidden", "true");
+    e.appendChild(i);
+  }
+  i.textContent = t || "";
+  return i;
+}
+
+function wireSplitscreenPanelHoverHints() {
+  const e = _splitscreenQuery("splitscreenRoot");
+  const t = _splitscreenQuery("splitscreenTop");
+  const i = _splitscreenQuery("splitscreenBottom");
+  if (!e || !t || !i) return;
+  ensureSplitscreenPanelHint(t, "Your content");
+  ensureSplitscreenPanelHint(i, secondaryPanelHintLabel());
+  if (e.dataset.hoverHintsWired === "1") return;
+  e.dataset.hoverHintsWired = "1";
+  const clearAll = () => {
+    e.querySelectorAll(".ss-hover-panel").forEach(e => {
+      e.classList.remove("ss-panel-outlined", "ss-panel-hint-visible");
+    });
+  };
+  const bind = (e, t) => {
+    e.classList.add("ss-hover-panel");
+    e.addEventListener("pointerenter", i => {
+      if (i.pointerType === "touch") return;
+      clearAll();
+      const n = t === "content" ? "Your content" : secondaryPanelHintLabel();
+      ensureSplitscreenPanelHint(e, n);
+      e.classList.add("ss-panel-outlined", "ss-panel-hint-visible");
+    });
+    e.addEventListener("pointerleave", () => {
+      e.classList.remove("ss-panel-outlined", "ss-panel-hint-visible");
+    });
+  };
+  bind(t, "content");
+  bind(i, "secondary");
 }
 
 function applyGameplayClip(e) {
-  selectedGameplayClip = e;
-  const t = getGameplayClipsForUI().find(t => t.id === e);
+  selectedGameplayClip = e || selectedGameplayClip || "minecraft_1";
+  const t = resolveGameplayClipMeta(selectedGameplayClip);
   const i = _splitscreenQuery("splitscreenGameplayVideo");
-  if (!i || !t) return;
+  if (!i || !t?.filename) return;
   i.style.position = "";
   i.style.left = "";
   i.style.top = "";
@@ -4867,7 +4979,10 @@ function applyGameplayClip(e) {
   i.style.maxWidth = "";
   i.style.transform = "";
   i.style.transition = "opacity .28s cubic-bezier(.22,.8,.28,1)";
-  const n = `/assets/${t.filename}`;
+  i.style.setProperty("display", "block", "important");
+  i.style.removeProperty("visibility");
+  i.style.removeProperty("opacity");
+  const n = resolveGameplayMediaUrl(`/assets/${t.filename}`);
   if (i.dataset.currentSrc === n && !i.paused && i.readyState >= 2) {
     i.style.opacity = "1";
     return;
@@ -4893,6 +5008,11 @@ function applyGameplayClip(e) {
     splitscreenVideoCanPlayHandler = null;
   };
   i.addEventListener("canplay", splitscreenVideoCanPlayHandler);
+  i.addEventListener("error", () => {
+    safeLog("Gameplay clip failed to load:", n);
+  }, {
+    once: true
+  });
   i.src = n;
   i.load();
 }
@@ -4946,7 +5066,7 @@ window.applySplitscreenMemoryLayout = function(e, t) {
       markLibrarySplitscreenDirty();
       try {
         buildSplitscreenFormatDropdown();
-        buildGameplayClipsDropdown();
+        rebuildGameplayClipsDropdown();
       } catch (e) {}
       try {
         if (typeof closeGameplayDropdowns === "function") closeGameplayDropdowns();
@@ -6724,7 +6844,7 @@ class ClipsStudio {
     safeLog(`🎨 generateTemplatePreviewHTML - template.id: ${e?.id}, template.type: ${e?.type}`);
     const t = {
       ranked_compilation: () => `\n                <style>\n                    .ranking-preview-container * {\n                        box-sizing: border-box;\n                    }\n                    .ranking-preview-container {\n                        position: absolute;\n                        inset: 0;\n                        width: 100%;\n                        height: 100%;\n                        padding: 14px 12px 16px;\n                        border-radius: inherit;\n                        display: flex;\n                        flex-direction: column;\n                        align-items: center;\n                        pointer-events: auto;\n                        overflow: hidden;\n                        background: transparent;\n                    }\n\n                    .ranking-preview-container::-webkit-scrollbar {\n                        width: 4px;\n                    }\n                    .ranking-preview-container::-webkit-scrollbar-track {\n                        background: transparent;\n                    }\n                    .ranking-preview-container::-webkit-scrollbar-thumb {\n                        background: rgba(255,255,255,0.3);\n                        border-radius: 2px;\n                    }\n                    .ranking-preview-container .text-stroke {\n                        font-weight: 400;\n                        text-shadow:\n                            2px 0 0 #000, -2px 0 0 #000, 0 2px 0 #000, 0 -2px 0 #000,\n                            1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;\n                        pointer-events: auto;\n                    }\n                    .ranking-preview-container .title {\n                        font-size: clamp(0.95rem, 5.2vw, 1.35rem);\n                        text-align: center;\n                        line-height: 1.12;\n                        text-transform: uppercase;\n                        margin-bottom: 4px;\n                        margin-top: 0;\n                        padding-top: 0;\n                        color: white;\n                        font-family: 'Luckiest Guy', cursive;\n                        font-weight: 400;\n                        pointer-events: auto;\n                        width: fit-content;\n                        max-width: calc(100% - 8px);\n                        margin-left: auto;\n                        margin-right: auto;\n                        overflow: visible;\n                    }\n                    .ranking-preview-container .funniest {\n                        color: #ff0000;\n                        pointer-events: auto;\n                    }\n                    .ranking-preview-container .ranking-list {\n                        list-style: none;\n                        padding: 0;\n                        margin: 6px 0 0 0;\n                        text-align: left;\n                        width: fit-content;\n                        max-width: 100%;\n                        align-self: flex-start;\n                        pointer-events: auto;\n                        flex: 0 0 auto;\n                        flex-shrink: 0;\n                        overflow: visible;\n                        display: flex;\n                        flex-direction: column;\n                        gap: 12px;\n                    }\n                    .ranking-preview-container .ranked-item {\n                        font-size: clamp(0.72rem, 3.8vw, 0.98rem);\n                        margin-bottom: 0;\n                        font-family: 'Luckiest Guy', cursive;\n                        line-height: 1.2;\n                        display: flex;\n                        align-items: baseline;\n                        justify-content: flex-start;\n                        font-weight: 400;\n                        pointer-events: auto;\n                        flex: 0 0 auto;\n                        flex-shrink: 0;\n                        overflow: visible;\n                        gap: 6px;\n                        width: fit-content;\n                        min-height: 1.2em;\n                    }\n                    .ranking-preview-container .ranked-item .rank-number {\n                        display: inline-block;\n                        pointer-events: auto;\n                        flex-shrink: 0;\n                        margin-right: 0.15em;\n                        padding: 0;\n                        width: max-content;\n                        letter-spacing: 0;\n                        line-height: 1.05;\n                    }\n                    .ranking-preview-container .rank-1 { color: #ffd700; pointer-events: auto; }\n                    .ranking-preview-container .rank-2 { color: #c0c0c0; pointer-events: auto; }\n                    .ranking-preview-container .rank-3 { color: #cd7f32; pointer-events: auto; }\n                    .ranking-preview-container .rank-4 { color: #ffffff; pointer-events: auto; }\n                    .ranking-preview-container .rank-5 { color: #ffffff; pointer-events: auto; }\n                    .ranking-editor-zone-header {\n                        display: flex;\n                        flex-direction: column;\n                        align-items: center;\n                        justify-content: flex-start;\n                        width: 100%;\n                        max-width: 100%;\n                        margin: 0 auto;\n                        text-align: center;\n                        overflow: visible;\n                        padding: 0 4px 4px;\n                        flex: 0 0 auto;\n                        flex-shrink: 0;\n                        position: relative;\n                        z-index: 6;\n                        box-sizing: border-box;\n                    }\n                    .ranking-preview-container .title .text-stroke,\n                    .ranking-preview-container h2.text-stroke {\n                        -webkit-text-stroke: 0;\n                        paint-order: stroke fill;\n                    }\n                    .ranking-editor-zone-ranks {\n                        width: fit-content;\n                        max-width: 100%;\n                        align-self: flex-start;\n                    }\n                    .ranking-preview-container [data-template-element-id] {\n                        transition: none;\n                    }\n                    .ranking-preview-container [data-template-element-id="title_channel"] {\n                        font-size: clamp(0.88rem, 4.8vw, 1.15rem);\n                        line-height: 1.1;\n                        margin: 2px auto 8px auto !important;\n                        max-width: calc(100% - 24px);\n                        display: block !important;\n                        width: fit-content;\n                        text-align: center;\n                        white-space: nowrap;\n                        overflow-wrap: normal;\n                        word-break: normal;\n                        box-sizing: border-box;\n                        position: relative;\n                        z-index: 7;\n                        float: none;\n                        transform: none;\n                    }\n                    .ranking-preview-container h1.title {\n                        display: block;\n                        white-space: nowrap;\n                        max-width: 100%;\n                        width: fit-content;\n                        margin: 0 auto 2px auto;\n                        text-align: center;\n                        position: relative;\n                        z-index: 7;\n                    }\n                    .ranking-preview-container [data-template-element-id="title_ranking"],\n                    .ranking-preview-container [data-template-element-id="title_funniest"] {\n                        display: inline-block;\n                        line-height: inherit;\n                        vertical-align: baseline;\n                        white-space: nowrap;\n                    }\n                    .ranking-preview-container .rank-title:empty::before {\n                        content: attr(data-placeholder);\n                        opacity: 0.42;\n                        font-style: italic;\n                    }\n                    .ranking-preview-container .rank-title {\n                        min-width: 2.5rem;\n                        cursor: text;\n                        text-transform: uppercase;\n                    }\n                </style>\n                <div class="ranking-preview-container">\n                    <div class="ranking-editor-zone ranking-editor-zone-header">\n                    <h1 class="title">\n                        <span data-template-element-id="title_ranking" class="text-stroke" style="color: white; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">RANKING</span> <span data-template-element-id="title_funniest" class="funniest text-stroke" style="color: #ff0000; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">BEST</span>\n                    </h1>\n                    <h2 data-template-element-id="title_channel" style="text-align: center; margin: 2px auto 12px auto; color: white !important; background: transparent !important; font-family: 'Luckiest Guy', cursive; font-weight: 400; max-width: calc(100% - 24px); pointer-events: auto; display: block; position: relative;" class="text-stroke">CHANNEL MOMENTS</h2>\n                    </div>\n                    <ul class="ranking-list ranking-editor-zone ranking-editor-zone-ranks">\n                        <li class="ranked-item rank-1">\n                            <span data-template-element-id="rank_1_number" class="rank-number text-stroke" style="color: #ffd700; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">1.</span>\n                            <span data-template-element-id="rank_1_title" class="rank-title text-stroke" style="color: #ffd700; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;"></span>\n                        </li>\n                        <li class="ranked-item rank-2">\n                            <span data-template-element-id="rank_2_number" class="rank-number text-stroke" style="color: #c0c0c0; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">2.</span>\n                            <span data-template-element-id="rank_2_title" class="rank-title text-stroke" style="color: #c0c0c0; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;"></span>\n                        </li>\n                        <li class="ranked-item rank-3">\n                            <span data-template-element-id="rank_3_number" class="rank-number text-stroke" style="color: #cd7f32; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">3.</span>\n                            <span data-template-element-id="rank_3_title" class="rank-title text-stroke" style="color: #cd7f32; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;"></span>\n                        </li>\n                        <li class="ranked-item rank-4">\n                            <span data-template-element-id="rank_4_number" class="rank-number text-stroke" style="color: #ffffff; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">4.</span>\n                            <span data-template-element-id="rank_4_title" class="rank-title text-stroke" style="color: #ffffff; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;"></span>\n                        </li>\n                        <li class="ranked-item rank-5">\n                            <span data-template-element-id="rank_5_number" class="rank-number text-stroke" style="color: #ffffff; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">5.</span>\n                            <span data-template-element-id="rank_5_title" class="rank-title text-stroke" style="color: #ffffff; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;"></span>\n                        </li>\n                    </ul>\n                </div>\n            `,
-      splitscreen: () => `\n                <div id="splitscreenRoot" style="display:flex;flex-direction:column;height:100%;width:100%;background:transparent;overflow:hidden;border-radius:inherit;user-select:none;">\n                    \x3c!-- TOP: Content slot — transparent so shared preview grey shows (same as ranking) --\x3e\n                    <div id="splitscreenTop" style="flex:0 0 50%;width:100%;min-height:0;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;">\n                        <div class="ss-content-placeholder" style="text-align:center;position:relative;z-index:2;">\n                            <div style="font-size:11px;color:#ff6a3d;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;display:flex;align-items:center;justify-content:center;gap:5px;">\n                                <span style="width:5px;height:5px;background:#ff6a3d;border-radius:50%;animation:splitscreen-pulse 2s infinite;display:inline-block;"></span>\n                                Your Content\n                            </div>\n                            <div style="font-size:12px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:.5px;">Video Preview</div>\n                        </div>\n                    </div>\n\n                    \x3c!-- DIVIDER — 1px seam; hit target expands via CSS ::before (no fat gap) --\x3e\n                    <div id="splitscreenDivider" style="flex:0 0 1px;width:100%;height:1px;min-height:1px;max-height:1px;cursor:row-resize;display:flex;align-items:center;justify-content:center;position:relative;z-index:50;background:transparent;flex-shrink:0;overflow:visible;padding:0;margin:0;">\n                        <div id="dividerLine" class="ss-divider-grip" style="position:absolute;left:0;right:0;top:50%;width:100%;height:1px;background:rgba(148,163,184,0.85);border-radius:0;box-shadow:none;pointer-events:none;transform:translateY(-50%);"></div>\n                    </div>\n\n                    \x3c!-- BOTTOM: Secondary panel (gameplay / face) — default type is face_track via JS --\x3e\n                    <div id="splitscreenBottom" style="flex:1 1 0;width:100%;min-height:0;background:transparent;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;"\n                         data-no-text-select="true">\n                        <video style="width:100%;height:100%;object-fit:cover;display:none;pointer-events:none;" autoplay muted loop playsinline preload="auto" disablePictureInPicture controlslist="nodownload nofullscreen noremoteplayback" id="splitscreenGameplayVideo">\n                            <source src="/assets/Minecraft_1.mp4" type="video/mp4">\n                        </video>\n                    </div>\n                </div>\n            `
+      splitscreen: () => `\n                <div id="splitscreenRoot" style="display:flex;flex-direction:column;height:100%;width:100%;background:transparent;overflow:hidden;border-radius:inherit;user-select:none;">\n                    \x3c!-- TOP: Content slot — transparent so shared preview grey shows (same as ranking) --\x3e\n                    <div id="splitscreenTop" style="flex:0 0 50%;width:100%;min-height:0;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;">\n                        <div class="ss-content-placeholder" style="text-align:center;position:relative;z-index:2;">\n                            <div style="font-size:11px;color:#ff6a3d;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;display:flex;align-items:center;justify-content:center;gap:5px;">\n                                <span style="width:5px;height:5px;background:#ff6a3d;border-radius:50%;animation:splitscreen-pulse 2s infinite;display:inline-block;"></span>\n                                Your Content\n                            </div>\n                            <div style="font-size:12px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:.5px;">Video Preview</div>\n                        </div>\n                    </div>\n\n                    \x3c!-- DIVIDER — 1px seam; hit target expands via CSS ::before (no fat gap) --\x3e\n                    <div id="splitscreenDivider" style="flex:0 0 1px;width:100%;height:1px;min-height:1px;max-height:1px;cursor:row-resize;display:flex;align-items:center;justify-content:center;position:relative;z-index:50;background:transparent;flex-shrink:0;overflow:visible;padding:0;margin:0;">\n                        <div id="dividerLine" class="ss-divider-grip" style="position:absolute;left:0;right:0;top:50%;width:100%;height:1px;background:rgba(148,163,184,0.85);border-radius:0;box-shadow:none;pointer-events:none;transform:translateY(-50%);"></div>\n                    </div>\n\n                    \x3c!-- BOTTOM: Secondary panel (gameplay / face) — default type is face_track via JS --\x3e\n                    <div id="splitscreenBottom" style="flex:1 1 0;width:100%;min-height:0;background:transparent;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;"\n                         data-no-text-select="true">\n                        <video style="width:100%;height:100%;object-fit:cover;display:none;pointer-events:none;" autoplay muted loop playsinline preload="auto" disablePictureInPicture controlslist="nodownload nofullscreen noremoteplayback" id="splitscreenGameplayVideo"></video>\n                    </div>\n                </div>\n            `
     };
     let i = t[e.id];
     if (!i) {

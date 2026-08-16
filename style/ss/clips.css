@@ -10721,7 +10721,7 @@ body.modal-open { overflow: hidden !important; }
 .solis-memory-suggest.solis-memory-suggest--recipe .solis-memory-suggest-label,
 .solis-memory-suggest.solis-memory-suggest--recipe #solisMemorySuggestTitle {
     display: inline-block !important;
-    max-width: 160px;
+    max-width: 200px;
     padding: 0 4px;
     font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
     font-size: 11px;
@@ -10735,7 +10735,7 @@ body.modal-open { overflow: hidden !important; }
 }
 
 .solis-memory-suggest.solis-memory-suggest--recipe #solisMemorySuggestTitle {
-    max-width: 200px;
+    max-width: 240px;
 }
 
 .template-card.is-recipe-pick {

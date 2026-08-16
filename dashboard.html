@@ -42,7 +42,7 @@
     <link rel="stylesheet" href="/style/ss/newsfeed-widget.css?v=31">
     <script src="/js/ui/navigation.js?v=3"></script>
     <script src="/js/ui/menu.js?v=6"></script>
-    <script src="/js/ui/solis-badges.js?v=10"></script>
+    <script src="/js/ui/solis-badges.js?v=11"></script>
     <script src="/js/i_dq/profile-notifications.js?t=20260815151000"></script>
     <script src="/js/s_new/qwsqa.js?v=5"></script>
     <script src="/js/s_new/qwe.js?v=7"></script>
@@ -64,7 +64,7 @@
     <script src="/js/ui/plan-selector.js?v=63"></script>
     <script src="/js/core/video-preview-system.js?v=2"></script>
     <script src="/js/s_new/clip-card.js?v=18"></script>
-    <script src="/js/s.js?v=253"></script>
+    <script src="/js/s.js?v=254"></script>
     <script src="/js/s_new/procc.js?v=2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -1356,7 +1356,7 @@
                         <div class="stgRow stgRow--toggle stgPrivacyPref">
                             <div class="stgRowBody">
                                 <div class="stgRowLabel">Style Memory on this device</div>
-                                <p class="stgRowHint">Keep preview style preferences (fonts, colors, sizes) in this browser so Solis can suggest them later. Stored locally, not uploaded as a profile.</p>
+                                <p class="stgRowHint">Keep preview style preferences (fonts, colors, sizes) in this browser so Solis can suggest them later. Synced with your account Memory.</p>
                             </div>
                             <button
                                 type="button"
@@ -7564,6 +7564,42 @@
     outline-offset:-2px;
     transition:outline-color .22s ease;
 }
+#templateVideoPreview .ss-hover-panel{
+    transition:outline-color .16s ease, outline-offset .16s ease;
+}
+#templateVideoPreview .ss-hover-panel.ss-panel-outlined{
+    outline:2px solid rgba(249,115,22,.55);
+    outline-offset:-2px;
+    z-index:3;
+}
+#templateVideoPreview .ss-panel-hover-hint{
+    position:absolute;
+    top:8px;
+    left:8px;
+    z-index:45;
+    max-width:calc(100% - 16px);
+    padding:4px 8px;
+    border-radius:7px;
+    font:700 10px/1.2 'Plus Jakarta Sans',system-ui,sans-serif;
+    letter-spacing:-.01em;
+    color:#fff;
+    background:rgba(15,18,28,.72);
+    border:1px solid rgba(255,255,255,.14);
+    box-shadow:0 4px 14px rgba(0,0,0,.28);
+    backdrop-filter:blur(10px) saturate(140%);
+    -webkit-backdrop-filter:blur(10px) saturate(140%);
+    opacity:0;
+    transform:translateY(-2px);
+    pointer-events:none;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    transition:opacity .14s ease, transform .16s cubic-bezier(.2,.9,.4,1.05);
+}
+#templateVideoPreview .ss-panel-hint-visible > .ss-panel-hover-hint{
+    opacity:1;
+    transform:translateY(0);
+}
 .gp-clips-dd .gp-dd-section{
     margin:0 10px 10px;
     padding:0;
@@ -13616,6 +13652,9 @@
             }
             if(window.SolisMemory&&typeof window.SolisMemory.recordCaptions==='function'){
                 window.SolisMemory.recordCaptions(tid, appliedSnap||style);
+            }
+            if(window.SolisMemory&&typeof window.SolisMemory.recordSuggestionAccepted==='function'){
+                window.SolisMemory.recordSuggestionAccepted(tid, { tip: !!(style&&style.__tip) });
             }
             if(window.SolisMemory&&typeof window.SolisMemory.continueSuggestAfterCaption==='function'){
                 window.SolisMemory.continueSuggestAfterCaption(tid);

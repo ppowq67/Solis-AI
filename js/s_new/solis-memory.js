@@ -10,9 +10,9 @@
   const a = 40;
   const c = 1200;
   const u = 45 * 1e3;
-  const f = 18 * 1e3;
-  const g = 20 * 1e3;
-  const p = new Set;
+  const p = 18 * 1e3;
+  const f = 20 * 1e3;
+  const g = new Set;
   function isRankingTemplate(e) {
     const t = String(e || "").toLowerCase();
     return t === "ranked_compilation" || t === "ranking" || t.includes("rank");
@@ -55,6 +55,188 @@
       t.splitscreen_secondary_type = String(t.splitscreen_secondary_type).toLowerCase();
     }
     return t;
+  }
+  const y = 1;
+  const d = {
+    karaoke: "word-by-word",
+    word: "word-by-word",
+    words: "word-by-word",
+    sentence: "sentence",
+    line: "line-by-line",
+    fade: "fade",
+    pop: "pop",
+    bounce: "bounce",
+    typewriter: "typewriter",
+    highlight: "highlight",
+    none: "static",
+    static: "static",
+    center: "centered"
+  };
+  function memColorName(e) {
+    const t = String(e || "").trim().replace(/^#/, "");
+    if (!t || t === "transparent") return null;
+    const n = t.match(/^([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i);
+    if (!n) return null;
+    const s = parseInt(n[1], 16);
+    const i = parseInt(n[2], 16);
+    const o = parseInt(n[3], 16);
+    if (s > 200 && i < 150 && o < 90) return "orange";
+    if (s > 210 && i > 170 && o < 90) return "gold";
+    if (i > s + 30 && i > o + 20) return "green";
+    if (o > s + 30 && o > i + 10) return "blue";
+    if (s > 180 && o > 140 && i < 140) return "pink";
+    if (s > 200 && i < 100 && o < 100) return "red";
+    if (s > 220 && i > 220 && o > 220) return "white";
+    if (s < 45 && i < 45 && o < 45) return "black";
+    return null;
+  }
+  function memFontShort(e) {
+    const t = String(e || "").replace(/['"]/g, "").split(",")[0].trim();
+    if (!t) return null;
+    const n = t.replace(/\s+(Bold|Black|ExtraBold|SemiBold|Medium|Regular|Light)$/i, "").trim();
+    return n.length > 18 ? `${n.slice(0, 16)}…` : n;
+  }
+  function memHashSeed(e) {
+    const t = String(e || "");
+    let n = 0;
+    for (let e = 0; e < t.length; e++) n = (n << 5) - n + t.charCodeAt(e) | 0;
+    return Math.abs(n);
+  }
+  function memPick(e, t) {
+    if (!e || !e.length) return "";
+    return e[memHashSeed(t) % e.length];
+  }
+  function suggestHookLine({captions: e = null, styles: t = null, layout: n = null, mode: s = "captions", seed: i = ""} = {}) {
+    const o = e && typeof e === "object" ? e : null;
+    const r = String(o?.anim || "").toLowerCase();
+    const l = d[r] || (r && r !== "none" ? r : null);
+    const a = memColorName(o?.color || o?.highlight || o?.fill);
+    const c = memFontShort(o?.font);
+    const u = [ a, l, c ].filter(Boolean);
+    const p = u.length ? u.slice(0, 2).join(" ") : "your look";
+    const f = u.length ? u.join(" · ") : "your look";
+    const g = `${s}|${i}|${f}|${String(o?.__tip || "")}`;
+    if (s === "tip" || o?.__tip === "animations") {
+      return memPick([ "Try word-by-word — most creators start here", "Word-by-word hits harder", "Starter look — make it yours", "Suggested caption style", "Warm up with this style" ], g);
+    }
+    if (s === "ranking") {
+      let e = "your ranking look";
+      try {
+        const n = t && typeof t === "object" ? t : null;
+        if (n) {
+          const t = Object.values(n).find(e => e && typeof e === "object" && (e.font || e.color));
+          if (t) {
+            const n = [ memColorName(t.color), memFontShort(t.font) ].filter(Boolean);
+            if (n.length) e = n.join(" ");
+          }
+        }
+      } catch (e) {}
+      return memPick([ `Keep ${e}?`, "Your ranking style — apply?", "Same ranking look as last time", "One click. Your ranking again.", "Still you on the board?", `Back to ${e}?` ], g + e);
+    }
+    if (s === "layout") {
+      const e = String(n?.splitscreen_secondary_type || "").replace(/_/g, " ");
+      const t = e ? `your ${e} split` : "your split";
+      return memPick([ `${t} — keep it?`, "Same split as last time", "Pick up your layout?", "Don’t rebuild the split", "Your composition. Apply?" ], g + e);
+    }
+    return memPick([ `Your ${p} — keep it?`, `Still rocking ${p}?`, `This is yours. Apply?`, `Back to ${p}?`, "Your signature. One click.", "Don’t start from zero", "Pick up where you left off", `${f} — still you?`, `Solis remembered ${p}`, c ? `Keep ${c}?` : `Keep ${p}?` ], g);
+  }
+  function trustFields(e, t, {resetOnFpChange: n = true} = {}) {
+    const s = !!(e && e.fingerprint && t && e.fingerprint === t);
+    if (s || !n) {
+      return {
+        acceptStreak: Number(e.acceptStreak) || 0,
+        acceptFingerprint: e.acceptFingerprint || null,
+        autoApply: e.autoApply === false ? false : e.autoApply !== false,
+        lastAcceptedAt: e.lastAcceptedAt || null
+      };
+    }
+    return {
+      acceptStreak: 0,
+      acceptFingerprint: null,
+      autoApply: true,
+      lastAcceptedAt: null
+    };
+  }
+  function recordSuggestionAccepted(e, t = {}) {
+    const n = e || h;
+    if (!n || t.tip) return;
+    const s = readState();
+    const i = s.templates[n];
+    if (!i) return;
+    const o = i.fingerprint || fingerprint(i.styles, i.captions, i.layout) || i.acceptFingerprint || "ok";
+    if (i.acceptFingerprint === o) {
+      i.acceptStreak = (Number(i.acceptStreak) || 0) + 1;
+    } else {
+      i.acceptFingerprint = o;
+      i.acceptStreak = 1;
+    }
+    i.lastAcceptedAt = (new Date).toISOString();
+    i.lastRejectedFingerprint = null;
+    i.lastRejectedAt = null;
+    if (i.acceptStreak >= y) {
+      i.autoApply = true;
+    }
+    writeState(s);
+  }
+  function clearAcceptTrust(e) {
+    const t = e || h;
+    if (!t) return;
+    const n = readState();
+    const s = n.templates[t];
+    if (!s) return;
+    s.acceptStreak = 0;
+    s.acceptFingerprint = null;
+    s.autoApply = false;
+    writeState(n);
+  }
+  function shouldAutoApply(e, t) {
+    if (!isEnabled() || !isSuggestEnabled()) return false;
+    t = t || getTemplateMemory(e);
+    if (!t) return false;
+    if (t.autoApply === false) return false;
+    if (isLibraryPreviewOpen()) return false;
+    const n = t.fingerprint || fingerprint(t.styles, t.captions, t.layout);
+    if (t.acceptFingerprint && n && t.acceptFingerprint !== n) return false;
+    const s = !!(captionsForSuggest(t) || stylesForSuggest(t) || layoutUseful(t.layout));
+    return s;
+  }
+  function silentlyApplyMemory(e) {
+    const t = getTemplateMemory(e);
+    if (!t) return false;
+    let n = false;
+    try {
+      if (window.SolisMemory) window.SolisMemory._applying = true;
+      if (isSplitscreenTemplate(e) && layoutUseful(t.layout)) {
+        const s = collectLiveLayout(e);
+        if (layoutDiffers(t.layout, s) && typeof window.applySplitscreenMemoryLayout === "function") {
+          window.applySplitscreenMemoryLayout(t.layout, {
+            commit: true
+          });
+          n = true;
+        }
+      }
+      if (!isRankingTemplate(e)) {
+        const s = captionsForSuggest(t);
+        if (s) {
+          const t = smarterCaptions(s, e);
+          const i = collectLiveCaptions(e);
+          if (!i || captionsDiffer(t, i)) {
+            if (applyCaptions(t, e)) n = true;
+          }
+        }
+      }
+      if (isRankingTemplate(e)) {
+        const s = stylesForSuggest(t);
+        if (s && Object.keys(s).length) {
+          window.__solisRankingDeferCustoms = false;
+          applyStyles(e, s);
+          n = true;
+        }
+      }
+    } catch (e) {} finally {
+      if (window.SolisMemory) window.SolisMemory._applying = false;
+    }
+    return n;
   }
   function mergeLayouts(e, t) {
     if (!layoutUseful(t) && !layoutUseful(e)) return null;
@@ -119,18 +301,18 @@
       ...n
     } : null;
   }
-  let y = null;
-  let d = 0;
-  let m = false;
-  let S = null;
-  let w = null;
-  let h = false;
+  let m = null;
+  let S = 0;
+  let w = false;
+  let h = null;
   let b = null;
+  let k = false;
   let _ = null;
-  let M = false;
+  let M = null;
+  let v = false;
   function _resolveUserId(e) {
     if (e != null && String(e).trim()) return String(e).trim();
-    if (_) return _;
+    if (M) return M;
     try {
       const e = window.currentUser?.id ?? window.currentUser?.user_id;
       if (e != null && String(e).trim()) return String(e).trim();
@@ -154,9 +336,9 @@
   }
   function setUserId(e, {clearLocal: t = false} = {}) {
     const s = _resolveUserId(e);
-    const i = !!(_ && s && _ !== s);
-    _ = s;
-    h = false;
+    const i = !!(M && s && M !== s);
+    M = s;
+    k = false;
     if (s) {
       try {
         localStorage.setItem(n, s);
@@ -173,7 +355,7 @@
           sync: false
         });
       } catch (e) {}
-      M = true;
+      v = true;
     }
     return {
       switched: i,
@@ -186,7 +368,7 @@
     } catch (e) {}
     return null;
   }
-  const k = {
+  const C = {
     karaoke: {
       color: "#FFFFFF",
       fill: null
@@ -322,7 +504,7 @@
     return "Previous styles";
   }
   function collectLiveLayout(e) {
-    const t = String(e || S || "").toLowerCase();
+    const t = String(e || h || "").toLowerCase();
     if (t && t !== "splitscreen" && !t.includes("split")) return null;
     try {
       if (typeof window.getSplitscreenConfig === "function") {
@@ -403,7 +585,7 @@
     }
     if (n.anim === "center") n.anim = "fade";
     const o = String(n.anim || "").toLowerCase();
-    const r = k[o];
+    const r = C[o];
     if (r) {
       if (!n.color) n.color = r.color;
       if (!("fill" in n) && r.fill) n.fill = r.fill;
@@ -494,7 +676,7 @@
         }
       }
     } catch (e) {}
-    if (t) return recallCaptionSnap(e || S);
+    if (t) return recallCaptionSnap(e || h);
     return null;
   }
   function applyStyles(e, t) {
@@ -604,7 +786,8 @@
     if (!(a && Object.keys(a).length) && !(c && Object.keys(c).length) && !layoutUseful(u)) {
       return;
     }
-    const f = fingerprint(a, c, u);
+    const p = fingerprint(a, c, u);
+    const f = trustFields(r, p);
     o.templates[e] = {
       updatedAt: (new Date).toISOString(),
       styles: a ? JSON.parse(JSON.stringify(a)) : null,
@@ -612,10 +795,14 @@
       lastGeneratedCaptions: r.lastGeneratedCaptions ? JSON.parse(JSON.stringify(r.lastGeneratedCaptions)) : null,
       lastGeneratedStyles: r.lastGeneratedStyles ? JSON.parse(JSON.stringify(r.lastGeneratedStyles)) : null,
       layout: u ? JSON.parse(JSON.stringify(u)) : null,
-      fingerprint: f,
-      rejectCount: r.rejectCount || 0,
-      lastRejectedFingerprint: r.fingerprint === f ? r.lastRejectedFingerprint || null : null,
-      lastSuggestedAt: r.fingerprint === f ? r.lastSuggestedAt : null,
+      fingerprint: p,
+      rejectCount: r.fingerprint === p ? r.rejectCount || 0 : 0,
+      lastRejectedFingerprint: r.fingerprint === p ? r.lastRejectedFingerprint || null : null,
+      lastSuggestedAt: r.fingerprint === p ? r.lastSuggestedAt : null,
+      acceptStreak: f.acceptStreak,
+      acceptFingerprint: f.acceptFingerprint,
+      autoApply: f.autoApply,
+      lastAcceptedAt: f.lastAcceptedAt,
       source: i || r.source || "edit"
     };
     if (c) rememberCaptionSnap(e, c);
@@ -637,22 +824,23 @@
     if (i.captions && (!c || !Object.keys(c).length)) {
       c = recallCaptionSnap(e);
     }
-    const f = sanitizeForTemplate(e, {
+    const p = sanitizeForTemplate(e, {
       styles: l,
       captions: c,
       layout: u
     });
-    l = f.styles;
-    c = f.captions;
-    u = f.layout;
+    l = p.styles;
+    c = p.captions;
+    u = p.layout;
     if (i.layout && !u && layoutUseful(r.layout)) {
       u = normalizeLayout(r.layout);
     }
     if (!(l && Object.keys(l).length) && !(c && Object.keys(c).length) && !layoutUseful(u)) {
       return;
     }
-    const g = fingerprint(l, c, u);
-    const y = r.fingerprint === g;
+    const f = fingerprint(l, c, u);
+    const y = r.fingerprint === f;
+    const d = trustFields(r, f);
     o.templates[e] = {
       updatedAt: (new Date).toISOString(),
       styles: l ? JSON.parse(JSON.stringify(l)) : null,
@@ -660,30 +848,34 @@
       lastGeneratedCaptions: c ? JSON.parse(JSON.stringify(c)) : r.lastGeneratedCaptions || null,
       lastGeneratedStyles: l ? JSON.parse(JSON.stringify(l)) : r.lastGeneratedStyles || null,
       layout: u ? JSON.parse(JSON.stringify(u)) : null,
-      fingerprint: g,
+      fingerprint: f,
       rejectCount: y ? r.rejectCount || 0 : 0,
       lastRejectedFingerprint: y ? r.lastRejectedFingerprint || null : null,
       lastRejectedAt: y ? r.lastRejectedAt || null : null,
       lastSuggestedAt: y ? r.lastSuggestedAt : null,
+      acceptStreak: d.acceptStreak,
+      acceptFingerprint: d.acceptFingerprint,
+      autoApply: y ? d.autoApply : true,
+      lastAcceptedAt: d.lastAcceptedAt,
       source: "generate"
     };
     o.usageLog.unshift({
       templateId: e,
       at: (new Date).toISOString(),
-      fingerprint: g
+      fingerprint: f
     });
     o.usageLog = o.usageLog.slice(0, a);
     if (c) rememberCaptionSnap(e, c);
     writeState(o, {
       sync: true
     });
-    d = 0;
-    p.delete(e);
+    S = 0;
+    g.delete(e);
     syncSettingsUI();
   }
   function recordLayout(e, t) {
     if (!isEnabled()) return;
-    const n = e || S || window.clipsStudio?.currentTemplateForPreview?.id;
+    const n = e || h || window.clipsStudio?.currentTemplateForPreview?.id;
     if (!n || !isSplitscreenTemplate(n)) return;
     const s = t || collectLiveLayout(n);
     if (!layoutUseful(s)) return;
@@ -694,7 +886,7 @@
   }
   function recordCaptions(e, t) {
     if (!isEnabled()) return;
-    const n = e || S || window.clipsStudio?.currentTemplateForPreview?.id;
+    const n = e || h || window.clipsStudio?.currentTemplateForPreview?.id;
     if (!n) return;
     const s = t || collectLiveCaptions(n);
     if (!s || !Object.keys(s).length) return;
@@ -705,26 +897,26 @@
   }
   function noteEdit(e) {
     if (!isEnabled()) return;
-    const t = e || S || window.clipsStudio?.currentTemplateForPreview?.id;
+    const t = e || h || window.clipsStudio?.currentTemplateForPreview?.id;
     if (!t) return;
-    d += 1;
-    S = t;
+    S += 1;
+    h = t;
   }
   function scheduleSuggest(e) {
-    if (y) {
-      clearTimeout(y);
-      y = null;
+    if (m) {
+      clearTimeout(m);
+      m = null;
     }
-    if (!e || !shouldSuggest(e) && !canOfferFirstAnimTip(e)) {
+    if (!e || !shouldSuggest(e) && !canOfferFirstAnimTip(e) && !shouldAutoApply(e)) {
       flushDeferredRankingCustoms();
       return;
     }
     const t = 40 + Math.floor(Math.random() * 80);
-    y = setTimeout(() => {
-      y = null;
+    m = setTimeout(() => {
+      m = null;
       const t = document.getElementById("templatePreviewModal");
       if (!t || !t.classList.contains("active")) return;
-      if (!shouldSuggest(e) && !canOfferFirstAnimTip(e)) {
+      if (!shouldSuggest(e) && !canOfferFirstAnimTip(e) && !shouldAutoApply(e)) {
         flushDeferredRankingCustoms();
         return;
       }
@@ -736,8 +928,8 @@
   }
   function shouldSuggest(e) {
     if (!isSuggestEnabled() || !e) return false;
-    if (m) return false;
-    if (p.has(e)) return false;
+    if (w) return false;
+    if (g.has(e)) return false;
     const t = getTemplateMemory(e);
     if (!t) return false;
     const n = stylesForSuggest(t);
@@ -766,34 +958,34 @@
     const c = collectLiveLayout(e);
     const y = !!(a && Object.keys(a).length);
     const d = !!(l && Object.keys(l).length);
-    const S = templateMemoryProfile(e);
-    const w = o && S.captions && !isLibraryPreviewOpen();
-    const h = s && S.styles;
-    const b = r && S.layout;
-    if (!w && !h && !b) return false;
-    const _ = Date.parse(t.lastSuggestedAt || 0);
-    if (Number.isFinite(_)) {
-      const n = isRankingTemplate(e) ? g : f;
-      if (Date.now() - _ < n) {
+    const m = templateMemoryProfile(e);
+    const S = o && m.captions && !isLibraryPreviewOpen();
+    const h = s && m.styles;
+    const b = r && m.layout;
+    if (!S && !h && !b) return false;
+    const k = Date.parse(t.lastSuggestedAt || 0);
+    if (Number.isFinite(k)) {
+      const n = isRankingTemplate(e) ? f : p;
+      if (Date.now() - k < n) {
         const e = b && layoutDiffers(t.layout, c);
         if (!e) return false;
       }
     }
     if (b && layoutDiffers(t.layout, c)) return true;
     if (h && isRankingTemplate(e)) return true;
-    if (w && !y) return true;
+    if (S && !y) return true;
     if (h && !d && !y) return true;
-    const M = smarterCaptions(i, e);
-    const k = fingerprint(l, a, c) === t.fingerprint;
-    const v = !M || fingerprint(null, a) === fingerprint(null, M);
-    if (k && v) return false;
+    const _ = smarterCaptions(i, e);
+    const M = fingerprint(l, a, c) === t.fingerprint;
+    const v = !_ || fingerprint(null, a) === fingerprint(null, _);
+    if (M && v) return false;
     return true;
   }
   function flushDeferredRankingCustoms() {
     if (!window.__solisRankingDeferCustoms) return;
     window.__solisRankingDeferCustoms = false;
     try {
-      const e = S || "ranked_compilation";
+      const e = h || "ranked_compilation";
       const t = getTemplateMemory(e);
       const n = stylesForSuggest(t);
       if (n && Object.keys(n).length && isRankingTemplate(e)) {
@@ -955,6 +1147,46 @@
       return false;
     }
   }
+  function paintCaptionMemoryChip(e, t) {
+    if (!e || typeof window.offerSubtitleMemorySuggest !== "function") return false;
+    window.offerSubtitleMemorySuggest(e, t);
+    const n = !!(window.__solisPendingSubMem || document.getElementById("subMemActions")?.classList.contains("open") || document.querySelector(".sub-mem-ghost"));
+    if (!n) return false;
+    try {
+      const e = document.getElementById("subMemActions");
+      if (e) {
+        e.classList.remove("open");
+        e.style.opacity = "0";
+        e.style.visibility = "hidden";
+        e.style.pointerEvents = "none";
+      }
+    } catch (e) {}
+    const s = ensureSuggestEl();
+    const i = s.querySelector("#solisMemorySuggestTitle");
+    const o = e.__tip ? "tip" : "captions";
+    const r = suggestHookLine({
+      captions: e,
+      mode: o,
+      seed: t
+    });
+    if (i) {
+      i.hidden = !r;
+      i.textContent = r || "";
+      if (r) {
+        i.removeAttribute("hidden");
+        i.style.display = "";
+      }
+    }
+    const l = s.querySelector("#solisMemorySuggestSub");
+    if (l) l.textContent = "";
+    s.dataset.templateId = t;
+    s.dataset.mode = "captions-pending";
+    s.classList.add("solis-memory-suggest--recipe");
+    s.classList.remove("solis-memory-suggest--ranking");
+    placeSuggestNearPreview();
+    revealSuggestEl(s);
+    return true;
+  }
   function offerCaptionSuggest(e, t) {
     if (isRankingTemplate(e)) return false;
     if (isLibraryPreviewOpen()) return false;
@@ -965,7 +1197,7 @@
       const n = !!(t && Object.keys(t).length);
       const s = String(t?.anim || "").toLowerCase();
       const i = !n || !s || s === "none" || s === "static";
-      if (!i || typeof window.offerSubtitleMemorySuggest !== "function") return false;
+      if (!i) return false;
       const o = smarterCaptions({
         anim: "karaoke",
         font: String(t?.font || "Montserrat"),
@@ -978,8 +1210,7 @@
         enabled: true,
         __tip: "animations"
       }, e);
-      window.offerSubtitleMemorySuggest(o, e);
-      return !!document.getElementById("subMemActions")?.classList.contains("open") || !!document.querySelector(".sub-mem-ghost");
+      return paintCaptionMemoryChip(o, e);
     }
     let s = smarterCaptions(n, e);
     if (s) {
@@ -992,16 +1223,22 @@
         };
       }
     }
-    if (!s || typeof window.offerSubtitleMemorySuggest !== "function") return false;
+    if (!s) return false;
     const i = collectLiveCaptions(e);
     const o = !!(i && Object.keys(i).length);
     if (o && !captionsDiffer(s, i)) return false;
-    window.offerSubtitleMemorySuggest(s, e);
-    return !!document.getElementById("subMemActions")?.classList.contains("open") || !!document.querySelector(".sub-mem-ghost");
+    return paintCaptionMemoryChip(s, e);
   }
   function showSuggestion(e) {
-    if (!shouldSuggest(e) && !canOfferFirstAnimTip(e)) return;
+    if (!shouldSuggest(e) && !canOfferFirstAnimTip(e) && !shouldAutoApply(e)) return;
     const t = getTemplateMemory(e);
+    if (shouldAutoApply(e, t)) {
+      silentlyApplyMemory(e);
+      w = true;
+      flushDeferredRankingCustoms();
+      return;
+    }
+    if (!shouldSuggest(e) && !canOfferFirstAnimTip(e)) return;
     let n = false;
     if (isSplitscreenTemplate(e)) {
       try {
@@ -1038,7 +1275,7 @@
       flushDeferredRankingCustoms();
       return;
     }
-    m = true;
+    w = true;
     if (t) {
       const t = readState();
       if (t.templates[e]) {
@@ -1049,8 +1286,8 @@
   }
   function canOfferFirstAnimTip(e) {
     if (!isSuggestEnabled() || !e) return false;
-    if (m) return false;
-    if (p.has(e)) return false;
+    if (w) return false;
+    if (g.has(e)) return false;
     if (isRankingTemplate(e)) return false;
     if (isLibraryPreviewOpen()) return false;
     const t = getTemplateMemory(e);
@@ -1086,14 +1323,14 @@
     } catch (t) {
       i._solisInstantRecipe = e;
     }
-    m = true;
+    w = true;
     placeSuggestNearPreview();
     revealSuggestEl(i);
     return true;
   }
   function retrySuggest(e) {
-    const t = e || S;
-    if (!t || m) return;
+    const t = e || h;
+    if (!t || w) return;
     const n = document.getElementById("templatePreviewModal");
     if (!n || !n.classList.contains("active")) return;
     showSuggestion(t);
@@ -1114,6 +1351,7 @@
     if (o) o.textContent = "";
     s.dataset.templateId = e;
     s.dataset.mode = "layout-only";
+    s.classList.remove("solis-memory-suggest--recipe", "solis-memory-suggest--ranking");
     placeSuggestNearPreview();
     revealSuggestEl(s);
     return true;
@@ -1146,7 +1384,11 @@
     if (l) {
       l.hidden = false;
       l.removeAttribute("hidden");
-      l.textContent = "Apply last ranking style?";
+      l.textContent = suggestHookLine({
+        styles: n,
+        mode: "ranking",
+        seed: e
+      });
       l.style.display = "";
     }
     const a = r.querySelector("#solisMemorySuggestSub");
@@ -1172,46 +1414,58 @@
     return true;
   }
   function continueSuggestAfterCaption(e) {
-    const t = e || S;
+    const t = e || h;
     if (!t || !isSuggestEnabled()) return;
-    if (p.has(t)) return;
+    if (g.has(t)) return;
     const n = getTemplateMemory(t);
     if (!n) return;
     if (n.lastRejectedFingerprint && n.lastRejectedFingerprint === n.fingerprint) return;
     setTimeout(() => {
       const e = document.getElementById("templatePreviewModal");
       if (!e || !e.classList.contains("active")) return;
-      if (p.has(t)) return;
+      if (g.has(t)) return;
       if (!isSplitscreenTemplate(t) && wantsLayoutSuggest(t, n) && offerLayoutSuggest(t, n)) return;
       offerRankingStylesSuggest(t, n);
     }, 180);
   }
   function continueSuggestAfterLayout(e) {
-    const t = e || S;
+    const t = e || h;
     if (!t || !isSuggestEnabled()) return;
-    if (p.has(t)) return;
+    if (g.has(t)) return;
     const n = getTemplateMemory(t);
     if (!n) return;
     setTimeout(() => {
       const e = document.getElementById("templatePreviewModal");
       if (!e || !e.classList.contains("active")) return;
-      if (p.has(t)) return;
+      if (g.has(t)) return;
       if (!isRankingTemplate(t) && offerCaptionSuggest(t, n)) {
-        m = true;
+        w = true;
         return;
       }
       offerRankingStylesSuggest(t, n);
       if (document.getElementById("solisMemorySuggest") && !document.getElementById("solisMemorySuggest").hidden) {
-        m = true;
+        w = true;
       }
     }, 160);
   }
   function acceptSuggestion() {
     const e = ensureSuggestEl();
-    const t = e.dataset.templateId || S;
+    const t = e.dataset.templateId || h;
     const n = e.dataset.mode || "all";
+    if (n === "captions-pending") {
+      if (t) g.delete(t);
+      try {
+        if (typeof window.acceptSubtitleMemorySuggest === "function") {
+          window.acceptSubtitleMemorySuggest();
+        }
+      } catch (e) {}
+      hideSuggest();
+      e.classList.remove("solis-memory-suggest--recipe");
+      S = 0;
+      return;
+    }
     hideSuggest();
-    if (t) p.delete(t);
+    if (t) g.delete(t);
     const s = getTemplateMemory(t);
     if (!s && n !== "instant-recipe") return;
     if (n === "instant-recipe") {
@@ -1234,10 +1488,10 @@
         delete e._solisInstantRecipe;
       } catch (e) {}
       e.classList.remove("solis-memory-suggest--recipe");
-      d = 0;
-      m = false;
+      S = 0;
+      w = false;
       if (window.__solisRecipeSkipCaptions) {
-        m = true;
+        w = true;
         return;
       }
       continueSuggestAfterLayout(t);
@@ -1260,8 +1514,9 @@
         e.templates[t].lastRejectedFingerprint = null;
         writeState(e);
       }
-      d = 0;
-      m = false;
+      recordSuggestionAccepted(t);
+      S = 0;
+      w = false;
       try {
         document.querySelectorAll(".gp-mem-pick").forEach(e => e.classList.remove("gp-mem-pick"));
         document.getElementById("subPillMenu")?.classList.remove("active");
@@ -1303,7 +1558,8 @@
       i.templates[t].lastRejectedFingerprint = null;
       writeState(i);
     }
-    d = 0;
+    recordSuggestionAccepted(t);
+    S = 0;
     if (typeof window.clearSubtitleMemorySuggest === "function") {
       window.clearSubtitleMemorySuggest();
     }
@@ -1319,7 +1575,7 @@
   }
   function rejectSuggestion() {
     const e = ensureSuggestEl();
-    const t = e.dataset.templateId || S;
+    const t = e.dataset.templateId || h;
     const n = e.dataset.mode || "all";
     if (n === "instant-recipe") {
       try {
@@ -1335,17 +1591,33 @@
       } catch (e) {}
       e.classList.remove("solis-memory-suggest--recipe");
       hideSuggest();
-      m = false;
-      d = 0;
+      w = false;
+      S = 0;
       if (!window.__solisRecipeSkipCaptions) {
         setTimeout(() => {
-          if (!t || p.has(t)) return;
+          if (!t || g.has(t)) return;
           const e = getTemplateMemory(t);
           if (e && offerCaptionSuggest(t, e)) {
-            m = true;
+            w = true;
           }
         }, 280);
       }
+      return;
+    }
+    if (n === "captions-pending") {
+      hideSuggest();
+      e.classList.remove("solis-memory-suggest--recipe");
+      markSuggestionRejected(t);
+      try {
+        if (typeof window.clearSubtitleMemorySuggest === "function") {
+          window.clearSubtitleMemorySuggest({
+            cooldown: true,
+            revert: true,
+            persistReject: true,
+            templateId: t
+          });
+        }
+      } catch (e) {}
       return;
     }
     if (n === "layout-only") {
@@ -1358,15 +1630,15 @@
         if (typeof window.hideGameplayPillMenu === "function") window.hideGameplayPillMenu();
       } catch (e) {}
       hideSuggest();
-      m = false;
-      d = 0;
+      w = false;
+      S = 0;
       setTimeout(() => {
-        if (!t || p.has(t)) return;
+        if (!t || g.has(t)) return;
         if (isRankingTemplate(t)) return;
         const e = getTemplateMemory(t);
         if (!e) return;
         if (offerCaptionSuggest(t, e)) {
-          m = true;
+          w = true;
         }
       }, 280);
       return;
@@ -1393,14 +1665,14 @@
     }
   }
   function markSuggestionRejected(e) {
-    const t = e || S;
+    const t = e || h;
     if (!t) return;
-    p.add(t);
-    m = true;
-    d = 0;
-    if (y) {
-      clearTimeout(y);
-      y = null;
+    g.add(t);
+    w = true;
+    S = 0;
+    if (m) {
+      clearTimeout(m);
+      m = null;
     }
     const n = readState();
     const s = n.templates[t];
@@ -1408,13 +1680,16 @@
       s.rejectCount = (s.rejectCount || 0) + 1;
       s.lastRejectedFingerprint = s.fingerprint || fingerprint(s.styles, s.captions, s.layout);
       s.lastRejectedAt = (new Date).toISOString();
+      s.acceptStreak = 0;
+      s.acceptFingerprint = null;
+      s.autoApply = false;
       writeState(n);
     }
   }
   function scheduleServerSync() {
-    if (w) clearTimeout(w);
-    w = setTimeout(() => {
-      w = null;
+    if (b) clearTimeout(b);
+    b = setTimeout(() => {
+      b = null;
       pushServerMemory();
     }, c);
   }
@@ -1518,8 +1793,8 @@
   }
   async function pullServerMemory() {
     if (!_resolveUserId()) return null;
-    if (b) return b;
-    b = (async () => {
+    if (_) return _;
+    _ = (async () => {
       try {
         const e = await fetch(apiUrl("/api/clips/memory"), {
           method: "POST",
@@ -1545,15 +1820,15 @@
           }
           return null;
         }
-        const s = M;
-        M = false;
+        const s = v;
+        v = false;
         const i = mergeMemoryStates(readState(), n, {
           preferRemote: s
         });
         writeState(i, {
           sync: false
         });
-        h = true;
+        k = true;
         syncSettingsUI();
         if (typeof window.solisLog === "function") {
           const e = Object.keys(i.templates || {}).length;
@@ -1564,23 +1839,23 @@
         console.warn("[SolisMemory] pull error:", e?.message || e);
         return null;
       } finally {
-        b = null;
+        _ = null;
       }
     })();
-    return b;
+    return _;
   }
   async function onTemplatePreviewOpen(e) {
-    S = e || null;
-    m = false;
-    d = 0;
+    h = e || null;
+    w = false;
+    S = 0;
     hideSuggest();
     try {
-      p.delete(e);
+      g.delete(e);
       const t = getTemplateMemory(e);
       if (t?.lastRejectedAt && t?.lastRejectedFingerprint && t.lastRejectedFingerprint === t.fingerprint) {
         const n = Date.parse(t.lastRejectedAt);
         if (Number.isFinite(n) && Date.now() - n < u) {
-          p.add(e);
+          g.add(e);
         } else {
           const t = readState();
           if (t.templates[e]) {
@@ -1592,26 +1867,26 @@
       }
     } catch (e) {}
     scheduleSuggest(e);
-    if (!h) {
+    if (!k) {
       pullServerMemory().then(() => {
-        if (!m) scheduleSuggest(e);
+        if (!w) scheduleSuggest(e);
       }).catch(() => {});
     }
     setTimeout(() => flushDeferredRankingCustoms(), r + 400);
   }
   function onTemplatePreviewClose() {
-    if (y) {
-      clearTimeout(y);
-      y = null;
+    if (m) {
+      clearTimeout(m);
+      m = null;
     }
     hideSuggest();
-    m = false;
+    w = false;
     try {
-      if (S) {
-        const e = templateMemoryProfile(S);
-        const t = e.captions ? collectLiveCaptions(S) : null;
-        const n = e.styles && !isRankingTemplate(S) ? collectLiveStyles(S) : undefined;
-        upsertTemplateMemory(S, {
+      if (h) {
+        const e = templateMemoryProfile(h);
+        const t = e.captions ? collectLiveCaptions(h) : null;
+        const n = e.styles && !isRankingTemplate(h) ? collectLiveStyles(h) : undefined;
+        upsertTemplateMemory(h, {
           styles: n || undefined,
           captions: t || undefined,
           source: "close"
@@ -1642,7 +1917,7 @@
         window.RankingTextPill.deselectAll();
       }
     } catch (e) {}
-    S = null;
+    h = null;
   }
   function generateFromUsage() {
     return 0;
@@ -1775,7 +2050,9 @@
     retrySuggest: retrySuggest,
     rememberCaptionSnap: rememberCaptionSnap,
     recallCaptionSnap: recallCaptionSnap,
-    getCurrentTemplateId: () => S,
+    suggestHookLine: suggestHookLine,
+    recordSuggestionAccepted: recordSuggestionAccepted,
+    getCurrentTemplateId: () => h,
     isRankingTemplate: isRankingTemplate,
     isSplitscreenTemplate: isSplitscreenTemplate,
     _applying: false

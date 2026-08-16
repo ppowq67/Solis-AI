@@ -5924,6 +5924,14 @@ class ClipsStudio {
       if (!t || t.disabled) return;
       t.click();
     });
+    const sharePreview = e => {
+      e.preventDefault();
+      e.stopPropagation();
+      const t = this.currentTemplateForPreview?.projectId || this._libraryPreviewProjectId || null;
+      if (t) this.copyPublicPreviewLink(t); else showNotification("Share link unavailable for this clip", "warning");
+    };
+    this.safeAddEventListenerById("libraryPreviewShareBtn", "click", sharePreview);
+    this.safeAddEventListenerById("libraryPreviewShareFab", "click", sharePreview);
     this._bindUseTemplateFabSync();
     if (typeof window.bindUseTemplateFabIdleHint === "function") {
       window.bindUseTemplateFabIdleHint();
@@ -6513,14 +6521,27 @@ class ClipsStudio {
       }
     });
   }
+  getWatermarkPlacement() {
+    const e = this.currentTemplateForPreview || {};
+    const t = String(e.id || e.type || e.templateId || this.selectedTemplate || "").toLowerCase();
+    if (t === "ranked_compilation" || t === "ranking" || t.includes("rank")) {
+      return "ranking";
+    }
+    return "splitscreen";
+  }
   buildSolisWatermarkHTML(e = null) {
     const t = this.getWatermarkVariant(e);
-    const i = String(window.API_BASE_URL || "").replace(/\/api\/?$/, "");
-    const n = t === "classic" ? "Watermark_v4.png" : "solisai-watermark-trim.png";
-    const r = t === "classic" ? "/assets/solis-watermark-classic.png" : "/assets/solisai-watermark.png";
-    const o = i ? `${i}/assets/${n}` : r;
-    const s = t === "classic" ? "Classic Solis AI — click for Made with mark" : "Made with Solis AI — click for classic mark";
-    return `\n            <div class="solis-watermark" data-variant="${t}" role="button" tabindex="0"\n                 title="${s}" aria-label="${s}">\n                <img class="solis-watermark-mark" src="${o}" alt="" draggable="false"\n                     onerror="this.onerror=null;this.src='${r}';if(!this.complete){this.style.display='none';const fb=this.nextElementSibling;if(fb)fb.style.display='flex';}" />\n                <div class="solis-watermark-fallback" style="display:none;align-items:center;gap:6px;">\n                    <div class="solis-watermark-icon" style="display:flex;">\n                        <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">\n                            <circle cx="50" cy="50" r="9" fill="currentColor"></circle>\n                            <ellipse rx="44" ry="18" cx="50" cy="50" stroke-width="6" transform="rotate(45 50 50)"></ellipse>\n                            <ellipse rx="44" ry="18" cx="50" cy="50" stroke-width="6" transform="rotate(-45 50 50)"></ellipse>\n                        </svg>\n                    </div>\n                    <div class="solis-watermark-label" style="display:block;">SOLIS <span class="ai">AI</span></div>\n                </div>\n            </div>\n        `;
+    const i = this.getWatermarkPlacement();
+    const n = i === "ranking" ? "is-ranking" : "is-splitscreen";
+    const r = String(window.API_BASE_URL || "").replace(/\/api\/?$/, "");
+    const o = t === "classic" ? "Classic Solis AI — click for atom mark" : "Solis AI — click for classic mark";
+    if (t === "classic") {
+      const e = "Watermark_v4.png";
+      const t = "/assets/solis-watermark-classic.png";
+      const s = r ? `${r}/assets/${e}` : t;
+      return `\n            <div class="solis-watermark ${n}" data-variant="classic" data-place="${i}" role="button" tabindex="0"\n                 title="${o}" aria-label="${o}">\n                <img class="solis-watermark-mark" src="${s}" alt="" draggable="false"\n                     onerror="this.onerror=null;this.src='${t}';" />\n            </div>\n        `;
+    }
+    return `\n            <div class="solis-watermark ${n}" data-variant="branded" data-place="${i}" role="button" tabindex="0"\n                 title="${o}" aria-label="${o}">\n                <div class="solis-watermark-icon" aria-hidden="true">\n                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">\n                        <circle cx="50" cy="50" r="12" fill="#ffffff" stroke="none"/>\n                        <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#ffffff" stroke-width="6" transform="rotate(45 50 50)"/>\n                        <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#ffffff" stroke-width="6" transform="rotate(-45 50 50)"/>\n                    </svg>\n                </div>\n                <div class="solis-watermark-label">SOLIS <span class="ai">AI</span></div>\n            </div>\n        `;
   }
   getWatermarkVariant(e = null) {
     if (e === "classic" || e === "branded") return e;
@@ -6585,11 +6606,12 @@ class ClipsStudio {
   ensureSolisWatermark(e) {
     if (!e) return null;
     let t = e.querySelector(".solis-watermark");
-    if (!t) {
+    const i = this.getWatermarkVariant();
+    const n = this.getWatermarkPlacement();
+    const r = !t || t.getAttribute("data-variant") !== i || t.getAttribute("data-place") !== n || i === "branded" && !t.querySelector(".solis-watermark-icon") || i === "classic" && !t.querySelector(".solis-watermark-mark");
+    if (r) {
+      if (t) t.remove();
       e.insertAdjacentHTML("beforeend", this.buildSolisWatermarkHTML());
-      t = e.querySelector(".solis-watermark");
-    } else if (!t.querySelector(".solis-watermark-mark") || t.getAttribute("data-variant") !== this.getWatermarkVariant()) {
-      t.outerHTML = this.buildSolisWatermarkHTML().trim();
       t = e.querySelector(".solis-watermark");
     }
     if (getComputedStyle(e).position === "static") {

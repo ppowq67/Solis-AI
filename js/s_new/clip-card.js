@@ -98,8 +98,8 @@
     const s = Array.isArray(t.clips) ? t.clips : [];
     const c = t.lone_clip === true || s.length <= 1;
     if (n < 60 && !c) return null;
-    const o = t.tag && typeof t.tag === "object" ? t.tag : null;
-    const a = o ? Number(o.confidence) : 0;
+    const a = t.tag && typeof t.tag === "object" ? t.tag : null;
+    const o = a ? Number(a.confidence) : 0;
     const l = r[i] || r.solid;
     return {
       band: i,
@@ -108,9 +108,9 @@
       label: String(t.label || l.label),
       why: String(t.why || "").trim(),
       fix: String(t.fix || "").trim(),
-      tag: o && o.label && a >= .8 ? {
-        label: String(o.label),
-        confidence: a
+      tag: a && a.label && o >= .8 ? {
+        label: String(a.label),
+        confidence: o
       } : null,
       hook: dimOf(t, "hook"),
       subtitles: dimOf(t, "subtitles"),
@@ -141,14 +141,14 @@
       if (!r) return "";
       const s = i.band || bandOf(r);
       const c = i.note || "";
-      const o = c ? `<div class="scc-why"><p>${esc(c)}</p></div>` : "";
-      return `<div class="pv-grade" data-dim="${esc(t)}">\n                <b class="pv-dim-tier ${dimBandClass(s)}">${esc(String(r))}</b>\n                <span class="pv-dim-label">${esc(n)}</span>\n                ${o}\n            </div>`;
+      const a = c ? `<div class="scc-why"><p>${esc(c)}</p></div>` : "";
+      return `<div class="pv-grade" data-dim="${esc(t)}">\n                <b class="pv-dim-tier ${dimBandClass(s)}">${esc(String(r))}</b>\n                <span class="pv-dim-label">${esc(n)}</span>\n                ${a}\n            </div>`;
     }).join("");
   }
   function previewUrl(e) {
     if (window.clipsStudio && typeof clipsStudio.getLibraryPreviewVideoUrl === "function") {
       return clipsStudio.getLibraryPreviewVideoUrl(e, {
-        bust: true
+        bust: false
       });
     }
     const t = (window.API_BASE_URL || "/api").replace(/\/$/, "");
@@ -177,7 +177,7 @@
     const i = esc(e.projectId || e.id || "");
     const r = formatClock(e.duration);
     const s = t ? `<div class="scc-viral ${bandClass(t.band)}">\n                    <span class="scc-viral-n">${esc(t.scoreDisplay)}</span>\n                    ${tip(`${t.scoreDisplay}/100 · ${t.label}`)}\n               </div>` : `<div class="scc-viral scc-viral-empty"></div>`;
-    return `\n            <div class="scc-preview">\n                <div class="scc-skel" aria-hidden="true"></div>\n                <video class="scc-video" muted playsinline loop preload="auto" controlslist="nodownload nofullscreen noremoteplayback" disablepictureinpicture></video>\n                <div class="scc-time"><span class="scc-t0">00:00</span> <span class="scc-t1">${esc(r)}</span></div>\n                <div class="scc-bar"><i></i></div>\n            </div>\n            <div class="scc-meta">\n                <div class="scc-meta-row">\n                    ${s}\n                    <div class="scc-actions">\n                        <button type="button" class="scc-ico library-share-btn" data-project-id="${i}" aria-label="Share preview">\n                            ${iconShare()}${tip("Copy public preview link")}\n                        </button>\n                        <button type="button" class="scc-ico library-download-btn" data-project-id="${i}" aria-label="Download">\n                            ${iconDl()}${tip("Save this clip")}\n                        </button>\n                        <button type="button" class="scc-ico library-delete-btn" aria-label="Delete">\n                            ${iconTrash()}${tip("Delete this clip")}\n                        </button>\n                    </div>\n                </div>\n                <h2 class="card-title scc-title" title="${n}">${n}</h2>\n            </div>`;
+    return `\n            <div class="scc-preview">\n                <div class="scc-skel" aria-hidden="true"></div>\n                <video class="scc-video" muted playsinline loop preload="none" controlslist="nodownload nofullscreen noremoteplayback" disablepictureinpicture></video>\n                <div class="scc-time"><span class="scc-t0">00:00</span> <span class="scc-t1">${esc(r)}</span></div>\n                <div class="scc-bar"><i></i></div>\n            </div>\n            <div class="scc-meta">\n                <div class="scc-meta-row">\n                    ${s}\n                    <div class="scc-actions">\n                        <button type="button" class="scc-ico library-share-btn" data-project-id="${i}" aria-label="Share preview">\n                            ${iconShare()}${tip("Copy public preview link")}\n                        </button>\n                        <button type="button" class="scc-ico library-download-btn" data-project-id="${i}" aria-label="Download">\n                            ${iconDl()}${tip("Save this clip")}\n                        </button>\n                        <button type="button" class="scc-ico library-delete-btn" aria-label="Delete">\n                            ${iconTrash()}${tip("Delete this clip")}\n                        </button>\n                    </div>\n                </div>\n                <h2 class="card-title scc-title" title="${n}">${n}</h2>\n            </div>`;
   }
   function railHTML(e) {
     const t = viralityOf(e);
@@ -221,18 +221,18 @@
     const r = t.projectId || t.id;
     const s = e.querySelector(".scc-preview");
     const c = e.querySelector(".scc-video");
-    const o = e.querySelector(".scc-bar > i");
-    const a = e.querySelector(".scc-t0");
+    const a = e.querySelector(".scc-bar > i");
+    const o = e.querySelector(".scc-t0");
     const l = e.querySelector(".scc-t1");
     let d = "";
     const tick = () => {
       if (!c) return;
       const e = c.duration;
       const t = c.currentTime || 0;
-      if (a) a.textContent = formatClock(t);
+      if (o) o.textContent = formatClock(t);
       if (Number.isFinite(e) && e > 0) {
         if (l) l.textContent = formatClock(e);
-        if (o) o.style.width = `${Math.min(100, t / e * 100)}%`;
+        if (a) a.style.width = `${Math.min(100, t / e * 100)}%`;
       }
     };
     const hasFrame = () => c && c.videoWidth > 0 && c.videoHeight > 0;
@@ -352,21 +352,6 @@
     c?.addEventListener("pause", () => {
       if (i === c) i = null;
     });
-    if (c && "IntersectionObserver" in window) {
-      const t = new IntersectionObserver(e => {
-        const t = e.some(e => e.isIntersecting);
-        if (t) ensureSrc(); else if (c && !c.paused) {
-          c.pause();
-          if (i === c) i = null;
-        }
-      }, {
-        rootMargin: "120px",
-        threshold: .2
-      });
-      t.observe(e);
-    } else {
-      ensureSrc();
-    }
     s?.addEventListener("mouseenter", () => {
       ensureSrc();
       if (c && c.paused) playClip();

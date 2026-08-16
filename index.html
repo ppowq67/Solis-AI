@@ -124,13 +124,7 @@
       -webkit-background-clip: text; background-clip: text;
       -webkit-text-fill-color: transparent; color: transparent;
     }
-    .eyebrow {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(249,115,22,0.08); border: 1px solid rgba(249,115,22,0.2);
-      border-radius: 100px; padding: 5px 14px;
-      font-size: 11.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--solis-deep); font-family: var(--font-display), system-ui, sans-serif;
-    }
+
     .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--solis); display: inline-block; flex-shrink: 0; }
     .dot.pulse { animation: pulse 2s ease-in-out infinite; }
     @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.55; transform: scale(0.85); } }
@@ -165,13 +159,13 @@
     @media (max-width: 768px) { .actions { display: none; } .toggle { display: inline-flex; } .bar { padding: 8px 12px 8px 16px; } }
     main { flex: 1; position: relative; z-index: 1; }
     .hero {
-      padding: calc(90px + env(safe-area-inset-top, 0px)) 20px 100px;
+      padding: calc(90px + env(safe-area-inset-top, 0px)) 20px 80px;
       text-align: center; position: relative;
-      max-width: 780px; margin: 0 auto;
+      max-width: 920px; margin: 0 auto;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       min-height: 100dvh;
     }
-    .hero .eyebrow { margin-bottom: 24px; }
+    .hero { margin-bottom: 24px; }
     .hero .title {
       font-family: var(--font-display), system-ui, sans-serif;
       font-size: clamp(40px, 7vw, 72px); font-weight: 800;
@@ -188,6 +182,128 @@
     .hero .subtitle {
       font-size: clamp(15px, 1.6vw, 18px); color: var(--text-secondary);
       max-width: 560px; margin: 0 auto 36px; line-height: 1.65;
+    }
+    .trust-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      background: transparent;
+      border: none;
+      border-radius: 0; padding: 0;
+      margin-bottom: 24px;
+      box-shadow: none;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+    .trust-rating {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .trust-laurel {
+      width: clamp(40px, 5.5vw, 56px);
+      height: clamp(56px, 7.5vw, 78px);
+      flex-shrink: 0;
+      display: block;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 6px rgba(160, 100, 10, 0.28));
+      user-select: none;
+      -webkit-user-select: none;
+      pointer-events: none;
+    }
+    .trust-laurel.is-left { transform: scaleX(-1); }
+    .trust-rating-core {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+    }
+    .trust-stars {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      line-height: 0;
+    }
+    .trust-stars .star {
+      width: clamp(18px, 2.5vw, 24px);
+      height: clamp(18px, 2.5vw, 24px);
+      flex-shrink: 0;
+      display: block;
+      background: linear-gradient(145deg, #fff8d6 0%, #f5d56a 32%, #e0a81a 68%, #a86b08 100%);
+      -webkit-clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+      box-shadow: none;
+      filter: drop-shadow(0 1px 2px rgba(140, 80, 0, 0.4));
+      position: relative;
+    }
+    .trust-stars .star::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(145deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.15) 42%, transparent 70%);
+      -webkit-clip-path: inherit;
+      clip-path: inherit;
+      pointer-events: none;
+    }
+    .mega-title {
+      font-family: var(--font-display), system-ui, sans-serif;
+      font-size: clamp(38px, 6.6vw, 68px); font-weight: 800;
+      letter-spacing: -0.045em; line-height: 1.08;
+      color: var(--text-primary);
+      margin: 0 auto 22px;
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+      gap: 0 16px;
+      position: relative;
+    }
+    .mega-title::before {
+      content: ''; position: absolute; left: 50%; top: 50%;
+      width: 900px; height: 500px; transform: translate(-50%, -50%);
+      background: radial-gradient(ellipse 50% 50% at 50% 50%, rgba(249,115,22,0.14) 0%, transparent 70%);
+      z-index: -1; pointer-events: none;
+    }
+    .mega-title .solis-text { font-weight: 800; }
+    .thumb {
+      display: inline-flex; position: relative; flex-shrink: 0;
+      border-radius: 16px; overflow: hidden;
+      border: 3px solid #fff;
+      box-shadow: 0 14px 34px rgba(120,80,40,0.2), 0 3px 10px rgba(120,80,40,0.1), 0 0 0 1px rgba(200,185,170,0.15);
+      vertical-align: middle;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .thumb:hover { transform: scale(1.06) rotate(0deg) !important; }
+    .thumb-wide { width: clamp(70px, 9vw, 112px); height: clamp(42px, 5.4vw, 68px); transform: rotate(-5deg); }
+    .thumb-tall { width: clamp(50px, 6vw, 80px); height: clamp(70px, 8.6vw, 114px); transform: rotate(5deg); margin: 0 4px; }
+    .thumb-inner {
+      width: 100%; height: 100%; position: relative;
+      background: #2a2118;
+      overflow: hidden;
+    }
+    .thumb-inner > img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+    .thumb-tall .thumb-inner { background: #1a1410; }
+    .thumb-play {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.18);
+      pointer-events: none;
+    }
+    .thumb-play svg { width: 30%; height: 30%; opacity: 0.92; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.3)); }
+    .thumb-badge {
+      position: absolute; top: 4px; left: 4px;
+      background: rgba(0,0,0,0.55); color: #fff;
+      font-size: 8px; font-weight: 700; padding: 2px 5px; border-radius: 5px;
+      font-family: var(--font-mono), monospace;
+    }
+    .thumb-bar {
+      position: absolute; bottom: 5px; left: 6px; right: 6px; height: 3px;
+      background: rgba(255,255,255,0.25); border-radius: 3px; overflow: hidden;
+    }
+    .thumb-bar::after { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 62%; background: #fff; border-radius: 3px; }
+    @media (max-width: 640px) {
+      .thumb-wide { width: 58px; height: 36px; }
+      .thumb-tall { width: 40px; height: 58px; }
+      .mega-title { gap: 0 8px; }
     }
     .pill-wrap { max-width: 540px; width: 100%; margin: 0 auto 20px; position: relative; z-index: 1; }
     .pill-wrap::before {
@@ -210,38 +326,39 @@
     @keyframes border-spin { to { --border-angle: 360deg; } }
     .pill {
       display: flex; align-items: center; gap: 0;
-      background: rgba(245,243,240,0.92);
-      backdrop-filter: blur(20px) saturate(140%); -webkit-backdrop-filter: blur(20px) saturate(140%);
-      border: 2px solid rgba(180,170,158,0.45); border-radius: 100px;
-      padding: 8px 4px 8px 20px;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(24px) saturate(160%); -webkit-backdrop-filter: blur(24px) saturate(160%);
+      border: 2px solid rgba(180,170,158,0.35); border-radius: 100px;
+      padding: 10px 10px 10px 26px;
       transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 4px 24px rgba(120,80,40,0.1), 0 1px 3px rgba(120,80,40,0.06), inset 0 1px 0 rgba(255,255,255,0.6);
+      box-shadow: 0 8px 32px rgba(120,80,40,0.12), 0 2px 6px rgba(120,80,40,0.06), inset 0 1px 0 rgba(255,255,255,0.8);
       position: relative;
     }
     .pill.focused {
-      border-color: rgba(249,115,22,0.4);
-      box-shadow: 0 8px 40px rgba(249,115,22,0.18), 0 0 0 4px rgba(249,115,22,0.08), 0 0 60px rgba(249,115,22,0.08), inset 0 1px 0 rgba(255,255,255,0.5);
-      background: rgba(250,248,245,0.96);
+      border-color: rgba(249,115,22,0.45);
+      box-shadow: 0 12px 48px rgba(249,115,22,0.2), 0 0 0 5px rgba(249,115,22,0.09), 0 0 70px rgba(249,115,22,0.1), inset 0 1px 0 rgba(255,255,255,0.6);
+      background: rgba(255,255,255,0.98);
     }
     .pill-icon { color: var(--text-muted); flex-shrink: 0; display: flex; align-items: center; transition: color 0.3s; }
     .pill.focused .pill-icon { color: var(--solis-deep); }
     .pill-input {
       flex: 1; border: none; outline: none; background: transparent;
       font-family: var(--font-body), system-ui, sans-serif;
-      font-size: 14px; color: var(--text-primary); padding: 13px 12px; min-width: 0;
+      font-size: 15.5px; font-weight: 500; color: var(--text-primary); padding: 15px 14px; min-width: 0;
     }
-    .pill-input::placeholder { color: var(--text-muted); opacity: 0.6; }
+    .pill-input::placeholder { color: var(--text-muted); opacity: 0.55; font-weight: 400; }
     .pill-btn {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: var(--ink); color: #fff;
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--solis-gradient); background-size: 200% 200%; color: #fff;
       font-family: var(--font-display), system-ui, sans-serif;
-      font-size: 12.5px; font-weight: 700;
-      padding: 14px 18px; border-radius: 100px; border: none;
-      transition: background 0.3s ease, box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      font-size: 13.5px; font-weight: 800; letter-spacing: -0.01em;
+      padding: 16px 24px; border-radius: 100px; border: none;
+      transition: box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-position 0.6s ease;
       white-space: nowrap; flex-shrink: 0;
       cursor: pointer;
+      box-shadow: 0 6px 20px rgba(249,115,22,0.35), inset 0 1px 0 rgba(255,255,255,0.25);
     }
-    .pill-btn:hover { background: var(--solis); box-shadow: 0 6px 24px rgba(249,115,22,0.45); }
+    .pill-btn:hover { box-shadow: 0 10px 32px rgba(249,115,22,0.5), inset 0 1px 0 rgba(255,255,255,0.3); background-position: 100% 50%; transform: scale(1.035); }
     .pill-btn:hover svg { transform: translateX(3px); }
     .pill-btn:active { transform: scale(0.97); }
     .pill-btn svg { transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -255,21 +372,6 @@
       color: var(--text-muted); margin-bottom: 18px;
       font-family: var(--font-display), system-ui, sans-serif;
     }
-    .hero-quote {
-      margin-top: 44px; max-width: 480px; margin-left: auto; margin-right: auto;
-    }
-    .hero-quote blockquote {
-      font-size: clamp(14.5px, 1.4vw, 16px); font-style: italic;
-      color: var(--text-secondary); line-height: 1.65;
-      margin: 0; font-family: var(--font-body), system-ui, sans-serif;
-    }
-    .hero-quote cite {
-      display: block; margin-top: 10px;
-      font-style: normal; font-size: 12.5px; font-weight: 600;
-      color: var(--text-muted); font-family: var(--font-display), system-ui, sans-serif;
-      letter-spacing: 0.01em;
-    }
-    .hero-quote cite span { color: var(--solis-deep); }
     .marquee {
       position: relative; overflow: hidden;
       mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
@@ -285,29 +387,21 @@
       100% { transform: translateX(-50%); }
     }
     .brand-pill {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 8px 18px; border-radius: 100px;
-      background: rgba(255,255,255,0.55);
-      border: 1px solid rgba(200,185,170,0.22);
+      display: inline-flex; align-items: center; gap: 12px;
+      padding: 0 26px; border-radius: 0;
+      background: none; border: none; box-shadow: none;
       font-family: var(--font-display), system-ui, sans-serif;
-      font-size: 13px; font-weight: 600; color: var(--text-secondary);
+      font-size: 20px; font-weight: 700; color: var(--text-muted);
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); white-space: nowrap;
-      box-shadow: 0 1px 6px rgba(120,80,40,0.04); cursor: default;
+      cursor: default; opacity: 0.55; filter: grayscale(1);
     }
-    .brand-pill:hover {
-      background: rgba(255,255,255,0.85);
-      border-color: rgba(200,185,170,0.4);
-      box-shadow: 0 4px 16px rgba(120,80,40,0.1);
-      transform: translateY(-2px) scale(1.04);
-    }
-    .brand-icon {
-      width: 18px; height: 18px; flex-shrink: 0;
-    }
+    .brand-pill:hover { opacity: 1; filter: grayscale(0); transform: translateY(-1px); color: var(--text-primary); }
+    .brand-icon { width: 30px; height: 30px; flex-shrink: 0; }
     .section { position: relative; z-index: 1; padding: clamp(72px, 9vw, 112px) 20px; }
     .inner { max-width: 1200px; margin: 0 auto; }
-    .narrow { max-width: 880px; margin: 0 auto; }
-    .header { text-align: center; margin-bottom: 56px; }
-    .header .eyebrow { margin-bottom: 20px; }
+    .header { text-align: center; margin-bottom: 64px; max-width: 640px; margin-left: auto; margin-right: auto; }
+    .header { margin-bottom: 22px; }
+    .header .subtitle { margin-top: 14px; }
     .header .title {
       font-family: var(--font-display), system-ui, sans-serif;
       font-size: clamp(28px, 4vw, 44px); font-weight: 800;
@@ -341,10 +435,7 @@
       box-shadow: 0 2px 12px rgba(249,115,22,0.08);
       transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .spotlight:hover .spotlight-icon {
-      transform: scale(1.05);
-      box-shadow: 0 4px 20px rgba(249,115,22,0.15);
-    }
+    .spotlight:hover .spotlight-icon { transform: scale(1.05); box-shadow: 0 4px 20px rgba(249,115,22,0.15); }
     .spotlight-icon svg { width: 30px; height: 30px; }
     .spotlight .content { flex: 1; min-width: 0; }
     .spotlight .title {
@@ -353,9 +444,7 @@
       letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 10px; color: var(--text-primary);
     }
     .spotlight .desc { font-size: clamp(14px, 1.3vw, 15.5px); color: var(--text-secondary); line-height: 1.7; max-width: 640px; }
-    .spotlight .chips {
-      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px;
-    }
+    .spotlight .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
     .spotlight .chip {
       display: inline-flex; align-items: center; gap: 6px;
       padding: 5px 14px; border-radius: 100px;
@@ -364,6 +453,55 @@
       font-size: 12px; font-weight: 600; color: var(--text-secondary);
     }
     .spotlight .chip svg { color: var(--solis); flex-shrink: 0; }
+    .agent-console {
+      flex-shrink: 0; width: 300px;
+      background: linear-gradient(155deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.55) 50%, rgba(255,248,240,0.5) 100%);
+      backdrop-filter: blur(24px) saturate(160%); -webkit-backdrop-filter: blur(24px) saturate(160%);
+      border-radius: 16px; overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.9);
+      border-bottom-color: rgba(200,185,170,0.3); border-right-color: rgba(200,185,170,0.2);
+      box-shadow: 0 12px 36px rgba(120,80,40,0.1), 0 2px 8px rgba(120,80,40,0.05), inset 0 1px 0 rgba(255,255,255,0.95);
+      align-self: stretch;
+      display: flex; flex-direction: column;
+      position: relative;
+    }
+    .console-head { display: flex; align-items: center; gap: 6px; padding: 12px 14px; border-bottom: 1px solid rgba(200,185,170,0.2); }
+    .console-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(120,100,80,0.14); }
+    .console-label {
+      margin-left: 6px; font-family: var(--font-mono), monospace; font-size: 10.5px;
+      color: var(--text-muted); letter-spacing: 0.02em;
+      display: inline-flex; align-items: center; gap: 5px;
+    }
+    .console-label::before {
+      content: ''; width: 6px; height: 6px; border-radius: 50%;
+      background: #22c55e; box-shadow: 0 0 0 0 rgba(34,197,94,0.5);
+      animation: console-live-pulse 1.8s ease-in-out infinite;
+    }
+    @keyframes console-live-pulse {
+      0% { box-shadow: 0 0 0 0 rgba(34,197,94,0.45); }
+      70% { box-shadow: 0 0 0 6px rgba(34,197,94,0); }
+      100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+    }
+    .console-body { padding: 16px 14px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
+    .console-row { display: flex; align-items: flex-start; gap: 10px; }
+    .console-text { font-size: 12.5px; line-height: 1.5; font-family: var(--font-body), system-ui, sans-serif; }
+    .console-row.done .console-text { color: var(--text-muted); }
+    .console-row.active .console-text { color: var(--text-primary); font-weight: 600; }
+    .console-row.pending .console-text { color: var(--text-muted); opacity: 0.55; }
+    .console-check {
+      flex-shrink: 0; width: 16px; height: 16px; border-radius: 50%; margin-top: 1px;
+      background: rgba(34,197,94,0.14); color: #16a34a;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .console-bullet { flex-shrink: 0; width: 16px; height: 16px; margin-top: 1px; display: flex; align-items: center; justify-content: center; }
+    .console-bullet::after { content: ''; width: 5px; height: 5px; border-radius: 50%; background: rgba(120,100,80,0.25); }
+    .console-spinner {
+      flex-shrink: 0; width: 16px; height: 16px; margin-top: 1px;
+      border-radius: 50%; border: 2px solid rgba(34,197,94,0.18); border-top-color: #22c55e;
+      animation: console-spin 0.8s linear infinite;
+    }
+    @keyframes console-spin { to { transform: rotate(360deg); } }
+    @media (max-width: 900px) { .agent-console { width: 100%; } }
     .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
     .feat {
       border-radius: 22px; padding: clamp(24px, 3vw, 32px) clamp(22px, 3vw, 28px);
@@ -388,6 +526,107 @@
       box-shadow: 0 4px 16px rgba(249,115,22,0.12);
     }
     .feat-icon svg { width: 22px; height: 22px; }
+    .feat-visual {
+      position: relative; width: 100%; height: 108px;
+      border-radius: 14px; margin-bottom: 20px; overflow: hidden;
+      background: linear-gradient(150deg, rgba(249,115,22,0.06) 0%, rgba(249,115,22,0.02) 100%);
+      border: 1px solid rgba(249,115,22,0.1);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .visual-overpurpose { justify-content: flex-start; padding-left: 18px; }
+    .v-lines { position: absolute; left: 38px; top: 4px; width: 62%; height: 100px; }
+    .v-line { stroke-dasharray: 6 5; }
+    .v-node {
+      width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+      background: var(--solis-gradient);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 14px rgba(249,115,22,0.35);
+      z-index: 2; position: relative;
+    }
+    .v-out {
+      position: absolute; right: 18px; width: 14px; height: 14px;
+      background: #fff; border: 2px solid var(--solis);
+      transform: translateY(-50%);
+      opacity: 0.7;
+    }
+    .visual-dual { gap: 8px; }
+    .v-pill {
+      font-family: var(--font-display), system-ui, sans-serif;
+      font-size: 12px; font-weight: 700; color: var(--solis-deep);
+      background: rgba(255,255,255,0.85); border: 1px solid rgba(249,115,22,0.25);
+      border-radius: 100px; padding: 8px 14px;
+      box-shadow: 0 3px 10px rgba(120,80,40,0.06);
+      white-space: nowrap;
+    }
+    .v-pill-ghost {
+      color: var(--text-muted); border-style: dashed; border-color: rgba(158,136,120,0.35);
+      background: rgba(255,255,255,0.5); font-weight: 600;
+    }
+    .v-arrow { display: flex; align-items: center; justify-content: center; }
+    .v-arrow-fwd svg { animation: v-arrow-slide-fwd 1.8s ease-in-out infinite; }
+    @keyframes v-arrow-slide-fwd { 0%, 100% { transform: translateX(0); opacity: 0.5; } 50% { transform: translateX(4px); opacity: 1; } }
+    .visual-cursor {
+      flex-direction: column; align-items: stretch; justify-content: center;
+      gap: 8px; padding: 14px 16px; position: relative;
+    }
+    .v-cursor-row { display: flex; gap: 6px; flex-wrap: wrap; }
+    .v-cursor-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-family: var(--font-mono), monospace; font-size: 10px; font-weight: 600;
+      color: var(--text-secondary);
+      background: rgba(255,255,255,0.8); border: 1px solid rgba(200,185,170,0.35);
+      border-radius: 7px; padding: 5px 9px;
+      transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
+    }
+    .v-mac-cursor {
+      position: absolute; width: 15px; height: 17px; z-index: 5;
+      filter: drop-shadow(0 2px 3px rgba(0,0,0,0.25));
+      transform-origin: top left;
+    }
+    .visual-layout .v-mac-cursor { animation: v-mac-cursor-path 4.5s cubic-bezier(0.65,0,0.35,1) infinite; }
+    .visual-edit .v-mac-cursor { animation: v-mac-cursor-path-edit 4.5s cubic-bezier(0.65,0,0.35,1) infinite; }
+    @keyframes v-mac-cursor-path {
+      0%   { top: 14px;  left: 20px;  }
+      8%   { top: 14px;  left: 20px;  }
+      22%  { top: 12px;  left: 62px;  }
+      30%  { top: 12px;  left: 62px;  }
+      45%  { top: 44px;  left: 30px;  }
+      53%  { top: 44px;  left: 30px;  }
+      68%  { top: 46px;  left: 108px; }
+      76%  { top: 46px;  left: 108px; }
+      90%  { top: 14px;  left: 20px;  }
+      100% { top: 14px;  left: 20px;  }
+    }
+    @keyframes v-mac-cursor-path-edit {
+      0%   { top: 40px; left: 130px; }
+      10%  { top: 40px; left: 130px; }
+      26%  { top: 14px; left: 24px;  }
+      36%  { top: 14px; left: 24px;  }
+      52%  { top: 34px; left: 60px;  }
+      62%  { top: 34px; left: 60px;  }
+      78%  { top: 54px; left: 96px;  }
+      88%  { top: 54px; left: 96px;  }
+      100% { top: 40px; left: 130px; }
+    }
+    .visual-layout .v-cursor-chip:nth-child(2) { animation: v-chip-pulse-a 4.5s ease-in-out infinite; }
+    .visual-layout .v-cursor-chip:nth-child(4) { animation: v-chip-pulse-b 4.5s ease-in-out infinite; }
+    .visual-layout .v-cursor-chip:nth-child(6) { animation: v-chip-pulse-c 4.5s ease-in-out infinite; }
+    @keyframes v-chip-pulse-a { 0%,8%,100% { background: rgba(255,255,255,0.8); border-color: rgba(200,185,170,0.35); color: var(--text-secondary); transform: none; box-shadow: none; } 12%,26% { background: rgba(249,115,22,0.12); border-color: rgba(249,115,22,0.4); color: var(--solis-deep); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(249,115,22,0.18); } }
+    @keyframes v-chip-pulse-b { 0%,32%,100% { background: rgba(255,255,255,0.8); border-color: rgba(200,185,170,0.35); color: var(--text-secondary); transform: none; box-shadow: none; } 36%,50% { background: rgba(249,115,22,0.12); border-color: rgba(249,115,22,0.4); color: var(--solis-deep); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(249,115,22,0.18); } }
+    @keyframes v-chip-pulse-c { 0%,55%,100% { background: rgba(255,255,255,0.8); border-color: rgba(200,185,170,0.35); color: var(--text-secondary); transform: none; box-shadow: none; } 59%,73% { background: rgba(249,115,22,0.12); border-color: rgba(249,115,22,0.4); color: var(--solis-deep); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(249,115,22,0.18); } }
+    .visual-edit .v-cursor-chip:nth-child(2) { animation: v-chip-pulse-edit-a 4.5s ease-in-out infinite; }
+    .visual-edit .v-cursor-chip:nth-child(3) { animation: v-chip-pulse-edit-b 4.5s ease-in-out infinite; }
+    .visual-edit .v-cursor-chip:nth-child(4) { animation: v-chip-pulse-edit-c 4.5s ease-in-out infinite; }
+    @keyframes v-chip-pulse-edit-a { 0%,10%,100% { background: rgba(255,255,255,0.8); border-color: rgba(200,185,170,0.35); color: var(--text-secondary); transform: none; box-shadow: none; } 14%,32% { background: rgba(249,115,22,0.12); border-color: rgba(249,115,22,0.4); color: var(--solis-deep); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(249,115,22,0.18); } }
+    @keyframes v-chip-pulse-edit-b { 0%,38%,100% { background: rgba(255,255,255,0.8); border-color: rgba(200,185,170,0.35); color: var(--text-secondary); transform: none; box-shadow: none; } 42%,60% { background: rgba(249,115,22,0.12); border-color: rgba(249,115,22,0.4); color: var(--solis-deep); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(249,115,22,0.18); } }
+    @keyframes v-chip-pulse-edit-c { 0%,64%,100% { background: rgba(255,255,255,0.8); border-color: rgba(200,185,170,0.35); color: var(--text-secondary); transform: none; box-shadow: none; } 68%,86% { background: rgba(249,115,22,0.12); border-color: rgba(249,115,22,0.4); color: var(--solis-deep); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(249,115,22,0.18); } }
+    .v-cursor-label {
+      position: absolute; top: 15px; left: 12px;
+      font-family: var(--font-mono), monospace; font-size: 8.5px; font-weight: 700;
+      letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-muted);
+      opacity: 0.6;
+    }
+    .feat:hover .feat-visual { border-color: rgba(249,115,22,0.22); }
     .feat-name {
       font-family: var(--font-display), system-ui, sans-serif;
       font-size: 16.5px; font-weight: 700; letter-spacing: -0.02em;
@@ -401,28 +640,52 @@
       border-top: 1px solid rgba(200,185,170,0.18);
     }
     .feat-tag svg { color: var(--solis); opacity: 0.7; }
-    @media (max-width: 768px) {
-      .spotlight { flex-direction: column; gap: 20px; }
-      .grid { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 768px) { .spotlight { flex-direction: column; gap: 20px; } .grid { grid-template-columns: 1fr; } }
     .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; position: relative; max-width: 920px; margin: 0 auto; }
     @media (max-width: 768px) { .steps { grid-template-columns: 1fr; gap: 24px; } }
-    .connector { display: none; position: absolute; top: 36px; left: calc(33.33% - 16px); right: calc(33.33% - 16px); height: 2px; background: linear-gradient(90deg, rgba(249,115,22,0.25), rgba(249,115,22,0.08)); border-radius: 2px; }
-    @media (min-width: 769px) { .connector { display: block; } }
-    .step { text-align: center; padding: 0 16px; }
-    .num {
-      width: 72px; height: 72px; border-radius: 50%;
-      background: linear-gradient(150deg, rgba(255,255,255,0.85) 0%, rgba(255,248,240,0.7) 100%);
-      border: 1.5px solid rgba(249,115,22,0.2);
-      box-shadow: 0 4px 20px rgba(120,80,40,0.08), inset 0 1px 0 rgba(255,255,255,0.95);
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 20px;
-      font-family: var(--font-display), system-ui, sans-serif;
-      font-size: 28px; font-weight: 800; color: var(--solis-deep);
-      letter-spacing: -0.02em;
+    .connector {
+      display: none; position: absolute; top: 40px;
+      left: calc(16.66% + 20px); right: calc(16.66% + 20px); height: 3px;
+      border-radius: 3px; overflow: hidden;
+      background: linear-gradient(90deg, rgba(200,185,170,0.25), rgba(200,185,170,0.25));
     }
-    .step-title { font-family: var(--font-display), system-ui, sans-serif; font-size: 18px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 8px; color: var(--text-primary); }
-    .step-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.6; max-width: 300px; margin: 0 auto; }
+    .connector::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(249,115,22,0.55), transparent);
+      width: 40%;
+      animation: connector-flow 3.2s ease-in-out infinite;
+    }
+    @keyframes connector-flow { 0% { transform: translateX(-100%); } 100% { transform: translateX(250%); } }
+    @media (min-width: 769px) { .connector { display: block; } }
+    .step { text-align: center; padding: 0 16px; position: relative; }
+    .num {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: linear-gradient(150deg, rgba(255,255,255,0.9) 0%, rgba(255,248,240,0.75) 100%);
+      border: 1.5px solid rgba(249,115,22,0.22);
+      box-shadow: 0 8px 28px rgba(120,80,40,0.1), inset 0 1px 0 rgba(255,255,255,0.95);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 22px;
+      font-family: var(--font-display), system-ui, sans-serif;
+      font-size: 30px; font-weight: 800;
+      letter-spacing: -0.02em;
+      position: relative; z-index: 2;
+    }
+    .num span {
+      background: var(--solis-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent; color: transparent;
+    }
+    .num::before {
+      content: ''; position: absolute; inset: -6px; border-radius: 50%;
+      background: conic-gradient(from 0deg, rgba(249,115,22,0.5), rgba(249,115,22,0) 40%, rgba(249,115,22,0) 60%, rgba(249,115,22,0.5) 100%);
+      opacity: 0; transition: opacity 0.4s ease;
+      animation: num-ring-spin 4s linear infinite;
+      z-index: -1;
+    }
+    .step:hover .num::before { opacity: 1; }
+    @keyframes num-ring-spin { to { transform: rotate(360deg); } }
+    .step-title { font-family: var(--font-display), system-ui, sans-serif; font-size: 19px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 8px; color: var(--text-primary); }
+    .step-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.6; max-width: 280px; margin: 0 auto; }
     .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
     @media (max-width: 768px) { .stats { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
     .stat { text-align: center; padding: clamp(22px, 3vw, 32px) 16px; }
@@ -520,9 +783,7 @@
       opacity: 0; font-size: 14px; color: #5c5048;
       line-height: 1.65; padding-top: 0;
     }
-    .faq.open .answer {
-      max-height: 300px; opacity: 1; padding-top: 8px;
-    }
+    .faq.open .answer { max-height: 300px; opacity: 1; padding-top: 8px; }
     .footer {
       position: relative; z-index: 1; margin-top: auto;
       max-width: 1200px; margin-left: auto; margin-right: auto;
@@ -557,25 +818,6 @@
       .bottom { margin-top: 28px; padding-top: 20px; }
     }
     @media (max-width: 380px) { .foot-grid { grid-template-columns: 1fr; } }
-    .canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
-    .blob { position: absolute; border-radius: 50%; filter: blur(100px); will-change: transform; }
-    .blob-a { width: 700px; height: 700px; top: -220px; right: -120px; background: radial-gradient(circle, rgba(251,146,60,0.14) 0%, rgba(249,115,22,0.06) 60%, transparent 100%); animation: float1 25s ease-in-out infinite; }
-    .blob-b { width: 500px; height: 500px; bottom: -140px; left: -120px; background: radial-gradient(circle, rgba(253,186,116,0.12) 0%, rgba(251,146,60,0.04) 60%, transparent 100%); animation: float2 20s ease-in-out infinite; }
-    .blob-c { width: 360px; height: 360px; top: 35%; left: 22%; background: radial-gradient(circle, rgba(255,237,213,0.45) 0%, transparent 70%); animation: float3 30s ease-in-out infinite; }
-    @keyframes float1 {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      33% { transform: translate(30px, -50px) scale(1.05); }
-      66% { transform: translate(-20px, 20px) scale(0.95); }
-    }
-    @keyframes float2 {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      33% { transform: translate(-40px, 30px) scale(1.1); }
-      66% { transform: translate(30px, -20px) scale(0.9); }
-    }
-    @keyframes float3 {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      50% { transform: translate(40px, 40px) scale(1.08); }
-    }
     .canvas { display: none; }
     .reveal {
       opacity: 0; transform: scale(0.88) translateY(16px);
@@ -597,10 +839,6 @@
     .blur-2 { transition-delay: 0.15s; }
     .blur-3 { transition-delay: 0.3s; }
     .blur-4 { transition-delay: 0.45s; }
-    @keyframes float-subtle {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-6px); }
-    }
     @keyframes glow-pulse {
       0%, 100% { box-shadow: 0 0 20px rgba(249,115,22,0.0); }
       50% { box-shadow: 0 0 30px rgba(249,115,22,0.12); }
@@ -619,10 +857,7 @@
     .stat:hover .value { transform: scale(1.08); }
     .spotlight .chip { transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
     .spotlight .chip:hover { background: rgba(249,115,22,0.12); border-color: rgba(249,115,22,0.25); transform: translateY(-2px) scale(1.04); box-shadow: 0 4px 12px rgba(249,115,22,0.1); }
-    @keyframes chip-in {
-      from { opacity: 0; transform: scale(0.7) translateY(8px); }
-      to { opacity: 1; transform: scale(1) translateY(0); }
-    }
+    @keyframes chip-in { from { opacity: 0; transform: scale(0.7) translateY(8px); } to { opacity: 1; transform: scale(1) translateY(0); } }
     .spotlight.visible .chip { animation: chip-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
     .spotlight.visible .chip:nth-child(1) { animation-delay: 0.3s; }
     .spotlight.visible .chip:nth-child(2) { animation-delay: 0.38s; }
@@ -630,10 +865,7 @@
     .spotlight.visible .chip:nth-child(4) { animation-delay: 0.54s; }
     .spotlight.visible .chip:nth-child(5) { animation-delay: 0.62s; }
     .spotlight.visible .chip:nth-child(6) { animation-delay: 0.70s; }
-    @keyframes hero-shimmer {
-      0% { background-position: -200% center; }
-      100% { background-position: 200% center; }
-    }
+    @keyframes hero-shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
     .shimmer {
       background: linear-gradient(90deg, #f97316 0%, #ff6b35 15%, #fbbf24 30%, #f97316 50%, #ef4444 65%, #fbbf24 80%, #f97316 100%);
       background-size: 300% auto;
@@ -643,8 +875,6 @@
     }
     @media (max-width: 640px) {
       .hero { padding: calc(80px + env(safe-area-inset-top, 0px)) 16px 48px; min-height: auto; }
-      .hero-quote { margin-top: 32px; }
-      .hero-quote blockquote { font-size: 13.5px; }
       .pill { padding: 6px 4px 6px 14px; border-width: 1.5px; }
       .pill-btn { padding: 12px; font-size: 13px; gap: 0; }
       .pill-btn span { display: none; }
@@ -680,11 +910,7 @@
 </head>
 <body>
 
-  <div class="canvas" aria-hidden="true">
-    <div class="blob blob-a"></div>
-    <div class="blob blob-b"></div>
-    <div class="blob blob-c"></div>
-  </div>
+  <div class="canvas" aria-hidden="true"></div>
 
   <nav class="nav" aria-label="Primary">
     <div class="bar glass" id="_nav">
@@ -703,8 +929,8 @@
         <a href="/premium.html">Pricing</a>
       </div>
       <div class="actions">
-        <a href="/login.html" class="login">Sign in</a>
-        <a href="/login.html" class="signup">
+        <a href="login.html" class="login">Sign in</a>
+        <a href="login.html" class="signup">
           <span>Start free</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="13" height="13">
             <line x1="5" y1="12" x2="19" y2="12" />
@@ -712,13 +938,7 @@
           </svg>
         </a>
       </div>
-      <button
-        type="button"
-        class="toggle"
-        id="_toggle"
-        aria-label="Open menu"
-        aria-expanded="false"
-      >
+      <button type="button" class="toggle" id="_toggle" aria-label="Open menu" aria-expanded="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" class="menu-icon">
           <line x1="4" y1="6" x2="20" y2="6" />
           <line x1="4" y1="12" x2="20" y2="12" />
@@ -736,21 +956,52 @@
       <a href="#_faq" role="menuitem" data-scroll="_faq">FAQ</a>
       <a href="/premium.html" role="menuitem">Pricing</a>
       <div class="divider"></div>
-      <a href="/login.html" role="menuitem">Sign in</a>
-      <a href="/login.html" role="menuitem" class="mob-signup">Start free</a>
+      <a href="login.html" role="menuitem">Sign in</a>
+      <a href="login.html" role="menuitem" class="mob-signup">Start free</a>
     </div>
   </nav>
 
   <div class="page">
   <main>
     <section class="hero">
+        <div class="trust-badge" aria-label="5 star rating">
+          <div class="trust-rating">
+            <img class="trust-laurel is-left" src="assets/laurel-gold.png" alt="" width="80" height="120" decoding="async" />
+            <div class="trust-rating-core">
+              <div class="trust-stars" aria-hidden="true">
+                <span class="star"></span>
+                <span class="star"></span>
+                <span class="star"></span>
+                <span class="star"></span>
+                <span class="star"></span>
+              </div>
+            </div>
+            <img class="trust-laurel" src="assets/laurel-gold.png" alt="" width="80" height="120" decoding="async" />
+          </div>
+        </div>
 
-        <span class="pre reveal">all it takes is</span>
-        <h1 class="title reveal d1">
-          <span class="shimmer">One URL</span>
+        <h1 class="mega-title reveal d1">
+          <span>Turn videos</span>
+          <span class="thumb thumb-wide" aria-hidden="true">
+            <span class="thumb-inner">
+              <img src="assets/hero-thumb-wide.jpg" alt="" width="640" height="360" loading="eager" decoding="async" />
+              <span class="thumb-badge">2:49</span>
+              <span class="thumb-play"><svg viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></span>
+            </span>
+          </span>
+          <span>into</span>
+          <span>viral</span>
+          <span class="thumb thumb-tall" aria-hidden="true">
+            <span class="thumb-inner">
+              <img src="assets/hero-thumb-tall.jpg" alt="" width="360" height="640" loading="eager" decoding="async" />
+              <span class="thumb-play"><svg viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></span>
+              <span class="thumb-bar"></span>
+            </span>
+          </span>
+          <span class="solis-text">shorts</span>
         </h1>
         <p class="subtitle reveal d2">
-          The first agentic AI that turns any video into ready-to-post short-form content in just 3 clicks. Clean, fast and work-free.
+          Turn any video into endless, ready-to-post clips your audience actually wants to watch.
         </p>
 
         <div class="pill-wrap reveal d3">
@@ -761,13 +1012,7 @@
                 <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
               </svg>
             </span>
-            <input
-              type="url"
-              class="pill-input"
-              id="_url"
-              placeholder="Drop any video link here..."
-              aria-label="Video URL input"
-            />
+            <input type="url" class="pill-input" id="_url" placeholder="Drop any video link here..." aria-label="Video URL input" />
             <button class="pill-btn" type="button">
               <span>Get started</span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
@@ -777,121 +1022,49 @@
             </button>
           </div>
         </div>
-        <p class="pill-hint">
-          Solis AI is new and constantly evolving
-        </p>
+        <p class="pill-hint">Solis AI is new and constantly evolving</p>
 
         <div class="hero-trust reveal" style="margin-top: 40px;">
           <div class="trust-inner">
         <p class="trust-label">Trusted by creators on</p>
         <div class="marquee">
           <div class="track" id="_marquee">
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#FF0000"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-              YouTube
-            </span>
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#000000"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
-              TikTok
-            </span>
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#E4405F"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 1 0 0-12.324zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405a1.441 1.441 0 0 1-2.88 0 1.441 1.441 0 0 1 2.88 0z"/></svg>
-              Instagram
-            </span>
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#18120e"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-              X
-            </span>
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-              LinkedIn
-            </span>
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-              Facebook
-            </span>
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#1ab7ea"><path d="M23.977 6.416c-.105 2.338-1.739 5.543-4.894 9.609-3.268 4.247-6.026 6.37-8.29 6.37-1.409 0-2.578-1.294-3.553-3.881L5.322 11.4C4.603 8.816 3.834 7.522 3.01 7.522c-.179 0-.806.378-1.881 1.132L0 7.197c1.185-1.044 2.351-2.084 3.501-3.128C5.08 2.701 6.266 1.984 7.055 1.91c1.867-.18 3.016 1.1 3.447 3.838.465 2.953.789 4.789.971 5.507.539 2.45 1.131 3.674 1.776 3.674.502 0 1.256-.796 2.265-2.385 1.004-1.589 1.54-2.797 1.612-3.628.144-1.371-.395-2.061-1.614-2.061-.574 0-1.167.121-1.777.391 1.186-3.868 3.434-5.757 6.762-5.637 2.473.06 3.628 1.664 3.493 4.797l-.013.01z"/></svg>
-              Vimeo
-            </span>
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#9146FF"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg>
-              Twitch
-            </span>
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#FF0000"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-              YouTube
-            </span>
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#000000"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
-              TikTok
-            </span>
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#E4405F"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 1 0 0-12.324zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405a1.441 1.441 0 0 1-2.88 0 1.441 1.441 0 0 1 2.88 0z"/></svg>
-              Instagram
-            </span>
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#18120e"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-              X
-            </span>
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-              LinkedIn
-            </span>
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-              Facebook
-            </span>
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#1ab7ea"><path d="M23.977 6.416c-.105 2.338-1.739 5.543-4.894 9.609-3.268 4.247-6.026 6.37-8.29 6.37-1.409 0-2.578-1.294-3.553-3.881L5.322 11.4C4.603 8.816 3.834 7.522 3.01 7.522c-.179 0-.806.378-1.881 1.132L0 7.197c1.185-1.044 2.351-2.084 3.501-3.128C5.08 2.701 6.266 1.984 7.055 1.91c1.867-.18 3.016 1.1 3.447 3.838.465 2.953.789 4.789.971 5.507.539 2.45 1.131 3.674 1.776 3.674.502 0 1.256-.796 2.265-2.385 1.004-1.589 1.54-2.797 1.612-3.628.144-1.371-.395-2.061-1.614-2.061-.574 0-1.167.121-1.777.391 1.186-3.868 3.434-5.757 6.762-5.637 2.473.06 3.628 1.664 3.493 4.797l-.013.01z"/></svg>
-              Vimeo
-            </span>
-            <span class="brand-pill">
-              <svg class="brand-icon" viewBox="0 0 24 24" fill="#9146FF"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg>
-              Twitch
-            </span>
+            <span class="brand-pill"><svg class="brand-icon" viewBox="0 0 24 24" fill="#FF0000"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>YouTube</span>
+            <span class="brand-pill"><svg class="brand-icon" viewBox="0 0 24 24" fill="#000000"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>TikTok</span>
+            <span class="brand-pill"><svg class="brand-icon" viewBox="0 0 24 24" fill="#E4405F"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 1 0 0-12.324zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405a1.441 1.441 0 0 1-2.88 0 1.441 1.441 0 0 1 2.88 0z"/></svg>Instagram</span>
+            <span class="brand-pill"><svg class="brand-icon" viewBox="0 0 24 24" fill="#18120e"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>X</span>
+            <span class="brand-pill"><svg class="brand-icon" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>LinkedIn</span>
+            <span class="brand-pill"><svg class="brand-icon" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>Facebook</span>
+            <span class="brand-pill"><svg class="brand-icon" viewBox="0 0 24 24" fill="#1ab7ea"><path d="M23.977 6.416c-.105 2.338-1.739 5.543-4.894 9.609-3.268 4.247-6.026 6.37-8.29 6.37-1.409 0-2.578-1.294-3.553-3.881L5.322 11.4C4.603 8.816 3.834 7.522 3.01 7.522c-.179 0-.806.378-1.881 1.132L0 7.197c1.185-1.044 2.351-2.084 3.501-3.128C5.08 2.701 6.266 1.984 7.055 1.91c1.867-.18 3.016 1.1 3.447 3.838.465 2.953.789 4.789.971 5.507.539 2.45 1.131 3.674 1.776 3.674.502 0 1.256-.796 2.265-2.385 1.004-1.589 1.54-2.797 1.612-3.628.144-1.371-.395-2.061-1.614-2.061-.574 0-1.167.121-1.777.391 1.186-3.868 3.434-5.757 6.762-5.637 2.473.06 3.628 1.664 3.493 4.797l-.013.01z"/></svg>Vimeo</span>
+            <span class="brand-pill"><svg class="brand-icon" viewBox="0 0 24 24" fill="#9146FF"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg>Twitch</span>
           </div>
         </div>
       </div>
         </div>
-
-        <div class="hero-quote reveal d4">
-              <blockquote>"Even in beta, Solis AI already feels like the future of content creation. I pasted a link and got back a short I could actually use. Can't wait to see where this goes."</blockquote>
-          <cite><span>@ Early access user</span></cite>
-        </div>
-
     </section>
 
     <section class="section" id="_how">
       <div class="inner">
         <div class="header reveal">
-          <h2 class="title">
-            Go from URL to publish-ready content <span class="solis-text">in minutes.</span>
-          </h2>
+          <h2 class="title">Go from URL to publish-ready content <span class="solis-text">in minutes.</span></h2>
+          <p class="subtitle">No editing timeline, no learning curve. Just paste, pick, and post.</p>
         </div>
-
         <div class="steps">
           <div class="connector" aria-hidden="true"></div>
           <div class="step reveal d1">
-            <div class="num">1</div>
+            <div class="num"><span>1</span></div>
             <h3 class="step-title">Paste your URL</h3>
-            <p class="step-desc">
-              Drop any video link, YouTube, TikTok, Instagram and more. Our AI fetches and analyzes it instantly.
-            </p>
+            <p class="step-desc">Drop any video link, YouTube, TikTok, Instagram and more. Our AI fetches and analyzes it instantly.</p>
           </div>
           <div class="step reveal d2">
-            <div class="num">2</div>
-            <h3 class="step-title">Choose your Template</h3>
-            <p class="step-desc">
-              Select a template to suit your content.
-            </p>
+            <div class="num"><span>2</span></div>
+            <h3 class="step-title">Choose your template</h3>
+            <p class="step-desc">Pick a style that fits your content, layout, captions, and framing are handled for you.</p>
           </div>
           <div class="step reveal d3">
-            <div class="num">3</div>
-            <h3 class="step-title">Export</h3>
-            <p class="step-desc">
-              Export your video in one click. Everything is automated, leaving customizing only an option.
-            </p>
+            <div class="num"><span>3</span></div>
+            <h3 class="step-title">Export & post</h3>
+            <p class="step-desc">Download or publish directly. Everything is automated, customizing is only ever optional.</p>
           </div>
         </div>
       </div>
@@ -900,121 +1073,114 @@
     <section class="section" id="_features">
       <div class="inner">
         <div class="header reveal">
-          <h2 class="title">
-            Not a tool. <span class="solis-text">An AI agent.</span>
-          </h2>
-          <p class="subtitle">
-            Solis AI doesn't just clip videos. It thinks, plans, and executes, choosing the best path for every piece of content.
-          </p>
+          <h2 class="title">Not a tool. <span class="solis-text">An AI agent.</span></h2>
+          <p class="subtitle">Solis AI doesn't just clip videos. It thinks, plans, and executes, choosing the best path for every piece of content.</p>
         </div>
 
         <div class="bento">
           <div class="spotlight reveal">
               <div class="spotlight-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="#c2410c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="30" height="30">
-                  <rect x="4" y="4" width="16" height="16" rx="2" />
-                  <rect x="9" y="9" width="6" height="6" />
-                  <path d="M15 2v2" />
-                  <path d="M15 20v2" />
-                  <path d="M2 15h2" />
-                  <path d="M2 9h2" />
-                  <path d="M20 15h2" />
-                  <path d="M20 9h2" />
-                  <path d="M9 2v2" />
-                  <path d="M9 20v2" />
+                  <rect x="4" y="4" width="16" height="16" rx="2" /><rect x="9" y="9" width="6" height="6" />
+                  <path d="M15 2v2" /><path d="M15 20v2" /><path d="M2 15h2" /><path d="M2 9h2" /><path d="M20 15h2" /><path d="M20 9h2" /><path d="M9 2v2" /><path d="M9 20v2" />
                 </svg>
               </div>
               <div class="content">
                 <h3 class="title">Our AI Agent</h3>
-                <p class="desc">
-                  One agent. Every step handled. Solis AI analyzes, refines, and transforms your videos into optimized content with intelligent decisions at every stage.
-                </p>
+                <p class="desc">One agent. Every step handled. Solis AI analyzes, refines, and transforms your videos into optimized content with intelligent decisions at every stage.</p>
                 <div class="chips">
-                  <span class="chip">
-                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><polyline points="1.5,6 4.5,9 10.5,3" /></svg>
-                    Full Automation
-                  </span>
-                  <span class="chip">
-                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><polyline points="1.5,6 4.5,9 10.5,3" /></svg>
-                    Content repurposing
-                  </span>
-                  <span class="chip">
-                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><polyline points="1.5,6 4.5,9 10.5,3" /></svg>
-                    Overlay removal & customization
-                  </span>
-                  <span class="chip">
-                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><polyline points="1.5,6 4.5,9 10.5,3" /></svg>
-                    Video Understanding
-                  </span>
-                  <span class="chip">
-                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><polyline points="1.5,6 4.5,9 10.5,3" /></svg>
-                    10+ more
-                  </span>
+                  <span class="chip"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><polyline points="1.5,6 4.5,9 10.5,3" /></svg>Full Automation</span>
+                  <span class="chip"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><polyline points="1.5,6 4.5,9 10.5,3" /></svg>Content repurposing</span>
+                  <span class="chip"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><polyline points="1.5,6 4.5,9 10.5,3" /></svg>Overlay removal & customization</span>
+                  <span class="chip"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><polyline points="1.5,6 4.5,9 10.5,3" /></svg>Video Understanding</span>
+                  <span class="chip"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><polyline points="1.5,6 4.5,9 10.5,3" /></svg>10+ more</span>
+                </div>
+              </div>
+              <div class="agent-console" aria-hidden="true">
+                <div class="console-head">
+                  <span class="console-dot"></span><span class="console-dot"></span><span class="console-dot"></span>
+                  <span class="console-label">solis-agent · live</span>
+                </div>
+                <div class="console-body">
+                  <div class="console-row done"><span class="console-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="9" height="9"><polyline points="1.5,6 4.5,9 10.5,3" /></svg></span><span class="console-text">Watched full video, found 6 key moments</span></div>
+                  <div class="console-row done"><span class="console-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="9" height="9"><polyline points="1.5,6 4.5,9 10.5,3" /></svg></span><span class="console-text">Removed overlays & dead air</span></div>
+                  <div class="console-row active"><span class="console-spinner"></span><span class="console-text">Reframing to 9:16, tracking speaker</span></div>
+                  <div class="console-row pending"><span class="console-bullet"></span><span class="console-text">Writing captions & hook titles</span></div>
                 </div>
               </div>
           </div>
 
           <div class="grid">
             <div class="feat reveal d1">
-              <div class="feat-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#c2410c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
-                  <path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21" />
-                  <path d="M22 21H7" />
-                  <path d="m5 11 9 9" />
+              <div class="feat-visual visual-overpurpose">
+                <span class="v-node v-src"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polygon points="5 3 19 12 5 21 5 3"/></svg></span>
+                <svg class="v-lines" viewBox="0 0 220 100" fill="none">
+                  <path class="v-line l1" d="M40 50 C 90 50, 90 20, 170 20" stroke="url(#gradO)" stroke-width="2" stroke-linecap="round"/>
+                  <path class="v-line l2" d="M40 50 C 90 50, 90 50, 170 50" stroke="url(#gradO)" stroke-width="2" stroke-linecap="round"/>
+                  <path class="v-line l3" d="M40 50 C 90 50, 90 80, 170 80" stroke="url(#gradO)" stroke-width="2" stroke-linecap="round"/>
+                  <defs><linearGradient id="gradO" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#f97316" stop-opacity="0.15"/><stop offset="100%" stop-color="#f97316" stop-opacity="0.65"/></linearGradient></defs>
                 </svg>
+                <span class="v-node v-out" style="top:20%;"></span>
+                <span class="v-node v-out" style="top:50%;"></span>
+                <span class="v-node v-out" style="top:80%;"></span>
               </div>
               <h3 class="feat-name">Overpurpose</h3>
-              <p class="feat-desc">
-                A powerful feature currently in development, coming out very soon.
-              </p>
-              <div class="feat-tag">
-                In development
-              </div>
+              <p class="feat-desc">A powerful feature currently in development, coming out very soon.</p>
+              <div class="feat-tag">In development</div>
             </div>
 
             <div class="feat reveal d2">
-              <div class="feat-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#c2410c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
-                  <polyline points="17 1 21 5 17 9" />
-                  <path d="M3 11V9a4 4 0 0 1 4-4h14" />
-                  <polyline points="7 23 3 19 7 15" />
-                  <path d="M21 13v2a4 4 0 0 1-4 4H3" />
-                </svg>
+              <div class="feat-visual visual-dual">
+                <span class="v-pill v-pill-a">Long-form</span>
+                <span class="v-arrow v-arrow-fwd"><svg viewBox="0 0 24 24" fill="none" stroke="#c2410c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></span>
+                <span class="v-pill v-pill-b">Short-form</span>
+                <span class="v-arrow v-arrow-fwd"><svg viewBox="0 0 24 24" fill="none" stroke="#c2410c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></span>
+                <span class="v-pill v-pill-ghost">Short → Short</span>
               </div>
               <h3 class="feat-name">Dual Workflow</h3>
-              <p class="feat-desc">
-                Long-form to short-form, or short-form to clean, remixed, repurposed content. Both directions, one engine.
-              </p>
+              <p class="feat-desc">Turn long-form videos into short-form clips today. Short-form to short-form remixing is coming soon.</p>
             </div>
 
             <div class="feat reveal d3">
-              <div class="feat-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#c2410c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
-                  <rect x="3" y="3" width="18" height="18" rx="2" />
-                  <path d="M12 3v18" />
+              <div class="feat-visual visual-cursor visual-layout">
+                <span class="v-cursor-label">Layout</span>
+                <div class="v-cursor-row" style="margin-top: 8px;">
+                  <span class="v-cursor-chip">Split 60/40</span>
+                  <span class="v-cursor-chip">Font: Inter</span>
+                </div>
+                <div class="v-cursor-row">
+                  <span class="v-cursor-chip">Position: Top</span>
+                  <span class="v-cursor-chip">Color</span>
+                </div>
+                <div class="v-cursor-row">
+                  <span class="v-cursor-chip">Size: 42px</span>
+                  <span class="v-cursor-chip">Align: Center</span>
+                </div>
+                <svg class="v-mac-cursor" viewBox="0 0 24 27" fill="none">
+                  <path d="M1 1L1 20.5L6.5 16L10 24L13.5 22.5L10 15L17 15L1 1Z" fill="#18120e" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/>
                 </svg>
               </div>
               <h3 class="feat-name">Custom Layouts</h3>
-              <p class="feat-desc">
-                Drag-to-adjust split-screen, swap positions, resize panels. No fixed templates, you control the composition.
-              </p>
+              <p class="feat-desc">No fixed templates. Drag, resize, swap fonts, positions, and colors, you're not limited by customization.</p>
             </div>
 
             <div class="feat reveal d4">
-              <div class="feat-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#c2410c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
-                  <path d="M12 20h9" />
-                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+              <div class="feat-visual visual-cursor visual-edit">
+                <span class="v-cursor-label">After generation</span>
+                <div class="v-cursor-row" style="margin-top: 8px;">
+                  <span class="v-cursor-chip">Edit caption text</span>
+                </div>
+                <div class="v-cursor-row">
+                  <span class="v-cursor-chip">Swap layout</span>
+                  <span class="v-cursor-chip">Remove element</span>
+                </div>
+                <svg class="v-mac-cursor" viewBox="0 0 24 27" fill="none">
+                  <path d="M1 1L1 20.5L6.5 16L10 24L13.5 22.5L10 15L17 15L1 1Z" fill="#18120e" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/>
                 </svg>
               </div>
               <h3 class="feat-name">Post-Generation Editing</h3>
-              <p class="feat-desc">
-                Change layout, remove elements, adjust captions, no full re-run needed. Edit after generation, instantly.
-              </p>
-              <div class="feat-tag">
-                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="10" height="10"><path d="M1.5 6l3 3 6-6" /></svg>
-                Most requested
-              </div>
+              <p class="feat-desc">Once the Solis agent finishes, keep customizing. Change layout, remove elements, adjust captions, no full re-run needed.</p>
+              <div class="feat-tag"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="10" height="10"><path d="M1.5 6l3 3 6-6" /></svg>Most requested</div>
             </div>
           </div>
         </div>
@@ -1024,22 +1190,10 @@
     <section class="section" style="padding-top: 0;">
       <div class="inner">
         <div class="stats">
-          <div class="feat stat reveal d1">
-            <div class="value solis-text">25x</div>
-            <p class="stat-label">Faster than manual editing</p>
-          </div>
-          <div class="feat stat reveal d2">
-            <div class="value solis-text">No Credits</div>
-            <p class="stat-label">No confusing credits. Your plan includes daily usage limits.</p>
-          </div>
-          <div class="feat stat reveal d3">
-            <div class="value solis-text">Flexibility</div>
-            <p class="stat-label">Customize at any time. No limits.</p>
-          </div>
-          <div class="feat stat reveal d4">
-            <div class="value solis-text">Fast Gen.</div>
-            <p class="stat-label">Create short-form content within few minutes. No long waits.</p>
-          </div>
+          <div class="feat stat reveal d1"><div class="value solis-text">25x</div><p class="stat-label">Faster than manual editing</p></div>
+          <div class="feat stat reveal d2"><div class="value solis-text">No Credits</div><p class="stat-label">No confusing credits. Your plan includes daily usage limits.</p></div>
+          <div class="feat stat reveal d3"><div class="value solis-text">Flexibility</div><p class="stat-label">Customize at any time. No limits.</p></div>
+          <div class="feat stat reveal d4"><div class="value solis-text">Fast Gen.</div><p class="stat-label">Create short-form content within few minutes. No long waits.</p></div>
         </div>
       </div>
     </section>
@@ -1047,63 +1201,32 @@
     <section class="section" id="_faq">
       <div class="inner">
         <div class="header reveal">
-          <span class="eyebrow">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12" style="color:var(--solis-deep)">
-              <path d="M9 9l.2 2.9a2 2 0 1 0 5.6 0L15 9" />
-              <path d="M7.5 9H4a1 1 0 0 0-.9 1.4l1.8 3.6a2 2 0 0 1 0 1.6l-1.8 3.6a1 1 0 0 0 .9 1.4h13a1 1 0 0 0 .9-1.4l-1.8-3.6a2 2 0 0 1 0-1.6l1.8-3.6A1 1 0 0 0 17 9h-3.5" />
-            </svg>
-            FAQ
-          </span>
           <h2 class="title">Common questions</h2>
           <p class="subtitle">Everything you need to know about Solis AI.</p>
         </div>
         <div class="faqs reveal">
           <div class="faq">
-            <button class="faq-btn" type="button" aria-expanded="false">
-              <span>What makes Solis AI different from other clip tools?</span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="6,9 12,15 18,9" /></svg>
-            </button>
-            <div class="answer">
-              Solis AI is the first agentic content repurposing AI that goes beyond traditional clip tools. Unlike traditional solutions that rely on fixed templates and simple cuts, Solis AI understands your video, makes intelligent decisions, and transforms existing content into fresh, platform-ready videos. Before generation even begins, you can customize your preferences, choose your desired style, and guide how Solis AI processes your content. It adapts to your vision, giving you the flexibility to refine and control the final result.
-            </div>
-            </div>
+            <button class="faq-btn" type="button" aria-expanded="false"><span>What makes Solis AI different from other clip tools?</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="6,9 12,15 18,9" /></svg></button>
+            <div class="answer">Solis AI is the first agentic content repurposing AI that goes beyond traditional clip tools. Unlike traditional solutions that rely on fixed templates and simple cuts, Solis AI understands your video, makes intelligent decisions, and transforms existing content into fresh, platform-ready videos. Before generation even begins, you can customize your preferences, choose your desired style, and guide how Solis AI processes your content. It adapts to your vision, giving you the flexibility to refine and control the final result.</div>
+          </div>
           <div class="faq">
-            <button class="faq-btn" type="button" aria-expanded="false">
-              <span>What video platforms are supported?</span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="6,9 12,15 18,9" /></svg>
-            </button>
-            <div class="answer">
-              Solis AI supports YouTube, YouTube Shorts, TikTok, and Instagram, with more platforms coming soon. Just paste your video link and let Solis AI transform it into engaging short-form content.
-              </div>
-            </div>
+            <button class="faq-btn" type="button" aria-expanded="false"><span>What video platforms are supported?</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="6,9 12,15 18,9" /></svg></button>
+            <div class="answer">Solis AI supports YouTube, YouTube Shorts, TikTok, and Instagram, with more platforms coming soon. Just paste your video link and let Solis AI transform it into engaging short-form content.</div>
+          </div>
           <div class="faq">
-            <button class="faq-btn" type="button" aria-expanded="false">
-              <span>What does 'agentic' mean in this context?</span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="6,9 12,15 18,9" /></svg>
-            </button>
-            <div class="answer">
-              Agentic means Solis AI doesn't just follow instructions, it makes intelligent decisions. It analyzes your content, finds the best moments, removes distractions, selects the right format, and handles the entire editing process for you. You get optimized, platform-ready clips without the manual work.
-              </div>
-            </div>
+            <button class="faq-btn" type="button" aria-expanded="false"><span>What does 'agentic' mean in this context?</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="6,9 12,15 18,9" /></svg></button>
+            <div class="answer">Agentic means Solis AI doesn't just follow instructions, it makes intelligent decisions. It analyzes your content, finds the best moments, removes distractions, selects the right format, and handles the entire editing process for you. You get optimized, platform-ready clips without the manual work.</div>
+          </div>
           <div class="faq">
-            <button class="faq-btn" type="button" aria-expanded="false">
-              <span>Can I edit after generation?</span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="6,9 12,15 18,9" /></svg>
-            </button>
+            <button class="faq-btn" type="button" aria-expanded="false"><span>Can I edit after generation?</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="6,9 12,15 18,9" /></svg></button>
             <div class="answer">Yes. Solis AI lets you customize text, remove elements, adjust captions, swap positions and more, all without re-running the full generation again. This is one of our most-loved features.</div>
           </div>
           <div class="faq">
-            <button class="faq-btn" type="button" aria-expanded="false">
-              <span>Is there a free trial?</span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="6,9 12,15 18,9" /></svg>
-            </button>
+            <button class="faq-btn" type="button" aria-expanded="false"><span>Is there a free trial?</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="6,9 12,15 18,9" /></svg></button>
             <div class="answer">Absolutely. Every new account starts with a 7-day free trial on the Prime plan.</div>
           </div>
           <div class="faq">
-            <button class="faq-btn" type="button" aria-expanded="false">
-              <span>Is Solis AI new?</span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="6,9 12,15 18,9" /></svg>
-            </button>
+            <button class="faq-btn" type="button" aria-expanded="false"><span>Is Solis AI new?</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="6,9 12,15 18,9" /></svg></button>
             <div class="answer">Solis AI is very new, but the technology behind it has been in development for around a year. We're excited to bring it to the market and help creators create content faster and easier than ever before.</div>
           </div>
         </div>
@@ -1114,40 +1237,20 @@
       <div class="cta">
         <div class="glow" aria-hidden="true"></div>
         <div class="glow-b" aria-hidden="true"></div>
-
-        <h2 class="cta-title blur-in blur-1">
-          Ready to repurpose<br>smarter?
-        </h2>
-        <p class="cta-subtitle blur-in blur-2">
-          Be among the first creators to experience a new era of AI-powered content creation. Save hours every week with Solis AI. Start free today, scale whenever you want.
-        </p>
-
+        <h2 class="cta-title blur-in blur-1">Ready to repurpose<br>smarter?</h2>
+        <p class="cta-subtitle blur-in blur-2">Be among the first creators to experience a new era of AI-powered content creation. Save hours every week with Solis AI. Start free today, scale whenever you want.</p>
         <div class="cta-wrap blur-in blur-3">
           <div class="cta-pill" id="_cta-pill">
             <span class="cta-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
-                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-              </svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></svg>
             </span>
-            <input
-              type="url"
-              class="cta-input"
-              id="_cta-url"
-              placeholder="Drop any video link here..."
-              aria-label="Video URL input"
-            />
+            <input type="url" class="cta-input" id="_cta-url" placeholder="Drop any video link here..." aria-label="Video URL input" />
             <button class="cta-btn" type="button">
               <span>Get started</span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
-                <line x1="5" y1="12" x2="19" y2="12" />
-                <polyline points="12,5 19,12 12,19" />
-              </svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12,5 19,12 12,19" /></svg>
             </button>
           </div>
-          <p class="cta-hint">
-            Works with <span>YouTube</span>, <span>TikTok</span>, <span>Instagram</span> and more
-          </p>
+          <p class="cta-hint">Works with <span>YouTube</span>, <span>TikTok</span>, <span>Instagram</span> and more</p>
         </div>
       </div>
     </section>
@@ -1166,13 +1269,8 @@
             </svg>
             <span class="logotype">Solis AI</span><span class="logotype-beta">beta</span>
           </a>
-          <p class="tagline">
-            The creator-first AI video repurposing studio. Turn long videos into platform-ready shorts in minutes.
-          </p>
-          <div class="status">
-            <span class="live"></span>
-            New product, still in early stages
-          </div>
+          <p class="tagline">The creator-first AI video repurposing studio. Turn long videos into platform-ready shorts in minutes.</p>
+          <div class="status"><span class="live"></span>New product, still in early stages</div>
         </div>
         <div class="col">
           <h4>Product</h4>
@@ -1198,7 +1296,7 @@
           <h4>Resources</h4>
           <ul>
             <li><a href="mailto:help@solisai.video">Help center</a></li>
-            <li><a href="/login.html">Sign in</a></li>
+            <li><a href="login.html">Sign in</a></li>
             <li><a href="/premium.html">Plans &amp; billing</a></li>
             <li><a href="/refund.html">Cancel &amp; refunds</a></li>
             <li><a href="https://discord.gg/SuZQBCZCKt" target="_blank" rel="noopener">Discord</a></li>
@@ -1218,31 +1316,11 @@
       <div class="bottom">
         <p>&copy; <script>document.write(new Date().getFullYear())</script> Solis AI. Currently in beta, crafted for creators, everywhere. Paid plans billed via Paddle.</p>
         <div class="social">
-          <a href="https://www.instagram.com/solisaivideo/" aria-label="Instagram">
-            <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
-              <path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 1 0 0-12.324zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405a1.441 1.441 0 0 1-2.88 0 1.441 1.441 0 0 1 2.88 0z" />
-            </svg>
-          </a>
-          <a href="https://bsky.app/profile/solisai.bsky.social" aria-label="Bluesky">
-            <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
-              <path d="M12.003 2c-2.265 0-6.29 1.364-6.29 7.325v1.195S3.55 14.96 3.55 17.474c0 .665.17 1.025.396 1.025.116 0 .263-.049.434-.154.852-.527 2.204-1.627 3.352-2.736a7.218 7.218 0 0 0 4.272 1.408 7.218 7.218 0 0 0 4.272-1.408c1.148 1.109 2.5 2.21 3.352 2.736.171.105.318.154.434.154.226 0 .396-.36.396-1.025 0-2.514-2.163-6.954-2.163-6.954V9.325C18.294 3.364 14.268 2 12.003 2z"/>
-            </svg>
-          </a>
-          <a href="https://x.com/solisaivideo" aria-label="X / Twitter">
-            <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
-              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-            </svg>
-          </a>
-          <a href="https://www.youtube.com/@solis_ai" aria-label="YouTube">
-            <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
-              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-            </svg>
-          </a>
-          <a href="https://discord.gg/SuZQBCZCKt" aria-label="Discord">
-            <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
-              <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.331c-1.182 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
-            </svg>
-          </a>
+          <a href="https://www.instagram.com/solisaivideo/" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 1 0 0-12.324zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405a1.441 1.441 0 0 1-2.88 0 1.441 1.441 0 0 1 2.88 0z" /></svg></a>
+          <a href="https://bsky.app/profile/solisai.bsky.social" aria-label="Bluesky"><svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M12.003 2c-2.265 0-6.29 1.364-6.29 7.325v1.195S3.55 14.96 3.55 17.474c0 .665.17 1.025.396 1.025.116 0 .263-.049.434-.154.852-.527 2.204-1.627 3.352-2.736a7.218 7.218 0 0 0 4.272 1.408 7.218 7.218 0 0 0 4.272-1.408c1.148 1.109 2.5 2.21 3.352 2.736.171.105.318.154.434.154.226 0 .396-.36.396-1.025 0-2.514-2.163-6.954-2.163-6.954V9.325C18.294 3.364 14.268 2 12.003 2z"/></svg></a>
+          <a href="https://x.com/solisaivideo" aria-label="X / Twitter"><svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg></a>
+          <a href="https://www.youtube.com/@solis_ai" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" /></svg></a>
+          <a href="https://discord.gg/SuZQBCZCKt" aria-label="Discord"><svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.331c-1.182 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" /></svg></a>
         </div>
       </div>
     </div>
@@ -1251,13 +1329,7 @@
   <script>
   (function() {
     var navbar = document.getElementById('_nav');
-    function onScroll() {
-      if (window.scrollY > 40) {
-        navbar.classList.add('scrolled');
-      } else {
-        navbar.classList.remove('scrolled');
-      }
-    }
+    function onScroll() { if (window.scrollY > 40) { navbar.classList.add('scrolled'); } else { navbar.classList.remove('scrolled'); } }
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
     var navToggle = document.getElementById('_toggle');
@@ -1268,17 +1340,11 @@
     navToggle.addEventListener('click', function() {
       mobileOpen = !mobileOpen;
       if (mobileOpen) {
-        navMobile.style.display = 'flex';
-        iconMenu.style.display = 'none';
-        iconClose.style.display = 'block';
-        navToggle.setAttribute('aria-label', 'Close menu');
-        navToggle.setAttribute('aria-expanded', 'true');
+        navMobile.style.display = 'flex'; iconMenu.style.display = 'none'; iconClose.style.display = 'block';
+        navToggle.setAttribute('aria-label', 'Close menu'); navToggle.setAttribute('aria-expanded', 'true');
       } else {
-        navMobile.style.display = 'none';
-        iconMenu.style.display = 'block';
-        iconClose.style.display = 'none';
-        navToggle.setAttribute('aria-label', 'Open menu');
-        navToggle.setAttribute('aria-expanded', 'false');
+        navMobile.style.display = 'none'; iconMenu.style.display = 'block'; iconClose.style.display = 'none';
+        navToggle.setAttribute('aria-label', 'Open menu'); navToggle.setAttribute('aria-expanded', 'false');
       }
     });
     var scrollLinks = document.querySelectorAll('[data-scroll]');
@@ -1289,12 +1355,8 @@
         var target = document.getElementById(targetId);
         if (target) {
           if (mobileOpen) {
-            mobileOpen = false;
-            navMobile.style.display = 'none';
-            iconMenu.style.display = 'block';
-            iconClose.style.display = 'none';
-            navToggle.setAttribute('aria-label', 'Open menu');
-            navToggle.setAttribute('aria-expanded', 'false');
+            mobileOpen = false; navMobile.style.display = 'none'; iconMenu.style.display = 'block'; iconClose.style.display = 'none';
+            navToggle.setAttribute('aria-label', 'Open menu'); navToggle.setAttribute('aria-expanded', 'false');
           }
           target.scrollIntoView({ behavior: 'smooth' });
         }
@@ -1302,58 +1364,44 @@
     });
     var urlPill = document.getElementById('_pill');
     var urlInput = document.getElementById('_url');
-    urlInput.addEventListener('focus', function() {
-      urlPill.classList.add('focused');
-    });
-    urlInput.addEventListener('blur', function() {
-      urlPill.classList.remove('focused');
-    });
     var ctaPill = document.getElementById('_cta-pill');
     var ctaInput = document.getElementById('_cta-url');
-    if (ctaPill && ctaInput) {
-      ctaInput.addEventListener('focus', function() {
-        ctaPill.classList.add('focused');
+    function goToAppOrLogin() {
+      var goLogin = function() {
+        window.location.href = new URL('login.html', window.location.href).pathname;
+      };
+      try {
+        var host = location.hostname;
+        var local = host === 'localhost' || host === '127.0.0.1';
+        var api = local ? (location.protocol + '//' + host + ':5500/api') : 'https://api.solisai.video/api';
+        fetch(api + '/auth/check', { method: 'GET', credentials: 'include' })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (d) { if (d && d.authenticated && d.user) { window.location.href = '/dashboard'; } else { goLogin(); } })
+          .catch(goLogin);
+      } catch (_) { goLogin(); }
+    }
+    [urlInput, ctaInput].forEach(function(input) {
+      if (!input) return;
+      input.setAttribute('readonly', 'readonly'); input.style.cursor = 'pointer';
+      input.addEventListener('click', function() {
+        var pill = input.id === '_url' ? urlPill : ctaPill;
+        if (pill) pill.classList.add('focused');
+        goToAppOrLogin();
       });
-      ctaInput.addEventListener('blur', function() {
-        ctaPill.classList.remove('focused');
-      });
-    }    document.querySelectorAll('.pill-btn, .cta-btn').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        var goLogin = function() { window.location.href = '/login.html'; };
-        try {
-          var host = location.hostname;
-          var local = host === 'localhost' || host === '127.0.0.1';
-          var api = local
-            ? (location.protocol + '//' + host + ':5500/api')
-            : 'https://api.solisai.video/api';
-          fetch(api + '/auth/check', { method: 'GET', credentials: 'include' })
-            .then(function (r) { return r.ok ? r.json() : null; })
-            .then(function (d) {
-              if (d && d.authenticated && d.user) {
-                window.location.href = '/dashboard';
-              } else {
-                goLogin();
-              }
-            })
-            .catch(goLogin);
-        } catch (_) {
-          goLogin();
-        }
-      });
+      input.addEventListener('focus', function() { input.blur(); });
+    });
+    if (urlPill) { urlPill.style.cursor = 'pointer'; urlPill.addEventListener('click', goToAppOrLogin); }
+    if (ctaPill) { ctaPill.style.cursor = 'pointer'; ctaPill.addEventListener('click', goToAppOrLogin); }
+    document.querySelectorAll('.pill-btn, .cta-btn').forEach(function(btn) {
+      btn.addEventListener('click', function(e) { e.stopPropagation(); goToAppOrLogin(); });
     });
     var faqItems = document.querySelectorAll('.faq');
     faqItems.forEach(function(item) {
       var btn = item.querySelector('.faq-btn');
       btn.addEventListener('click', function() {
         var isOpen = item.classList.contains('open');
-        faqItems.forEach(function(other) {
-          other.classList.remove('open');
-          other.querySelector('.faq-btn').setAttribute('aria-expanded', 'false');
-        });
-        if (!isOpen) {
-          item.classList.add('open');
-          btn.setAttribute('aria-expanded', 'true');
-        }
+        faqItems.forEach(function(other) { other.classList.remove('open'); other.querySelector('.faq-btn').setAttribute('aria-expanded', 'false'); });
+        if (!isOpen) { item.classList.add('open'); btn.setAttribute('aria-expanded', 'true'); }
       });
     });
     var revealObserver = new IntersectionObserver(function(entries) {
@@ -1367,9 +1415,7 @@
         }
       });
     }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
-    document.querySelectorAll('.reveal, .blur-in').forEach(function(el) {
-      revealObserver.observe(el);
-    });
+    document.querySelectorAll('.reveal, .blur-in').forEach(function(el) { revealObserver.observe(el); });
   })();
   </script>
 </body>

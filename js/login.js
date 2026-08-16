@@ -44,7 +44,7 @@ function finishLogoutLanding() {
   const t = localStorage.getItem("theme");
   localStorage.clear();
   if (t) localStorage.setItem("theme", t);
-  window.history.replaceState({}, document.title, "/login.html");
+  window.history.replaceState({}, document.title, "/login");
   const e = window.API_BASE_URL || window.location.origin + "/api";
   fetch(`${e}/auth/logout`, {
     method: "POST",

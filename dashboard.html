@@ -36,7 +36,7 @@
     <link rel="stylesheet" href="/style/ss/ios-pill-nav.css?v=29">
     <link rel="stylesheet" href="/style/ss/mobile-nav.css?v=27">
     <link rel="stylesheet" href="/style/ss/customize.css?v=27">
-    <link rel="stylesheet" href="/style/ss/clips.css?v=53">
+    <link rel="stylesheet" href="/style/ss/clips.css?v=58">
     <link rel="stylesheet" href="/style/ss/profile.css?v=29">
     <link rel="stylesheet" href="/style/ss/tasks-panel-v2-demo.css?v=11">
     <link rel="stylesheet" href="/style/ss/newsfeed-widget.css?v=31">
@@ -63,8 +63,8 @@
     <script src="/js/payment/platform-connections.js?v=3"></script>
     <script src="/js/ui/plan-selector.js?v=63"></script>
     <script src="/js/core/video-preview-system.js?v=2"></script>
-    <script src="/js/s_new/clip-card.js?v=18"></script>
-    <script src="/js/s.js?v=258"></script>
+    <script src="/js/s_new/clip-card.js?v=19"></script>
+    <script src="/js/s.js?v=261"></script>
     <script src="/js/s_new/procc.js?v=2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -3622,15 +3622,22 @@
                     </div>
                 </div>
 
-                <button type="button" class="template-use-fab" id="confirmUseTemplateFab" aria-label="Use Template" title="Use Template">
-                    <span class="template-use-fab-icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M5 12h14"/>
-                            <path d="m13 6 6 6-6 6"/>
+                <div class="template-use-fab-cluster" id="templateUseFabCluster">
+                    <button type="button" class="template-share-fab" id="libraryPreviewShareFab" aria-label="Share preview" title="Copy public preview link">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1em" height="1em" aria-hidden="true">
+                            <path fill="currentColor" d="M386.218667 247.850667c0-102.4 120.405333-157.397333 197.76-90.282667l304.426666 264.32a119.466667 119.466667 0 0 1 1.365334 179.285333l-304.469334 272.170667c-76.970667 68.778667-199.082667 14.122667-199.082666-89.088v-89.173333c-33.024 2.261333-59.306667 6.826667-83.2 15.36-30.592 10.88-61.866667 29.952-98.602667 67.712a76.8 76.8 0 0 1-131.84-53.504c0-98.645333 24.106667-190.976 83.712-261.888 55.253333-65.792 133.973333-104.789333 229.930667-117.845334V247.850667z m147.413333-32.256c-27.648-23.978667-70.613333-4.352-70.613333 32.256v126.208l-0.256 4.309333c-2.218667 21.504-20.437333 38.186667-42.410667 40.021333l-17.194667 1.706667c-173.994667 20.949333-253.824 136.405333-253.824 304.554667 86.997333-89.557333 163.925333-105.386667 270.933334-107.861334a42.026667 42.026667 0 0 1 42.752 42.24v125.226667c0 34.56 38.272 53.845333 65.706666 35.925333l5.376-4.096 304.426667-272.213333a42.666667 42.666667 0 0 0 2.986667-60.714667l-3.413334-3.285333-304.469333-264.277333z"/>
                         </svg>
-                    </span>
-                    <span class="template-use-fab-label" aria-hidden="true">Use Template</span>
-                </button>
+                    </button>
+                    <button type="button" class="template-use-fab" id="confirmUseTemplateFab" aria-label="Use Template" title="Use Template">
+                        <span class="template-use-fab-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M5 12h14"/>
+                                <path d="m13 6 6 6-6 6"/>
+                            </svg>
+                        </span>
+                        <span class="template-use-fab-label" aria-hidden="true">Use Template</span>
+                    </button>
+                </div>
                 </div>
             </div>
 
@@ -3978,9 +3985,16 @@
                     </button>
                     <p class="pro-fine-print"><a href="/premium.html">View plans</a></p>
                 </div>
-                <button class="template-use-confirm-btn" id="confirmUseTemplateBtn">
-                    Use Template
-                </button>
+                <div class="template-use-cta-cluster" id="templateUseCtaCluster">
+                    <button type="button" class="template-preview-share-btn" id="libraryPreviewShareBtn" aria-label="Share preview" title="Copy public preview link">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1em" height="1em" aria-hidden="true">
+                            <path fill="currentColor" d="M386.218667 247.850667c0-102.4 120.405333-157.397333 197.76-90.282667l304.426666 264.32a119.466667 119.466667 0 0 1 1.365334 179.285333l-304.469334 272.170667c-76.970667 68.778667-199.082667 14.122667-199.082666-89.088v-89.173333c-33.024 2.261333-59.306667 6.826667-83.2 15.36-30.592 10.88-61.866667 29.952-98.602667 67.712a76.8 76.8 0 0 1-131.84-53.504c0-98.645333 24.106667-190.976 83.712-261.888 55.253333-65.792 133.973333-104.789333 229.930667-117.845334V247.850667z m147.413333-32.256c-27.648-23.978667-70.613333-4.352-70.613333 32.256v126.208l-0.256 4.309333c-2.218667 21.504-20.437333 38.186667-42.410667 40.021333l-17.194667 1.706667c-173.994667 20.949333-253.824 136.405333-253.824 304.554667 86.997333-89.557333 163.925333-105.386667 270.933334-107.861334a42.026667 42.026667 0 0 1 42.752 42.24v125.226667c0 34.56 38.272 53.845333 65.706666 35.925333l5.376-4.096 304.426667-272.213333a42.666667 42.666667 0 0 0 2.986667-60.714667l-3.413334-3.285333-304.469333-264.277333z"/>
+                        </svg>
+                    </button>
+                    <button class="template-use-confirm-btn" id="confirmUseTemplateBtn">
+                        Use Template
+                    </button>
+                </div>
                 <div class="warning">Solis AI can make mistakes since we're very new.</div>
             </div>
             </div>
@@ -5559,25 +5573,36 @@
 
        function showSsHookInSecondary(text) {
            removeSsHookDemo();
-           const panel = getSsSecondaryPanel();
-           if (!panel) {
+           const cont = previewRoot();
+           const divider = cont?.querySelector('#splitscreenDivider');
+           if (!cont) {
                showLayer(
                    `<div class="solis-hover-teach-caption solis-hover-teach-caption--hook">${text}</div>` +
                    `<div class="solis-hover-teach-label">AI Text Generation</div>`
                );
                return;
            }
-           const cs = getComputedStyle(panel);
-           if (cs.position === 'static') panel.style.position = 'relative';
+           const cs = getComputedStyle(cont);
+           if (cs.position === 'static') cont.style.position = 'relative';
            const el = document.createElement('div');
-           el.className = 'solis-ss-hook-demo';
+           el.className = 'solis-ss-hook-demo solis-ss-hook-demo--divider';
            el.setAttribute('aria-hidden', 'true');
            el.innerHTML = `<span class="solis-ss-hook-demo-text">${text}</span>`;
-           const panelH = panel.clientHeight || 120;
-           const hookPx = Math.max(32, Math.min(72, Math.round(panelH * 0.38)));
+           const panelH = (getSsSecondaryPanel()?.clientHeight) || Math.round((cont.clientHeight || 400) * 0.35);
+           const hookPx = Math.max(14, Math.min(26, Math.round(panelH * 0.12)));
            const textEl = el.querySelector('.solis-ss-hook-demo-text');
            if (textEl) textEl.style.fontSize = hookPx + 'px';
-           panel.appendChild(el);
+           if (divider) {
+               const cR = cont.getBoundingClientRect();
+               const dR = divider.getBoundingClientRect();
+               const mid = dR.top + dR.height / 2 - cR.top;
+               el.style.top = `${Math.round(mid)}px`;
+               el.style.transform = 'translateY(-50%)';
+           } else {
+               el.style.top = '50%';
+               el.style.transform = 'translateY(-50%)';
+           }
+           cont.appendChild(el);
            ssHookEl = el;
        }
 
@@ -6193,8 +6218,8 @@
     overflow:visible;z-index:90;
 }
 .overlay-text-block[data-ai-hook="1"][data-hook-box="1"].selected{
-    background:rgba(255,255,255,.92) !important;
-    border-color:#f97316 !important;
+    background:rgba(255,255,255,.94) !important;
+    border:none !important;
     box-shadow:
         0 0 0 3px rgba(249,115,22,.32),
         0 0 14px rgba(249,115,22,.28),
@@ -6291,7 +6316,8 @@
     animation:none !important;
 }
 .overlay-text-block[data-ai-hook="1"].sub-suggest[data-hook-box="1"]{
-    background:rgba(255,255,255,.92) !important;
+    background:rgba(255,255,255,.94) !important;
+    border:none !important;
 }
 .sub-guide{position:absolute;background:#f97316;pointer-events:none;z-index:200;display:none;}
 .sub-guide.h{left:0;right:0;height:2px;box-shadow:0 0 6px rgba(249,115,22,.7);}
@@ -8491,7 +8517,7 @@
     }
 
     const HOOK_FRAME_H=1920;
-    const HOOK_DEFAULT_BURN=96;
+    const HOOK_DEFAULT_BURN=48;
     function hookBurnToPreviewPx(burnPx, cH){
         const h=Math.max(1, Number(cH)||500);
         return Math.max(14, Math.round(Number(burnPx||HOOK_DEFAULT_BURN)*(h/HOOK_FRAME_H)));
@@ -8656,45 +8682,25 @@
             )));
         }catch(_){ ratio=0.5; }
 
-        const panelEl=resolveAiHookPanelEl(cont);
-        if(panelEl&&cont){
+        let dividerY=Math.round(cH*(inverted?(1-ratio):ratio));
+        const divider=cont?.querySelector('#splitscreenDivider');
+        if(divider){
             const cR=cont.getBoundingClientRect();
-            const pR=panelEl.getBoundingClientRect();
-            if(pR.height>8){
-                const minTop=Math.max(pad,Math.round(pR.top-cR.top)+pad);
-                const maxBottom=Math.min(cH-pad,Math.round(pR.bottom-cR.top)-pad);
-                return{
-                    maxW:Math.max(48,Math.round(pR.width)-pad*2),
-                    maxH:Math.max(24,maxBottom-minTop),
-                    minTop,
-                    maxBottom,
-                    cH,cW,pad,
-                    inPanel:true,
-                };
-            }
+            const dR=divider.getBoundingClientRect();
+            dividerY=Math.round(dR.top+dR.height/2-cR.top);
         }
-
         if(collapsed){
-            return{
-                maxW:Math.max(48,cW-pad*2),
-                maxH:Math.max(28,Math.floor(cH*0.22)),
-                minTop:pad,
-                maxBottom:Math.max(pad*2,Math.floor(cH*0.28)),
-                cH,cW,pad,
-                inPanel:false,
-            };
+            dividerY=Math.round(cH*0.12);
         }
-
-        const secRatio=Math.max(0.08,1-ratio);
-        const minTop=inverted?pad:Math.round(ratio*cH)+pad;
-        const maxBottom=inverted?Math.round(secRatio*cH)-pad:cH-pad;
+        const band=Math.max(36, Math.round(cH*0.14));
         return{
             maxW:Math.max(48,cW-pad*2),
-            maxH:Math.max(24,maxBottom-minTop),
-            minTop:Math.max(pad,minTop),
-            maxBottom:Math.max(pad*2,maxBottom),
+            maxH:band*2,
+            minTop:Math.max(pad, dividerY-band),
+            maxBottom:Math.min(cH-pad, dividerY+band),
             cH,cW,pad,
             inPanel:true,
+            dividerY,
         };
     }
 
@@ -12271,15 +12277,26 @@
         const bBottom=top+bH;
         const overlaps=!(bBottom+gap<=hTop || top>=hBottom+gap);
         if(!overlaps) return false;
-        let next=Math.round(hBottom+gap);
         const divider=cont.querySelector('#splitscreenDivider');
+        let dividerY=null;
         if(divider){
             const cR=cont.getBoundingClientRect();
             const dR=divider.getBoundingClientRect();
-            const dividerY=dR.top+dR.height/2-cR.top;
+            dividerY=dR.top+dR.height/2-cR.top;
+        }
+        const hookOnSeam=dividerY!=null && Math.abs((hTop+hH/2)-dividerY)<Math.max(28,hH*0.7);
+        let next;
+        if(hookOnSeam){
+            next=Math.round(hTop-bH-gap);
             const maxTop=Math.round(dividerY-bH-6);
-            if(hBottom < dividerY - 4){
-                next=Math.min(next, maxTop);
+            next=Math.min(next, maxTop);
+        }else{
+            next=Math.round(hBottom+gap);
+            if(dividerY!=null){
+                const maxTop=Math.round(dividerY-bH-6);
+                if(hBottom < dividerY - 4){
+                    next=Math.min(next, maxTop);
+                }
             }
         }
         next=Math.max(4, Math.min(next, Math.max(4, cH-bH-4)));
@@ -12865,12 +12882,12 @@
 
     function applyAiHookBurnStyle(block, style, cont){
         const cH=(cont&&cont.clientHeight)||500;
-        const burnSize=Math.max(36,Math.min(200,Number(style?.font_size)||HOOK_DEFAULT_BURN));
+        const burnSize=Math.max(28,Math.min(120,Number(style?.font_size)||HOOK_DEFAULT_BURN));
         const previewPx=hookBurnToPreviewPx(burnSize, cH);
         const font=String(style?.font||'Montserrat').replace(/['"]/g,'').split(',')[0].trim()||'Montserrat';
-        const boxOn=style?.box===true||style?.box===1||style?.box==='1';
-        const boxBorder=Math.max(6,Math.min(40,Number(style?.box_border_w)||18));
-        const boxPad=Math.max(4,Math.round(boxBorder*(cH/HOOK_FRAME_H)));
+        const boxOn=!(style?.box===false||style?.box===0||style?.box==='0');
+        const boxBorder=Math.max(6,Math.min(28,Number(style?.box_border_w)||12));
+        const boxPad=Math.max(4,Math.round(boxBorder*(cH/HOOK_FRAME_H)*1.15));
         let fill=String(style?.font_color||style?.color||(boxOn?'#000000':'#ffffff')).trim();
         const locked=!!style?.color_locked;
         if(!locked&&boxOn&&(/^white$/i.test(fill)||/^#fff(fff)?$/i.test(fill)||/^rgb\(\s*255/i.test(fill))){
@@ -12885,18 +12902,18 @@
         block.style.cssText=[
             `font-family:${fontStack(font)}`,
             'font-weight:700',
-            'letter-spacing:-.015em',
+            'letter-spacing:-.01em',
             `font-size:${previewPx}px`,
             `color:${fill}`,
             `text-shadow:${outline}`,
-            boxOn?'background:rgba(255,255,255,.92)':'background:transparent',
-            'border-radius:14px',
-            boxOn?`padding:${boxPad}px ${boxPad+4}px`:'padding:0',
+            boxOn?'background:rgba(255,255,255,.94)':'background:transparent',
+            'border-radius:10px',
+            boxOn?`padding:${boxPad}px ${boxPad+6}px`:'padding:0',
             'left:0','right:0','margin-left:auto','margin-right:auto',
-            'width:fit-content','max-width:calc(100% - 16px)',
-            'transform:none','line-height:1.12','text-align:center',
+            'width:fit-content','max-width:calc(100% - 20px)',
+            'transform:none','line-height:1.2','text-align:center',
             'z-index:82','pointer-events:all','user-select:none',
-            'border:1.5px solid transparent','box-sizing:border-box',
+            'border:none','box-sizing:border-box',
             'white-space:normal','word-break:break-word',
             'top:-9999px',
         ].join(';');
@@ -12904,7 +12921,7 @@
         block.dataset.hookFontFamily=font;
         block.dataset.hookBoxBorderW=String(boxBorder);
         block.dataset.hookBox=boxOn?'1':'0';
-        if(boxOn) block.dataset.hookBoxColor='rgba(255,255,255,.92)';
+        if(boxOn) block.dataset.hookBoxColor='rgba(255,255,255,.94)';
         else delete block.dataset.hookBoxColor;
         if(locked || (style?.font_color||style?.color)) block.dataset.hookColorLocked='1';
         return previewPx;
@@ -12928,27 +12945,12 @@
                 ?? 0.5
             )));
         }catch(_){ ratio=0.5; }
-        const secType=String(
-            (typeof splitscreenSecondaryType!=='undefined'?splitscreenSecondaryType:null)
-            || style?.secondary_type
-            || 'gameplay'
-        );
         const secRatio=collapsed?0:(1-ratio);
-        if(collapsed||secRatio<0.04){
-            return { yRatio:0.12, burnSizeHint:null, blankPx:0 };
-        }
-        if(secType==='blank'||secType==='blank_blur'){
-            const yRatio=inverted?(secRatio*0.5):(ratio+secRatio*0.5);
-            const blankPx=Math.round(secRatio*cH);
-            const previewHint=Math.max(30, Math.min(56, Math.round(blankPx*0.24)));
-            const burnHint=hookPreviewToBurnPx(previewHint, cH);
-            return { yRatio, burnSizeHint:burnHint, blankPx, previewHint };
-        }
-        const yRatio=inverted?(secRatio*0.5):(ratio+secRatio*0.5);
-        const panelPx=Math.round(secRatio*cH);
-        const previewHint=Math.max(28, Math.min(52, Math.round(panelPx*0.22)));
+        const yRatio=collapsed?0.12:(inverted?secRatio:ratio);
+        const panelPx=Math.max(24, Math.round((collapsed?cH*0.22:secRatio*cH)||cH*0.22));
+        const previewHint=Math.max(14, Math.min(26, Math.round(panelPx*0.12)));
         const burnHint=hookPreviewToBurnPx(previewHint, cH);
-        return { yRatio, burnSizeHint:burnHint, blankPx:panelPx, previewHint };
+        return { yRatio, burnSizeHint:burnHint, blankPx:panelPx, previewHint, atDivider:true };
     }
 
     window.placeAiHookInLayout=function(block, cont, style){
@@ -12957,14 +12959,14 @@
         const cH=cont.clientHeight||500;
         const panel=getAiHookPanelBounds(cont);
         const panelH=Math.max(24, panel.maxH||80);
-        const panelCap=Math.max(22, Math.floor(panelH*0.34));
-        const readableFloor=Math.max(16, Math.round(panelH*0.12));
+        const panelCap=Math.max(18, Math.floor(panelH*0.18));
+        const readableFloor=Math.max(12, Math.round(panelH*0.07));
         const rawBurn=Number(style?.font_size);
         const userSized=!!(style?.size_locked||style?.user_sized||block.dataset?.hookUserSized==='1');
-        let burn=Number.isFinite(rawBurn)?Math.max(20,Math.min(200,rawBurn)):null;
+        let burn=Number.isFinite(rawBurn)?Math.max(20,Math.min(120,rawBurn)):null;
         if(layout.burnSizeHint){
             const hint=layout.burnSizeHint;
-            if(!userSized && (burn==null || burn<Math.max(90, hint*0.85))){
+            if(!userSized && (burn==null || burn<Math.max(28, hint*0.7))){
                 burn=hint;
             }
         }else if(burn==null){
@@ -12991,29 +12993,30 @@
             while(guard++<60 && size>12){
                 const h=block.offsetHeight||0;
                 const w=Math.max(block.scrollWidth||0, block.offsetWidth||0);
-                if(h<=panel.maxH+1 && w<=panel.maxW+1) break;
+                if(h<=Math.max(panel.maxH, Math.round(cH*0.2))+1 && w<=panel.maxW+1) break;
                 size-=1;
                 block.style.fontSize=`${size}px`;
             }
             block.dataset.hookFontSize=String(hookPreviewToBurnPx(parseFloat(block.style.fontSize)||size, cH));
         }
-        let yRatio=layout.yRatio;
-        if(style?.y_ratio!=null && Number.isFinite(Number(style.y_ratio))){
-            yRatio=Math.max(0.04,Math.min(0.96,Number(style.y_ratio)));
-        }
         const bH=block.offsetHeight||40;
-        const panelMid=(panel.minTop+panel.maxBottom)/2;
-        let centerY=cH*yRatio;
-        if(centerY<panel.minTop+bH*0.35 || centerY>panel.maxBottom-bH*0.35){
-            centerY=panelMid;
-            yRatio=centerY/Math.max(1,cH);
+        const divider=cont.querySelector('#splitscreenDivider');
+        let centerY;
+        if(divider){
+            const cR=cont.getBoundingClientRect();
+            const dR=divider.getBoundingClientRect();
+            centerY=dR.top+dR.height/2-cR.top;
+        }else if(style?.y_ratio!=null && Number.isFinite(Number(style.y_ratio))){
+            centerY=cH*Math.max(0.04,Math.min(0.96,Number(style.y_ratio)));
+        }else{
+            centerY=cH*layout.yRatio;
         }
-        const top=typeof clampSubtitlePosition==='function'
-            ? clampSubtitlePosition(block, cont, centerY)
-            : Math.max(panel.minTop, Math.min(panel.maxBottom-bH, Math.round(centerY-bH/2)));
+        const top=Math.max(4, Math.min(cH-bH-4, Math.round(centerY-bH/2)));
         if(typeof setSubtitleTop==='function') setSubtitleTop(block, top, cont);
         else block.style.top=`${top}px`;
-        block.dataset.dividerOffsetY='__hook_blank__';
+        const yRatio=(top+bH/2)/Math.max(1,cH);
+        block.dataset.dividerOffsetY='0';
+        block.dataset.dividerPinned='1';
         block.dataset.hookYRatio=String(Number(yRatio).toFixed(3));
         if(typeof preserveAiHookPill==='function') preserveAiHookPill(block);
         return yRatio;
@@ -13118,12 +13121,12 @@
             const m=String(color).match(/(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
             if(m) color='#'+[m[1],m[2],m[3]].map(n=>Number(n).toString(16).padStart(2,'0')).join('');
         }
-        const boxOn=block.dataset.hookBox==='1';
+        const boxOn=block.dataset.hookBox!=='0';
         if(!block.dataset.hookColorLocked){
             if(boxOn&&(!color||/^white$/i.test(color)||/^#fff(fff)?$/i.test(color))) color='#000000';
             if(!boxOn&&(!color||/^black$/i.test(color)||/^#000$/i.test(color))) color='#ffffff';
         }
-        let boxColor='white@0.92';
+        let boxColor='white@0.94';
         const rawBox=block.dataset.hookBoxColor||'';
         const bm=String(rawBox).match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i);
         if(bm){
@@ -13144,7 +13147,7 @@
                 user_sized:block.dataset.hookUserSized==='1',
                 box:boxOn,
                 box_color:boxColor,
-                box_border_w:Math.max(6,Math.min(40,Number(block.dataset.hookBoxBorderW)||18)),
+                box_border_w:Math.max(6,Math.min(28,Number(block.dataset.hookBoxBorderW)||12)),
                 outline_color:'black',
                 outline_width:boxOn?0:4,
                 y_ratio:Number(Number(yRatio).toFixed(3)),
@@ -13235,7 +13238,7 @@
         if((o.forceHook||realHook) && typeof window.ensureLibraryAiHookOverlay==='function'){
             window.ensureLibraryAiHookOverlay(
                 realHook||'AI HOOK',
-                o.hookStyle||{ y_ratio:0.62, font_size:168, font:'Montserrat' },
+                o.hookStyle||{ y_ratio:0.5, font_size:48, font:'Montserrat', box:true, outline_width:0, font_color:'black' },
             );
             try{
                 const cap=cont.querySelector('.sub-text-block:not(.overlay-text-block)');

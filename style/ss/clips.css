@@ -11015,11 +11015,17 @@ body.modal-open { overflow: hidden !important; }
     gap: 0;
     color: #ffffff;
     opacity: 0.85;
-    pointer-events: none;
+    pointer-events: auto;
+    cursor: pointer;
     user-select: none;
     -webkit-user-select: none;
     filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.55));
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+.solis-watermark:focus-visible {
+    outline: 2px solid rgba(255,255,255,0.55);
+    outline-offset: 3px;
+    border-radius: 6px;
 }
 
 .solis-watermark.is-hidden {
@@ -11028,11 +11034,15 @@ body.modal-open { overflow: hidden !important; }
 
 .solis-watermark-mark {
     display: block;
-    height: 36px;
+    height: 58px;
     width: auto;
-    max-width: 42%;
+    max-width: 78%;
     object-fit: contain;
     object-position: left center;
+}
+.solis-watermark[data-variant="classic"] .solis-watermark-mark {
+    height: 52px;
+    max-width: 82%;
 }
 
 .solis-watermark-icon {

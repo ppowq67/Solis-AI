@@ -385,8 +385,8 @@ const PreviewTimeline = (() => {
   let C = 0;
   let P = 0;
   let I = 1;
-  let x = [];
-  let E = -1;
+  let E = [];
+  let x = -1;
   let T = 0;
   let M = 1;
   let B = null;
@@ -490,10 +490,10 @@ const PreviewTimeline = (() => {
   function rebuildSplitsFromLengths(t) {
     if (!t.length) return;
     let i = d;
-    x = [];
+    E = [];
     for (let n = 0; n < t.length - 1; n++) {
       i += Math.max(e, Number(t[n]) || e);
-      if (i < p - .04) x.push(i);
+      if (i < p - .04) E.push(i);
     }
     const n = t.reduce((t, i) => t + Math.max(e, Number(i) || e), 0);
     const r = d + n;
@@ -628,7 +628,7 @@ const PreviewTimeline = (() => {
   }
   const ie = 6;
   function getSegmentBounds() {
-    const e = x.filter(e => e > d + .04 && e < p - .04);
+    const e = E.filter(e => e > d + .04 && e < p - .04);
     return [ d, ...e, p ];
   }
   function makeSegHandle(e, t) {
@@ -686,15 +686,15 @@ const PreviewTimeline = (() => {
     }
     if (t === 0) d = l; else {
       const e = r[t];
-      const i = x.findIndex(t => Math.abs(t - e) < .05);
-      if (i >= 0) x[i] = l; else x.push(l);
+      const i = E.findIndex(t => Math.abs(t - e) < .05);
+      if (i >= 0) E[i] = l; else E.push(l);
     }
     if (t === r.length - 2) p = c; else {
       const e = r[t + 1];
-      const i = x.findIndex(t => Math.abs(t - e) < .05);
-      if (i >= 0) x[i] = c; else x.push(c);
+      const i = E.findIndex(t => Math.abs(t - e) < .05);
+      if (i >= 0) E[i] = c; else E.push(c);
     }
-    x = x.filter(e => e > d + .04 && e < p - .04).sort((e, t) => e - t);
+    E = E.filter(e => e > d + .04 && e < p - .04).sort((e, t) => e - t);
   }
   function paintSegmentMove(e) {
     if (!N || !u || I <= 0) return;
@@ -909,26 +909,26 @@ const PreviewTimeline = (() => {
     }
   }
   function applyBoundTime(e) {
-    if (E === 0) {
+    if (x === 0) {
       d = e;
       return;
     }
     const t = getSegmentBounds();
-    if (E >= t.length - 1) {
+    if (x >= t.length - 1) {
       p = e;
       return;
     }
     if (B != null) {
-      const t = x.findIndex(e => Math.abs(e - B) < .05);
-      if (t >= 0) x[t] = e; else x.push(e);
+      const t = E.findIndex(e => Math.abs(e - B) < .05);
+      if (t >= 0) E[t] = e; else E.push(e);
       B = e;
     } else {
-      x.push(e);
+      E.push(e);
     }
-    x.sort((e, t) => e - t);
+    E.sort((e, t) => e - t);
   }
   function paintBoundFast(e) {
-    if (!u || I <= 0 || E < 0) return;
+    if (!u || I <= 0 || x < 0) return;
     const t = timeFromClientX(e);
     const i = Math.max(T, Math.min(M, t));
     applyBoundTime(i);
@@ -953,7 +953,7 @@ const PreviewTimeline = (() => {
     const n = getSegmentBounds();
     if (t < 0 || t >= n.length) return;
     c = "bound";
-    E = t;
+    x = t;
     T = t === 0 ? 0 : n[t - 1] + e;
     M = t === n.length - 1 ? u : n[t + 1] - e;
     B = t > 0 && t < n.length - 1 ? n[t] : null;
@@ -1310,7 +1310,7 @@ const PreviewTimeline = (() => {
       w = 0;
     }
     c = null;
-    E = -1;
+    x = -1;
     B = null;
     if (e === "start" || e === "end" || e === "bound") {
       m = Math.max(d, Math.min(p, m));
@@ -1457,7 +1457,7 @@ const PreviewTimeline = (() => {
       t.stopPropagation();
       const i = Number.isFinite(a?.currentTime) ? a.currentTime : m;
       const n = splitAt(i);
-      if (!n && x.length >= 4) {
+      if (!n && E.length >= 4) {
         e?.classList.remove("is-flash");
         void e?.offsetWidth;
         e?.classList.add("is-flash");
@@ -1520,7 +1520,7 @@ const PreviewTimeline = (() => {
     N = null;
     D = false;
     f = false;
-    x = [];
+    E = [];
     R = null;
     A = false;
     if (j) {
@@ -1646,7 +1646,7 @@ const PreviewTimeline = (() => {
       i.push(n);
     }
     i.sort((e, t) => e - t);
-    x = i.slice(0, 4);
+    E = i.slice(0, 4);
     R = null;
     cacheTrackMetrics();
     paintChrome({
@@ -1655,7 +1655,7 @@ const PreviewTimeline = (() => {
     return true;
   }
   function clearSplits() {
-    x = [];
+    E = [];
     if (l) {
       cacheTrackMetrics();
       paintChrome({
@@ -1708,16 +1708,16 @@ const PreviewTimeline = (() => {
     cacheTrackMetrics();
     let t = Number.isFinite(e) ? e : m;
     t = Math.max(d + .05, Math.min(p - .05, t));
-    if (x.some(e => Math.abs(e - t) < .08)) {
+    if (E.some(e => Math.abs(e - t) < .08)) {
       paintSegments(t);
       return false;
     }
-    if (x.length >= 4) {
+    if (E.length >= 4) {
       paintSegments(t);
       return false;
     }
-    x.push(t);
-    x.sort((e, t) => e - t);
+    E.push(t);
+    E.sort((e, t) => e - t);
     m = t;
     paintChrome();
     paintSegments(t);
@@ -1725,7 +1725,7 @@ const PreviewTimeline = (() => {
     return true;
   }
   function getSplits() {
-    return x.slice();
+    return E.slice();
   }
   return {
     attach: attach,
@@ -6513,10 +6513,69 @@ class ClipsStudio {
       }
     });
   }
-  buildSolisWatermarkHTML() {
-    const e = String(window.API_BASE_URL || "").replace(/\/api\/?$/, "");
-    const t = e ? `${e}/assets/solisai-watermark.png` : "/assets/solisai-watermark.png";
-    return `\n            <div class="solis-watermark" aria-hidden="true">\n                <img class="solis-watermark-mark" src="${t}" alt="" draggable="false"\n                     onerror="this.style.display='none';const fb=this.nextElementSibling;if(fb)fb.style.display='flex';" />\n                <div class="solis-watermark-fallback" style="display:none;align-items:center;gap:6px;">\n                    <div class="solis-watermark-icon" style="display:flex;">\n                        <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">\n                            <circle cx="50" cy="50" r="9" fill="currentColor"></circle>\n                            <ellipse rx="44" ry="18" cx="50" cy="50" stroke-width="6" transform="rotate(45 50 50)"></ellipse>\n                            <ellipse rx="44" ry="18" cx="50" cy="50" stroke-width="6" transform="rotate(-45 50 50)"></ellipse>\n                        </svg>\n                    </div>\n                    <div class="solis-watermark-label" style="display:block;">SOLIS <span class="ai">AI</span></div>\n                </div>\n            </div>\n        `;
+  buildSolisWatermarkHTML(e = null) {
+    const t = this.getWatermarkVariant(e);
+    const i = String(window.API_BASE_URL || "").replace(/\/api\/?$/, "");
+    const n = t === "classic" ? "Watermark_v4.png" : "solisai-watermark-trim.png";
+    const r = t === "classic" ? "/assets/solis-watermark-classic.png" : "/assets/solisai-watermark.png";
+    const o = i ? `${i}/assets/${n}` : r;
+    const s = t === "classic" ? "Classic Solis AI — click for Made with mark" : "Made with Solis AI — click for classic mark";
+    return `\n            <div class="solis-watermark" data-variant="${t}" role="button" tabindex="0"\n                 title="${s}" aria-label="${s}">\n                <img class="solis-watermark-mark" src="${o}" alt="" draggable="false"\n                     onerror="this.onerror=null;this.src='${r}';if(!this.complete){this.style.display='none';const fb=this.nextElementSibling;if(fb)fb.style.display='flex';}" />\n                <div class="solis-watermark-fallback" style="display:none;align-items:center;gap:6px;">\n                    <div class="solis-watermark-icon" style="display:flex;">\n                        <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">\n                            <circle cx="50" cy="50" r="9" fill="currentColor"></circle>\n                            <ellipse rx="44" ry="18" cx="50" cy="50" stroke-width="6" transform="rotate(45 50 50)"></ellipse>\n                            <ellipse rx="44" ry="18" cx="50" cy="50" stroke-width="6" transform="rotate(-45 50 50)"></ellipse>\n                        </svg>\n                    </div>\n                    <div class="solis-watermark-label" style="display:block;">SOLIS <span class="ai">AI</span></div>\n                </div>\n            </div>\n        `;
+  }
+  getWatermarkVariant(e = null) {
+    if (e === "classic" || e === "branded") return e;
+    try {
+      const e = String(localStorage.getItem("solisWatermarkVariant") || "").toLowerCase();
+      if (e === "classic" || e === "old" || e === "legacy") return "classic";
+      if (e === "branded" || e === "made_with" || e === "new") return "branded";
+    } catch (e) {}
+    return "branded";
+  }
+  setWatermarkVariant(e) {
+    const t = e === "classic" ? "classic" : "branded";
+    try {
+      localStorage.setItem("solisWatermarkVariant", t);
+    } catch (e) {}
+    return t;
+  }
+  cycleWatermarkVariant() {
+    const e = this.getWatermarkVariant() === "classic" ? "branded" : "classic";
+    this.setWatermarkVariant(e);
+    this.refreshSolisWatermarkMarks();
+    return e;
+  }
+  refreshSolisWatermarkMarks() {
+    const e = document.getElementById("templateVideoPreview");
+    const t = e ? [ e ] : Array.from(document.querySelectorAll(".preview-placeholder, #templateVideoPreview"));
+    t.forEach(e => {
+      if (!e) return;
+      const t = e.querySelector(".solis-watermark");
+      if (!t) {
+        this.ensureSolisWatermark(e);
+        return;
+      }
+      t.outerHTML = this.buildSolisWatermarkHTML().trim();
+      this.bindSolisWatermarkClicks(e);
+    });
+    this.updateWatermarkDisplay();
+  }
+  bindSolisWatermarkClicks(e) {
+    const t = e || document.getElementById("templateVideoPreview");
+    if (!t) return;
+    t.querySelectorAll(".solis-watermark").forEach(e => {
+      if (e.dataset.wmBound === "1") return;
+      e.dataset.wmBound = "1";
+      const cycle = e => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!this.shouldShowSolisWatermark()) return;
+        this.cycleWatermarkVariant();
+      };
+      e.addEventListener("click", cycle);
+      e.addEventListener("keydown", e => {
+        if (e.key === "Enter" || e.key === " ") cycle(e);
+      });
+    });
   }
   shouldShowSolisWatermark() {
     const e = document.getElementById("watermarkToggle");
@@ -6529,13 +6588,14 @@ class ClipsStudio {
     if (!t) {
       e.insertAdjacentHTML("beforeend", this.buildSolisWatermarkHTML());
       t = e.querySelector(".solis-watermark");
-    } else if (!t.querySelector(".solis-watermark-mark")) {
+    } else if (!t.querySelector(".solis-watermark-mark") || t.getAttribute("data-variant") !== this.getWatermarkVariant()) {
       t.outerHTML = this.buildSolisWatermarkHTML().trim();
       t = e.querySelector(".solis-watermark");
     }
     if (getComputedStyle(e).position === "static") {
       e.style.position = "relative";
     }
+    this.bindSolisWatermarkClicks(e);
     this.updateWatermarkDisplay();
     return t;
   }
@@ -9862,6 +9922,7 @@ class ClipsStudio {
         template_id: t,
         use_slot_system: true,
         watermark_enabled: l,
+        watermark_variant: typeof this.getWatermarkVariant === "function" ? this.getWatermarkVariant() : localStorage.getItem("solisWatermarkVariant") || "branded",
         effort: (typeof window.getSelectedEffortMode === "function" ? window.getSelectedEffortMode() : null) || "auto",
         ai_text_generation: window.solisAiTitleGenerationEnabled !== false,
         sfx_enabled: false

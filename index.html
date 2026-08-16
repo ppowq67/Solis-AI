@@ -243,6 +243,26 @@
       clip-path: inherit;
       pointer-events: none;
     }
+    .trust-stars .star.star-half {
+      background: linear-gradient(
+        90deg,
+        #fff8d6 0%,
+        #f5d56a 28%,
+        #e0a81a 48%,
+        #a86b08 50%,
+        rgba(180, 160, 120, 0.22) 50%,
+        rgba(160, 150, 130, 0.16) 100%
+      );
+    }
+    .trust-stars .star.star-half::after {
+      background: linear-gradient(
+        90deg,
+        rgba(255,255,255,0.85) 0%,
+        rgba(255,255,255,0.12) 42%,
+        transparent 50%,
+        transparent 100%
+      );
+    }
     .mega-title {
       font-family: var(--font-display), system-ui, sans-serif;
       font-size: clamp(38px, 6.6vw, 68px); font-weight: 800;
@@ -964,7 +984,7 @@
   <div class="page">
   <main>
     <section class="hero">
-        <div class="trust-badge" aria-label="5 star rating">
+        <div class="trust-badge" aria-label="4.5 star rating">
           <div class="trust-rating">
             <img class="trust-laurel is-left" src="assets/laurel-gold.png" alt="" width="80" height="120" decoding="async" />
             <div class="trust-rating-core">
@@ -973,7 +993,7 @@
                 <span class="star"></span>
                 <span class="star"></span>
                 <span class="star"></span>
-                <span class="star"></span>
+                <span class="star star-half"></span>
               </div>
             </div>
             <img class="trust-laurel" src="assets/laurel-gold.png" alt="" width="80" height="120" decoding="async" />

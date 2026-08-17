@@ -1,573 +1,519 @@
 window.getCSRFToken = function() {
-            const metaToken = document.querySelector('meta[name="csrf-token"]');
-            if (metaToken) return metaToken.getAttribute('content');
-
-            const name = 'csrf_token=';
-            const decodedCookie = decodeURIComponent(document.cookie);
-            const cookieArray = decodedCookie.split(';');
-            for (let cookie of cookieArray) {
-                cookie = cookie.trim();
-                if (cookie.indexOf(name) === 0) {
-                    return cookie.substring(name.length);
-                }
-            }
-            return null;
-        };
-
-        window.secureHeaders = function() {
-            return {
-                'Content-Type': 'application/json',
-                ...(window.getCSRFToken() && { 'X-CSRF-Token': window.getCSRFToken() })
-            };
-        };
-
-        window.createDebounce = function(func, delay) {
-            let timeoutId;
-            return function(...args) {
-                clearTimeout(timeoutId);
-                timeoutId = setTimeout(() => func(...args), delay);
-            };
-        };
-
-        window.addEventListener('load', () => {
-            const inputSection = document.querySelector('.input-section');
-            const inputContainer = document.querySelector('.input-container');
-            const currentIndex = parseInt(localStorage.getItem('sidebarActiveIndex') || '0');
-
-            if (inputSection && inputContainer) {
-                if (currentIndex === 0) {
-                    inputSection.classList.add('active');
-                    inputContainer.classList.remove('hidden');
-                    inputSection.style.cssText = 'display: flex !important; visibility: visible !important; opacity: 1 !important; pointer-events: all !important; z-index: 1000 !important;';
-                } else {
-                    inputSection.classList.remove('active');
-                    inputContainer.classList.add('hidden');
-                    inputSection.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; z-index: -10000 !important;';
-                }
-            }
-        });
-
-        window.handleDeleteAllClips = async function() {
-            const confirmed = confirm('This will permanently delete every clip in your library. This cannot be undone.');
-            if (!confirmed) return;
-
-            const doubleConfirmed = confirm('Final confirmation: delete all stored clips?');
-            if (!doubleConfirmed) return;
-
-            try {
-                if (!window.clipsStudio || !window.clipsStudio.libraryItems || window.clipsStudio.libraryItems.length === 0) {
-                    window.clipsStudio?.showNotification('No clips to delete', 'info');
-                    return;
-                }
-
-                const totalClips = window.clipsStudio.libraryItems.length;
-                const clipIds = window.clipsStudio.libraryItems.map(clip => clip.id);
-                let deletedCount = 0;
-
-                try {
-                    const response = await fetch('/api/clips/bulk-delete', {
-                        method: 'DELETE',
-                        credentials: 'include', // ✅ Uses httpOnly cookie
-                        headers: {
-                            'Content-Type': 'application/json',
-                            ...(window.getCSRFToken && { 'X-CSRF-Token': window.getCSRFToken() })
-                        },
-                        body: JSON.stringify({ clip_ids: clipIds })
-                    });
-
-                    if (!response.ok) {
-                        const errorData = await response.json().catch(() => ({}));
-                        const safeMsg = window.getSafeErrorMessage(errorData);
-                        console.error('Bulk delete failed:', response.status, errorData);
-                        window.clipsStudio?.showNotification('Failed to delete clips: ' + safeMsg, 'error');
-                        return;
-                    }
-
-                    const result = await response.json();
-                    deletedCount = result.deleted_count || totalClips;
-                } catch (bulkError) {
-                    console.warn('Bulk delete endpoint failed, falling back to individual deletes:', bulkError);
-
-                    for (const clip of window.clipsStudio.libraryItems) {
-                        try {
-                            const projectId = clip.projectId || clip.project_id;
-                            if (!projectId) continue;
-                            const response = await fetch(`/api/clips/project/${encodeURIComponent(projectId)}`, {
-                                method: 'DELETE',
-                                credentials: 'include', // ✅ Use httpOnly cookie, not localStorage token
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    ...(window.getCSRFToken && { 'X-CSRF-Token': window.getCSRFToken() })
-                                }
-                            });
-
-                            if (response.ok) {
-                                deletedCount++;
-                            } else {
-                                console.error(`Failed to delete clip ${projectId}: ${response.status}`);
-                            }
-
-                            await new Promise(resolve => setTimeout(resolve, 100));
-                        } catch (error) {
-                            console.error(`Exception deleting clip:`, error);
-                        }
-                    }
-                }
-
-                window.clipsStudio.libraryItems = [];
-                window.clipsStudio.saveLibraryItems();
-                window.clipsStudio.updateLibraryView();
-
-                updateStorageBadgeDisplay();
-                window.clipsStudio?.showNotification(`Deleted ${deletedCount}/${totalClips} clips`, 'success');
-
-                setTimeout(() => {
-                    window.location.reload();
-                }, 800);
-            } catch (error) {
-                console.error('Error deleting all clips:', error);
-                window.clipsStudio?.showNotification('Error: Failed to delete clips. Please try again.', 'error');
-            }
-        };
-
-    window.getStoragePhase = function(used, limit, plan) {
-        const safeUsed = Math.max(0, used);
-        const safeLimit = Math.max(1, limit);
-        const ratio = safeUsed / safeLimit;
-        const isFree = !plan || plan === 'free';
-        const orangeAt = isFree ? 0.5 : 0.5;
-        const redAt = isFree ? 0.75 : 0.8;
-        const deleteAt = isFree ? 0.5 : 0.8;
-        const upgradeAt = isFree ? 0.5 : 0.9;
-
-        let phase = 'ok';
-        if (ratio >= 1) phase = 'full';
-        else if (ratio >= redAt) phase = 'high';
-        else if (ratio >= orangeAt) phase = 'half';
-
-        return {
-            phase,
-            ratio,
-            showDeleteAll: ratio >= deleteAt && safeUsed > 0,
-            showUpgrade: isFree && ratio >= upgradeAt
-        };
-    };
-
-    window.isUnlimitedLibrary = function(limit, plan) {
-        const p = (plan || 'free').toString().toLowerCase();
-        if (['basic', 'prime', 'elite'].includes(p)) return true;
-        return limit == null;
-    };
-
-    window.applyStorageBadgeUI = function({ used, limit, plan, unlimited }) {
-        const planNorm = (typeof plan === 'string' && plan.length) ? plan.toLowerCase() : 'free';
-        const isUnlimited = unlimited === true || window.isUnlimitedLibrary(limit, planNorm);
-        const effectiveLimit = isUnlimited ? null : Math.max(1, Number(limit) || 10);
-        const { phase, showDeleteAll, showUpgrade } = isUnlimited
-            ? { phase: 'ok', showDeleteAll: false, showUpgrade: false }
-            : window.getStoragePhase(used, effectiveLimit, planNorm);
-        const planLabel = planNorm.charAt(0).toUpperCase() + planNorm.slice(1);
-        const isWarn = phase === 'high' || phase === 'full';
-
-        const storageBadge = document.getElementById('storageBadge');
-        const usedEl = document.getElementById('storageUsedBadge');
-        const totalEl = document.getElementById('storageTotalBadge');
-        const limitGroup = document.getElementById('storageLimitGroup');
-        const planEl = document.getElementById('storagePlanBadge');
-        const warnIcon = document.getElementById('storageWarnIcon');
-        const deleteAllBtn = document.getElementById('deleteAllClipsBtn');
-        const needMoreUpgradeText = document.getElementById('needMoreUpgradeText');
-
-        if (usedEl) {
-            usedEl.textContent = String(used);
-            usedEl.style.color = '';
-            usedEl.classList.toggle('storage-count-warn', isWarn);
-        }
-        if (totalEl) {
-            if (isUnlimited) {
-                totalEl.textContent = '';
-            } else {
-                totalEl.textContent = String(effectiveLimit);
-            }
-            totalEl.style.color = '';
-            totalEl.classList.toggle('storage-count-warn', !isUnlimited && phase === 'full');
-        }
-        if (limitGroup) limitGroup.hidden = isUnlimited;
-        if (storageBadge) storageBadge.classList.toggle('is-unlimited', isUnlimited);
-        if (planEl) planEl.textContent = planLabel;
-
-        if (storageBadge) {
-            storageBadge.classList.toggle('is-warn', isWarn);
-            storageBadge.classList.toggle('is-full', phase === 'full');
-            storageBadge.title = isUnlimited
-                ? `${used} clip${used === 1 ? '' : 's'} stored — unlimited on your plan`
-                : phase === 'full'
-                ? 'Storage full — delete clips or upgrade your plan'
-                : phase === 'high'
-                    ? `Storage almost full (${used}/${effectiveLimit}) — remove old videos to keep generating`
-                    : 'Library storage';
-        }
-        if (warnIcon) {
-            warnIcon.hidden = !isWarn;
-            warnIcon.setAttribute('aria-hidden', isWarn ? 'false' : 'true');
-        }
-
-        if (deleteAllBtn) deleteAllBtn.style.display = showDeleteAll ? 'inline-flex' : 'none';
-        if (needMoreUpgradeText) needMoreUpgradeText.style.display = showUpgrade ? 'inline' : 'none';
-    };
-
-    window.pulseStorageBadgeWarning = function() {
-        const storageBadge = document.getElementById('storageBadge');
-        if (!storageBadge) return;
-        storageBadge.classList.add('is-warn', 'storage-badge-attention');
-        const warnIcon = document.getElementById('storageWarnIcon');
-        if (warnIcon) {
-            warnIcon.hidden = false;
-            warnIcon.setAttribute('aria-hidden', 'false');
-        }
-        window.clearTimeout(window._storageBadgeAttentionTimer);
-        window._storageBadgeAttentionTimer = window.setTimeout(() => {
-            storageBadge.classList.remove('storage-badge-attention');
-        }, 2200);
-    };
-
-    window.updateLibraryStorageWarning = function() {};
-
-    window.syncStorageLimitsFromStatus = function(limitData) {
-        if (!limitData?.storage?.videos) return null;
-        const used = limitData.storage.videos.used ?? 0;
-        const unlimited = limitData.storage.videos.unlimited === true;
-        const limit = unlimited ? null : (limitData.storage.videos.limit ?? 10);
-        const plan = (limitData.plan?.name || limitData.plan || 'free').toString().toLowerCase();
-        const unlimited = limitData.storage.videos.unlimited === true
-            || ['basic', 'prime', 'elite'].includes(plan);
-        window.applyStorageBadgeUI({ used, limit: unlimited ? null : limit, plan, unlimited });
-        return unlimited ? { phase: 'ok' } : window.getStoragePhase(used, limit, plan);
-    };
-
-    window.updateStorageBadgeDisplay = (function() {
-        let originalFunc = async function() {
-            try {
-                const response = await window.apiRequestCache.dedupFetch('/api/auth/subscription', {
-                    method: 'GET',
-                    credentials: 'include',
-                    headers: { 'Content-Type': 'application/json' }
-                });
-                if (!response.ok) throw new Error(`Failed to fetch subscription: ${response.status}`);
-
-                const data = await response.json();
-                const subscription = data?.subscription;
-                if (!subscription || typeof subscription !== 'object') throw new Error('Missing subscription');
-
-                let videosInLibrary = window.validateNumber(subscription.active_videos, 0, VALIDATION.MAX_VIDEOS_LIMIT, 0);
-                if (window.clipsStudio?.libraryItems?.length != null) {
-                    videosInLibrary = window.clipsStudio.libraryItems.length;
-                }
-                const limit = subscription.library_unlimited
-                    ? null
-                    : window.validateNumber(subscription.video_limit, 1, VALIDATION.MAX_VIDEOS_LIMIT, 10);
-                const planRaw = subscription.plan || 'free';
-                const plan = (typeof planRaw === 'string' && VALIDATION.ALLOWED_PLANS.includes(planRaw.toLowerCase()))
-                    ? planRaw.toLowerCase() : 'free';
-
-                window.applyStorageBadgeUI({
-                    used: videosInLibrary,
-                    limit,
-                    plan,
-                    unlimited: subscription.library_unlimited === true,
-                });
-            } catch (error) {
-                console.error('Failed to fetch storage info from backend:', error);
-            }
-        };
-        return window.createDebounce(originalFunc, 3000);
-    })();
-
-    window.closeUpgradeModal = function() {
-        const modal = document.getElementById('upgradeModalOverlay');
-        if (modal) {
-            modal.style.display = 'none';
-        }
-    };
-
-    window.showUpgradeModal = function(title = 'Unlock more uploads', subtitle = 'Same price for any video length. Upgrade for more uploads per day and more clips per run.') {
-        const modal = document.getElementById('upgradeModalOverlay');
-        const titleEl = document.getElementById('upgradeModalTitle');
-        const subtitleEl = document.getElementById('upgradeModalSubtitle');
-
-        if (modal) {
-            if (titleEl) titleEl.textContent = window.sanitizeString(title);
-            if (subtitleEl) subtitleEl.textContent = window.sanitizeString(subtitle);
-            modal.style.display = 'flex';
-        }
-    };
-
-    document.addEventListener('DOMContentLoaded', function() {
-        try {
-            const savedClipsTab = localStorage.getItem('clipsActiveTab') || 'templates';
-            const clipsTabButtons = document.querySelectorAll('.clips-sub-item');
-            const clipsSubItems = document.querySelectorAll('.clips-sub-item');
-
-            let tabFound = false;
-            clipsSubItems.forEach(item => {
-                if (item.getAttribute('data-tab') === savedClipsTab) {
-                    item.classList.add('active');
-                    switchClipsTab(savedClipsTab, item);
-                    tabFound = true;
-                } else {
-                    item.classList.remove('active');
-                }
-            });
-
-            if (!tabFound && clipsSubItems[0]) {
-                clipsSubItems[0].classList.add('active');
-                switchClipsTab('templates', clipsSubItems[0]);
-            }
-        } catch (err) {
-            console.warn('Failed to restore clips tab state:', err);
-        }
-
-        const paymentSuccess = sessionStorage.getItem('paymentSuccess');
-        if (paymentSuccess) {
-            try {
-                const paymentData = JSON.parse(paymentSuccess);
-
-                if (!paymentData.plan || typeof paymentData.plan !== 'string') {
-                    console.error('Invalid payment data: plan is missing or not a string');
-                    sessionStorage.removeItem('paymentSuccess');
-                    return;
-                }
-
-                if (!VALIDATION.ALLOWED_PLANS.includes(paymentData.plan.toLowerCase())) {
-                    console.error('Invalid payment data: plan not in allowed list');
-                    sessionStorage.removeItem('paymentSuccess');
-                    return;
-                }
-
-                const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-                if (currentUser) {
-                    currentUser.plan = paymentData.plan.toLowerCase();
-                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                }
-            } catch (e) {
-                console.error('Failed to parse payment success data:', e);
-            }
-            sessionStorage.removeItem('paymentSuccess');
-        }
-
-        async function loadUserTierInfo() {
-            try {
-                const response = await fetch('/api/tier/info', {
-                    method: 'GET',
-                    credentials: 'include'  // ✅ Send httpOnly cookie
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    if (!data || typeof data !== 'object') {
-                        throw new Error('Invalid response structure');
-                    }
-                    const tierData = data.data;
-                    if (!tierData || typeof tierData !== 'object') {
-                        throw new Error('Missing tier data in response');
-                    }
-
-                    const currentTierEl = document.getElementById('currentTier');
-                    const tierInfoEl = document.getElementById('tierInfo');
-                    const tierInfoCard = document.getElementById('tierInfoCard');
-
-                    if (currentTierEl && tierData.tier_name && typeof tierData.tier_name === 'string') {
-                        currentTierEl.textContent = window.sanitizeString(tierData.tier_name);
-
-                        if (tierInfoCard) {
-                            tierInfoCard.classList.remove('tier-free', 'tier-basic', 'tier-prime', 'tier-elite');
-                            const planKey = String(tierData.tier_name || 'free').toLowerCase();
-                            tierInfoCard.classList.add(`tier-${planKey}`);
-                            tierInfoCard.setAttribute('data-plan', planKey);
-                        }
-                    }
-
-                    if (tierInfoEl && tierData.generations && typeof tierData.generations.remaining === 'number') {
-                        const remaining = window.validateNumber(tierData.generations.remaining, 0, 999999, 0);
-                        tierInfoEl.textContent = remaining + ' gens left today';
-                    }
-                }
-            } catch (error) {
-            }
-        }
-
-        loadUserTierInfo();
-
-        async function refreshSubscriptionOnDashboard() {
-            try {
-                const response = await fetch('/api/auth/subscription', {
-                    method: 'GET',
-                    credentials: 'include'
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    if (!data || typeof data !== 'object') {
-                        throw new Error('Invalid response structure');
-                    }
-                    const subscription = data.subscription;
-                    if (!subscription || typeof subscription !== 'object') {
-                        throw new Error('Missing subscription in response');
-                    }
-
-                    updateStorageBadgesFromSubscription(subscription);
-                } else {
-                    console.warn('Could not fetch subscription from backend:', response.status);
-                }
-            } catch (error) {
-                console.error('Dashboard failed to fetch subscription:', error);
-            }
-        }
-
-        function updateStorageBadgesFromSubscription(subscription) {
-            if (!subscription || typeof subscription !== 'object') return;
-
-            const planRaw = subscription.plan || 'free';
-            const plan = (typeof planRaw === 'string' && VALIDATION.ALLOWED_PLANS.includes(planRaw.toLowerCase()))
-                ? planRaw.toLowerCase() : 'free';
-            const unlimited = subscription.library_unlimited === true
-                || window.isUnlimitedLibrary?.(null, plan);
-            const videosInLibrary = window.clipsStudio?.libraryItems?.length != null
-                ? window.clipsStudio.libraryItems.length
-                : window.validateNumber(subscription.active_videos, 0, VALIDATION.MAX_VIDEOS_LIMIT, 0);
-            const limit = unlimited
-                ? null
-                : window.validateNumber(subscription.video_limit || subscription.videos_space_limit, 1, VALIDATION.MAX_VIDEOS_LIMIT, 10);
-            const planDisplayName = plan.charAt(0).toUpperCase() + plan.slice(1);
-
-            if (typeof window.applyStorageBadgeUI === 'function') {
-                window.applyStorageBadgeUI({ used: videosInLibrary, limit, plan, unlimited });
-            }
-
-            const storagePlanBadge = document.getElementById('storagePlanBadge');
-            const currentPlanDesc = document.getElementById('currentPlanDesc');
-            if (storagePlanBadge) storagePlanBadge.textContent = planDisplayName;
-            if (currentPlanDesc) currentPlanDesc.textContent = planDisplayName + ' Plan';
-        }
-
-        refreshSubscriptionOnDashboard();
-
-        updateStorageBadgeDisplay();
-
-        const disclaimerBtn = document.getElementById('disclaimerBtn');
-        const disclaimerOverlay = document.querySelector('.url-input-overlay');
-        const urlInput = document.querySelector('.url-input');
-        const urlSubmitBtn = document.querySelector('.url-submit-btn');
-        const checkmarkIcon = document.querySelector('.checkmark-icon');
-
-        const DISCLAIMER_KEY = 'disclaimerAcceptedTime';
-        const WEEK_IN_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
-
-        if (disclaimerBtn && disclaimerOverlay) {
-            const lastAcceptedTime = localStorage.getItem(DISCLAIMER_KEY);
-            const now = Date.now();
-            let shouldShowDisclaimer = false;
-
-            if (!lastAcceptedTime) {
-                shouldShowDisclaimer = true;
-            } else {
-                const timeSinceAccepted = now - parseInt(lastAcceptedTime);
-                if (timeSinceAccepted > WEEK_IN_MS) {
-                    shouldShowDisclaimer = true;
-                }
-            }
-
-            if (!shouldShowDisclaimer) {
-                disclaimerOverlay.classList.add('hidden');
-                disclaimerBtn.classList.add('active');
-                if (checkmarkIcon) checkmarkIcon.style.display = 'block';
-                if (urlInput) urlInput.style.filter = 'none';
-                if (urlSubmitBtn) urlSubmitBtn.style.filter = 'none';
-                if (urlInput) urlInput.style.pointerEvents = 'auto';
-                if (urlSubmitBtn) urlSubmitBtn.style.pointerEvents = 'auto';
-            }
-
-            disclaimerBtn.addEventListener('click', function() {
-                if (!this.classList.contains('active')) {
-                    this.classList.add('active');
-                    if (checkmarkIcon) checkmarkIcon.style.display = 'block';
-
-                    setTimeout(() => {
-                        disclaimerOverlay.classList.add('hidden');
-                        if (urlInput) urlInput.style.filter = 'none';
-                        if (urlSubmitBtn) urlSubmitBtn.style.filter = 'none';
-                        if (urlInput) urlInput.style.pointerEvents = 'auto';
-                        if (urlSubmitBtn) urlSubmitBtn.style.pointerEvents = 'auto';
-                        localStorage.setItem(DISCLAIMER_KEY, Date.now().toString());
-                    }, 300);
-                }
-            });
-        }
-    });
-
-    function switchClipsTab(tabName, buttonElement) {
-        if (window.clipsStudio && typeof window.clipsStudio.switchTab === 'function') {
-            window.clipsStudio.switchTab(tabName);
-            return;
-        }
-
-        const buttons = document.querySelectorAll('.clips-sub-item');
-        buttons.forEach(btn => btn.classList.remove('active'));
-        if (buttonElement) buttonElement.classList.add('active');
-
-        const sections = document.querySelectorAll('.clips-section');
-        sections.forEach(section => {
-            section.classList.remove('active');
-            section.style.display = 'none';
-        });
-
-        const tabToSection = {
-            'templates': 'templatesSection',
-            'create': 'createSection',
-            'library': 'librarySection'
-        };
-
-        const targetSection = document.getElementById(tabToSection[tabName]);
-        if (targetSection) {
-            targetSection.classList.add('active');
-            targetSection.style.display = 'block';
-        }
-
-        if (tabName === 'library') {
-            const studio = window.clipsStudio;
-            if (studio) {
-                const STALE_MS = 30_000;
-                const isStale = !studio._libraryLastLoaded || (Date.now() - studio._libraryLastLoaded) > STALE_MS;
-                const isEmpty = !studio.libraryItems || studio.libraryItems.length === 0;
-                if (isStale || isEmpty) {
-                    studio.showLibrarySkeleton(4);
-                    studio.loadLibraryItems().then(() => {
-                        studio._libraryLastLoaded = Date.now();
-                    });
-                }
-            }
-        }
-
-        try {
-            localStorage.setItem('clipsActiveTab', tabName);
-            localStorage.setItem('clipsStudioCurrentTab', tabName);
-        } catch (err) {
-            console.warn('Failed to save clips tab state:', err);
-        }
-
-        const indicator = document.getElementById('clipsSubPane');
-        if (indicator && buttonElement) {
-            const pill = document.querySelector('.clips-sub-pill');
-            if (!pill) return;
-            const pillStyle = window.getComputedStyle(pill);
-            if (pillStyle.display === 'contents') return;
-            const pillRect = pill.getBoundingClientRect();
-            const buttonRect = buttonElement.getBoundingClientRect();
-            indicator.style.left = (buttonRect.left - pillRect.left) + 'px';
-        }
+  const e = document.querySelector('meta[name="csrf-token"]');
+  if (e) return e.getAttribute("content");
+  const t = "csrf_token=";
+  const i = decodeURIComponent(document.cookie);
+  const o = i.split(";");
+  for (let e of o) {
+    e = e.trim();
+    if (e.indexOf(t) === 0) {
+      return e.substring(t.length);
     }
+  }
+  return null;
+};
 
-    window.switchClipsTab = switchClipsTab;
-    window.goMobileClipsTab = window.goMobileClipsTab || function(tabName, buttonElement) {
-        if (typeof window.switchSection === 'function') window.switchSection('clips');
-        switchClipsTab(tabName, buttonElement || document.querySelector(`.clips-sub-item[data-tab="${tabName}"]`));
-    };
+window.secureHeaders = function() {
+  return {
+    "Content-Type": "application/json",
+    ...window.getCSRFToken() && {
+      "X-CSRF-Token": window.getCSRFToken()
+    }
+  };
+};
+
+window.createDebounce = function(e, t) {
+  let i;
+  return function(...o) {
+    clearTimeout(i);
+    i = setTimeout(() => e(...o), t);
+  };
+};
+
+window.addEventListener("load", () => {
+  const e = document.querySelector(".input-section");
+  const t = document.querySelector(".input-container");
+  const i = parseInt(localStorage.getItem("sidebarActiveIndex") || "0");
+  if (e && t) {
+    if (i === 0) {
+      e.classList.add("active");
+      t.classList.remove("hidden");
+      e.style.cssText = "display: flex !important; visibility: visible !important; opacity: 1 !important; pointer-events: all !important; z-index: 1000 !important;";
+    } else {
+      e.classList.remove("active");
+      t.classList.add("hidden");
+      e.style.cssText = "display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; z-index: -10000 !important;";
+    }
+  }
+});
+
+window.handleDeleteAllClips = async function() {
+  const e = confirm("This will permanently delete every clip in your library. This cannot be undone.");
+  if (!e) return;
+  const t = confirm("Final confirmation: delete all stored clips?");
+  if (!t) return;
+  try {
+    if (!window.clipsStudio || !window.clipsStudio.libraryItems || window.clipsStudio.libraryItems.length === 0) {
+      window.clipsStudio?.showNotification("No clips to delete", "info");
+      return;
+    }
+    const e = window.clipsStudio.libraryItems.length;
+    const t = window.clipsStudio.libraryItems.map(e => e.id);
+    let i = 0;
+    try {
+      const o = await fetch("/api/clips/bulk-delete", {
+        method: "DELETE",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          ...window.getCSRFToken && {
+            "X-CSRF-Token": window.getCSRFToken()
+          }
+        },
+        body: JSON.stringify({
+          clip_ids: t
+        })
+      });
+      if (!o.ok) {
+        const e = await o.json().catch(() => ({}));
+        const t = window.getSafeErrorMessage(e);
+        console.error("Bulk delete failed:", o.status, e);
+        window.clipsStudio?.showNotification("Failed to delete clips: " + t, "error");
+        return;
+      }
+      const n = await o.json();
+      i = n.deleted_count || e;
+    } catch (e) {
+      console.warn("Bulk delete endpoint failed, falling back to individual deletes:", e);
+      for (const e of window.clipsStudio.libraryItems) {
+        try {
+          const t = e.projectId || e.project_id;
+          if (!t) continue;
+          const o = await fetch(`/api/clips/project/${encodeURIComponent(t)}`, {
+            method: "DELETE",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+              ...window.getCSRFToken && {
+                "X-CSRF-Token": window.getCSRFToken()
+              }
+            }
+          });
+          if (o.ok) {
+            i++;
+          } else {
+            console.error(`Failed to delete clip ${t}: ${o.status}`);
+          }
+          await new Promise(e => setTimeout(e, 100));
+        } catch (e) {
+          console.error(`Exception deleting clip:`, e);
+        }
+      }
+    }
+    window.clipsStudio.libraryItems = [];
+    window.clipsStudio.saveLibraryItems();
+    window.clipsStudio.updateLibraryView();
+    updateStorageBadgeDisplay();
+    window.clipsStudio?.showNotification(`Deleted ${i}/${e} clips`, "success");
+    setTimeout(() => {
+      window.location.reload();
+    }, 800);
+  } catch (e) {
+    console.error("Error deleting all clips:", e);
+    window.clipsStudio?.showNotification("Error: Failed to delete clips. Please try again.", "error");
+  }
+};
+
+window.getStoragePhase = function(e, t, i) {
+  const o = Math.max(0, e);
+  const n = Math.max(1, t);
+  const s = o / n;
+  const a = !i || i === "free";
+  const r = a ? .5 : .5;
+  const l = a ? .75 : .8;
+  const c = a ? .5 : .8;
+  const d = a ? .5 : .9;
+  let u = "ok";
+  if (s >= 1) u = "full"; else if (s >= l) u = "high"; else if (s >= r) u = "half";
+  return {
+    phase: u,
+    ratio: s,
+    showDeleteAll: s >= c && o > 0,
+    showUpgrade: a && s >= d
+  };
+};
+
+window.isUnlimitedLibrary = function(e, t) {
+  const i = (t || "free").toString().toLowerCase();
+  if ([ "basic", "prime", "elite" ].includes(i)) return true;
+  return e == null;
+};
+
+window.applyStorageBadgeUI = function({used: e, limit: t, plan: i, unlimited: o}) {
+  const n = typeof i === "string" && i.length ? i.toLowerCase() : "free";
+  const s = o === true || window.isUnlimitedLibrary(t, n);
+  const a = s ? null : Math.max(1, Number(t) || 10);
+  const {phase: r, showDeleteAll: l, showUpgrade: c} = s ? {
+    phase: "ok",
+    showDeleteAll: false,
+    showUpgrade: false
+  } : window.getStoragePhase(e, a, n);
+  const d = n.charAt(0).toUpperCase() + n.slice(1);
+  const u = r === "high" || r === "full";
+  const p = document.getElementById("storageBadge");
+  const w = document.getElementById("storageUsedBadge");
+  const m = document.getElementById("storageTotalBadge");
+  const f = document.getElementById("storageLimitGroup");
+  const g = document.getElementById("storagePlanBadge");
+  const y = document.getElementById("storageWarnIcon");
+  const S = document.getElementById("deleteAllClipsBtn");
+  const b = document.getElementById("needMoreUpgradeText");
+  if (w) {
+    w.textContent = String(e);
+    w.style.color = "";
+    w.classList.toggle("storage-count-warn", u);
+  }
+  if (m) {
+    if (s) {
+      m.textContent = "";
+    } else {
+      m.textContent = String(a);
+    }
+    m.style.color = "";
+    m.classList.toggle("storage-count-warn", !s && r === "full");
+  }
+  if (f) f.hidden = s;
+  if (p) p.classList.toggle("is-unlimited", s);
+  if (g) g.textContent = d;
+  if (p) {
+    p.classList.toggle("is-warn", u);
+    p.classList.toggle("is-full", r === "full");
+    p.title = s ? `${e} clip${e === 1 ? "" : "s"} stored — unlimited on your plan` : r === "full" ? "Storage full — delete clips or upgrade your plan" : r === "high" ? `Storage almost full (${e}/${a}) — remove old videos to keep generating` : "Library storage";
+  }
+  if (y) {
+    y.hidden = !u;
+    y.setAttribute("aria-hidden", u ? "false" : "true");
+  }
+  if (S) S.style.display = l ? "inline-flex" : "none";
+  if (b) b.style.display = c ? "inline" : "none";
+};
+
+window.pulseStorageBadgeWarning = function() {
+  const e = document.getElementById("storageBadge");
+  if (!e) return;
+  e.classList.add("is-warn", "storage-badge-attention");
+  const t = document.getElementById("storageWarnIcon");
+  if (t) {
+    t.hidden = false;
+    t.setAttribute("aria-hidden", "false");
+  }
+  window.clearTimeout(window._storageBadgeAttentionTimer);
+  window._storageBadgeAttentionTimer = window.setTimeout(() => {
+    e.classList.remove("storage-badge-attention");
+  }, 2200);
+};
+
+window.updateLibraryStorageWarning = function() {};
+
+window.syncStorageLimitsFromStatus = function(e) {
+  if (!e?.storage?.videos) return null;
+  const t = e.storage.videos.used ?? 0;
+  const i = (e.plan?.name || e.plan || "free").toString().toLowerCase();
+  const o = e.storage.videos.unlimited === true || [ "basic", "prime", "elite" ].includes(i);
+  const n = o ? null : e.storage.videos.limit ?? 10;
+  window.applyStorageBadgeUI({
+    used: t,
+    limit: n,
+    plan: i,
+    unlimited: o
+  });
+  return o ? {
+    phase: "ok"
+  } : window.getStoragePhase(t, n, i);
+};
+
+window.updateStorageBadgeDisplay = function() {
+  let originalFunc = async function() {
+    try {
+      const e = await window.apiRequestCache.dedupFetch("/api/auth/subscription", {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+      if (!e.ok) throw new Error(`Failed to fetch subscription: ${e.status}`);
+      const t = await e.json();
+      const i = t?.subscription;
+      if (!i || typeof i !== "object") throw new Error("Missing subscription");
+      let o = window.validateNumber(i.active_videos, 0, VALIDATION.MAX_VIDEOS_LIMIT, 0);
+      if (window.clipsStudio?.libraryItems?.length != null) {
+        o = window.clipsStudio.libraryItems.length;
+      }
+      const n = i.library_unlimited ? null : window.validateNumber(i.video_limit, 1, VALIDATION.MAX_VIDEOS_LIMIT, 10);
+      const s = i.plan || "free";
+      const a = typeof s === "string" && VALIDATION.ALLOWED_PLANS.includes(s.toLowerCase()) ? s.toLowerCase() : "free";
+      window.applyStorageBadgeUI({
+        used: o,
+        limit: n,
+        plan: a,
+        unlimited: i.library_unlimited === true
+      });
+    } catch (e) {
+      console.error("Failed to fetch storage info from backend:", e);
+    }
+  };
+  return window.createDebounce(originalFunc, 3e3);
+}();
+
+window.closeUpgradeModal = function() {
+  const e = document.getElementById("upgradeModalOverlay");
+  if (e) {
+    e.style.display = "none";
+  }
+};
+
+window.showUpgradeModal = function(e = "Unlock more uploads", t = "Same price for any video length. Upgrade for more uploads per day and more clips per run.") {
+  const i = document.getElementById("upgradeModalOverlay");
+  const o = document.getElementById("upgradeModalTitle");
+  const n = document.getElementById("upgradeModalSubtitle");
+  if (i) {
+    if (o) o.textContent = window.sanitizeString(e);
+    if (n) n.textContent = window.sanitizeString(t);
+    i.style.display = "flex";
+  }
+};
+
+document.addEventListener("DOMContentLoaded", function() {
+  try {
+    const e = localStorage.getItem("clipsActiveTab") || "templates";
+    const t = document.querySelectorAll(".clips-sub-item");
+    const i = document.querySelectorAll(".clips-sub-item");
+    let o = false;
+    i.forEach(t => {
+      if (t.getAttribute("data-tab") === e) {
+        t.classList.add("active");
+        switchClipsTab(e, t);
+        o = true;
+      } else {
+        t.classList.remove("active");
+      }
+    });
+    if (!o && i[0]) {
+      i[0].classList.add("active");
+      switchClipsTab("templates", i[0]);
+    }
+  } catch (e) {
+    console.warn("Failed to restore clips tab state:", e);
+  }
+  const e = sessionStorage.getItem("paymentSuccess");
+  if (e) {
+    try {
+      const t = JSON.parse(e);
+      if (!t.plan || typeof t.plan !== "string") {
+        console.error("Invalid payment data: plan is missing or not a string");
+        sessionStorage.removeItem("paymentSuccess");
+        return;
+      }
+      if (!VALIDATION.ALLOWED_PLANS.includes(t.plan.toLowerCase())) {
+        console.error("Invalid payment data: plan not in allowed list");
+        sessionStorage.removeItem("paymentSuccess");
+        return;
+      }
+      const i = JSON.parse(localStorage.getItem("currentUser") || "{}");
+      if (i) {
+        i.plan = t.plan.toLowerCase();
+        localStorage.setItem("currentUser", JSON.stringify(i));
+      }
+    } catch (e) {
+      console.error("Failed to parse payment success data:", e);
+    }
+    sessionStorage.removeItem("paymentSuccess");
+  }
+  async function loadUserTierInfo() {
+    try {
+      const e = await fetch("/api/tier/info", {
+        method: "GET",
+        credentials: "include"
+      });
+      if (e.ok) {
+        const t = await e.json();
+        if (!t || typeof t !== "object") {
+          throw new Error("Invalid response structure");
+        }
+        const i = t.data;
+        if (!i || typeof i !== "object") {
+          throw new Error("Missing tier data in response");
+        }
+        const o = document.getElementById("currentTier");
+        const n = document.getElementById("tierInfo");
+        const s = document.getElementById("tierInfoCard");
+        if (o && i.tier_name && typeof i.tier_name === "string") {
+          o.textContent = window.sanitizeString(i.tier_name);
+          if (s) {
+            s.classList.remove("tier-free", "tier-basic", "tier-prime", "tier-elite");
+            const e = String(i.tier_name || "free").toLowerCase();
+            s.classList.add(`tier-${e}`);
+            s.setAttribute("data-plan", e);
+          }
+        }
+        if (n && i.generations && typeof i.generations.remaining === "number") {
+          const e = window.validateNumber(i.generations.remaining, 0, 999999, 0);
+          n.textContent = e + " gens left today";
+        }
+      }
+    } catch (e) {}
+  }
+  loadUserTierInfo();
+  async function refreshSubscriptionOnDashboard() {
+    try {
+      const e = await fetch("/api/auth/subscription", {
+        method: "GET",
+        credentials: "include"
+      });
+      if (e.ok) {
+        const t = await e.json();
+        if (!t || typeof t !== "object") {
+          throw new Error("Invalid response structure");
+        }
+        const i = t.subscription;
+        if (!i || typeof i !== "object") {
+          throw new Error("Missing subscription in response");
+        }
+        updateStorageBadgesFromSubscription(i);
+      } else {
+        console.warn("Could not fetch subscription from backend:", e.status);
+      }
+    } catch (e) {
+      console.error("Dashboard failed to fetch subscription:", e);
+    }
+  }
+  function updateStorageBadgesFromSubscription(e) {
+    if (!e || typeof e !== "object") return;
+    const t = e.plan || "free";
+    const i = typeof t === "string" && VALIDATION.ALLOWED_PLANS.includes(t.toLowerCase()) ? t.toLowerCase() : "free";
+    const o = e.library_unlimited === true || window.isUnlimitedLibrary?.(null, i);
+    const n = window.clipsStudio?.libraryItems?.length != null ? window.clipsStudio.libraryItems.length : window.validateNumber(e.active_videos, 0, VALIDATION.MAX_VIDEOS_LIMIT, 0);
+    const s = o ? null : window.validateNumber(e.video_limit || e.videos_space_limit, 1, VALIDATION.MAX_VIDEOS_LIMIT, 10);
+    const a = i.charAt(0).toUpperCase() + i.slice(1);
+    if (typeof window.applyStorageBadgeUI === "function") {
+      window.applyStorageBadgeUI({
+        used: n,
+        limit: s,
+        plan: i,
+        unlimited: o
+      });
+    }
+    const r = document.getElementById("storagePlanBadge");
+    const l = document.getElementById("currentPlanDesc");
+    if (r) r.textContent = a;
+    if (l) l.textContent = a + " Plan";
+  }
+  refreshSubscriptionOnDashboard();
+  updateStorageBadgeDisplay();
+  const t = document.getElementById("disclaimerBtn");
+  const i = document.querySelector(".url-input-overlay");
+  const o = document.querySelector(".url-input");
+  const n = document.querySelector(".url-submit-btn");
+  const s = document.querySelector(".checkmark-icon");
+  const a = "disclaimerAcceptedTime";
+  const r = 7 * 24 * 60 * 60 * 1e3;
+  if (t && i) {
+    const e = localStorage.getItem(a);
+    const l = Date.now();
+    let c = false;
+    if (!e) {
+      c = true;
+    } else {
+      const t = l - parseInt(e);
+      if (t > r) {
+        c = true;
+      }
+    }
+    if (!c) {
+      i.classList.add("hidden");
+      t.classList.add("active");
+      if (s) s.style.display = "block";
+      if (o) o.style.filter = "none";
+      if (n) n.style.filter = "none";
+      if (o) o.style.pointerEvents = "auto";
+      if (n) n.style.pointerEvents = "auto";
+    }
+    t.addEventListener("click", function() {
+      if (!this.classList.contains("active")) {
+        this.classList.add("active");
+        if (s) s.style.display = "block";
+        setTimeout(() => {
+          i.classList.add("hidden");
+          if (o) o.style.filter = "none";
+          if (n) n.style.filter = "none";
+          if (o) o.style.pointerEvents = "auto";
+          if (n) n.style.pointerEvents = "auto";
+          localStorage.setItem(a, Date.now().toString());
+        }, 300);
+      }
+    });
+  }
+});
+
+function switchClipsTab(e, t) {
+  if (window.clipsStudio && typeof window.clipsStudio.switchTab === "function") {
+    window.clipsStudio.switchTab(e);
+    return;
+  }
+  const i = document.querySelectorAll(".clips-sub-item");
+  i.forEach(e => e.classList.remove("active"));
+  if (t) t.classList.add("active");
+  const o = document.querySelectorAll(".clips-section");
+  o.forEach(e => {
+    e.classList.remove("active");
+    e.style.display = "none";
+  });
+  const n = {
+    templates: "templatesSection",
+    create: "createSection",
+    library: "librarySection"
+  };
+  const s = document.getElementById(n[e]);
+  if (s) {
+    s.classList.add("active");
+    s.style.display = "block";
+  }
+  if (e === "library") {
+    const e = window.clipsStudio;
+    if (e) {
+      const t = 3e4;
+      const i = !e._libraryLastLoaded || Date.now() - e._libraryLastLoaded > t;
+      const o = !e.libraryItems || e.libraryItems.length === 0;
+      if (i || o) {
+        e.showLibrarySkeleton(4);
+        e.loadLibraryItems().then(() => {
+          e._libraryLastLoaded = Date.now();
+        });
+      }
+    }
+  }
+  try {
+    localStorage.setItem("clipsActiveTab", e);
+    localStorage.setItem("clipsStudioCurrentTab", e);
+  } catch (e) {
+    console.warn("Failed to save clips tab state:", e);
+  }
+  const a = document.getElementById("clipsSubPane");
+  if (a && t) {
+    const e = document.querySelector(".clips-sub-pill");
+    if (!e) return;
+    const i = window.getComputedStyle(e);
+    if (i.display === "contents") return;
+    const o = e.getBoundingClientRect();
+    const n = t.getBoundingClientRect();
+    a.style.left = n.left - o.left + "px";
+  }
+}
+
+window.switchClipsTab = switchClipsTab;
+
+window.goMobileClipsTab = window.goMobileClipsTab || function(e, t) {
+  if (typeof window.switchSection === "function") window.switchSection("clips");
+  switchClipsTab(e, t || document.querySelector(`.clips-sub-item[data-tab="${e}"]`));
+};

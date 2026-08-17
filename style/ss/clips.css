@@ -9580,7 +9580,8 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, color 0.25s ease;
 }
 
-.storage-badge.is-unlimited #storageLimitGroup {
+.storage-badge.is-unlimited #storageLimitGroup,
+#storageLimitGroup[hidden] {
     display: none !important;
 }
 

@@ -199,10 +199,13 @@ document.addEventListener("DOMContentLoaded", function() {
     const a = e.library_unlimited === true || [ "basic", "prime", "elite" ].includes(String(s).toLowerCase());
     const r = a ? null : e.video_limit || e.videos_space_limit || 10;
     const c = s.charAt(0).toUpperCase() + s.slice(1);
-    if (t && !a) {
-      t.textContent = r;
+    if (t && !a && r != null) {
+      t.textContent = String(r);
     }
-    if (n) n.hidden = a;
+    if (n) {
+      n.style.display = a ? "none" : "";
+      n.hidden = a;
+    }
     if (i) {
       i.textContent = c;
     }

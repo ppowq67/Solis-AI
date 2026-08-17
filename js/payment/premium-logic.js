@@ -154,8 +154,11 @@ function updateStorageDisplayOnDashboard(n) {
     const t = document.getElementById("storagePlanBadge");
     const s = document.getElementById("storageLimitGroup");
     if (n) n.textContent = a;
-    if (e && !o) e.textContent = i;
-    if (s) s.hidden = o;
+    if (e && !o && i != null) e.textContent = String(i);
+    if (s) {
+      s.style.display = o ? "none" : "";
+      s.hidden = o;
+    }
     if (t) t.textContent = r;
   }
   updateDashboardStorageInfo(n);

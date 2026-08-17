@@ -10186,18 +10186,22 @@ class ClipsStudio {
       }
       try {
         const e = window.clipsStudio?.libraryItems?.length ?? Number(document.getElementById("storageUsedBadge")?.textContent || 0);
-        const t = Number(document.getElementById("storageTotalBadge")?.textContent || 0) || 1;
-        const i = (document.getElementById("storagePlanBadge")?.textContent || "free").toLowerCase();
+        const t = (document.getElementById("storagePlanBadge")?.textContent || "free").toLowerCase();
+        const i = typeof window.isUnlimitedLibrary === "function" && window.isUnlimitedLibrary(null, t);
+        const n = i ? null : Number(document.getElementById("storageTotalBadge")?.textContent || 0) || 10;
         if (typeof window.applyStorageBadgeUI === "function") {
           window.applyStorageBadgeUI({
             used: e,
-            limit: t,
-            plan: i
+            limit: n,
+            plan: t,
+            unlimited: i
           });
         }
-        const n = window.getStoragePhase?.(e, t, i)?.phase;
-        if ((n === "high" || n === "full") && typeof window.pulseStorageBadgeWarning === "function") {
-          window.pulseStorageBadgeWarning();
+        if (!i) {
+          const i = window.getStoragePhase?.(e, n, t)?.phase;
+          if ((i === "high" || i === "full") && typeof window.pulseStorageBadgeWarning === "function") {
+            window.pulseStorageBadgeWarning();
+          }
         }
       } catch (e) {}
       if (solisWSClient && y.project_id) {
@@ -11476,16 +11480,18 @@ class ClipsStudio {
   }
   updateStorageDisplay(e) {
     const t = this.libraryItems.length;
-    const i = e.video_limit || e.videos_space_limit || 10;
-    const n = (e.plan || "free").toLowerCase();
+    const i = (e.plan || "free").toLowerCase();
+    const n = e.library_unlimited === true || typeof window.isUnlimitedLibrary === "function" && window.isUnlimitedLibrary(null, i);
+    const r = n ? null : e.video_limit || e.videos_space_limit || 10;
     if (typeof window.applyStorageBadgeUI === "function") {
       window.applyStorageBadgeUI({
         used: t,
-        limit: i,
-        plan: n
+        limit: r,
+        plan: i,
+        unlimited: n
       });
     }
-    safeLog(`📊 Library storage: ${t} / ${i} (${n})`);
+    safeLog(n ? `📊 Library storage: ${t} clips (${i})` : `📊 Library storage: ${t} / ${r} (${i})`);
   }
   handleSubscriptionExpiration() {
     if (!this.loadAndDisplayStorageInfo) return;

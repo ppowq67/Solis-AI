@@ -58,23 +58,23 @@ function createConfettiEffect() {
     const o = e[Math.floor(Math.random() * e.length)];
     const a = n[Math.floor(Math.random() * n.length)];
     const i = Math.random() * 12 + 6;
-    let r, s, d, c;
-    const l = Math.floor(Math.random() * 3);
-    if (l === 0) {
+    let r, s, d, l;
+    const c = Math.floor(Math.random() * 3);
+    if (c === 0) {
       r = Math.random() * 100;
       s = -10;
       d = 45 + Math.random() * 10;
-      c = 40 + Math.random() * 20;
-    } else if (l === 1) {
+      l = 40 + Math.random() * 20;
+    } else if (c === 1) {
       r = -10;
       s = 60 + Math.random() * 40;
       d = 45 + Math.random() * 10;
-      c = 40 + Math.random() * 20;
+      l = 40 + Math.random() * 20;
     } else {
       r = 110;
       s = 60 + Math.random() * 40;
       d = 45 + Math.random() * 10;
-      c = 40 + Math.random() * 20;
+      l = 40 + Math.random() * 20;
     }
     let p = "";
     if (o === "circle") {
@@ -82,7 +82,7 @@ function createConfettiEffect() {
     } else if (o === "triangle") {
       p = `clip-path: polygon(50% 0%, 0% 100%, 100% 100%);`;
     }
-    t.style.cssText = `\n            position: fixed;\n            width: ${i}px;\n            height: ${i}px;\n            background-color: ${a};\n            ${p}\n            left: ${r}%;\n            top: ${s}%;\n            pointer-events: none;\n            z-index: 9999;\n            animation: confetti-explosion 2.5s ease-out forwards;\n            animation-delay: ${Math.random() * .5}s;\n            --end-left: ${d}%;\n            --end-top: ${c}%;\n        `;
+    t.style.cssText = `\n            position: fixed;\n            width: ${i}px;\n            height: ${i}px;\n            background-color: ${a};\n            ${p}\n            left: ${r}%;\n            top: ${s}%;\n            pointer-events: none;\n            z-index: 9999;\n            animation: confetti-explosion 2.5s ease-out forwards;\n            animation-delay: ${Math.random() * .5}s;\n            --end-left: ${d}%;\n            --end-top: ${l}%;\n        `;
     document.body.appendChild(t);
     setTimeout(() => t.remove(), 3e3);
   }
@@ -133,27 +133,30 @@ function updateStorageDisplayOnDashboard(n) {
       videosPerDay: 10
     }
   };
-  const t = n.plan || "free";
-  const o = e[t] || e.free;
-  const a = document.getElementById("storageUsedBadge");
-  const i = document.getElementById("storageTotalBadge");
-  const r = document.getElementById("storagePlanBadge");
-  let s = 0;
+  const t = (n.plan || "free").toLowerCase();
+  const o = n.library_unlimited === true || [ "basic", "prime", "elite" ].includes(t);
+  let a = 0;
   if (window.clipsStudio && window.clipsStudio.libraryItems) {
-    s = window.clipsStudio.libraryItems.length;
+    a = window.clipsStudio.libraryItems.length;
   }
-  const d = n.video_limit || o.videosStorage;
-  const c = n.plan_name || t.charAt(0).toUpperCase() + t.slice(1);
+  const i = o ? null : n.video_limit || 10;
+  const r = n.plan_name || t.charAt(0).toUpperCase() + t.slice(1);
   if (typeof window.applyStorageBadgeUI === "function") {
     window.applyStorageBadgeUI({
-      used: s,
-      limit: d,
-      plan: t
+      used: a,
+      limit: i,
+      plan: t,
+      unlimited: o
     });
   } else {
-    if (a) a.textContent = s;
-    if (i) i.textContent = d;
-    if (r) r.textContent = c;
+    const n = document.getElementById("storageUsedBadge");
+    const e = document.getElementById("storageTotalBadge");
+    const t = document.getElementById("storagePlanBadge");
+    const s = document.getElementById("storageLimitGroup");
+    if (n) n.textContent = a;
+    if (e && !o) e.textContent = i;
+    if (s) s.hidden = o;
+    if (t) t.textContent = r;
   }
   updateDashboardStorageInfo(n);
   if (window.clipsStudio && typeof window.clipsStudio.loadAndDisplayStorageInfo === "function") {

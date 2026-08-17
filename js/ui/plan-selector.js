@@ -655,10 +655,13 @@
       c = Date.now();
       const r = l.library || l.saved_videos;
       if (r && typeof window.applyStorageBadgeUI === "function") {
+        const e = (l.tier || "free").toLowerCase();
+        const t = r.unlimited === true || typeof window.isUnlimitedLibrary === "function" && window.isUnlimitedLibrary(null, e);
         window.applyStorageBadgeUI({
           used: r.used ?? 0,
-          limit: r.limit ?? r.max_videos ?? 2,
-          plan: l.tier || "free"
+          limit: t ? null : r.limit ?? r.max_videos ?? 10,
+          plan: e,
+          unlimited: t
         });
       }
       return l;

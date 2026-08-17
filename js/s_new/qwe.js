@@ -292,7 +292,7 @@ window.closeUpgradeModal = function() {
   }
 };
 
-window.showUpgradeModal = function(e = "Unlock more uploads", t = "Same price for any video length. Upgrade for more uploads per day and more clips per run.") {
+window.showUpgradeModal = function(e = "Unlock more uploads", t = "Upgrade for more uploads per day, unlimited clips in your library, and more clips per run.") {
   const i = document.getElementById("upgradeModalOverlay");
   const n = document.getElementById("upgradeModalTitle");
   const o = document.getElementById("upgradeModalSubtitle");

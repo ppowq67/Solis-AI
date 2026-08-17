@@ -114,6 +114,8 @@ class GenerationProgressSpinner {
     this.POLLING_INTERVAL = 4500;
     this.POLLING_INTERVAL_WS = 12e3;
     this.WS_FRESH_MS = 1e4;
+    this.STUCK_PROGRESS_MS = 4 * 60 * 1e3;
+    this.STUCK_FAIL_MS = 25 * 60 * 1e3;
     this.pollingTimer = null;
     this.wsHandlersSetup = false;
     this._completionHandled = false;
@@ -389,12 +391,75 @@ class GenerationProgressSpinner {
     }
     if (this.todoPanel) this.todoPanel.classList.add("is-error-state");
   }
+  _showStuckBanner(e) {
+    this._ensureDomRefs();
+    const t = e || "We're having trouble with our servers right now — sorry about that. " + "Your generation is still running and should continue when things settle.";
+    if (this.errorBanner) {
+      this.errorBanner.textContent = t;
+      this.errorBanner.hidden = false;
+      this.errorBanner.classList.add("is-visible", "is-stuck");
+    }
+    if (this.todoPanel) {
+      this.todoPanel.classList.remove("is-error-state");
+      this.todoPanel.classList.add("is-stuck-state");
+    }
+    if (this.launcher) {
+      this.launcher.classList.remove("is-error", "is-complete");
+      this.launcher.classList.add("is-stuck", "is-active");
+    }
+    if (this.progressCircle) {
+      this.progressCircle.style.stroke = "#eab308";
+    }
+    if (this.progressTooltip) {
+      this.progressTooltip.textContent = "Still working — servers are slow";
+    }
+    if (this.taskCounter) {
+      this.taskCounter.textContent = "Hang tight";
+    }
+  }
+  _clearStuckBanner() {
+    if (this.errorBanner) {
+      this.errorBanner.classList.remove("is-stuck");
+    }
+    if (this.todoPanel) {
+      this.todoPanel.classList.remove("is-stuck-state");
+    }
+    if (this.launcher) {
+      this.launcher.classList.remove("is-stuck");
+    }
+  }
   _hideErrorBanner() {
     if (this.errorBanner) {
       this.errorBanner.hidden = true;
-      this.errorBanner.classList.remove("is-visible");
+      this.errorBanner.classList.remove("is-visible", "is-stuck");
     }
-    if (this.todoPanel) this.todoPanel.classList.remove("is-error-state");
+    if (this.todoPanel) {
+      this.todoPanel.classList.remove("is-error-state", "is-stuck-state");
+    }
+    if (this.launcher) {
+      this.launcher.classList.remove("is-stuck");
+    }
+  }
+  _maybeMarkStuck(e, t) {
+    if (!t) return;
+    const s = Date.now();
+    const i = t._lastProgressAt || t.startTime || s;
+    const r = t._lastProgressValue ?? t.progress ?? 0;
+    const n = s - i >= this.STUCK_PROGRESS_MS;
+    const a = t._pollMisses || 0;
+    if (n && t.progress < 100 && t.progress === r) {
+      this._showStuckBanner();
+      return;
+    }
+    if (a >= 2) {
+      this._showStuckBanner();
+    }
+  }
+  _shouldFailFromStuck(e) {
+    if (!e) return false;
+    const t = Date.now();
+    const s = e._lastProgressAt || e.startTime || t;
+    return t - s >= this.STUCK_FAIL_MS || (e._pollMisses || 0) >= 12;
   }
   async _resolveRemovedProject(e) {
     const t = await this._fetchProjectStatus(e);
@@ -402,8 +467,10 @@ class GenerationProgressSpinner {
       const t = this.activeGenerations.get(e);
       const s = (t?._pollMisses || 0) + 1;
       if (t) t._pollMisses = s;
-      if (s < 3) return;
-      this.failGeneration(e, "There was an error — try again");
+      this._maybeMarkStuck(e, t);
+      if (this._shouldFailFromStuck(t)) {
+        this.failGeneration(e, "There was an error — try again");
+      }
       return;
     }
     const s = this.activeGenerations.get(e);
@@ -757,7 +824,9 @@ class GenerationProgressSpinner {
         progress: Math.max(0, Math.min(100, t || 0)),
         message: s || "Resuming...",
         templateId: l,
-        templateOptions: c
+        templateOptions: c,
+        _lastProgressAt: Date.now(),
+        _lastProgressValue: Math.max(0, Math.min(100, t || 0))
       });
     }
     this._saveTemplateMeta(e, l, c);
@@ -1175,7 +1244,10 @@ class GenerationProgressSpinner {
     const l = t > o.progress;
     const c = s && s !== o.message;
     const h = r && JSON.stringify(r) !== JSON.stringify(o.queueInfo || null);
-    if (!i && !l && !c && !h) return;
+    if (!i && !l && !c && !h) {
+      this._maybeMarkStuck(n, o);
+      return;
+    }
     if (a) {
       o.progress = Math.min(t, 2);
     } else {
@@ -1183,6 +1255,12 @@ class GenerationProgressSpinner {
     }
     if (s) o.message = s;
     if (r) o.queueInfo = r; else if (!this._isQueueWaitingMessage(o.message)) o.queueInfo = null;
+    if (l || c) {
+      o._lastProgressAt = Date.now();
+      o._lastProgressValue = o.progress;
+      o._pollMisses = 0;
+      this._clearStuckBanner();
+    }
     this._syncCancelLockOnSubmitButton(t, s);
     this._ensureDomRefs();
     this._syncDisplayFromActive();
@@ -1521,8 +1599,9 @@ class GenerationProgressSpinner {
     if (this.wrapper) this.wrapper.style.display = "flex";
     this._ensureTaskList();
     this._markTasksFailed();
+    this._clearStuckBanner();
     if (this.launcher) {
-      this.launcher.classList.remove("is-complete");
+      this.launcher.classList.remove("is-complete", "is-stuck");
       this.launcher.classList.add("is-error");
     }
     if (this.progressCircle) {
@@ -1623,7 +1702,8 @@ class GenerationProgressSpinner {
         if (!i) {
           const e = (s._pollMisses || 0) + 1;
           s._pollMisses = e;
-          if (e >= 3) {
+          this._maybeMarkStuck(t, s);
+          if (this._shouldFailFromStuck(s)) {
             await this._resolveRemovedProject(t);
           }
           continue;

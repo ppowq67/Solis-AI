@@ -219,6 +219,33 @@
     font-size: 11px;
 }
 
+.generation-launcher.is-stuck {
+    box-shadow: 0 0 0 2px rgba(234, 179, 8, 0.45), 0 8px 28px rgba(234, 179, 8, 0.18);
+}
+
+.generation-launcher.is-stuck .generation-progress-circle {
+    stroke: #eab308 !important;
+}
+
+.generation-launcher.is-stuck .generation-progress-text {
+    color: #ca8a04;
+}
+
+.generation-todo-panel.is-stuck-state {
+    border-color: rgba(234, 179, 8, 0.45);
+    box-shadow: 0 12px 40px rgba(234, 179, 8, 0.12);
+}
+
+.generation-todo-panel.is-stuck-state .generation-todo-counter {
+    color: #ca8a04;
+}
+
+.generation-error-banner.is-stuck {
+    background: linear-gradient(135deg, rgba(234, 179, 8, 0.14), rgba(202, 138, 4, 0.08));
+    border-bottom-color: rgba(234, 179, 8, 0.35);
+    color: #854d0e;
+}
+
 .generation-error-banner {
     display: none;
     margin: 0;

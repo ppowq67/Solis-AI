@@ -12333,7 +12333,7 @@ class ClipsStudio {
       if (e) {
         this.processingItems = JSON.parse(e);
         const t = Date.now();
-        const i = 24 * 60 * 60 * 1e3;
+        const i = 2 * 60 * 60 * 1e3;
         this.processingItems = this.processingItems.filter(e => {
           if (e.status === "completed" || e.status === "failed") {
             safeLog(`🧹 Cleaning up ${e.status} item: ${e.name}`);

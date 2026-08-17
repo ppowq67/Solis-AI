@@ -197,13 +197,12 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 0;
-      perspective: 880px;
-      transform-style: preserve-3d;
+      gap: 4px;
+      perspective: 720px;
     }
     .trust-laurel {
-      width: clamp(44px, 6vw, 62px);
-      height: clamp(62px, 8.2vw, 86px);
+      width: clamp(42px, 5.8vw, 58px);
+      height: clamp(58px, 7.8vw, 80px);
       flex-shrink: 0;
       display: block;
       object-fit: contain;
@@ -213,28 +212,23 @@
       user-select: none;
       -webkit-user-select: none;
       pointer-events: none;
-      transform-style: preserve-3d;
-      backface-visibility: hidden;
-      will-change: transform;
+      transform-origin: center center;
     }
     .trust-laurel.is-left {
-      transform: rotate(-86deg) rotateY(26deg) scaleX(-1);
-      transform-origin: 58% 52%;
-      margin-right: -6px;
+      transform: scaleX(-1) rotate(-14deg) rotateY(14deg);
+      margin-right: -2px;
     }
     .trust-laurel.is-right {
-      transform: rotate(86deg) rotateY(-26deg);
-      transform-origin: 42% 52%;
-      margin-left: -6px;
+      transform: rotate(14deg) rotateY(-14deg);
+      margin-left: -2px;
     }
     .trust-rating-core {
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 0 8px;
+      padding: 0 6px;
       position: relative;
       z-index: 1;
-      transform: translateZ(12px);
     }
     .trust-stars {
       display: inline-flex;
@@ -245,58 +239,53 @@
     }
     .trust-stars .star {
       --star-size: clamp(20px, 2.65vw, 26px);
+      --star-clip: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
       width: var(--star-size);
       height: var(--star-size);
       flex-shrink: 0;
       display: block;
       position: relative;
-      background:
-        radial-gradient(circle at 34% 26%, rgba(255, 252, 230, 0.98) 0%, rgba(255, 252, 230, 0) 42%),
-        linear-gradient(148deg, #fff9df 0%, #ffe992 16%, #f3c43a 42%, #dc9812 68%, #a86b08 100%);
-      -webkit-clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+      background: transparent;
       filter:
-        drop-shadow(0 1px 0 rgba(255, 255, 255, 0.55))
-        drop-shadow(0 1px 2px rgba(130, 75, 0, 0.35))
-        drop-shadow(0 3px 7px rgba(120, 70, 0, 0.28));
+        drop-shadow(0 0 0 #7a4808)
+        drop-shadow(0 0 0.55px #7a4808)
+        drop-shadow(0 0 1px #6b3f05)
+        drop-shadow(0 1.5px 3px rgba(70, 40, 0, 0.28));
     }
     .trust-stars .star::before {
       content: '';
       position: absolute;
-      inset: 12% 14% 38% 16%;
-      background: radial-gradient(circle at 40% 35%, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 72%);
-      -webkit-clip-path: inherit;
-      clip-path: inherit;
+      inset: 0;
+      background:
+        radial-gradient(circle at 34% 28%, rgba(255, 248, 210, 0.95) 0%, rgba(255, 248, 210, 0) 40%),
+        linear-gradient(148deg, #ffc933 0%, #f0a812 38%, #d4820a 72%, #9a5806 100%);
+      -webkit-clip-path: var(--star-clip);
+      clip-path: var(--star-clip);
       pointer-events: none;
-      opacity: 0.9;
     }
     .trust-stars .star::after {
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(128deg, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.08) 38%, transparent 62%);
-      -webkit-clip-path: inherit;
-      clip-path: inherit;
+      box-shadow: inset 0 0 0 1.25px #8a5208, inset 0 0 0 2px rgba(255, 255, 255, 0.35);
+      -webkit-clip-path: var(--star-clip);
+      clip-path: var(--star-clip);
       pointer-events: none;
     }
-    .trust-stars .star.star-half {
+    .trust-stars .star.star-half::before {
       background:
-        radial-gradient(circle at 34% 26%, rgba(255, 252, 230, 0.98) 0%, rgba(255, 252, 230, 0) 42%),
+        radial-gradient(circle at 34% 28%, rgba(255, 248, 210, 0.95) 0%, rgba(255, 248, 210, 0) 40%),
         linear-gradient(
           90deg,
-          #fff9df 0%,
-          #ffe992 22%,
-          #f3c43a 44%,
-          #dc9812 49.5%,
-          rgba(200, 185, 155, 0.28) 50%,
-          rgba(180, 170, 150, 0.18) 100%
+          #ffc933 0%,
+          #f0a812 42%,
+          #d4820a 49.5%,
+          rgba(190, 175, 150, 0.35) 50%,
+          rgba(190, 175, 150, 0.22) 100%
         );
     }
-    .trust-stars .star.star-half::before {
-      background: linear-gradient(90deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.2) 46%, transparent 50%);
-    }
     .trust-stars .star.star-half::after {
-      background: linear-gradient(128deg, rgba(255,255,255,0.55) 0%, transparent 48%, transparent 100%);
+      box-shadow: inset 0 0 0 1.25px #8a5208, inset 0 0 0 2px rgba(255, 255, 255, 0.28);
     }
     .mega-title {
       font-family: var(--font-display), system-ui, sans-serif;

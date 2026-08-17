@@ -190,28 +190,25 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   }
   function updateStorageBadgesFromSubscription(e) {
-    if (!e) return;
-    const t = document.getElementById("storageTotalBadge");
-    const i = document.getElementById("storagePlanBadge");
-    const o = document.getElementById("currentPlanDesc");
-    const n = document.getElementById("storageLimitGroup");
-    const s = e.plan || "free";
-    const a = e.library_unlimited === true || [ "basic", "prime", "elite" ].includes(String(s).toLowerCase());
-    const r = a ? null : e.video_limit || e.videos_space_limit || 10;
-    const c = s.charAt(0).toUpperCase() + s.slice(1);
-    if (t && !a && r != null) {
-      t.textContent = String(r);
+    if (!e || typeof e !== "object") return;
+    const t = e.plan || "free";
+    const i = String(t).toLowerCase().replace(/\s+plan\s*$/, "").trim();
+    const o = e.library_unlimited === true || typeof window.isUnlimitedLibrary === "function" && window.isUnlimitedLibrary(null, i);
+    const n = window.clipsStudio?.libraryItems?.length != null ? window.clipsStudio.libraryItems.length : Math.max(0, Number(e.active_videos) || 0);
+    const s = o ? null : Math.max(1, Number(e.video_limit || e.videos_space_limit) || 10);
+    if (typeof window.applyStorageBadgeUI === "function") {
+      window.applyStorageBadgeUI({
+        used: n,
+        limit: s,
+        plan: i,
+        unlimited: o
+      });
     }
-    if (n) {
-      n.style.display = a ? "none" : "";
-      n.hidden = a;
-    }
-    if (i) {
-      i.textContent = c;
-    }
-    if (o) {
-      o.textContent = c + " Plan";
-    }
+    const a = i.charAt(0).toUpperCase() + i.slice(1);
+    const r = document.getElementById("storagePlanBadge");
+    const l = document.getElementById("currentPlanDesc");
+    if (r) r.textContent = a;
+    if (l) l.textContent = a + " Plan";
   }
   refreshSubscriptionOnDashboard();
   updateStorageBadgeDisplay();
@@ -224,17 +221,17 @@ document.addEventListener("DOMContentLoaded", function() {
   const r = 7 * 24 * 60 * 60 * 1e3;
   if (t && i) {
     const e = localStorage.getItem(a);
-    const c = Date.now();
-    let l = false;
+    const l = Date.now();
+    let c = false;
     if (!e) {
-      l = true;
+      c = true;
     } else {
-      const t = c - parseInt(e);
+      const t = l - parseInt(e);
       if (t > r) {
-        l = true;
+        c = true;
       }
     }
-    if (!l) {
+    if (!c) {
       i.classList.add("hidden");
       t.classList.add("active");
       if (s) s.style.display = "block";

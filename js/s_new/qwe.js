@@ -3,8 +3,8 @@ window.getCSRFToken = function() {
   if (e) return e.getAttribute("content");
   const t = "csrf_token=";
   const i = decodeURIComponent(document.cookie);
-  const o = i.split(";");
-  for (let e of o) {
+  const n = i.split(";");
+  for (let e of n) {
     e = e.trim();
     if (e.indexOf(t) === 0) {
       return e.substring(t.length);
@@ -24,9 +24,9 @@ window.secureHeaders = function() {
 
 window.createDebounce = function(e, t) {
   let i;
-  return function(...o) {
+  return function(...n) {
     clearTimeout(i);
-    i = setTimeout(() => e(...o), t);
+    i = setTimeout(() => e(...n), t);
   };
 };
 
@@ -61,7 +61,7 @@ window.handleDeleteAllClips = async function() {
     const t = window.clipsStudio.libraryItems.map(e => e.id);
     let i = 0;
     try {
-      const o = await fetch("/api/clips/bulk-delete", {
+      const n = await fetch("/api/clips/bulk-delete", {
         method: "DELETE",
         credentials: "include",
         headers: {
@@ -74,22 +74,22 @@ window.handleDeleteAllClips = async function() {
           clip_ids: t
         })
       });
-      if (!o.ok) {
-        const e = await o.json().catch(() => ({}));
+      if (!n.ok) {
+        const e = await n.json().catch(() => ({}));
         const t = window.getSafeErrorMessage(e);
-        console.error("Bulk delete failed:", o.status, e);
+        console.error("Bulk delete failed:", n.status, e);
         window.clipsStudio?.showNotification("Failed to delete clips: " + t, "error");
         return;
       }
-      const n = await o.json();
-      i = n.deleted_count || e;
+      const o = await n.json();
+      i = o.deleted_count || e;
     } catch (e) {
       console.warn("Bulk delete endpoint failed, falling back to individual deletes:", e);
       for (const e of window.clipsStudio.libraryItems) {
         try {
           const t = e.projectId || e.project_id;
           if (!t) continue;
-          const o = await fetch(`/api/clips/project/${encodeURIComponent(t)}`, {
+          const n = await fetch(`/api/clips/project/${encodeURIComponent(t)}`, {
             method: "DELETE",
             credentials: "include",
             headers: {
@@ -99,10 +99,10 @@ window.handleDeleteAllClips = async function() {
               }
             }
           });
-          if (o.ok) {
+          if (n.ok) {
             i++;
           } else {
-            console.error(`Failed to delete clip ${t}: ${o.status}`);
+            console.error(`Failed to delete clip ${t}: ${n.status}`);
           }
           await new Promise(e => setTimeout(e, 100));
         } catch (e) {
@@ -125,9 +125,9 @@ window.handleDeleteAllClips = async function() {
 };
 
 window.getStoragePhase = function(e, t, i) {
-  const o = Math.max(0, e);
-  const n = Math.max(1, t);
-  const s = o / n;
+  const n = Math.max(0, e);
+  const o = Math.max(1, t);
+  const s = n / o;
   const a = !i || i === "free";
   const r = a ? .5 : .5;
   const l = a ? .75 : .8;
@@ -138,29 +138,29 @@ window.getStoragePhase = function(e, t, i) {
   return {
     phase: u,
     ratio: s,
-    showDeleteAll: s >= c && o > 0,
+    showDeleteAll: s >= c && n > 0,
     showUpgrade: a && s >= d
   };
 };
 
 window.isUnlimitedLibrary = function(e, t) {
   const i = (t || document.getElementById("storagePlanBadge")?.textContent || "free").toString().toLowerCase();
-  const o = i.replace(/\s+plan\s*$/, "").trim();
-  return o === "basic" || o === "prime" || o === "elite" || o.includes("basic") || o.includes("prime") || o.includes("elite");
+  const n = i.replace(/\s+plan\s*$/, "").trim();
+  return n === "basic" || n === "prime" || n === "elite" || n.includes("basic") || n.includes("prime") || n.includes("elite");
 };
 
-window.applyStorageBadgeUI = function({used: e, limit: t, plan: i, unlimited: o}) {
-  const n = typeof i === "string" && i.length ? i.toLowerCase().replace(/\s+plan\s*$/, "").trim() : "free";
-  const s = o === true || window.isUnlimitedLibrary(t, n);
+window.applyStorageBadgeUI = function({used: e, limit: t, plan: i, unlimited: n}) {
+  const o = typeof i === "string" && i.length ? i.toLowerCase().replace(/\s+plan\s*$/, "").trim() : "free";
+  const s = n === true || window.isUnlimitedLibrary(t, o);
   const a = !s;
   const r = a ? Math.max(1, Number(t) || 10) : null;
   const l = Math.max(0, Number(e) || 0);
-  const {phase: c, showDeleteAll: d, showUpgrade: u} = a ? window.getStoragePhase(l, r, n) : {
+  const {phase: c, showDeleteAll: d, showUpgrade: u} = a ? window.getStoragePhase(l, r, o) : {
     phase: "ok",
     showDeleteAll: false,
     showUpgrade: false
   };
-  const p = n.charAt(0).toUpperCase() + n.slice(1);
+  const p = o.charAt(0).toUpperCase() + o.slice(1);
   const w = a && (c === "high" || c === "full");
   const m = document.getElementById("storageBadge");
   const f = document.getElementById("storageUsedBadge");
@@ -224,17 +224,17 @@ window.syncStorageLimitsFromStatus = function(e) {
   if (!e?.storage?.videos) return null;
   const t = e.storage.videos.used ?? 0;
   const i = (e.plan?.name || e.plan || "free").toString().toLowerCase();
-  const o = e.storage.videos.unlimited === true || [ "basic", "prime", "elite" ].includes(i);
-  const n = o ? null : e.storage.videos.limit ?? 10;
+  const n = e.storage.videos.unlimited === true || [ "basic", "prime", "elite" ].includes(i);
+  const o = n ? null : e.storage.videos.limit ?? 10;
   window.applyStorageBadgeUI({
     used: t,
-    limit: n,
+    limit: o,
     plan: i,
-    unlimited: o
+    unlimited: n
   });
-  return o ? {
+  return n ? {
     phase: "ok"
-  } : window.getStoragePhase(t, n, i);
+  } : window.getStoragePhase(t, o, i);
 };
 
 window.updateStorageBadgeDisplay = function() {
@@ -251,18 +251,18 @@ window.updateStorageBadgeDisplay = function() {
       const t = await e.json();
       const i = t?.subscription;
       if (!i || typeof i !== "object") throw new Error("Missing subscription");
-      let o = window.validateNumber(i.active_videos, 0, VALIDATION.MAX_VIDEOS_LIMIT, 0);
+      let n = window.validateNumber(i.active_videos, 0, VALIDATION.MAX_VIDEOS_LIMIT, 0);
       if (window.clipsStudio?.libraryItems?.length != null) {
-        o = window.clipsStudio.libraryItems.length;
+        n = window.clipsStudio.libraryItems.length;
       }
-      const n = i.library_unlimited ? null : window.validateNumber(i.video_limit, 1, VALIDATION.MAX_VIDEOS_LIMIT, 10);
-      const s = i.plan || "free";
-      const a = typeof s === "string" && VALIDATION.ALLOWED_PLANS.includes(s.toLowerCase()) ? s.toLowerCase() : "free";
+      const o = i.plan || "free";
+      const s = typeof o === "string" && VALIDATION.ALLOWED_PLANS.includes(o.toLowerCase()) ? o.toLowerCase() : "free";
+      const a = i.library_unlimited === true || window.isUnlimitedLibrary?.(null, s);
       window.applyStorageBadgeUI({
-        used: o,
-        limit: n,
-        plan: a,
-        unlimited: i.library_unlimited === true
+        used: n,
+        limit: a ? null : window.validateNumber(i.video_limit || i.videos_space_limit, 1, VALIDATION.MAX_VIDEOS_LIMIT, 10),
+        plan: s,
+        unlimited: a
       });
     } catch (e) {
       console.error("Failed to fetch storage info from backend:", e);
@@ -270,6 +270,20 @@ window.updateStorageBadgeDisplay = function() {
   };
   return window.createDebounce(originalFunc, 3e3);
 }();
+
+window.addEventListener("DOMContentLoaded", () => {
+  const e = document.getElementById("storagePlanBadge");
+  const t = (e?.textContent || "free").toLowerCase().replace(/\s+plan\s*$/, "").trim();
+  if (typeof window.isUnlimitedLibrary === "function" && window.isUnlimitedLibrary(null, t)) {
+    const e = Number(document.getElementById("storageUsedBadge")?.textContent || 0);
+    window.applyStorageBadgeUI?.({
+      used: e,
+      limit: null,
+      plan: t,
+      unlimited: true
+    });
+  }
+});
 
 window.closeUpgradeModal = function() {
   const e = document.getElementById("upgradeModalOverlay");
@@ -280,11 +294,11 @@ window.closeUpgradeModal = function() {
 
 window.showUpgradeModal = function(e = "Unlock more uploads", t = "Same price for any video length. Upgrade for more uploads per day and more clips per run.") {
   const i = document.getElementById("upgradeModalOverlay");
-  const o = document.getElementById("upgradeModalTitle");
-  const n = document.getElementById("upgradeModalSubtitle");
+  const n = document.getElementById("upgradeModalTitle");
+  const o = document.getElementById("upgradeModalSubtitle");
   if (i) {
-    if (o) o.textContent = window.sanitizeString(e);
-    if (n) n.textContent = window.sanitizeString(t);
+    if (n) n.textContent = window.sanitizeString(e);
+    if (o) o.textContent = window.sanitizeString(t);
     i.style.display = "flex";
   }
 };
@@ -294,17 +308,17 @@ document.addEventListener("DOMContentLoaded", function() {
     const e = localStorage.getItem("clipsActiveTab") || "templates";
     const t = document.querySelectorAll(".clips-sub-item");
     const i = document.querySelectorAll(".clips-sub-item");
-    let o = false;
+    let n = false;
     i.forEach(t => {
       if (t.getAttribute("data-tab") === e) {
         t.classList.add("active");
         switchClipsTab(e, t);
-        o = true;
+        n = true;
       } else {
         t.classList.remove("active");
       }
     });
-    if (!o && i[0]) {
+    if (!n && i[0]) {
       i[0].classList.add("active");
       switchClipsTab("templates", i[0]);
     }
@@ -350,11 +364,11 @@ document.addEventListener("DOMContentLoaded", function() {
         if (!i || typeof i !== "object") {
           throw new Error("Missing tier data in response");
         }
-        const o = document.getElementById("currentTier");
-        const n = document.getElementById("tierInfo");
+        const n = document.getElementById("currentTier");
+        const o = document.getElementById("tierInfo");
         const s = document.getElementById("tierInfoCard");
-        if (o && i.tier_name && typeof i.tier_name === "string") {
-          o.textContent = window.sanitizeString(i.tier_name);
+        if (n && i.tier_name && typeof i.tier_name === "string") {
+          n.textContent = window.sanitizeString(i.tier_name);
           if (s) {
             s.classList.remove("tier-free", "tier-basic", "tier-prime", "tier-elite");
             const e = String(i.tier_name || "free").toLowerCase();
@@ -362,9 +376,9 @@ document.addEventListener("DOMContentLoaded", function() {
             s.setAttribute("data-plan", e);
           }
         }
-        if (n && i.generations && typeof i.generations.remaining === "number") {
+        if (o && i.generations && typeof i.generations.remaining === "number") {
           const e = window.validateNumber(i.generations.remaining, 0, 999999, 0);
-          n.textContent = e + " gens left today";
+          o.textContent = e + " gens left today";
         }
       }
     } catch (e) {}
@@ -397,16 +411,16 @@ document.addEventListener("DOMContentLoaded", function() {
     if (!e || typeof e !== "object") return;
     const t = e.plan || "free";
     const i = typeof t === "string" && VALIDATION.ALLOWED_PLANS.includes(t.toLowerCase()) ? t.toLowerCase() : "free";
-    const o = e.library_unlimited === true || window.isUnlimitedLibrary?.(null, i);
-    const n = window.clipsStudio?.libraryItems?.length != null ? window.clipsStudio.libraryItems.length : window.validateNumber(e.active_videos, 0, VALIDATION.MAX_VIDEOS_LIMIT, 0);
-    const s = o ? null : window.validateNumber(e.video_limit || e.videos_space_limit, 1, VALIDATION.MAX_VIDEOS_LIMIT, 10);
+    const n = e.library_unlimited === true || window.isUnlimitedLibrary?.(null, i);
+    const o = window.clipsStudio?.libraryItems?.length != null ? window.clipsStudio.libraryItems.length : window.validateNumber(e.active_videos, 0, VALIDATION.MAX_VIDEOS_LIMIT, 0);
+    const s = n ? null : window.validateNumber(e.video_limit || e.videos_space_limit, 1, VALIDATION.MAX_VIDEOS_LIMIT, 10);
     const a = i.charAt(0).toUpperCase() + i.slice(1);
     if (typeof window.applyStorageBadgeUI === "function") {
       window.applyStorageBadgeUI({
-        used: n,
+        used: o,
         limit: s,
         plan: i,
-        unlimited: o
+        unlimited: n
       });
     }
     const r = document.getElementById("storagePlanBadge");
@@ -418,8 +432,8 @@ document.addEventListener("DOMContentLoaded", function() {
   updateStorageBadgeDisplay();
   const t = document.getElementById("disclaimerBtn");
   const i = document.querySelector(".url-input-overlay");
-  const o = document.querySelector(".url-input");
-  const n = document.querySelector(".url-submit-btn");
+  const n = document.querySelector(".url-input");
+  const o = document.querySelector(".url-submit-btn");
   const s = document.querySelector(".checkmark-icon");
   const a = "disclaimerAcceptedTime";
   const r = 7 * 24 * 60 * 60 * 1e3;
@@ -439,10 +453,10 @@ document.addEventListener("DOMContentLoaded", function() {
       i.classList.add("hidden");
       t.classList.add("active");
       if (s) s.style.display = "block";
-      if (o) o.style.filter = "none";
       if (n) n.style.filter = "none";
-      if (o) o.style.pointerEvents = "auto";
+      if (o) o.style.filter = "none";
       if (n) n.style.pointerEvents = "auto";
+      if (o) o.style.pointerEvents = "auto";
     }
     t.addEventListener("click", function() {
       if (!this.classList.contains("active")) {
@@ -450,10 +464,10 @@ document.addEventListener("DOMContentLoaded", function() {
         if (s) s.style.display = "block";
         setTimeout(() => {
           i.classList.add("hidden");
-          if (o) o.style.filter = "none";
           if (n) n.style.filter = "none";
-          if (o) o.style.pointerEvents = "auto";
+          if (o) o.style.filter = "none";
           if (n) n.style.pointerEvents = "auto";
+          if (o) o.style.pointerEvents = "auto";
           localStorage.setItem(a, Date.now().toString());
         }, 300);
       }
@@ -469,17 +483,17 @@ function switchClipsTab(e, t) {
   const i = document.querySelectorAll(".clips-sub-item");
   i.forEach(e => e.classList.remove("active"));
   if (t) t.classList.add("active");
-  const o = document.querySelectorAll(".clips-section");
-  o.forEach(e => {
+  const n = document.querySelectorAll(".clips-section");
+  n.forEach(e => {
     e.classList.remove("active");
     e.style.display = "none";
   });
-  const n = {
+  const o = {
     templates: "templatesSection",
     create: "createSection",
     library: "librarySection"
   };
-  const s = document.getElementById(n[e]);
+  const s = document.getElementById(o[e]);
   if (s) {
     s.classList.add("active");
     s.style.display = "block";
@@ -489,8 +503,8 @@ function switchClipsTab(e, t) {
     if (e) {
       const t = 3e4;
       const i = !e._libraryLastLoaded || Date.now() - e._libraryLastLoaded > t;
-      const o = !e.libraryItems || e.libraryItems.length === 0;
-      if (i || o) {
+      const n = !e.libraryItems || e.libraryItems.length === 0;
+      if (i || n) {
         e.showLibrarySkeleton(4);
         e.loadLibraryItems().then(() => {
           e._libraryLastLoaded = Date.now();
@@ -510,9 +524,9 @@ function switchClipsTab(e, t) {
     if (!e) return;
     const i = window.getComputedStyle(e);
     if (i.display === "contents") return;
-    const o = e.getBoundingClientRect();
-    const n = t.getBoundingClientRect();
-    a.style.left = n.left - o.left + "px";
+    const n = e.getBoundingClientRect();
+    const o = t.getBoundingClientRect();
+    a.style.left = o.left - n.left + "px";
   }
 }
 

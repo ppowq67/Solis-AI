@@ -157,6 +157,22 @@
       });
     } catch (e) {}
   }
+  window.getSolisSocketOrigin = function getSolisSocketOrigin() {
+    const e = window.location.hostname;
+    if (e === "localhost" || e === "127.0.0.1") {
+      const t = window.API_BASE_URL || `http://${e}:5500/api`;
+      return String(t).replace(/\/api\/?$/, "") || window.location.origin;
+    }
+    return "https://api.solisai.video";
+  };
+  try {
+    Object.defineProperty(window, "getSolisSocketOrigin", {
+      value: window.getSolisSocketOrigin,
+      writable: false,
+      configurable: false,
+      enumerable: false
+    });
+  } catch (e) {}
   window.SOLIS_INITIALIZED = true;
   try {
     document.documentElement.style.touchAction = "manipulation";

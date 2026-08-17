@@ -1,17 +1,22 @@
 function getSolisSocketOrigin() {
+  if (typeof window.getSolisSocketOrigin === "function" && window.getSolisSocketOrigin !== getSolisSocketOrigin) {
+    return window.getSolisSocketOrigin();
+  }
   try {
     const e = window.location && window.location.hostname || "";
     if (e === "localhost" || e === "127.0.0.1") {
-      return window.location.origin;
+      const t = window.API_BASE_URL || `http://${e}:5500/api`;
+      return String(t).replace(/\/api\/?$/, "") || window.location.origin;
     }
-    const t = (window.API_BASE_URL || window.API_BASE || "https://api.solisai.video/api").toString();
-    return t.replace(/\/api\/?$/, "") || "https://api.solisai.video";
+    return "https://api.solisai.video";
   } catch (e) {
     return "https://api.solisai.video";
   }
 }
 
-window.getSolisSocketOrigin = getSolisSocketOrigin;
+if (typeof window.getSolisSocketOrigin !== "function") {
+  window.getSolisSocketOrigin = getSolisSocketOrigin;
+}
 
 class WebSocketManager {
   constructor() {

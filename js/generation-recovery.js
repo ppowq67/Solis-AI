@@ -49,24 +49,29 @@ class GenerationRecoverySystem {
     }
   }
   async recoverGeneration(e) {
-    const {project_id: t, status: n, progress: r, message: s, template_id: o, template: i, splitscreen_secondary_type: a} = e;
+    const {project_id: t, status: n, progress: s, message: r, template_id: o, template: i, splitscreen_secondary_type: a} = e;
     if (!t) return;
     this.activeGenerations.set(t, e);
     const c = a ? {
       secondaryType: a
     } : {};
-    const u = this.spinnerSystem;
-    if (u && typeof u.restoreGeneration === "function") {
-      u.restoreGeneration(t, r || 0, s || "Resuming...", n || "processing", o || i || null, c);
-    } else if (u && typeof u.updateProgress === "function") {
-      u.updateProgress(t, r || 0, s || "Resuming...");
+    const d = this.spinnerSystem;
+    if (d && typeof d.restoreGeneration === "function") {
+      d.restoreGeneration(t, s || 0, r || "Resuming...", n || "processing", o || i || null, c);
+    } else if (d && typeof d.updateProgress === "function") {
+      d.updateProgress(t, s || 0, r || "Resuming...");
     }
     this.attachWebSocketListener(t);
   }
   attachWebSocketListener(e) {
     if (this.socketListeners.has(e)) return;
-    const t = window.socket || window.io && window.io();
-    if (!t) return;
+    const t = typeof window.getSolisSocketOrigin === "function" ? window.getSolisSocketOrigin() : "https://api.solisai.video";
+    const n = window.socket || window.videoGenerationSocket || window.io && window.io(t, {
+      path: "/socket.io/",
+      transports: [ "websocket", "polling" ],
+      withCredentials: true
+    });
+    if (!n) return;
     const listener = t => {
       if (t.project_id !== e) return;
       const n = this.spinnerSystem;
@@ -87,9 +92,9 @@ class GenerationRecoverySystem {
         n.status = t.status;
       }
     };
-    t.on("clips_status_update", listener);
+    n.on("clips_status_update", listener);
     this.socketListeners.set(e, {
-      socket: t,
+      socket: n,
       listener: listener,
       eventName: "clips_status_update"
     });
@@ -106,8 +111,8 @@ class GenerationRecoverySystem {
   detachSocketListener(e) {
     const t = this.socketListeners.get(e);
     if (t) {
-      const {socket: n, listener: r, eventName: s} = t;
-      n.off(s, r);
+      const {socket: n, listener: s, eventName: r} = t;
+      n.off(r, s);
       this.socketListeners.delete(e);
     }
   }

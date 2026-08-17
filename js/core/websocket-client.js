@@ -54,13 +54,15 @@ class SolisAIWebSocketClient {
     this.heartbeatInterval = null;
   }
   _detectServerUrl() {
+    if (typeof window.getSolisSocketOrigin === "function") {
+      return window.getSolisSocketOrigin();
+    }
     try {
-      const e = new URL(window.API_BASE_URL || "https://api.solisai.video/api");
-      const t = e.protocol === "https:" ? "wss:" : "ws:";
-      return `${t}//${e.host}`;
+      const e = new URL(window.API_BASE_URL || "https://api.solisai.video/api", window.location.href);
+      return `${e.protocol}//${e.host}`;
     } catch (e) {
       console.error("Invalid API_BASE_URL:", e);
-      return "wss://api.solisai.video";
+      return "https://api.solisai.video";
     }
   }
   connect(e, t = null) {

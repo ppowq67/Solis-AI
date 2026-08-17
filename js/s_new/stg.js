@@ -653,54 +653,54 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (e) {
       console.error("Error loading user data:", e);
     }
-    if (!e) return;
-    setText("stgName", e.name || e.username || "Guest User");
+    const t = e;
+    setText("stgName", t?.name || t?.username || "Guest User");
     if (window.SolisBadges?.renderCurrentUser) {
       window.SolisBadges.renderCurrentUser("stgBadges", 20);
     }
-    setText("stgUserEmail", e.email || "unknown@email.com");
-    setText("stgEmailAddress", e.email || "unknown@email.com");
-    const t = document.getElementById("stgBio");
-    const n = document.getElementById("stgProfileHero");
-    if (t && !n?.classList.contains("is-editing")) {
-      t.textContent = e.bio || "";
+    setText("stgUserEmail", t?.email || "unknown@email.com");
+    setText("stgEmailAddress", t?.email || "unknown@email.com");
+    const n = document.getElementById("stgBio");
+    const i = document.getElementById("stgProfileHero");
+    if (n && !i?.classList.contains("is-editing")) {
+      n.textContent = t?.bio || "";
     }
-    const i = document.getElementById("stgAvatar");
-    if (i) {
-      const t = typeof resolveAvatarUrl === "function" ? resolveAvatarUrl(e) : e.picture || e.avatar || null;
+    const s = document.getElementById("stgAvatar");
+    if (s) {
+      const e = typeof resolveAvatarUrl === "function" ? resolveAvatarUrl(t || {}) : t?.picture || t?.avatar || null;
       const n = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>';
-      const o = t && (typeof window.isValidImageUrl !== "function" || window.isValidImageUrl(t));
+      const o = e && (typeof window.isValidImageUrl !== "function" || window.isValidImageUrl(e));
       if (o) {
-        const e = document.createElement("img");
-        e.src = t;
-        e.alt = "Profile";
-        e.decoding = "async";
-        e.referrerPolicy = "no-referrer";
-        e.onerror = () => {
-          i.innerHTML = n;
+        const t = document.createElement("img");
+        t.src = e;
+        t.alt = "Profile";
+        t.decoding = "async";
+        t.referrerPolicy = "no-referrer";
+        t.onerror = () => {
+          s.innerHTML = n;
         };
-        i.innerHTML = "";
-        i.appendChild(e);
+        s.innerHTML = "";
+        s.appendChild(t);
       } else {
-        i.innerHTML = n;
+        s.innerHTML = n;
       }
     }
     setSubscriptionLoading(true);
-    const s = String(e.plan || "free").toLowerCase();
-    const r = document.getElementById("stgPlanBanner");
-    const a = document.getElementById("stgPlanMeta");
-    const c = document.getElementById("stgPlanCompare");
-    const l = document.getElementById("stgQuotaGrid");
+    const r = String(t?.plan || window.currentUser?.plan || "free").toLowerCase();
+    const a = document.getElementById("stgPlanBanner");
+    const c = document.getElementById("stgPlanMeta");
+    const l = document.getElementById("stgPlanCompare");
+    const d = document.getElementById("stgQuotaGrid");
     const applyPlanBanner = e => {
-      if (r) r.setAttribute("data-plan", e);
+      if (a) a.setAttribute("data-plan", e);
       const t = e === "free";
-      if (a) a.hidden = t;
-      if (c) c.hidden = !t;
-      if (l) l.hidden = t;
+      if (c) c.hidden = t;
+      if (l) l.hidden = !t;
+      if (d) d.hidden = t;
     };
-    if ([ "free", "basic", "prime", "elite" ].includes(s)) {
-      setText("stgCurrentPlan", s.charAt(0).toUpperCase() + s.slice(1));
-      applyPlanBanner(s);
+    if ([ "free", "basic", "prime", "elite" ].includes(r)) {
+      setText("stgCurrentPlan", r.charAt(0).toUpperCase() + r.slice(1));
+      applyPlanBanner(r);
     }
     try {
       const {profile: t, subscription: n, clipsStatus: i, storageInfo: s} = await fetchSecureSettingsData();
@@ -775,53 +775,53 @@ document.addEventListener("DOMContentLoaded", () => {
       const y = f.max_effort || {};
       const h = g.unlimited === true || [ "basic", "prime", "elite" ].includes(String(l || "").toLowerCase());
       const E = Math.max(0, Number(g.used ?? 0) || 0);
+      const b = h ? null : Math.max(1, Number(g.limit ?? 10) || 10);
       if (h) {
         setText("stgVideosUsed", E + " clips (unlimited)");
         setQuotaFill(document.getElementById("stgVideosFill"), 0, 1);
       } else {
-        const e = Math.max(1, Number(g.limit ?? 10) || 10);
-        setText("stgVideosUsed", E + " / " + e);
-        setQuotaFill(document.getElementById("stgVideosFill"), E, e);
+        setText("stgVideosUsed", E + " / " + b);
+        setQuotaFill(document.getElementById("stgVideosFill"), E, b);
       }
-      const b = document.getElementById("stgStorage")?.closest(".stgQuota");
-      if (b) b.hidden = true;
-      const v = Math.max(0, Number(p.limit ?? f.plan?.videos_per_day ?? 0) || 0);
-      const S = Math.max(0, Number(p.used ?? 0) || 0);
-      if (v > 0) {
-        setText("stgDailyGens", S + " / " + v);
-        setQuotaFill(document.getElementById("stgDailyFill"), S, v);
+      const v = document.getElementById("stgStorage")?.closest(".stgQuota");
+      if (v) v.hidden = true;
+      const S = Math.max(0, Number(p.limit ?? f.plan?.videos_per_day ?? 0) || 0);
+      const C = Math.max(0, Number(p.used ?? 0) || 0);
+      if (S > 0) {
+        setText("stgDailyGens", C + " / " + S);
+        setQuotaFill(document.getElementById("stgDailyFill"), C, S);
         const e = document.getElementById("stgDailyHint");
         if (e) {
           if (p.resets_at) {
-            e.textContent = formatQuotaResetHint(p.resets_at, S >= v ? "Daily quota reached. Resets {when}." : "Resets {when}.");
+            e.textContent = formatQuotaResetHint(p.resets_at, C >= S ? "Daily quota reached. Resets {when}." : "Resets {when}.");
           }
         }
       } else {
         setText("stgDailyGens", "—");
         setQuotaFill(document.getElementById("stgDailyFill"), 0, 1);
       }
-      const C = Math.max(0, Number(w.limit ?? f.plan?.videos_per_month ?? 0) || 0);
-      const B = Math.max(0, Number(w.used ?? 0) || 0);
-      if (C > 0) {
-        setText("stgMonthlyGens", B + " / " + C);
-        setQuotaFill(document.getElementById("stgMonthlyFill"), B, C);
+      const B = Math.max(0, Number(w.limit ?? f.plan?.videos_per_month ?? 0) || 0);
+      const I = Math.max(0, Number(w.used ?? 0) || 0);
+      if (B > 0) {
+        setText("stgMonthlyGens", I + " / " + B);
+        setQuotaFill(document.getElementById("stgMonthlyFill"), I, B);
         const e = document.getElementById("stgMonthlyHint");
         if (e) {
-          e.textContent = formatQuotaResetHint(w.resets_at, B >= C ? "Monthly quota reached. Resets {when}." : "Resets {when}.");
+          e.textContent = formatQuotaResetHint(w.resets_at, I >= B ? "Monthly quota reached. Resets {when}." : "Resets {when}.");
         }
       } else {
         setText("stgMonthlyGens", "—");
         setQuotaFill(document.getElementById("stgMonthlyFill"), 0, 1);
       }
-      const I = Number(y.limit ?? 0);
-      const x = Number(y.used ?? 0);
-      const L = y.remaining;
-      if (I > 0) {
-        setText("stgMaxEffort", x + " / " + I + " used");
-        setQuotaFill(document.getElementById("stgMaxFill"), x, I);
+      const x = Number(y.limit ?? 0);
+      const L = Number(y.used ?? 0);
+      const U = y.remaining;
+      if (x > 0) {
+        setText("stgMaxEffort", L + " / " + x + " used");
+        setQuotaFill(document.getElementById("stgMaxFill"), L, x);
         const e = document.getElementById("stgMaxHint");
         if (e) {
-          const t = Math.max(0, Number(L ?? I - x));
+          const t = Math.max(0, Number(U ?? x - L));
           e.textContent = t > 0 ? t + " Premium Request" + (t === 1 ? "" : "s") + " left in this window." : "Premium Requests locked until reset.";
         }
       } else {
@@ -830,8 +830,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const e = document.getElementById("stgMaxHint");
         if (e) e.textContent = "Upgrade to Prime or Elite for Premium Requests.";
       }
-      const U = formatRenewalLabel(t.subscription_end_date || t.plan_expires_at, t.plan_status);
-      if (U) setText("stgRenewalDate", U); else if (!u) setText("stgRenewalDate", "Active subscription"); else setText("stgRenewalDate", "No active subscription");
+      const M = formatRenewalLabel(t.subscription_end_date || t.plan_expires_at, t.plan_status);
+      if (M) setText("stgRenewalDate", M); else if (!u) setText("stgRenewalDate", "Active subscription"); else setText("stgRenewalDate", "No active subscription");
       syncBillingCancelUI({
         plan: l,
         planStatus: t.plan_status || t.subscription_status,
@@ -842,7 +842,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       window.currentUser = Object.assign({}, window.currentUser || {}, t, {
         active_videos: E,
-        video_limit: videoLimit
+        video_limit: b
       });
       setSubscriptionLoading(false);
     } catch (e) {
@@ -859,7 +859,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       setSubscriptionLoading(false);
     }
-    updateYouTubeConnectorUI(!!e.youtube_connected);
+    updateYouTubeConnectorUI(!!(window.currentUser?.youtube_connected || t?.youtube_connected));
   }
   function updateYouTubeConnectorUI(e) {
     const t = document.getElementById("stgYouTubeStatus");

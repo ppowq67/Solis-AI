@@ -130,53 +130,72 @@ window.getStoragePhase = function(e, t, o) {
   const s = n / i;
   const a = !o || o === "free";
   const r = a ? .5 : .5;
-  const c = a ? .75 : .8;
-  const l = a ? .5 : .8;
+  const l = a ? .75 : .8;
+  const c = a ? .5 : .8;
   const d = a ? .5 : .9;
   let u = "ok";
-  if (s >= 1) u = "full"; else if (s >= c) u = "high"; else if (s >= r) u = "half";
+  if (s >= 1) u = "full"; else if (s >= l) u = "high"; else if (s >= r) u = "half";
   return {
     phase: u,
     ratio: s,
-    showDeleteAll: s >= l && n > 0,
+    showDeleteAll: s >= c && n > 0,
     showUpgrade: a && s >= d
   };
 };
 
-window.applyStorageBadgeUI = function({used: e, limit: t, plan: o}) {
-  const n = typeof o === "string" && o.length ? o.toLowerCase() : "free";
-  const {phase: i, showDeleteAll: s, showUpgrade: a} = window.getStoragePhase(e, t, n);
-  const r = n.charAt(0).toUpperCase() + n.slice(1);
-  const c = i === "high" || i === "full";
-  const l = document.getElementById("storageBadge");
-  const d = document.getElementById("storageUsedBadge");
-  const u = document.getElementById("storageTotalBadge");
-  const p = document.getElementById("storagePlanBadge");
-  const w = document.getElementById("storageWarnIcon");
-  const f = document.getElementById("deleteAllClipsBtn");
-  const m = document.getElementById("needMoreUpgradeText");
-  if (d) {
-    d.textContent = String(e);
-    d.style.color = "";
-    d.classList.toggle("storage-count-warn", c);
-  }
-  if (u) {
-    u.textContent = String(t);
-    u.style.color = "";
-    u.classList.toggle("storage-count-warn", i === "full");
-  }
-  if (p) p.textContent = r;
-  if (l) {
-    l.classList.toggle("is-warn", c);
-    l.classList.toggle("is-full", i === "full");
-    l.title = i === "full" ? "Storage full — delete clips or upgrade your plan" : i === "high" ? `Storage almost full (${e}/${t}) — remove old videos to keep generating` : "Library storage";
-  }
+window.isUnlimitedLibrary = function(e, t) {
+  const o = (t || "free").toString().toLowerCase();
+  if ([ "basic", "prime", "elite" ].includes(o)) return true;
+  return e == null;
+};
+
+window.applyStorageBadgeUI = function({used: e, limit: t, plan: o, unlimited: n}) {
+  const i = typeof o === "string" && o.length ? o.toLowerCase() : "free";
+  const s = n === true || window.isUnlimitedLibrary(t, i);
+  const a = s ? null : Math.max(1, Number(t) || 10);
+  const {phase: r, showDeleteAll: l, showUpgrade: c} = s ? {
+    phase: "ok",
+    showDeleteAll: false,
+    showUpgrade: false
+  } : window.getStoragePhase(e, a, i);
+  const d = i.charAt(0).toUpperCase() + i.slice(1);
+  const u = r === "high" || r === "full";
+  const p = document.getElementById("storageBadge");
+  const w = document.getElementById("storageUsedBadge");
+  const m = document.getElementById("storageTotalBadge");
+  const f = document.getElementById("storageLimitGroup");
+  const g = document.getElementById("storagePlanBadge");
+  const y = document.getElementById("storageWarnIcon");
+  const S = document.getElementById("deleteAllClipsBtn");
+  const h = document.getElementById("needMoreUpgradeText");
   if (w) {
-    w.hidden = !c;
-    w.setAttribute("aria-hidden", c ? "false" : "true");
+    w.textContent = String(e);
+    w.style.color = "";
+    w.classList.toggle("storage-count-warn", u);
   }
-  if (f) f.style.display = s ? "inline-flex" : "none";
-  if (m) m.style.display = a ? "inline" : "none";
+  if (m) {
+    if (s) {
+      m.textContent = "";
+    } else {
+      m.textContent = String(a);
+    }
+    m.style.color = "";
+    m.classList.toggle("storage-count-warn", !s && r === "full");
+  }
+  if (f) f.hidden = s;
+  if (p) p.classList.toggle("is-unlimited", s);
+  if (g) g.textContent = d;
+  if (p) {
+    p.classList.toggle("is-warn", u);
+    p.classList.toggle("is-full", r === "full");
+    p.title = s ? `${e} clip${e === 1 ? "" : "s"} stored — unlimited on your plan` : r === "full" ? "Storage full — delete clips or upgrade your plan" : r === "high" ? `Storage almost full (${e}/${a}) — remove old videos to keep generating` : "Library storage";
+  }
+  if (y) {
+    y.hidden = !u;
+    y.setAttribute("aria-hidden", u ? "false" : "true");
+  }
+  if (S) S.style.display = l ? "inline-flex" : "none";
+  if (h) h.style.display = c ? "inline" : "none";
 };
 
 window.pulseStorageBadgeWarning = function() {
@@ -199,14 +218,18 @@ window.updateLibraryStorageWarning = function() {};
 window.syncStorageLimitsFromStatus = function(e) {
   if (!e?.storage?.videos) return null;
   const t = e.storage.videos.used ?? 0;
-  const o = e.storage.videos.limit ?? 2;
-  const n = (e.plan?.name || e.plan || "free").toString().toLowerCase();
+  const o = e.storage.videos.unlimited === true;
+  const n = o ? null : e.storage.videos.limit ?? 10;
+  const i = (e.plan?.name || e.plan || "free").toString().toLowerCase();
   window.applyStorageBadgeUI({
     used: t,
-    limit: o,
-    plan: n
+    limit: n,
+    plan: i,
+    unlimited: o
   });
-  return window.getStoragePhase(t, o, n);
+  return o ? {
+    phase: "ok"
+  } : window.getStoragePhase(t, n, i);
 };
 
 window.updateStorageBadgeDisplay = function() {
@@ -227,13 +250,14 @@ window.updateStorageBadgeDisplay = function() {
       if (window.clipsStudio?.libraryItems?.length != null) {
         n = window.clipsStudio.libraryItems.length;
       }
-      const i = window.validateNumber(o.video_limit, 1, VALIDATION.MAX_VIDEOS_LIMIT, 2);
+      const i = o.library_unlimited ? null : window.validateNumber(o.video_limit, 1, VALIDATION.MAX_VIDEOS_LIMIT, 10);
       const s = o.plan || "free";
       const a = typeof s === "string" && VALIDATION.ALLOWED_PLANS.includes(s.toLowerCase()) ? s.toLowerCase() : "free";
       window.applyStorageBadgeUI({
         used: n,
         limit: i,
-        plan: a
+        plan: a,
+        unlimited: o.library_unlimited === true
       });
     } catch (e) {
       console.error("Failed to fetch storage info from backend:", e);
@@ -394,17 +418,17 @@ document.addEventListener("DOMContentLoaded", function() {
   const r = 7 * 24 * 60 * 60 * 1e3;
   if (t && o) {
     const e = localStorage.getItem(a);
-    const c = Date.now();
-    let l = false;
+    const l = Date.now();
+    let c = false;
     if (!e) {
-      l = true;
+      c = true;
     } else {
-      const t = c - parseInt(e);
+      const t = l - parseInt(e);
       if (t > r) {
-        l = true;
+        c = true;
       }
     }
-    if (!l) {
+    if (!c) {
       o.classList.add("hidden");
       t.classList.add("active");
       if (s) s.style.display = "block";

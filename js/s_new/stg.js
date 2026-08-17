@@ -773,54 +773,55 @@ document.addEventListener("DOMContentLoaded", () => {
       const p = f.daily || {};
       const w = f.monthly || {};
       const y = f.max_effort || {};
-      const h = Math.max(1, Number(g.limit ?? f.plan?.videos_space ?? 2) || 2);
+      const h = g.unlimited === true || [ "basic", "prime", "elite" ].includes(String(l || "").toLowerCase());
       const E = Math.max(0, Number(g.used ?? 0) || 0);
-      setText("stgVideosUsed", E + " / " + h);
-      setQuotaFill(document.getElementById("stgVideosFill"), E, h);
-      let b = Math.max(0, Number(m.used) || 0) * 1024 * 1024;
-      let v = Math.max(1, Number(m.total) || 512) * 1024 * 1024;
-      if (Number(f.plan?.storage_gb) > 0 && (!m.total || m.total <= 0)) {
-        v = Number(f.plan.storage_gb) * 1024 * 1024 * 1024;
+      if (h) {
+        setText("stgVideosUsed", E + " clips (unlimited)");
+        setQuotaFill(document.getElementById("stgVideosFill"), 0, 1);
+      } else {
+        const e = Math.max(1, Number(g.limit ?? 10) || 10);
+        setText("stgVideosUsed", E + " / " + e);
+        setQuotaFill(document.getElementById("stgVideosFill"), E, e);
       }
-      setText("stgStorage", formatStoragePair(b, v));
-      setQuotaFill(document.getElementById("stgStorageFill"), b, v);
-      const S = Math.max(0, Number(p.limit ?? f.plan?.videos_per_day ?? 0) || 0);
-      const C = Math.max(0, Number(p.used ?? 0) || 0);
-      if (S > 0) {
-        setText("stgDailyGens", C + " / " + S);
-        setQuotaFill(document.getElementById("stgDailyFill"), C, S);
+      const b = document.getElementById("stgStorage")?.closest(".stgQuota");
+      if (b) b.hidden = true;
+      const v = Math.max(0, Number(p.limit ?? f.plan?.videos_per_day ?? 0) || 0);
+      const S = Math.max(0, Number(p.used ?? 0) || 0);
+      if (v > 0) {
+        setText("stgDailyGens", S + " / " + v);
+        setQuotaFill(document.getElementById("stgDailyFill"), S, v);
         const e = document.getElementById("stgDailyHint");
         if (e) {
           if (p.resets_at) {
-            e.textContent = formatQuotaResetHint(p.resets_at, C >= S ? "Daily quota reached. Resets {when}." : "Resets {when}.");
+            e.textContent = formatQuotaResetHint(p.resets_at, S >= v ? "Daily quota reached. Resets {when}." : "Resets {when}.");
           }
         }
       } else {
         setText("stgDailyGens", "—");
         setQuotaFill(document.getElementById("stgDailyFill"), 0, 1);
       }
-      const B = Math.max(0, Number(w.limit ?? f.plan?.videos_per_month ?? 0) || 0);
-      const I = Math.max(0, Number(w.used ?? 0) || 0);
-      if (B > 0) {
-        setText("stgMonthlyGens", I + " / " + B);
-        setQuotaFill(document.getElementById("stgMonthlyFill"), I, B);
+      const C = Math.max(0, Number(w.limit ?? f.plan?.videos_per_month ?? 0) || 0);
+      const B = Math.max(0, Number(w.used ?? 0) || 0);
+      if (C > 0) {
+        setText("stgMonthlyGens", B + " / " + C);
+        setQuotaFill(document.getElementById("stgMonthlyFill"), B, C);
         const e = document.getElementById("stgMonthlyHint");
         if (e) {
-          e.textContent = formatQuotaResetHint(w.resets_at, I >= B ? "Monthly quota reached. Resets {when}." : "Resets {when}.");
+          e.textContent = formatQuotaResetHint(w.resets_at, B >= C ? "Monthly quota reached. Resets {when}." : "Resets {when}.");
         }
       } else {
         setText("stgMonthlyGens", "—");
         setQuotaFill(document.getElementById("stgMonthlyFill"), 0, 1);
       }
-      const x = Number(y.limit ?? 0);
-      const L = Number(y.used ?? 0);
-      const U = y.remaining;
-      if (x > 0) {
-        setText("stgMaxEffort", L + " / " + x + " used");
-        setQuotaFill(document.getElementById("stgMaxFill"), L, x);
+      const I = Number(y.limit ?? 0);
+      const x = Number(y.used ?? 0);
+      const L = y.remaining;
+      if (I > 0) {
+        setText("stgMaxEffort", x + " / " + I + " used");
+        setQuotaFill(document.getElementById("stgMaxFill"), x, I);
         const e = document.getElementById("stgMaxHint");
         if (e) {
-          const t = Math.max(0, Number(U ?? x - L));
+          const t = Math.max(0, Number(L ?? I - x));
           e.textContent = t > 0 ? t + " Premium Request" + (t === 1 ? "" : "s") + " left in this window." : "Premium Requests locked until reset.";
         }
       } else {
@@ -829,8 +830,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const e = document.getElementById("stgMaxHint");
         if (e) e.textContent = "Upgrade to Prime or Elite for Premium Requests.";
       }
-      const M = formatRenewalLabel(t.subscription_end_date || t.plan_expires_at, t.plan_status);
-      if (M) setText("stgRenewalDate", M); else if (!u) setText("stgRenewalDate", "Active subscription"); else setText("stgRenewalDate", "No active subscription");
+      const U = formatRenewalLabel(t.subscription_end_date || t.plan_expires_at, t.plan_status);
+      if (U) setText("stgRenewalDate", U); else if (!u) setText("stgRenewalDate", "Active subscription"); else setText("stgRenewalDate", "No active subscription");
       syncBillingCancelUI({
         plan: l,
         planStatus: t.plan_status || t.subscription_status,
@@ -841,7 +842,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       window.currentUser = Object.assign({}, window.currentUser || {}, t, {
         active_videos: E,
-        video_limit: h
+        video_limit: videoLimit
       });
       setSubscriptionLoading(false);
     } catch (e) {
@@ -1057,8 +1058,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let P = false;
   let A = 0;
   const T = 4e3;
-  const N = 5 * 1024 * 1024;
-  const k = 512;
+  const k = 5 * 1024 * 1024;
+  const N = 512;
   const _ = {
     open: false,
     objectUrl: null,
@@ -1176,7 +1177,7 @@ document.addEventListener("DOMContentLoaded", () => {
   async function exportCroppedAvatarFile() {
     const e = cropViewportSize();
     const t = _.baseScale * _.zoom;
-    const n = k;
+    const n = N;
     const o = document.createElement("canvas");
     o.width = n;
     o.height = n;
@@ -1198,7 +1199,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }, "image/webp", .9);
     });
     if (!d || d.size <= 0) throw new Error("Failed to process image");
-    if (d.size > N) throw new Error("Image too large. Maximum size is 5MB.");
+    if (d.size > k) throw new Error("Image too large. Maximum size is 5MB.");
     const u = d.type === "image/webp" ? "image/webp" : "image/jpeg";
     const f = u === "image/webp" ? "webp" : "jpg";
     return new File([ d ], `avatar.${f}`, {
@@ -1419,7 +1420,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const t = new Uint8Array(await e.slice(0, 16).arrayBuffer());
         const n = detectImageMime(t);
         if (!n) throw new Error("File is not a valid JPG, PNG, or WebP image");
-        if (e.size <= 0 || e.size > N) {
+        if (e.size <= 0 || e.size > k) {
           throw new Error("Image too large. Maximum size is 5MB.");
         }
         openCropModal(e);

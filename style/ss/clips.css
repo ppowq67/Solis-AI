@@ -17060,6 +17060,21 @@ body.modal-open { overflow: hidden !important; }
     background: #f3f4f6;
     cursor: pointer;
 }
+.scc-poster {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center bottom;
+    display: block;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+.scc-preview.has-poster .scc-poster { opacity: 1; }
+.scc-preview.has-video-playing .scc-poster { opacity: 0; }
+.scc-preview.has-poster .scc-skel { display: none; }
 .scc-video {
     position: absolute;
     inset: 0;
@@ -17074,6 +17089,7 @@ body.modal-open { overflow: hidden !important; }
     pointer-events: none;
 }
 .scc-preview.has-clip .scc-video { opacity: 1; background: transparent; }
+.scc-preview.has-video-playing .scc-video { opacity: 1; pointer-events: auto; }
 .scc-preview.has-clip .scc-skel { display: none; }
 
 .scc-time {

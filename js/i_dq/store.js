@@ -1,9 +1,9 @@
 window.addEventListener("load", () => {
   const e = document.querySelector(".input-section");
   const t = document.querySelector(".input-container");
-  const o = parseInt(localStorage.getItem("sidebarActiveIndex") || "0");
+  const i = parseInt(localStorage.getItem("sidebarActiveIndex") || "0");
   if (e && t) {
-    if (o === 0) {
+    if (i === 0) {
       e.classList.add("active");
       t.classList.remove("hidden");
       e.style.cssText = "display: flex !important; visibility: visible !important; opacity: 1 !important; pointer-events: all !important; z-index: 1000 !important;";
@@ -18,15 +18,15 @@ window.addEventListener("load", () => {
 window.handleDeleteAllClips = async function() {
   const e = document.getElementById("deleteConfirmationModal");
   const t = document.getElementById("deleteModalTitle");
-  const o = document.getElementById("deleteConfirmationText");
-  const i = e?.querySelector(".delete-modal-warning");
+  const i = document.getElementById("deleteConfirmationText");
+  const o = e?.querySelector(".delete-modal-warning");
   const n = document.getElementById("confirmDeleteBtn");
-  if (!e || !o || !n) return;
+  if (!e || !i || !n) return;
   const s = window.clipsStudio && window.clipsStudio.libraryItems ? window.clipsStudio.libraryItems : [];
   const a = s.length;
   if (t) t.textContent = "Clear library";
-  o.textContent = a > 0 ? `This will permanently remove all ${a} clips from your library.` : "There are no clips in your library to remove.";
-  if (i) i.textContent = "Associated files are deleted and cannot be recovered.";
+  i.textContent = a > 0 ? `This will permanently remove all ${a} clips from your library.` : "There are no clips in your library to remove.";
+  if (o) o.textContent = "Associated files are deleted and cannot be recovered.";
   n.textContent = "Clear library";
   n.disabled = a === 0;
   e.classList.add("show");
@@ -42,8 +42,8 @@ window.handleDeleteAllClips = async function() {
     r.textContent = "Clearing…";
     try {
       const t = [ ...window.clipsStudio.libraryItems ];
-      const o = t.length;
-      let i = 0;
+      const i = t.length;
+      let o = 0;
       const n = typeof getAuthHeaders === "function" ? getAuthHeaders() : {
         "Content-Type": "application/json"
       };
@@ -57,7 +57,7 @@ window.handleDeleteAllClips = async function() {
             headers: n,
             credentials: "include"
           });
-          if (e.ok) i++;
+          if (e.ok) o++;
         } catch (e) {
           console.error(`Failed to delete clip ${t}:`, e);
         }
@@ -75,7 +75,7 @@ window.handleDeleteAllClips = async function() {
       if (typeof updateStorageBadgeDisplay === "function") {
         await updateStorageBadgeDisplay();
       }
-      window.clipsStudio.showNotification(i > 0 ? `Cleared ${i}/${o} clips from your library` : "Library cleared", "success");
+      window.clipsStudio.showNotification(o > 0 ? `Cleared ${o}/${i} clips from your library` : "Library cleared", "success");
       e.classList.remove("show");
       setTimeout(() => window.location.reload(), 600);
     } catch (t) {
@@ -123,13 +123,13 @@ window.closeUpgradeModal = function() {
 };
 
 window.showUpgradeModal = function(e = "Unlock more uploads", t = "Same price for any video length. Upgrade for more uploads per day and more clips per run.") {
-  const o = document.getElementById("upgradeModalOverlay");
-  const i = document.getElementById("upgradeModalTitle");
+  const i = document.getElementById("upgradeModalOverlay");
+  const o = document.getElementById("upgradeModalTitle");
   const n = document.getElementById("upgradeModalSubtitle");
-  if (o) {
-    if (i) i.textContent = e;
+  if (i) {
+    if (o) o.textContent = e;
     if (n) n.textContent = t;
-    o.style.display = "flex";
+    i.style.display = "flex";
   }
 };
 
@@ -138,10 +138,10 @@ document.addEventListener("DOMContentLoaded", function() {
   if (e) {
     try {
       const t = JSON.parse(e);
-      const o = JSON.parse(localStorage.getItem("currentUser") || "{}");
-      if (o) {
-        o.plan = t.plan;
-        localStorage.setItem("currentUser", JSON.stringify(o));
+      const i = JSON.parse(localStorage.getItem("currentUser") || "{}");
+      if (i) {
+        i.plan = t.plan;
+        localStorage.setItem("currentUser", JSON.stringify(i));
       }
     } catch (e) {
       console.error("Failed to parse payment success data:", e);
@@ -156,21 +156,21 @@ document.addEventListener("DOMContentLoaded", function() {
       });
       if (e.ok) {
         const t = await e.json();
-        const o = t.data;
-        const i = document.getElementById("currentTier");
+        const i = t.data;
+        const o = document.getElementById("currentTier");
         const n = document.getElementById("tierInfo");
         const s = document.getElementById("tierInfoCard");
-        if (i) {
-          i.textContent = o.tier_name;
+        if (o) {
+          o.textContent = i.tier_name;
           if (s) {
             s.classList.remove("tier-free", "tier-basic", "tier-prime", "tier-elite");
-            const e = String(o.tier_name || "free").toLowerCase();
+            const e = String(i.tier_name || "free").toLowerCase();
             s.classList.add(`tier-${e}`);
             s.setAttribute("data-plan", e);
           }
         }
         if (n) {
-          const e = o.generations.remaining;
+          const e = i.generations.remaining;
           n.textContent = `${e} gens left today`;
         }
       }
@@ -192,31 +192,34 @@ document.addEventListener("DOMContentLoaded", function() {
   function updateStorageBadgesFromSubscription(e) {
     if (!e) return;
     const t = document.getElementById("storageTotalBadge");
-    const o = document.getElementById("storagePlanBadge");
-    const i = document.getElementById("currentPlanDesc");
-    const n = e.video_limit || e.videos_space_limit || 2;
+    const i = document.getElementById("storagePlanBadge");
+    const o = document.getElementById("currentPlanDesc");
+    const n = document.getElementById("storageLimitGroup");
     const s = e.plan || "free";
-    const a = s.charAt(0).toUpperCase() + s.slice(1);
-    if (t) {
-      t.textContent = n;
+    const a = e.library_unlimited === true || [ "basic", "prime", "elite" ].includes(String(s).toLowerCase());
+    const r = a ? null : e.video_limit || e.videos_space_limit || 10;
+    const c = s.charAt(0).toUpperCase() + s.slice(1);
+    if (t && !a) {
+      t.textContent = r;
+    }
+    if (n) n.hidden = a;
+    if (i) {
+      i.textContent = c;
     }
     if (o) {
-      o.textContent = a;
-    }
-    if (i) {
-      i.textContent = a + " Plan";
+      o.textContent = c + " Plan";
     }
   }
   refreshSubscriptionOnDashboard();
   updateStorageBadgeDisplay();
   const t = document.getElementById("disclaimerBtn");
-  const o = document.querySelector(".url-input-overlay");
-  const i = document.querySelector(".url-input");
+  const i = document.querySelector(".url-input-overlay");
+  const o = document.querySelector(".url-input");
   const n = document.querySelector(".url-submit-btn");
   const s = document.querySelector(".checkmark-icon");
   const a = "disclaimerAcceptedTime";
   const r = 7 * 24 * 60 * 60 * 1e3;
-  if (t && o) {
+  if (t && i) {
     const e = localStorage.getItem(a);
     const c = Date.now();
     let l = false;
@@ -229,12 +232,12 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     }
     if (!l) {
-      o.classList.add("hidden");
+      i.classList.add("hidden");
       t.classList.add("active");
       if (s) s.style.display = "block";
-      if (i) i.style.filter = "none";
+      if (o) o.style.filter = "none";
       if (n) n.style.filter = "none";
-      if (i) i.style.pointerEvents = "auto";
+      if (o) o.style.pointerEvents = "auto";
       if (n) n.style.pointerEvents = "auto";
     }
     t.addEventListener("click", function() {
@@ -242,10 +245,10 @@ document.addEventListener("DOMContentLoaded", function() {
         this.classList.add("active");
         if (s) s.style.display = "block";
         setTimeout(() => {
-          o.classList.add("hidden");
-          if (i) i.style.filter = "none";
+          i.classList.add("hidden");
+          if (o) o.style.filter = "none";
           if (n) n.style.filter = "none";
-          if (i) i.style.pointerEvents = "auto";
+          if (o) o.style.pointerEvents = "auto";
           if (n) n.style.pointerEvents = "auto";
           localStorage.setItem(a, Date.now().toString());
         }, 300);
@@ -255,11 +258,11 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 function switchClipsTab(e, t) {
-  const o = document.querySelectorAll(".clips-sub-item");
-  o.forEach(e => e.classList.remove("active"));
+  const i = document.querySelectorAll(".clips-sub-item");
+  i.forEach(e => e.classList.remove("active"));
   t.classList.add("active");
-  const i = document.querySelectorAll(".clips-section");
-  i.forEach(e => {
+  const o = document.querySelectorAll(".clips-section");
+  o.forEach(e => {
     e.classList.remove("active");
     e.style.display = "none";
   });
@@ -277,9 +280,9 @@ function switchClipsTab(e, t) {
     const e = window.clipsStudio;
     if (e) {
       const t = 3e4;
-      const o = !e._libraryLastLoaded || Date.now() - e._libraryLastLoaded > t;
-      const i = !e.libraryItems || e.libraryItems.length === 0;
-      if (o || i) {
+      const i = !e._libraryLastLoaded || Date.now() - e._libraryLastLoaded > t;
+      const o = !e.libraryItems || e.libraryItems.length === 0;
+      if (i || o) {
         e.showLibrarySkeleton(4);
         e.loadLibraryItems().then(() => {
           e._libraryLastLoaded = Date.now();
@@ -289,9 +292,9 @@ function switchClipsTab(e, t) {
   }
   const a = document.getElementById("clipsSubPane");
   if (a) {
-    const e = Array.from(o).indexOf(t);
-    const i = document.querySelector(".clips-sub-pill");
-    const n = i.getBoundingClientRect();
+    const e = Array.from(i).indexOf(t);
+    const o = document.querySelector(".clips-sub-pill");
+    const n = o.getBoundingClientRect();
     const s = t.getBoundingClientRect();
     const r = s.left - n.left;
     a.style.left = r + "px";

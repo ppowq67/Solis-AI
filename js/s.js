@@ -11476,7 +11476,7 @@ class ClipsStudio {
   }
   updateStorageDisplay(e) {
     const t = this.libraryItems.length;
-    const i = e.video_limit || e.videos_space_limit || 2;
+    const i = e.video_limit || e.videos_space_limit || 10;
     const n = (e.plan || "free").toLowerCase();
     if (typeof window.applyStorageBadgeUI === "function") {
       window.applyStorageBadgeUI({
@@ -11619,58 +11619,13 @@ class ClipsStudio {
           });
         }
         const i = String(e.projectId);
-        if (i && this._durationCache[i]) {
-          if (window.SolisClipCard) SolisClipCard.setDuration(t, this._durationCache[i]); else {
+        const n = e.duration || this._durationCache[i];
+        if (n) {
+          if (window.SolisClipCard) SolisClipCard.setDuration(t, n); else {
             const e = t.querySelector(".duration-text");
-            if (e) e.textContent = this._durationCache[i];
+            if (e) e.textContent = n;
           }
-        } else if (i) {
-          let e = null;
-          const n = new IntersectionObserver(r => {
-            if (r[0].isIntersecting) {
-              e = setTimeout(() => {
-                n.disconnect();
-                if (window.__solisDownloadBusy) return;
-                const e = `${API_BASE_URL}/clips/duration/${encodeURIComponent(i)}`;
-                const loadDur = n => fetch(e, {
-                  method: "GET",
-                  credentials: "include"
-                }).then(async e => {
-                  if (!e.ok) {
-                    if (n < 4) {
-                      setTimeout(() => loadDur(n + 1), 1500 * (n + 1));
-                      return null;
-                    }
-                    return null;
-                  }
-                  try {
-                    return await e.json();
-                  } catch (e) {
-                    return null;
-                  }
-                }).then(e => {
-                  if (e?.duration_formatted) {
-                    this._durationCache[i] = e.duration_formatted;
-                    if (window.SolisClipCard) SolisClipCard.setDuration(t, e.duration_formatted); else {
-                      const i = t.querySelector(".duration-text");
-                      if (i) i.textContent = e.duration_formatted;
-                    }
-                  }
-                }).catch(() => {});
-                loadDur(0);
-              }, 400);
-            } else {
-              if (e) {
-                clearTimeout(e);
-                e = null;
-              }
-            }
-          }, {
-            rootMargin: "0px",
-            threshold: .1
-          });
-          n.observe(t);
-          this._durationObservers.push(n);
+          if (i) this._durationCache[i] = n;
         }
         return t;
       };

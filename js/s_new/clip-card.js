@@ -98,8 +98,8 @@
     const s = Array.isArray(t.clips) ? t.clips : [];
     const c = t.lone_clip === true || s.length <= 1;
     if (n < 60 && !c) return null;
-    const a = t.tag && typeof t.tag === "object" ? t.tag : null;
-    const o = a ? Number(a.confidence) : 0;
+    const o = t.tag && typeof t.tag === "object" ? t.tag : null;
+    const a = o ? Number(o.confidence) : 0;
     const l = r[i] || r.solid;
     return {
       band: i,
@@ -108,9 +108,9 @@
       label: String(t.label || l.label),
       why: String(t.why || "").trim(),
       fix: String(t.fix || "").trim(),
-      tag: a && a.label && o >= .8 ? {
-        label: String(a.label),
-        confidence: o
+      tag: o && o.label && a >= .8 ? {
+        label: String(o.label),
+        confidence: a
       } : null,
       hook: dimOf(t, "hook"),
       subtitles: dimOf(t, "subtitles"),
@@ -141,8 +141,8 @@
       if (!r) return "";
       const s = i.band || bandOf(r);
       const c = i.note || "";
-      const a = c ? `<div class="scc-why"><p>${esc(c)}</p></div>` : "";
-      return `<div class="pv-grade" data-dim="${esc(t)}">\n                <b class="pv-dim-tier ${dimBandClass(s)}">${esc(String(r))}</b>\n                <span class="pv-dim-label">${esc(n)}</span>\n                ${a}\n            </div>`;
+      const o = c ? `<div class="scc-why"><p>${esc(c)}</p></div>` : "";
+      return `<div class="pv-grade" data-dim="${esc(t)}">\n                <b class="pv-dim-tier ${dimBandClass(s)}">${esc(String(r))}</b>\n                <span class="pv-dim-label">${esc(n)}</span>\n                ${o}\n            </div>`;
     }).join("");
   }
   function previewUrl(e) {
@@ -153,6 +153,14 @@
     }
     const t = (window.API_BASE_URL || "/api").replace(/\/$/, "");
     return `${t}/clips/preview/${encodeURIComponent(e)}/1`;
+  }
+  function posterUrl(e) {
+    const t = e && (e.thumbnailUrl || e.thumbnail_url);
+    if (t && String(t).startsWith("http")) return String(t);
+    const n = e && (e.projectId || e.id);
+    if (!n) return "";
+    const i = (window.API_BASE_URL || "/api").replace(/\/$/, "");
+    return `${i}/clips/poster/${encodeURIComponent(n)}`;
   }
   function pumpQueue() {
     while (n < e && t.length) {
@@ -177,7 +185,7 @@
     const i = esc(e.projectId || e.id || "");
     const r = formatClock(e.duration);
     const s = t ? `<div class="scc-viral ${bandClass(t.band)}">\n                    <span class="scc-viral-n">${esc(t.scoreDisplay)}</span>\n                    ${tip(`${t.scoreDisplay}/100 · ${t.label}`)}\n               </div>` : `<div class="scc-viral scc-viral-empty"></div>`;
-    return `\n            <div class="scc-preview">\n                <div class="scc-skel" aria-hidden="true"></div>\n                <video class="scc-video" muted playsinline loop preload="none" controlslist="nodownload nofullscreen noremoteplayback" disablepictureinpicture></video>\n                <div class="scc-time"><span class="scc-t0">00:00</span> <span class="scc-t1">${esc(r)}</span></div>\n                <div class="scc-bar"><i></i></div>\n            </div>\n            <div class="scc-meta">\n                <div class="scc-meta-row">\n                    ${s}\n                    <div class="scc-actions">\n                        <button type="button" class="scc-ico library-share-btn" data-project-id="${i}" aria-label="Share preview">\n                            ${iconShare()}${tip("Copy public preview link")}\n                        </button>\n                        <button type="button" class="scc-ico library-download-btn" data-project-id="${i}" aria-label="Download">\n                            ${iconDl()}${tip("Save this clip")}\n                        </button>\n                        <button type="button" class="scc-ico library-delete-btn" aria-label="Delete">\n                            ${iconTrash()}${tip("Delete this clip")}\n                        </button>\n                    </div>\n                </div>\n                <h2 class="card-title scc-title" title="${n}">${n}</h2>\n            </div>`;
+    return `\n            <div class="scc-preview">\n                <div class="scc-skel" aria-hidden="true"></div>\n                <img class="scc-poster" alt="" loading="lazy" decoding="async" draggable="false">\n                <video class="scc-video" muted playsinline loop preload="none" controlslist="nodownload nofullscreen noremoteplayback" disablepictureinpicture></video>\n                <div class="scc-time"><span class="scc-t0">00:00</span> <span class="scc-t1">${esc(r)}</span></div>\n                <div class="scc-bar"><i></i></div>\n            </div>\n            <div class="scc-meta">\n                <div class="scc-meta-row">\n                    ${s}\n                    <div class="scc-actions">\n                        <button type="button" class="scc-ico library-share-btn" data-project-id="${i}" aria-label="Share preview">\n                            ${iconShare()}${tip("Copy public preview link")}\n                        </button>\n                        <button type="button" class="scc-ico library-download-btn" data-project-id="${i}" aria-label="Download">\n                            ${iconDl()}${tip("Save this clip")}\n                        </button>\n                        <button type="button" class="scc-ico library-delete-btn" aria-label="Delete">\n                            ${iconTrash()}${tip("Delete this clip")}\n                        </button>\n                    </div>\n                </div>\n                <h2 class="card-title scc-title" title="${n}">${n}</h2>\n            </div>`;
   }
   function railHTML(e) {
     const t = viralityOf(e);
@@ -220,90 +228,108 @@
     e.dataset.sccBound = "1";
     const r = t.projectId || t.id;
     const s = e.querySelector(".scc-preview");
-    const c = e.querySelector(".scc-video");
+    const c = e.querySelector(".scc-poster");
+    const o = e.querySelector(".scc-video");
     const a = e.querySelector(".scc-bar > i");
-    const o = e.querySelector(".scc-t0");
-    const l = e.querySelector(".scc-t1");
-    let d = "";
+    const l = e.querySelector(".scc-t0");
+    const d = e.querySelector(".scc-t1");
+    let u = "";
+    const showPoster = () => {
+      s?.classList.add("has-poster");
+      s?.classList.remove("has-video-playing");
+    };
+    if (c) {
+      const e = posterUrl(t);
+      if (e) {
+        c.src = e;
+        c.addEventListener("load", showPoster, {
+          once: true
+        });
+        c.addEventListener("error", () => {
+          c.removeAttribute("src");
+        }, {
+          once: true
+        });
+      }
+    }
     const tick = () => {
-      if (!c) return;
-      const e = c.duration;
-      const t = c.currentTime || 0;
-      if (o) o.textContent = formatClock(t);
+      if (!o) return;
+      const e = o.duration;
+      const t = o.currentTime || 0;
+      if (l) l.textContent = formatClock(t);
       if (Number.isFinite(e) && e > 0) {
-        if (l) l.textContent = formatClock(e);
+        if (d) d.textContent = formatClock(e);
         if (a) a.style.width = `${Math.min(100, t / e * 100)}%`;
       }
     };
-    const hasFrame = () => c && c.videoWidth > 0 && c.videoHeight > 0;
+    const hasFrame = () => o && o.videoWidth > 0 && o.videoHeight > 0;
     const showFrame = () => {
       if (!hasFrame()) return;
-      s?.classList.add("has-clip");
+      s?.classList.add("has-clip", "has-video-playing");
       tick();
     };
     const paintStill = () => {
-      if (!c) return;
-      const e = c.currentTime > .05 ? c.currentTime : .08;
+      if (!o) return;
+      const e = o.currentTime > .05 ? o.currentTime : .08;
       const afterSeek = () => {
         showFrame();
         if (!s?.matches(":hover")) {
           try {
-            c.pause();
+            o.pause();
           } catch (e) {}
         }
       };
       try {
-        c.currentTime = e;
+        o.currentTime = e;
       } catch (e) {}
-      c.addEventListener("seeked", afterSeek, {
+      o.addEventListener("seeked", afterSeek, {
         once: true
       });
-      c.play().then(() => {
+      o.play().then(() => {
         showFrame();
         if (!s?.matches(":hover")) {
-          c.pause();
+          o.pause();
           showFrame();
         }
       }).catch(() => showFrame());
     };
     const playClip = () => {
-      if (!c) return;
-      c.muted = true;
-      if (i && i !== c) {
+      if (!o) return;
+      o.muted = true;
+      if (i && i !== o) {
         try {
           i.pause();
         } catch (e) {}
       }
-      i = c;
-      c.play().then(showFrame).catch(() => {});
+      i = o;
+      o.play().then(showFrame).catch(() => {});
     };
     const attachSrc = e => {
-      c.muted = true;
-      c.playsInline = true;
-      c.setAttribute("playsinline", "");
-      c.preload = "auto";
-      c.src = e;
+      o.muted = true;
+      o.playsInline = true;
+      o.setAttribute("playsinline", "");
+      o.preload = "auto";
+      o.src = e;
       try {
-        c.load();
+        o.load();
       } catch (e) {}
     };
     const bindReady = e => {
-      c.addEventListener("loadeddata", e);
-      c.addEventListener("canplay", e);
-      c.addEventListener("loadedmetadata", e);
+      o.addEventListener("loadeddata", e);
+      o.addEventListener("canplay", e);
+      o.addEventListener("loadedmetadata", e);
     };
     const ensureSrc = () => {
-      if (!c || c.dataset.srcReady === "1" || c.dataset.srcFailed === "1") return;
-      c.dataset.srcReady = "1";
+      if (!o || o.dataset.srcReady === "1" || o.dataset.srcFailed === "1") return;
+      o.dataset.srcReady = "1";
       const e = previewUrl(r);
       enqueueLoad(() => new Promise(t => {
-        if (!c.isConnected) {
-          c.dataset.srcReady = "";
+        if (!o.isConnected) {
+          o.dataset.srcReady = "";
           t();
           return;
         }
         let n = false;
-        let i = 0;
         const finish = () => {
           if (!n) {
             n = true;
@@ -316,58 +342,38 @@
           finish();
         };
         bindReady(onReady);
-        c.addEventListener("error", () => {
-          const t = typeof getAuthHeaders === "function" ? getAuthHeaders() : {};
-          const tryBlob = () => {
-            if (i >= 2) {
-              c.dataset.srcFailed = "1";
-              finish();
-              return;
-            }
-            i += 1;
-            fetch(e, {
-              credentials: "include",
-              headers: t
-            }).then(e => e.ok ? e.blob() : Promise.reject(new Error(String(e.status)))).then(e => {
-              if (d) try {
-                URL.revokeObjectURL(d);
-              } catch (e) {}
-              d = URL.createObjectURL(e);
-              bindReady(onReady);
-              attachSrc(d);
-            }).catch(() => {
-              setTimeout(tryBlob, 1800 * i);
-            });
-          };
-          tryBlob();
+        o.addEventListener("error", () => {
+          o.dataset.srcFailed = "1";
+          finish();
         }, {
           once: true
         });
         attachSrc(e);
-        setTimeout(finish, 1e4);
+        setTimeout(finish, 8e3);
       }));
     };
-    c?.addEventListener("timeupdate", tick);
-    c?.addEventListener("loadedmetadata", tick);
-    c?.addEventListener("pause", () => {
-      if (i === c) i = null;
+    o?.addEventListener("timeupdate", tick);
+    o?.addEventListener("loadedmetadata", tick);
+    o?.addEventListener("pause", () => {
+      if (i === o) i = null;
     });
     s?.addEventListener("mouseenter", () => {
       ensureSrc();
-      if (c && c.paused) playClip();
+      if (o && o.paused) playClip();
     });
     s?.addEventListener("mouseleave", () => {
-      if (c) {
-        c.pause();
-        showFrame();
+      if (o) {
+        o.pause();
+        s?.classList.remove("has-video-playing");
+        showPoster();
       }
     });
     e.addEventListener("click", i => {
       if (i.target.closest(".library-download-btn, .library-delete-btn, .library-share-btn, .scc-ico, .scc-viral")) return;
       i.preventDefault();
       i.stopPropagation();
-      if (c && !c.paused) try {
-        c.pause();
+      if (o && !o.paused) try {
+        o.pause();
       } catch (e) {}
       const s = t.id || r;
       if (n && typeof n.openLibraryPreview === "function" && s) {

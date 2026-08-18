@@ -6992,7 +6992,14 @@ class ClipsStudio {
     return /(?:https?:\/\/)?(?:www\.)?youtube\.com\/shorts\//.test(e);
   }
   isShortFormUrl(e) {
-    return /youtube\.com\/shorts\//i.test(e) || /(?:vm|vt)\.tiktok\.com/i.test(e) || /tiktok\.com/i.test(e) || /instagram\.com\/reels?\//i.test(e) || /instagram\.com\/p\//i.test(e);
+    return /youtube\.com\/shorts\//i.test(e);
+  }
+  getMediaUrlError(e) {
+    const t = this.detectMediaPlatform(e);
+    if (t === "tiktok" || t === "instagram") {
+      return "TikTok and Instagram are coming soon. Paste a YouTube or YouTube Shorts link for now.";
+    }
+    return "Enter a valid YouTube or YouTube Shorts URL";
   }
   detectMediaPlatform(e) {
     const t = (e || "").toLowerCase();
@@ -7007,7 +7014,7 @@ class ClipsStudio {
       const t = new URL(e.startsWith("http") ? e : "https://" + e);
       const i = t.hostname.toLowerCase();
       const n = t.pathname.toLowerCase();
-      const r = new Set([ "youtube.com", "www.youtube.com", "m.youtube.com", "youtu.be", "www.youtu.be", "tiktok.com", "www.tiktok.com", "vm.tiktok.com", "vt.tiktok.com", "m.tiktok.com", "instagram.com", "www.instagram.com" ]);
+      const r = new Set([ "youtube.com", "www.youtube.com", "m.youtube.com", "youtu.be", "www.youtu.be" ]);
       if (!r.has(i)) {
         return false;
       }
@@ -7015,18 +7022,15 @@ class ClipsStudio {
         return false;
       }
       const o = this.detectMediaPlatform(e);
+      if (o === "tiktok" || o === "instagram") {
+        return false;
+      }
       if (o === "youtube") {
         const t = this.extractYouTubeVideoId(e);
         return !!(t && /^[a-zA-Z0-9_-]{11}$/.test(t));
       }
       if (o === "youtube_shorts") {
         return /youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/i.test(e);
-      }
-      if (o === "tiktok") {
-        return /tiktok\.com|vm\.tiktok\.com|vt\.tiktok\.com/i.test(e);
-      }
-      if (o === "instagram") {
-        return /instagram\.com\/(reels?|p)\//i.test(e);
       }
       return false;
     } catch (e) {
@@ -9317,12 +9321,13 @@ class ClipsStudio {
           this.closeTemplatePreviewModal();
           await this.downloadClip(n);
         }
-      } catch (t) {
-        showNotification(`Save failed: ${t.message}`, "error");
+      } catch (e) {
+        showNotification(`Save failed: ${e.message}`, "error");
+      } finally {
         if (e) {
           e.disabled = false;
           e.dataset.applying = "0";
-          e.textContent = e.dataset.prevLabel || "Apply & Download";
+          e.textContent = e.dataset.prevLabel || "Download";
         }
       }
       return;
@@ -9437,7 +9442,7 @@ class ClipsStudio {
       return;
     }
     if (!this.isValidMediaUrl(s)) {
-      showNotification("Enter a valid YouTube, YouTube Shorts, TikTok, or Instagram Reels URL", "error");
+      showNotification(this.getMediaUrlError(s), "error");
       this.closeTemplatePreviewModal();
       this._armTemplateThenUrlFlow(t);
       return;
@@ -10588,7 +10593,7 @@ class ClipsStudio {
         return;
       }
       if (!this.isValidMediaUrl(t)) {
-        showNotification("Enter a valid YouTube, YouTube Shorts, TikTok, or Instagram Reels URL", "error");
+        showNotification(this.getMediaUrlError(t), "error");
         return;
       }
       if (this.isShortFormUrl(t)) {
@@ -10932,56 +10937,27 @@ class ClipsStudio {
             const r = await t.json();
             const o = r.full_download_url;
             if (o) {
-              let t = false;
-              try {
-                const e = await fetch(o, {
-                  method: "HEAD",
-                  credentials: "omit",
-                  cache: "no-store"
-                });
-                t = e.ok;
-                if (!t && (e.status === 405 || e.status === 501)) {
-                  const e = await fetch(o, {
-                    method: "GET",
-                    credentials: "omit",
-                    cache: "no-store",
-                    headers: {
-                      Range: "bytes=0-0"
-                    }
-                  });
-                  t = e.ok || e.status === 206;
-                  try {
-                    e.body?.cancel?.();
-                  } catch (e) {}
-                }
-              } catch (e) {
-                console.warn("Signed download probe failed, using cookie fetch", e);
-                t = false;
-              }
-              if (t) {
-                const t = document.createElement("a");
-                t.href = o;
-                t.rel = "noopener";
-                t.download = `clip_${e}.mp4`;
-                t.style.display = "none";
-                document.body.appendChild(t);
-                t.click();
-                document.body.removeChild(t);
-                if (!n) showNotification("Download started!", "success");
-                if (!i) this.closeTemplatePreviewModal();
-                document.querySelectorAll("[data-project-id]").forEach(t => {
-                  if (t.getAttribute("data-project-id") === e) {
-                    const e = t.querySelector(".status-pill");
-                    if (e) {
-                      e.style.opacity = "0";
-                      e.style.transition = "opacity 0.3s ease";
-                      setTimeout(() => e.remove(), 300);
-                    }
+              const t = document.createElement("a");
+              t.href = o;
+              t.rel = "noopener";
+              t.download = `clip_${e}.mp4`;
+              t.style.display = "none";
+              document.body.appendChild(t);
+              t.click();
+              document.body.removeChild(t);
+              if (!n) showNotification("Download started!", "success");
+              if (!i) this.closeTemplatePreviewModal();
+              document.querySelectorAll("[data-project-id]").forEach(t => {
+                if (t.getAttribute("data-project-id") === e) {
+                  const e = t.querySelector(".status-pill");
+                  if (e) {
+                    e.style.opacity = "0";
+                    e.style.transition = "opacity 0.3s ease";
+                    setTimeout(() => e.remove(), 300);
                   }
-                });
-                return;
-              }
-              console.warn("Signed download invalid/expired — falling back to authenticated fetch");
+                }
+              });
+              return;
             }
           }
         } catch (e) {

@@ -1,6 +1,35 @@
 (function() {
   "use strict";
-  var e = {
+  var e = "https://solisai.video/assets/og-image.png";
+  function setOgMeta(e) {
+    if (!e) return;
+    function setMeta(e, t, o) {
+      if (!t) return;
+      var r = o ? 'meta[name="' + e + '"]' : 'meta[property="' + e + '"]';
+      var n = document.querySelector(r);
+      if (!n) {
+        n = document.createElement("meta");
+        if (o) n.setAttribute("name", e); else n.setAttribute("property", e);
+        document.head.appendChild(n);
+      }
+      n.setAttribute("content", t);
+    }
+    if (e.title) {
+      document.title = e.title;
+      setMeta("og:title", e.title);
+      setMeta("twitter:title", e.title, true);
+    }
+    if (e.description) {
+      setMeta("og:description", e.description);
+      setMeta("twitter:description", e.description, true);
+    }
+    if (e.image) {
+      setMeta("og:image", e.image);
+      setMeta("twitter:image", e.image, true);
+    }
+    if (e.url) setMeta("og:url", e.url);
+  }
+  var t = {
     mode: "clip",
     creator: null,
     following: false,
@@ -42,11 +71,11 @@
     if (!e || typeof e !== "object") return null;
     var t = {};
     Object.keys(e).forEach(function(o) {
-      var n = String(o).toLowerCase();
-      if (n.indexOf("email") >= 0 || n.indexOf("mail") >= 0) return;
-      var r = e[o];
-      if (looksLikeEmail(r)) return;
-      t[o] = r;
+      var r = String(o).toLowerCase();
+      if (r.indexOf("email") >= 0 || r.indexOf("mail") >= 0) return;
+      var n = e[o];
+      if (looksLikeEmail(n)) return;
+      t[o] = n;
     });
     if (!t.public_id && t.id) t.public_id = t.id;
     if (!t.name || looksLikeEmail(t.name)) t.name = t.username || "Creator";
@@ -75,8 +104,8 @@
       };
     }
     var o = (t.get("id") || t.get("project") || t.get("sol") || "").trim();
-    var n = e.indexOf("preview");
-    var r = e.indexOf("share");
+    var r = e.indexOf("preview");
+    var n = e.indexOf("share");
     var i = e.indexOf("shareable");
     var a = e.indexOf("u");
     if (a >= 0 && e[a + 1]) {
@@ -97,7 +126,7 @@
         projectId: o
       };
     }
-    var l = n >= 0 ? n : r >= 0 ? r : i;
+    var l = r >= 0 ? r : n >= 0 ? n : i;
     if (l >= 0 && e[l + 1]) {
       var d = e[l + 1];
       if (/^SOL-/i.test(d)) return {
@@ -109,14 +138,14 @@
         projectId: d
       };
     }
-    var c = e[e.length - 1] || "";
-    if (/^SOL-/i.test(c)) return {
+    var s = e[e.length - 1] || "";
+    if (/^SOL-/i.test(s)) return {
       mode: "profile",
-      solId: c.toUpperCase()
+      solId: s.toUpperCase()
     };
-    if (String(c).indexOf("prj_") === 0) return {
+    if (String(s).indexOf("prj_") === 0) return {
       mode: "clip",
-      projectId: c
+      projectId: s
     };
     if (location.protocol === "file:" || /shareable\.html$/i.test(location.pathname)) {
       return {
@@ -139,13 +168,13 @@
   }
   function openWall(e, t) {
     var o = document.getElementById("signupWall");
-    var n = document.getElementById("wallLogin");
-    var r = document.getElementById("wallTitle");
+    var r = document.getElementById("wallLogin");
+    var n = document.getElementById("wallTitle");
     var i = document.getElementById("wallMsg");
-    if (r && e) r.textContent = e;
+    if (n && e) n.textContent = e;
     if (i && t) i.textContent = t;
-    if (n) {
-      n.href = "/login.html?redirect=" + encodeURIComponent(location.pathname + location.search);
+    if (r) {
+      r.href = "/login.html?redirect=" + encodeURIComponent(location.pathname + location.search);
     }
     if (o) o.hidden = false;
   }
@@ -153,26 +182,26 @@
     var e = document.getElementById("signupWall");
     if (e) e.hidden = true;
   }
-  function setFollowUi(t) {
-    e.following = !!t;
+  function setFollowUi(e) {
+    t.following = !!e;
     var o = document.getElementById("followBtn");
     if (!o) return;
-    o.classList.toggle("is-following", e.following);
-    o.textContent = e.following ? "Following" : "Follow";
-    o.setAttribute("aria-pressed", e.following ? "true" : "false");
+    o.classList.toggle("is-following", t.following);
+    o.textContent = t.following ? "Following" : "Follow";
+    o.setAttribute("aria-pressed", t.following ? "true" : "false");
   }
-  function paintBadges(t, o) {
-    var n = document.getElementById(t);
-    if (!n) return;
-    n.innerHTML = "";
+  function paintBadges(e, o) {
+    var r = document.getElementById(e);
+    if (!r) return;
+    r.innerHTML = "";
     if (!o || !o.length) return;
     if (window.SolisBadges && typeof window.SolisBadges.renderList === "function") {
-      window.SolisBadges.renderList(n, o, 24);
+      window.SolisBadges.renderList(r, o, 24);
       return;
     }
-    var r = e.creator && (e.creator.public_id || e.creator.id);
-    if (r && window.SolisBadges && window.SolisBadges.fetchAndRender) {
-      window.SolisBadges.fetchAndRender(r, [ t ], 24);
+    var n = t.creator && (t.creator.public_id || t.creator.id);
+    if (n && window.SolisBadges && window.SolisBadges.fetchAndRender) {
+      window.SolisBadges.fetchAndRender(n, [ e ], 24);
     }
   }
   function mixHex(e, t, o) {
@@ -181,11 +210,11 @@
       if (e.length === 3) e = e[0] + e[0] + e[1] + e[1] + e[2] + e[2];
       return [ parseInt(e.slice(0, 2), 16) || 0, parseInt(e.slice(2, 4), 16) || 0, parseInt(e.slice(4, 6), 16) || 0 ];
     }
-    var n = parse(e);
-    var r = parse(t);
+    var r = parse(e);
+    var n = parse(t);
     var i = Math.max(0, Math.min(1, o));
     function ch(e) {
-      return Math.round(n[e] + (r[e] - n[e]) * i);
+      return Math.round(r[e] + (n[e] - r[e]) * i);
     }
     return "#" + [ ch(0), ch(1), ch(2) ].map(function(e) {
       return e.toString(16).padStart(2, "0");
@@ -218,34 +247,34 @@
         return;
       }
       var o = document.createElement("canvas");
-      var n = 24;
-      o.width = n;
-      o.height = n;
-      var r = o.getContext("2d", {
+      var r = 24;
+      o.width = r;
+      o.height = r;
+      var n = o.getContext("2d", {
         willReadFrequently: true
       });
-      if (!r) {
+      if (!n) {
         t(null);
         return;
       }
-      r.drawImage(e, 0, 0, n, n);
-      var i = r.getImageData(0, 0, n, n).data;
+      n.drawImage(e, 0, 0, r, r);
+      var i = n.getImageData(0, 0, r, r).data;
       var a = {};
       var l = null;
       var d = 0;
-      for (var c = 0; c < i.length; c += 4) {
-        var s = i[c + 3];
-        if (s < 180) continue;
-        var f = i[c];
-        var u = i[c + 1];
-        var p = i[c + 2];
+      for (var s = 0; s < i.length; s += 4) {
+        var c = i[s + 3];
+        if (c < 180) continue;
+        var f = i[s];
+        var u = i[s + 1];
+        var p = i[s + 2];
         var m = Math.max(f, u, p);
         var g = Math.min(f, u, p);
         if (m < 40 || g > 235) continue;
-        var v = Math.round(f / 24) * 24;
-        var y = Math.round(u / 24) * 24;
-        var h = Math.round(p / 24) * 24;
-        var w = v + "," + y + "," + h;
+        var h = Math.round(f / 24) * 24;
+        var v = Math.round(u / 24) * 24;
+        var y = Math.round(p / 24) * 24;
+        var w = h + "," + v + "," + y;
         a[w] = (a[w] || 0) + 1;
         if (a[w] > d) {
           d = a[w];
@@ -256,50 +285,50 @@
         t(null);
         return;
       }
-      var E = l.split(",").map(Number);
-      var I = "#" + E.map(function(e) {
+      var I = l.split(",").map(Number);
+      var E = "#" + I.map(function(e) {
         return Math.max(0, Math.min(255, e)).toString(16).padStart(2, "0");
       }).join("");
-      t(I);
+      t(E);
     } catch (e) {
       t(null);
     }
   }
-  function setAvatar(e, t, o, n) {
-    var r = document.getElementById(e);
+  function setAvatar(e, t, o, r) {
+    var n = document.getElementById(e);
     var i = document.getElementById(t);
-    if (!r || !i) return;
+    if (!n || !i) return;
     if (o) {
-      r.crossOrigin = "anonymous";
-      r.src = absoluteApi(o);
-      r.alt = n || "";
-      r.hidden = false;
+      n.crossOrigin = "anonymous";
+      n.src = absoluteApi(o);
+      n.alt = r || "";
+      n.hidden = false;
       i.hidden = true;
-      r.onload = function() {
+      n.onload = function() {
         if (e === "pAvatar") {
-          extractDominantColor(r, applyBannerPalette);
+          extractDominantColor(n, applyBannerPalette);
         }
       };
-      r.onerror = function() {
-        r.hidden = true;
+      n.onerror = function() {
+        n.hidden = true;
         i.hidden = false;
-        i.textContent = initials(n);
+        i.textContent = initials(r);
         if (e === "pAvatar") applyBannerPalette(null);
       };
     } else {
-      r.hidden = true;
+      n.hidden = true;
       i.hidden = false;
-      i.textContent = initials(n);
+      i.textContent = initials(r);
       if (e === "pAvatar") applyBannerPalette(null);
     }
   }
   function paintCreatorOntoClip(e) {
     var t = scrubCreator(e) || {};
     var o = t.name || "Creator";
-    var n = String(t.username || "").replace(/^@/, "");
-    var r = t.public_id || t.solis_id || t.id || "";
+    var r = String(t.username || "").replace(/^@/, "");
+    var n = t.public_id || t.solis_id || t.id || "";
     document.getElementById("creatorName").textContent = o;
-    document.getElementById("creatorHandle").textContent = n ? "@" + n : "";
+    document.getElementById("creatorHandle").textContent = r ? "@" + r : "";
     setAvatar("creatorAvatar", "creatorFallback", t.picture, o);
     paintBadges("clipBadges", t.badges);
     var i = document.getElementById("clipCaption");
@@ -309,52 +338,58 @@
       i.hidden = !a;
     }
   }
-  function paintProfile(t, o, n) {
-    var r = scrubCreator(t) || {};
-    e.creator = r;
-    e.solId = r.public_id || r.solis_id || r.id || e.solId;
+  function paintProfile(o, r, n) {
+    var i = scrubCreator(o) || {};
+    t.creator = i;
+    t.solId = i.public_id || i.solis_id || i.id || t.solId;
     document.getElementById("clipRoot").hidden = true;
     document.getElementById("profileRoot").hidden = false;
     document.getElementById("pageError").hidden = true;
-    var i = r.name || "Creator";
-    var a = String(r.username || "").replace(/^@/, "");
-    var l = e.solId || "";
-    document.getElementById("pName").textContent = i;
-    document.getElementById("pHandle").textContent = a ? "@" + a : "";
-    document.title = i + " · Solis AI";
-    var d = document.getElementById("pBio");
-    var c = String(r.bio || "").trim();
-    if (d) {
-      d.textContent = c;
-      d.hidden = !c;
-    }
-    document.getElementById("pFollowers").textContent = formatCount(r.followers);
-    setAvatar("pAvatar", "pAvatarFallback", r.picture, i);
-    if (!r.picture) applyBannerPalette(null);
-    paintBadges("pBadges", r.badges);
-    setFollowUi(o);
-    var s = document.getElementById("followBtn");
+    var a = i.name || "Creator";
+    var l = String(i.username || "").replace(/^@/, "");
+    var d = t.solId || "";
+    document.getElementById("pName").textContent = a;
+    document.getElementById("pHandle").textContent = l ? "@" + l : "";
+    document.title = a + " · Solis AI";
+    setOgMeta({
+      title: a + " · Solis AI",
+      description: c || "Follow creators on Solis AI.",
+      image: i.picture && /^https?:\/\//i.test(i.picture) ? i.picture : e,
+      url: location.href.split("?")[0]
+    });
+    var s = document.getElementById("pBio");
+    var c = String(i.bio || "").trim();
     if (s) {
-      s.hidden = !!n;
+      s.textContent = c;
+      s.hidden = !c;
     }
-    if ((!r.badges || !r.badges.length) && l && window.SolisBadges) {
-      window.SolisBadges.fetchAndRender(l, [ "pBadges" ], 24);
+    document.getElementById("pFollowers").textContent = formatCount(i.followers);
+    setAvatar("pAvatar", "pAvatarFallback", i.picture, a);
+    if (!i.picture) applyBannerPalette(null);
+    paintBadges("pBadges", i.badges);
+    setFollowUi(r);
+    var f = document.getElementById("followBtn");
+    if (f) {
+      f.hidden = !!n;
+    }
+    if ((!i.badges || !i.badges.length) && d && window.SolisBadges) {
+      window.SolisBadges.fetchAndRender(d, [ "pBadges" ], 24);
     }
   }
   async function toggleFollow() {
-    var t = e.solId;
-    if (!t) return;
+    var e = t.solId;
+    if (!e) return;
     var o = document.getElementById("followBtn");
     if (o) o.disabled = true;
-    var n = e.following;
-    setFollowUi(!n);
-    var r = document.getElementById("pFollowers");
-    var i = Number(e.creator && e.creator.followers) || 0;
-    var a = Math.max(0, i + (n ? -1 : 1));
-    if (r) r.textContent = formatCount(a);
+    var r = t.following;
+    setFollowUi(!r);
+    var n = document.getElementById("pFollowers");
+    var i = Number(t.creator && t.creator.followers) || 0;
+    var a = Math.max(0, i + (r ? -1 : 1));
+    if (n) n.textContent = formatCount(a);
     try {
-      var l = await fetch(apiBase() + "/follows/" + encodeURIComponent(t), {
-        method: n ? "DELETE" : "POST",
+      var l = await fetch(apiBase() + "/follows/" + encodeURIComponent(e), {
+        method: r ? "DELETE" : "POST",
         credentials: "include",
         headers: authHeaders()
       });
@@ -362,27 +397,27 @@
         return {};
       });
       if (l.status === 401) {
-        setFollowUi(n);
-        if (r) r.textContent = formatCount(i);
+        setFollowUi(r);
+        if (n) n.textContent = formatCount(i);
         openWall("Sign in to follow", "Follow creators with a free Solis account — takes a few seconds.");
         return;
       }
       if (!l.ok) {
-        setFollowUi(n);
-        if (r) r.textContent = formatCount(i);
+        setFollowUi(r);
+        if (n) n.textContent = formatCount(i);
         return;
       }
-      var c = d.following != null ? !!d.following : !n;
-      setFollowUi(c);
+      var s = d.following != null ? !!d.following : !r;
+      setFollowUi(s);
       if (d.followers != null) {
-        if (e.creator) e.creator.followers = d.followers;
-        if (r) r.textContent = formatCount(d.followers);
-      } else if (e.creator) {
-        e.creator.followers = a;
+        if (t.creator) t.creator.followers = d.followers;
+        if (n) n.textContent = formatCount(d.followers);
+      } else if (t.creator) {
+        t.creator.followers = a;
       }
     } catch (e) {
-      setFollowUi(n);
-      if (r) r.textContent = formatCount(i);
+      setFollowUi(r);
+      if (n) n.textContent = formatCount(i);
     } finally {
       if (o) o.disabled = false;
     }
@@ -420,17 +455,17 @@
       loadProfile(e, true);
       return;
     }
-    var n = "/u/" + encodeURIComponent(e);
+    var r = "/u/" + encodeURIComponent(e);
     history.pushState({
       mode: "profile",
       solId: e
-    }, "", n);
+    }, "", r);
     loadProfile(e);
   }
-  async function loadProfile(t, o) {
-    e.mode = "profile";
-    e.solId = t;
-    if (o || t === "SOL-DEMO1234" || /DEMO/i.test(String(t || ""))) {
+  async function loadProfile(e, o) {
+    t.mode = "profile";
+    t.solId = e;
+    if (o || e === "SOL-DEMO1234" || /DEMO/i.test(String(e || ""))) {
       paintProfile({
         name: "Speed Clips",
         username: "speedclips",
@@ -455,33 +490,33 @@
       return;
     }
     try {
-      var n = await fetch(apiBase() + "/public/profile/" + encodeURIComponent(t), {
+      var r = await fetch(apiBase() + "/public/profile/" + encodeURIComponent(e), {
         method: "GET",
         credentials: "include",
         headers: authHeaders()
       });
-      var r = await n.json().catch(function() {
+      var n = await r.json().catch(function() {
         return {};
       });
-      if (!n.ok) {
-        showError(r.error || "Profile not found.");
+      if (!r.ok) {
+        showError(n.error || "Profile not found.");
         return;
       }
-      paintProfile(r.creator, !!r.following, !!r.is_self);
+      paintProfile(n.creator, !!n.following, !!n.is_self);
     } catch (e) {
       showError("Could not load this profile.");
     }
   }
-  async function loadClip(t, o) {
-    e.mode = "clip";
-    e.projectId = t;
+  async function loadClip(o, r) {
+    t.mode = "clip";
+    t.projectId = o;
     document.getElementById("profileRoot").hidden = true;
     document.getElementById("clipRoot").hidden = false;
     document.getElementById("pageError").hidden = true;
     var n = document.getElementById("previewVideo");
-    var r = document.getElementById("skel");
+    var i = document.getElementById("skel");
     wireVideo(n);
-    if (o) {
+    if (r) {
       paintCreatorOntoClip({
         name: "Speed Clips",
         username: "speedclips",
@@ -502,56 +537,72 @@
           }
         } ]
       });
-      e.solId = "SOL-DEMO1234";
-      e.creator = scrubCreator({
+      t.solId = "SOL-DEMO1234";
+      t.creator = scrubCreator({
         name: "Speed Clips",
         username: "speedclips",
         public_id: "SOL-DEMO1234"
       });
-      if (r) r.style.display = "none";
+      if (i) i.style.display = "none";
       if (n) {
         n.poster = "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg";
         n.style.background = "center / cover no-repeat url(https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg), #111";
       }
       document.title = "Clip by Speed Clips · Solis AI";
+      setOgMeta({
+        title: "Clip by Speed Clips · Solis AI",
+        description: "Ishowspeed Funny Moments Compilation",
+        image: "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
+        url: location.href.split("?")[0]
+      });
       return;
     }
-    if (!t || t.indexOf("prj_") !== 0) {
+    if (!o || o.indexOf("prj_") !== 0) {
       showError("Invalid share link.");
       return;
     }
     try {
-      var i = await fetch(apiBase() + "/public/preview/" + encodeURIComponent(t), {
+      var a = await fetch(apiBase() + "/public/preview/" + encodeURIComponent(o), {
         method: "GET",
         credentials: "omit"
       });
-      var a = await i.json().catch(function() {
+      var l = await a.json().catch(function() {
         return {};
       });
-      if (!i.ok) {
-        showError(a.error || "This clip may be expired or still generating.");
+      if (!a.ok) {
+        showError(l.error || "This clip may be expired or still generating.");
         return;
       }
-      var l = scrubCreator(a.creator);
-      e.creator = l;
-      e.solId = l && (l.public_id || l.id) || "";
-      paintCreatorOntoClip(l);
-      var d = document.getElementById("clipCaption");
-      if (d && a.title && !(l && l.bio)) {
-        d.textContent = a.title;
-        d.hidden = false;
+      var d = scrubCreator(l.creator);
+      t.creator = d;
+      t.solId = d && (d.public_id || d.id) || "";
+      paintCreatorOntoClip(d);
+      var s = document.getElementById("clipCaption");
+      if (s && l.title && !(d && d.bio)) {
+        s.textContent = l.title;
+        s.hidden = false;
       }
-      document.title = (a.title || "Clip") + " · Solis AI";
-      var c = absoluteApi(a.video_url || "/api/public/preview/" + t + "/video");
+      document.title = (l.title || "Clip") + " · Solis AI";
+      var c = l.thumbnail_url && /^https?:\/\//i.test(l.thumbnail_url) ? l.thumbnail_url : e;
+      setOgMeta({
+        title: (l.title || "Clip") + " · Solis AI",
+        description: d && d.name ? "Watch a clip by " + d.name + " on Solis AI" : "Watch this clip on Solis AI",
+        image: c,
+        url: location.href.split("?")[0]
+      });
+      if (n && l.thumbnail_url) {
+        n.poster = absoluteApi(l.thumbnail_url);
+      }
+      var f = absoluteApi(l.video_url || "/api/public/preview/" + o + "/video");
       if (n) {
-        n.src = c;
+        n.src = f;
         n.addEventListener("loadeddata", function() {
-          if (r) r.style.display = "none";
+          if (i) i.style.display = "none";
         }, {
           once: true
         });
         n.addEventListener("error", function() {
-          if (r) r.style.display = "none";
+          if (i) i.style.display = "none";
         });
         try {
           n.play().catch(function() {});
@@ -582,8 +633,8 @@
       toggleFollow();
     });
     document.getElementById("creatorLink")?.addEventListener("click", function() {
-      var t = e.solId || e.creator && (e.creator.public_id || e.creator.id);
-      if (t) goToProfile(t);
+      var e = t.solId || t.creator && (t.creator.public_id || t.creator.id);
+      if (e) goToProfile(e);
     });
     window.addEventListener("popstate", function() {
       boot(true);

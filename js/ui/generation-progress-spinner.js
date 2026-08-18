@@ -5,6 +5,11 @@ const GENERATION_TASK_PIPELINES = {
     keywords: [ "queued", "queue", "ahead of you", "open slot", "starting shortly", "free queue", "priority", "processing soon" ],
     maxProgress: 8
   }, {
+    id: "server",
+    label: "Starting GPU servers",
+    keywords: [ "starting gpu", "gpu servers", "servers are", "waking up", "servers are busy", "hang tight", "first run", "starting processing", "still starting", "our servers" ],
+    maxProgress: 14
+  }, {
     id: "install",
     label: "Fetch video",
     keywords: [ "download", "installing", "preparing download", "starting generation", "starting download", "fetching", "fetch &", "source video", "video info", "streaming", "stream" ],
@@ -35,6 +40,11 @@ const GENERATION_TASK_PIPELINES = {
     label: "Free queue · Processing soon",
     keywords: [ "queued", "queue", "ahead of you", "open slot", "starting shortly", "free queue", "priority", "processing soon" ],
     maxProgress: 8
+  }, {
+    id: "server",
+    label: "Starting GPU servers",
+    keywords: [ "starting gpu", "gpu servers", "servers are", "waking up", "servers are busy", "hang tight", "first run", "starting processing", "still starting", "our servers" ],
+    maxProgress: 14
   }, {
     id: "install",
     label: "Fetch video",
@@ -114,8 +124,9 @@ class GenerationProgressSpinner {
     this.POLLING_INTERVAL = 4500;
     this.POLLING_INTERVAL_WS = 12e3;
     this.WS_FRESH_MS = 1e4;
-    this.STUCK_PROGRESS_MS = 4 * 60 * 1e3;
-    this.STUCK_FAIL_MS = 25 * 60 * 1e3;
+    this.STUCK_PROGRESS_MS = 6 * 60 * 1e3;
+    this.STUCK_FAIL_MS = 32 * 60 * 1e3;
+    this.GPU_WARMUP_FAIL_MS = 30 * 60 * 1e3;
     this.pollingTimer = null;
     this.wsHandlersSetup = false;
     this._completionHandled = false;
@@ -393,7 +404,7 @@ class GenerationProgressSpinner {
   }
   _showStuckBanner(e) {
     this._ensureDomRefs();
-    const t = e || "We're having trouble with our servers right now — sorry about that. " + "Your generation is still running and should continue when things settle.";
+    const t = e || "We're having some server issues right now — sorry about that. " + "Your generation is still running. First start can take up to 15 minutes.";
     if (this.errorBanner) {
       this.errorBanner.textContent = t;
       this.errorBanner.hidden = false;
@@ -411,7 +422,7 @@ class GenerationProgressSpinner {
       this.progressCircle.style.stroke = "#eab308";
     }
     if (this.progressTooltip) {
-      this.progressTooltip.textContent = "Still working — servers are slow";
+      this.progressTooltip.textContent = "Servers waking up — still working";
     }
     if (this.taskCounter) {
       this.taskCounter.textContent = "Hang tight";
@@ -459,7 +470,12 @@ class GenerationProgressSpinner {
     if (!e) return false;
     const t = Date.now();
     const s = e._lastProgressAt || e.startTime || t;
-    return t - s >= this.STUCK_FAIL_MS || (e._pollMisses || 0) >= 12;
+    const i = t - s;
+    const r = e.progress ?? 0;
+    if (r < 15 && t - (e.startTime || t) < this.GPU_WARMUP_FAIL_MS) {
+      return false;
+    }
+    return i >= this.STUCK_FAIL_MS || (e._pollMisses || 0) >= 16;
   }
   async _resolveRemovedProject(e) {
     const t = await this._fetchProjectStatus(e);
@@ -1136,7 +1152,7 @@ class GenerationProgressSpinner {
       }
     });
   }
-  beginOptimisticGeneration(e = "Starting...", t = DEFAULT_PIPELINE_TEMPLATE, s = {}) {
+  beginOptimisticGeneration(e = "Starting GPU servers...", t = DEFAULT_PIPELINE_TEMPLATE, s = {}) {
     this._setActivePipeline(t, s);
     this.optimisticPending = true;
     this.currentTaskIndex = -1;
@@ -1161,7 +1177,7 @@ class GenerationProgressSpinner {
       this._syncGeneratingBadge();
     }
   }
-  startGeneration(e, t = "Queued — waiting for an open slot...", s = null, i = {}) {
+  startGeneration(e, t = "Starting GPU servers — first run can take a few minutes...", s = null, i = {}) {
     if (!this._isValidProjectId(e)) return;
     if (this._wasUserCancelled(e)) {
       return;
@@ -1292,8 +1308,11 @@ class GenerationProgressSpinner {
     if (i) {
       if (/download|install|fetch|stream/i.test(s)) return "Fetching video...";
       if (/fail|error|crash|exception/i.test(s)) return "Something went wrong — try again";
+      if (/server|gpu|waking|hang tight|first run|busy right now/i.test(s)) {
+        return "Starting GPU servers — please wait...";
+      }
       if (/queue|wait|slot|priority|starting|start|worker|rent|boot|load/i.test(s)) {
-        return "Starting...";
+        return "Starting GPU servers...";
       }
       return "";
     }

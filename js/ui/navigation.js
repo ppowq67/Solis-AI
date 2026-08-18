@@ -1,3 +1,57 @@
+window.SolisFirstLanding = window.SolisFirstLanding || {
+  prefix: "solis_seen_create_landing_",
+  userId: function() {
+    try {
+      const t = window.currentUser;
+      return t && (t.id || t.user_id) || null;
+    } catch (t) {
+      return null;
+    }
+  },
+  key: function(t) {
+    return this.prefix + String(t || "");
+  },
+  hasSeen: function(t) {
+    const e = t || this.userId();
+    if (!e) return false;
+    try {
+      return localStorage.getItem(this.key(e)) === "1";
+    } catch (t) {
+      return false;
+    }
+  },
+  markSeen: function(t) {
+    const e = t || this.userId();
+    if (!e) return;
+    try {
+      localStorage.setItem(this.key(e), "1");
+    } catch (t) {}
+  },
+  needsLanding: function(t) {
+    const e = t || this.userId();
+    if (e) return !this.hasSeen(e);
+    try {
+      const t = localStorage.getItem("currentNavigationTarget");
+      return !t || t === "dashboard";
+    } catch (t) {
+      return true;
+    }
+  },
+  applyCreateLanding: function() {
+    try {
+      localStorage.setItem("currentNavigationTarget", "clips");
+      localStorage.setItem("clipsStudioCurrentTab", "create");
+      localStorage.setItem("clipsActiveTab", "create");
+    } catch (t) {}
+    if (window.clipsStudio && typeof window.clipsStudio.goToCreateUrlSubmit === "function") {
+      window.clipsStudio.goToCreateUrlSubmit();
+    } else if (typeof window.goToCreateUrlSubmit === "function") {
+      window.goToCreateUrlSubmit();
+    }
+    this.markSeen();
+  }
+};
+
 function initNavigation() {
   const t = document.querySelectorAll(".nav-item[data-target]");
   const e = document.getElementById("dashboardContainer");
@@ -37,10 +91,18 @@ function initNavigation() {
     localStorage.removeItem("currentNavigationTarget");
   }
   const c = a && a !== "dashboard" && [ "portal", "Portal", "clips", "custom" ].includes(a) ? a : null;
-  const l = window.innerWidth <= 768;
-  let d = c || (l ? "clips" : "Portal");
-  if (l && (d === "Portal" || d === "portal")) {
+  const r = window.innerWidth <= 768;
+  const l = window.SolisFirstLanding.needsLanding();
+  let d = l ? "clips" : c || "clips";
+  if (r && (d === "Portal" || d === "portal")) {
     d = "clips";
+  }
+  if (l) {
+    try {
+      localStorage.setItem("currentNavigationTarget", "clips");
+      localStorage.setItem("clipsStudioCurrentTab", "create");
+      localStorage.setItem("clipsActiveTab", "create");
+    } catch (t) {}
   }
   if ((d === "Portal" || d === "portal") && i) {
     i.style.display = "block";
@@ -73,14 +135,14 @@ function initNavigation() {
       a.preventDefault();
       if (t.classList.contains("disabled")) return;
       const c = t.getAttribute("data-target") || "";
-      const l = String(c).toLowerCase();
+      const r = String(c).toLowerCase();
       updateActiveNav(c);
       hideAll();
       if (s) {
         s.style.cssText = "display: none !important; position: absolute !important; visibility: hidden !important; z-index: -10000 !important; pointer-events: none !important;";
         s.classList.remove("is-first-prompt");
       }
-      if (l === "dashboard") {
+      if (r === "dashboard") {
         localStorage.setItem("currentNavigationTarget", "dashboard");
         if (e) {
           e.style.display = "block";
@@ -99,7 +161,7 @@ function initNavigation() {
             console.error("Error docking input:", a);
           }
         }
-      } else if (l === "portal") {
+      } else if (r === "portal") {
         localStorage.setItem("currentNavigationTarget", "portal");
         if (i) {
           i.style.display = "block";
@@ -114,7 +176,7 @@ function initNavigation() {
             console.error("Error docking input:", a);
           }
         }
-      } else if (l === "clips" || l === "clips-studio" || l === "clipscontainer") {
+      } else if (r === "clips" || r === "clips-studio" || r === "clipscontainer") {
         localStorage.setItem("currentNavigationTarget", "clips");
         if (n) {
           n.style.display = "block";
@@ -132,7 +194,7 @@ function initNavigation() {
             console.error("Error docking input:", a);
           }
         }
-      } else if (l === "custom-edit" || l === "custom") {
+      } else if (r === "custom-edit" || r === "custom") {
         localStorage.setItem("currentNavigationTarget", "custom");
         if (o) {
           o.style.display = "block";
@@ -150,9 +212,9 @@ function initNavigation() {
       }
     });
   });
-  const r = document.getElementById("clips-toggle");
-  if (r) {
-    r.addEventListener("click", function(t) {
+  const u = document.getElementById("clips-toggle");
+  if (u) {
+    u.addEventListener("click", function(t) {
       t.preventDefault();
       t.stopPropagation();
       const e = document.getElementById("clips-submenu");
@@ -229,9 +291,9 @@ function initNavigation() {
       if (t) t.classList.remove("rotated");
     }
   });
-  const u = document.querySelector('.nav-item[data-target="Portal"]');
-  if (u) {
-    u.addEventListener("click", function(t) {
+  const y = document.querySelector('.nav-item[data-target="Portal"]');
+  if (y) {
+    y.addEventListener("click", function(t) {
       t.preventDefault();
       const e = document.getElementById("portalContainer");
       const i = document.getElementById("dashboardContainer");

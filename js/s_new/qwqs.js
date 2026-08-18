@@ -260,6 +260,9 @@ function loadUserProfile(e) {
       }
       const l = document.getElementById("dropdownUserPlan");
       if (l) l.textContent = i;
+      if (typeof window.applyPremiumCurrentPlan === "function") {
+        window.applyPremiumCurrentPlan(r);
+      }
     } else {
       if (n) n.style.display = "none";
       if (t) t.style.display = "";

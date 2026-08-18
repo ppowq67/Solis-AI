@@ -382,7 +382,7 @@
     const t = document.getElementById("clipsSubPane");
     const i = document.querySelector(".clips-sub-pill");
     if (!t || !i || window.innerWidth > 768) return;
-    const n = e || document.querySelector(".clips-sub-item.active")?.getAttribute("data-tab") || localStorage.getItem("clipsActiveTab") || "templates";
+    const n = e || document.querySelector(".clips-sub-item.active")?.getAttribute("data-tab") || localStorage.getItem("clipsActiveTab") || "create";
     const o = document.querySelector(`.clips-sub-item[data-tab="${n}"]`);
     if (!o) return;
     const a = i.getBoundingClientRect();
@@ -400,7 +400,7 @@
       return;
     }
     const i = [ "templates", "create", "library" ];
-    const n = document.querySelector(".clips-sub-item.active")?.getAttribute("data-tab") || localStorage.getItem("clipsActiveTab") || "templates";
+    const n = document.querySelector(".clips-sub-item.active")?.getAttribute("data-tab") || localStorage.getItem("clipsActiveTab") || "create";
     const o = i.indexOf(n);
     const a = i.indexOf(e);
     const s = a > o ? "left" : a < o ? "right" : null;
@@ -462,7 +462,7 @@
     }
     function currentTabIndex() {
       const e = document.querySelector(".clips-sub-item.active");
-      const i = e?.getAttribute("data-tab") || localStorage.getItem("clipsActiveTab") || "templates";
+      const i = e?.getAttribute("data-tab") || localStorage.getItem("clipsActiveTab") || "create";
       return t.indexOf(i);
     }
     e.addEventListener("touchstart", e => {
@@ -586,7 +586,7 @@
     if (!e || e.classList.contains("disabled") || e.disabled) return;
     const i = e.getAttribute("data-target");
     if (i === "clips") {
-      goMobileClipsTab(localStorage.getItem("clipsActiveTab") || "templates");
+      goMobileClipsTab(localStorage.getItem("clipsActiveTab") || "create");
       return;
     }
     localStorage.setItem("activeNavIndex", t);
@@ -702,7 +702,7 @@
       });
     }
     if (window.innerWidth <= 768) {
-      const e = localStorage.getItem("clipsActiveTab") || "templates";
+      const e = localStorage.getItem("clipsActiveTab") || "create";
       goMobileClipsTab(e);
       requestAnimationFrame(() => updateMobileClipsPillIndicator(e));
     }

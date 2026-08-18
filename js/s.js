@@ -2835,6 +2835,9 @@ async function verifyToken() {
     }
     checkYouTubeConnection();
     const i = currentUser?.id ?? currentUser?.user_id;
+    if (window.SolisFirstLanding && window.SolisFirstLanding.needsLanding(i)) {
+      window.SolisFirstLanding.applyCreateLanding();
+    }
     if (window.SolisMemory?.setUserId) {
       window.SolisMemory.setUserId(i);
     }
@@ -5777,11 +5780,14 @@ class ClipsStudio {
       } else {
         safeLog("ðŸ“ No processing items from previous session - polling idle");
       }
-      const e = localStorage.getItem("clipsStudioCurrentTab");
-      if (e && [ "templates", "create", "processing", "library", "editor" ].includes(e)) {
-        this.switchTab(e);
+      const e = window.SolisFirstLanding && window.SolisFirstLanding.needsLanding();
+      const t = localStorage.getItem("clipsStudioCurrentTab");
+      if (e) {
+        this.switchTab("create");
+      } else if (t && [ "templates", "create", "processing", "library", "editor" ].includes(t)) {
+        this.switchTab(t);
       } else {
-        this.switchTab("templates");
+        this.switchTab("create");
       }
       this.moveSlider();
       window.addEventListener("resize", () => this.moveSlider());

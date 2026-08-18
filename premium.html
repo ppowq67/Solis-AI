@@ -280,11 +280,11 @@
 
     main { flex: 1; position: relative; z-index: 1; padding-top: calc(96px + env(safe-area-inset-top, 0px)); padding-bottom: 80px; }
 
-    .hero { padding: 12px 20px 8px; }
+    .hero { padding: 72px 20px 24px; }
     .hero-inner { max-width: var(--max-width); margin: 0 auto; text-align: center; }
     .hero-eyebrow { margin-bottom: 22px; }
     .hero-title { font-family: var(--font-display); font-size: clamp(36px, 6vw, 60px); font-weight: 800; letter-spacing: -0.04em; line-height: 1.04; margin: 0 auto 12px; max-width: 800px; }
-    .hero-subtitle { font-size: clamp(15px, 1.6vw, 17px); color: var(--text-secondary); max-width: 580px; margin: 0 auto 8px; line-height: 1.6; }
+    .hero-subtitle { font-size: clamp(15px, 1.6vw, 17px); color: var(--text-secondary); max-width: 580px; margin: 0 auto 20px; line-height: 1.6; }
 
     .trust-badges { display: flex; align-items: center; justify-content: center; gap: 24px; flex-wrap: wrap; margin-bottom: 8px; }
     .trust-badge { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 600; color: var(--text-secondary); }
@@ -309,7 +309,7 @@
     .savings-callout { text-align: center; margin-top: 14px; font-size: 12.5px; color: var(--text-muted); height: 18px; transition: opacity 0.2s; }
     .savings-callout strong { color: var(--solis-deep); font-family: var(--font-numeric); font-weight: 700; }
 
-    .pricing-section { padding: 8px 20px 56px; }
+    .pricing-section { padding: 20px 20px 56px; }
     .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: end; max-width: var(--max-width); margin: 0 auto; }
     @media (max-width: 860px) { .pricing-grid { grid-template-columns: 1fr; gap: 14px; max-width: 480px; } }
 
@@ -378,6 +378,29 @@
     }
     .plan-btn-elite { background: rgba(24,18,14,0.04); color: var(--ink); border: 1px solid rgba(24,18,14,0.14); }
     .plan-btn-elite:hover { background: var(--ink); color: #fff; border-color: transparent; transform: translateY(-1px); }
+    .plan-card.is-current {
+      box-shadow: 0 18px 52px rgba(249,115,22,0.16), 0 4px 12px rgba(120,80,40,0.07), inset 0 1px 0 rgba(255,255,255,0.95);
+      border-color: rgba(249,115,22,0.38);
+    }
+    .plan-card.is-current .plan-btn.is-current-plan,
+    .plan-btn.is-current-plan {
+      background: rgba(249,115,22,0.12);
+      color: var(--solis-deep);
+      border: 1px solid rgba(249,115,22,0.32);
+      cursor: default;
+      pointer-events: none;
+      box-shadow: none;
+    }
+    .plan-btn.is-current-plan:hover,
+    .plan-btn-prime.is-current-plan:hover,
+    .plan-btn-basic.is-current-plan:hover,
+    .plan-btn-elite.is-current-plan:hover {
+      transform: none;
+      background: rgba(249,115,22,0.12);
+      color: var(--solis-deep);
+      border-color: rgba(249,115,22,0.32);
+    }
+    .plan-btn.is-current-plan:hover svg { transform: none; }
 
     .plan-divider { height: 1px; background: var(--border); margin: 4px 0 16px; }
     .plan-features-label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 12px; }
@@ -608,6 +631,8 @@
     ._cta-btn:hover::before { opacity: 1; }
     ._cta-btn > * { position: relative; z-index: 1; }
     ._cta-btn svg { width: 12px; height: 12px; }
+    ._cta-btn.is-current-plan { background: rgba(249,115,22,0.14); color: var(--solis-deep); pointer-events: none; }
+    ._cta-btn.is-current-plan:hover::before { opacity: 0; }
     @media (max-width: 860px) { ._cta { display: block; } }
 
     .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out); }
@@ -642,7 +667,7 @@
       .glass-card, .glass-card-strong { box-shadow: 0 2px 12px rgba(120,80,40,0.06), inset 0 1px 0 rgba(255,255,255,0.9); }
 
       .section { padding: 56px 16px; }
-      .hero { padding: 24px 16px 16px; }
+      .hero { padding: 48px 16px 20px; }
 
       .nav-container { top: calc(12px + env(safe-area-inset-top, 0px)); width: calc(100% - 24px); }
       .nav { padding: 7px 7px 7px 14px; }
@@ -1255,7 +1280,7 @@
   <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
   <script src="/js/core/paddle-config.js?v=8"></script>
   <script src="/js/payment/payment-flow.js?v=2"></script>
-  <script src="/js/s_new/qwqs.js?v=4"></script>
-  <script src="/js/payment/premium-page.js?v=2"></script>
+  <script src="/js/s_new/qwqs.js?v=5"></script>
+  <script src="/js/payment/premium-page.js?v=3"></script>
 </body>
 </html>

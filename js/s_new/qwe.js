@@ -163,30 +163,30 @@ window.applyStorageBadgeUI = function({used: e, limit: t, plan: i, unlimited: n}
   const p = o.charAt(0).toUpperCase() + o.slice(1);
   const w = a && (c === "high" || c === "full");
   const m = document.getElementById("storageBadge");
-  const f = document.getElementById("storageUsedBadge");
-  const g = document.getElementById("storageTotalBadge");
+  const g = document.getElementById("storageUsedBadge");
+  const f = document.getElementById("storageTotalBadge");
   const y = document.getElementById("storageLimitGroup");
   const b = document.getElementById("storagePlanBadge");
   const S = document.getElementById("storageWarnIcon");
   const h = document.getElementById("deleteAllClipsBtn");
   const I = document.getElementById("needMoreUpgradeText");
-  if (f) {
-    f.textContent = String(l);
-    f.style.color = "";
-    f.classList.toggle("storage-count-warn", w);
+  if (g) {
+    g.textContent = String(l);
+    g.style.color = "";
+    g.classList.toggle("storage-count-warn", w);
   }
   if (y) {
     y.style.display = a ? "" : "none";
     y.hidden = !a;
-  } else if (g) {
-    g.style.display = a ? "" : "none";
-    const e = g.previousSibling;
+  } else if (f) {
+    f.style.display = a ? "" : "none";
+    const e = f.previousSibling;
     if (e && e.nodeType === 3) e.textContent = a ? " / " : "";
   }
-  if (g && a) {
-    g.textContent = String(r);
-    g.style.display = "";
-    g.classList.toggle("storage-count-warn", c === "full");
+  if (f && a) {
+    f.textContent = String(r);
+    f.style.display = "";
+    f.classList.toggle("storage-count-warn", c === "full");
   }
   if (m) m.classList.toggle("is-unlimited", s);
   if (b) b.textContent = p;
@@ -305,22 +305,26 @@ window.showUpgradeModal = function(e = "Unlock more uploads", t = "Upgrade for m
 
 document.addEventListener("DOMContentLoaded", function() {
   try {
-    const e = localStorage.getItem("clipsActiveTab") || "templates";
-    const t = document.querySelectorAll(".clips-sub-item");
+    const e = window.SolisFirstLanding && window.SolisFirstLanding.needsLanding();
+    const t = e ? "create" : localStorage.getItem("clipsActiveTab") || "create";
     const i = document.querySelectorAll(".clips-sub-item");
-    let n = false;
-    i.forEach(t => {
-      if (t.getAttribute("data-tab") === e) {
-        t.classList.add("active");
-        switchClipsTab(e, t);
-        n = true;
+    const n = document.querySelectorAll(".clips-sub-item");
+    let o = false;
+    n.forEach(e => {
+      if (e.getAttribute("data-tab") === t) {
+        e.classList.add("active");
+        switchClipsTab(t, e);
+        o = true;
       } else {
-        t.classList.remove("active");
+        e.classList.remove("active");
       }
     });
-    if (!n && i[0]) {
-      i[0].classList.add("active");
-      switchClipsTab("templates", i[0]);
+    if (!o) {
+      const e = document.querySelector('.clips-sub-item[data-tab="create"]') || n[0];
+      if (e) {
+        e.classList.add("active");
+        switchClipsTab("create", e);
+      }
     }
   } catch (e) {
     console.warn("Failed to restore clips tab state:", e);

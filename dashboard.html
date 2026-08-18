@@ -2014,7 +2014,7 @@
 
 <div class="ui-wrapper">
     <nav class="pill-nav" id="navContainer" data-direction="none" data-moving="false">
-        <div class="nav-item active" data-target="Portal" onclick="navigate(this, 0)">
+        <div class="nav-item" data-target="Portal" onclick="navigate(this, 0)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="8" stroke-opacity="0.3"/>
                 <path d="M4.5 12c1-5 6-8 7.5-8s6.5 3 7.5 8M19.5 12c-1 5-6 8-7.5 8S5.5 17 4.5 12"/>
@@ -2029,7 +2029,7 @@
             <span>Analytics</span>
         </div>
 
-        <div class="nav-item" data-target="clips" onclick="navigate(this, 2)">
+        <div class="nav-item active" data-target="clips" onclick="navigate(this, 2)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="3" width="18" height="18" rx="2"/>
                 <path d="M10 9l5 3-5 3V9z" fill="currentColor"/>
@@ -2044,7 +2044,7 @@
     <nav class="mobile-clips-bar clips-sub-nav" id="clipsSubNav" aria-label="Clips navigation">
         <div class="clips-sub-pill">
             <div class="mobile-clips-indicator clips-sub-indicator" id="clipsSubPane" aria-hidden="true"></div>
-            <button type="button" class="mobile-clips-tab clips-sub-item active" data-tab="templates" onclick="goMobileClipsTab('templates', this)">
+            <button type="button" class="mobile-clips-tab clips-sub-item" data-tab="templates" onclick="goMobileClipsTab('templates', this)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <rect x="2" y="2" width="10" height="10" rx="1"/>
                     <line x1="2" y1="6" x2="12" y2="6"/>
@@ -2052,7 +2052,7 @@
                 </svg>
                 <span>Template</span>
             </button>
-            <button type="button" class="mobile-clips-tab clips-sub-item" data-tab="create" onclick="goMobileClipsTab('create', this)">
+            <button type="button" class="mobile-clips-tab clips-sub-item active" data-tab="create" onclick="goMobileClipsTab('create', this)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <rect x="1.5" y="3.5" width="9" height="9" rx="1.5"/>
                     <path d="M10.5 6.5l3.5-2v7l-3.5-2"/>
@@ -3389,7 +3389,7 @@
         </div>
     </div>
 </div>
-<div class="clips-container" id="clipsContainer">
+<div class="clips-container active" id="clipsContainer">
     <div class="clips-header">
         <div class="clips-header-left">
         </div>
@@ -3404,7 +3404,7 @@
 
  <div class="clips-tabs">
     <div class="clips-tab-slider"></div>
-    <button class="clips-tab active" data-tab="templates">
+    <button class="clips-tab" data-tab="templates">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <rect x="1.5" y="1.5" width="5.5" height="5.5" rx="1.2"/>
             <rect x="9" y="1.5" width="5.5" height="5.5" rx="1.2"/>
@@ -3413,7 +3413,7 @@
         </svg>
         Templates
     </button>
-    <button class="clips-tab" data-tab="create">
+    <button class="clips-tab active" data-tab="create">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <rect x="1.5" y="3.5" width="9" height="9" rx="1.5"/>
             <path d="M10.5 6.5l3.5-2v7l-3.5-2"/>
@@ -3429,7 +3429,7 @@
     </button>
 </div>
 
-    <div class="clips-section active" id="templatesSection">
+    <div class="clips-section" id="templatesSection">
 
 <div class="templates-grid">
     <div class="template-card" data-template="ranked_compilation">
@@ -3999,7 +3999,7 @@
         </div>
     </div>
 </div>
-<div class="clips-section" id="createSection">
+<div class="clips-section active" id="createSection">
     <div class="create-content">
         <div class="url-input-container">
             <div class="url-input-stack" id="urlInputStack">

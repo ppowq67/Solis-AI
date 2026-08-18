@@ -5,14 +5,9 @@ const GENERATION_TASK_PIPELINES = {
     keywords: [ "queued", "queue", "ahead of you", "open slot", "starting shortly", "free queue", "priority", "processing soon" ],
     maxProgress: 8
   }, {
-    id: "server",
-    label: "Starting GPU servers",
-    keywords: [ "starting gpu", "gpu servers", "servers are", "waking up", "servers are busy", "hang tight", "first run", "starting processing", "still starting", "our servers" ],
-    maxProgress: 14
-  }, {
     id: "install",
     label: "Fetch video",
-    keywords: [ "download", "installing", "preparing download", "starting generation", "starting download", "fetching", "fetch &", "source video", "video info", "streaming", "stream" ],
+    keywords: [ "download", "installing", "preparing download", "starting generation", "starting download", "fetching", "fetch &", "source video", "video info", "streaming", "stream", "starting", "processing" ],
     maxProgress: 35
   }, {
     id: "clip",
@@ -41,14 +36,9 @@ const GENERATION_TASK_PIPELINES = {
     keywords: [ "queued", "queue", "ahead of you", "open slot", "starting shortly", "free queue", "priority", "processing soon" ],
     maxProgress: 8
   }, {
-    id: "server",
-    label: "Starting GPU servers",
-    keywords: [ "starting gpu", "gpu servers", "servers are", "waking up", "servers are busy", "hang tight", "first run", "starting processing", "still starting", "our servers" ],
-    maxProgress: 14
-  }, {
     id: "install",
     label: "Fetch video",
-    keywords: [ "download", "installing", "preparing download", "starting generation", "starting download", "fetching", "streaming", "stream" ],
+    keywords: [ "download", "installing", "preparing download", "starting generation", "starting download", "fetching", "streaming", "stream", "starting", "processing" ],
     maxProgress: 30
   }, {
     id: "moment",
@@ -422,7 +412,7 @@ class GenerationProgressSpinner {
       this.progressCircle.style.stroke = "#eab308";
     }
     if (this.progressTooltip) {
-      this.progressTooltip.textContent = "Servers waking up — still working";
+      this.progressTooltip.textContent = "Still working…";
     }
     if (this.taskCounter) {
       this.taskCounter.textContent = "Hang tight";
@@ -1152,7 +1142,7 @@ class GenerationProgressSpinner {
       }
     });
   }
-  beginOptimisticGeneration(e = "Starting GPU servers...", t = DEFAULT_PIPELINE_TEMPLATE, s = {}) {
+  beginOptimisticGeneration(e = "Fetching video...", t = DEFAULT_PIPELINE_TEMPLATE, s = {}) {
     this._setActivePipeline(t, s);
     this.optimisticPending = true;
     this.currentTaskIndex = -1;
@@ -1177,7 +1167,7 @@ class GenerationProgressSpinner {
       this._syncGeneratingBadge();
     }
   }
-  startGeneration(e, t = "Starting GPU servers — first run can take a few minutes...", s = null, i = {}) {
+  startGeneration(e, t = "Fetching video...", s = null, i = {}) {
     if (!this._isValidProjectId(e)) return;
     if (this._wasUserCancelled(e)) {
       return;
@@ -1308,12 +1298,8 @@ class GenerationProgressSpinner {
     if (i) {
       if (/download|install|fetch|stream/i.test(s)) return "Fetching video...";
       if (/fail|error|crash|exception/i.test(s)) return "Something went wrong — try again";
-      if (/server|gpu|waking|hang tight|first run|busy right now/i.test(s)) {
-        return "Starting GPU servers — please wait...";
-      }
-      if (/queue|wait|slot|priority|starting|start|worker|rent|boot|load/i.test(s)) {
-        return "Starting GPU servers...";
-      }
+      if (/queue|wait|slot|priority/i.test(s)) return "Waiting in queue...";
+      if (/starting|start|processing|worker|boot|load/i.test(s)) return "Fetching video...";
       return "";
     }
     t = t.replace(/\b\d+(\.\d+)?\s*(MB\/s|MiB\/s|KB\/s|KiB\/s|Gbps|Mbps)\b/gi, "").replace(/\([^)]*\.(mp4|wav|webm|mkv)[^)]*\)/gi, "").replace(/\s+/g, " ").trim();

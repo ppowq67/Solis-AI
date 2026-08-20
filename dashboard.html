@@ -21,6 +21,7 @@
     <script src="/js/s_new/solis-sg.js?v=1"></script>
     <script src="/js/i_dq/ranking-text-pill.js?v=98"></script>
     <script src="/js/i_dq/ranking-template-editor.js?v=22"></script>
+    <link rel="icon" type="image/png" href="/assets/favicon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon/genfavicon-32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon/genfavicon-16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
@@ -34,9 +35,9 @@
     <link rel="stylesheet" href="/style/ss/badges.css?v=32">
     <link rel="stylesheet" href="/style/ss/sidebar.css?v=27">
     <link rel="stylesheet" href="/style/ss/ios-pill-nav.css?v=29">
-    <link rel="stylesheet" href="/style/ss/mobile-nav.css?v=27">
+    <link rel="stylesheet" href="/style/ss/mobile-nav.css?v=28">
     <link rel="stylesheet" href="/style/ss/customize.css?v=27">
-    <link rel="stylesheet" href="/style/ss/clips.css?v=58">
+    <link rel="stylesheet" href="/style/ss/clips.css?v=62">
     <link rel="stylesheet" href="/style/ss/profile.css?v=29">
     <link rel="stylesheet" href="/style/ss/tasks-panel-v2-demo.css?v=11">
     <link rel="stylesheet" href="/style/ss/newsfeed-widget.css?v=31">
@@ -3680,7 +3681,10 @@
 
                         <div class="multi-gen-card" id="multiGenCard" data-count="3">
                             <div class="multi-gen-head">
-                                <span class="multi-gen-title">Clips</span>
+                                <span class="multi-gen-title">
+                                    Clips
+                                    <span class="multi-gen-pro-tag" id="multiGenProTag" hidden>PRO</span>
+                                </span>
                                 <span class="multi-gen-value" id="multiGenValue" aria-live="polite">3×</span>
                             </div>
                             <div
@@ -4694,6 +4698,7 @@
        const slider = document.getElementById('multiGenSlider');
        const rail = document.getElementById('multiGenRail');
        const valueEl = document.getElementById('multiGenValue');
+       const proTagEl = document.getElementById('multiGenProTag');
        if (!card || !slider || !rail) return;
 
        const VISUAL_MAX = 5;
@@ -4717,17 +4722,19 @@
        }
 
        function pulsePro() {
-           const badge = rail.querySelector('.multi-gen-pro');
-           if (!badge) return;
-           badge.classList.remove('is-pulse');
-           void badge.offsetWidth;
-           badge.classList.add('is-pulse');
-           setTimeout(() => badge.classList.remove('is-pulse'), 560);
+           if (!proTagEl || proTagEl.hidden) return;
+           proTagEl.classList.remove('is-pulse');
+           void proTagEl.offsetWidth;
+           proTagEl.classList.add('is-pulse');
+           setTimeout(() => proTagEl.classList.remove('is-pulse'), 560);
        }
 
        function layoutSteps() {
-           rail.querySelectorAll('.multi-gen-step, .multi-gen-pro').forEach((el) => el.remove());
-           card.classList.toggle('has-pro', allowed < VISUAL_MAX);
+           rail.querySelectorAll('.multi-gen-step').forEach((el) => el.remove());
+           const hasPro = allowed < VISUAL_MAX;
+           card.classList.toggle('has-pro', hasPro);
+           if (proTagEl) proTagEl.hidden = !hasPro;
+           slider.style.setProperty('--mg-pro-from', String(allowed + 1));
            for (let n = MIN; n <= VISUAL_MAX; n++) {
                const locked = n > allowed;
                const step = document.createElement('span');
@@ -4744,14 +4751,6 @@
                    paint(n, { pop: true });
                });
                rail.appendChild(step);
-           }
-           if (allowed < VISUAL_MAX) {
-               const firstLocked = allowed + 1;
-               const pro = document.createElement('span');
-               pro.className = 'multi-gen-pro';
-               pro.textContent = 'PRO';
-               pro.style.left = leftFor(firstLocked);
-               rail.appendChild(pro);
            }
        }
 

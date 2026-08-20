@@ -2,7 +2,7 @@
   const e = 3;
   const t = [];
   let n = 0;
-  let i = null;
+  let r = null;
   function esc(e) {
     return String(e == null ? "" : e).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   }
@@ -11,14 +11,14 @@
     const t = String(e).trim();
     const n = t.match(/^(\d+):(\d{2})$/);
     if (n) return `${String(n[1]).padStart(2, "0")}:${n[2]}`;
-    const i = t.match(/^(\d+(?:\.\d+)?)\s*s$/i);
-    if (i) {
-      const e = Math.max(0, Math.round(Number(i[1])));
+    const r = t.match(/^(\d+(?:\.\d+)?)\s*s$/i);
+    if (r) {
+      const e = Math.max(0, Math.round(Number(r[1])));
       return `${String(Math.floor(e / 60)).padStart(2, "0")}:${String(e % 60).padStart(2, "0")}`;
     }
-    const r = Number(t);
-    if (Number.isFinite(r) && r >= 0) {
-      const e = Math.round(r);
+    const i = Number(t);
+    if (Number.isFinite(i) && i >= 0) {
+      const e = Math.round(i);
       return `${String(Math.floor(e / 60)).padStart(2, "0")}:${String(e % 60).padStart(2, "0")}`;
     }
     return t;
@@ -29,7 +29,7 @@
     if (t > 10) return Math.max(0, Math.min(100, Math.round(t)));
     return Math.max(0, Math.min(100, Math.round(t * 10)));
   }
-  const r = {
+  const i = {
     high: {
       label: "High potential."
     },
@@ -66,22 +66,22 @@
     if (Number(e.score_max) === 100 && e.score != null) return fmtHundred(e.score);
     const n = e.score_10 != null ? e.score_10 : e.n != null ? e.n : e.score;
     if (n != null && Number.isFinite(Number(n))) return fmtHundred(n);
-    const i = String(t || e.tier || e.grade || "").toUpperCase().replace(/\s+/g, "");
-    return s[i === "S+" ? "S+" : i] || 0;
+    const r = String(t || e.tier || e.grade || "").toUpperCase().replace(/\s+/g, "");
+    return s[r === "S+" ? "S+" : r] || 0;
   }
   function dimOf(e, t) {
     const n = e && e[t] || {};
-    const i = Number(n.n != null ? n.n : n.score);
-    const r = n.available !== false && Number.isFinite(i) && i > 0;
-    const s = r ? scoreToHundred(n, n.band || n.grade) : 0;
-    const c = n.band || bandOf(s);
+    const r = Number(n.n != null ? n.n : n.score);
+    const i = n.available !== false && Number.isFinite(r) && r > 0;
+    const s = i ? scoreToHundred(n, n.band || n.grade) : 0;
+    const o = n.band || bandOf(s);
     return {
-      n: r ? i : 0,
+      n: i ? r : 0,
       n100: s,
       display: s ? String(s) : "",
-      band: c,
+      band: o,
       note: String(n.note || n.why || "").trim(),
-      available: r || s > 0
+      available: i || s > 0
     };
   }
   function viralityOf(e) {
@@ -89,27 +89,27 @@
     if (!t || typeof t !== "object") return null;
     if (t.available === false) return null;
     const n = scoreToHundred(t, t.tier || t.band);
-    let i = String(t.band || "").toLowerCase();
-    if (!r[i]) {
+    let r = String(t.band || "").toLowerCase();
+    if (!i[r]) {
       const e = String(t.tier || "").toLowerCase();
-      i = r[e] ? e : bandOf(n);
+      r = i[e] ? e : bandOf(n);
     }
-    if (!r[i] || n <= 0) return null;
+    if (!i[r] || n <= 0) return null;
     const s = Array.isArray(t.clips) ? t.clips : [];
-    const c = t.lone_clip === true || s.length <= 1;
-    if (n < 60 && !c) return null;
-    const o = t.tag && typeof t.tag === "object" ? t.tag : null;
-    const a = o ? Number(o.confidence) : 0;
-    const l = r[i] || r.solid;
+    const o = t.lone_clip === true || s.length <= 1;
+    if (n < 60 && !o) return null;
+    const c = t.tag && typeof t.tag === "object" ? t.tag : null;
+    const a = c ? Number(c.confidence) : 0;
+    const l = i[r] || i.solid;
     return {
-      band: i,
+      band: r,
       score100: n,
       scoreDisplay: String(n),
       label: String(t.label || l.label),
       why: String(t.why || "").trim(),
       fix: String(t.fix || "").trim(),
-      tag: o && o.label && a >= .8 ? {
-        label: String(o.label),
+      tag: c && c.label && a >= .8 ? {
+        label: String(c.label),
         confidence: a
       } : null,
       hook: dimOf(t, "hook"),
@@ -136,13 +136,13 @@
   }
   function gradeRows(e) {
     return [ [ "hook", "Hook" ], [ "clip", "Clip" ], [ "video", "Video" ] ].map(([t, n]) => {
-      const i = e[t] || {};
-      const r = i.n100 || 0;
-      if (!r) return "";
-      const s = i.band || bandOf(r);
-      const c = i.note || "";
-      const o = c ? `<div class="scc-why"><p>${esc(c)}</p></div>` : "";
-      return `<div class="pv-grade" data-dim="${esc(t)}">\n                <b class="pv-dim-tier ${dimBandClass(s)}">${esc(String(r))}</b>\n                <span class="pv-dim-label">${esc(n)}</span>\n                ${o}\n            </div>`;
+      const r = e[t] || {};
+      const i = r.n100 || 0;
+      if (!i) return "";
+      const s = r.band || bandOf(i);
+      const o = r.note || "";
+      const c = o ? `<div class="scc-why"><p>${esc(o)}</p></div>` : "";
+      return `<div class="pv-grade" data-dim="${esc(t)}">\n                <b class="pv-dim-tier ${dimBandClass(s)}">${esc(String(i))}</b>\n                <span class="pv-dim-label">${esc(n)}</span>\n                ${c}\n            </div>`;
     }).join("");
   }
   function previewUrl(e) {
@@ -159,8 +159,8 @@
     if (t && String(t).startsWith("http")) return String(t);
     const n = e && (e.projectId || e.id);
     if (!n) return "";
-    const i = (window.API_BASE_URL || "/api").replace(/\/$/, "");
-    return `${i}/clips/poster/${encodeURIComponent(n)}`;
+    const r = (window.API_BASE_URL || "/api").replace(/\/$/, "");
+    return `${r}/clips/poster/${encodeURIComponent(n)}`;
   }
   function pumpQueue() {
     while (n < e && t.length) {
@@ -182,17 +182,21 @@
   function buildHTML(e) {
     const t = viralityOf(e);
     const n = esc(e.name || e.video_title || "Clip");
-    const i = esc(e.projectId || e.id || "");
-    const r = formatClock(e.duration);
-    const s = t ? `<div class="scc-viral ${bandClass(t.band)}">\n                    <span class="scc-viral-n">${esc(t.scoreDisplay)}</span>\n                    ${tip(`${t.scoreDisplay}/100 · ${t.label}`)}\n               </div>` : `<div class="scc-viral scc-viral-empty"></div>`;
-    return `\n            <div class="scc-preview">\n                <div class="scc-skel" aria-hidden="true"></div>\n                <img class="scc-poster" alt="" loading="lazy" decoding="async" draggable="false">\n                <video class="scc-video" muted playsinline loop preload="none" controlslist="nodownload nofullscreen noremoteplayback" disablepictureinpicture></video>\n                <div class="scc-time"><span class="scc-t0">00:00</span> <span class="scc-t1">${esc(r)}</span></div>\n                <div class="scc-bar"><i></i></div>\n            </div>\n            <div class="scc-meta">\n                <div class="scc-meta-row">\n                    ${s}\n                    <div class="scc-actions">\n                        <button type="button" class="scc-ico library-share-btn" data-project-id="${i}" aria-label="Share preview">\n                            ${iconShare()}${tip("Copy public preview link")}\n                        </button>\n                        <button type="button" class="scc-ico library-download-btn" data-project-id="${i}" aria-label="Download">\n                            ${iconDl()}${tip("Save this clip")}\n                        </button>\n                        <button type="button" class="scc-ico library-delete-btn" aria-label="Delete">\n                            ${iconTrash()}${tip("Delete this clip")}\n                        </button>\n                    </div>\n                </div>\n                <h2 class="card-title scc-title" title="${n}">${n}</h2>\n            </div>`;
+    const r = esc(e.projectId || e.id || "");
+    const i = formatClock(e.duration);
+    const s = window.currentUser && window.currentUser.plan || "free";
+    const o = e.resolution || (s === "free" ? "720p" : "1080p");
+    const c = s !== "free";
+    const a = c ? "" : '<span class="pro-badge scc-res-pro-inline">PRO</span>';
+    const l = `<div class="scc-res-wrap" data-project-id="${r}" data-res="${esc(o)}">\n            <button class="scc-res-pill${o === "720p" ? " active" : ""}" data-res="720p">720p</button>\n            <button class="scc-res-pill${o === "1080p" ? " active" : ""}${!c ? " locked" : ""}" data-res="1080p">1080p${a}</button>\n        </div>`;
+    return `\n            <div class="scc-preview">\n                <div class="scc-skel" aria-hidden="true"></div>\n                <img class="scc-poster" alt="" loading="lazy" decoding="async" draggable="false">\n                <video class="scc-video" muted playsinline loop preload="none" controlslist="nodownload nofullscreen noremoteplayback" disablepictureinpicture></video>\n                <div class="scc-time"><span class="scc-t0">00:00</span> <span class="scc-t1">${esc(i)}</span></div>\n                <div class="scc-bar"><i></i></div>\n            </div>\n            <div class="scc-meta">\n                <div class="scc-meta-row">\n                    ${l}\n                    <div class="scc-actions">\n                        <button type="button" class="scc-ico library-share-btn" data-project-id="${r}" aria-label="Share preview">\n                            ${iconShare()}${tip("Copy public preview link")}\n                        </button>\n                        <button type="button" class="scc-ico library-download-btn" data-project-id="${r}" aria-label="Download">\n                            ${iconDl()}${tip("Save this clip")}\n                        </button>\n                        <button type="button" class="scc-ico library-delete-btn" aria-label="Delete">\n                            ${iconTrash()}${tip("Delete this clip")}\n                        </button>\n                    </div>\n                </div>\n                <h2 class="card-title scc-title" title="${n}">${n}</h2>\n            </div>`;
   }
   function railHTML(e) {
     const t = viralityOf(e);
     if (!t) return "";
     const n = gradeRows(t);
-    const i = t.fix ? `<div class="scc-why pv-fix-tip"><p>${esc(t.fix)}</p></div>` : "";
-    return `<div class="pv-card">\n            <div class="pv-head">\n                <div class="pv-score-line">\n                    <b class="pv-score-num">${esc(String(t.score100))}</b><span class="pv-score-max">/100</span>\n                </div>\n                ${i}\n            </div>\n            <div class="pv-grades">${n}</div>\n        </div>`;
+    const r = t.fix ? `<div class="scc-why pv-fix-tip"><p>${esc(t.fix)}</p></div>` : "";
+    return `<div class="pv-card">\n            <div class="pv-head">\n                <div class="pv-score-line">\n                    <b class="pv-score-num">${esc(String(t.score100))}</b><span class="pv-score-max">/100</span> <span class="pv-res-badge">${esc(e.resolution || e.video_quality || "")}</span>\n                </div>\n                ${r}\n            </div>\n            <div class="pv-grades">${n}</div>\n        </div>`;
   }
   function bindRail(e) {
     if (!e) return;
@@ -226,10 +230,10 @@
   function bind(e, t, n) {
     if (!e || e.dataset.sccBound === "1") return;
     e.dataset.sccBound = "1";
-    const r = t.projectId || t.id;
+    const i = t.projectId || t.id;
     const s = e.querySelector(".scc-preview");
-    const c = e.querySelector(".scc-poster");
-    const o = e.querySelector(".scc-video");
+    const o = e.querySelector(".scc-poster");
+    const c = e.querySelector(".scc-video");
     const a = e.querySelector(".scc-bar > i");
     const l = e.querySelector(".scc-t0");
     const d = e.querySelector(".scc-t1");
@@ -238,94 +242,94 @@
       s?.classList.add("has-poster");
       s?.classList.remove("has-video-playing");
     };
-    if (c) {
+    if (o) {
       const e = posterUrl(t);
       if (e) {
-        c.src = e;
-        c.addEventListener("load", showPoster, {
+        o.src = e;
+        o.addEventListener("load", showPoster, {
           once: true
         });
-        c.addEventListener("error", () => {
-          c.removeAttribute("src");
+        o.addEventListener("error", () => {
+          o.removeAttribute("src");
         }, {
           once: true
         });
       }
     }
     const tick = () => {
-      if (!o) return;
-      const e = o.duration;
-      const t = o.currentTime || 0;
+      if (!c) return;
+      const e = c.duration;
+      const t = c.currentTime || 0;
       if (l) l.textContent = formatClock(t);
       if (Number.isFinite(e) && e > 0) {
         if (d) d.textContent = formatClock(e);
         if (a) a.style.width = `${Math.min(100, t / e * 100)}%`;
       }
     };
-    const hasFrame = () => o && o.videoWidth > 0 && o.videoHeight > 0;
+    const hasFrame = () => c && c.videoWidth > 0 && c.videoHeight > 0;
     const showFrame = () => {
       if (!hasFrame()) return;
       s?.classList.add("has-clip", "has-video-playing");
       tick();
     };
     const paintStill = () => {
-      if (!o) return;
-      const e = o.currentTime > .05 ? o.currentTime : .08;
+      if (!c) return;
+      const e = c.currentTime > .05 ? c.currentTime : .08;
       const afterSeek = () => {
         showFrame();
         if (!s?.matches(":hover")) {
           try {
-            o.pause();
+            c.pause();
           } catch (e) {}
         }
       };
       try {
-        o.currentTime = e;
+        c.currentTime = e;
       } catch (e) {}
-      o.addEventListener("seeked", afterSeek, {
+      c.addEventListener("seeked", afterSeek, {
         once: true
       });
-      o.play().then(() => {
+      c.play().then(() => {
         showFrame();
         if (!s?.matches(":hover")) {
-          o.pause();
+          c.pause();
           showFrame();
         }
       }).catch(() => showFrame());
     };
     const playClip = () => {
-      if (!o) return;
-      o.muted = true;
-      if (i && i !== o) {
+      if (!c) return;
+      c.muted = true;
+      if (r && r !== c) {
         try {
-          i.pause();
+          r.pause();
         } catch (e) {}
       }
-      i = o;
-      o.play().then(showFrame).catch(() => {});
+      r = c;
+      c.play().then(showFrame).catch(() => {});
     };
     const attachSrc = e => {
-      o.muted = true;
-      o.playsInline = true;
-      o.setAttribute("playsinline", "");
-      o.preload = "auto";
-      o.src = e;
+      c.muted = true;
+      c.playsInline = true;
+      c.setAttribute("playsinline", "");
+      c.preload = "auto";
+      c.src = e;
       try {
-        o.load();
+        c.load();
       } catch (e) {}
     };
     const bindReady = e => {
-      o.addEventListener("loadeddata", e);
-      o.addEventListener("canplay", e);
-      o.addEventListener("loadedmetadata", e);
+      c.addEventListener("loadeddata", e);
+      c.addEventListener("canplay", e);
+      c.addEventListener("loadedmetadata", e);
     };
     const ensureSrc = () => {
-      if (!o || o.dataset.srcReady === "1" || o.dataset.srcFailed === "1") return;
-      o.dataset.srcReady = "1";
-      const e = previewUrl(r);
+      if (!c || c.dataset.srcReady === "1" || c.dataset.srcFailed === "1") return;
+      c.dataset.srcReady = "1";
+      const e = previewUrl(i);
       enqueueLoad(() => new Promise(t => {
-        if (!o.isConnected) {
-          o.dataset.srcReady = "";
+        if (!c.isConnected) {
+          c.dataset.srcReady = "";
           t();
           return;
         }
@@ -342,8 +346,8 @@
           finish();
         };
         bindReady(onReady);
-        o.addEventListener("error", () => {
-          o.dataset.srcFailed = "1";
+        c.addEventListener("error", () => {
+          c.dataset.srcFailed = "1";
           finish();
         }, {
           once: true
@@ -352,39 +356,67 @@
         setTimeout(finish, 8e3);
       }));
     };
-    o?.addEventListener("timeupdate", tick);
-    o?.addEventListener("loadedmetadata", tick);
-    o?.addEventListener("pause", () => {
-      if (i === o) i = null;
+    c?.addEventListener("timeupdate", tick);
+    c?.addEventListener("loadedmetadata", tick);
+    c?.addEventListener("pause", () => {
+      if (r === c) r = null;
     });
     s?.addEventListener("mouseenter", () => {
       ensureSrc();
-      if (o && o.paused) playClip();
+      if (c && c.paused) playClip();
     });
     s?.addEventListener("mouseleave", () => {
-      if (o) {
-        o.pause();
+      if (c) {
+        c.pause();
         s?.classList.remove("has-video-playing");
         showPoster();
       }
     });
-    e.addEventListener("click", i => {
-      if (i.target.closest(".library-download-btn, .library-delete-btn, .library-share-btn, .scc-ico, .scc-viral")) return;
-      i.preventDefault();
-      i.stopPropagation();
-      if (o && !o.paused) try {
-        o.pause();
+    e.addEventListener("click", r => {
+      const s = r.target.closest(".scc-res-pill");
+      if (s) {
+        r.preventDefault();
+        r.stopPropagation();
+        if (s.classList.contains("locked")) {
+          if (typeof window.openPlanSelector === "function") window.openPlanSelector(); else if (typeof window.showUpgradeModal === "function") window.showUpgradeModal();
+          return;
+        }
+        const e = s.closest(".scc-res-wrap");
+        const n = s.dataset.res;
+        e.dataset.res = n;
+        e.querySelectorAll(".scc-res-pill").forEach(e => e.classList.toggle("active", e.dataset.res === n));
+        t.resolution = n;
+        const i = e.dataset.projectId;
+        if (i) {
+          fetch("/api/clips/" + encodeURIComponent(i) + "/resolution", {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              resolution: n
+            })
+          }).catch(() => {});
+        }
+        return;
+      }
+      if (r.target.closest(".scc-res-wrap")) return;
+      if (r.target.closest(".library-download-btn, .library-delete-btn, .library-share-btn, .scc-ico")) return;
+      r.preventDefault();
+      r.stopPropagation();
+      if (c && !c.paused) try {
+        c.pause();
       } catch (e) {}
-      const s = t.id || r;
-      if (n && typeof n.openLibraryPreview === "function" && s) {
-        n.openLibraryPreview(s, r, e);
+      const o = t.id || i;
+      if (n && typeof n.openLibraryPreview === "function" && o) {
+        n.openLibraryPreview(o, i, e);
       }
     });
   }
   function setDuration(e, t) {
     const n = formatClock(t);
-    const i = e && e.querySelector(".scc-t1");
-    if (i) i.textContent = n;
+    const r = e && e.querySelector(".scc-t1");
+    if (r) r.textContent = n;
   }
   window.SolisClipCard = {
     buildHTML: buildHTML,

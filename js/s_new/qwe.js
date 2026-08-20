@@ -149,58 +149,94 @@ window.isUnlimitedLibrary = function(e, t) {
   return n === "basic" || n === "prime" || n === "elite" || n.includes("basic") || n.includes("prime") || n.includes("elite");
 };
 
-window.applyStorageBadgeUI = function({used: e, limit: t, plan: i, unlimited: n}) {
-  const o = typeof i === "string" && i.length ? i.toLowerCase().replace(/\s+plan\s*$/, "").trim() : "free";
-  const s = n === true || window.isUnlimitedLibrary(t, o);
-  const a = !s;
-  const r = a ? Math.max(1, Number(t) || 10) : null;
-  const l = Math.max(0, Number(e) || 0);
-  const {phase: c, showDeleteAll: d, showUpgrade: u} = a ? window.getStoragePhase(l, r, o) : {
+window.formatStorageSpaceTooltip = function(e, t) {
+  const i = Math.max(0, Number(e) || 0);
+  const n = Math.max(0, Number(t) || 0);
+  const fmtGb = e => {
+    if (e >= 1024) {
+      const t = e / 1024;
+      return t >= 10 ? t.toFixed(0) : t.toFixed(1);
+    }
+    if (e > 0) return (e / 1024).toFixed(2);
+    return "0";
+  };
+  if (n > 0) return `${fmtGb(i)} / ${fmtGb(n)} GB`;
+  if (i > 0) {
+    if (i >= 1024) return `${fmtGb(i)} GB`;
+    return `${Math.max(1, Math.round(i))} MB`;
+  }
+  return "0 GB";
+};
+
+window.buildStorageBadgeTitle = function({used: e, limit: t, plan: i, unlimited: n, phase: o, effectiveLimit: s, spaceUsedMb: a, spaceTotalMb: r}) {
+  const l = window.formatStorageSpaceTooltip(a, r);
+  if (n) {
+    return `${e} clip${e === 1 ? "" : "s"} stored · ${l}`;
+  }
+  if (o === "full") {
+    return `Storage full (${e}/${s} clips) · ${l}`;
+  }
+  if (o === "high") {
+    return `Almost full (${e}/${s} clips) · ${l}`;
+  }
+  return `${e}/${s} clips · ${l}`;
+};
+
+window.applyStorageBadgeUI = function({used: e, limit: t, plan: i, unlimited: n, spaceUsedMb: o, spaceTotalMb: s}) {
+  const a = typeof i === "string" && i.length ? i.toLowerCase().replace(/\s+plan\s*$/, "").trim() : "free";
+  const r = n === true || window.isUnlimitedLibrary(t, a);
+  const l = !r;
+  const c = l ? Math.max(1, Number(t) || 10) : null;
+  const d = Math.max(0, Number(e) || 0);
+  const {phase: u, showDeleteAll: p, showUpgrade: m} = l ? window.getStoragePhase(d, c, a) : {
     phase: "ok",
     showDeleteAll: false,
     showUpgrade: false
   };
-  const p = o.charAt(0).toUpperCase() + o.slice(1);
-  const w = a && (c === "high" || c === "full");
-  const m = document.getElementById("storageBadge");
-  const g = document.getElementById("storageUsedBadge");
-  const f = document.getElementById("storageTotalBadge");
-  const y = document.getElementById("storageLimitGroup");
-  const b = document.getElementById("storagePlanBadge");
-  const S = document.getElementById("storageWarnIcon");
-  const h = document.getElementById("deleteAllClipsBtn");
-  const I = document.getElementById("needMoreUpgradeText");
-  if (g) {
-    g.textContent = String(l);
-    g.style.color = "";
-    g.classList.toggle("storage-count-warn", w);
-  }
+  const w = a.charAt(0).toUpperCase() + a.slice(1);
+  const f = l && (u === "high" || u === "full");
+  const g = document.getElementById("storageBadge");
+  const y = document.getElementById("storageUsedBadge");
+  const b = document.getElementById("storageTotalBadge");
+  const S = document.getElementById("storageLimitGroup");
+  const h = document.getElementById("storagePlanBadge");
+  const I = document.getElementById("storageWarnIcon");
+  const L = document.getElementById("deleteAllClipsBtn");
+  const T = document.getElementById("needMoreUpgradeText");
   if (y) {
-    y.style.display = a ? "" : "none";
-    y.hidden = !a;
-  } else if (f) {
-    f.style.display = a ? "" : "none";
-    const e = f.previousSibling;
-    if (e && e.nodeType === 3) e.textContent = a ? " / " : "";
-  }
-  if (f && a) {
-    f.textContent = String(r);
-    f.style.display = "";
-    f.classList.toggle("storage-count-warn", c === "full");
-  }
-  if (m) m.classList.toggle("is-unlimited", s);
-  if (b) b.textContent = p;
-  if (m) {
-    m.classList.toggle("is-warn", w);
-    m.classList.toggle("is-full", a && c === "full");
-    m.title = s ? `${l} clip${l === 1 ? "" : "s"} stored` : c === "full" ? "Storage full — delete clips or upgrade your plan" : c === "high" ? `Storage almost full (${l}/${r}) — remove old videos to keep generating` : "Library storage";
+    y.textContent = String(d);
+    y.style.color = "";
+    y.classList.toggle("storage-count-warn", f);
   }
   if (S) {
-    S.hidden = !w;
-    S.setAttribute("aria-hidden", w ? "false" : "true");
+    S.style.display = l ? "" : "none";
+    S.hidden = !l;
+  } else if (b) {
+    b.style.display = l ? "" : "none";
+    const e = b.previousSibling;
+    if (e && e.nodeType === 3) e.textContent = l ? " / " : "";
   }
-  if (h) h.style.display = d ? "inline-flex" : "none";
-  if (I) I.style.display = u ? "inline" : "none";
+  if (b && l) {
+    b.textContent = String(c);
+    b.style.display = "";
+    b.classList.toggle("storage-count-warn", u === "full");
+  }
+  if (g) g.classList.toggle("is-unlimited", r);
+  if (h) h.textContent = w;
+  if (g) {
+    g.classList.toggle("is-warn", f);
+    g.classList.toggle("is-full", l && u === "full");
+    g.title = r ? `${d} clip${d === 1 ? "" : "s"} stored` : u === "full" ? "Storage full — delete clips or upgrade your plan" : u === "high" ? `Storage almost full (${d}/${c}) — remove old videos to keep generating` : "Library storage";
+  }
+  if (I) {
+    I.hidden = !f;
+    I.setAttribute("aria-hidden", f ? "false" : "true");
+  }
+  if (L) L.style.display = p ? "inline-flex" : "none";
+  if (T) {
+    T.hidden = !m;
+    T.style.display = m ? "" : "none";
+  }
 };
 
 window.pulseStorageBadgeWarning = function() {
@@ -226,11 +262,14 @@ window.syncStorageLimitsFromStatus = function(e) {
   const i = (e.plan?.name || e.plan || "free").toString().toLowerCase();
   const n = e.storage.videos.unlimited === true || [ "basic", "prime", "elite" ].includes(i);
   const o = n ? null : e.storage.videos.limit ?? 10;
+  const s = e.storage?.space_mb || {};
   window.applyStorageBadgeUI({
     used: t,
     limit: o,
     plan: i,
-    unlimited: n
+    unlimited: n,
+    spaceUsedMb: s.used,
+    spaceTotalMb: s.total
   });
   return n ? {
     phase: "ok"
@@ -240,29 +279,45 @@ window.syncStorageLimitsFromStatus = function(e) {
 window.updateStorageBadgeDisplay = function() {
   let originalFunc = async function() {
     try {
-      const e = await window.apiRequestCache.dedupFetch("/api/auth/subscription", {
+      const e = {
         method: "GET",
         credentials: "include",
         headers: {
           "Content-Type": "application/json"
         }
-      });
-      if (!e.ok) throw new Error(`Failed to fetch subscription: ${e.status}`);
-      const t = await e.json();
-      const i = t?.subscription;
-      if (!i || typeof i !== "object") throw new Error("Missing subscription");
-      let n = window.validateNumber(i.active_videos, 0, VALIDATION.MAX_VIDEOS_LIMIT, 0);
-      if (window.clipsStudio?.libraryItems?.length != null) {
-        n = window.clipsStudio.libraryItems.length;
+      };
+      const [t, i] = await Promise.all([ window.apiRequestCache.dedupFetch("/api/auth/subscription", e), window.apiRequestCache.dedupFetch("/api/clips/status", e).catch(() => null) ]);
+      if (!t.ok) throw new Error(`Failed to fetch subscription: ${t.status}`);
+      const n = await t.json();
+      const o = n?.subscription;
+      if (!o || typeof o !== "object") throw new Error("Missing subscription");
+      let s = null;
+      let a = null;
+      if (i?.ok) {
+        try {
+          const e = await i.json();
+          const t = e?.storage?.space_mb || {};
+          s = t.used;
+          a = t.total;
+        } catch (e) {}
       }
-      const o = i.plan || "free";
-      const s = typeof o === "string" && VALIDATION.ALLOWED_PLANS.includes(o.toLowerCase()) ? o.toLowerCase() : "free";
-      const a = i.library_unlimited === true || window.isUnlimitedLibrary?.(null, s);
+      if (a == null && o.storage_limit_gb != null) {
+        a = Number(o.storage_limit_gb) * 1024;
+      }
+      let r = window.validateNumber(o.active_videos, 0, VALIDATION.MAX_VIDEOS_LIMIT, 0);
+      if (window.clipsStudio?.libraryItems?.length != null) {
+        r = window.clipsStudio.libraryItems.length;
+      }
+      const l = o.plan || "free";
+      const c = typeof l === "string" && VALIDATION.ALLOWED_PLANS.includes(l.toLowerCase()) ? l.toLowerCase() : "free";
+      const d = o.library_unlimited === true || window.isUnlimitedLibrary?.(null, c);
       window.applyStorageBadgeUI({
-        used: n,
-        limit: a ? null : window.validateNumber(i.video_limit || i.videos_space_limit, 1, VALIDATION.MAX_VIDEOS_LIMIT, 10),
-        plan: s,
-        unlimited: a
+        used: r,
+        limit: d ? null : window.validateNumber(o.video_limit || o.videos_space_limit, 1, VALIDATION.MAX_VIDEOS_LIMIT, 10),
+        plan: c,
+        unlimited: d,
+        spaceUsedMb: s,
+        spaceTotalMb: a
       });
     } catch (e) {
       console.error("Failed to fetch storage info from backend:", e);

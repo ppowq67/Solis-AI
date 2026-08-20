@@ -51,6 +51,7 @@
     --glass-shadow: 0 8px 32px rgba(120,90,60,0.10), 0 2px 8px rgba(120,90,60,0.07), inset 0 1.5px 0 rgba(255,255,255,0.95), inset 0 -1px 0 rgba(180,155,130,0.12), inset 1.5px 0 0 rgba(255,255,255,0.70), inset -1px 0 0 rgba(180,155,130,0.08);
     --ink: #18120e;
     --orange-deep: #c2410c;
+    --frame-thick: 18px;
   }
 
   html, body {
@@ -98,16 +99,20 @@
 
   ._grid { display: none; }
 
+  .lp-frame-glow {
+    position: fixed; inset: 0; z-index: 2; pointer-events: none;
+    box-shadow:
+      inset 0 0 26px rgba(249,115,22,0.22),
+      inset 0 0 60px rgba(249,115,22,0.10);
+  }
+
   @keyframes fadeSlideDown { from { opacity: 0; transform: translateY(-25px) translateX(-50%); } to { opacity: 1; transform: translateY(0) translateX(-50%); } }
   @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
   @keyframes slideUpMobile { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
   .nav { animation: fadeSlideDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-  .side-left > *:nth-child(1) { opacity: 0; animation: fadeSlideUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards; }
-  .side-left > *:nth-child(2) { opacity: 0; animation: fadeSlideUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.45s forwards; }
-  .side-left > *:nth-child(3) { opacity: 0; animation: fadeSlideUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards; }
-  .side-left > *:nth-child(4) { opacity: 0; animation: fadeSlideUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.75s forwards; }
+  .clip-showcase { opacity: 0; animation: fadeSlideUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards; }
   .login-wrap { opacity: 0; animation: scaleIn 1s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards; }
   .nav {
     position: fixed; top: 24px; left: 50%; transform: translateX(-50%);
@@ -148,21 +153,66 @@
     min-height: calc(100vh - 88px); max-width: 1152px; margin: 0 auto;
     padding: 0 32px; align-items: center; gap: 3rem;
   }
-  .side-left { order: 2; display: flex; flex-direction: column; gap: 2.5rem; padding: 3rem 0; }
+  .clip-showcase { order: 2; position: relative; height: min(640px, 78vh); display: flex; flex-direction: column; gap: 1.5rem; }
   .login-wrap { order: 1; }
+
+  .clip-wall-mask {
+    position: relative; flex: 1; border-radius: 28px; overflow: hidden;
+    display: flex; gap: 14px; padding: 18px;
+    background: rgba(255,247,237,0.4);
+    border: 1px solid rgba(255,255,255,0.6);
+  }
+  .clip-wall-mask::before {
+    content: ''; position: absolute; inset: 0; z-index: 4; pointer-events: none;
+    background: linear-gradient(180deg, rgba(255,250,244,0.75) 0%, rgba(255,250,244,0.15) 22%, rgba(255,250,244,0.15) 78%, rgba(255,250,244,0.75) 100%);
+  }
+  .clip-col { flex: 1; display: flex; flex-direction: column; will-change: transform; }
+  .clip-col.up { animation: clipUp 40s linear infinite; }
+  .clip-col.down { animation: clipUp 46s linear infinite reverse; }
+  .clip-col.up.slow { animation-duration: 54s; }
+  @keyframes clipUp { from { transform: translateY(0); } to { transform: translateY(-50%); } }
+
+  .clip-card {
+    position: relative; width: 100%; aspect-ratio: 9 / 13; border-radius: 16px; overflow: hidden;
+    flex-shrink: 0; margin-bottom: 14px; box-shadow: 0 4px 14px rgba(120,90,60,0.12);
+  }
+
+  .clip-a { background: linear-gradient(155deg, #fdba74, #f97316); }
+  .clip-b { background: linear-gradient(155deg, #5c5048, #18120e); }
+  .clip-c { background: linear-gradient(155deg, #ffedd5, #fed7aa); }
+  .clip-d { background: linear-gradient(155deg, #ea580c, #b84d1a); }
+  .clip-e { background: linear-gradient(155deg, #fff7ed, #fdba74); }
+  .clip-f { background: linear-gradient(155deg, #d65a31, #5c5048); }
+
+  .clip-card { opacity: 0.85; }
+
+  .clip-heading { text-align: left; flex: 0 0 auto; }
+  .clip-heading .hero-headline { font-size: clamp(30px, 3.4vw, 42px); }
+  .clip-heading .hero-sub { max-width: 380px; }
   .hero-headline {
     font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: clamp(38px, 5vw, 58px); font-weight: 800; color: var(--text-primary);
     letter-spacing: -0.8px; line-height: 1.1;
   }
   .hero-headline em {
-    display: inline-block; padding-bottom: 0.08em; font-style: normal;
+    font-style: normal;
+  }
+  .word-cycle {
+    display: inline-block; will-change: filter, opacity, transform;
+    transition: filter 0.6s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    filter: blur(0px); opacity: 1; transform: translateY(0) scale(1);
+    min-width: 3.6ch;
     background: var(--solis-gradient); background-size: 200% 200%; animation: shimmer 5s ease-in-out infinite;
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+    padding-bottom: 0.08em;
+  }
+  .word-cycle.is-swapping {
+    filter: blur(16px); opacity: 0; transform: translateY(10px) scale(0.94);
+    transition: filter 0.38s cubic-bezier(0.4, 0, 1, 1), opacity 0.32s cubic-bezier(0.4, 0, 1, 1), transform 0.38s cubic-bezier(0.4, 0, 1, 1);
   }
   @keyframes shimmer { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
   .hero-sub { font-size: 16px; color: var(--text-secondary); line-height: 1.7; font-weight: 400; max-width: 420px; }
-  .trust-row { display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap; }
+  .trust-row { display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap; justify-content: center; }
   .trust-badge {
     display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px;
     background: var(--glass-bg); border: 1px solid rgba(255,255,255,0.82);
@@ -177,14 +227,23 @@
   .trust-divider { width: 1px; height: 20px; background: rgba(200,185,170,0.4); }
 
   .users-chip {
-    background: var(--glass-bg); border: 1px solid rgba(255,255,255,0.82);
+    background: rgba(255,255,255,0.55); border: 1px solid rgba(255,255,255,0.82);
     border-bottom-color: rgba(200,185,170,0.35); border-right-color: rgba(200,185,170,0.25);
-    box-shadow: var(--glass-shadow); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%);
-    border-radius: 100px; padding: 7px 16px 7px 8px; display: inline-flex; align-items: center; gap: 10px; width: fit-content;
+    border-radius: 100px; padding: 7px 16px 7px 8px; display: inline-flex; align-items: center; gap: 10px; width: fit-content; flex-shrink: 0;
   }
+  .stat-strip {
+    display: flex; gap: 0; background: rgba(255,255,255,0.45);
+    border: 1px solid rgba(255,255,255,0.82); border-bottom-color: rgba(200,185,170,0.35); border-right-color: rgba(200,185,170,0.25);
+    border-radius: 18px; overflow: hidden; flex: 1;
+  }
+  .stat-item { padding: 0.85rem 1.2rem; text-align: center; position: relative; flex: 1; }
+  .stat-item:not(:last-child)::after { content: ''; position: absolute; right: 0; top: 20%; height: 60%; width: 1px; background: rgba(200,185,170,0.35); }
+  .stat-item .num { font-size: 14px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.2px; }
+  .stat-item .lbl { font-size: 9.5px; color: var(--text-muted); margin-top: 2px; line-height: 1.3; }
+  .below-card { margin-top: 1.5rem; display: flex; flex-wrap: nowrap; align-items: center; justify-content: center; gap: 0.75rem; }
   .avatars-stack { display: flex; }
   .avatar {
-    width: 28px; height: 28px; border-radius: 50%; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 10px; font-weight: 600;
+    width: 26px; height: 26px; border-radius: 50%; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 10px; font-weight: 600;
     display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0;
     border: 2px solid rgba(253,250,247,0.9); margin-left: -8px; transition: transform 0.2s ease, z-index 0.2s ease;
   }
@@ -193,20 +252,19 @@
   .av-a { background: linear-gradient(135deg, #f97316, #dc2626); }
   .av-b { background: linear-gradient(135deg, #0ea5e9, #6366f1); }
   .av-c { background: linear-gradient(135deg, #10b981, #0ea5e9); }
-  .users-chip .txt { font-size: 13px; color: var(--text-secondary); }
+  .users-chip .txt { font-size: 12.5px; color: var(--text-secondary); }
   .users-chip .txt strong { color: var(--text-primary); font-weight: 600; }
 
   .stat-strip {
-    display: flex; gap: 0; background: var(--glass-bg);
+    display: flex; gap: 0; background: rgba(255,255,255,0.45);
     border: 1px solid rgba(255,255,255,0.82); border-bottom-color: rgba(200,185,170,0.35); border-right-color: rgba(200,185,170,0.25);
-    box-shadow: var(--glass-shadow); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%);
-    border-radius: 20px; overflow: hidden; width: fit-content;
+    border-radius: 18px; overflow: hidden; width: 100%;
   }
-  .stat-item { padding: 1.25rem 2rem; text-align: center; position: relative; transition: background 0.3s ease; }
-  .stat-item:hover { background: rgba(255,255,255,0.3); }
+  .stat-item { padding: 0.85rem 0.6rem; text-align: center; position: relative; flex: 1; }
   .stat-item:not(:last-child)::after { content: ''; position: absolute; right: 0; top: 20%; height: 60%; width: 1px; background: rgba(200,185,170,0.35); }
-  .stat-item .num { font-size: 24px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.6px; }
-  .stat-item .lbl { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+  .stat-item .num { font-size: 15px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.3px; }
+  .stat-item .lbl { font-size: 9.5px; color: var(--text-muted); margin-top: 2px; line-height: 1.3; }
+
   .login-wrap { display: flex; flex-direction: column; align-items: stretch; padding: 3rem 0; }
   .login-card {
     width: 100%; background: var(--glass-bg);
@@ -259,6 +317,8 @@
   .mobile-hero { display: none; }
 
   @media (max-width: 900px) {
+    :root { --frame-thick: 10px; }
+    .below-card { display: none; }
     html, body {
       height: 100%;
       height: 100dvh;
@@ -288,7 +348,7 @@
       box-sizing: border-box;
     }
 
-    .side-left { display: none; }
+    .clip-showcase { display: none; }
 
     .login-wrap {
       position: relative;
@@ -359,12 +419,6 @@
     }
     .mobile-hero h1 em {
       font-style: normal;
-      background: var(--solis-gradient);
-      background-size: 200% 200%;
-      animation: shimmer 5s ease-in-out infinite;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
     }
     .mobile-hero .lead {
       margin: 0;
@@ -383,6 +437,7 @@
       flex: 0 0 auto;
       width: 100%;
     }
+    .below-card { flex-wrap: wrap; }
 
     .social-btn {
       height: 58px;
@@ -462,6 +517,11 @@
   @media (max-width: 380px) {
     .page { padding-left: 16px; padding-right: 16px; }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .clip-col.up, .clip-col.down { animation: none; }
+    .word-cycle { transition: none; }
+  }
 </style>
 </head>
 <body>
@@ -472,6 +532,8 @@
   <div class="blob blob-3"></div>
 </div>
 <div class="_grid"></div>
+
+<div class="lp-frame-glow"></div>
 
 <nav class="nav">
   <a href="index.html" class="nav-brand">
@@ -499,41 +561,36 @@
 </nav>
 
 <main class="page">
-  <aside class="side-left">
-    <div>
-      <h1 class="hero-headline">
-        Stop Scrolling<br>
-        go <em>viral</em>
-      </h1>
+  <aside class="clip-showcase">
+    <div class="clip-heading">
+      <h1 class="hero-headline">Stop Scrolling<br>go <em><span class="word-cycle" data-cycle-group="viral">viral</span></em></h1>
+      <p class="hero-sub">The people who started early already achieved insane numbers. Now it's your turn.</p>
     </div>
 
-    <p class="hero-sub">
-     The people who started early already achieved insane numbers. Now it’s your turn.
-    </p>
-
-    <div class="trust-row">
-      <div class="users-chip">
-        <div class="avatars-stack">
-          <div class="avatar av-a">JL</div>
-          <div class="avatar av-b">SK</div>
-          <div class="avatar av-c">MR</div>
-        </div>
-        <span class="txt"><strong>400+</strong> joined this month</span>
+    <div class="clip-wall-mask">
+      <div class="clip-col up">
+        <div class="clip-card clip-a"></div>
+        <div class="clip-card clip-b"></div>
+        <div class="clip-card clip-c"></div>
+        <div class="clip-card clip-a"></div>
+        <div class="clip-card clip-b"></div>
+        <div class="clip-card clip-c"></div>
       </div>
-    </div>
-
-    <div class="stat-strip">
-      <div class="stat-item">
-        <div class="num">No Credits</div>
-        <div class="lbl">We don't use credit based systems.</div>
+      <div class="clip-col down">
+        <div class="clip-card clip-d"></div>
+        <div class="clip-card clip-e"></div>
+        <div class="clip-card clip-f"></div>
+        <div class="clip-card clip-d"></div>
+        <div class="clip-card clip-e"></div>
+        <div class="clip-card clip-f"></div>
       </div>
-      <div class="stat-item">
-        <div class="num">Any length</div>
-        <div class="lbl">Upload any video length.</div>
-      </div>
-      <div class="stat-item">
-        <div class="num">48ms</div>
-        <div class="lbl">Avg latency</div>
+      <div class="clip-col up slow">
+        <div class="clip-card clip-c"></div>
+        <div class="clip-card clip-a"></div>
+        <div class="clip-card clip-b"></div>
+        <div class="clip-card clip-c"></div>
+        <div class="clip-card clip-a"></div>
+        <div class="clip-card clip-b"></div>
       </div>
     </div>
   </aside>
@@ -554,16 +611,8 @@
       <p class="sub card-sub">Sign in to your workspace to continue.</p>
 
       <div class="mobile-hero">
-        <h1>Stop scrolling.<br>Go <em>viral</em>.</h1>
-        <p class="lead">The people who started early already achieved insane numbers. Now it’s your turn.</p>
-        <div class="users-chip">
-          <div class="avatars-stack">
-            <div class="avatar av-a">JL</div>
-            <div class="avatar av-b">SK</div>
-            <div class="avatar av-c">MR</div>
-          </div>
-          <span class="txt"><strong>400+</strong> joined this month</span>
-        </div>
+        <h1>Stop scrolling.<br>Go <em><span class="word-cycle" data-cycle-group="viral">viral</span></em>.</h1>
+        <p class="lead">The people who started early already achieved insane numbers. Now it's your turn.</p>
       </div>
 
       <button class="social-btn" id="googleLoginBtn">
@@ -594,8 +643,56 @@
         By signing in, you agree to our <a href="terms.html">Terms of Service</a> and <a href="privacy.html">Privacy Policy</a>
       </p>
     </div>
+
+    <div class="below-card">
+      <div class="users-chip">
+        <div class="avatars-stack">
+          <div class="avatar av-a">JL</div>
+          <div class="avatar av-b">SK</div>
+          <div class="avatar av-c">MR</div>
+        </div>
+        <span class="txt">Be one of our <strong>first creators</strong></span>
+      </div>
+      <div class="stat-strip">
+        <div class="stat-item">
+          <div class="num">No Credits</div>
+          <div class="lbl">We don't use credit systems</div>
+        </div>
+        <div class="stat-item">
+          <div class="num">Any length</div>
+          <div class="lbl">Upload any video length</div>
+        </div>
+      </div>
+    </div>
   </section>
 
 </main>
+
+<script>
+(function () {
+  var words = ['viral', 'famous', 'global', 'everywhere', 'big'];
+  var els = document.querySelectorAll('.word-cycle[data-cycle-group="viral"]');
+  if (!els.length) return;
+  var idx = 0;
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function tick() {
+    idx = (idx + 1) % words.length;
+    if (reduceMotion) {
+      els.forEach(function (el) { el.textContent = words[idx]; });
+      return;
+    }
+    els.forEach(function (el) { el.classList.add('is-swapping'); });
+
+    setTimeout(function () {
+      els.forEach(function (el) { el.textContent = words[idx]; });
+      void els[0].offsetWidth;
+      els.forEach(function (el) { el.classList.remove('is-swapping'); });
+    }, 340);
+  }
+
+  setInterval(tick, 2600);
+})();
+</script>
 </body>
 </html>

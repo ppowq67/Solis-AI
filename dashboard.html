@@ -3984,14 +3984,46 @@
                     <p class="pro-fine-print"><a href="/premium.html">View plans</a></p>
                 </div>
                 <div class="template-use-cta-cluster" id="templateUseCtaCluster">
-                    <button type="button" class="template-preview-share-btn" id="libraryPreviewShareBtn" aria-label="Share preview" title="Copy public preview link">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1em" height="1em" aria-hidden="true">
-                            <path fill="currentColor" d="M386.218667 247.850667c0-102.4 120.405333-157.397333 197.76-90.282667l304.426666 264.32a119.466667 119.466667 0 0 1 1.365334 179.285333l-304.469334 272.170667c-76.970667 68.778667-199.082667 14.122667-199.082666-89.088v-89.173333c-33.024 2.261333-59.306667 6.826667-83.2 15.36-30.592 10.88-61.866667 29.952-98.602667 67.712a76.8 76.8 0 0 1-131.84-53.504c0-98.645333 24.106667-190.976 83.712-261.888 55.253333-65.792 133.973333-104.789333 229.930667-117.845334V247.850667z m147.413333-32.256c-27.648-23.978667-70.613333-4.352-70.613333 32.256v126.208l-0.256 4.309333c-2.218667 21.504-20.437333 38.186667-42.410667 40.021333l-17.194667 1.706667c-173.994667 20.949333-253.824 136.405333-253.824 304.554667 86.997333-89.557333 163.925333-105.386667 270.933334-107.861334a42.026667 42.026667 0 0 1 42.752 42.24v125.226667c0 34.56 38.272 53.845333 65.706666 35.925333l5.376-4.096 304.426667-272.213333a42.666667 42.666667 0 0 0 2.986667-60.714667l-3.413334-3.285333-304.469333-264.277333z"/>
+                    <button
+                        type="button"
+                        class="clip-intent-toggle-btn"
+                        id="clipIntentToggleBtn"
+                        aria-label="Tell Solis what moments to find"
+                        aria-pressed="false"
+                        title="Tell Solis what moments to find"
+                    >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="12" r="3.5"/>
+                            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
                         </svg>
                     </button>
-                    <button class="template-use-confirm-btn" id="confirmUseTemplateBtn">
-                        Use Template
-                    </button>
+                    <div class="template-use-cta-main" id="templateUseCtaMain">
+                        <button type="button" class="template-use-confirm-btn" id="confirmUseTemplateBtn">
+                            Use Template
+                        </button>
+                        <div class="clip-intent-row" id="clipIntentRow" hidden>
+                            <input
+                                type="text"
+                                id="clipIntentInput"
+                                class="clip-intent-input"
+                                placeholder="e.g. Only the funny reactions"
+                                maxlength="200"
+                                autocomplete="off"
+                                aria-label="Describe the moments you want"
+                            />
+                            <button
+                                type="button"
+                                class="clip-intent-submit-btn"
+                                id="clipIntentSubmitBtn"
+                                aria-label="Generate with this intent"
+                            >
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M5 12h14"/>
+                                    <path d="m13 6 6 6-6 6"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <div class="warning">Solis AI can make mistakes since we're very new.</div>
             </div>
@@ -4288,35 +4320,20 @@
                         </button>
                     </div>
                     <div class="storage-badge" id="storageBadge" title="Library storage">
-                        <i class="fas fa-exclamation-triangle storage-warn-icon" id="storageWarnIcon" aria-hidden="true"></i>
-                        <span id="storageUsedBadge">0</span><span id="storageLimitGroup" hidden style="display:none"> / <span id="storageTotalBadge">10</span></span> clips
+                        <span class="storage-badge-main">
+                            <i class="fas fa-exclamation-triangle storage-warn-icon" id="storageWarnIcon" aria-hidden="true"></i>
+                            <span class="storage-badge-count">
+                                <span id="storageUsedBadge">0</span><span id="storageLimitGroup" hidden> / <span id="storageTotalBadge">10</span></span>
+                            </span>
+                            <span class="storage-badge-unit">clips</span>
+                        </span>
                         <span id="storagePlanBadge" class="storage-plan-label">Free</span>
-                        <span id="needMoreUpgradeText" class="storage-upgrade-hint" style="display: none;">Need more? <a href="/premium.html">Upgrade</a></span>
+                        <span id="needMoreUpgradeText" class="storage-upgrade-hint" hidden>Need more? <a href="/premium.html">Upgrade</a></span>
                     </div>
                     <button class="delete-all-clips-btn storage-delete-btn" id="deleteAllClipsBtn" type="button" style="display: none;" onclick="handleDeleteAllClips()">
-                        <i class="fas fa-trash"></i> Clear library
+                        <i class="fas fa-trash-can" aria-hidden="true"></i>
+                        <span>Clear library</span>
                     </button>
-                </div>
-                <div class="library-sort-wrap" id="librarySortWrap">
-                    <button
-                        class="sort-btn"
-                        id="sortLibraryBtn"
-                        type="button"
-                        aria-haspopup="listbox"
-                        aria-expanded="false"
-                        aria-controls="librarySortMenu"
-                        onclick="event.preventDefault(); event.stopPropagation(); window.toggleLibrarySortMenu && window.toggleLibrarySortMenu();"
-                    >
-                        <i class="fas fa-arrow-down-wide-short" aria-hidden="true"></i>
-                        <span id="sortLibraryLabel">Newest</span>
-                        <i class="fas fa-chevron-down sort-btn-chevron" aria-hidden="true"></i>
-                    </button>
-                    <div class="library-sort-menu" id="librarySortMenu" role="listbox" aria-labelledby="sortLibraryBtn">
-                        <button type="button" class="library-sort-option is-active" data-sort="newest" role="option" aria-selected="true" onclick="event.preventDefault(); event.stopPropagation(); window.setLibrarySortMode && window.setLibrarySortMode('newest');">Newest</button>
-                        <button type="button" class="library-sort-option" data-sort="oldest" role="option" aria-selected="false" onclick="event.preventDefault(); event.stopPropagation(); window.setLibrarySortMode && window.setLibrarySortMode('oldest');">Oldest</button>
-                        <button type="button" class="library-sort-option" data-sort="ranking" role="option" aria-selected="false" onclick="event.preventDefault(); event.stopPropagation(); window.setLibrarySortMode && window.setLibrarySortMode('ranking');">Ranking</button>
-                        <button type="button" class="library-sort-option" data-sort="split" role="option" aria-selected="false" onclick="event.preventDefault(); event.stopPropagation(); window.setLibrarySortMode && window.setLibrarySortMode('split');">Split</button>
-                    </div>
                 </div>
             </div>
         </div>
@@ -5029,6 +5046,10 @@
           window.solisSeriesModeEnabled = false;
           window.solisRemoveFillersEnabled = false;
           window.solisSfxEnabled = false;
+          window.solisClipIntentEnabled = false;
+          if (typeof window.syncClipIntentFeatureUi === 'function') {
+              window.syncClipIntentFeatureUi();
+          }
           const aiTitleToggleLabel = document.getElementById('aiTitleGenerationToggleLabel');
           const smartCaptionsToggleLabel = document.getElementById('smartCaptionsToggleLabel');
           const seriesModeToggleLabel = document.getElementById('seriesModeToggleLabel');

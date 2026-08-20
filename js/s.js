@@ -383,11 +383,11 @@ const PreviewTimeline = (() => {
   let k = 0;
   let L = 0;
   let C = 0;
-  let P = 0;
-  let I = 1;
+  let I = 0;
+  let P = 1;
   let E = [];
-  let x = -1;
-  let T = 0;
+  let T = -1;
+  let x = 0;
   let M = 1;
   let B = null;
   let A = false;
@@ -533,7 +533,7 @@ const PreviewTimeline = (() => {
     if (r) {
       const e = (() => {
         const e = getSegmentBounds();
-        return e[N.index] / u * I;
+        return e[N.index] / u * P;
       })();
       r.style.transform = `translate3d(${e + n}px,0,0)`;
       r.style.zIndex = "5";
@@ -559,12 +559,12 @@ const PreviewTimeline = (() => {
   function cacheTrackMetrics() {
     if (!W) return;
     const e = W.getBoundingClientRect();
-    P = e.left;
-    I = Math.max(1, e.width);
+    I = e.left;
+    P = Math.max(1, e.width);
   }
   function timeFromClientX(e) {
     if (!u) return 0;
-    const t = (e - P) / I;
+    const t = (e - I) / P;
     return Math.max(0, Math.min(u, t * u));
   }
   function paintChrome({rebuildSegments: e = false} = {}) {
@@ -573,19 +573,19 @@ const PreviewTimeline = (() => {
       if (V) V.textContent = fmt(m);
       if (q) q.textContent = fmt(u || 0);
     }
-    if (!u || I <= 0) return;
-    const i = d / u * I;
-    const n = p / u * I;
+    if (!u || P <= 0) return;
+    const i = d / u * P;
+    const n = p / u * P;
     const r = Math.max(2, n - i);
     if (K) {
       K.style.width = `${r}px`;
       K.style.transform = `translate3d(${i}px,0,0)`;
     }
     if (J) J.style.width = `${i}px`;
-    if (X) X.style.width = `${Math.max(0, I - n)}px`;
+    if (X) X.style.width = `${Math.max(0, P - n)}px`;
     if (te && !t) {
       const e = Math.max(d, Math.min(p, m));
-      const t = e / u * I;
+      const t = e / u * P;
       te.style.transform = `translate3d(${t}px,0,0) translateX(-50%)`;
     }
     if (!t && W) {
@@ -697,23 +697,23 @@ const PreviewTimeline = (() => {
     E = E.filter(e => e > d + .04 && e < p - .04).sort((e, t) => e - t);
   }
   function paintSegmentMove(e) {
-    if (!N || !u || I <= 0) return;
+    if (!N || !u || P <= 0) return;
     if (isRankingEdit()) {
       paintSegmentReorderGhost(e);
       return;
     }
     const {index: t, startX: i, startA: n, startB: r} = N;
-    const o = (e - i) / I * u;
+    const o = (e - i) / P * u;
     applySegmentTimes(t, n + o, r + o);
     m = Math.max(d, Math.min(p, n + o));
-    const s = d / u * I;
-    const a = p / u * I;
+    const s = d / u * P;
+    const a = p / u * P;
     if (K) {
       K.style.width = `${Math.max(2, a - s)}px`;
       K.style.transform = `translate3d(${s}px,0,0)`;
     }
     if (J) J.style.width = `${s}px`;
-    if (X) X.style.width = `${Math.max(0, I - a)}px`;
+    if (X) X.style.width = `${Math.max(0, P - a)}px`;
     paintSegmentsFast();
   }
   function beginSegmentDrag() {
@@ -830,14 +830,14 @@ const PreviewTimeline = (() => {
     customizeSegment(t.index);
   }
   function paintSegments(e) {
-    if (!Q || !u || I <= 0) return;
+    if (!Q || !u || P <= 0) return;
     const t = getSegmentBounds();
     Q.innerHTML = "";
     for (let i = 0; i < t.length - 1; i++) {
       const n = t[i];
       const r = t[i + 1];
-      let o = n / u * I;
-      let s = r / u * I;
+      let o = n / u * P;
+      let s = r / u * P;
       if (i > 0) o += ie / 2;
       if (i < t.length - 2) s -= ie / 2;
       const a = Math.max(8, s - o);
@@ -864,7 +864,7 @@ const PreviewTimeline = (() => {
       }
       const p = document.createElement("div");
       p.className = "preview-timeline-segment-film";
-      p.style.width = `${I}px`;
+      p.style.width = `${P}px`;
       p.style.transform = `translate3d(${-o}px,0,0)`;
       cloneFilmInto(p);
       c.appendChild(p);
@@ -879,7 +879,7 @@ const PreviewTimeline = (() => {
     }
   }
   function paintSegmentsFast() {
-    if (!Q || !u || I <= 0) return;
+    if (!Q || !u || P <= 0) return;
     const e = Array.from(Q.children);
     const t = getSegmentBounds();
     if (e.length !== t.length - 1) {
@@ -889,8 +889,8 @@ const PreviewTimeline = (() => {
     for (let i = 0; i < t.length - 1; i++) {
       const n = t[i];
       const r = t[i + 1];
-      let o = n / u * I;
-      let s = r / u * I;
+      let o = n / u * P;
+      let s = r / u * P;
       if (i > 0) o += ie / 2;
       if (i < t.length - 2) s -= ie / 2;
       const a = Math.max(6, s - o);
@@ -899,7 +899,7 @@ const PreviewTimeline = (() => {
       l.style.transform = `translate3d(${o}px,0,0)`;
       const c = l.querySelector(".preview-timeline-segment-film");
       if (c) {
-        c.style.width = `${I}px`;
+        c.style.width = `${P}px`;
         c.style.transform = `translate3d(${-o}px,0,0)`;
       }
       const d = l.querySelector(".preview-timeline-handle.left");
@@ -909,12 +909,12 @@ const PreviewTimeline = (() => {
     }
   }
   function applyBoundTime(e) {
-    if (x === 0) {
+    if (T === 0) {
       d = e;
       return;
     }
     const t = getSegmentBounds();
-    if (x >= t.length - 1) {
+    if (T >= t.length - 1) {
       p = e;
       return;
     }
@@ -928,19 +928,19 @@ const PreviewTimeline = (() => {
     E.sort((e, t) => e - t);
   }
   function paintBoundFast(e) {
-    if (!u || I <= 0 || x < 0) return;
+    if (!u || P <= 0 || T < 0) return;
     const t = timeFromClientX(e);
-    const i = Math.max(T, Math.min(M, t));
+    const i = Math.max(x, Math.min(M, t));
     applyBoundTime(i);
     m = i;
-    const n = d / u * I;
-    const r = p / u * I;
+    const n = d / u * P;
+    const r = p / u * P;
     if (K) {
       K.style.width = `${Math.max(2, r - n)}px`;
       K.style.transform = `translate3d(${n}px,0,0)`;
     }
     if (J) J.style.width = `${n}px`;
-    if (X) X.style.width = `${Math.max(0, I - r)}px`;
+    if (X) X.style.width = `${Math.max(0, P - r)}px`;
     paintSegmentsFast();
   }
   function startBoundDrag(t, i) {
@@ -953,8 +953,8 @@ const PreviewTimeline = (() => {
     const n = getSegmentBounds();
     if (t < 0 || t >= n.length) return;
     c = "bound";
-    x = t;
-    T = t === 0 ? 0 : n[t - 1] + e;
+    T = t;
+    x = t === 0 ? 0 : n[t - 1] + e;
     M = t === n.length - 1 ? u : n[t + 1] - e;
     B = t > 0 && t < n.length - 1 ? n[t] : null;
     f = a ? !a.paused : false;
@@ -969,7 +969,7 @@ const PreviewTimeline = (() => {
     paintBoundFast(i.clientX);
   }
   function paintTrimFast(t) {
-    if (!u || I <= 0) return;
+    if (!u || P <= 0) return;
     if (c === "bound") {
       paintBoundFast(t);
       return;
@@ -982,15 +982,15 @@ const PreviewTimeline = (() => {
     } else {
       return;
     }
-    const n = d / u * I;
-    const r = p / u * I;
+    const n = d / u * P;
+    const r = p / u * P;
     const o = Math.max(2, r - n);
     if (K) {
       K.style.width = `${o}px`;
       K.style.transform = `translate3d(${n}px,0,0)`;
     }
     if (J) J.style.width = `${n}px`;
-    if (X) X.style.width = `${Math.max(0, I - r)}px`;
+    if (X) X.style.width = `${Math.max(0, P - r)}px`;
     paintSegmentsFast();
   }
   function scheduleSeek(e, t = false) {
@@ -1310,7 +1310,7 @@ const PreviewTimeline = (() => {
       w = 0;
     }
     c = null;
-    x = -1;
+    T = -1;
     B = null;
     if (e === "start" || e === "end" || e === "bound") {
       m = Math.max(d, Math.min(p, m));
@@ -2509,6 +2509,111 @@ function syncUseTemplateFab() {
 }
 
 window.syncUseTemplateFab = syncUseTemplateFab;
+
+function isClipIntentEnabled() {
+  return window.solisClipIntentEnabled === true;
+}
+
+function syncClipIntentFeatureUi() {
+  const e = document.getElementById("clipIntentToggleBtn");
+  const t = document.getElementById("templateUseCtaCluster");
+  const i = isClipIntentEnabled();
+  if (e) {
+    e.hidden = !i;
+    e.style.display = i ? "" : "none";
+  }
+  if (!i) resetClipIntentMode();
+  if (t) t.classList.toggle("clip-intent-disabled", !i);
+}
+
+window.isClipIntentEnabled = isClipIntentEnabled;
+
+window.syncClipIntentFeatureUi = syncClipIntentFeatureUi;
+
+function getClipIntentText() {
+  if (!isClipIntentEnabled()) return "";
+  const e = document.getElementById("clipIntentInput");
+  const t = (e?.value || "").trim();
+  return t.slice(0, 200);
+}
+
+function resetClipIntentMode() {
+  const e = document.getElementById("templateUseCtaCluster");
+  const t = document.getElementById("clipIntentToggleBtn");
+  const i = document.getElementById("clipIntentRow");
+  const n = document.getElementById("clipIntentInput");
+  if (e) e.classList.remove("is-intent-mode");
+  if (t) t.setAttribute("aria-pressed", "false");
+  if (i) i.hidden = true;
+  if (n) n.value = "";
+}
+
+function toggleClipIntentMode(e) {
+  if (!isClipIntentEnabled()) return false;
+  const t = document.getElementById("templateUseCtaCluster");
+  const i = document.getElementById("clipIntentToggleBtn");
+  const n = document.getElementById("clipIntentRow");
+  const r = document.getElementById("clipIntentInput");
+  if (!t || !i || !n) return false;
+  const o = typeof e === "boolean" ? e : !t.classList.contains("is-intent-mode");
+  t.classList.toggle("is-intent-mode", o);
+  i.setAttribute("aria-pressed", o ? "true" : "false");
+  n.hidden = !o;
+  if (o && r) {
+    requestAnimationFrame(() => {
+      try {
+        r.focus();
+      } catch (e) {}
+    });
+  }
+  return o;
+}
+
+window.getClipIntentText = getClipIntentText;
+
+window.resetClipIntentMode = resetClipIntentMode;
+
+window.toggleClipIntentMode = toggleClipIntentMode;
+
+function bindClipIntentControls(e) {
+  syncClipIntentFeatureUi();
+  if (!isClipIntentEnabled()) return;
+  const t = document.getElementById("clipIntentToggleBtn");
+  const i = document.getElementById("clipIntentSubmitBtn");
+  const n = document.getElementById("clipIntentInput");
+  if (!t || t.dataset.bound === "1") return;
+  t.dataset.bound = "1";
+  t.addEventListener("click", e => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleClipIntentMode();
+  });
+  const submitIntent = t => {
+    t?.preventDefault?.();
+    t?.stopPropagation?.();
+    const i = document.getElementById("confirmUseTemplateBtn");
+    if (i?.disabled || i?.getAttribute("data-pro-locked") === "1") return;
+    if (e && typeof e.confirmTemplateUse === "function") {
+      e.confirmTemplateUse();
+    } else {
+      i?.click();
+    }
+  };
+  if (i) i.addEventListener("click", submitIntent);
+  if (n) {
+    n.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        submitIntent(e);
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        resetClipIntentMode();
+      }
+    });
+  }
+}
+
+window.bindClipIntentControls = bindClipIntentControls;
 
 function bindUseTemplateFabIdleHint() {
   const e = document.getElementById("confirmUseTemplateFab");
@@ -5930,6 +6035,7 @@ class ClipsStudio {
       if (!t || t.disabled) return;
       t.click();
     });
+    bindClipIntentControls(this);
     const sharePreview = e => {
       e.preventDefault();
       e.stopPropagation();
@@ -7210,6 +7316,11 @@ class ClipsStudio {
       s.style.pointerEvents = "";
       s.style.opacity = "";
     }
+    if (typeof window.resetClipIntentMode === "function") {
+      window.resetClipIntentMode();
+    }
+    const a = document.getElementById("clipIntentToggleBtn");
+    if (a) a.style.display = "";
     this.toggleLibraryPreviewLayout(false);
     this.libraryPreviewModalOpen = false;
     this._libraryRankingOverlayPending = null;
@@ -7218,10 +7329,10 @@ class ClipsStudio {
       clearInterval(this._customizeExpiryTimer);
       this._customizeExpiryTimer = null;
     }
-    const a = document.getElementById("libraryCustomizeExpiryPill");
-    if (a) {
-      a.hidden = true;
-      a.textContent = "";
+    const l = document.getElementById("libraryCustomizeExpiryPill");
+    if (l) {
+      l.hidden = true;
+      l.textContent = "";
     }
     if (this._libraryRefreshPending) {
       this._libraryRefreshPending = false;
@@ -9091,6 +9202,13 @@ class ClipsStudio {
       r.hidden = !!e;
       r.style.display = e ? "none" : "";
     }
+    const l = document.getElementById("clipIntentToggleBtn");
+    if (l) {
+      l.style.display = e ? "none" : "";
+    }
+    if (e && typeof window.resetClipIntentMode === "function") {
+      window.resetClipIntentMode();
+    }
     if (e) {
       if (t) t.style.display = "";
       if (i) i.style.display = "block";
@@ -10054,6 +10172,12 @@ class ClipsStudio {
         const e = window.solisSeriesModeEnabled === true;
         u.series_mode = e;
         u.clip_count = e ? window.getMultiGenCount() : 1;
+      }
+      if (typeof window.isClipIntentEnabled === "function" && window.isClipIntentEnabled()) {
+        const e = typeof window.getClipIntentText === "function" ? window.getClipIntentText() : "";
+        if (e) {
+          u.clip_intent = e;
+        }
       }
       let f = await fetch(`${API_BASE_URL}/clips/start`, {
         method: "POST",

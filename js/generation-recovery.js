@@ -130,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
         restoreGenerationStateFromServer();
       }
     });
-  }, 800);
+  }, 300);
 });
 
 if (typeof window.socket !== "undefined" && window.socket !== null) {

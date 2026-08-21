@@ -14513,6 +14513,36 @@ body.modal-open { overflow: hidden !important; }
     text-transform: uppercase;
     letter-spacing: 0.02em;
 }
+.solis-mod-tip-preview-demo .hook.ss-hook {
+    font-size: 18px;
+    letter-spacing: 0.04em;
+}
+.solis-mod-tip-preview-demo .rank-demo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    line-height: 1.05;
+}
+.solis-mod-tip-preview-demo .rank-demo .rk {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    color: rgba(255,255,255,.78);
+}
+.solis-mod-tip-preview-demo .rank-demo .rk-acc {
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    color: #ff6b35;
+    text-shadow: 0 2px 12px rgba(255,107,53,.45);
+}
+.solis-mod-tip-preview-demo .rank-demo .rk-sub {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,.88);
+}
 .solis-mod-tip-preview-demo .series {
     display: flex;
     gap: 6px;

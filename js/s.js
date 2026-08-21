@@ -6646,14 +6646,13 @@ class ClipsStudio {
     const i = this.getWatermarkPlacement();
     const n = i === "ranking" ? "is-ranking" : "is-splitscreen";
     const r = String(window.API_BASE_URL || "").replace(/\/api\/?$/, "");
-    const o = t === "classic" ? "Classic Solis AI — click for atom mark" : "Solis AI — click for classic mark";
     if (t === "classic") {
       const e = "Watermark_v4.png";
       const t = "/assets/solis-watermark-classic.png";
-      const s = r ? `${r}/assets/${e}` : t;
-      return `\n            <div class="solis-watermark ${n}" data-variant="classic" data-place="${i}" role="button" tabindex="0"\n                 title="${o}" aria-label="${o}">\n                <img class="solis-watermark-mark" src="${s}" alt="" draggable="false"\n                     onerror="this.onerror=null;this.src='${t}';" />\n            </div>\n        `;
+      const o = r ? `${r}/assets/${e}` : t;
+      return `\n            <div class="solis-watermark ${n}" data-variant="classic" data-place="${i}" role="button" tabindex="0" aria-label="Solis AI">\n                <img class="solis-watermark-mark" src="${o}" alt="" draggable="false"\n                     onerror="this.onerror=null;this.src='${t}';" />\n            </div>\n        `;
     }
-    return `\n            <div class="solis-watermark ${n}" data-variant="branded" data-place="${i}" role="button" tabindex="0"\n                 title="${o}" aria-label="${o}">\n                <div class="solis-watermark-icon" aria-hidden="true">\n                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">\n                        <circle cx="50" cy="50" r="12" fill="#ffffff" stroke="none"/>\n                        <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#ffffff" stroke-width="6" transform="rotate(45 50 50)"/>\n                        <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#ffffff" stroke-width="6" transform="rotate(-45 50 50)"/>\n                    </svg>\n                </div>\n                <div class="solis-watermark-label">SOLIS <span class="ai">AI</span></div>\n            </div>\n        `;
+    return `\n            <div class="solis-watermark ${n}" data-variant="branded" data-place="${i}" role="button" tabindex="0" aria-label="Solis AI">\n                <div class="solis-watermark-icon" aria-hidden="true">\n                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">\n                        <circle cx="50" cy="50" r="12" fill="#ffffff" stroke="none"/>\n                        <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#ffffff" stroke-width="6" transform="rotate(45 50 50)"/>\n                        <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#ffffff" stroke-width="6" transform="rotate(-45 50 50)"/>\n                    </svg>\n                </div>\n                <div class="solis-watermark-label">SOLIS <span class="ai">AI</span></div>\n            </div>\n        `;
   }
   getWatermarkVariant(e = null) {
     if (e === "classic" || e === "branded") return e;

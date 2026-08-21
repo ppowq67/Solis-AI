@@ -305,7 +305,7 @@
     }
     .toggle-knob { position: absolute; top: 3px; left: 3px; width: 17px; height: 17px; border-radius: 50%; background: #fff; transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1); }
     .toggle-track[aria-checked="true"] .toggle-knob { transform: translateX(19px); }
-    .save-badge { background: rgba(249,115,22,0.1); color: var(--solis-deep); border-radius: 100px; padding: 3px 10px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
+    .save-badge { background: #fff1e0; color: var(--solis); border-radius: 100px; padding: 3px 10px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
     .save-badge svg { width: 11px; height: 11px; }
 
     .savings-callout { text-align: center; margin-top: 14px; font-size: 12.5px; color: var(--text-muted); height: 18px; transition: opacity 0.2s; }
@@ -349,15 +349,65 @@
     .name-basic { color: var(--text-secondary); }
     .name-prime { background: var(--solis-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
     .name-elite { color: var(--ink); }
+    .plan-tagline { font-size: 12.5px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.45; min-height: 34px; }
 
-    .plan-tagline { font-size: 12.5px; color: var(--text-muted); margin-bottom: 18px; line-height: 1.45; min-height: 34px; }
+    .plan-price {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px 10px;
+      margin-bottom: 8px;
+      line-height: 1;
+    }
+    .plan-price-was {
+      font-family: var(--font-numeric);
+      font-size: 26px;
+      font-weight: 600;
+      color: var(--text-faint);
+      text-decoration: line-through;
+      text-decoration-thickness: 1.5px;
+      letter-spacing: -0.02em;
+      flex-shrink: 0;
+    }
+    .plan-price-now {
+      display: flex;
+      align-items: flex-end;
+      gap: 1px;
+      line-height: 1;
+    }
+    .plan-price-currency { font-family: var(--font-numeric); font-size: 20px; font-weight: 700; color: var(--ink); margin-bottom: 8px; margin-right: 1px; }
+    .plan-price-int { font-family: var(--font-numeric); font-size: 56px; font-weight: 800; letter-spacing: -2.5px; color: var(--ink); line-height: 1; }
+    .plan-price-dec { font-family: var(--font-numeric); font-size: 20px; font-weight: 700; color: var(--ink); padding-bottom: 7px; }
+    .plan-price-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 5px;
+      padding-bottom: 2px;
+    }
+    .plan-price-save {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: #fff1e0;
+      color: var(--solis);
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .plan-price-period {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+      opacity: 0.7;
+      margin: 0;
+    }
+    .plan-price-billnote { font-size: 12px; color: var(--text-muted); margin-bottom: 16px; min-height: 16px; font-weight: 550; }
 
-    .plan-price { display: flex; align-items: flex-end; gap: 1px; margin-bottom: 4px; line-height: 1; }
-    .plan-price-currency { font-family: var(--font-numeric); font-size: 20px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; margin-right: 1px; }
-    .plan-price-int { font-family: var(--font-numeric); font-size: 56px; font-weight: 800; letter-spacing: -2.5px; color: #1a1a1ae0; line-height: 1; transition: opacity 0.2s; }
-    .plan-price-dec { font-family: var(--font-numeric); font-size: 20px; font-weight: 700; color: var(--text-secondary); padding-bottom: 7px; }
-    .plan-price-period { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
-    .plan-price-billnote { font-size: 11.5px; color: var(--text-faint); margin-bottom: 18px; min-height: 16px; }
+    .col-plan-price s { color: var(--text-faint); font-weight: 500; margin-right: 4px; }
 
     .plan-btn { width: 100%; padding: 13px 16px; border-radius: 12px; font-family: var(--font-display); font-size: 13.5px; font-weight: 700; border: none; cursor: pointer; transition: all 0.25s; margin-bottom: 12px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; text-decoration: none; box-sizing: border-box; }
     .plan-btn svg { width: 13px; height: 13px; transition: transform 0.3s; }
@@ -670,6 +720,7 @@
 
       .section { padding: 56px 16px; }
       .hero { padding: 48px 16px 20px; }
+      .hero-eyebrow { margin-bottom: 18px; }
 
       .nav-container { top: calc(12px + env(safe-area-inset-top, 0px)); width: calc(100% - 24px); }
       .nav { padding: 7px 7px 7px 14px; }
@@ -678,7 +729,6 @@
 
       .hero-title { font-size: clamp(30px, 8vw, 40px); letter-spacing: -0.04em; margin-bottom: 14px; }
       .hero-subtitle { font-size: 14.5px; margin-bottom: 22px; }
-      .hero-eyebrow { margin-bottom: 18px; }
       .toggle-track { width: 38px; height: 21px; }
       .toggle-knob { width: 15px; height: 15px; }
       .toggle-track[aria-checked="true"] .toggle-knob { transform: translateX(17px); }
@@ -834,9 +884,7 @@
       <div class="hero-inner reveal">
         <h1 class="hero-title">Built To Grow <span class="text-solis-gradient">With You.</span></h1>
         <p class="hero-subtitle">Start Free. Scale when you are ready.</p>
-
-        <div class="billing-wrap">
-        </div>
+        <div class="save-badge" style="margin: 0 auto;">40% off · first 2 months</div>
       </div>
     </section>
 
@@ -847,12 +895,18 @@
           <p class="plan-tagline">Perfect for beginners finding their footing and shipping their first clips.</p>
 
           <div class="plan-price">
-            <span class="plan-price-currency">$</span>
-            <span class="plan-price-int">9</span>
-            <span class="plan-price-dec">.99</span>
-            <p class="plan-price-period">/monthly</p>
+            <span class="plan-price-was">$9.99</span>
+            <div class="plan-price-now">
+              <span class="plan-price-currency">$</span>
+              <span class="plan-price-int">5</span>
+              <span class="plan-price-dec">.99</span>
+            </div>
+            <div class="plan-price-meta">
+              <span class="plan-price-save">40% OFF</span>
+              <span class="plan-price-period">/month</span>
+            </div>
           </div>
-          <p class="plan-price-billnote">Billed monthly</p>
+          <p class="plan-price-billnote">First 2 months, then $9.99/mo</p>
 
           <button type="button" class="plan-btn plan-btn-basic" data-plan-name="Basic">
             Buy Basic
@@ -876,15 +930,21 @@
           <p class="plan-tagline">The sweet spot for everything you need to ship daily viral shorts.</p>
 
           <div class="plan-price">
-            <span class="plan-price-currency">$</span>
-            <span class="plan-price-int">23</span>
-            <span class="plan-price-dec">.99</span>
-            <p class="plan-price-period">/monthly</p>
+            <span class="plan-price-was">$23.99</span>
+            <div class="plan-price-now">
+              <span class="plan-price-currency">$</span>
+              <span class="plan-price-int">14</span>
+              <span class="plan-price-dec">.49</span>
+            </div>
+            <div class="plan-price-meta">
+              <span class="plan-price-save">40% OFF</span>
+              <span class="plan-price-period">/month</span>
+            </div>
           </div>
-          <p class="plan-price-billnote">Billed monthly</p>
+          <p class="plan-price-billnote">First 2 months, then $23.99/mo</p>
 
           <button type="button" class="plan-btn plan-btn-prime" data-plan-name="Prime">
-            Start free trial
+            Buy Prime
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
           </button>
 
@@ -904,12 +964,18 @@
           <p class="plan-tagline">Everything unlocked, with priority rendering and dedicated support.</p>
 
           <div class="plan-price">
-            <span class="plan-price-currency">$</span>
-            <span class="plan-price-int">39</span>
-            <span class="plan-price-dec">.99</span>
-            <p class="plan-price-period">/monthly</p>
+            <span class="plan-price-was">$39.99</span>
+            <div class="plan-price-now">
+              <span class="plan-price-currency">$</span>
+              <span class="plan-price-int">23</span>
+              <span class="plan-price-dec">.99</span>
+            </div>
+            <div class="plan-price-meta">
+              <span class="plan-price-save">40% OFF</span>
+              <span class="plan-price-period">/month</span>
+            </div>
           </div>
-          <p class="plan-price-billnote">Billed monthly</p>
+          <p class="plan-price-billnote">First 2 months, then $39.99/mo</p>
 
           <button type="button" class="plan-btn plan-btn-elite" data-plan-name="Elite">
             Buy Elite
@@ -977,15 +1043,15 @@
                   </th>
                   <th>
                     <div class="col-plan-name name-basic">Basic</div>
-                    <div class="col-plan-price">$9.99/mo</div>
+                    <div class="col-plan-price"><s>$9.99</s>$5.99</div>
                   </th>
                   <th class="col-plan-prime">
                     <div class="col-plan-name name-prime">Prime <span class="prime-badge">POPULAR</span></div>
-                    <div class="col-plan-price">$23.99/mo</div>
+                    <div class="col-plan-price"><s>$23.99</s>$14.49</div>
                   </th>
                   <th>
                     <div class="col-plan-name name-elite">Elite</div>
-                    <div class="col-plan-price">$39.99/mo</div>
+                    <div class="col-plan-price"><s>$39.99</s>$23.99</div>
                   </th>
                 </tr>
               </thead>
@@ -1066,7 +1132,7 @@
           Prime
           <span class="prime-tag">POPULAR</span>
         </div>
-        <div class="_cta-price" id="_ctaPrice"><strong>$23.99</strong>/mo with 3-day free trial</div>
+        <div class="_cta-price" id="_ctaPrice"><strong>$14.49</strong>/mo · first 2 months</div>
       </div>
       <button type="button" class="_cta-btn">
         Start free
@@ -1111,7 +1177,7 @@
       document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setMenuOpen(false); });
       var stickyCtaPrice = $('#_ctaPrice');
       if (stickyCtaPrice) {
-        stickyCtaPrice.innerHTML = '<strong>$23.99</strong>/mo with 3-day free trial';
+        stickyCtaPrice.innerHTML = '<strong>$14.49</strong>/mo · first 2 months';
       }
       var compareCue = $('.compare-scroll-cue');
       var compareCueKey = 'solis_compare_cue_seen';
@@ -1184,6 +1250,7 @@
         { q: "What counts as an upload?", a: "One upload is one source URL you submit. We analyze the video once (VideoDNA), then render the clips you chose for that run. On paid plans you can get multiple clips per upload without re-analyzing or re-downloading. Each finished clip uses one saved video slot. Submitting the same source again with a different template counts as a new upload. Failed renders caused by platform-side errors are automatically refunded to your daily quota." },
         { q: 'Do you offer refunds?', a: "If you started with a free trial, you can cancel within 5 days of your first charge and receive a full refund - no questions asked. Annual plans are refundable on a prorated basis within the first 14 days. See our <a href='/refund.html'>Refund Policy</a> for the full policy." },
         { q: 'Is there a free trial?', a: "Currently, 'Prime' tier includes a 3-day free trial. You won't be charged until the trial ends and you can cancel anytime from your dashboard before the trial expires with no charge."},
+        { q: 'What is the 40% off launch offer?', a: "For a limited time, every paid plan is 40% off for your first 2 months. Basic is $5.99/mo, Prime is $14.49/mo, and Elite is $23.99/mo for those first two months. After that, billing returns to the regular price ($9.99 / $23.99 / $39.99). Cancel anytime."},
         { q: 'What payment methods do you accept?', a: 'We accept all major credit and debit cards through Paddle, our merchant of record. Apple Pay, Google Pay, and PayPal are also supported at checkout.' },
         { q: 'How does the priority queue work on Elite?', a: "Elite subscribers' renders are placed at the front of our global render queue, ahead of Basic and Prime subscribers. During peak hours this typically reduces wait time by 60–80% versus the standard queue." },
         { q: 'What happens to my clips if I cancel?', a: "All clips you've already rendered and downloaded remain yours forever, they're watermark-free on every tier. If you cancel, your saved videos in the Solis library are retained for 30 days, then permanently deleted unless you re-subscribe." },

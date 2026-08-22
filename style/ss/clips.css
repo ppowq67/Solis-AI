@@ -10805,13 +10805,13 @@ body.modal-open { overflow: hidden !important; }
     cursor: var(--solis-preview-cursor-hand) !important;
 }
 :root {
-    --solis-preview-cursor: url('/style/cursor.png?v=12') 15 11,
-        url('/frontend/style/cursor.png?v=12') 15 11,
-        url('/style/cursor.svg?v=12') 10 7,
+    --solis-preview-cursor: url('/style/cursor.png?v=20') 15 11,
+        url('/frontend/style/cursor.png?v=20') 15 11,
+        url('/style/cursor.svg?v=20') 10 7,
         auto;
-    --solis-preview-cursor-hand: url('/style/cursor-hand.png?v=12') 19 12,
-        url('/frontend/style/cursor-hand.png?v=12') 19 12,
-        url('/style/cursor-hand.svg?v=12') 13 8,
+    --solis-preview-cursor-hand: url('/style/cursor-hand.png?v=20') 19 12,
+        url('/frontend/style/cursor-hand.png?v=20') 19 12,
+        url('/style/cursor-hand.svg?v=20') 13 8,
         pointer;
 }
 
@@ -12149,7 +12149,7 @@ body.modal-open { overflow: hidden !important; }
     min-width: 0;
     border-radius: 12px;
     overflow: visible;
-    cursor: var(--solis-preview-cursor, url('/style/cursor.png?v=12') 15 11, url('/style/cursor.svg?v=12') 10 7, auto);
+    cursor: var(--solis-preview-cursor, url('/style/cursor.png?v=20') 15 11, url('/style/cursor.svg?v=20') 10 7, auto);
     touch-action: none;
     isolation: isolate;
     background: rgba(15, 23, 42, 0.28);
@@ -12378,7 +12378,7 @@ body.modal-open { overflow: hidden !important; }
     padding: 0;
     border: 1px solid rgba(255, 255, 255, 0.95);
     border-radius: 999px;
-    cursor: var(--solis-preview-cursor, url('/style/cursor.png?v=12') 15 11, url('/style/cursor.svg?v=12') 10 7, auto);
+    cursor: var(--solis-preview-cursor, url('/style/cursor.png?v=20') 15 11, url('/style/cursor.svg?v=20') 10 7, auto);
     pointer-events: auto;
     touch-action: none;
     z-index: 6;
@@ -12461,7 +12461,7 @@ body.modal-open { overflow: hidden !important; }
 .preview-timeline-wrap.is-scrubbing,
 .preview-timeline-wrap.is-trimming,
 .preview-timeline-wrap.is-dragging {
-    cursor: var(--solis-preview-cursor, url('/style/cursor.png?v=12') 15 11, url('/style/cursor.svg?v=12') 10 7, auto);
+    cursor: var(--solis-preview-cursor, url('/style/cursor.png?v=20') 15 11, url('/style/cursor.svg?v=20') 10 7, auto);
 }
 
 .preview-timeline-split-btn {

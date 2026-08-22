@@ -8103,13 +8103,13 @@ class ClipsStudio {
         } catch (e) {}
         if (s) {
           const e = i.caption_style || {
-            anim: "karaoke",
+            anim: "static",
             font: "Montserrat",
             color: "#ffffff",
-            shadow: "outline",
-            font_size: 68,
-            font_size_ratio: 68 / 1920,
-            y_pct: .78,
+            shadow: "none",
+            font_size: 70,
+            font_size_ratio: 70 / 1920,
+            y_pct: .8,
             enabled: true
           };
           if (typeof window.setLiveCaptionTimedWords === "function") {
@@ -8603,13 +8603,13 @@ class ClipsStudio {
     try {
       if (this._libraryRankingSubtitlesOn && this._libraryRankingNeedsBurn) {
         const e = this._libraryRankingCaptionStyle || {
-          anim: "karaoke",
+          anim: "static",
           font: "Montserrat",
           color: "#ffffff",
-          shadow: "outline",
-          font_size: 68,
-          font_size_ratio: 68 / 1920,
-          y_pct: .78,
+          shadow: "none",
+          font_size: 70,
+          font_size_ratio: 70 / 1920,
+          y_pct: .8,
           enabled: true
         };
         const n = String(t.caption_preview_text || (typeof e.preview_text === "string" ? e.preview_text : "") || "").trim();

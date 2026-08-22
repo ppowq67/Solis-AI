@@ -591,7 +591,7 @@
       if (!n.color) n.color = r.color;
       if (!("fill" in n) && r.fill) n.fill = r.fill;
     }
-    if (!n.font_size || n.font_size < 28) n.font_size = n.font_size || 68;
+    if (!n.font_size || n.font_size < 28) n.font_size = n.font_size || 70;
     if (n.y_pct == null || !Number.isFinite(Number(n.y_pct))) {
       n.y_pct = .55;
     } else {
@@ -1205,8 +1205,8 @@
         color: t?.color || "#ffffff",
         highlight: t?.highlight || "#FFFFFF",
         shadow: t?.shadow || "outline",
-        font_size: t?.font_size || 96,
-        font_size_ratio: t?.font_size_ratio || .058,
+        font_size: t?.font_size || 70,
+        font_size_ratio: t?.font_size_ratio || .036,
         y_pct: t?.y_pct != null ? t.y_pct : .55,
         enabled: true,
         __tip: "animations"

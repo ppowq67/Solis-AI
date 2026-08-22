@@ -15,6 +15,9 @@
     title: "Built tiny,<br>shipping fast",
     sub: "We are early and moving quick. Your generations help Solis get sharper every week."
   }, {
+    title: "Fun fact",
+    sub: "Solis was built by a 16-year-old from Georgia — still shipping, still iterating."
+  }, {
     title: "Library is<br>home base",
     sub: "Finished clips land in Library ready to tweak, download, and post wherever you create."
   } ];

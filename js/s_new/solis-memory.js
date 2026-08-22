@@ -475,7 +475,7 @@
     const s = [];
     if (n && typeof n === "object") {
       const e = String(n.splitscreen_secondary_type || "");
-      if (e === "face_track") s.push("AI Reframe"); else if (e === "blank") s.push("Black"); else if (e === "blank_blur") s.push("Blur"); else if (e === "gameplay") s.push("Gameplay");
+      if (n.splitscreen_secondary_collapsed) s.push("Focus"); else if (e === "face_track") s.push("AI Reframe"); else if (e === "blank") s.push("Blank"); else if (e === "blank_blur") s.push("Blur"); else if (e === "gameplay") s.push("Focus");
       if (n.splitscreen_inverted) s.push("flip");
       const t = Number(n.splitscreen_content_ratio);
       if (Number.isFinite(t)) s.push(`split ${Math.round(t * 100)}%`);
@@ -521,11 +521,12 @@
   }
   function layoutLabel(e) {
     if (!e) return "saved layout";
+    if (e.splitscreen_secondary_collapsed) return "Focus";
     const t = String(e.splitscreen_secondary_type || "");
     if (t === "face_track") return "AI Reframe";
-    if (t === "blank") return "Black canvas";
-    if (t === "blank_blur") return "Blur canvas";
-    if (t === "gameplay") return "Gameplay fill";
+    if (t === "blank") return "Blank";
+    if (t === "blank_blur") return "Blur";
+    if (t === "gameplay") return "Focus";
     const n = Number(e.splitscreen_content_ratio);
     if (Number.isFinite(n)) return `split ${Math.round(n * 100)}%`;
     return "saved layout";

@@ -406,6 +406,12 @@
       opacity: 0.7;
       margin: 0;
     }
+    .plan-price-now .plan-price-period {
+      align-self: flex-end;
+      padding-bottom: 10px;
+      margin-left: 6px;
+      opacity: 0.7;
+    }
     .plan-price-billnote { font-size: 12px; color: var(--text-muted); margin-bottom: 16px; min-height: 16px; font-weight: 550; }
 
     .col-plan-price s { color: var(--text-faint); font-weight: 500; margin-right: 4px; }
@@ -965,18 +971,14 @@
           <p class="plan-tagline">Everything unlocked, with priority rendering and dedicated support.</p>
 
           <div class="plan-price">
-            <span class="plan-price-was">$39.99</span>
             <div class="plan-price-now">
               <span class="plan-price-currency">$</span>
-              <span class="plan-price-int">23</span>
+              <span class="plan-price-int">39</span>
               <span class="plan-price-dec">.99</span>
-            </div>
-            <div class="plan-price-meta">
-              <span class="plan-price-save">40% OFF</span>
               <span class="plan-price-period">/month</span>
             </div>
           </div>
-          <p class="plan-price-billnote">First 2 months, then $39.99/mo</p>
+          <p class="plan-price-billnote">&nbsp;</p>
 
           <button type="button" class="plan-btn plan-btn-elite" data-plan-name="Elite">
             Buy Elite
@@ -1052,7 +1054,7 @@
                   </th>
                   <th>
                     <div class="col-plan-name name-elite">Elite</div>
-                    <div class="col-plan-price"><s>$39.99</s>$23.99</div>
+                    <div class="col-plan-price">$39.99</div>
                   </th>
                 </tr>
               </thead>
@@ -1251,7 +1253,7 @@
         { q: "What counts as an upload?", a: "One upload is one source URL you submit. We analyze the video once (VideoDNA), then render the clips you chose for that run. On paid plans you can get multiple clips per upload without re-analyzing or re-downloading. Each finished clip uses one saved video slot. Submitting the same source again with a different template counts as a new upload. Failed renders caused by platform-side errors are automatically refunded to your daily quota." },
         { q: 'Do you offer refunds?', a: "If you started with a free trial, you can cancel within 5 days of your first charge and receive a full refund - no questions asked. Annual plans are refundable on a prorated basis within the first 14 days. See our <a href='/refund.html'>Refund Policy</a> for the full policy." },
         { q: 'Is there a free trial?', a: "Currently, 'Prime' tier includes a 3-day free trial. You won't be charged until the trial ends and you can cancel anytime from your dashboard before the trial expires with no charge."},
-        { q: 'What is the 40% off launch offer?', a: "For a limited time, every paid plan is 40% off for your first 2 months. Basic is $5.99/mo, Prime is $14.49/mo, and Elite is $23.99/mo for those first two months. After that, billing returns to the regular price ($9.99 / $23.99 / $39.99). Cancel anytime."},
+        { q: 'What is the 40% off launch offer?', a: "For a limited time, Basic and Prime are 40% off for your first 2 months. Basic is $5.99/mo and Prime is $14.49/mo for those first two months, then billing returns to the regular price ($9.99 / $23.99). Elite is $39.99/mo. Cancel anytime."},
         { q: 'What payment methods do you accept?', a: 'We accept all major credit and debit cards through Paddle, our merchant of record. Apple Pay, Google Pay, and PayPal are also supported at checkout.' },
         { q: 'How does the priority queue work on Elite?', a: "Elite subscribers' renders are placed at the front of our global render queue, ahead of Basic and Prime subscribers. During peak hours this typically reduces wait time by 60–80% versus the standard queue." },
         { q: 'What happens to my clips if I cancel?', a: "All clips you've already rendered and downloaded remain yours forever, they're watermark-free on every tier. If you cancel, your saved videos in the Solis library are retained for 30 days, then permanently deleted unless you re-subscribe." },

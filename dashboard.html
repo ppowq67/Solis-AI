@@ -38,9 +38,10 @@
     <link rel="stylesheet" href="/style/ss/ios-pill-nav.css?v=29">
     <link rel="stylesheet" href="/style/ss/mobile-nav.css?v=28">
     <link rel="stylesheet" href="/style/ss/customize.css?v=27">
-    <link rel="stylesheet" href="/style/ss/clips.css?v=82">
+    <link rel="stylesheet" href="/style/ss/clips.css?v=89">
     <link rel="stylesheet" href="/style/ss/profile.css?v=29">
-    <link rel="stylesheet" href="/style/ss/tasks-panel-v2-demo.css?v=11">
+    <link rel="stylesheet" href="/style/ss/tasks-panel-v2-demo.css?v=18">
+    <link rel="stylesheet" href="/style/ss/solis-gen-stage.css?v=26">
     <link rel="stylesheet" href="/style/ss/newsfeed-widget.css?v=61">
     <script src="/js/ui/navigation.js?v=6"></script>
     <script src="/js/ui/menu.js?v=6"></script>
@@ -52,7 +53,8 @@
     <script src="/js/s_new/stg.js?v=61"></script>
     <script src="/js/i_dq/video-generation-hook.js?v=1"></script>
     <script src="/js/ui/progress-ui.js?v=2"></script>
-    <script src="/js/ui/generation-progress-spinner.js?v=61"></script>
+    <script src="/js/ui/generation-progress-spinner.js?v=65"></script>
+    <script src="/js/ui/solis-gen-stage.js?v=23"></script>
     <script src="/js/generation-recovery.js?v=6"></script>
     <script src="/js/i_dq/ranking-customizer.js?v=24"></script>
     <script src="/js/s_new/solis-memory.js?v=60"></script>
@@ -65,7 +67,7 @@
     <script src="/js/payment/platform-connections.js?v=6"></script>
     <script src="/js/ui/plan-selector.js?v=63"></script>
     <script src="/js/core/video-preview-system.js?v=2"></script>
-    <script src="/js/s_new/clip-card.js?v=19"></script>
+    <script src="/js/s_new/clip-card.js?v=23"></script>
     <script src="/js/s.js?v=261"></script>
     <script src="/js/s_new/procc.js?v=2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -1043,12 +1045,78 @@
                 There was an error. Try again
             </div>
             <div class="generation-todo-header">
-                <h2 class="generation-todo-title">Solis AI Tasks</h2>
+                <div class="generation-todo-title-row">
+                    <h2 class="generation-todo-title">Solis Tasks</h2>
+                    <button type="button" id="generationTodoMoreBtn" class="generation-todo-advanced" title="Open advanced generation view">Advanced</button>
+                </div>
                 <span class="generation-todo-counter" id="generationTaskCounter">5 remaining</span>
             </div>
             <ul class="generation-todo-list" id="generationTodoList"></ul>
         </div>
     </div>
+
+    <div class="solis-gen-stage" id="solisGenStage" aria-hidden="true" role="dialog" aria-label="Generating your clip">
+        <div class="solis-gen-topbar">
+            <button type="button" class="solis-gen-brand" id="solisGenExitBtn" aria-label="Leave and continue in background" title="Leave">
+                <span class="solis-gen-brand-mark" aria-hidden="true">
+                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <ellipse rx="44" ry="18" cx="50" cy="50" fill="none" stroke="#ea580c" stroke-width="6" transform="rotate(45 50 50)"/>
+                      <ellipse rx="44" ry="18" cx="50" cy="50" fill="none" stroke="#ea580c" stroke-width="6" transform="rotate(-45 50 50)"/>
+                      <circle cx="50" cy="50" r="12" fill="#ea580c" stroke="none"/>
+                    </svg>
+                </span>
+                <span class="solis-gen-brand-exit" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                        <polyline points="10 17 5 12 10 7"/>
+                        <line x1="15" y1="12" x2="5" y2="12"/>
+                    </svg>
+                </span>
+            </button>
+            <div class="solis-gen-account" id="solisGenAccount">
+                <div class="solis-gen-account-host" id="solisGenAccountHost"></div>
+            </div>
+        </div>
+        <div class="solis-gen-stage-inner">
+            <div class="solis-gen-main">
+                <div class="solis-gen-video-card">
+                    <div class="solis-gen-thumb" id="solisGenThumb">
+                        <span class="solis-gen-thumb-fallback">CLIP</span>
+                    </div>
+                    <div class="solis-gen-video-meta">
+                        <div class="solis-gen-video-title" id="solisGenVideoTitle">Your video</div>
+                        <div class="solis-gen-video-sub">
+                            <span class="solis-gen-badge" id="solisGenTemplateBadge">Clip</span>
+                            <span id="solisGenProgressLabel">Starting…</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="solis-gen-mark" aria-hidden="true">
+                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <ellipse rx="44" ry="18" cx="50" cy="50" fill="none" stroke="#ea580c" stroke-width="6" transform="rotate(45 50 50)"/>
+                      <ellipse rx="44" ry="18" cx="50" cy="50" fill="none" stroke="#ea580c" stroke-width="6" transform="rotate(-45 50 50)"/>
+                      <circle cx="50" cy="50" r="12" fill="#ea580c" stroke="none"/>
+                    </svg>
+                </div>
+                <h1 class="solis-gen-heading" id="solisGenHeading">Analyzing content and finding clips</h1>
+                <p class="solis-gen-sub">
+                    You can safely leave this page. We’ll keep working in the background.
+                    <button type="button" id="solisGenContinueBg">Do not stay</button>
+                </p>
+                <ul class="solis-gen-steps" id="solisGenSteps"></ul>
+            </div>
+            <aside class="solis-gen-aff-hero" id="solisGenAffHero" aria-label="While you wait">
+                <div class="solis-gen-aff-ring-top" aria-hidden="true"></div>
+                <a class="solis-gen-aff-link" href="/faq">Get to know us more</a>
+                <div class="solis-gen-aff-body">
+                    <div class="solis-gen-aff-title" id="solisGenAffTitle">Meet Solis AI,<br>your clip co-pilot</div>
+                    <div class="solis-gen-aff-sub" id="solisGenAffSub">We turn long videos into short-form clips with captions, modes, and polish built in.</div>
+                </div>
+                <div class="solis-gen-aff-ring-bottom" aria-hidden="true"></div>
+            </aside>
+        </div>
+    </div>
+
     <div class="profile-action-cluster" id="profileActionCluster">
     <div class="notif-wrapper" id="notifWrapper" aria-hidden="true">
         <button class="bell-btn" id="bellBtn" aria-label="Notifications">
@@ -3473,7 +3541,7 @@
             </svg>
         </div>
         <div class="template-content">
-            <h3 class="template-title">Split Screen</h3>
+            <h3 class="template-title">Clip</h3>
             <p class="template-subtitle">Dynamic layouts for any video.</p>
             <div class="template-features">
                 <div class="template-feature">
@@ -3524,7 +3592,7 @@
             <div class="template-preview-video" style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; border-radius: 8px; min-height: 0; gap: 16px; padding-top: 8px; padding-bottom: 10px; overflow: visible;">
                 <div class="preview-phone-row" id="previewPhoneRow">
                 <aside class="preview-virality-rail" id="previewViralityRail" hidden></aside>
-                <div class="preview-placeholder" id="templateVideoPreview" style="width: 280px; max-width: 280px; min-width: 280px; aspect-ratio: 9/16; min-height: 280px; border-radius: 2rem; overflow: hidden; position: relative; display: block; background: #000;">
+                <div class="preview-placeholder" id="templateVideoPreview" style="width: 280px; max-width: 280px; min-width: 280px; aspect-ratio: 9/16; min-height: 280px; border-radius: 2rem; overflow: hidden; position: relative; display: block; background: #2a2118;">
                     <div class="preview-video-placeholder" style="text-align: center; color: #666;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 16px; opacity: 0.5;">
                             <polygon points="23 7 16 12 23 17 23 7"></polygon>
@@ -6404,8 +6472,8 @@
 
 <style>
 .sub-text-block{position:absolute;left:0;right:0;margin-left:auto;margin-right:auto;transform:none;color:#fff;font-size:18px;font-family:'Montserrat',sans-serif;font-weight:700;letter-spacing:-.015em;text-align:center;line-height:1.2;padding:7px 16px;border:1.5px solid transparent;border-radius:14px;outline:none;cursor:ns-resize;white-space:normal;word-wrap:break-word;overflow-wrap:anywhere;width:fit-content;max-width:calc(100% - 16px);min-width:2rem;box-sizing:border-box;background:transparent;z-index:80;pointer-events:all;user-select:none;-webkit-user-select:none;touch-action:none;transition:color .2s,background .18s,border-color .18s,box-shadow .18s,font-family .15s;text-shadow:none;}
-#splitscreenDivider{z-index:50!important;}
-#splitscreenRoot.is-dragging #splitscreenDivider{z-index:240!important;}
+#splitscreenDivider{z-index:260!important;}
+#splitscreenRoot.is-dragging #splitscreenDivider{z-index:280!important;}
 #templateVideoPreview:has(#splitscreenRoot.is-dragging) > .sub-text-block{
     pointer-events:none!important;
     z-index:90 !important;
@@ -7714,10 +7782,12 @@
     font-family:'Komika Axis',sans-serif !important;
     font-weight:400 !important;
     text-shadow:none !important;
+    overflow:visible;
 }
 .sub-chunk-line.sub-beast-line,
 .sub-aprev.sub-beast-line{
     gap:0.55em !important;
+    overflow:visible;
 }
 .sub-beast-word{
     font-family:'Komika Axis',sans-serif !important;
@@ -7727,15 +7797,18 @@
     paint-order:stroke fill;
     display:inline-block;
     margin:0;
-    transition:color .05s ease;
-    text-shadow:none !important;
-    filter:none;
+    transition:color .05s ease, filter .12s ease;
+    filter:
+        drop-shadow(0 0 1px rgba(0,0,0,.55))
+        drop-shadow(0 1px 2px rgba(0,0,0,.35))
+        drop-shadow(0 0 10px rgba(255,255,255,.22));
 }
 .sub-text-block[data-sub-anim="beast"],
 .sub-text-block[data-sub-anim="beast"] .sub-text-inner{
     font-family:'Komika Axis',sans-serif !important;
     font-weight:400 !important;
     text-shadow:none !important;
+    overflow:visible !important;
 }
 .sub-font-item .sub-fname[data-font="Komika Axis"],
 .sub-font-item[data-font="Komika Axis"] .sub-fname{
@@ -7745,15 +7818,23 @@
 .sub-beast-word.active-yellow{
     color:#FFEE00 !important;
     -webkit-text-fill-color:#FFEE00 !important;
-    filter:drop-shadow(0px 0px 15px rgba(255,238,0,.8));
-    text-shadow:none !important;
+    filter:
+        drop-shadow(0 0 2px rgba(0,0,0,.85))
+        drop-shadow(0 0 6px rgba(255,238,0,.95))
+        drop-shadow(0 0 14px rgba(255,238,0,.85))
+        drop-shadow(0 0 28px rgba(255,220,0,.55))
+        drop-shadow(0 0 42px rgba(255,200,0,.35));
 }
 .sub-beast-word.is-green,
 .sub-beast-word.active-green{
     color:#00FF2A !important;
     -webkit-text-fill-color:#00FF2A !important;
-    filter:drop-shadow(0px 0px 15px rgba(0,255,42,.8));
-    text-shadow:none !important;
+    filter:
+        drop-shadow(0 0 2px rgba(0,0,0,.85))
+        drop-shadow(0 0 6px rgba(0,255,42,.95))
+        drop-shadow(0 0 14px rgba(0,255,42,.85))
+        drop-shadow(0 0 28px rgba(0,230,60,.55))
+        drop-shadow(0 0 42px rgba(0,200,50,.35));
 }
 @keyframes sub-beast-pop{
     0%{transform:scale(.4) translateY(10px);opacity:0;}
@@ -7899,6 +7980,12 @@
     -webkit-backdrop-filter:blur(18px) saturate(140%);
 }
 .gp-pill-menu.active{display:flex;animation:gp-pill-in .16s cubic-bezier(.2,.9,.4,1.05);}
+.gp-pill-menu--modes .gp-pill-btn{
+    width:auto;min-width:36px;padding:0 12px 0 8px;gap:6px;
+}
+.gp-pill-menu--modes .gp-pill-btn .gp-pill-label{
+    display:inline;font-size:12px;font-weight:700;letter-spacing:-0.01em;
+}
 @keyframes gp-pill-in{
     from{opacity:0;transform:scale(.97);}
     to{opacity:1;transform:scale(1);}
@@ -8066,22 +8153,23 @@
     max-height:none;
 }
 #templateVideoPreview.gp-hover-preview #splitscreenBottom{
-    outline:2px solid rgba(249,115,22,.42);
-    outline-offset:-2px;
-    transition:outline-color .22s ease;
+    outline:none;
+    box-shadow:inset 0 0 0 2px rgba(249,115,22,.42);
+    transition:box-shadow .22s ease;
 }
 #templateVideoPreview .ss-hover-panel{
-    transition:outline-color .16s ease, outline-offset .16s ease;
+    transition:box-shadow .16s ease;
 }
 #templateVideoPreview .ss-hover-panel.ss-panel-outlined{
-    outline:2px solid rgba(249,115,22,.55);
-    outline-offset:-2px;
+    outline:none;
+    box-shadow:inset 0 0 0 2px rgba(249,115,22,.58);
     z-index:3;
 }
 #templateVideoPreview .ss-panel-hover-hint{
     position:absolute;
     top:8px;
-    left:8px;
+    left:auto;
+    right:8px;
     z-index:45;
     max-width:calc(100% - 16px);
     padding:4px 8px;
@@ -8122,6 +8210,51 @@
     display:grid;
     grid-template-columns:repeat(3,minmax(0,1fr));
     gap:8px;
+}
+.gp-mode-row--4{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+}
+@media (min-width:420px){
+    .gp-mode-row--4{grid-template-columns:repeat(4,minmax(0,1fr));}
+}
+.gp-mode-tile.gp-mode-suggested .gp-mode-preview{
+    border-color:rgba(249,115,22,.55);
+    box-shadow:0 0 0 1px rgba(249,115,22,.18),0 4px 14px rgba(249,115,22,.1);
+}
+.gp-ai-tag{
+    display:inline-flex;align-items:center;margin-left:5px;
+    padding:1px 5px;border-radius:4px;
+    font-size:9px;font-weight:800;font-style:normal;letter-spacing:.04em;
+    background:rgba(249,115,22,.14);color:#c2410c;vertical-align:middle;
+}
+.gp-clips-ai-hint{
+    display:block;margin-top:4px;
+    font-size:11px;font-weight:600;color:rgba(194,65,12,.85);
+}
+.gp-prev-letterbox{
+    position:absolute;inset:0;display:flex;flex-direction:column;
+}
+.gp-prev-letterbox .gp-lb-top,
+.gp-prev-letterbox .gp-lb-bot{
+    flex:0 0 18%;
+    background:
+        linear-gradient(90deg,rgba(255,200,150,.35),rgba(180,140,100,.45),rgba(255,220,180,.3));
+    filter:blur(1px);
+}
+.gp-prev-letterbox .gp-lb-mid{
+    flex:1 1 auto;
+    background:linear-gradient(160deg,#2a221c,#1a1410);
+}
+.gp-prev-focus{
+    background:linear-gradient(160deg,#1c1917,#292524);
+}
+.gp-prev-focus-frame{
+    position:absolute;inset:14% 18%;
+    border-radius:6px;
+    border:1.5px solid rgba(255,255,255,.35);
+    box-shadow:0 0 0 1px rgba(249,115,22,.25);
+    background:linear-gradient(145deg,rgba(249,115,22,.15),rgba(255,255,255,.06));
 }
 .gp-mode-tile{
     position:relative;
@@ -8379,7 +8512,12 @@
 }
 #splitscreenBlankPanel{
     position:absolute !important;inset:0 !important;z-index:20 !important;
-    display:block;overflow:hidden;background:#000;
+    display:block;overflow:hidden;
+    background:
+        radial-gradient(ellipse 90% 70% at 25% 35%, rgba(255,190,130,.55), transparent 55%),
+        radial-gradient(ellipse 80% 60% at 80% 65%, rgba(255,230,190,.42), transparent 50%),
+        radial-gradient(ellipse 60% 50% at 50% 50%, rgba(160,110,80,.35), transparent 60%),
+        linear-gradient(160deg, #5a4030 0%, #2a2118 100%);
     pointer-events:none;
     opacity:0;visibility:hidden;
     transition:
@@ -8391,44 +8529,102 @@
     opacity:1;visibility:visible;
 }
 #splitscreenBlankPanel .gp-blank-blur-vid{
-    position:absolute;inset:-40%;
-    width:180%;height:180%;
+    position:absolute;inset:-50%;
+    width:200%;height:200%;
     object-fit:cover;object-position:center center;
-    filter:blur(28px) saturate(1.35) brightness(1.12);
-    -webkit-filter:blur(28px) saturate(1.35) brightness(1.12);
-    transform:scale(1.2);
+    background:transparent !important;
+    filter:blur(36px) saturate(1.45) brightness(1.18) contrast(1.04);
+    -webkit-filter:blur(36px) saturate(1.45) brightness(1.18) contrast(1.04);
+    transform:scale(1.18);
     pointer-events:none;
     display:block;
-    opacity:0;
+    opacity:1 !important;
+    visibility:visible !important;
     z-index:0;
     transition:
         opacity .32s cubic-bezier(.22,.8,.28,1),
         filter .32s ease;
 }
-#splitscreenBlankPanel.mode-black{background:#000;}
-#splitscreenBlankPanel.mode-black .gp-blank-blur-vid{opacity:0;visibility:hidden;}
+#splitscreenBlankPanel.mode-black,
 #splitscreenBlankPanel.mode-blur{
-    background:#0c0a09;
+    background:
+        radial-gradient(ellipse 90% 70% at 25% 35%, rgba(255,190,130,.5), transparent 55%),
+        radial-gradient(ellipse 80% 60% at 80% 65%, rgba(255,230,190,.38), transparent 50%),
+        linear-gradient(160deg, #5c4232 0%, #2c221a 100%);
 }
+#splitscreenBlankPanel.mode-black .gp-blank-blur-vid,
 #splitscreenBlankPanel.mode-blur .gp-blank-blur-vid{
     opacity:1 !important;visibility:visible !important;
-    filter:blur(32px) saturate(1.4) brightness(1.15) contrast(1.06);
-    -webkit-filter:blur(32px) saturate(1.4) brightness(1.15) contrast(1.06);
+    background:transparent !important;
+    filter:blur(36px) saturate(1.45) brightness(1.18) contrast(1.04);
+    -webkit-filter:blur(36px) saturate(1.45) brightness(1.18) contrast(1.04);
 }
-#splitscreenBlankPanel::after{
-    content:'';
-    position:absolute;inset:0;z-index:1;pointer-events:none;
-    background:rgba(255,255,255,.14);
-    opacity:0;
-    transition:opacity .32s cubic-bezier(.22,.8,.28,1);
-}
-#splitscreenBlankPanel.mode-blur::after{
+#splitscreenBlankPanel.mode-blur::after,
+#splitscreenBlankPanel.mode-black::after{
+    content:'';position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:linear-gradient(180deg, rgba(255,255,255,.08), transparent 45%, rgba(0,0,0,.06));
     opacity:1;
-    background:
-        linear-gradient(180deg,rgba(255,255,255,.1),rgba(0,0,0,.18)),
-        rgba(12,10,9,.08);
 }
-#splitscreenBlankPanel.mode-black::after{opacity:0;}
+
+.ss-mode-dots{
+    position:absolute;left:50%;bottom:10px;transform:translateX(-50%);
+    z-index:260;display:none;align-items:center;justify-content:center;gap:8px;
+    padding:7px 11px;border-radius:999px;
+    background:rgba(12,10,9,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,.18);
+    pointer-events:auto;
+    opacity:1;
+    box-shadow:0 4px 16px rgba(0,0,0,.35);
+}
+.ss-mode-dots.visible{display:flex;}
+.ss-mode-dot{
+    width:8px;height:8px;border-radius:999px;padding:0;border:none;cursor:pointer;
+    background:rgba(255,255,255,.4);
+    transition:transform .2s cubic-bezier(.22,.8,.28,1), background .2s ease, width .2s ease;
+}
+.ss-mode-dot.on{
+    width:18px;background:#f97316;
+    box-shadow:0 0 0 2px rgba(249,115,22,.28);
+}
+.ss-mode-dot:hover{background:rgba(255,255,255,.65);}
+.ss-mode-dot.on:hover{background:#fb923c;}
+
+#splitscreenRoot.ss-mode-fade{
+    animation:ss-mode-cross .16s ease;
+}
+@keyframes ss-mode-cross{
+    0%{opacity:.88;}
+    100%{opacity:1;}
+}
+
+#splitscreenBlurBottom{
+    display:none;position:relative;width:100%;min-height:0;overflow:hidden;
+    flex-shrink:0;pointer-events:none;z-index:15;
+    opacity:0;visibility:hidden;
+    background:
+        radial-gradient(ellipse 90% 70% at 30% 40%, rgba(255,190,130,.45), transparent 55%),
+        linear-gradient(160deg, #5a4030 0%, #2a2118 100%) !important;
+    transition:opacity .28s cubic-bezier(.22,.8,.28,1), visibility .28s;
+}
+#splitscreenBlurBottom.visible{
+    display:block;opacity:1;visibility:visible;
+}
+#splitscreenBlurBottom .gp-blank-blur-vid{
+    position:absolute;inset:-40%;
+    width:180%;height:180%;
+    object-fit:cover;object-position:center center;
+    background:transparent !important;
+    filter:blur(36px) saturate(1.4) brightness(1.15) contrast(1.04);
+    -webkit-filter:blur(36px) saturate(1.4) brightness(1.15) contrast(1.04);
+    transform:scale(1.2);
+    pointer-events:none;display:block;opacity:1 !important;visibility:visible !important;z-index:0;
+}
+#splitscreenBlurBottom.mode-blur::after{
+    content:'';position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:linear-gradient(0deg, rgba(255,255,255,.06), transparent 45%, rgba(0,0,0,.06));
+}
+#splitscreenRoot.ss-letterbox-blur #splitscreenBottom.ss-blank-fill{
+}
 
 #splitscreenBottom .gp-secondary-panel{
     position:absolute;inset:0;z-index:3;
@@ -8448,7 +8644,7 @@
 #splitscreenTop > .ss-content-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;}
 @keyframes splitscreen-pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(1.4);}}
 #splitscreenRoot.is-dragging #splitscreenTop,#splitscreenRoot.is-dragging #splitscreenBottom{transition:none!important;pointer-events:none!important;}
-#splitscreenRoot.is-dragging #splitscreenDivider{z-index:240!important;pointer-events:auto!important;}
+#splitscreenRoot.is-dragging #splitscreenDivider{z-index:280!important;pointer-events:auto!important;}
 #splitscreenRoot.is-dragging video{pointer-events:none!important;}
 #splitscreenFacePanel{background:transparent;}
 #splitscreenFacePanel .gp-face-panel-content{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:12px;}
@@ -9049,7 +9245,7 @@
             span.textContent=String(word||'').toUpperCase();
             span.style.color=col;
             span.style.textShadow='none';
-            span.style.filter='none';
+            span.style.removeProperty('filter');
             if(col===BEAST_COLORS.yellow) span.classList.add('is-yellow','active-yellow');
             if(col===BEAST_COLORS.green) span.classList.add('is-green','active-green');
             if(live && block){

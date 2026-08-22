@@ -1,0 +1,429 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap');
+
+.solis-gen-stage{
+    --sg-orange:#ff6b3d;
+    --sg-orange-deep:#ea580c;
+    --sg-ink:#111827;
+    --sg-muted:#6b7280;
+    --sg-line:#e5e7eb;
+    --sg-soft:#f3f4f6;
+    --solis:#f97316;
+    --solis_gradient:linear-gradient(135deg,#f97316,#d65a31,#ff8c42,#b84d1a);
+    position:fixed;inset:0;z-index:12050;
+    display:flex;
+    flex-direction:column;
+    background:#fff;
+    font-family:'Manrope','Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
+    color:var(--sg-ink);
+    overflow:hidden;
+    height:100dvh;
+    max-height:100dvh;
+    -webkit-font-smoothing:antialiased;
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transform:translateY(10px) scale(.985);
+    filter:blur(6px);
+    transition:
+        opacity .38s ease,
+        transform .42s cubic-bezier(.22,1,.36,1),
+        filter .38s ease,
+        visibility 0s linear .38s;
+}
+.solis-gen-stage.is-open{
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+    transform:none;
+    filter:blur(0);
+    transition:
+        opacity .42s ease,
+        transform .48s cubic-bezier(.22,1,.36,1),
+        filter .42s ease,
+        visibility 0s linear 0s;
+}
+.solis-gen-stage.is-leaving{
+    opacity:0;
+    transform:translateY(8px) scale(.988);
+    filter:blur(5px);
+    pointer-events:none;
+}
+body.solis-gen-stage-active{overflow:hidden;}
+
+body.solis-gen-stage-active .generation-progress-wrapper{
+    opacity:0 !important;
+    visibility:hidden !important;
+    pointer-events:none !important;
+    z-index:1 !important;
+}
+body.solis-gen-stage-active .profile-notif-wrapper{
+    z-index:12110 !important;
+    pointer-events:none !important;
+}
+body.solis-gen-stage-active .profile-notif-wrapper > .generation-progress-wrapper{
+    pointer-events:none !important;
+}
+
+.solis-gen-topbar{
+    flex:0 0 auto;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:12px 28px;
+    background:#fff;
+}
+.solis-gen-brand{
+    position:relative;
+    width:52px;height:52px;
+    padding:0;margin:0;
+    border:none;background:transparent;
+    border-radius:14px;
+    cursor:pointer;
+    display:inline-flex;align-items:center;justify-content:center;
+    color:#111827;
+    flex-shrink:0;
+    outline:none;
+    -webkit-tap-highlight-color:transparent;
+    box-shadow:none;
+}
+.solis-gen-brand:focus,
+.solis-gen-brand:focus-visible{
+    outline:none;
+    box-shadow:0 0 0 2px rgba(234,88,12,.35);
+}
+.solis-gen-brand-mark,
+.solis-gen-brand-exit{
+    position:absolute;inset:0;
+    display:flex;align-items:center;justify-content:center;
+    transition:opacity .22s ease, transform .22s ease;
+    filter:none !important;
+}
+.solis-gen-brand-mark{opacity:1;transform:scale(1);}
+.solis-gen-brand-mark img,
+.solis-gen-brand-mark svg{
+    width:48px;height:48px;display:block;
+    overflow:visible;
+}
+.solis-gen-brand-mark svg circle{
+    fill:#ea580c !important;
+    stroke:none !important;
+}
+.solis-gen-brand-mark svg ellipse{
+    fill:none !important;
+    stroke:#ea580c !important;
+}
+.solis-gen-brand-exit{
+    opacity:0;
+    transform:scale(.88);
+    color:#111827;
+    background:rgba(243,244,246,.92);
+    border-radius:12px;
+}
+.solis-gen-brand-exit svg{width:22px;height:22px;display:block;}
+.solis-gen-brand:hover .solis-gen-brand-mark,
+.solis-gen-brand:focus-visible .solis-gen-brand-mark{
+    opacity:0;
+    transform:scale(.9);
+}
+.solis-gen-brand:hover .solis-gen-brand-exit,
+.solis-gen-brand:focus-visible .solis-gen-brand-exit{
+    opacity:1;
+    transform:scale(1);
+}
+.solis-gen-account{
+    display:flex;align-items:center;gap:12px;
+}
+.solis-gen-account-host{
+    display:flex;align-items:center;min-height:40px;
+}
+.solis-gen-stage .profile-action-cluster{
+    position:relative;
+    z-index:3;
+}
+.solis-gen-stage .profile-action-cluster .bell-btn,
+.solis-gen-stage .profile-action-cluster .profile-avatar-btn{
+    color:#111827;
+    background:transparent;
+}
+.solis-gen-stage .profile-action-cluster .notif-dropdown,
+.solis-gen-stage .profile-action-cluster .profile-dropdown{
+    z-index:5;
+}
+.solis-gen-stage-inner{
+    flex:1 1 auto;
+    min-height:0;
+    width:min(1360px,100%);
+    margin:0 auto;
+    padding:10px clamp(16px,3vw,36px) 14px;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(440px,520px);
+    gap:clamp(28px,4vw,64px);
+    align-items:stretch;
+    overflow:hidden;
+    box-sizing:border-box;
+}
+@media (max-width:900px){
+    .solis-gen-stage-inner{
+        grid-template-columns:1fr;
+        align-items:start;
+        justify-items:center;
+        overflow:hidden;
+        padding-top:4px;
+    }
+    .solis-gen-main{align-items:center;text-align:center;max-width:440px;max-height:100%;}
+    .solis-gen-steps{margin-left:auto;margin-right:auto;text-align:left;}
+    .solis-gen-video-card{margin-left:auto;margin-right:auto;}
+    .solis-gen-aff-hero{
+        display:none;
+    }
+}
+
+.solis-gen-main{
+    display:flex;flex-direction:column;align-items:flex-start;
+    max-width:480px;width:100%;
+    justify-self:center;
+    align-self:center;
+    min-height:0;
+    overflow:hidden;
+}
+
+.solis-gen-video-card{
+    display:flex;align-items:center;gap:12px;
+    width:100%;max-width:420px;
+    padding:10px 14px 10px 10px;
+    border-radius:14px;
+    background:#f3f4f6;
+    flex-shrink:0;
+}
+.solis-gen-thumb{
+    width:46px;height:46px;border-radius:10px;flex-shrink:0;overflow:hidden;
+    background:#111827;
+    display:flex;align-items:center;justify-content:center;
+}
+.solis-gen-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.solis-gen-thumb-fallback{color:rgba(255,255,255,.5);font-size:9px;font-weight:800;letter-spacing:.06em;}
+.solis-gen-video-meta{min-width:0;flex:1;}
+.solis-gen-video-title{
+    font-size:14px;font-weight:700;letter-spacing:-.02em;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.solis-gen-video-sub{
+    margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+    font-size:12px;font-weight:600;color:var(--sg-muted);
+}
+.solis-gen-badge{
+    display:inline-flex;align-items:center;
+    padding:2px 7px;border-radius:5px;
+    background:#e5e7eb;color:#374151;
+    font-size:11px;font-weight:700;
+}
+
+.solis-gen-mark{
+    margin:18px 0 12px;
+    width:48px;height:48px;
+    display:flex;align-items:center;justify-content:center;
+    filter:none;
+    flex-shrink:0;
+    position:relative;
+}
+.solis-gen-mark::before{
+    content:"";
+    position:absolute;
+    inset:-6px;
+    border-radius:50%;
+    background:radial-gradient(circle,rgba(255,107,61,.28) 0%,rgba(255,107,61,0) 70%);
+    pointer-events:none;
+    z-index:0;
+}
+.solis-gen-mark svg{
+    width:48px;height:48px;display:block;
+    position:relative;z-index:1;
+    overflow:visible;
+}
+.solis-gen-mark svg circle{
+    fill:#ea580c !important;
+    stroke:none !important;
+}
+.solis-gen-mark svg ellipse{
+    fill:none !important;
+    stroke:#ea580c !important;
+}
+
+.solis-gen-heading{
+    margin:0 0 8px;
+    font-size:clamp(1.25rem,2.2vw,1.7rem);
+    font-weight:800;letter-spacing:-.04em;line-height:1.2;
+    color:#0f172a;
+    flex-shrink:0;
+}
+.solis-gen-sub{
+    margin:0 0 16px;
+    font-size:14px;font-weight:500;line-height:1.45;color:#6b7280;
+    max-width:34em;
+    flex-shrink:0;
+}
+.solis-gen-sub button{
+    appearance:none;border:none;background:none;padding:0;margin:0 0 0 4px;
+    color:#2563eb;font:inherit;font-weight:650;cursor:pointer;
+    text-decoration:underline;text-underline-offset:2px;
+}
+
+.solis-gen-steps{
+    list-style:none;margin:0;padding:0;width:100%;max-width:340px;
+    min-height:0;
+    overflow:hidden;
+}
+.solis-gen-step{
+    display:flex;align-items:center;gap:14px;
+    padding:6px 0;
+    font-size:14.5px;font-weight:600;color:#9ca3af;
+    opacity:0;transform:translateY(6px);
+    transition:color .2s ease, opacity .35s ease, transform .35s ease;
+}
+.solis-gen-step.is-shown{opacity:1;transform:none;}
+.solis-gen-step.is-done{color:#16a34a;}
+.solis-gen-step.is-active{color:#111827;font-weight:700;}
+.solis-gen-step.is-active .solis-gen-step-label{
+    position:relative;
+    display:inline-block;
+    color:#6b7280;
+    overflow:hidden;
+    vertical-align:baseline;
+    isolation:isolate;
+}
+.solis-gen-step.is-active .solis-gen-step-label::after{
+    content:"";
+    position:absolute;
+    inset:0 auto 0 0;
+    width:70%;
+    background:linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255,255,255,0) 25%,
+        rgba(255,255,255,.75) 50%,
+        rgba(255,255,255,0) 75%,
+        transparent 100%
+    );
+    transform:translateX(-120%);
+    animation:solisGenTaskShimmer 1.7s linear infinite;
+    pointer-events:none;
+    mix-blend-mode:plus-lighter;
+    z-index:1;
+}
+.solis-gen-step.is-active .solis-gen-step-pct{
+    color:#6b7280;
+    font-weight:700;
+}
+@keyframes solisGenTaskShimmer{
+    0%{transform:translateX(-120%);}
+    100%{transform:translateX(180%);}
+}
+.solis-gen-step-ico{
+    width:20px;height:20px;border-radius:999px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    border:1.75px solid #d1d5db;background:#fff;box-sizing:border-box;
+}
+.solis-gen-step.is-done .solis-gen-step-ico{
+    border-color:transparent;background:#22c55e;color:#fff;
+}
+.solis-gen-step.is-active .solis-gen-step-ico{
+    border-color:transparent;background:transparent;
+}
+.solis-gen-step-spin{
+    width:18px;height:18px;border-radius:999px;
+    border:2.25px solid rgba(17,24,39,.12);
+    border-top-color:#111827;
+    animation:solisGenSpin .7s linear infinite;
+    box-sizing:border-box;
+}
+@keyframes solisGenSpin{to{transform:rotate(360deg);}}
+.solis-gen-step-check{width:11px;height:11px;}
+.solis-gen-step-pct{
+    margin-left:2px;
+    font-variant-numeric:tabular-nums;
+    font-weight:700;
+}
+
+.solis-gen-aff-hero{
+    width:100%;
+    max-width:520px;
+    height:min(860px,94%);
+    max-height:none;
+    min-height:0;
+    border-radius:40px;
+    background:var(--solis_gradient);
+    position:relative;
+    overflow:hidden;
+    padding:36px 34px;
+    color:#fff;
+    display:flex;
+    flex-direction:column;
+    box-shadow:
+        0 30px 60px -20px rgba(194,65,12,.45),
+        0 10px 24px rgba(194,65,12,.25);
+    justify-self:end;
+    align-self:end;
+    margin-bottom:-48px;
+    transform:translateY(18px);
+    box-sizing:border-box;
+}
+.solis-gen-aff-ring-top{
+    position:absolute;
+    top:-60px;left:-60px;
+    width:180px;height:180px;
+    border-radius:50%;
+    border:1.5px solid rgba(255,255,255,.35);
+    pointer-events:none;
+}
+.solis-gen-aff-ring-bottom{
+    position:absolute;
+    bottom:-110px;right:-110px;
+    width:260px;height:260px;
+    border-radius:50%;
+    border:1.5px solid rgba(255,255,255,.35);
+    pointer-events:none;
+}
+.solis-gen-aff-link{
+    font-size:15px;
+    font-weight:600;
+    color:rgba(255,255,255,.9);
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    align-self:center;
+    position:relative;
+    z-index:1;
+    flex-shrink:0;
+}
+.solis-gen-aff-link:hover{color:#fff;}
+.solis-gen-aff-body{
+    margin-top:clamp(140px,28%,220px);
+    margin-bottom:auto;
+    padding-bottom:0;
+    position:relative;
+    z-index:1;
+    flex-shrink:0;
+    transition:filter .45s ease, opacity .45s ease, transform .45s ease;
+    filter:blur(0);
+    opacity:1;
+    transform:translateY(0);
+    will-change:filter, opacity, transform;
+}
+.solis-gen-aff-body.is-tip-out{
+    filter:blur(10px);
+    opacity:0;
+    transform:translateY(6px);
+}
+.solis-gen-aff-title{
+    font-size:clamp(2.1rem,3.2vw,2.75rem);
+    font-weight:800;
+    line-height:1.12;
+    letter-spacing:-0.6px;
+}
+.solis-gen-aff-sub{
+    margin-top:26px;
+    font-size:clamp(1.05rem,1.5vw,1.2rem);
+    font-weight:500;
+    color:rgba(255,255,255,.92);
+    line-height:1.45;
+    max-width:18em;
+}

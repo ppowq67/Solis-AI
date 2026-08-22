@@ -156,3 +156,84 @@
     70% { transform: scale(1.15); }
     100% { opacity: 1; transform: scale(1); }
 }
+
+.solis-tasks-panel .generation-todo-header {
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px 10px !important;
+}
+
+.solis-tasks-panel .generation-todo-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.solis-tasks-panel .generation-todo-title {
+    margin: 0;
+    font-size: 13.5px !important;
+    font-weight: 750 !important;
+    letter-spacing: -0.01em;
+    color: #111827;
+}
+
+.solis-tasks-panel .generation-todo-advanced {
+    appearance: none;
+    position: relative;
+    display: inline-block;
+    isolation: isolate;
+    overflow: hidden;
+    vertical-align: baseline;
+    border: none !important;
+    cursor: pointer;
+    padding: 0 !important;
+    margin: 0;
+    border-radius: 0 !important;
+    background: none !important;
+    box-shadow: none !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    line-height: 1.2;
+    color: #6b7280 !important;
+    text-decoration: none !important;
+    white-space: nowrap;
+}
+
+.solis-tasks-panel .generation-todo-advanced::after {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 70%;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0) 25%,
+        rgba(255, 255, 255, 0.75) 50%,
+        rgba(255, 255, 255, 0) 75%,
+        transparent 100%
+    );
+    transform: translateX(-120%);
+    animation: solisGenTaskShimmer 1.7s linear infinite;
+    pointer-events: none;
+    mix-blend-mode: plus-lighter;
+    z-index: 1;
+}
+
+.solis-tasks-panel .generation-todo-advanced:hover {
+    color: #4b5563 !important;
+}
+
+.solis-tasks-panel .generation-todo-counter {
+    margin-left: auto;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+}
+
+.solis-tasks-panel .generation-todo-list {
+    padding: 4px 10px 12px !important;
+}
+
+.generation-todo-more {
+    display: none !important;
+}

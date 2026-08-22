@@ -180,16 +180,15 @@
     return "scc-band-" + String(e || "solid");
   }
   function buildHTML(e) {
-    const t = viralityOf(e);
-    const n = esc(e.name || e.video_title || "Clip");
-    const r = esc(e.projectId || e.id || "");
-    const i = formatClock(e.duration);
-    const s = window.currentUser && window.currentUser.plan || "free";
-    const o = e.resolution || (s === "free" ? "720p" : "1080p");
-    const c = s !== "free";
-    const a = c ? "" : '<span class="pro-badge scc-res-pro-inline">PRO</span>';
-    const l = `<div class="scc-res-wrap" data-project-id="${r}" data-res="${esc(o)}">\n            <button class="scc-res-pill${o === "720p" ? " active" : ""}" data-res="720p">720p</button>\n            <button class="scc-res-pill${o === "1080p" ? " active" : ""}${!c ? " locked" : ""}" data-res="1080p">1080p${a}</button>\n        </div>`;
-    return `\n            <div class="scc-preview">\n                <div class="scc-skel" aria-hidden="true"></div>\n                <img class="scc-poster" alt="" loading="lazy" decoding="async" draggable="false">\n                <video class="scc-video" muted playsinline loop preload="none" controlslist="nodownload nofullscreen noremoteplayback" disablepictureinpicture></video>\n                <div class="scc-time"><span class="scc-t0">00:00</span> <span class="scc-t1">${esc(i)}</span></div>\n                <div class="scc-bar"><i></i></div>\n            </div>\n            <div class="scc-meta">\n                <div class="scc-meta-row">\n                    ${l}\n                    <div class="scc-actions">\n                        <button type="button" class="scc-ico library-share-btn" data-project-id="${r}" aria-label="Share preview">\n                            ${iconShare()}${tip("Copy public preview link")}\n                        </button>\n                        <button type="button" class="scc-ico library-download-btn" data-project-id="${r}" aria-label="Download">\n                            ${iconDl()}${tip("Save this clip")}\n                        </button>\n                        <button type="button" class="scc-ico library-delete-btn" aria-label="Delete">\n                            ${iconTrash()}${tip("Delete this clip")}\n                        </button>\n                    </div>\n                </div>\n                <h2 class="card-title scc-title" title="${n}">${n}</h2>\n            </div>`;
+    const t = esc(e.name || e.video_title || "Clip");
+    const n = esc(e.projectId || e.id || "");
+    const r = formatClock(e.duration);
+    const i = window.currentUser && window.currentUser.plan || "free";
+    const s = e.resolution || (i === "free" ? "720p" : "1080p");
+    const o = i !== "free";
+    const c = o ? "" : '<span class="pro-badge scc-res-pro-inline">PRO</span>';
+    const a = `<div class="scc-res-wrap" data-project-id="${n}" data-res="${esc(s)}">\n            <button type="button" class="scc-res-pill${s === "720p" ? " active" : ""}" data-res="720p">720p</button>\n            <button type="button" class="scc-res-pill${s === "1080p" ? " active" : ""}${!o ? " locked" : ""}" data-res="1080p">1080p${c}</button>\n        </div>`;
+    return `\n            <div class="scc-preview">\n                <div class="scc-skel" aria-hidden="true"></div>\n                <img class="scc-poster" alt="" loading="lazy" decoding="async" draggable="false">\n                <video class="scc-video" muted playsinline loop preload="none" controlslist="nodownload nofullscreen noremoteplayback" disablepictureinpicture></video>\n                <span class="scc-play" aria-hidden="true"></span>\n                <div class="scc-time"><span class="scc-t0">00:00</span> <span class="scc-t1">${esc(r)}</span></div>\n                <div class="scc-bar"><i></i></div>\n            </div>\n            <div class="scc-meta">\n                <div class="scc-meta-row">\n                    ${a}\n                    <div class="scc-actions">\n                        <button type="button" class="scc-ico library-share-btn" data-project-id="${n}" aria-label="Share preview">\n                            ${iconShare()}${tip("Copy public preview link")}\n                        </button>\n                        <button type="button" class="scc-ico library-download-btn" data-project-id="${n}" aria-label="Download">\n                            ${iconDl()}${tip("Save this clip")}\n                        </button>\n                        <button type="button" class="scc-ico library-delete-btn" aria-label="Delete">\n                            ${iconTrash()}${tip("Delete this clip")}\n                        </button>\n                    </div>\n                </div>\n                <h2 class="card-title scc-title" title="${t}">${t}</h2>\n            </div>`;
   }
   function railHTML(e) {
     const t = viralityOf(e);

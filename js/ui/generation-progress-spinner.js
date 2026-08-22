@@ -123,6 +123,7 @@ class GenerationProgressSpinner {
     this._errorDismissTimer = null;
     this._libraryRefreshQueued = false;
     this.showQueueWaitTask = false;
+    this.genStageOpen = false;
     this._ensureDomRefs();
     this._bindPanelEvents();
     this._restoreFromLocalStorageImmediate();
@@ -801,6 +802,58 @@ class GenerationProgressSpinner {
     document.body.appendChild(e);
     setTimeout(() => e.remove(), 5e3);
   }
+  _ensureCompleteSound() {
+    if (this._completeAudio) return this._completeAudio;
+    try {
+      const e = new Audio("/assets/notification.mp3");
+      e.preload = "auto";
+      e.volume = .75;
+      this._completeAudio = e;
+    } catch (e) {
+      this._completeAudio = null;
+    }
+    return this._completeAudio;
+  }
+  _unlockCompleteSound() {
+    if (this._completeSoundUnlocked) return;
+    const e = this._ensureCompleteSound();
+    if (!e) return;
+    try {
+      const t = e.volume;
+      e.volume = 0;
+      const s = e.play();
+      const settle = () => {
+        try {
+          e.pause();
+          e.currentTime = 0;
+          e.volume = t || .75;
+        } catch (e) {}
+        this._completeSoundUnlocked = true;
+      };
+      if (s && typeof s.then === "function") {
+        s.then(settle).catch(() => {
+          try {
+            e.volume = t || .75;
+          } catch (e) {}
+        });
+      } else {
+        settle();
+      }
+    } catch (e) {}
+  }
+  _playGenerationCompleteSound() {
+    try {
+      const e = this._ensureCompleteSound();
+      if (!e) return;
+      e.pause();
+      e.currentTime = 0;
+      e.volume = .75;
+      const t = e.play();
+      if (t && typeof t.catch === "function") {
+        t.catch(() => {});
+      }
+    } catch (e) {}
+  }
   restoreGeneration(e, t = 0, s = "Resuming...", i = "processing", r = null, n = null) {
     if (!this._isValidProjectId(e)) return;
     if (this._wasUserCancelled(e)) return;
@@ -1149,6 +1202,7 @@ class GenerationProgressSpinner {
     this.completedTaskCount = 0;
     this.showQueueWaitTask = false;
     this._ensureDomRefs();
+    this._unlockCompleteSound();
     if (this.wrapper) this.wrapper.style.display = "flex";
     this.tasksIntroPlayed = false;
     this._resetTaskVisibility();
@@ -1357,6 +1411,16 @@ class GenerationProgressSpinner {
       this.progressTooltip.textContent = o ? a || "Complete!" : a || `${n}% complete`;
     }
     this._updateTaskStates(n, i, s);
+    if (this.genStageOpen) {
+      try {
+        if (typeof this._syncGenStageSteps === "function") {
+          this._syncGenStageSteps(n, i);
+        }
+        if (typeof this._fillGenStageVideoMeta === "function") {
+          this._fillGenStageVideoMeta();
+        }
+      } catch (e) {}
+    }
   }
   _linkProjectAliases(e, t) {
     if (!e || !t || e === t) return;
@@ -1549,16 +1613,19 @@ class GenerationProgressSpinner {
     this.optimisticPending = false;
     this._completionHandled = true;
     this._syncGeneratingBadge();
+    this._playGenerationCompleteSound();
     this.showVideoReadyNotification();
     this.displayProgress(100, "Processing complete! Video ready!");
     this._unlockUrlSubmitButton();
     if (this.activeGenerations.size === 0) {
       this.stopPolling();
+      const e = this.genStageOpen ? 2400 : 900;
       setTimeout(() => {
         this._completionHandled = false;
+        if (typeof this.closeGenStage === "function") this.closeGenStage();
         this.closePanel();
         this.hide();
-      }, 180);
+      }, e);
     }
   }
   _notifyGenerationFailed(e, t) {

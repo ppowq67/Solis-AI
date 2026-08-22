@@ -216,7 +216,7 @@ const _clipModeRatioMemory = {
   blur: .78
 };
 
-const SPLITSCREEN_CANVAS_MAX = .35;
+const SPLITSCREEN_CANVAS_MAX = .42;
 
 const SPLITSCREEN_PEEK_EXIT = .28;
 
@@ -259,7 +259,7 @@ function _splitscreenQuery(e) {
 }
 
 function buildSplitscreenPreviewShell() {
-  return `\n        <div id="splitscreenRoot" style="display:flex;flex-direction:column;height:100%;width:100%;background:#111;overflow:hidden;border-radius:inherit;user-select:none;">\n            <div id="splitscreenTop" style="flex:0 0 50%;width:100%;min-height:0;background:#000;position:relative;overflow:hidden;">\n                <div class="ss-panel-crop-viewport" id="splitscreenContentViewport">\n                    <video id="splitscreenContentVideo" autoplay muted loop playsinline preload="auto"></video>\n                </div>\n            </div>\n                <div id="splitscreenDivider" style="flex:0 0 1px;width:100%;height:1px;min-height:1px;max-height:1px;cursor:row-resize;display:flex;align-items:center;justify-content:center;position:relative;z-index:50;background:transparent;flex-shrink:0;overflow:visible;padding:0;margin:0;">\n                <div id="dividerLine" class="ss-divider-grip" style="position:absolute;left:0;right:0;top:50%;width:100%;height:1px;background:rgba(148,163,184,0.85);border-radius:0;box-shadow:none;pointer-events:none;transform:translateY(-50%);"></div>\n            </div>\n            <div id="splitscreenBottom" style="flex:1 1 0;width:100%;min-height:0;background:#000;position:relative;overflow:hidden;" data-no-text-select="true">\n                <div class="ss-panel-crop-viewport" id="splitscreenSecondaryViewport">\n                    <video id="splitscreenGameplayVideo" autoplay muted loop playsinline preload="auto"></video>\n                    <video id="splitscreenReframeVideo" autoplay muted loop playsinline preload="auto" style="display:none;"></video>\n                </div>\n            </div>\n        </div>\n    `;
+  return `\n        <div id="splitscreenRoot" style="display:flex;flex-direction:column;height:100%;width:100%;background:#111;overflow:hidden;border-radius:inherit;user-select:none;">\n            <div id="splitscreenTop" style="flex:0 0 50%;width:100%;min-height:0;background:#000;position:relative;overflow:hidden;">\n                <div class="ss-panel-crop-viewport" id="splitscreenContentViewport">\n                    <video id="splitscreenContentVideo" autoplay muted loop playsinline preload="auto"></video>\n                </div>\n            </div>\n                <div id="splitscreenDivider" style="flex:0 0 1px;width:100%;height:1px;min-height:1px;max-height:1px;cursor:var(--solis-preview-cursor-hand);display:flex;align-items:center;justify-content:center;position:relative;z-index:50;background:transparent;flex-shrink:0;overflow:visible;padding:0;margin:0;">\n                <div id="dividerLine" class="ss-divider-grip" style="position:absolute;left:0;right:0;top:50%;width:100%;height:1px;background:rgba(148,163,184,0.85);border-radius:0;box-shadow:none;pointer-events:none;transform:translateY(-50%);"></div>\n            </div>\n            <div id="splitscreenBottom" style="flex:1 1 0;width:100%;min-height:0;background:#000;position:relative;overflow:hidden;" data-no-text-select="true">\n                <div class="ss-panel-crop-viewport" id="splitscreenSecondaryViewport">\n                    <video id="splitscreenGameplayVideo" autoplay muted loop playsinline preload="auto"></video>\n                    <video id="splitscreenReframeVideo" autoplay muted loop playsinline preload="auto" style="display:none;"></video>\n                </div>\n            </div>\n        </div>\n    `;
 }
 
 let _librarySplitscreenCropState = null;
@@ -2349,6 +2349,10 @@ function bindFaceReframePanHandlers() {
       a = false;
       return;
     }
+    if (typeof hideGameplayPillMenu === "function" && gpPill?.classList.contains("active")) {
+      hideGameplayPillMenu();
+      return;
+    }
     if (typeof showSplitscreenCustomizer === "function") {
       showSplitscreenCustomizer(e, "fill");
     }
@@ -3309,9 +3313,9 @@ function initGameplayPillUI() {
   document.addEventListener("click", e => {
     if (!gpPill?.classList.contains("active")) return;
     if (gpPill.contains(e.target) || gpDdClips.contains(e.target)) return;
-    if (e.target.closest("#splitscreenRoot")) return;
     if (e.target.closest("#previewEditorPill")) return;
     if (e.target.closest("#templatePreviewLoading")) return;
+    if (e.target.closest("#splitscreenRoot")) return;
     hideGameplayPillMenu();
   });
   window.addEventListener("resize", () => {
@@ -3528,6 +3532,7 @@ function buildModeTile({id: e, title: t, hint: n, previewClass: i, previewHtml: 
 }
 
 function getSuggestedClipMode() {
+  if (window.solisAutoModesEnabled === false) return null;
   const e = window._solisClipModeSuggestion;
   if (!e || typeof e !== "object") return null;
   if (e.collapsed) return "focus";
@@ -3683,7 +3688,7 @@ function selectClipMode(e, t) {
     splitscreenCanvasMode = "blank_blur";
     splitscreenInverted = true;
     const e = Number(_clipModeRatioMemory.blur);
-    const t = Number.isFinite(e) && e > .05 ? e : Math.max(Number(splitscreenContentRatio) || .78, .78);
+    const t = Number.isFinite(e) && e > .05 ? e : Math.max(Number(splitscreenContentRatio) || .72, .72);
     splitscreenContentRatio = clampCanvasContentRatio(t);
     splitscreenSavedRatio = splitscreenContentRatio;
     _clipModeRatioMemory.blur = splitscreenContentRatio;
@@ -3694,6 +3699,14 @@ function selectClipMode(e, t) {
     notifySubtitleLayoutEdit();
     applySplitscreenPreview();
   }
+  try {
+    const e = getSplitscreenPreviewContainer();
+    if (e && typeof window.clampAllPreviewSubtitles === "function") {
+      window.clampAllPreviewSubtitles(e);
+    } else {
+      syncSplitscreenSubtitles(e);
+    }
+  } catch (e) {}
   syncClipModeDots();
   markLibrarySplitscreenDirty();
   try {
@@ -3714,126 +3727,20 @@ function cycleClipMode(e) {
 
 function ensureClipModeDots() {
   const e = document.getElementById("templateVideoPreview");
-  if (!e) return null;
-  let t = e.querySelector("#ssModeDots");
-  if (!t) {
-    t = document.createElement("div");
-    t.id = "ssModeDots";
-    t.className = "ss-mode-dots";
-    t.setAttribute("role", "tablist");
-    t.setAttribute("aria-label", "Clip modes");
-    CLIP_MODE_ORDER.forEach((e, n) => {
-      const i = document.createElement("button");
-      i.type = "button";
-      i.className = "ss-mode-dot";
-      i.dataset.mode = e;
-      i.setAttribute("aria-label", e === "face_track" ? "AI Reframe" : e === "blur" ? "Blur" : "Focus");
-      i.addEventListener("click", t => {
-        t.stopPropagation();
-        t.preventDefault();
-        selectClipMode(e, {
-          animate: true
-        });
-      });
-      t.appendChild(i);
-    });
-    e.appendChild(t);
-  }
-  return t;
+  const t = e?.querySelector("#ssModeDots");
+  if (t) t.remove();
+  return null;
 }
 
 function syncClipModeDots() {
-  const e = ensureClipModeDots();
-  if (!e) return;
-  const t = currentClipModeId();
-  e.querySelectorAll(".ss-mode-dot").forEach(e => {
-    e.classList.toggle("on", e.dataset.mode === t);
-  });
-  const n = _splitscreenQuery("splitscreenRoot");
-  const i = document.getElementById("templateVideoPreview");
-  const r = !!n && !!i;
-  e.classList.toggle("visible", r);
-  e.style.zIndex = "260";
+  const e = document.getElementById("templateVideoPreview");
+  const t = e?.querySelector("#ssModeDots");
+  if (t) t.remove();
 }
 
 function bindClipModeSwipe(e) {
-  if (!e || e.dataset.modeSwipeBound === "1") return;
-  e.dataset.modeSwipeBound = "1";
-  let t = 0;
-  let n = 0;
-  let i = 0;
-  let r = 0;
-  let o = false;
-  let s = null;
-  let a = false;
-  const nearDivider = e => {
-    const t = _splitscreenQuery("splitscreenDivider");
-    if (!t) return false;
-    const n = t.getBoundingClientRect();
-    return e >= n.top - 28 && e <= n.bottom + 28;
-  };
-  const onDown = e => {
-    if (e.pointerType === "mouse" && e.button !== 0) return;
-    if (e.target.closest("#splitscreenDivider")) return;
-    if (e.target.closest(".sub-text-block")) return;
-    if (e.target.closest("#ssModeDots")) return;
-    if (e.target.closest(".gp-pill-menu") || e.target.closest(".gp-dropdown")) return;
-    if (nearDivider(e.clientY)) return;
-    t = i = e.clientX;
-    n = r = e.clientY;
-    o = true;
-    s = null;
-    a = false;
-  };
-  const onMove = l => {
-    if (!o) return;
-    i = l.clientX;
-    r = l.clientY;
-    if (e.classList.contains("is-dragging")) {
-      o = false;
-      s = "dead";
-      return;
-    }
-    const c = i - t;
-    const d = r - n;
-    if (!s) {
-      if (Math.abs(c) < 16 && Math.abs(d) < 16) return;
-      if (Math.abs(d) >= Math.abs(c) * .9) {
-        s = "v";
-        return;
-      }
-      if (Math.abs(c) < 40) return;
-      s = "h";
-    }
-    if (s === "h" && Math.abs(c) > 36) a = true;
-  };
-  const onUp = () => {
-    if (!o) {
-      s = null;
-      a = false;
-      return;
-    }
-    o = false;
-    const l = i - t;
-    const c = r - n;
-    const d = s === "h" && a && Math.abs(l) >= 56 && Math.abs(l) > Math.abs(c) * 2 && !e.classList.contains("is-dragging");
-    s = null;
-    a = false;
-    if (!d) return;
-    cycleClipMode(l < 0 ? 1 : -1);
-  };
-  e.addEventListener("pointerdown", onDown, {
-    passive: true
-  });
-  e.addEventListener("pointermove", onMove, {
-    passive: true
-  });
-  e.addEventListener("pointerup", onUp, {
-    passive: true
-  });
-  e.addEventListener("pointercancel", onUp, {
-    passive: true
-  });
+  if (!e) return;
+  e.dataset.modeSwipeBound = "0";
 }
 
 function gameplaySelectionLabel() {
@@ -3949,6 +3856,8 @@ function rebuildGameplayClipsDropdown() {
   gpDdClips.appendChild(n);
 }
 
+window.rebuildGameplayClipsDropdown = rebuildGameplayClipsDropdown;
+
 function openGameplayDropdown(e, t) {
   closeGameplayDropdowns(e);
   positionGameplayPill();
@@ -4054,12 +3963,8 @@ function showGameplayPillMenu(e, t) {
   initGameplayPillUI();
   positionGameplayPill();
   gpPill.classList.add("active");
-  gpPillFocusMode = null;
-  requestAnimationFrame(() => {
-    closeGameplayDropdowns();
-    const e = document.getElementById("gpBtnClips");
-    if (e) e.click();
-  });
+  gpPillFocusMode = t || null;
+  closeGameplayDropdowns();
 }
 
 function showSplitscreenCustomizer(e, t) {
@@ -5573,6 +5478,9 @@ function syncSplitscreenSubtitles(e, t) {
   const i = e.getBoundingClientRect().height;
   const r = !!e.querySelector("#splitscreenRoot.is-dragging");
   e.querySelectorAll(".sub-text-block").forEach(t => {
+    if (t.classList.contains("is-resizing") || t.classList.contains("is-dragging")) {
+      return;
+    }
     if (r) {
       t.style.setProperty("z-index", "90", "important");
     } else {
@@ -5591,22 +5499,15 @@ function syncSplitscreenSubtitles(e, t) {
     let o = t.dataset.dividerPinned === "1";
     const s = t.offsetHeight || 0;
     const a = parseFloat(t.style.top);
-    const l = Number.isFinite(a) ? a + s / 2 : NaN;
-    if (!o && Number.isFinite(l) && Math.abs(l - n) < 90) {
-      t.dataset.dividerPinned = "1";
-      t.dataset.dividerOffsetY = String(l - n);
-      delete t.dataset.yPct;
-      o = true;
-    }
-    const c = Number(t.dataset.yPct);
+    const l = Number(t.dataset.yPct);
     if (!o) {
-      if (Number.isFinite(c)) {
+      if (Number.isFinite(l)) {
         if (typeof window.placeCaptionAtYPct === "function") {
           try {
-            window.placeCaptionAtYPct(t, e, c);
+            window.placeCaptionAtYPct(t, e, l);
           } catch (e) {}
         } else {
-          const e = Math.round(c * i - s / 2);
+          const e = Math.round(l * i - s / 2);
           t.style.top = `${Math.max(0, Math.min(Math.max(0, i - s), e))}px`;
         }
       } else if (Number.isFinite(a) && i > 0) {
@@ -5621,10 +5522,10 @@ function syncSplitscreenSubtitles(e, t) {
         t.dataset.dividerOffsetY = String(-(s / 2 + 6));
       }
     }
-    const d = parseFloat(t.dataset.dividerOffsetY || "0");
-    if (!Number.isFinite(d)) return;
-    const p = Math.max(0, Math.min(Math.max(0, i - s), Math.round(n + d - s / 2)));
-    t.style.top = `${p}px`;
+    const c = parseFloat(t.dataset.dividerOffsetY || "0");
+    if (!Number.isFinite(c)) return;
+    const d = Math.max(0, Math.min(Math.max(0, i - s), Math.round(n + c - s / 2)));
+    t.style.top = `${d}px`;
     if (typeof window.lockSubtitleCenterX === "function") {
       window.lockSubtitleCenterX(t);
     }
@@ -5665,7 +5566,11 @@ function initializeSplitscreenDivider() {
     const t = e.target.closest("#splitscreenTop");
     const i = e.target.closest("#splitscreenBottom");
     if (t || i || e.target.closest(".ss-content-placeholder")) {
-      showSplitscreenCustomizer(e, "fill");
+      if (gpPill?.classList.contains("active")) {
+        hideGameplayPillMenu();
+      } else {
+        showSplitscreenCustomizer(e, "fill");
+      }
     }
   });
   const setDividerHover = n => {
@@ -5752,21 +5657,38 @@ function initializeSplitscreenDivider() {
     }
     startDividerDrag(e);
   };
-  e.addEventListener("mousedown", e => {
-    e.preventDefault();
+  e.addEventListener("mousedown", t => {
+    const n = e.style.pointerEvents;
+    e.style.pointerEvents = "none";
+    const i = document.elementFromPoint(t.clientX, t.clientY);
+    e.style.pointerEvents = n;
+    if (i?.closest?.(".sub-text-block, .sub-resize-handle, .overlay-text-block, .sub-pill-menu")) {
+      return;
+    }
+    t.preventDefault();
     if (splitscreenSecondaryCollapsed) {
       expandSplitscreenSecondary();
       return;
     }
-    startDividerDrag(e.clientY);
+    startDividerDrag(t.clientY);
   });
-  e.addEventListener("touchstart", e => {
-    e.preventDefault();
+  e.addEventListener("touchstart", t => {
+    const n = t.touches?.[0];
+    if (n) {
+      const t = e.style.pointerEvents;
+      e.style.pointerEvents = "none";
+      const i = document.elementFromPoint(n.clientX, n.clientY);
+      e.style.pointerEvents = t;
+      if (i?.closest?.(".sub-text-block, .sub-resize-handle, .overlay-text-block, .sub-pill-menu")) {
+        return;
+      }
+    }
+    t.preventDefault();
     if (splitscreenSecondaryCollapsed) {
       expandSplitscreenSecondary();
       return;
     }
-    if (e.touches[0]) startDividerDrag(e.touches[0].clientY);
+    if (t.touches[0]) startDividerDrag(t.touches[0].clientY);
   }, {
     passive: false
   });
@@ -5776,7 +5698,7 @@ function initializeSplitscreenDivider() {
 function bindSeamHoldDrag(e, t) {
   if (!e || e.dataset.seamHoldBound === "1") return;
   e.dataset.seamHoldBound = "1";
-  const n = 36;
+  const n = 10;
   let i = null;
   const clear = () => {
     if (!i) return;
@@ -5789,7 +5711,7 @@ function bindSeamHoldDrag(e, t) {
     if (r.pointerType === "mouse" && r.button !== 0) return;
     if (splitscreenSecondaryCollapsed || _reframeImmersive) return;
     if (r.target.closest("#splitscreenDivider")) return;
-    if (r.target.closest("#ssModeDots") || r.target.closest(".sub-text-block")) return;
+    if (r.target.closest("#ssModeDots") || r.target.closest(".sub-text-block") || r.target.closest(".sub-resize-handle") || r.target.closest(".sub-pill-menu") || r.target.closest(".overlay-text-block")) return;
     const o = _splitscreenQuery("splitscreenBottom");
     const s = _splitscreenQuery("splitscreenTop");
     if (!o || !s) return;
@@ -5805,7 +5727,7 @@ function bindSeamHoldDrag(e, t) {
       const r = n.clientY - p;
       const o = n.clientX - u;
       if (!i.started) {
-        if (Math.abs(r) < 7) return;
+        if (Math.abs(r) < 10) return;
         if (Math.abs(o) > Math.abs(r) * 1.1) {
           clear();
           return;
@@ -7342,7 +7264,7 @@ class ClipsStudio {
     safeLog(`🎨 generateTemplatePreviewHTML - template.id: ${e?.id}, template.type: ${e?.type}`);
     const t = {
       ranked_compilation: () => `\n                <style>\n                    .ranking-preview-container * {\n                        box-sizing: border-box;\n                    }\n                    .ranking-preview-container {\n                        position: absolute;\n                        inset: 0;\n                        width: 100%;\n                        height: 100%;\n                        padding: 14px 12px 16px;\n                        border-radius: inherit;\n                        display: flex;\n                        flex-direction: column;\n                        align-items: center;\n                        pointer-events: auto;\n                        overflow: hidden;\n                        background: transparent;\n                    }\n\n                    .ranking-preview-container::-webkit-scrollbar {\n                        width: 4px;\n                    }\n                    .ranking-preview-container::-webkit-scrollbar-track {\n                        background: transparent;\n                    }\n                    .ranking-preview-container::-webkit-scrollbar-thumb {\n                        background: rgba(255,255,255,0.3);\n                        border-radius: 2px;\n                    }\n                    .ranking-preview-container .text-stroke {\n                        font-weight: 400;\n                        text-shadow:\n                            2px 0 0 #000, -2px 0 0 #000, 0 2px 0 #000, 0 -2px 0 #000,\n                            1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;\n                        pointer-events: auto;\n                    }\n                    .ranking-preview-container .title {\n                        font-size: clamp(0.95rem, 5.2vw, 1.35rem);\n                        text-align: center;\n                        line-height: 1.12;\n                        text-transform: uppercase;\n                        margin-bottom: 4px;\n                        margin-top: 0;\n                        padding-top: 0;\n                        color: white;\n                        font-family: 'Luckiest Guy', cursive;\n                        font-weight: 400;\n                        pointer-events: auto;\n                        width: fit-content;\n                        max-width: calc(100% - 8px);\n                        margin-left: auto;\n                        margin-right: auto;\n                        overflow: visible;\n                    }\n                    .ranking-preview-container .funniest {\n                        color: #ff0000;\n                        pointer-events: auto;\n                    }\n                    .ranking-preview-container .ranking-list {\n                        list-style: none;\n                        padding: 0;\n                        margin: 6px 0 0 0;\n                        text-align: left;\n                        width: fit-content;\n                        max-width: 100%;\n                        align-self: flex-start;\n                        pointer-events: auto;\n                        flex: 0 0 auto;\n                        flex-shrink: 0;\n                        overflow: visible;\n                        display: flex;\n                        flex-direction: column;\n                        gap: 12px;\n                    }\n                    .ranking-preview-container .ranked-item {\n                        font-size: clamp(0.72rem, 3.8vw, 0.98rem);\n                        margin-bottom: 0;\n                        font-family: 'Luckiest Guy', cursive;\n                        line-height: 1.2;\n                        display: flex;\n                        align-items: baseline;\n                        justify-content: flex-start;\n                        font-weight: 400;\n                        pointer-events: auto;\n                        flex: 0 0 auto;\n                        flex-shrink: 0;\n                        overflow: visible;\n                        gap: 6px;\n                        width: fit-content;\n                        min-height: 1.2em;\n                    }\n                    .ranking-preview-container .ranked-item .rank-number {\n                        display: inline-block;\n                        pointer-events: auto;\n                        flex-shrink: 0;\n                        margin-right: 0.15em;\n                        padding: 0;\n                        width: max-content;\n                        letter-spacing: 0;\n                        line-height: 1.05;\n                    }\n                    .ranking-preview-container .rank-1 { color: #ffd700; pointer-events: auto; }\n                    .ranking-preview-container .rank-2 { color: #c0c0c0; pointer-events: auto; }\n                    .ranking-preview-container .rank-3 { color: #cd7f32; pointer-events: auto; }\n                    .ranking-preview-container .rank-4 { color: #ffffff; pointer-events: auto; }\n                    .ranking-preview-container .rank-5 { color: #ffffff; pointer-events: auto; }\n                    .ranking-editor-zone-header {\n                        display: flex;\n                        flex-direction: column;\n                        align-items: center;\n                        justify-content: flex-start;\n                        width: 100%;\n                        max-width: 100%;\n                        margin: 0 auto;\n                        text-align: center;\n                        overflow: visible;\n                        padding: 0 4px 4px;\n                        flex: 0 0 auto;\n                        flex-shrink: 0;\n                        position: relative;\n                        z-index: 6;\n                        box-sizing: border-box;\n                    }\n                    .ranking-preview-container .title .text-stroke,\n                    .ranking-preview-container h2.text-stroke {\n                        -webkit-text-stroke: 0;\n                        paint-order: stroke fill;\n                    }\n                    .ranking-editor-zone-ranks {\n                        width: fit-content;\n                        max-width: 100%;\n                        align-self: flex-start;\n                    }\n                    .ranking-preview-container [data-template-element-id] {\n                        transition: none;\n                    }\n                    .ranking-preview-container [data-template-element-id="title_channel"] {\n                        font-size: clamp(0.88rem, 4.8vw, 1.15rem);\n                        line-height: 1.1;\n                        margin: 2px auto 8px auto !important;\n                        max-width: calc(100% - 24px);\n                        display: block !important;\n                        width: fit-content;\n                        text-align: center;\n                        white-space: nowrap;\n                        overflow-wrap: normal;\n                        word-break: normal;\n                        box-sizing: border-box;\n                        position: relative;\n                        z-index: 7;\n                        float: none;\n                        transform: none;\n                    }\n                    .ranking-preview-container h1.title {\n                        display: block;\n                        white-space: nowrap;\n                        max-width: 100%;\n                        width: fit-content;\n                        margin: 0 auto 2px auto;\n                        text-align: center;\n                        position: relative;\n                        z-index: 7;\n                    }\n                    .ranking-preview-container [data-template-element-id="title_ranking"],\n                    .ranking-preview-container [data-template-element-id="title_funniest"] {\n                        display: inline-block;\n                        line-height: inherit;\n                        vertical-align: baseline;\n                        white-space: nowrap;\n                    }\n                    .ranking-preview-container .rank-title:empty::before {\n                        content: attr(data-placeholder);\n                        opacity: 0.42;\n                        font-style: italic;\n                    }\n                    .ranking-preview-container .rank-title {\n                        min-width: 2.5rem;\n                        cursor: text;\n                        text-transform: uppercase;\n                    }\n                </style>\n                <div class="ranking-preview-container">\n                    <div class="ranking-editor-zone ranking-editor-zone-header">\n                    <h1 class="title">\n                        <span data-template-element-id="title_ranking" class="text-stroke" style="color: white; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">RANKING</span> <span data-template-element-id="title_funniest" class="funniest text-stroke" style="color: #ff0000; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">BEST</span>\n                    </h1>\n                    <h2 data-template-element-id="title_channel" style="text-align: center; margin: 2px auto 12px auto; color: white !important; background: transparent !important; font-family: 'Luckiest Guy', cursive; font-weight: 400; max-width: calc(100% - 24px); pointer-events: auto; display: block; position: relative;" class="text-stroke">CHANNEL MOMENTS</h2>\n                    </div>\n                    <ul class="ranking-list ranking-editor-zone ranking-editor-zone-ranks">\n                        <li class="ranked-item rank-1">\n                            <span data-template-element-id="rank_1_number" class="rank-number text-stroke" style="color: #ffd700; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">1.</span>\n                            <span data-template-element-id="rank_1_title" class="rank-title text-stroke" style="color: #ffd700; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;"></span>\n                        </li>\n                        <li class="ranked-item rank-2">\n                            <span data-template-element-id="rank_2_number" class="rank-number text-stroke" style="color: #c0c0c0; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">2.</span>\n                            <span data-template-element-id="rank_2_title" class="rank-title text-stroke" style="color: #c0c0c0; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;"></span>\n                        </li>\n                        <li class="ranked-item rank-3">\n                            <span data-template-element-id="rank_3_number" class="rank-number text-stroke" style="color: #cd7f32; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">3.</span>\n                            <span data-template-element-id="rank_3_title" class="rank-title text-stroke" style="color: #cd7f32; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;"></span>\n                        </li>\n                        <li class="ranked-item rank-4">\n                            <span data-template-element-id="rank_4_number" class="rank-number text-stroke" style="color: #ffffff; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">4.</span>\n                            <span data-template-element-id="rank_4_title" class="rank-title text-stroke" style="color: #ffffff; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;"></span>\n                        </li>\n                        <li class="ranked-item rank-5">\n                            <span data-template-element-id="rank_5_number" class="rank-number text-stroke" style="color: #ffffff; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">5.</span>\n                            <span data-template-element-id="rank_5_title" class="rank-title text-stroke" style="color: #ffffff; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;"></span>\n                        </li>\n                    </ul>\n                </div>\n            `,
-      splitscreen: () => `\n                <div id="splitscreenRoot" style="display:flex;flex-direction:column;height:100%;width:100%;background:transparent;overflow:hidden;border-radius:inherit;user-select:none;">\n                    \x3c!-- TOP: Content slot — transparent so shared preview grey shows (same as ranking) --\x3e\n                    <div id="splitscreenTop" style="flex:0 0 50%;width:100%;min-height:0;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;">\n                        <div class="ss-content-placeholder" style="text-align:center;position:relative;z-index:2;">\n                            <div style="font-size:11px;color:#ff6a3d;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;display:flex;align-items:center;justify-content:center;gap:5px;">\n                                <span style="width:5px;height:5px;background:#ff6a3d;border-radius:50%;animation:splitscreen-pulse 2s infinite;display:inline-block;"></span>\n                                Your Content\n                            </div>\n                            <div style="font-size:12px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:.5px;">Video Preview</div>\n                        </div>\n                    </div>\n\n                    \x3c!-- DIVIDER — 1px seam; hit target expands via CSS ::before (no fat gap) --\x3e\n                    <div id="splitscreenDivider" style="flex:0 0 1px;width:100%;height:1px;min-height:1px;max-height:1px;cursor:row-resize;display:flex;align-items:center;justify-content:center;position:relative;z-index:50;background:transparent;flex-shrink:0;overflow:visible;padding:0;margin:0;">\n                        <div id="dividerLine" class="ss-divider-grip" style="position:absolute;left:0;right:0;top:50%;width:100%;height:1px;background:rgba(148,163,184,0.85);border-radius:0;box-shadow:none;pointer-events:none;transform:translateY(-50%);"></div>\n                    </div>\n\n                    \x3c!-- BOTTOM: Secondary panel (gameplay / face) — default type is face_track via JS --\x3e\n                    <div id="splitscreenBottom" style="flex:1 1 0;width:100%;min-height:0;background:transparent;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;"\n                         data-no-text-select="true">\n                        <video style="width:100%;height:100%;object-fit:cover;display:none;pointer-events:none;" autoplay muted loop playsinline preload="auto" disablePictureInPicture controlslist="nodownload nofullscreen noremoteplayback" id="splitscreenGameplayVideo"></video>\n                    </div>\n                </div>\n            `
+      splitscreen: () => `\n                <div id="splitscreenRoot" style="display:flex;flex-direction:column;height:100%;width:100%;background:transparent;overflow:hidden;border-radius:inherit;user-select:none;">\n                    \x3c!-- TOP: Content slot — transparent so shared preview grey shows (same as ranking) --\x3e\n                    <div id="splitscreenTop" style="flex:0 0 50%;width:100%;min-height:0;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;">\n                        <div class="ss-content-placeholder" style="text-align:center;position:relative;z-index:2;">\n                            <div style="font-size:11px;color:#ff6a3d;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;display:flex;align-items:center;justify-content:center;gap:5px;">\n                                <span style="width:5px;height:5px;background:#ff6a3d;border-radius:50%;animation:splitscreen-pulse 2s infinite;display:inline-block;"></span>\n                                Your Content\n                            </div>\n                            <div style="font-size:12px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:.5px;">Video Preview</div>\n                        </div>\n                    </div>\n\n                    \x3c!-- DIVIDER — 1px seam; hit target expands via CSS ::before (no fat gap) --\x3e\n                    <div id="splitscreenDivider" style="flex:0 0 1px;width:100%;height:1px;min-height:1px;max-height:1px;cursor:var(--solis-preview-cursor-hand);display:flex;align-items:center;justify-content:center;position:relative;z-index:50;background:transparent;flex-shrink:0;overflow:visible;padding:0;margin:0;">\n                        <div id="dividerLine" class="ss-divider-grip" style="position:absolute;left:0;right:0;top:50%;width:100%;height:1px;background:rgba(148,163,184,0.85);border-radius:0;box-shadow:none;pointer-events:none;transform:translateY(-50%);"></div>\n                    </div>\n\n                    \x3c!-- BOTTOM: Secondary panel (gameplay / face) — default type is face_track via JS --\x3e\n                    <div id="splitscreenBottom" style="flex:1 1 0;width:100%;min-height:0;background:transparent;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;"\n                         data-no-text-select="true">\n                        <video style="width:100%;height:100%;object-fit:cover;display:none;pointer-events:none;" autoplay muted loop playsinline preload="auto" disablePictureInPicture controlslist="nodownload nofullscreen noremoteplayback" id="splitscreenGameplayVideo"></video>\n                    </div>\n                </div>\n            `
     };
     let n = t[e.id];
     if (!n) {
@@ -10385,6 +10307,7 @@ class ClipsStudio {
         watermark_variant: typeof this.getWatermarkVariant === "function" ? this.getWatermarkVariant() : localStorage.getItem("solisWatermarkVariant") || "branded",
         effort: (typeof window.getSelectedEffortMode === "function" ? window.getSelectedEffortMode() : null) || "auto",
         ai_text_generation: window.solisAiTitleGenerationEnabled !== false,
+        auto_modes: window.solisAutoModesEnabled !== false,
         sfx_enabled: false
       };
       try {

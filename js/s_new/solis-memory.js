@@ -1296,6 +1296,7 @@
     return true;
   }
   function offerInstantRecipe(e, t) {
+    if (window.solisAutoModesEnabled === false) return false;
     if (!e || !e.ok || !isSplitscreenTemplate(t)) return false;
     const n = e.splitscreen;
     if (!n || typeof n !== "object") return false;

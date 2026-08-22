@@ -25,7 +25,7 @@
   const s = "__ranking_layout";
   const l = .25;
   const c = .1;
-  const u = .45;
+  const d = .45;
   function shadowCss(e, t) {
     const n = normalizeHex(t) || t || "#000";
     if (!e || e === "none") return "none";
@@ -34,7 +34,7 @@
     }
     return `2px 0 0 ${n},-2px 0 0 ${n},0 2px 0 ${n},0 -2px 0 ${n},` + `1px 1px 0 ${n},-1px -1px 0 ${n},1px -1px 0 ${n},-1px 1px 0 ${n}`;
   }
-  let d, p, g, m;
+  let u, p, g, m;
   let y = new Set;
   let b = "Luckiest Guy";
   let w = "#ffffff";
@@ -42,35 +42,35 @@
   let x = "outline";
   let S = "#000000";
   let E = undefined;
-  let z = "text";
-  let C = false;
+  let C = "text";
+  let z = false;
   let R = null;
   let L = false;
   let M = false;
-  let F = false;
-  let P = false;
-  let T = null;
   let A = false;
+  let P = false;
+  let F = null;
+  let T = false;
   let B = new Map;
   let H = null;
   let _ = null;
   let D = 18;
-  let N = 92;
-  let $ = 56;
-  let I = false;
+  let I = 92;
+  let N = 56;
+  let O = false;
   let q = false;
   let G = false;
-  let O = null;
+  let $ = null;
   let V = "single";
   let W = null;
-  let j = null;
-  const Z = new Map;
-  let Y = [];
-  let U = 0;
-  let X = [];
-  let J = null;
+  let Z = null;
+  const J = new Map;
+  let Q = [];
+  let j = 0;
+  let U = [];
+  let X = null;
   let K = 0;
-  let Q = 0;
+  let Y = 0;
   let ee = 0;
   const te = 6e3;
   const ne = 2200;
@@ -81,8 +81,8 @@
   const se = 38;
   const le = 18;
   const ce = 16;
-  const ue = 34;
-  const de = 120;
+  const de = 34;
+  const ue = 120;
   const pe = 110;
   const fe = 95;
   const ge = pe;
@@ -282,17 +282,17 @@
     if (G) return;
     G = true;
     hideSubtitleGuidesOverRanking();
-    d = document.createElement("div");
-    d.className = "sub-pill-menu";
-    d.id = "rkPillMenu";
-    d.innerHTML = `\n            <button type="button" class="sub-pill-btn" id="rkBtnFont" title="Font">\n                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>\n            </button>\n            <button type="button" class="sub-pill-btn" id="rkBtnColor" title="Color">\n                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>\n            </button>\n        `;
-    document.body.appendChild(d);
+    u = document.createElement("div");
+    u.className = "sub-pill-menu";
+    u.id = "rkPillMenu";
+    u.innerHTML = `\n            <button type="button" class="sub-pill-btn" id="rkBtnFont" title="Font">\n                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>\n            </button>\n            <button type="button" class="sub-pill-btn" id="rkBtnColor" title="Color">\n                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>\n            </button>\n        `;
+    document.body.appendChild(u);
     p = document.createElement("div");
     p.className = "sub-dropdown sub-font-dd";
     p.id = "rkDdFont";
     buildFontList();
     p.addEventListener("mouseleave", e => {
-      if (p.contains(e.relatedTarget) || d?.contains(e.relatedTarget)) return;
+      if (p.contains(e.relatedTarget) || u?.contains(e.relatedTarget)) return;
       resetFontPreview();
     });
     document.body.appendChild(p);
@@ -316,7 +316,7 @@
     injectStyles();
   }
   function injectStyles() {
-    const e = `\n            .ranking-preview-container{\n                position:relative !important;\n                overflow:visible !important;\n                padding:14px 12px 16px !important;\n                container-type:inline-size;\n                container-name:rk-phone;\n            }\n            .ranking-preview-container .ranking-list{\n                display:flex !important;\n                flex-direction:column !important;\n                gap:10px !important;\n                margin:6px 0 0 0 !important;\n                flex:0 0 auto !important;\n                flex-shrink:0 !important;\n                overflow:visible !important;\n            }\n            .ranking-preview-container .ranked-item{\n                flex:0 0 auto !important;\n                flex-shrink:0 !important;\n                line-height:1.2 !important;\n                min-height:1.2em !important;\n                margin:0 !important;\n                gap:6px !important;\n                overflow:visible !important;\n                font-size:clamp(22px, 9.2cqi, 38px);\n                font-family:'Luckiest Guy', cursive;\n            }\n            .ranking-preview-container .title,\n            .ranking-preview-container h1.title{\n                font-size:clamp(28px, 11cqi, 40px) !important;\n                line-height:1.12 !important;\n                padding-top:0 !important;\n                margin-top:0 !important;\n                overflow:visible !important;\n                max-width:calc(100% - 8px) !important;\n            }\n            .ranking-preview-container .rank-title,\n            .ranking-preview-container .rank-number{\n                font-size:inherit;\n                font-family:inherit;\n            }\n            .ranking-preview-container .rank-title.rk-sized,\n            .ranking-preview-container .rank-number.rk-sized{\n            }\n            .ranking-preview-container .ranking-editor-zone-header{\n                flex:0 0 auto !important;\n                flex-shrink:0 !important;\n                padding:0 4px 4px !important;\n            }\n            .ranking-preview-container [data-template-element-id]{\n                position:relative;display:inline-block;\n                cursor:var(--solis-preview-cursor, url('/style/cursor.png?v=20') 15 11, url('/style/cursor.svg?v=20') 10 7, auto);\n                transition:none!important;\n                overflow:visible !important;\n            }\n            .ranking-preview-container h1.title,\n            .ranking-preview-container h1{\n                white-space:nowrap!important;\n                max-width:100%;\n            }\n            .ranking-preview-container [data-template-element-id="title_ranking"],\n            .ranking-preview-container [data-template-element-id="title_funniest"]{\n                white-space:nowrap!important;\n            }\n            .ranking-preview-container .ranking-editor-zone-header,\n            .ranking-preview-container .ranking-editor-zone-ranks{\n                width:fit-content;max-width:100%;\n                overflow:visible !important;\n            }\n            .ranking-preview-container .ranking-editor-zone-header{\n                display:flex !important;\n                flex-direction:column !important;\n                align-items:center !important;\n                justify-content:flex-start !important;\n                gap:0;\n                margin:0 auto !important;\n                padding:2px 4px 0;\n                text-align:center;\n                position:relative;\n                z-index:6;\n                flex-shrink:0;\n                width:100% !important;\n                max-width:100% !important;\n                box-sizing:border-box;\n            }\n            .ranking-preview-container .ranking-editor-zone-header > h1.title,\n            .ranking-preview-container .ranking-editor-zone-header > h1{\n                display:block !important;\n                width:fit-content !important;\n                max-width:100% !important;\n                margin:0 auto 2px !important;\n                padding:0 !important;\n                text-align:center;\n                position:relative;\n                z-index:7;\n            }\n            .ranking-preview-container [data-template-element-id="title_channel"]{\n                display:block !important;\n                position:relative !important;\n                z-index:7;\n                width:fit-content !important;\n                max-width:calc(100% - 24px) !important;\n                margin:2px auto 8px auto !important;\n                font-size:clamp(20px, 8.5cqi, 34px) !important;\n                padding:0 !important;\n                text-align:center !important;\n                box-sizing:border-box;\n                white-space:nowrap !important;\n                overflow:visible !important;\n                overflow-wrap:normal !important;\n                word-break:normal !important;\n                float:none !important;\n                inset:auto !important;\n                top:auto !important;\n                left:auto !important;\n                right:auto !important;\n                bottom:auto !important;\n                transform:none !important;\n            }\n            .ranking-preview-container .ranking-editor-zone-member{\n                position:relative;z-index:1;\n            }\n            .ranking-preview-container .sub-resize-handle{\n                position:absolute;width:18px;height:18px;\n                background:rgba(249,115,22,.98);border:2.5px solid #fff;border-radius:50%;\n                cursor:var(--solis-preview-cursor-hand)!important;\n                box-shadow:0 2px 10px rgba(194,65,12,.4);\n                bottom:0;right:0;\n                transform:translate(35%,35%);\n                z-index:120;\n                pointer-events:none;display:none;\n                opacity:0;visibility:hidden;\n                touch-action:none;\n            }\n            .ranking-preview-container .sub-resize-handle::after{\n                content:'';position:absolute;inset:-10px -12px -12px -10px;border-radius:50%;\n                cursor:var(--solis-preview-cursor-hand)!important;\n            }\n            .ranking-preview-container .ranking-editor-selected > .sub-resize-handle,\n            .ranking-preview-container .ranking-editor-resize-anchor > .sub-resize-handle,\n            .ranking-preview-container .ranking-editor-zone-selected > .sub-resize-handle{\n                display:block;pointer-events:all;\n                opacity:1;visibility:visible;\n            }\n            .ranking-preview-container .ranking-editor-selected > .sub-resize-handle:hover,\n            .ranking-preview-container .ranking-editor-resize-anchor > .sub-resize-handle:hover,\n            .ranking-preview-container .ranking-editor-zone-selected > .sub-resize-handle:hover{\n                transform:translate(40%,40%) scale(1.15);\n            }\n            .ranking-editor-text{cursor:var(--solis-preview-cursor, url('/style/cursor.png?v=20') 15 11, url('/style/cursor.svg?v=20') 10 7, auto);}\n            .ranking-preview-container .rk-number-locked,\n            .ranking-preview-container [data-template-element-id$="_number"]{\n                -webkit-user-modify:read-only;\n                user-select:none;\n                caret-color:transparent;\n                touch-action:none;\n            }\n            .ranking-preview-container .ranking-editor-zone-ranks{\n                touch-action:none;\n            }\n            .ranking-editor-text,.ranking-editor-zone{\n                transition:none!important;\n                box-shadow:none!important;\n            }\n            .ranking-editor-zone{\n                position:relative;\n                border-radius:10px;\n            }\n            .ranking-preview-container [data-template-element-id].ranking-editor-selected{\n                position:relative;\n                z-index:6;\n                isolation:isolate;\n                box-shadow:none!important;\n            }\n            .ranking-preview-container [data-template-element-id].ranking-editor-selected::before{\n                content:'';\n                position:absolute;\n                inset:-5px -4px;\n                border-radius:8px;\n                border:1.5px solid #f97316;\n                background:transparent;\n                box-shadow:\n                    0 0 0 3px rgba(249,115,22,.32),\n                    0 0 14px rgba(249,115,22,.28);\n                pointer-events:none;\n                z-index:0;\n                animation:none;\n            }\n            .ranking-preview-container [data-template-element-id].ranking-editor-selected::after{\n                content:none;\n                display:none;\n            }\n            .ranking-preview-container .rank-number.ranking-editor-selected::before{\n                inset:-3px -2px !important;\n                border-radius:5px;\n            }\n            .ranking-preview-container .rank-number.ranking-editor-selected::after{\n                display:none !important;\n            }\n            .ranking-preview-container .rank-number{\n                display:inline-block !important;\n                width:max-content !important;\n                max-width:none !important;\n                margin-right:0.15em !important;\n                padding:0 !important;\n                letter-spacing:0 !important;\n                line-height:1.05 !important;\n                box-sizing:content-box !important;\n            }\n            .ranking-preview-container .text-stroke{\n                text-shadow:\n                    2px 0 0 #000, -2px 0 0 #000, 0 2px 0 #000, 0 -2px 0 #000,\n                    1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000 !important;\n            }\n            .ranking-editor-zone-selected{\n                position:relative;\n                z-index:5;\n                isolation:isolate;\n                box-shadow:none!important;\n            }\n            .ranking-editor-zone-selected::before{\n                content:'';\n                position:absolute;\n                inset:-6px -8px;\n                border-radius:12px;\n                border:1.5px solid #f97316;\n                background:transparent;\n                box-shadow:\n                    0 0 0 3px rgba(249,115,22,.28),\n                    0 0 14px rgba(249,115,22,.22);\n                pointer-events:none;\n                z-index:0;\n                animation:none;\n            }\n            .ranking-editor-zone-selected::after{\n                content:none;\n                display:none;\n            }\n            .ranking-editor-zone-selected > *:not(.sub-resize-handle){\n                position:relative;\n                z-index:1;\n            }\n            .ranking-preview-container .sub-guide,\n            .ranking-preview-container .sub-half-line,\n            .ranking-preview-container .rk-half-line,\n            .ranking-preview-container .rk-guide{\n                display:none !important;\n                visibility:hidden !important;\n                opacity:0 !important;\n            }\n            @keyframes rkSelInnerFade{\n                0%,100%{opacity:1;}\n                50%{opacity:.92;}\n            }\n            @keyframes rkSelWhitePulse{\n                0%,100%{opacity:.45;transform:scale(.97);}\n                50%{opacity:.95;transform:scale(1);}\n            }\n            #rkPillMenu{\n                transition:opacity .1s ease,transform .1s ease,visibility .1s!important;\n            }\n            .rk-ghost-stack{\n                position:fixed;z-index:99850;pointer-events:none;\n                display:flex;flex-direction:column;justify-content:center;align-items:flex-end;\n                gap:6px;\n                padding:6px 12px;border-radius:8px;\n                background:rgba(34,197,94,.16);\n                box-shadow:inset 0 0 0 1.5px rgba(34,197,94,.45);\n                width:max-content;height:auto;max-width:min(220px,40vw);\n                overflow:visible;\n                -webkit-user-select:none!important;user-select:none!important;\n                -webkit-user-drag:none;\n            }\n            .rk-ghost-stack .rk-ghost-line{\n                display:block;white-space:nowrap;line-height:1.05;opacity:1!important;\n                background:none!important;padding:0;margin:0;\n                position:static!important;right:auto!important;top:auto!important;\n                transform:none!important;\n                font-weight:700;\n                letter-spacing:-.015em;\n                -webkit-user-select:none!important;user-select:none!important;\n            }\n            .rk-ghost-stack .rk-ghost-title-row{\n                display:flex;flex-direction:row;align-items:baseline;justify-content:flex-end;\n                gap:6px;flex-wrap:nowrap;\n            }\n            .rk-ghost-stack .rk-ghost-title-row .rk-ghost-line{\n                display:inline-block;\n            }\n            .rk-ghost-stack .rk-ghost-channel{\n                text-align:right;\n            }\n            .rk-suggest-remove{\n                position:relative;\n                z-index:6;\n            }\n            .rk-suggest-remove::before{\n                content:'';\n                position:absolute;\n                inset:-6px -8px;\n                border-radius:10px;\n                border:2px solid rgba(239,68,68,.7);\n                background:rgba(239,68,68,.12);\n                box-shadow:0 0 0 1px rgba(239,68,68,.22);\n                pointer-events:none;\n                z-index:0;\n            }\n            .rk-suggest-remove > *{\n                position:relative;\n                z-index:1;\n            }\n            .rk-suggest-receive{\n                position:relative;\n                z-index:6;\n            }\n            .rk-suggest-receive::before{\n                content:'';\n                position:absolute;\n                inset:-6px -8px;\n                border-radius:10px;\n                border:2px solid rgba(239,68,68,.7);\n                background:rgba(239,68,68,.12);\n                box-shadow:0 0 0 1px rgba(239,68,68,.22);\n                pointer-events:none;\n                z-index:0;\n            }\n            .rk-suggest-receive > *{\n                position:relative;\n                z-index:1;\n            }\n            .rk-suggest-actions{\n                position:fixed;z-index:99870;display:flex;gap:2px;align-items:center;\n                padding:3px 4px;border-radius:999px;\n                font-family:'Plus Jakarta Sans',sans-serif;\n                isolation:isolate;\n                background:linear-gradient(\n                    145deg,\n                    rgba(255,255,255,.96) 0%,\n                    rgba(255,255,255,.9) 45%,\n                    rgba(255,252,248,.88) 100%\n                );\n                border:1px solid rgba(255,255,255,.95);\n                border-bottom-color:rgba(200,185,170,.28);\n                border-right-color:rgba(200,185,170,.2);\n                box-shadow:\n                    0 6px 18px rgba(120,90,60,.12),\n                    0 1px 4px rgba(120,90,60,.06),\n                    inset 0 1px 0 rgba(255,255,255,1);\n                backdrop-filter:blur(16px) saturate(140%);\n                -webkit-backdrop-filter:blur(16px) saturate(140%);\n                opacity:0;visibility:hidden;pointer-events:none;\n                transform:none !important;\n                left:0;top:0;\n            }\n            .rk-suggest-actions.open{\n                opacity:1;visibility:visible;pointer-events:auto;\n            }\n            .rk-sa-btn{\n                appearance:none;-webkit-appearance:none;\n                width:28px;height:28px;min-width:28px;border:none;border-radius:999px;\n                display:inline-flex;align-items:center;justify-content:center;\n                cursor:var(--solis-preview-cursor-hand);\n                padding:0;box-sizing:border-box;margin:0;\n                font:inherit;\n                transition:background .12s ease,color .12s ease,border-color .12s ease,\n                    box-shadow .12s ease,transform .1s ease;\n            }\n            .rk-sa-btn:active{transform:scale(.95);}\n            .rk-sa-btn svg{display:block;flex-shrink:0;width:20px;height:20px;}\n            .rk-sa-accept{\n                background:linear-gradient(145deg,#34d399 0%,#16a34a 100%);\n                color:#ffffff !important;\n                border:1px solid rgba(21,128,61,.35);\n                box-shadow:\n                    inset 0 1px 0 rgba(255,255,255,.35),\n                    0 1px 3px rgba(22,163,74,.25);\n            }\n            .rk-sa-accept:hover{\n                background:linear-gradient(145deg,#22c55e 0%,#15803d 100%);\n                color:#ffffff !important;\n                border-color:rgba(21,128,61,.5);\n            }\n            .rk-sa-decline{\n                background:linear-gradient(145deg,rgba(255,255,255,.75),rgba(255,255,255,.4));\n                border:1px solid rgba(200,185,170,.35);\n                color:rgba(50,38,28,.72);\n                box-shadow:inset 0 1px 0 rgba(255,255,255,.9);\n            }\n            .rk-sa-decline:hover{\n                background:linear-gradient(145deg,rgba(254,226,226,.9),rgba(254,202,202,.55));\n                border-color:rgba(254,202,202,.7);\n                color:#ef4444;\n            }\n            .rk-top-line{align-items:flex-start;flex-direction:column;gap:8px;}\n            .rk-top-line .sub-clabel{flex:none;}\n            .rk-top-modes{\n                display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;width:100%;\n            }\n            .rk-top-mode{\n                appearance:none;cursor:var(--solis-preview-cursor-hand);margin:0;\n                border:1.5px solid rgba(200,185,170,.4);\n                background:linear-gradient(145deg,rgba(255,255,255,.85),rgba(255,255,255,.45));\n                border-radius:10px;\n                padding:9px 6px;\n                font-family:'Plus Jakarta Sans',sans-serif;\n                font-size:11.5px;font-weight:700;letter-spacing:-.01em;\n                color:rgba(50,38,28,.78);\n                transition:border-color .12s ease,background .12s ease,color .12s ease,box-shadow .12s ease;\n            }\n            .rk-top-mode:hover{\n                border-color:rgba(249,115,22,.45);\n                color:#9a3412;\n                box-shadow:0 0 0 1px rgba(249,115,22,.12);\n            }\n            .rk-top-mode.on{\n                border-color:rgba(249,115,22,.55);\n                background:linear-gradient(145deg,rgba(255,237,213,.95),rgba(254,215,170,.55));\n                color:#9a3412;\n                box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 0 0 1px rgba(249,115,22,.15);\n            }\n            .ranking-preview-container{\n                position:relative !important;\n            }\n            .ranking-preview-container .rk-top-panel{\n                position:absolute;left:0;right:0;top:0;z-index:1;\n                height:25%;pointer-events:none;overflow:hidden;\n                background:#fff;\n                margin:0;width:100%;border-radius:0;\n                box-sizing:border-box;\n            }\n            .ranking-preview-container .rk-top-handle{\n                position:absolute;left:0;right:0;bottom:0;height:14px;\n                cursor:var(--solis-preview-cursor-hand);pointer-events:auto;z-index:3;\n                background:linear-gradient(180deg,transparent,rgba(0,0,0,.08));\n            }\n            .ranking-preview-container .rk-top-handle::after{\n                content:'';position:absolute;left:50%;bottom:4px;\n                width:36px;height:3px;border-radius:999px;\n                transform:translateX(-50%);\n                background:rgba(0,0,0,.28);\n            }\n            .ranking-preview-container .rk-top-panel[hidden]{display:none!important;}\n            .ranking-preview-container .rk-top-panel.mode-blank{background:#fff;}\n            .ranking-preview-container .rk-top-panel.mode-blur{\n                background:rgba(255,255,255,.72);\n                backdrop-filter:none;\n                -webkit-backdrop-filter:none;\n            }\n            .ranking-preview-container .rk-top-panel .rk-top-blur-vid{\n                position:absolute;inset:0;width:100%;height:100%;\n                object-fit:cover;object-position:center top;\n                filter:blur(64px) saturate(1.22) brightness(1.26) contrast(0.95);\n                -webkit-filter:blur(64px) saturate(1.22) brightness(1.26) contrast(0.95);\n                transform:scale(1.7);transform-origin:center top;\n                pointer-events:none;opacity:0;z-index:0;\n                transition:opacity .18s ease;\n            }\n            .ranking-preview-container .rk-top-panel.mode-blur .rk-top-blur-vid{opacity:1;}\n            .ranking-preview-container .rk-top-panel.mode-blur.has-blur-src{\n                background:rgba(255,255,255,.35);\n            }\n            .ranking-preview-container .rk-top-panel.mode-blur::after{\n                content:'';position:absolute;inset:0;z-index:1;pointer-events:none;\n                background:\n                    linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,.08));\n            }\n            .rk-top-line.is-hidden{display:none!important;}\n            .ranking-preview-container.has-rk-top > .ranking-editor-zone-header,\n            .ranking-preview-container.has-rk-top > .ranking-editor-zone-ranks,\n            .ranking-preview-container.has-rk-top > .ranking-list{\n                position:relative;z-index:6;\n            }\n            .ranking-preview-container.has-rk-top [data-template-element-id^="title_"],\n            .ranking-preview-container.has-rk-top h1.title,\n            .ranking-preview-container.has-rk-top .ranking-editor-zone-header{\n                position:relative;z-index:7;\n            }\n            .ranking-preview-container .ranking-editor-zone-ranks{\n                cursor:var(--solis-preview-cursor-hand);\n                will-change:transform;\n                touch-action:none;\n            }\n            .ranking-preview-container .ranking-editor-zone-ranks [data-template-element-id],\n            .ranking-preview-container .ranking-editor-zone-ranks .ranking-editor-text{\n                cursor:var(--solis-preview-cursor-hand);\n                touch-action:none;\n                pointer-events:auto;\n            }\n            .ranking-preview-container.rk-stack-dragging,\n            .ranking-preview-container.rk-stack-dragging .ranking-editor-zone-ranks,\n            .ranking-preview-container.rk-stack-dragging .ranking-editor-zone-ranks [data-template-element-id]{\n                cursor:grabbing !important;\n                transition:none !important;\n            }\n            .ranking-preview-container.rk-stack-settle .ranking-editor-zone-ranks{\n                transition:transform .18s ease !important;\n            }\n            .ranking-preview-container .ranking-editor-zone-ranks{\n                transform:translateY(var(--rk-oy, 0px));\n            }\n            .ranking-preview-container [data-template-element-id="title_ranking"],\n            .ranking-preview-container [data-template-element-id="title_funniest"]{\n                font-size:inherit;\n                display:inline-block !important;\n                vertical-align:baseline;\n                max-width:100%;\n            }\n            .ranking-preview-container [data-template-element-id="title_channel"]{\n                max-width:calc(100% - 16px)!important;\n            }\n            .ranking-preview-container h1.title,\n            .ranking-preview-container h1{\n                max-width:100% !important;\n                box-sizing:border-box !important;\n                overflow:visible !important;\n            }\n            .ranking-preview-container .ranking-editor-zone-header{\n                max-width:100% !important;\n                box-sizing:border-box !important;\n                overflow:visible !important;\n            }\n            .ranking-preview-container [data-template-element-id].rk-sized{\n                line-height:1.1;\n            }\n            #templateVideoPreview.preview-placeholder .ranking-preview-container{\n                max-width:100% !important;\n                max-height:100% !important;\n                overflow:hidden !important;\n            }\n            #templateVideoPreview.preview-placeholder .ranking-preview-container .ranking-editor-zone-header,\n            #templateVideoPreview.preview-placeholder .ranking-preview-container .ranking-editor-zone-ranks,\n            #templateVideoPreview.preview-placeholder .ranking-preview-container [data-template-element-id].ranking-editor-selected,\n            #templateVideoPreview.preview-placeholder .ranking-preview-container .ranking-editor-zone-selected,\n            #templateVideoPreview.preview-placeholder .ranking-preview-container .ranking-editor-resize-anchor{\n                overflow:visible !important;\n            }\n            #templateVideoPreview.preview-placeholder .ranking-preview-container h1.title,\n            #templateVideoPreview.preview-placeholder .ranking-preview-container [data-template-element-id^="title_"]{\n                overflow:visible !important;\n                text-overflow:clip !important;\n            }\n            #rkDdFont.sub-font-dd{\n                padding:8px;\n                min-width:200px;\n                max-width:min(240px,calc(100vw - 24px));\n                max-height:min(320px,calc(100vh - 24px));\n                overflow:auto;\n                gap:3px;\n            }\n            #rkDdFont .rk-font-search,\n            #rkDdFont .sub-fcheck{\n                display:none !important;\n            }\n            .rk-cplus-lab{\n                font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;\n                color:rgba(50,38,28,.42);margin:8px 0 4px;\n            }\n            .rk-cplus-lab:first-of-type{margin-top:0;}\n            .rk-sv-panel{\n                position:relative;height:110px;border-radius:12px;cursor:crosshair;\n                border:1px solid rgba(255,255,255,.85);\n                box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 1px 3px rgba(120,90,60,.1);\n                touch-action:none;overflow:hidden;\n            }\n            .rk-sv-thumb{\n                position:absolute;width:14px;height:14px;margin:-7px 0 0 -7px;\n                border-radius:999px;pointer-events:none;\n                border:2px solid #fff;box-shadow:0 1px 4px rgba(40,28,18,.35);\n                left:92%;top:44%;\n            }\n            .rk-sv-panel.is-dragging .rk-sv-thumb{transition:none;}\n            .rk-blank-line.is-hidden{display:none!important;}\n        `;
+    const e = `\n            .ranking-preview-container{\n                position:relative !important;\n                overflow:visible !important;\n                padding:14px 12px 16px !important;\n                container-type:inline-size;\n                container-name:rk-phone;\n            }\n            .ranking-preview-container .ranking-list{\n                display:flex !important;\n                flex-direction:column !important;\n                gap:10px !important;\n                margin:6px 0 0 0 !important;\n                flex:0 0 auto !important;\n                flex-shrink:0 !important;\n                overflow:visible !important;\n            }\n            .ranking-preview-container .ranked-item{\n                flex:0 0 auto !important;\n                flex-shrink:0 !important;\n                line-height:1.2 !important;\n                min-height:1.2em !important;\n                margin:0 !important;\n                gap:6px !important;\n                overflow:visible !important;\n                font-size:clamp(22px, 9.2cqi, 38px);\n                font-family:'Luckiest Guy', cursive;\n            }\n            .ranking-preview-container .title,\n            .ranking-preview-container h1.title{\n                font-size:clamp(28px, 11cqi, 40px) !important;\n                line-height:1.12 !important;\n                padding-top:0 !important;\n                margin-top:0 !important;\n                overflow:visible !important;\n                max-width:calc(100% - 8px) !important;\n            }\n            .ranking-preview-container .rank-title,\n            .ranking-preview-container .rank-number{\n                font-size:inherit;\n                font-family:inherit;\n            }\n            .ranking-preview-container .rank-title.rk-sized,\n            .ranking-preview-container .rank-number.rk-sized{\n            }\n            .ranking-preview-container .ranking-editor-zone-header{\n                flex:0 0 auto !important;\n                flex-shrink:0 !important;\n                padding:0 4px 4px !important;\n            }\n            .ranking-preview-container [data-template-element-id]{\n                position:relative;display:inline-block;\n                cursor:var(--solis-preview-cursor, url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAADnUlEQVR4nO2YMUwbVxjHv/fuzoaESqy0ys6AuiAxdGEsQpBQkIWIZIulIlXSgNylE5ilA4ux3KSjh0pVMQNBHjKwMEbqUokBiYggkcECIVEg5uznu/evvuNO9dAs4Wxzyv2kp3f3fPf0/d/3f+/dM1FMTExMTMznCgBJUQeAoCgC4D6A7/1rg6IGgF4ANQA/+fdWpLIBIAngAwDtOM6PkZsTAHoAXF5fXwOA0yLCpCiwsrLCAq7W1tZ0Pp9nEVBKPY+MnUZHRz0By8vLICK3UqlozoRt2886aSd52w4SiQQJIWQqlaKNjQ3Z09OzXqvVngkhdCfsZN62AwBeaTabIpPJQEpppFKpolJKCCGKbCcicoQQnKnQkWF1ZFkWcdCZTEZvbW3Bsqy8bdtPhRBNImrbfJBhdaS1Jikl1et1OTc3R+Vyme1UuLq6etpOO5lhdhaIaDQaIp1Oa8MwjJmZmV+VUjxPXrTDTpJCJhChlJIsYnt7m+20rpR60g47SWoDgQjbtuXs7Cxtbm6almUVLy8vfwjbTia1CRZhGIZnJ57YlmWZU1NTLxyHHSRehmUnGV7IxD73SoDrul7NE3t6etotl8swDCOvlFrw7XR3MhAEznsCX3M9PDxMfX19np201kapVKKhoaHE4ODgS54jQojf+JPjNlkITUCwofF+wPbh0Z+YmKBcLkeO4zSklNp1XQOAK29YB2AT0e++6Jt0ddpCgW14qcxms7pYLCKwTqFQ0Kenp2Sa5lsp5WPLsr5LJBIpInpERFwfcwwcfMc//oKPudXVVU4/stksB+ExMjLitXFZWFjg9trFxcU3dJcY9QXkcjmk02nHPxRUABzs7OzwJqbZ2/39/e7+/j7//KZQKPAhyGwpRtcEHB0deQeaw8NDXteZSqlU4rY034yPj7tBFubn571nGo3G4ztzcgOQdF33Hz/4P6vV6n1u90f5r93dXfT29rqchWQy6e7t7bGIv09OTvpYQNcPPLg5UqLZbP7BYvw2b1Wr1+sP2VGTk5MON/PuOzY25mrtJeJJ67NdAwCPJC+F9/x7b1S5Pj4+5n8sXh8cHPD5gDcsDAwMqPPzc1bwrlarfRm8Q10UIIJJ2GqHlrZvAVwvLS01FxcXVbVaDRap9wC+7rqAgP/zciDCcZxXQdQADgH8DOCLj73XcT4WRNAOYNgP/Jezs7OvKIoAeNByHa2/IPFfJow74fdPIbKBx8TExHwe/At9ycKu2r1fywAAAABJRU5ErkJggg==') 15 11, auto);\n                transition:none!important;\n                overflow:visible !important;\n            }\n            .ranking-preview-container h1.title,\n            .ranking-preview-container h1{\n                white-space:nowrap!important;\n                max-width:100%;\n            }\n            .ranking-preview-container [data-template-element-id="title_ranking"],\n            .ranking-preview-container [data-template-element-id="title_funniest"]{\n                white-space:nowrap!important;\n            }\n            .ranking-preview-container .ranking-editor-zone-header,\n            .ranking-preview-container .ranking-editor-zone-ranks{\n                width:fit-content;max-width:100%;\n                overflow:visible !important;\n            }\n            .ranking-preview-container .ranking-editor-zone-header{\n                display:flex !important;\n                flex-direction:column !important;\n                align-items:center !important;\n                justify-content:flex-start !important;\n                gap:0;\n                margin:0 auto !important;\n                padding:2px 4px 0;\n                text-align:center;\n                position:relative;\n                z-index:6;\n                flex-shrink:0;\n                width:100% !important;\n                max-width:100% !important;\n                box-sizing:border-box;\n            }\n            .ranking-preview-container .ranking-editor-zone-header > h1.title,\n            .ranking-preview-container .ranking-editor-zone-header > h1{\n                display:block !important;\n                width:fit-content !important;\n                max-width:100% !important;\n                margin:0 auto 2px !important;\n                padding:0 !important;\n                text-align:center;\n                position:relative;\n                z-index:7;\n            }\n            .ranking-preview-container [data-template-element-id="title_channel"]{\n                display:block !important;\n                position:relative !important;\n                z-index:7;\n                width:fit-content !important;\n                max-width:calc(100% - 24px) !important;\n                margin:2px auto 8px auto !important;\n                font-size:clamp(20px, 8.5cqi, 34px) !important;\n                padding:0 !important;\n                text-align:center !important;\n                box-sizing:border-box;\n                white-space:nowrap !important;\n                overflow:visible !important;\n                overflow-wrap:normal !important;\n                word-break:normal !important;\n                float:none !important;\n                inset:auto !important;\n                top:auto !important;\n                left:auto !important;\n                right:auto !important;\n                bottom:auto !important;\n                transform:none !important;\n            }\n            .ranking-preview-container .ranking-editor-zone-member{\n                position:relative;z-index:1;\n            }\n            .ranking-preview-container .sub-resize-handle{\n                position:absolute;width:18px;height:18px;\n                background:rgba(249,115,22,.98);border:2.5px solid #fff;border-radius:50%;\n                cursor:var(--solis-preview-cursor-hand)!important;\n                box-shadow:0 2px 10px rgba(194,65,12,.4);\n                bottom:0;right:0;\n                transform:translate(35%,35%);\n                z-index:120;\n                pointer-events:none;display:none;\n                opacity:0;visibility:hidden;\n                touch-action:none;\n            }\n            .ranking-preview-container .sub-resize-handle::after{\n                content:'';position:absolute;inset:-10px -12px -12px -10px;border-radius:50%;\n                cursor:var(--solis-preview-cursor-hand)!important;\n            }\n            .ranking-preview-container .ranking-editor-selected > .sub-resize-handle,\n            .ranking-preview-container .ranking-editor-resize-anchor > .sub-resize-handle,\n            .ranking-preview-container .ranking-editor-zone-selected > .sub-resize-handle{\n                display:block;pointer-events:all;\n                opacity:1;visibility:visible;\n            }\n            .ranking-preview-container .ranking-editor-selected > .sub-resize-handle:hover,\n            .ranking-preview-container .ranking-editor-resize-anchor > .sub-resize-handle:hover,\n            .ranking-preview-container .ranking-editor-zone-selected > .sub-resize-handle:hover{\n                transform:translate(40%,40%) scale(1.15);\n            }\n            .ranking-editor-text{cursor:var(--solis-preview-cursor, url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAADnUlEQVR4nO2YMUwbVxjHv/fuzoaESqy0ys6AuiAxdGEsQpBQkIWIZIulIlXSgNylE5ilA4ux3KSjh0pVMQNBHjKwMEbqUokBiYggkcECIVEg5uznu/evvuNO9dAs4Wxzyv2kp3f3fPf0/d/3f+/dM1FMTExMTMznCgBJUQeAoCgC4D6A7/1rg6IGgF4ANQA/+fdWpLIBIAngAwDtOM6PkZsTAHoAXF5fXwOA0yLCpCiwsrLCAq7W1tZ0Pp9nEVBKPY+MnUZHRz0By8vLICK3UqlozoRt2886aSd52w4SiQQJIWQqlaKNjQ3Z09OzXqvVngkhdCfsZN62AwBeaTabIpPJQEpppFKpolJKCCGKbCcicoQQnKnQkWF1ZFkWcdCZTEZvbW3Bsqy8bdtPhRBNImrbfJBhdaS1Jikl1et1OTc3R+Vyme1UuLq6etpOO5lhdhaIaDQaIp1Oa8MwjJmZmV+VUjxPXrTDTpJCJhChlJIsYnt7m+20rpR60g47SWoDgQjbtuXs7Cxtbm6almUVLy8vfwjbTia1CRZhGIZnJ57YlmWZU1NTLxyHHSRehmUnGV7IxD73SoDrul7NE3t6etotl8swDCOvlFrw7XR3MhAEznsCX3M9PDxMfX19np201kapVKKhoaHE4ODgS54jQojf+JPjNlkITUCwofF+wPbh0Z+YmKBcLkeO4zSklNp1XQOAK29YB2AT0e++6Jt0ddpCgW14qcxms7pYLCKwTqFQ0Kenp2Sa5lsp5WPLsr5LJBIpInpERFwfcwwcfMc//oKPudXVVU4/stksB+ExMjLitXFZWFjg9trFxcU3dJcY9QXkcjmk02nHPxRUABzs7OzwJqbZ2/39/e7+/j7//KZQKPAhyGwpRtcEHB0deQeaw8NDXteZSqlU4rY034yPj7tBFubn571nGo3G4ztzcgOQdF33Hz/4P6vV6n1u90f5r93dXfT29rqchWQy6e7t7bGIv09OTvpYQNcPPLg5UqLZbP7BYvw2b1Wr1+sP2VGTk5MON/PuOzY25mrtJeJJ67NdAwCPJC+F9/x7b1S5Pj4+5n8sXh8cHPD5gDcsDAwMqPPzc1bwrlarfRm8Q10UIIJJ2GqHlrZvAVwvLS01FxcXVbVaDRap9wC+7rqAgP/zciDCcZxXQdQADgH8DOCLj73XcT4WRNAOYNgP/Jezs7OvKIoAeNByHa2/IPFfJow74fdPIbKBx8TExHwe/At9ycKu2r1fywAAAABJRU5ErkJggg==') 15 11, auto);}\n            .ranking-preview-container .rk-number-locked,\n            .ranking-preview-container [data-template-element-id$="_number"]{\n                -webkit-user-modify:read-only;\n                user-select:none;\n                caret-color:transparent;\n                touch-action:none;\n            }\n            .ranking-preview-container .ranking-editor-zone-ranks{\n                touch-action:none;\n            }\n            .ranking-editor-text,.ranking-editor-zone{\n                transition:none!important;\n                box-shadow:none!important;\n            }\n            .ranking-editor-zone{\n                position:relative;\n                border-radius:10px;\n            }\n            .ranking-preview-container [data-template-element-id].ranking-editor-selected{\n                position:relative;\n                z-index:6;\n                isolation:isolate;\n                box-shadow:none!important;\n            }\n            .ranking-preview-container [data-template-element-id].ranking-editor-selected::before{\n                content:'';\n                position:absolute;\n                inset:-5px -4px;\n                border-radius:8px;\n                border:1.5px solid #f97316;\n                background:transparent;\n                box-shadow:\n                    0 0 0 3px rgba(249,115,22,.32),\n                    0 0 14px rgba(249,115,22,.28);\n                pointer-events:none;\n                z-index:0;\n                animation:none;\n            }\n            .ranking-preview-container [data-template-element-id].ranking-editor-selected::after{\n                content:none;\n                display:none;\n            }\n            .ranking-preview-container .rank-number.ranking-editor-selected::before{\n                inset:-3px -2px !important;\n                border-radius:5px;\n            }\n            .ranking-preview-container .rank-number.ranking-editor-selected::after{\n                display:none !important;\n            }\n            .ranking-preview-container .rank-number{\n                display:inline-block !important;\n                width:max-content !important;\n                max-width:none !important;\n                margin-right:0.15em !important;\n                padding:0 !important;\n                letter-spacing:0 !important;\n                line-height:1.05 !important;\n                box-sizing:content-box !important;\n            }\n            .ranking-preview-container .text-stroke{\n                text-shadow:\n                    2px 0 0 #000, -2px 0 0 #000, 0 2px 0 #000, 0 -2px 0 #000,\n                    1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000 !important;\n            }\n            .ranking-editor-zone-selected{\n                position:relative;\n                z-index:5;\n                isolation:isolate;\n                box-shadow:none!important;\n            }\n            .ranking-editor-zone-selected::before{\n                content:'';\n                position:absolute;\n                inset:-6px -8px;\n                border-radius:12px;\n                border:1.5px solid #f97316;\n                background:transparent;\n                box-shadow:\n                    0 0 0 3px rgba(249,115,22,.28),\n                    0 0 14px rgba(249,115,22,.22);\n                pointer-events:none;\n                z-index:0;\n                animation:none;\n            }\n            .ranking-editor-zone-selected::after{\n                content:none;\n                display:none;\n            }\n            .ranking-editor-zone-selected > *:not(.sub-resize-handle){\n                position:relative;\n                z-index:1;\n            }\n            .ranking-preview-container .sub-guide,\n            .ranking-preview-container .sub-half-line,\n            .ranking-preview-container .rk-half-line,\n            .ranking-preview-container .rk-guide{\n                display:none !important;\n                visibility:hidden !important;\n                opacity:0 !important;\n            }\n            @keyframes rkSelInnerFade{\n                0%,100%{opacity:1;}\n                50%{opacity:.92;}\n            }\n            @keyframes rkSelWhitePulse{\n                0%,100%{opacity:.45;transform:scale(.97);}\n                50%{opacity:.95;transform:scale(1);}\n            }\n            #rkPillMenu{\n                transition:opacity .1s ease,transform .1s ease,visibility .1s!important;\n            }\n            .rk-ghost-stack{\n                position:fixed;z-index:99850;pointer-events:none;\n                display:flex;flex-direction:column;justify-content:center;align-items:flex-end;\n                gap:6px;\n                padding:6px 12px;border-radius:8px;\n                background:rgba(34,197,94,.16);\n                box-shadow:inset 0 0 0 1.5px rgba(34,197,94,.45);\n                width:max-content;height:auto;max-width:min(220px,40vw);\n                overflow:visible;\n                -webkit-user-select:none!important;user-select:none!important;\n                -webkit-user-drag:none;\n            }\n            .rk-ghost-stack .rk-ghost-line{\n                display:block;white-space:nowrap;line-height:1.05;opacity:1!important;\n                background:none!important;padding:0;margin:0;\n                position:static!important;right:auto!important;top:auto!important;\n                transform:none!important;\n                font-weight:700;\n                letter-spacing:-.015em;\n                -webkit-user-select:none!important;user-select:none!important;\n            }\n            .rk-ghost-stack .rk-ghost-title-row{\n                display:flex;flex-direction:row;align-items:baseline;justify-content:flex-end;\n                gap:6px;flex-wrap:nowrap;\n            }\n            .rk-ghost-stack .rk-ghost-title-row .rk-ghost-line{\n                display:inline-block;\n            }\n            .rk-ghost-stack .rk-ghost-channel{\n                text-align:right;\n            }\n            .rk-suggest-remove{\n                position:relative;\n                z-index:6;\n            }\n            .rk-suggest-remove::before{\n                content:'';\n                position:absolute;\n                inset:-6px -8px;\n                border-radius:10px;\n                border:2px solid rgba(239,68,68,.7);\n                background:rgba(239,68,68,.12);\n                box-shadow:0 0 0 1px rgba(239,68,68,.22);\n                pointer-events:none;\n                z-index:0;\n            }\n            .rk-suggest-remove > *{\n                position:relative;\n                z-index:1;\n            }\n            .rk-suggest-receive{\n                position:relative;\n                z-index:6;\n            }\n            .rk-suggest-receive::before{\n                content:'';\n                position:absolute;\n                inset:-6px -8px;\n                border-radius:10px;\n                border:2px solid rgba(239,68,68,.7);\n                background:rgba(239,68,68,.12);\n                box-shadow:0 0 0 1px rgba(239,68,68,.22);\n                pointer-events:none;\n                z-index:0;\n            }\n            .rk-suggest-receive > *{\n                position:relative;\n                z-index:1;\n            }\n            .rk-suggest-actions{\n                position:fixed;z-index:99870;display:flex;gap:2px;align-items:center;\n                padding:3px 4px;border-radius:999px;\n                font-family:'Plus Jakarta Sans',sans-serif;\n                isolation:isolate;\n                background:linear-gradient(\n                    145deg,\n                    rgba(255,255,255,.96) 0%,\n                    rgba(255,255,255,.9) 45%,\n                    rgba(255,252,248,.88) 100%\n                );\n                border:1px solid rgba(255,255,255,.95);\n                border-bottom-color:rgba(200,185,170,.28);\n                border-right-color:rgba(200,185,170,.2);\n                box-shadow:\n                    0 6px 18px rgba(120,90,60,.12),\n                    0 1px 4px rgba(120,90,60,.06),\n                    inset 0 1px 0 rgba(255,255,255,1);\n                backdrop-filter:blur(16px) saturate(140%);\n                -webkit-backdrop-filter:blur(16px) saturate(140%);\n                opacity:0;visibility:hidden;pointer-events:none;\n                transform:none !important;\n                left:0;top:0;\n            }\n            .rk-suggest-actions.open{\n                opacity:1;visibility:visible;pointer-events:auto;\n            }\n            .rk-sa-btn{\n                appearance:none;-webkit-appearance:none;\n                width:28px;height:28px;min-width:28px;border:none;border-radius:999px;\n                display:inline-flex;align-items:center;justify-content:center;\n                cursor:var(--solis-preview-cursor-hand);\n                padding:0;box-sizing:border-box;margin:0;\n                font:inherit;\n                transition:background .12s ease,color .12s ease,border-color .12s ease,\n                    box-shadow .12s ease,transform .1s ease;\n            }\n            .rk-sa-btn:active{transform:scale(.95);}\n            .rk-sa-btn svg{display:block;flex-shrink:0;width:20px;height:20px;}\n            .rk-sa-accept{\n                background:linear-gradient(145deg,#34d399 0%,#16a34a 100%);\n                color:#ffffff !important;\n                border:1px solid rgba(21,128,61,.35);\n                box-shadow:\n                    inset 0 1px 0 rgba(255,255,255,.35),\n                    0 1px 3px rgba(22,163,74,.25);\n            }\n            .rk-sa-accept:hover{\n                background:linear-gradient(145deg,#22c55e 0%,#15803d 100%);\n                color:#ffffff !important;\n                border-color:rgba(21,128,61,.5);\n            }\n            .rk-sa-decline{\n                background:linear-gradient(145deg,rgba(255,255,255,.75),rgba(255,255,255,.4));\n                border:1px solid rgba(200,185,170,.35);\n                color:rgba(50,38,28,.72);\n                box-shadow:inset 0 1px 0 rgba(255,255,255,.9);\n            }\n            .rk-sa-decline:hover{\n                background:linear-gradient(145deg,rgba(254,226,226,.9),rgba(254,202,202,.55));\n                border-color:rgba(254,202,202,.7);\n                color:#ef4444;\n            }\n            .rk-top-line{align-items:flex-start;flex-direction:column;gap:8px;}\n            .rk-top-line .sub-clabel{flex:none;}\n            .rk-top-modes{\n                display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;width:100%;\n            }\n            .rk-top-mode{\n                appearance:none;cursor:var(--solis-preview-cursor-hand);margin:0;\n                border:1.5px solid rgba(200,185,170,.4);\n                background:linear-gradient(145deg,rgba(255,255,255,.85),rgba(255,255,255,.45));\n                border-radius:10px;\n                padding:9px 6px;\n                font-family:'Plus Jakarta Sans',sans-serif;\n                font-size:11.5px;font-weight:700;letter-spacing:-.01em;\n                color:rgba(50,38,28,.78);\n                transition:border-color .12s ease,background .12s ease,color .12s ease,box-shadow .12s ease;\n            }\n            .rk-top-mode:hover{\n                border-color:rgba(249,115,22,.45);\n                color:#9a3412;\n                box-shadow:0 0 0 1px rgba(249,115,22,.12);\n            }\n            .rk-top-mode.on{\n                border-color:rgba(249,115,22,.55);\n                background:linear-gradient(145deg,rgba(255,237,213,.95),rgba(254,215,170,.55));\n                color:#9a3412;\n                box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 0 0 1px rgba(249,115,22,.15);\n            }\n            .ranking-preview-container{\n                position:relative !important;\n            }\n            .ranking-preview-container .rk-top-panel{\n                position:absolute;left:0;right:0;top:0;z-index:1;\n                height:25%;pointer-events:none;overflow:hidden;\n                background:#fff;\n                margin:0;width:100%;border-radius:0;\n                box-sizing:border-box;\n            }\n            .ranking-preview-container .rk-top-handle{\n                position:absolute;left:0;right:0;bottom:0;height:14px;\n                cursor:var(--solis-preview-cursor-hand);pointer-events:auto;z-index:3;\n                background:linear-gradient(180deg,transparent,rgba(0,0,0,.08));\n            }\n            .ranking-preview-container .rk-top-handle::after{\n                content:'';position:absolute;left:50%;bottom:4px;\n                width:36px;height:3px;border-radius:999px;\n                transform:translateX(-50%);\n                background:rgba(0,0,0,.28);\n            }\n            .ranking-preview-container .rk-top-panel[hidden]{display:none!important;}\n            .ranking-preview-container .rk-top-panel.mode-blank{background:#fff;}\n            .ranking-preview-container .rk-top-panel.mode-blur{\n                background:rgba(255,255,255,.72);\n                backdrop-filter:none;\n                -webkit-backdrop-filter:none;\n            }\n            .ranking-preview-container .rk-top-panel .rk-top-blur-vid{\n                position:absolute;inset:0;width:100%;height:100%;\n                object-fit:cover;object-position:center top;\n                filter:blur(64px) saturate(1.22) brightness(1.26) contrast(0.95);\n                -webkit-filter:blur(64px) saturate(1.22) brightness(1.26) contrast(0.95);\n                transform:scale(1.7);transform-origin:center top;\n                pointer-events:none;opacity:0;z-index:0;\n                transition:opacity .18s ease;\n            }\n            .ranking-preview-container .rk-top-panel.mode-blur .rk-top-blur-vid{opacity:1;}\n            .ranking-preview-container .rk-top-panel.mode-blur.has-blur-src{\n                background:rgba(255,255,255,.35);\n            }\n            .ranking-preview-container .rk-top-panel.mode-blur::after{\n                content:'';position:absolute;inset:0;z-index:1;pointer-events:none;\n                background:\n                    linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,.08));\n            }\n            .rk-top-line.is-hidden{display:none!important;}\n            .ranking-preview-container.has-rk-top > .ranking-editor-zone-header,\n            .ranking-preview-container.has-rk-top > .ranking-editor-zone-ranks,\n            .ranking-preview-container.has-rk-top > .ranking-list{\n                position:relative;z-index:6;\n            }\n            .ranking-preview-container.has-rk-top [data-template-element-id^="title_"],\n            .ranking-preview-container.has-rk-top h1.title,\n            .ranking-preview-container.has-rk-top .ranking-editor-zone-header{\n                position:relative;z-index:7;\n            }\n            .ranking-preview-container .ranking-editor-zone-ranks{\n                cursor:var(--solis-preview-cursor-hand);\n                will-change:transform;\n                touch-action:none;\n            }\n            .ranking-preview-container .ranking-editor-zone-ranks [data-template-element-id],\n            .ranking-preview-container .ranking-editor-zone-ranks .ranking-editor-text{\n                cursor:var(--solis-preview-cursor-hand);\n                touch-action:none;\n                pointer-events:auto;\n            }\n            .ranking-preview-container.rk-stack-dragging,\n            .ranking-preview-container.rk-stack-dragging .ranking-editor-zone-ranks,\n            .ranking-preview-container.rk-stack-dragging .ranking-editor-zone-ranks [data-template-element-id]{\n                cursor:grabbing !important;\n                transition:none !important;\n            }\n            .ranking-preview-container.rk-stack-settle .ranking-editor-zone-ranks{\n                transition:transform .18s ease !important;\n            }\n            .ranking-preview-container .ranking-editor-zone-ranks{\n                transform:translateY(var(--rk-oy, 0px));\n            }\n            .ranking-preview-container [data-template-element-id="title_ranking"],\n            .ranking-preview-container [data-template-element-id="title_funniest"]{\n                font-size:inherit;\n                display:inline-block !important;\n                vertical-align:baseline;\n                max-width:100%;\n            }\n            .ranking-preview-container [data-template-element-id="title_channel"]{\n                max-width:calc(100% - 16px)!important;\n            }\n            .ranking-preview-container h1.title,\n            .ranking-preview-container h1{\n                max-width:100% !important;\n                box-sizing:border-box !important;\n                overflow:visible !important;\n            }\n            .ranking-preview-container .ranking-editor-zone-header{\n                max-width:100% !important;\n                box-sizing:border-box !important;\n                overflow:visible !important;\n            }\n            .ranking-preview-container [data-template-element-id].rk-sized{\n                line-height:1.1;\n            }\n            #templateVideoPreview.preview-placeholder .ranking-preview-container{\n                max-width:100% !important;\n                max-height:100% !important;\n                overflow:hidden !important;\n            }\n            #templateVideoPreview.preview-placeholder .ranking-preview-container .ranking-editor-zone-header,\n            #templateVideoPreview.preview-placeholder .ranking-preview-container .ranking-editor-zone-ranks,\n            #templateVideoPreview.preview-placeholder .ranking-preview-container [data-template-element-id].ranking-editor-selected,\n            #templateVideoPreview.preview-placeholder .ranking-preview-container .ranking-editor-zone-selected,\n            #templateVideoPreview.preview-placeholder .ranking-preview-container .ranking-editor-resize-anchor{\n                overflow:visible !important;\n            }\n            #templateVideoPreview.preview-placeholder .ranking-preview-container h1.title,\n            #templateVideoPreview.preview-placeholder .ranking-preview-container [data-template-element-id^="title_"]{\n                overflow:visible !important;\n                text-overflow:clip !important;\n            }\n            #rkDdFont.sub-font-dd{\n                padding:8px;\n                min-width:200px;\n                max-width:min(240px,calc(100vw - 24px));\n                max-height:min(320px,calc(100vh - 24px));\n                overflow:auto;\n                gap:3px;\n            }\n            #rkDdFont .rk-font-search,\n            #rkDdFont .sub-fcheck{\n                display:none !important;\n            }\n            .rk-cplus-lab{\n                font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;\n                color:rgba(50,38,28,.42);margin:8px 0 4px;\n            }\n            .rk-cplus-lab:first-of-type{margin-top:0;}\n            .rk-sv-panel{\n                position:relative;height:110px;border-radius:12px;cursor:crosshair;\n                border:1px solid rgba(255,255,255,.85);\n                box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 1px 3px rgba(120,90,60,.1);\n                touch-action:none;overflow:hidden;\n            }\n            .rk-sv-thumb{\n                position:absolute;width:14px;height:14px;margin:-7px 0 0 -7px;\n                border-radius:999px;pointer-events:none;\n                border:2px solid #fff;box-shadow:0 1px 4px rgba(40,28,18,.35);\n                left:92%;top:44%;\n            }\n            .rk-sv-panel.is-dragging .rk-sv-thumb{transition:none;}\n            .rk-blank-line.is-hidden{display:none!important;}\n        `;
     let t = document.getElementById("rk-pill-styles");
     if (!t) {
       t = document.createElement("style");
@@ -381,10 +381,10 @@
     e.setAttribute("aria-hidden", "false");
     const t = document.getElementById("rkCPlusTitle");
     if (t) {
-      t.textContent = z === "blank" ? "Custom blank" : z === "fill" ? "Custom fill" : "Custom text";
+      t.textContent = C === "blank" ? "Custom blank" : C === "fill" ? "Custom fill" : "Custom text";
     }
     g?.querySelectorAll(".sub-sw-add").forEach(e => {
-      e.classList.toggle("on", (e.dataset.target || "text") === z);
+      e.classList.toggle("on", (e.dataset.target || "text") === C);
     });
     syncSpectrumUI();
     renderPlusRecents();
@@ -392,7 +392,7 @@
     wireSvPanel();
   }
   function spectrumHex() {
-    return hslToHex(D, N, $);
+    return hslToHex(D, I, N);
   }
   function syncSpectrumUI() {
     const e = spectrumHex();
@@ -408,21 +408,21 @@
     }
     const i = document.getElementById("rkSvThumb");
     if (i) {
-      i.style.left = `${Math.max(0, Math.min(100, N))}%`;
-      i.style.top = `${Math.max(0, Math.min(100, 100 - $))}%`;
+      i.style.left = `${Math.max(0, Math.min(100, I))}%`;
+      i.style.top = `${Math.max(0, Math.min(100, 100 - N))}%`;
       i.style.background = e;
     }
   }
   function commitSpectrumColor(e, t) {
     if (t) {
-      if (z === "blank") previewBlankColor(e); else if (z === "fill") previewTextColor(e); else previewTextColor(e);
+      if (C === "blank") previewBlankColor(e); else if (C === "fill") previewTextColor(e); else previewTextColor(e);
       return;
     }
-    if (z === "blank") {
+    if (C === "blank") {
       applyBlankColor(e, true);
       saveCustomCol(e);
       renderPlusRecents();
-    } else if (z === "fill") {
+    } else if (C === "fill") {
       applyFillColor(e, true);
       saveCustomCol(e);
       renderPlusRecents();
@@ -450,7 +450,7 @@
         if (document.querySelector(".rk-inline-editing")) e.preventDefault();
       };
       n.onclick = () => {
-        if (z === "blank") applyBlankColor(t, true); else if (z === "fill") applyFillColor(t, true); else applyTextColor(t, true);
+        if (C === "blank") applyBlankColor(t, true); else if (C === "fill") applyFillColor(t, true); else applyTextColor(t, true);
         closePlusPop();
       };
       e.appendChild(n);
@@ -501,8 +501,8 @@
       const r = e.getBoundingClientRect();
       const o = Math.max(0, Math.min(1, (t - r.left) / Math.max(1, r.width)));
       const a = Math.max(0, Math.min(1, (n - r.top) / Math.max(1, r.height)));
-      N = Math.round(o * 100);
-      $ = Math.round((1 - a) * 100);
+      I = Math.round(o * 100);
+      N = Math.round((1 - a) * 100);
       const s = spectrumHex();
       syncSpectrumUI();
       commitSpectrumColor(s, i);
@@ -541,13 +541,13 @@
     };
     t.onclick = e => {
       e.stopPropagation();
-      z = t.dataset.target || "text";
+      C = t.dataset.target || "text";
       const n = document.getElementById("rkCPlusTitle");
       if (n) {
-        n.textContent = z === "blank" ? "Custom blank" : z === "fill" ? "Custom fill" : "Custom text";
+        n.textContent = C === "blank" ? "Custom blank" : C === "fill" ? "Custom fill" : "Custom text";
       }
       g?.querySelectorAll(".sub-sw-add").forEach(e => {
-        e.classList.toggle("on", e.dataset.target === z && isPlusPopOpen());
+        e.classList.toggle("on", e.dataset.target === C && isPlusPopOpen());
       });
       if (isPlusPopOpen() && t.classList.contains("on")) {
         closePlusPop();
@@ -604,12 +604,12 @@
     return i;
   }
   function beginColorPreview() {
-    if (A) return;
-    A = true;
-    H = z === "fill" ? v : w;
+    if (T) return;
+    T = true;
+    H = C === "fill" ? v : w;
     B.clear();
     _ = null;
-    const e = z === "text" ? getInlineEditSelection() : null;
+    const e = C === "text" ? getInlineEditSelection() : null;
     if (e) {
       B.set(e.editing, {
         html: e.editing.innerHTML
@@ -617,7 +617,7 @@
       return;
     }
     resolveApplyTargets().forEach(e => {
-      if (z === "fill") {
+      if (C === "fill") {
         B.set(e, {
           bg: e.style.backgroundColor || "",
           pad: e.style.padding || "",
@@ -630,13 +630,13 @@
     });
   }
   function previewTextColor(e) {
-    if (!y.size && z !== "blank") return;
-    if (z === "blank") {
+    if (!y.size && C !== "blank") return;
+    if (C === "blank") {
       previewBlankColor(e);
       return;
     }
     beginColorPreview();
-    if (z === "fill") {
+    if (C === "fill") {
       resolveApplyTargets().forEach(t => applyFillToEl(t, e));
       syncFillSwatches(e);
       return;
@@ -663,8 +663,8 @@
     });
   }
   function endColorPreview() {
-    if (!A) return;
-    A = false;
+    if (!T) return;
+    T = false;
     B.forEach((e, t) => {
       if (!t?.isConnected) return;
       if (e && typeof e === "object" && "html" in e) {
@@ -680,21 +680,21 @@
     });
     B.clear();
     _ = null;
-    if (z === "fill") {
+    if (C === "fill") {
       if (H !== undefined) v = H;
     } else if (H != null) {
       w = H;
     }
     H = null;
-    T = null;
+    F = null;
     syncColorSwatches();
     syncFillSwatches();
   }
   function discardColorPreview() {
-    A = false;
+    T = false;
     B.clear();
     H = null;
-    T = null;
+    F = null;
     _ = null;
   }
   function applyFillToEl(e, t) {
@@ -715,9 +715,9 @@
     e.classList.add("rk-has-fill");
   }
   function applyFillColor(e, t) {
-    if (A) discardColorPreview();
+    if (T) discardColorPreview();
     v = e ? normalizeHex(e) || e : null;
-    if (t !== false) C = true;
+    if (t !== false) z = true;
     resolveApplyTargets().forEach(e => applyFillToEl(e, v));
     syncFillSwatches();
     if (t !== false && window.rankingCustomizer) window.rankingCustomizer.syncFromDOM();
@@ -745,14 +745,14 @@
           if (document.querySelector(".rk-inline-editing")) e.preventDefault();
         };
         n.onpointerenter = () => {
-          z = "text";
+          C = "text";
           previewTextColor(t);
         };
         n.onpointerleave = () => {
           endColorPreview();
         };
         n.onclick = () => {
-          z = "text";
+          C = "text";
           applyTextColor(t, true);
           closePlusPop();
         };
@@ -881,7 +881,7 @@
         if (document.querySelector(".rk-inline-editing")) e.preventDefault();
       };
       n.onclick = () => {
-        z = "blank";
+        C = "blank";
         applyBlankColor(t, true);
         closePlusPop();
       };
@@ -901,7 +901,7 @@
   function syncBlankBgVisibility() {
     const e = document.getElementById("rkBlankLine");
     if (!e) return;
-    const t = O != null ? O : getRankingLayout().top_panel || "none";
+    const t = $ != null ? $ : getRankingLayout().top_panel || "none";
     const n = t === "blank" && selectionAllowsTopBg();
     e.classList.toggle("is-hidden", !n);
     e.setAttribute("aria-hidden", n ? "false" : "true");
@@ -1010,7 +1010,7 @@
     return {
       top_panel: t.top_panel === "blank" || t.top_panel === "blank_blur" ? t.top_panel : "none",
       top_panel_color: normalizeHex(t.top_panel_color) || "#000000",
-      top_ratio: Math.max(c, Math.min(u, n)),
+      top_ratio: Math.max(c, Math.min(d, n)),
       offset_x_pct: 0,
       offset_y_pct: (() => {
         const e = Number(t.offset_y_pct);
@@ -1050,10 +1050,10 @@
     const s = i.getBoundingClientRect();
     const l = s.top - o - r;
     const c = s.bottom - o - r;
-    const u = Math.max(6, t * .012);
-    const d = Math.max(4, t * .01);
-    let p = (a + u - l) / t;
-    let g = (t - d - c) / t;
+    const d = Math.max(6, t * .012);
+    const u = Math.max(4, t * .01);
+    let p = (a + d - l) / t;
+    let g = (t - u - c) / t;
     p = Math.max(-.35, Math.min(.45, p));
     g = Math.max(-.35, Math.min(.45, g));
     if (g < p) {
@@ -1151,7 +1151,7 @@
       const s = r.pointerId;
       const l = getRankingLayout();
       const c = r.clientY;
-      const u = r.clientX;
+      const d = r.clientX;
       const p = Number(l.offset_y_pct) || 0;
       const g = Math.max(1, e.getBoundingClientRect().height || 1);
       const m = computeStackOffsetBounds(e);
@@ -1179,7 +1179,7 @@
         if (v) return;
         if (i.pointerId != null && i.pointerId !== s) return;
         const r = i.clientY - c;
-        const o = i.clientX - u;
+        const o = i.clientX - d;
         if (!b && Math.hypot(o, r) < n) return;
         if (!b) {
           b = true;
@@ -1191,8 +1191,8 @@
         if (i.cancelable) i.preventDefault();
         e.classList.add("rk-stack-dragging");
         e.classList.remove("rk-stack-settle");
-        if (y.size && d?.classList) {
-          d.classList.add("active");
+        if (y.size && u?.classList) {
+          u.classList.add("active");
           schedulePosMenu();
         }
         const a = p + r / g;
@@ -1271,7 +1271,7 @@
       ...t,
       ...e
     };
-    O = null;
+    $ = null;
     storeRankingLayout(n);
     applyRankingTopPanel(n);
     applyStackOffset(n);
@@ -1303,13 +1303,13 @@
         const o = getRankingLayout();
         const a = n.clientY;
         const s = Number(o.top_ratio) || l;
-        const d = n.pointerId;
+        const u = n.pointerId;
         try {
-          e.setPointerCapture(d);
+          e.setPointerCapture(u);
         } catch (e) {}
         const onMove = e => {
           const n = e.clientY - a;
-          const i = Math.max(c, Math.min(u, s + n / r));
+          const i = Math.max(c, Math.min(d, s + n / r));
           t.style.height = `${Math.round(i * 1e3) / 10}%`;
           t._rkPendingRatio = i;
         };
@@ -1318,7 +1318,7 @@
           document.removeEventListener("pointerup", onUp);
           document.removeEventListener("pointercancel", onUp);
           try {
-            e.releasePointerCapture(d);
+            e.releasePointerCapture(u);
           } catch (e) {}
           const n = Number.isFinite(t._rkPendingRatio) ? t._rkPendingRatio : s;
           delete t._rkPendingRatio;
@@ -1352,7 +1352,7 @@
     });
     if (i <= 4) return l;
     const o = Math.max(6, Math.round(n * .01));
-    return Math.max(c, Math.min(u, (i + o) / n));
+    return Math.max(c, Math.min(d, (i + o) / n));
   }
   function syncTopPanelToHeader(e) {
     e = e || {};
@@ -1365,7 +1365,7 @@
     const r = measureHeaderBandRatio(t);
     const o = Number(n.top_ratio);
     const a = Number.isFinite(o) ? o : l;
-    const s = Math.max(c, Math.min(u, Math.max(a, r)));
+    const s = Math.max(c, Math.min(d, Math.max(a, r)));
     i.style.height = `${Math.round(s * 1e3) / 10}%`;
     if (!e.liveOnly && Math.abs(a - s) > .004) {
       storeRankingLayout({
@@ -1413,7 +1413,7 @@
     i.classList.toggle("mode-blank", n === "blank");
     const r = measureHeaderBandRatio(t);
     const o = Number(e.top_ratio);
-    const a = Math.max(c, Math.min(u, Math.max(Number.isFinite(o) ? o : l, r)));
+    const a = Math.max(c, Math.min(d, Math.max(Number.isFinite(o) ? o : l, r)));
     i.style.height = `${Math.round(a * 1e3) / 10}%`;
     const s = Number(e.top_ratio);
     if (!Number.isFinite(s) || Math.abs(s - a) > .004) {
@@ -1424,67 +1424,67 @@
         v: 2
       });
     }
-    const d = i.querySelector(".rk-top-blur-vid");
+    const u = i.querySelector(".rk-top-blur-vid");
     if (n === "blank") {
       i.classList.remove("has-blur-src");
       i.style.background = e.top_panel_color || "#000";
-      if (d) {
+      if (u) {
         try {
-          d.pause();
-          d.removeAttribute("src");
+          u.pause();
+          u.removeAttribute("src");
         } catch (e) {}
       }
     } else if (n === "blank_blur") {
       i.style.background = "";
       const e = findRankingSourceVideo();
-      if (d && e && (e.currentSrc || e.src)) {
+      if (u && e && (e.currentSrc || e.src)) {
         const t = e.currentSrc || e.src;
-        if (d.getAttribute("src") !== t && d.src !== t) {
-          d.src = t;
+        if (u.getAttribute("src") !== t && u.src !== t) {
+          u.src = t;
           try {
-            d.load();
+            u.load();
           } catch (e) {}
         }
         i.classList.add("has-blur-src");
         const sync = () => {
           try {
-            d.currentTime = e.currentTime || 0;
+            u.currentTime = e.currentTime || 0;
           } catch (e) {}
-          d.muted = true;
-          d.playsInline = true;
-          const t = d.play();
+          u.muted = true;
+          u.playsInline = true;
+          const t = u.play();
           if (t && typeof t.catch === "function") t.catch(() => {});
         };
-        if (!d._rkBlurBound) {
-          d._rkBlurBound = true;
+        if (!u._rkBlurBound) {
+          u._rkBlurBound = true;
           e.addEventListener("play", sync);
           e.addEventListener("seeked", sync);
           e.addEventListener("timeupdate", () => {
-            if (Math.abs((d.currentTime || 0) - (e.currentTime || 0)) > .45) {
+            if (Math.abs((u.currentTime || 0) - (e.currentTime || 0)) > .45) {
               try {
-                d.currentTime = e.currentTime || 0;
+                u.currentTime = e.currentTime || 0;
               } catch (e) {}
             }
           });
-          d.addEventListener("loadeddata", sync);
+          u.addEventListener("loadeddata", sync);
         }
-        if (d.readyState >= 2) sync(); else {
-          d.addEventListener("loadeddata", sync, {
+        if (u.readyState >= 2) sync(); else {
+          u.addEventListener("loadeddata", sync, {
             once: true
           });
           sync();
         }
-      } else if (d) {
+      } else if (u) {
         try {
-          d.pause();
-          d.removeAttribute("src");
+          u.pause();
+          u.removeAttribute("src");
         } catch (e) {}
         i.classList.remove("has-blur-src");
         i.style.background = "";
       }
-    } else if (d) {
+    } else if (u) {
       try {
-        d.pause();
+        u.pause();
       } catch (e) {}
       i.classList.remove("has-blur-src");
       i.style.background = "";
@@ -1496,7 +1496,7 @@
     applyStackOffset(e);
   }
   function syncTopModeButtons() {
-    const e = O != null ? O : getRankingLayout().top_panel || "none";
+    const e = $ != null ? $ : getRankingLayout().top_panel || "none";
     document.querySelectorAll("#rkTopModes .rk-top-mode").forEach(t => {
       t.classList.toggle("on", (t.dataset.top || "none") === e);
     });
@@ -1505,7 +1505,7 @@
   }
   function previewTopMode(e) {
     const t = e === "blank" || e === "blank_blur" ? e : "none";
-    O = t;
+    $ = t;
     applyRankingTopPanel({
       ...getRankingLayout(),
       top_panel: t
@@ -1513,8 +1513,8 @@
     syncTopModeButtons();
   }
   function resetTopModePreview() {
-    if (O == null) return;
-    O = null;
+    if ($ == null) return;
+    $ = null;
     applyRankingTopPanel(getRankingLayout());
     syncTopModeButtons();
   }
@@ -1527,7 +1527,7 @@
       if (!t) return;
       e.preventDefault();
       e.stopPropagation();
-      O = null;
+      $ = null;
       const n = t.dataset.top || "none";
       const i = {
         top_panel: n
@@ -1595,16 +1595,16 @@
       const s = V === "group-header" ? getPrimaryHeaderEl() || n[0] : W && document.contains(W) ? W : n[0];
       const l = R != null ? R : getEffectiveFontSize(s);
       const c = V === "group-header";
-      const u = V === "group-ranks";
+      const d = V === "group-ranks";
       const p = c || V !== "single" && n.every(e => isHeaderEl(e));
-      const g = getHardSizeCap(u || n.every(e => isRankEl(e)) ? "ranks" : "header");
+      const g = getHardSizeCap(d || n.every(e => isRankEl(e)) ? "ranks" : "header");
       const m = g;
       let b = false;
       const onMove = e => {
         if (!i) return;
         if (e.cancelable) e.preventDefault();
         const t = (e.clientX - r + (e.clientY - o)) * .55;
-        const a = u || n.every(e => isRankEl(e)) ? ce : le;
+        const a = d || n.every(e => isRankEl(e)) ? ce : le;
         const s = Math.max(a, Math.min(m, Math.round(l + t)));
         if (Math.abs(s - l) < 1 && Math.abs(t) < 2) return;
         b = true;
@@ -1615,7 +1615,7 @@
           syncTopPanelToHeader({
             liveOnly: true
           });
-        } else if (u) {
+        } else if (d) {
           R = applyRankBlockSize(s, {
             resizing: true
           });
@@ -1638,7 +1638,7 @@
             });
           }
         }
-        if (d?.classList.contains("active")) schedulePosMenu();
+        if (u?.classList.contains("active")) schedulePosMenu();
       };
       const onUp = () => {
         i = false;
@@ -1658,7 +1658,7 @@
             });
           }
         }
-        if (u) {
+        if (d) {
           const e = getRankingRoot();
           if (e && !ranksListFits(e)) {
             applyRankBlockSize(R != null ? R : l, {
@@ -1731,7 +1731,7 @@
     e.style.zIndex = "8";
   }
   function snapshotEl(e) {
-    Z.set(e, {
+    J.set(e, {
       fontFamily: e.style.fontFamily,
       fontWeight: e.style.fontWeight,
       fontSize: e.style.fontSize,
@@ -1741,7 +1741,7 @@
     });
   }
   function restoreSnapshot(e) {
-    const t = Z.get(e);
+    const t = J.get(e);
     if (!t) return;
     e.style.fontFamily = t.fontFamily;
     e.style.fontWeight = t.fontWeight;
@@ -1803,7 +1803,7 @@
     } else if (e.querySelector(".rk-sized")) {
       return false;
     }
-    const n = previewPxFromBurn(de);
+    const n = previewPxFromBurn(ue);
     const i = previewPxFromBurn(pe);
     const r = previewPxFromBurn(fe);
     applyHeaderBlockSize(n);
@@ -1812,7 +1812,7 @@
     });
     const o = e.querySelector('[data-template-element-id="title_channel"]');
     if (o && !o.classList.contains("rk-sized")) {
-      const e = Math.min(ue, previewPxFromBurn(me));
+      const e = Math.min(de, previewPxFromBurn(me));
       o.style.setProperty("font-size", `${e}px`, "important");
       o.classList.add("rk-sized");
     }
@@ -1826,7 +1826,7 @@
   }
   function getHardSizeCap(e) {
     if (e && isChannelEl(e)) {
-      return ue;
+      return de;
     }
     const t = e === "ranks" || e === "header" ? e : isHeaderEl(e) ? "header" : isRankEl(e) ? "ranks" : "header";
     if (t === "ranks") return se;
@@ -1924,14 +1924,14 @@
     const s = o ? 12 : 10;
     const l = a ? 2 : 8;
     const c = o ? 6 : 4;
-    const u = getContentRect(e);
-    if (!u || u.width <= 0) return true;
-    const d = r.width - s * 2;
-    if (u.width + c * 2 > d + 1) return false;
-    if (u.left - c < r.left + s - 1) return false;
-    if (u.right + c > r.right - s + 1) return false;
-    if (u.bottom + c > r.bottom - l + 1) return false;
-    if (!a && u.top - c < r.top + l - 1) return false;
+    const d = getContentRect(e);
+    if (!d || d.width <= 0) return true;
+    const u = r.width - s * 2;
+    if (d.width + c * 2 > u + 1) return false;
+    if (d.left - c < r.left + s - 1) return false;
+    if (d.right + c > r.right - s + 1) return false;
+    if (d.bottom + c > r.bottom - l + 1) return false;
+    if (!a && d.top - c < r.top + l - 1) return false;
     return true;
   }
   function headerLineFits(e) {
@@ -2253,7 +2253,7 @@
     t.forEach(e => {
       if (M) setElementFont(e, b);
       if (L && R) setElementFontSize(e, R);
-      if (F) e.style.color = w;
+      if (A) e.style.color = w;
       if (P) setElementShadow(e, x);
     });
     syncColorSwatches();
@@ -2262,20 +2262,20 @@
     }
   }
   function applyTextColor(e, t) {
-    if (A && _?.isConnected) {
+    if (T && _?.isConnected) {
       _.style.color = normalizeHex(e) || e;
       discardColorPreview();
-      z = "text";
+      C = "text";
       w = e;
-      if (t !== false) F = true;
+      if (t !== false) A = true;
       syncColorSwatches();
       if (t !== false) markLibraryRankingDirty();
       return;
     }
-    if (A) discardColorPreview();
-    z = "text";
+    if (T) discardColorPreview();
+    C = "text";
     w = e;
-    if (t !== false) F = true;
+    if (t !== false) A = true;
     const n = getInlineEditSelection();
     if (n) {
       colorSelectionRange(n.range, e);
@@ -2303,10 +2303,10 @@
     });
   }
   function beginFontPreviewSession(e) {
-    if (!I) {
-      Y = e;
+    if (!O) {
+      Q = e;
       e.forEach(e => snapshotEl(e));
-      I = true;
+      O = true;
     }
   }
   function previewFont(e) {
@@ -2316,17 +2316,17 @@
     t.forEach(t => paintFontDom(t, e));
   }
   function resetFontPreview() {
-    if (q || !I) return;
-    I = false;
-    Y.forEach(e => restoreSnapshot(e));
-    Y = [];
+    if (q || !O) return;
+    O = false;
+    Q.forEach(e => restoreSnapshot(e));
+    Q = [];
   }
   function applyFont(e) {
     b = e;
     M = true;
     const t = resolveApplyTargets();
-    I = false;
-    Y = [];
+    O = false;
+    Q = [];
     applyFontChange(e, t);
     t.forEach(e => snapshotEl(e));
     syncFontDdHighlight(e);
@@ -2360,12 +2360,12 @@
     markLibraryRankingDirty();
   }
   function clearSuggest(e) {
-    X.forEach(e => e.remove());
-    X = [];
-    J = null;
-    if (Q) {
-      clearTimeout(Q);
-      Q = 0;
+    U.forEach(e => e.remove());
+    U = [];
+    X = null;
+    if (Y) {
+      clearTimeout(Y);
+      Y = 0;
     }
     ee += 1;
     if (m) {
@@ -2555,12 +2555,12 @@
     if (!e?.length || n == null) return;
     if (Math.abs(n - t) < 1) return;
     if (!canOfferSuggest()) return;
-    if (Q) clearTimeout(Q);
+    if (Y) clearTimeout(Y);
     const i = ++ee;
     const r = e.filter(e => e?.isConnected);
     const o = n;
-    Q = setTimeout(() => {
-      Q = 0;
+    Y = setTimeout(() => {
+      Y = 0;
       if (i !== ee) return;
       if (!canOfferSuggest()) return;
       const e = r.filter(e => e?.isConnected);
@@ -2594,10 +2594,10 @@
     }, re);
   }
   function layoutGhosts() {
-    if (!J) return;
-    const {props: e, targets: i} = J;
-    X.forEach(e => e.remove());
-    X = [];
+    if (!X) return;
+    const {props: e, targets: i} = X;
+    U.forEach(e => e.remove());
+    U = [];
     const r = i.filter(e => e.isConnected);
     if (!r.length) return;
     document.querySelectorAll(".rk-suggest-receive,.rk-suggest-remove").forEach(e => {
@@ -2618,9 +2618,9 @@
     }
     const l = r.map(e => e.getBoundingClientRect());
     const c = Math.min(...l.map(e => e.top));
-    const u = Math.max(...l.map(e => e.bottom));
-    const d = Math.min(...l.map(e => e.left));
-    const p = (c + u) / 2;
+    const d = Math.max(...l.map(e => e.bottom));
+    const u = Math.min(...l.map(e => e.left));
+    const p = (c + d) / 2;
     const g = 12;
     const y = document.createElement("div");
     y.className = "rk-ghost-stack";
@@ -2687,21 +2687,21 @@
       if (!y.childNodes.length) return;
     }
     document.body.appendChild(y);
-    X.push(y);
+    U.push(y);
     try {
       if (window.__SolisSG?.harden) window.__SolisSG.harden(y);
       if (m && window.__SolisSG?.harden) window.__SolisSG.harden(m);
     } catch (e) {}
     const x = y.offsetHeight || 40;
     const S = y.offsetWidth || 80;
-    let E = Math.round(d - S - g);
-    let z = Math.round(p - x / 2);
-    z = Math.max(8, Math.min(z, window.innerHeight - x - 8));
+    let E = Math.round(u - S - g);
+    let C = Math.round(p - x / 2);
+    C = Math.max(8, Math.min(C, window.innerHeight - x - 8));
     if (E < 8) E = 8;
     y.style.left = `${E}px`;
-    y.style.top = `${z}px`;
+    y.style.top = `${C}px`;
     requestAnimationFrame(() => {
-      if (!J || !y.isConnected) return;
+      if (!X || !y.isConnected) return;
       posSuggestActions(y);
     });
   }
@@ -2758,7 +2758,7 @@
     const s = window.innerWidth;
     const l = window.innerHeight;
     const c = document.getElementById("templateVideoPreview")?.getBoundingClientRect?.() || null;
-    const u = [ {
+    const d = [ {
       left: n.right - i,
       top: n.top - r - o,
       pref: 100
@@ -2798,43 +2798,43 @@
       const s = Math.max(0, Math.min(o.bottom, n.bottom) - Math.max(o.top, n.top));
       return a * s / Math.max(1, i * r);
     };
-    let d = null;
+    let u = null;
     let p = -Infinity;
-    u.forEach(e => {
+    d.forEach(e => {
       let t = Math.round(e.left);
       let o = Math.round(e.top);
       t = Math.max(a, Math.min(t, s - i - a));
       o = Math.max(a, Math.min(o, l - r - a));
-      let u = e.pref;
-      if (e.left < a || e.left + i > s - a) u -= 25;
-      if (e.top < a || e.top + r > l - a) u -= 25;
+      let d = e.pref;
+      if (e.left < a || e.left + i > s - a) d -= 25;
+      if (e.top < a || e.top + r > l - a) d -= 25;
       if (c) {
         const e = t + i / 2;
         const n = o + r / 2;
         const a = e >= c.left - 12 && e <= c.right + 12 && n >= c.top - 20 && n <= c.bottom + 20;
-        u += a ? 18 : -12;
+        d += a ? 18 : -12;
       }
       const g = overlapsRed(t, o);
-      u -= g * 80;
+      d -= g * 80;
       const m = t + i / 2 - (n.left + n.width / 2);
       const y = o + r / 2 - (n.top + n.height / 2);
-      u -= Math.min(40, Math.hypot(m, y) / 12);
-      if (u > p) {
-        p = u;
-        d = {
+      d -= Math.min(40, Math.hypot(m, y) / 12);
+      if (d > p) {
+        p = d;
+        u = {
           left: t,
           top: o
         };
       }
     });
-    if (!d) {
-      d = {
+    if (!u) {
+      u = {
         left: Math.max(a, Math.min(Math.round(n.right - i), s - i - a)),
         top: Math.max(a, Math.min(Math.round(n.top - r - o), l - r - a))
       };
     }
-    m.style.left = `${d.left}px`;
-    m.style.top = `${d.top}px`;
+    m.style.left = `${u.left}px`;
+    m.style.top = `${u.top}px`;
     m.style.transform = "none";
     m.style.zIndex = "99870";
   }
@@ -2844,7 +2844,7 @@
     try {
       closeDD();
     } catch (e) {}
-    J = {
+    X = {
       props: {
         ...e
       },
@@ -2859,8 +2859,8 @@
     }
   }
   function acceptSuggest() {
-    if (!J) return;
-    const {props: e, targets: t} = J;
+    if (!X) return;
+    const {props: e, targets: t} = X;
     const n = e.chain || null;
     const i = t.filter(e => e?.isConnected);
     if (e.font) {
@@ -2872,7 +2872,7 @@
       i.forEach(t => {
         t.style.color = e.color;
       });
-      F = true;
+      A = true;
       w = e.color;
     }
     if (e.shadow) {
@@ -3008,9 +3008,9 @@
     return null;
   }
   function posMenu() {
-    if (!y.size || !d) return;
-    const e = d.offsetWidth || 100;
-    const t = d.offsetHeight || 44;
+    if (!y.size || !u) return;
+    const e = u.offsetWidth || 100;
+    const t = u.offsetHeight || 44;
     const n = 8;
     const i = 10;
     const r = {
@@ -3022,8 +3022,8 @@
       const t = getRankingRoot();
       const o = t?.getBoundingClientRect?.();
       if (o) {
-        d.style.left = `${Math.round(Math.max(i, Math.min(o.right + n, r.w - e - i)))}px`;
-        d.style.top = `${Math.round(Math.max(i, o.top + 24))}px`;
+        u.style.left = `${Math.round(Math.max(i, Math.min(o.right + n, r.w - e - i)))}px`;
+        u.style.top = `${Math.round(Math.max(i, o.top + 24))}px`;
       }
       return;
     }
@@ -3055,12 +3055,12 @@
       if (s < i) s = o.bottom + n;
       s = Math.max(i, Math.min(s, r.h - t - i));
     }
-    d.style.left = `${Math.round(a)}px`;
-    d.style.top = `${Math.round(s)}px`;
+    u.style.left = `${Math.round(a)}px`;
+    u.style.top = `${Math.round(s)}px`;
     placeOpenDd();
   }
   function placeOpenDd() {
-    if (!d) return;
+    if (!u) return;
     let e = null;
     let t = null;
     if (p?.classList.contains("open")) {
@@ -3071,7 +3071,7 @@
       t = document.getElementById("rkBtnColor");
     }
     if (!e || !t) return;
-    const n = d.getBoundingClientRect();
+    const n = u.getBoundingClientRect();
     const i = e.offsetWidth || 220;
     const r = e.offsetHeight || 200;
     const o = {
@@ -3092,33 +3092,33 @@
       if (c + i > o.w - 10) c = o.w - i - 10;
       if (c < 10) c = 10;
     }
-    let u = n.bottom + a;
-    if (l) u = Math.max(12, Math.min(u, l.top + 8));
-    if (u + r > o.h - 12) u = Math.max(12, o.h - r - 12);
-    e.style.top = `${Math.round(u)}px`;
+    let d = n.bottom + a;
+    if (l) d = Math.max(12, Math.min(d, l.top + 8));
+    if (d + r > o.h - 12) d = Math.max(12, o.h - r - 12);
+    e.style.top = `${Math.round(d)}px`;
     e.style.left = `${Math.round(c)}px`;
   }
   function schedulePosMenu() {
-    if (U) return;
-    U = requestAnimationFrame(() => {
-      U = 0;
-      if (d?.classList.contains("active")) posMenu();
+    if (j) return;
+    j = requestAnimationFrame(() => {
+      j = 0;
+      if (u?.classList.contains("active")) posMenu();
       try {
         syncTopPanelToHeader({
           liveOnly: true
         });
       } catch (e) {}
-      if (J && X[0]) {
+      if (X && U[0]) {
         layoutGhosts();
       }
     });
   }
   function hideMenu() {
-    d?.classList.remove("active");
-    if (d) {
-      d.style.opacity = "";
-      d.style.visibility = "";
-      d.style.pointerEvents = "";
+    u?.classList.remove("active");
+    if (u) {
+      u.style.opacity = "";
+      u.style.visibility = "";
+      u.style.pointerEvents = "";
     }
     closeDD();
   }
@@ -3128,7 +3128,7 @@
   function openDD(e, t) {
     closeDD(e);
     e.classList.add("open");
-    const n = d.getBoundingClientRect();
+    const n = u.getBoundingClientRect();
     const i = e.offsetWidth || 220;
     const r = e.offsetHeight || 200;
     const o = {
@@ -3154,23 +3154,23 @@
       if (!t || t === e) return;
       t.classList.remove("open");
     });
-    d?.querySelectorAll(".sub-pill-btn").forEach(e => e.classList.remove("sub-active"));
+    u?.querySelectorAll(".sub-pill-btn").forEach(e => e.classList.remove("sub-active"));
   }
   function showMenu() {
     if (!y.size) return;
     buildUI();
-    if (!d) return;
+    if (!u) return;
     try {
       window.solisClosePeerPreviewChrome?.("rk");
     } catch (e) {}
-    d.classList.add("active");
-    d.style.opacity = "1";
-    d.style.visibility = "visible";
-    d.style.pointerEvents = "auto";
-    d.style.zIndex = "99900";
+    u.classList.add("active");
+    u.style.opacity = "1";
+    u.style.visibility = "visible";
+    u.style.pointerEvents = "auto";
+    u.style.zIndex = "99900";
     posMenu();
     requestAnimationFrame(() => {
-      if (y.size && d?.classList.contains("active")) posMenu();
+      if (y.size && u?.classList.contains("active")) posMenu();
     });
   }
   function wireButtons() {
@@ -3179,7 +3179,7 @@
       const t = p.classList.contains("open");
       closeDD();
       if (!t) {
-        I = false;
+        O = false;
         y.forEach(e => snapshotEl(e));
         buildFontList();
         openDD(p, e.currentTarget);
@@ -3217,7 +3217,7 @@
       });
     });
     document.addEventListener("keydown", e => {
-      if (!J) return;
+      if (!X) return;
       if (e.key === "Tab" && !e.shiftKey) {
         e.preventDefault();
         acceptSuggest();
@@ -3230,9 +3230,9 @@
     });
     document.addEventListener("mousedown", e => {
       if (e.target.closest("#rkSuggestActions")) return;
-      if (!d?.classList.contains("active")) return;
+      if (!u?.classList.contains("active")) return;
       if (e.target.closest(".sub-resize-handle")) return;
-      if (d.contains(e.target) || p.contains(e.target) || g.contains(e.target)) return;
+      if (u.contains(e.target) || p.contains(e.target) || g.contains(e.target)) return;
       if (e.target.closest("[data-template-element-id]")) return;
       if (e.target.closest(".ranking-editor-zone-header, .ranking-editor-zone-ranks")) return;
       if (e.target.closest(".ranking-preview-container")) {
@@ -3249,10 +3249,10 @@
       e.contentEditable = "false";
     });
     y.clear();
-    Z.clear();
+    J.clear();
     V = "single";
     W = null;
-    j = null;
+    Z = null;
     clearSelectionVisuals();
     syncResizeHandles();
     hideMenu();
@@ -3265,17 +3265,17 @@
   function selectElements(e, t = "single", n = null, i = null) {
     buildUI();
     const r = normalizeSelectionElements(e, t);
-    if (J) {
+    if (X) {
       clearSuggest();
     }
     y.forEach(e => {
       e.contentEditable = "false";
     });
     y.clear();
-    Z.clear();
+    J.clear();
     V = t;
     W = n || (r.length === 1 ? r[0] : null);
-    if (i) j = i;
+    if (i) Z = i;
     r.forEach(e => {
       if (!e?.isConnected) return;
       y.add(e);
@@ -3284,8 +3284,8 @@
     applySelectionVisuals();
     showMenu();
     M = false;
-    F = false;
-    C = false;
+    A = false;
+    z = false;
     P = false;
     L = false;
     const finishSelectChrome = () => {
@@ -3316,10 +3316,10 @@
   }
   function toggleElement(e, t, n) {
     buildUI();
-    if (J) {
+    if (X) {
       clearSuggest();
     }
-    if (n) j = n;
+    if (n) Z = n;
     if (!t) {
       if (y.has(e) && y.size === 1 && V === "single") return e;
       selectElements([ e ], "single", e, n);
@@ -3327,7 +3327,7 @@
     }
     if (V === "group-ranks" || V === "group-header") {
       y.clear();
-      Z.clear();
+      J.clear();
       y.add(e);
       snapshotEl(e);
       return finishMultiSelection(e);

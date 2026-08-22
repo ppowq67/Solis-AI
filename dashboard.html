@@ -47,7 +47,7 @@
     <link rel="stylesheet" href="/style/ss/ios-pill-nav.css?v=29">
     <link rel="stylesheet" href="/style/ss/mobile-nav.css?v=28">
     <link rel="stylesheet" href="/style/ss/customize.css?v=27">
-    <link rel="stylesheet" href="/style/ss/clips.css?v=106">
+    <link rel="stylesheet" href="/style/ss/clips.css?v=107">
     <link rel="stylesheet" href="/style/ss/profile.css?v=29">
     <link rel="stylesheet" href="/style/ss/tasks-panel-v2-demo.css?v=18">
     <link rel="stylesheet" href="/style/ss/solis-gen-stage.css?v=26">
@@ -3692,10 +3692,14 @@
                             title="Preview caption fonts & style" aria-label="Captions">
                             <i data-lucide="captions"></i>
                         </button>
-                        <button type="button" class="tool-btn" data-tool="animations"
+                        <button type="button" class="tool-btn" data-tool="animations" id="previewAnimToolBtn"
                             onclick="activatePreviewToolbar(this); openSubtitleAnimations()"
                             title="Caption presets" aria-label="Presets">
                             <i data-lucide="sparkles"></i>
+                            <span class="pill-anim-nudge" id="pillAnimNudge" hidden aria-hidden="true">
+                                <span class="pill-anim-nudge-stem"></span>
+                                <span class="pill-anim-nudge-head"></span>
+                            </span>
                         </button>
                         <button type="button" class="tool-btn tool-btn-modifiers" data-tool="modifiers"
                             onclick="activatePreviewToolbar(this); togglePreviewModifiersMenu(event)"
@@ -5387,6 +5391,7 @@
                   });
               };
               requestAnimationFrame(paintIndicator);
+              try{ window.syncPillAnimNudge?.(); }catch(_){}
            };
 
            window.syncPreviewEditorPillLayout = function(opts) {
@@ -5398,6 +5403,7 @@
                    if (!active) return;
                    void pill.offsetWidth;
                    window.activatePreviewToolbar(active);
+                   try{ window.syncPillAnimNudge?.(); }catch(_){}
                };
                if (delay) setTimeout(run, delay);
                else run();
@@ -7939,7 +7945,8 @@
     filter:drop-shadow(0 1px 1px rgba(0,0,0,.45));
 }
 @keyframes sub-beast-pop{
-    0%{transform:scale(.92) translateY(4px);opacity:0;}
+    0%{transform:scale(.86);opacity:0;}
+    70%{transform:scale(1.05);opacity:1;}
     100%{transform:scale(1) translateY(0);opacity:1;}
 }
 .sub-beast-pop .sub-beast-word{
@@ -7983,40 +7990,43 @@
 .sub-chunk-line.sub-chunk-out,
 .sub-static-line.sub-chunk-out,
 .k-line.sub-chunk-out{
-    animation:sub-chunk-pop-out .16s cubic-bezier(.22,1,.36,1) forwards;
+    animation:sub-chunk-pop-out .18s cubic-bezier(.22,1,.36,1) forwards;
     pointer-events:none;
+    transform-origin:50% 55%;
 }
 .sub-aprev.sub-chunk-in,
 .sub-chunk-line.sub-chunk-in,
 .sub-static-line.sub-chunk-in,
 .k-line.sub-chunk-in{
-    animation:sub-chunk-pop-out-in .2s cubic-bezier(.22,1,.36,1) forwards;
+    animation:sub-chunk-pop-out-in .22s cubic-bezier(.22,1,.36,1) forwards;
+    transform-origin:50% 55%;
 }
 @keyframes sub-chunk-pop-out{
-    0%{opacity:1;transform:translateY(0) scale(1)}
-    100%{opacity:0;transform:translateY(-6px) scale(.98)}
+    0%{opacity:1;transform:scale(1)}
+    100%{opacity:0;transform:scale(1.1)}
 }
 @keyframes sub-chunk-pop-out-in{
-    0%{opacity:0;transform:translateY(8px) scale(.98)}
-    100%{opacity:1;transform:translateY(0) scale(1)}
+    0%{opacity:0;transform:scale(.86)}
+    70%{opacity:1;transform:scale(1.04)}
+    100%{opacity:1;transform:scale(1)}
 }
 .sub-text-block.sub-anim-previewing .sub-chunk-out,
 .sub-text-block.sub-anim-previewing .k-line.sub-chunk-out,
 .sub-text-block.sub-anim-previewing .sub-static-line.sub-chunk-out{
-    animation:sub-live-chunk-out .16s ease forwards;
+    animation:sub-live-chunk-out .16s cubic-bezier(.22,1,.36,1) forwards;
 }
 .sub-text-block.sub-anim-previewing .sub-chunk-in,
 .sub-text-block.sub-anim-previewing .k-line.sub-chunk-in,
 .sub-text-block.sub-anim-previewing .sub-static-line.sub-chunk-in{
-    animation:sub-live-chunk-in .2s ease forwards;
+    animation:sub-live-chunk-in .2s cubic-bezier(.22,1,.36,1) forwards;
 }
 @keyframes sub-live-chunk-out{
-    0%{opacity:1;transform:translateY(0)}
-    100%{opacity:0;transform:translateY(-4px)}
+    0%{opacity:1;transform:scale(1)}
+    100%{opacity:0;transform:scale(1.08)}
 }
 @keyframes sub-live-chunk-in{
-    0%{opacity:0;transform:translateY(5px)}
-    100%{opacity:1;transform:translateY(0)}
+    0%{opacity:0;transform:scale(.9)}
+    100%{opacity:1;transform:scale(1)}
 }
 .sub-text-block.sub-anim-previewing{
     will-change:auto;
@@ -12905,6 +12915,7 @@
                     localStorage.removeItem('solis_last_caption_style');
                 }
             }catch(_){}
+            try{ window.syncPillAnimNudge?.(); }catch(_){}
         });
         document.addEventListener('mousedown',e=>{
             if(pill.contains(e.target)||ddFont.contains(e.target)||ddColor.contains(e.target)||ddAnim.contains(e.target))return;
@@ -14209,6 +14220,7 @@
                 const block=createSubtitleBlockSilent();
                 if(block) select(block);
             }
+            try{ window.syncPillAnimNudge?.(); }catch(_){}
             return;
         }
         try{
@@ -14218,11 +14230,13 @@
         const existing=cont.querySelector('.sub-text-block:not(.overlay-text-block)');
         if(existing){
             select(existing);
+            try{ window.syncPillAnimNudge?.(); }catch(_){}
             return;
         }
         const block=createSubtitleBlockSilent();
         if(!block) return;
         select(block);
+        try{ window.syncPillAnimNudge?.(); }catch(_){}
     };
 
     window.addSimpleTextBlock=function(){
@@ -14600,6 +14614,7 @@
             try{ window.__solisCaptionsOptedIn=false; }catch(_){}
             try{ window.__solisCaptionsClearedForGenerate=true; }catch(_){}
         }
+        try{ window.syncPillAnimNudge?.(); }catch(_){}
     };
 
     window.seedSplitscreenPreviewOverlays=function(opts){
@@ -14662,6 +14677,28 @@
     function init(){
         buildUI();
     }
+    window.syncPillAnimNudge=function(){
+        const nudge=document.getElementById('pillAnimNudge');
+        if(!nudge) return;
+        const pill=document.getElementById('previewEditorPill');
+        const wrap=document.getElementById('previewEditorToolbarWrap');
+        const pillVisible=!!(
+            pill
+            && wrap
+            && wrap.offsetParent!==null
+            && getComputedStyle(wrap).display!=='none'
+            && getComputedStyle(pill).visibility!=='hidden'
+        );
+        const cont=document.getElementById('templateVideoPreview');
+        const hasCaption=!!cont?.querySelector('.sub-text-block:not(.overlay-text-block)');
+        const closed=!!window.__solisCaptionsClearedForGenerate && !hasCaption;
+        const need=pillVisible && closed;
+        nudge.hidden=!need;
+        nudge.setAttribute('aria-hidden', need ? 'false' : 'true');
+        nudge.classList.toggle('is-on', need);
+        if(need) nudge.removeAttribute('hidden');
+    };
+
     window.openSubtitleAnimations=function(){
         const wasTeach=!!window.solisAnimTeachActive;
         const handoffId=animPreviewActiveId||curAnim||null;
@@ -14669,6 +14706,7 @@
             window.solisTeachCycleAnims(false, { keepPreview: wasTeach });
         }
         if(typeof addSubtitleBlock==='function')addSubtitleBlock();
+        try{ window.syncPillAnimNudge?.(); }catch(_){}
         setTimeout(()=>{
             if(!active||isOverlayText(active))return;
             const btn=document.getElementById('subBtnAnims');
@@ -14688,6 +14726,7 @@
                 animPinnedBlock=active;
                 posMenu({force:true});
             }
+            try{ window.syncPillAnimNudge?.(); }catch(_){}
         },80);
     };
 
@@ -15132,10 +15171,10 @@
         let font=String(style.font||'Montserrat').replace(/['"]/g,'').split(',')[0].trim()||'Montserrat';
         if(anim==='beast'){
             font='Komika Axis';
-            style={...style, font:'Komika Axis', shadow:'none', words_per_chunk:2};
+            style={...style, font:'Komika Axis', shadow:'thick-outline', words_per_chunk:2};
         }
         curFont=font;
-        curShadow=style.shadow||'none';
+        curShadow=style.shadow||(anim==='beast'?'thick-outline':'none');
         const animPreview=anim;
         const keepText=normalizeHex(block?.style?.color) || normalizeHex(curTextCol) || '#ffffff';
         const keepHighlight=normalizeHex(block?.dataset?.subHighlight)
@@ -15381,6 +15420,7 @@
         }catch(_){}
 
         if(fromMemory&&window.SolisMemory) window.SolisMemory._applying=false;
+        try{ window.syncPillAnimNudge?.(); }catch(_){}
         return block;
     };
 

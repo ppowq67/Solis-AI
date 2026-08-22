@@ -12102,6 +12102,52 @@ html[data-solis-cursor="always"] :is(
 .preview-editor-toolbar .tool-btn.active { color: #0f172a; }
 .preview-editor-toolbar .tool-btn svg { width: 22px; height: 22px; }
 
+.preview-editor-toolbar .tool-btn[data-tool="animations"] {
+    overflow: visible;
+}
+.pill-anim-nudge {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 2px);
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    pointer-events: none;
+    z-index: 6;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.22s ease, visibility 0.22s ease, transform 0.22s ease;
+}
+.pill-anim-nudge.is-on {
+    opacity: 1;
+    visibility: visible;
+    animation: pill-anim-nudge-bob 1.6s ease-in-out infinite;
+}
+.pill-anim-nudge-stem {
+    width: 1.5px;
+    height: 14px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.35),
+        0 0 10px rgba(255, 255, 255, 0.55);
+}
+.pill-anim-nudge-head {
+    width: 0;
+    height: 0;
+    margin-top: -1px;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid rgba(255, 255, 255, 0.95);
+    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.65));
+}
+@keyframes pill-anim-nudge-bob {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(3px); }
+}
+
 .preview-editor-toolbar-wrap {
     position: relative;
     display: inline-flex;

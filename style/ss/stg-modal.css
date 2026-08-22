@@ -1818,6 +1818,60 @@
     color: rgba(107, 114, 128, 0.85);
 }
 
+.stgAdvancedBody .stgRow + .stgRow {
+    margin-top: 4px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.stgMacCursorScopeRow {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 12px;
+}
+
+.stgMacCursorScopeRow.is-disabled {
+    opacity: 0.45;
+    pointer-events: none;
+}
+
+.stgSeg {
+    display: inline-flex;
+    flex: 0 0 auto;
+    padding: 3px;
+    border-radius: 10px;
+    background: rgba(120, 110, 100, 0.12);
+    gap: 2px;
+}
+
+.stgSegBtn {
+    appearance: none;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 650;
+    letter-spacing: 0.01em;
+    color: rgba(90, 82, 74, 0.72);
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+    white-space: nowrap;
+}
+
+.stgSegBtn:hover {
+    color: rgba(60, 52, 45, 0.9);
+}
+
+.stgSegBtn.is-on {
+    background: #fff;
+    color: rgba(42, 34, 28, 0.92);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
 @media (max-width: 520px) {
     .stgThemeGrid {
         gap: 8px;

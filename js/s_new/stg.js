@@ -22,8 +22,9 @@ document.addEventListener("DOMContentLoaded", () => {
   let l = "all";
   let d = false;
   const u = "solis_effort_ui_mode";
-  const f = "solis_plugin_auto_captions";
-  const g = "solis_plugin_auto_sfx";
+  const f = "solisMacCursor";
+  const g = "solis_plugin_auto_captions";
+  const p = "solis_plugin_auto_sfx";
   function readPluginFlag(e, t = false) {
     try {
       const n = localStorage.getItem(e);
@@ -35,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   window.getSolisPluginPrefs = function getSolisPluginPrefs() {
     return {
-      auto_captions: readPluginFlag(f, false),
+      auto_captions: readPluginFlag(g, false),
       auto_sfx: false
     };
   };
@@ -71,6 +72,45 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       document.documentElement.dataset.effortUi = t;
     }
+  }
+  function readMacCursorMode() {
+    try {
+      const e = localStorage.getItem(f);
+      if (e === "off" || e === "preview" || e === "always") return e;
+    } catch (e) {}
+    return "preview";
+  }
+  function persistMacCursorMode(e) {
+    try {
+      localStorage.setItem(f, e);
+    } catch (e) {}
+  }
+  function applyMacCursorMode(e) {
+    const t = e === "off" || e === "always" ? e : "preview";
+    persistMacCursorMode(t);
+    document.documentElement.setAttribute("data-solis-cursor", t);
+    syncMacCursorUi();
+  }
+  function syncMacCursorUi() {
+    const e = readMacCursorMode();
+    const t = e !== "off";
+    const n = e === "always" ? "always" : "preview";
+    const o = document.getElementById("stgMacCursorToggle");
+    const i = document.getElementById("stgMacCursorLabel");
+    const s = document.getElementById("stgMacCursorScopeRow");
+    if (o) {
+      o.classList.toggle("is-on", t);
+      o.setAttribute("aria-checked", t ? "true" : "false");
+    }
+    if (i) {
+      i.textContent = !t ? "Off" : n === "always" ? "Everywhere" : "Preview";
+    }
+    if (s) s.classList.toggle("is-disabled", !t);
+    document.querySelectorAll("[data-solis-cursor-scope]").forEach(e => {
+      const o = t && e.getAttribute("data-solis-cursor-scope") === n;
+      e.classList.toggle("is-on", o);
+      e.setAttribute("aria-checked", o ? "true" : "false");
+    });
   }
   function syncThemeCards() {
     document.querySelectorAll(".stgThemeCard[data-theme-choice]").forEach(e => {
@@ -262,15 +302,46 @@ document.addEventListener("DOMContentLoaded", () => {
       applyEffortUiMode(e);
     });
   }
-  const p = document.getElementById("stgAdvancedToggle");
-  const w = p?.closest(".stgAdvanced");
-  const y = document.getElementById("stgAdvancedBody");
-  if (p && w && y) {
-    p.addEventListener("click", () => {
-      const e = !w.classList.contains("is-open");
-      w.classList.toggle("is-open", e);
-      p.setAttribute("aria-expanded", e ? "true" : "false");
-      if (e) y.removeAttribute("hidden"); else y.setAttribute("hidden", "");
+  const w = document.getElementById("stgMacCursorToggle");
+  if (w) {
+    applyMacCursorMode(readMacCursorMode());
+    w.addEventListener("click", () => {
+      const e = readMacCursorMode();
+      if (e === "off") {
+        let e = "preview";
+        try {
+          const t = localStorage.getItem("solisMacCursorScope");
+          if (t === "always" || t === "preview") e = t;
+        } catch (e) {}
+        applyMacCursorMode(e);
+      } else {
+        try {
+          localStorage.setItem("solisMacCursorScope", e === "always" ? "always" : "preview");
+        } catch (e) {}
+        applyMacCursorMode("off");
+      }
+    });
+  }
+  document.querySelectorAll("[data-solis-cursor-scope]").forEach(e => {
+    e.addEventListener("click", () => {
+      if (readMacCursorMode() === "off") return;
+      const t = e.getAttribute("data-solis-cursor-scope") === "always" ? "always" : "preview";
+      try {
+        localStorage.setItem("solisMacCursorScope", t);
+      } catch (e) {}
+      applyMacCursorMode(t);
+    });
+  });
+  syncMacCursorUi();
+  const y = document.getElementById("stgAdvancedToggle");
+  const h = y?.closest(".stgAdvanced");
+  const E = document.getElementById("stgAdvancedBody");
+  if (y && h && E) {
+    y.addEventListener("click", () => {
+      const e = !h.classList.contains("is-open");
+      h.classList.toggle("is-open", e);
+      y.setAttribute("aria-expanded", e ? "true" : "false");
+      if (e) E.removeAttribute("hidden"); else E.setAttribute("hidden", "");
     });
   }
   document.querySelectorAll(".stgThemeCard[data-theme-choice]").forEach(e => {
@@ -288,10 +359,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
   syncThemeCards();
-  const h = "solis_privacy_improve_product";
+  const v = "solis_privacy_improve_product";
   function readImproveSolis() {
     try {
-      const e = localStorage.getItem(h);
+      const e = localStorage.getItem(v);
       if (e === null || e === undefined) return true;
       return e === "1" || e === "true";
     } catch (e) {
@@ -300,7 +371,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   function setImproveSolis(e) {
     try {
-      localStorage.setItem(h, e ? "1" : "0");
+      localStorage.setItem(v, e ? "1" : "0");
     } catch (e) {}
     syncPrivacyToggles();
   }
@@ -769,31 +840,31 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       const f = i && typeof i === "object" ? i : {};
       const g = f.storage?.videos || {};
-      const m = f.storage?.space_mb || {};
-      const p = f.daily || {};
+      const p = f.storage?.space_mb || {};
+      const m = f.daily || {};
       const w = f.monthly || {};
       const y = f.max_effort || {};
       const h = g.unlimited === true || [ "basic", "prime", "elite" ].includes(String(l || "").toLowerCase());
       const E = Math.max(0, Number(g.used ?? 0) || 0);
-      const b = h ? null : Math.max(1, Number(g.limit ?? 10) || 10);
+      const v = h ? null : Math.max(1, Number(g.limit ?? 10) || 10);
       if (h) {
         setText("stgVideosUsed", E + " clips (unlimited)");
         setQuotaFill(document.getElementById("stgVideosFill"), 0, 1);
       } else {
-        setText("stgVideosUsed", E + " / " + b);
-        setQuotaFill(document.getElementById("stgVideosFill"), E, b);
+        setText("stgVideosUsed", E + " / " + v);
+        setQuotaFill(document.getElementById("stgVideosFill"), E, v);
       }
-      const v = document.getElementById("stgStorage")?.closest(".stgQuota");
-      if (v) v.hidden = true;
-      const S = Math.max(0, Number(p.limit ?? f.plan?.videos_per_day ?? 0) || 0);
-      const C = Math.max(0, Number(p.used ?? 0) || 0);
-      if (S > 0) {
-        setText("stgDailyGens", C + " / " + S);
-        setQuotaFill(document.getElementById("stgDailyFill"), C, S);
+      const b = document.getElementById("stgStorage")?.closest(".stgQuota");
+      if (b) b.hidden = true;
+      const C = Math.max(0, Number(m.limit ?? f.plan?.videos_per_day ?? 0) || 0);
+      const S = Math.max(0, Number(m.used ?? 0) || 0);
+      if (C > 0) {
+        setText("stgDailyGens", S + " / " + C);
+        setQuotaFill(document.getElementById("stgDailyFill"), S, C);
         const e = document.getElementById("stgDailyHint");
         if (e) {
-          if (p.resets_at) {
-            e.textContent = formatQuotaResetHint(p.resets_at, C >= S ? "Daily quota reached. Resets {when}." : "Resets {when}.");
+          if (m.resets_at) {
+            e.textContent = formatQuotaResetHint(m.resets_at, S >= C ? "Daily quota reached. Resets {when}." : "Resets {when}.");
           }
         }
       } else {
@@ -813,15 +884,15 @@ document.addEventListener("DOMContentLoaded", () => {
         setText("stgMonthlyGens", "—");
         setQuotaFill(document.getElementById("stgMonthlyFill"), 0, 1);
       }
-      const x = Number(y.limit ?? 0);
+      const M = Number(y.limit ?? 0);
       const L = Number(y.used ?? 0);
-      const U = y.remaining;
-      if (x > 0) {
-        setText("stgMaxEffort", L + " / " + x + " used");
-        setQuotaFill(document.getElementById("stgMaxFill"), L, x);
+      const x = y.remaining;
+      if (M > 0) {
+        setText("stgMaxEffort", L + " / " + M + " used");
+        setQuotaFill(document.getElementById("stgMaxFill"), L, M);
         const e = document.getElementById("stgMaxHint");
         if (e) {
-          const t = Math.max(0, Number(U ?? x - L));
+          const t = Math.max(0, Number(x ?? M - L));
           e.textContent = t > 0 ? t + " Premium Request" + (t === 1 ? "" : "s") + " left in this window." : "Premium Requests locked until reset.";
         }
       } else {
@@ -830,8 +901,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const e = document.getElementById("stgMaxHint");
         if (e) e.textContent = "Upgrade to Prime or Elite for Premium Requests.";
       }
-      const M = formatRenewalLabel(t.subscription_end_date || t.plan_expires_at, t.plan_status);
-      if (M) setText("stgRenewalDate", M); else if (!u) setText("stgRenewalDate", "Active subscription"); else setText("stgRenewalDate", "No active subscription");
+      const U = formatRenewalLabel(t.subscription_end_date || t.plan_expires_at, t.plan_status);
+      if (U) setText("stgRenewalDate", U); else if (!u) setText("stgRenewalDate", "Active subscription"); else setText("stgRenewalDate", "No active subscription");
       syncBillingCancelUI({
         plan: l,
         planStatus: t.plan_status || t.subscription_status,
@@ -842,7 +913,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       window.currentUser = Object.assign({}, window.currentUser || {}, t, {
         active_videos: E,
-        video_limit: b
+        video_limit: v
       });
       setSubscriptionLoading(false);
     } catch (e) {
@@ -927,35 +998,35 @@ document.addEventListener("DOMContentLoaded", () => {
   window.closeSettingsModal = closeSettingsModal;
   window.updateSettingsModal = updateSettingsModal;
   window.switchSettingsPanel = switchSettingsPanel;
-  const E = document.getElementById("stgEditHeaderBtn");
-  let b = false;
+  const b = document.getElementById("stgEditHeaderBtn");
+  let C = false;
   function setProfileEditing(e) {
     const t = document.getElementById("stgProfileHero");
     const n = document.getElementById("stgName");
     const o = document.getElementById("stgBio");
     const i = document.getElementById("stgNameInput");
     const s = document.getElementById("stgBioInput");
-    if (!t || !i || !s || !E) return;
-    b = !!e;
-    t.classList.toggle("is-editing", b);
-    i.hidden = !b;
-    s.hidden = !b;
-    if (b) {
+    if (!t || !i || !s || !b) return;
+    C = !!e;
+    t.classList.toggle("is-editing", C);
+    i.hidden = !C;
+    s.hidden = !C;
+    if (C) {
       i.value = (n?.textContent || "").trim();
       s.value = o?.textContent || "";
-      E.classList.add("editing");
-      E.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Done</span>';
+      b.classList.add("editing");
+      b.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Done</span>';
       requestAnimationFrame(() => {
         i.focus();
         i.select();
       });
     } else {
-      E.classList.remove("editing");
-      E.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg><span>Edit</span>';
+      b.classList.remove("editing");
+      b.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg><span>Edit</span>';
     }
   }
   function toggleProfileEditMode() {
-    if (!b) {
+    if (!C) {
       setProfileEditing(true);
       return;
     }
@@ -1046,21 +1117,21 @@ document.addEventListener("DOMContentLoaded", () => {
       cancelProfileEdit();
     }
   }
-  const v = document.getElementById("pfpFileInput");
-  const S = document.getElementById("stgAvatarContainer");
-  const C = document.getElementById("stgCropBackdrop");
-  const B = document.getElementById("stgCropModal");
-  const I = document.getElementById("stgCropImg");
+  const S = document.getElementById("pfpFileInput");
+  const B = document.getElementById("stgAvatarContainer");
+  const I = document.getElementById("stgCropBackdrop");
+  const M = document.getElementById("stgCropModal");
+  const L = document.getElementById("stgCropImg");
   const x = document.getElementById("stgCropViewport");
-  const L = document.getElementById("stgCropStage");
-  const U = document.getElementById("stgCropZoom");
-  const M = document.getElementById("stgCropSave");
-  let P = false;
-  let A = 0;
-  const T = 4e3;
-  const k = 5 * 1024 * 1024;
-  const N = 512;
-  const _ = {
+  const U = document.getElementById("stgCropStage");
+  const P = document.getElementById("stgCropZoom");
+  const A = document.getElementById("stgCropSave");
+  let T = false;
+  let k = 0;
+  const N = 4e3;
+  const _ = 5 * 1024 * 1024;
+  const D = 512;
+  const F = {
     open: false,
     objectUrl: null,
     naturalW: 0,
@@ -1092,64 +1163,64 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   function clampCropOffsets() {
     const e = cropViewportSize();
-    const t = _.baseScale * _.zoom;
-    const n = _.naturalW * t;
-    const o = _.naturalH * t;
+    const t = F.baseScale * F.zoom;
+    const n = F.naturalW * t;
+    const o = F.naturalH * t;
     const i = Math.max(0, (n - e) / 2);
     const s = Math.max(0, (o - e) / 2);
-    _.offsetX = Math.max(-i, Math.min(i, _.offsetX));
-    _.offsetY = Math.max(-s, Math.min(s, _.offsetY));
+    F.offsetX = Math.max(-i, Math.min(i, F.offsetX));
+    F.offsetY = Math.max(-s, Math.min(s, F.offsetY));
   }
   function applyCropTransform() {
-    if (!I) return;
+    if (!L) return;
     clampCropOffsets();
-    const e = _.baseScale * _.zoom;
-    I.style.width = `${_.naturalW}px`;
-    I.style.height = `${_.naturalH}px`;
-    I.style.transform = `translate(-50%, -50%) translate(${_.offsetX}px, ${_.offsetY}px) scale(${e})`;
+    const e = F.baseScale * F.zoom;
+    L.style.width = `${F.naturalW}px`;
+    L.style.height = `${F.naturalH}px`;
+    L.style.transform = `translate(-50%, -50%) translate(${F.offsetX}px, ${F.offsetY}px) scale(${e})`;
   }
   function closeCropModal() {
-    _.open = false;
-    _.dragging = false;
-    C?.classList.remove("is-open");
-    B?.classList.remove("is-open");
-    if (C) C.hidden = true;
-    if (B) B.hidden = true;
-    if (_.objectUrl) {
-      URL.revokeObjectURL(_.objectUrl);
-      _.objectUrl = null;
+    F.open = false;
+    F.dragging = false;
+    I?.classList.remove("is-open");
+    M?.classList.remove("is-open");
+    if (I) I.hidden = true;
+    if (M) M.hidden = true;
+    if (F.objectUrl) {
+      URL.revokeObjectURL(F.objectUrl);
+      F.objectUrl = null;
     }
-    if (I) I.removeAttribute("src");
-    if (v) v.value = "";
-    if (M) {
-      M.disabled = false;
-      M.classList.remove("is-busy");
+    if (L) L.removeAttribute("src");
+    if (S) S.value = "";
+    if (A) {
+      A.disabled = false;
+      A.classList.remove("is-busy");
     }
   }
   function openCropModal(e) {
-    if (!B || !I || !x) {
+    if (!M || !L || !x) {
       uploadProfilePicture(e);
       return;
     }
-    if (_.objectUrl) URL.revokeObjectURL(_.objectUrl);
+    if (F.objectUrl) URL.revokeObjectURL(F.objectUrl);
     const t = URL.createObjectURL(e);
-    _.objectUrl = t;
-    _.zoom = 1;
-    _.offsetX = 0;
-    _.offsetY = 0;
-    if (U) U.value = "1";
+    F.objectUrl = t;
+    F.zoom = 1;
+    F.offsetX = 0;
+    F.offsetY = 0;
+    if (P) P.value = "1";
     const onLoad = () => {
-      I.removeEventListener("load", onLoad);
-      _.naturalW = I.naturalWidth || 0;
-      _.naturalH = I.naturalHeight || 0;
-      if (_.naturalW < 64 || _.naturalH < 64) {
+      L.removeEventListener("load", onLoad);
+      F.naturalW = L.naturalWidth || 0;
+      F.naturalH = L.naturalHeight || 0;
+      if (F.naturalW < 64 || F.naturalH < 64) {
         closeCropModal();
         if (typeof window.showNotification === "function") {
           window.showNotification("Image too small. Minimum 64x64 pixels.", "error");
         }
         return;
       }
-      if (_.naturalW > 5e3 || _.naturalH > 5e3) {
+      if (F.naturalW > 5e3 || F.naturalH > 5e3) {
         closeCropModal();
         if (typeof window.showNotification === "function") {
           window.showNotification("Image too large. Maximum 5000x5000 pixels.", "error");
@@ -1157,27 +1228,27 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
       const e = cropViewportSize();
-      _.baseScale = Math.max(e / _.naturalW, e / _.naturalH);
-      _.zoom = 1;
-      _.offsetX = 0;
-      _.offsetY = 0;
+      F.baseScale = Math.max(e / F.naturalW, e / F.naturalH);
+      F.zoom = 1;
+      F.offsetX = 0;
+      F.offsetY = 0;
       applyCropTransform();
-      _.open = true;
-      if (C) {
-        C.hidden = false;
-        C.classList.add("is-open");
+      F.open = true;
+      if (I) {
+        I.hidden = false;
+        I.classList.add("is-open");
       }
-      B.hidden = false;
-      B.classList.add("is-open");
+      M.hidden = false;
+      M.classList.add("is-open");
       requestAnimationFrame(() => applyCropTransform());
     };
-    I.addEventListener("load", onLoad);
-    I.src = t;
+    L.addEventListener("load", onLoad);
+    L.src = t;
   }
   async function exportCroppedAvatarFile() {
     const e = cropViewportSize();
-    const t = _.baseScale * _.zoom;
-    const n = N;
+    const t = F.baseScale * F.zoom;
+    const n = D;
     const o = document.createElement("canvas");
     o.width = n;
     o.height = n;
@@ -1188,18 +1259,18 @@ document.addEventListener("DOMContentLoaded", () => {
     i.fillStyle = "#ffffff";
     i.fillRect(0, 0, n, n);
     const s = e / t;
-    const r = _.naturalW / 2 - _.offsetX / t;
-    const a = _.naturalH / 2 - _.offsetY / t;
+    const r = F.naturalW / 2 - F.offsetX / t;
+    const a = F.naturalH / 2 - F.offsetY / t;
     const c = r - s / 2;
     const l = a - s / 2;
-    i.drawImage(I, c, l, s, s, 0, 0, n, n);
+    i.drawImage(L, c, l, s, s, 0, 0, n, n);
     const d = await new Promise(e => {
       o.toBlob(t => {
         if (t && t.size > 0) e(t); else o.toBlob(t => e(t), "image/jpeg", .9);
       }, "image/webp", .9);
     });
     if (!d || d.size <= 0) throw new Error("Failed to process image");
-    if (d.size > k) throw new Error("Image too large. Maximum size is 5MB.");
+    if (d.size > _) throw new Error("Image too large. Maximum size is 5MB.");
     const u = d.type === "image/webp" ? "image/webp" : "image/jpeg";
     const f = u === "image/webp" ? "webp" : "jpg";
     return new File([ d ], `avatar.${f}`, {
@@ -1249,14 +1320,14 @@ document.addEventListener("DOMContentLoaded", () => {
     setImg(document.getElementById("menuUserAvatar"));
   }
   async function uploadProfilePicture(e) {
-    if (P || !e) return;
-    P = true;
+    if (T || !e) return;
+    T = true;
     const t = document.getElementById("stgAvatar");
     try {
       if (t) t.style.opacity = "0.55";
-      if (M) {
-        M.disabled = true;
-        M.classList.add("is-busy");
+      if (A) {
+        A.disabled = true;
+        A.classList.add("is-busy");
       }
       const n = new FormData;
       n.append("pfp", e, e.name || "avatar.webp");
@@ -1295,7 +1366,7 @@ document.addEventListener("DOMContentLoaded", () => {
         window.apiCache.userProfile = null;
         window.apiCache.userProfileTime = 0;
       }
-      A = Date.now();
+      k = Date.now();
       closeCropModal();
       if (typeof window.showNotification === "function") {
         window.showNotification("Profile picture updated", "success");
@@ -1307,18 +1378,18 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         alert(e.message || "Failed to upload profile picture");
       }
-      if (M) {
-        M.disabled = false;
-        M.classList.remove("is-busy");
+      if (A) {
+        A.disabled = false;
+        A.classList.remove("is-busy");
       }
     } finally {
       if (t) t.style.opacity = "1";
-      P = false;
-      if (v) v.value = "";
+      T = false;
+      if (S) S.value = "";
     }
   }
   async function saveCroppedAvatar() {
-    if (!_.open || P) return;
+    if (!F.open || T) return;
     try {
       const e = await exportCroppedAvatarFile();
       await uploadProfilePicture(e);
@@ -1330,102 +1401,102 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
   function onCropPointerDown(e) {
-    if (!_.open || e.button != null && e.button !== 0) return;
+    if (!F.open || e.button != null && e.button !== 0) return;
     e.preventDefault();
-    _.dragging = true;
-    _.lastX = e.clientX;
-    _.lastY = e.clientY;
-    _.pointerId = e.pointerId;
-    L?.setPointerCapture?.(e.pointerId);
+    F.dragging = true;
+    F.lastX = e.clientX;
+    F.lastY = e.clientY;
+    F.pointerId = e.pointerId;
+    U?.setPointerCapture?.(e.pointerId);
   }
   function onCropPointerMove(e) {
-    if (!_.dragging) return;
+    if (!F.dragging) return;
     e.preventDefault();
-    const t = e.clientX - _.lastX;
-    const n = e.clientY - _.lastY;
-    _.lastX = e.clientX;
-    _.lastY = e.clientY;
-    _.offsetX += t;
-    _.offsetY += n;
+    const t = e.clientX - F.lastX;
+    const n = e.clientY - F.lastY;
+    F.lastX = e.clientX;
+    F.lastY = e.clientY;
+    F.offsetX += t;
+    F.offsetY += n;
     applyCropTransform();
   }
   function onCropPointerUp(e) {
-    if (!_.dragging) return;
-    _.dragging = false;
+    if (!F.dragging) return;
+    F.dragging = false;
     try {
-      L?.releasePointerCapture?.(e.pointerId);
+      U?.releasePointerCapture?.(e.pointerId);
     } catch (e) {}
   }
-  if (L) {
-    L.addEventListener("pointerdown", onCropPointerDown);
-    L.addEventListener("pointermove", onCropPointerMove);
-    L.addEventListener("pointerup", onCropPointerUp);
-    L.addEventListener("pointercancel", onCropPointerUp);
-    L.addEventListener("wheel", e => {
-      if (!_.open) return;
+  if (U) {
+    U.addEventListener("pointerdown", onCropPointerDown);
+    U.addEventListener("pointermove", onCropPointerMove);
+    U.addEventListener("pointerup", onCropPointerUp);
+    U.addEventListener("pointercancel", onCropPointerUp);
+    U.addEventListener("wheel", e => {
+      if (!F.open) return;
       e.preventDefault();
       const t = e.deltaY > 0 ? -.08 : .08;
-      _.zoom = Math.max(1, Math.min(3, _.zoom + t));
-      if (U) U.value = String(_.zoom);
+      F.zoom = Math.max(1, Math.min(3, F.zoom + t));
+      if (P) P.value = String(F.zoom);
       applyCropTransform();
     }, {
       passive: false
     });
   }
-  U?.addEventListener("input", () => {
-    _.zoom = Math.max(1, Math.min(3, Number(U.value) || 1));
+  P?.addEventListener("input", () => {
+    F.zoom = Math.max(1, Math.min(3, Number(P.value) || 1));
     applyCropTransform();
   });
   document.getElementById("stgCropZoomIn")?.addEventListener("click", () => {
-    _.zoom = Math.min(3, _.zoom + .12);
-    if (U) U.value = String(_.zoom);
+    F.zoom = Math.min(3, F.zoom + .12);
+    if (P) P.value = String(F.zoom);
     applyCropTransform();
   });
   document.getElementById("stgCropZoomOut")?.addEventListener("click", () => {
-    _.zoom = Math.max(1, _.zoom - .12);
-    if (U) U.value = String(_.zoom);
+    F.zoom = Math.max(1, F.zoom - .12);
+    if (P) P.value = String(F.zoom);
     applyCropTransform();
   });
   document.getElementById("stgCropCancel")?.addEventListener("click", () => closeCropModal());
   document.getElementById("stgCropClose")?.addEventListener("click", () => closeCropModal());
-  C?.addEventListener("click", () => closeCropModal());
-  B?.addEventListener("click", e => {
-    if (e.target === B) closeCropModal();
+  I?.addEventListener("click", () => closeCropModal());
+  M?.addEventListener("click", e => {
+    if (e.target === M) closeCropModal();
   });
-  M?.addEventListener("click", () => {
+  A?.addEventListener("click", () => {
     saveCroppedAvatar();
   });
-  B?.querySelector(".stgCropCard")?.addEventListener("click", e => e.stopPropagation());
-  if (S && v) {
-    S.addEventListener("click", e => {
+  M?.querySelector(".stgCropCard")?.addEventListener("click", e => e.stopPropagation());
+  if (B && S) {
+    B.addEventListener("click", e => {
       e.preventDefault();
       e.stopPropagation();
-      if (P || _.open) return;
-      v.click();
+      if (T || F.open) return;
+      S.click();
     });
   }
-  if (v) {
-    v.addEventListener("change", async () => {
-      const e = v.files && v.files[0];
+  if (S) {
+    S.addEventListener("change", async () => {
+      const e = S.files && S.files[0];
       if (!e) return;
       const t = Date.now();
-      if (t - A < T) {
+      if (t - k < N) {
         if (typeof window.showNotification === "function") {
           window.showNotification("Please wait before uploading another picture", "warning");
         }
-        v.value = "";
+        S.value = "";
         return;
       }
       try {
         const t = new Uint8Array(await e.slice(0, 16).arrayBuffer());
         const n = detectImageMime(t);
         if (!n) throw new Error("File is not a valid JPG, PNG, or WebP image");
-        if (e.size <= 0 || e.size > k) {
+        if (e.size <= 0 || e.size > _) {
           throw new Error("Image too large. Maximum size is 5MB.");
         }
         openCropModal(e);
       } catch (e) {
-        v.value = "";
+        S.value = "";
         if (typeof window.showNotification === "function") {
           window.showNotification(e.message || "Invalid image", "error");
         } else {
@@ -1564,22 +1635,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
   function cancelProfileEdit() {
-    if (!b) return;
+    if (!C) return;
     setProfileEditing(false);
   }
-  if (E) {
-    E.addEventListener("click", e => {
+  if (b) {
+    b.addEventListener("click", e => {
       e.stopPropagation();
       toggleProfileEditMode();
     });
   }
   document.addEventListener("keydown", e => {
-    if (e.key === "Escape" && _.open) {
+    if (e.key === "Escape" && F.open) {
       e.preventDefault();
       closeCropModal();
       return;
     }
-    if (e.key === "Escape" && b) {
+    if (e.key === "Escape" && C) {
       cancelProfileEdit();
       return;
     }

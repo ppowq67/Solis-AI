@@ -1,5 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="dark" data-solis-cursor="preview">
+<script>
+(function () {
+  try {
+    var v = localStorage.getItem('solisMacCursor');
+    if (v !== 'off' && v !== 'preview' && v !== 'always') v = 'preview';
+    document.documentElement.setAttribute('data-solis-cursor', v);
+  } catch (e) {}
+})();
+</script>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -38,7 +47,7 @@
     <link rel="stylesheet" href="/style/ss/ios-pill-nav.css?v=29">
     <link rel="stylesheet" href="/style/ss/mobile-nav.css?v=28">
     <link rel="stylesheet" href="/style/ss/customize.css?v=27">
-    <link rel="stylesheet" href="/style/ss/clips.css?v=105">
+    <link rel="stylesheet" href="/style/ss/clips.css?v=106">
     <link rel="stylesheet" href="/style/ss/profile.css?v=29">
     <link rel="stylesheet" href="/style/ss/tasks-panel-v2-demo.css?v=18">
     <link rel="stylesheet" href="/style/ss/solis-gen-stage.css?v=26">
@@ -49,8 +58,8 @@
     <script src="/js/i_dq/profile-notifications.js?t=20260815151000"></script>
     <script src="/js/s_new/qwsqa.js?v=6"></script>
     <script src="/js/s_new/qwe.js?v=20"></script>
-    <link rel="stylesheet" href="/style/ss/stg-modal.css?v=66">
-    <script src="/js/s_new/stg.js?v=61"></script>
+    <link rel="stylesheet" href="/style/ss/stg-modal.css?v=67">
+    <script src="/js/s_new/stg.js?v=62"></script>
     <script src="/js/i_dq/video-generation-hook.js?v=1"></script>
     <script src="/js/ui/progress-ui.js?v=2"></script>
     <script src="/js/ui/generation-progress-spinner.js?v=65"></script>
@@ -1588,6 +1597,33 @@
                                 >
                                     <span class="stgToggleKnob" aria-hidden="true"></span>
                                 </button>
+                            </div>
+                            <div class="stgRow stgRow--toggle">
+                                <div class="stgRowBody">
+                                    <div class="stgRowLabel">macOS cursor</div>
+                                    <div class="stgRowValue" id="stgMacCursorLabel">On</div>
+                                    <p class="stgRowHint">Use the Solis macOS arrow and hand cursors.</p>
+                                </div>
+                                <button
+                                    type="button"
+                                    class="stgToggle is-on"
+                                    id="stgMacCursorToggle"
+                                    role="switch"
+                                    aria-checked="true"
+                                    aria-label="Enable macOS cursor"
+                                >
+                                    <span class="stgToggleKnob" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                            <div class="stgRow stgMacCursorScopeRow" id="stgMacCursorScopeRow">
+                                <div class="stgRowBody">
+                                    <div class="stgRowLabel">Cursor scope</div>
+                                    <p class="stgRowHint">Template preview only, or the whole dashboard.</p>
+                                </div>
+                                <div class="stgSeg" id="stgMacCursorScope" role="radiogroup" aria-label="macOS cursor scope">
+                                    <button type="button" class="stgSegBtn is-on" data-solis-cursor-scope="preview" role="radio" aria-checked="true">Preview</button>
+                                    <button type="button" class="stgSegBtn" data-solis-cursor-scope="always" role="radio" aria-checked="false">Everywhere</button>
+                                </div>
                             </div>
                         </div>
                     </div>

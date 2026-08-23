@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  @font-face {
+    font-family: "Exposure VAR";
+    src: url("https://arc.net/fonts/205TF-Exposure-[-30].woff2") format("woff2");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "ABC Oracle";
+    src: url("https://arc.net/fonts/ABCOracle-Regular.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "InterVariable";
+    src: url("https://arc.net/fonts/inter-var-latin.woff2") format("woff2-variations");
+    font-weight: 100 900;
+    font-display: optional;
+  }
+
+  .dia-banner {
+    display: flex;
+    width: 717px;
+    height: 184px;
+    background-image: url("https://arc.net/images/dia-background-image.png");
+    background-size: cover;
+    border-radius: 16px;
+    overflow: hidden;
+    font-family: "InterVariable", "Inter", -apple-system, sans-serif;
+    color: #fffcea;
+    position: relative;
+    user-select: none;
+  }
+
+  .dia-content {
+    flex: 1;
+    padding: 32px 0 32px 32px;
+    z-index: 2;
+  }
+
+  .dia-title {
+    margin: 0;
+    color: rgba(0, 0, 0, 0.85);
+    font-family: "Exposure VAR", Helvetica, sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.2;
+    max-width: 390px;
+  }
+
+  .dia-subtitle {
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  .dia-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 24px;
+    padding: 8px 18px 8px 8px;
+    background-color: rgba(0, 0, 0, 0.85);
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 16px;
+    font-family: "ABC Oracle", Helvetica, sans-serif;
+    font-size: 20px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.25);
+    transition: background 0.2s ease-in-out;
+  }
+
+  .dia-button:hover {
+    background-color: rgba(0, 0, 0, 0.95);
+  }
+
+  .dia-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .dia-button-text {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 2px;
+  }
+
+  .dia-preview {
+    width: 295px;
+    position: relative;
+  }
+
+  .dia-browser-frame {
+    width: 672px;
+    height: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="dia-banner">
+  <div class="dia-content">
+    <p class="dia-title">
+      Meet Solis Agent. <span class="dia-subtitle">Same as Solis AI, but better</span>
+    </p>
+    <a href="https://diabrowser.com/?utm_campaign=arc-cta" class="dia-button">
+      <img src="https://arc.net/images/dia_app_icon.png" alt="Dia Icon" class="dia-icon">
+      <span class="dia-button-text">
+        Try Solis Agent
+        <svg width="18" height="15" viewBox="0 0 18 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path opacity="0.5" d="M9.98438 14.0625C9.72656 14.0625 9.50781 13.9766 9.32812 13.8047C9.15625 13.6328 9.07031 13.4141 9.07031 13.1484C9.07031 13.0234 9.08984 12.9023 9.12891 12.7852C9.17578 12.668 9.24219 12.5703 9.32812 12.4922L10.9453 10.8164L15.1406 7.03125L10.9453 3.24609L9.32812 1.57031C9.24219 1.49219 9.17578 1.39453 9.12891 1.27734C9.08984 1.16016 9.07031 1.03906 9.07031 0.914062C9.07031 0.648438 9.15625 0.429688 9.32812 0.257812C9.50781 0.0859375 9.72656 0 9.98438 0C10.2422 0 10.4727 0.0976562 10.6758 0.292969L16.7227 6.32812C16.9414 6.53125 17.0508 6.76562 17.0508 7.03125C17.0508 7.29688 16.9414 7.53125 16.7227 7.73438L10.6758 13.7695C10.4727 13.9648 10.2422 14.0625 9.98438 14.0625ZM0.9375 7.98047C0.65625 7.98047 0.429688 7.89062 0.257812 7.71094C0.0859375 7.53125 0 7.30469 0 7.03125C0 6.75781 0.0859375 6.53125 0.257812 6.35156C0.429688 6.17188 0.65625 6.08203 0.9375 6.08203H12L15.1172 6.30469C15.3359 6.32812 15.5117 6.40234 15.6445 6.52734C15.7773 6.65234 15.8438 6.82031 15.8438 7.03125C15.8438 7.24219 15.7734 7.41016 15.6328 7.53516C15.5 7.66016 15.3281 7.73438 15.1172 7.75781L12 7.98047H0.9375Z" fill="white"></path>
+        </svg>
+      </span>
+    </a>
+  </div>
+  <div class="dia-preview">
+    <img src="https://arc.net/images/Dia-Browserframe.png" alt="Dia Preview" class="dia-browser-frame">
+  </div>
+</div>
+
+</body>
+</html>

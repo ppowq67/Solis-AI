@@ -45,7 +45,7 @@ function finishLogoutLanding() {
   localStorage.clear();
   if (t) localStorage.setItem("theme", t);
   window.history.replaceState({}, document.title, "/login");
-  const e = window.API_BASE_URL || window.location.origin + "/api";
+  const e = apiBase();
   fetch(`${e}/auth/logout`, {
     method: "POST",
     credentials: "include"
@@ -118,6 +118,23 @@ function setupEventListeners() {
   });
 }
 
+function apiBase() {
+  if (window.API_BASE_URL) return String(window.API_BASE_URL).replace(/\/$/, "");
+  const t = window.location.hostname || "";
+  const e = t === "localhost" || t === "127.0.0.1";
+  if (e) return `${window.location.protocol}//${t}:5500/api`;
+  return "https://api.solisai.video/api";
+}
+
+function oauthAuthUrl(t) {
+  if (typeof window.apiUrl === "function") return window.apiUrl(t);
+  const e = apiBase();
+  let n = String(t || "");
+  if (n.startsWith("/api/")) n = n.slice(4); else if (n.startsWith("/api")) n = n.slice(4);
+  if (!n.startsWith("/")) n = "/" + n;
+  return e + n;
+}
+
 async function handleOAuthLogin(t) {
   const e = OAUTH_PROVIDERS[t];
   if (!e) return;
@@ -129,7 +146,7 @@ async function handleOAuthLogin(t) {
       n.disabled = true;
       n.setAttribute("aria-busy", "true");
     }
-    const i = window.API_BASE_URL || `${window.location.protocol}//${window.location.hostname}:5500/api`;
+    const i = apiBase();
     await fetch(`${i}/auth/logout`, {
       method: "POST",
       credentials: "include"
@@ -141,7 +158,7 @@ async function handleOAuthLogin(t) {
       localStorage.removeItem("solis_memory_owner_id");
     } catch (t) {}
     sessionStorage.removeItem(SKIP_AUTH_REDIRECT_KEY);
-    const a = window.apiUrl ? window.apiUrl(e.path) : `${i}${e.path.replace(/^\/api/, "")}`;
+    const a = oauthAuthUrl(e.path);
     const s = await fetch(a, {
       method: "GET",
       credentials: "include"
@@ -160,10 +177,12 @@ async function handleOAuthLogin(t) {
   } catch (n) {
     sessionStorage.setItem(SKIP_AUTH_REDIRECT_KEY, "1");
     console.error("Login error:", n);
-    alert(n.message || "Login failed. Please check your connection and try again.");
+    const o = String(n && n.message || "");
+    const i = /failed to fetch|networkerror|load failed/i.test(o) ? "Could not reach Solis servers. Check your connection and try again." : o || "Login failed. Please check your connection and try again.";
+    alert(i);
     resetOAuthButton(t);
-    const o = document.getElementById(e.btnId);
-    disableButtonWithCountdown(o, 3, e.label);
+    const a = document.getElementById(e.btnId);
+    disableButtonWithCountdown(a, 3, e.label);
   }
 }
 

@@ -390,6 +390,12 @@ class GenerationProgressSpinner {
       this.errorBanner.textContent = e;
       this.errorBanner.hidden = false;
       this.errorBanner.classList.add("is-visible");
+      this.errorBanner.title = "Click to dismiss";
+      this.errorBanner.style.cursor = "pointer";
+      if (!this.errorBanner.dataset.dismissBound) {
+        this.errorBanner.dataset.dismissBound = "1";
+        this.errorBanner.addEventListener("click", () => this._dismissErrorState());
+      }
     }
     if (this.todoPanel) this.todoPanel.classList.add("is-error-state");
   }
@@ -1221,6 +1227,41 @@ class GenerationProgressSpinner {
       this._syncGeneratingBadge();
     }
   }
+  failOptimisticStart(e = "Could not start generation — try again") {
+    const t = this._cleanMessage(e) || "Could not start generation — try again";
+    this._clearErrorDismissTimer();
+    this.optimisticPending = false;
+    this._completionHandled = false;
+    this.stopPolling();
+    this._unlockUrlSubmitButton();
+    this._ensureDomRefs();
+    if (this.wrapper) this.wrapper.style.display = "flex";
+    this._ensureTaskList();
+    this._markTasksFailed();
+    this._clearStuckBanner();
+    if (this.launcher) {
+      this.launcher.classList.remove("is-complete", "is-stuck", "is-queued");
+      this.launcher.classList.add("is-error", "is-active");
+    }
+    if (this.progressCircle) {
+      this.progressCircle.style.strokeDashoffset = "0";
+      this.progressCircle.style.stroke = "#ef4444";
+    }
+    if (this.progressText) {
+      this.progressText.textContent = "✕";
+    }
+    if (this.progressTooltip) {
+      this.progressTooltip.textContent = t;
+    }
+    if (this.taskCounter) {
+      this.taskCounter.textContent = "Failed";
+    }
+    this._showErrorBanner(t);
+    this.openPanel();
+    this._errorDismissTimer = setTimeout(() => {
+      this._dismissErrorState();
+    }, 16e3);
+  }
   startGeneration(e, t = "Fetching video...", s = null, i = {}) {
     if (!this._isValidProjectId(e)) return;
     if (this._wasUserCancelled(e)) {
@@ -1364,7 +1405,7 @@ class GenerationProgressSpinner {
     if (!t) return "Something went wrong — try again";
     const s = t.toLowerCase();
     if (s.includes("youtube") && (s.includes("proxy") || s.includes("cookie") || s.includes("bot"))) {
-      return "YouTube blocked the download — refresh Chrome cookies (YTDLP_COOKIES) and retry.";
+      return "YouTube blocked the download — tokens auto-refresh on retry; wait a moment and try again.";
     }
     if (/\b(vast|modal|gpu|rtx|serverless|traceback|exception|errno)\b/i.test(t) || s.includes("failed:") || s.length > 140) {
       return "Something went wrong — try again";
@@ -1691,7 +1732,7 @@ class GenerationProgressSpinner {
     }
     this._showErrorBanner(s);
     this.openPanel();
-    const i = /youtube|proxy|cookie/i.test(s) ? 12e3 : 2800;
+    const i = /youtube|proxy|cookie|start|could not/i.test(s) ? 16e3 : 1e4;
     this._errorDismissTimer = setTimeout(() => {
       this._dismissErrorState();
     }, i);

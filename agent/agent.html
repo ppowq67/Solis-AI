@@ -5,6 +5,7 @@
 <title>Solis Agent</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap');
   :root {
     --bg: #f4f4f2;
     --bg-2: #eaeae7;
@@ -472,6 +473,788 @@
     font-size: 14px;
   }
 
+  .workspace {
+    display: none;
+    flex-direction: row;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 30;
+    background: var(--bg);
+    animation: workspaceIn 0.5s cubic-bezier(.16,1,.3,1) both;
+  }
+  .workspace.active { display: flex; }
+
+  .sidebar-toggle {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 40;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: left 0.28s cubic-bezier(.16,1,.3,1);
+  }
+  .sidebar-toggle.docked { left: 154px; }
+  .sidebar-toggle svg { width: 16px; height: 16px; }
+
+  .rightpanel-toggle {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 40;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .rightpanel-toggle svg { width: 16px; height: 16px; }
+  .rightpanel-toggle.active { color: var(--text); }
+
+  .fullscreen-toggle-float {
+    position: absolute;
+    top: 16px;
+    right: 56px;
+    z-index: 40;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .fullscreen-toggle-float svg { width: 16px; height: 16px; }
+  .fullscreen-toggle-float.active { color: var(--text); }
+
+  .sidebar {
+    position: relative;
+    width: 0;
+    flex-shrink: 0;
+    overflow: hidden;
+    background: var(--panel);
+    border-right: 1px solid transparent;
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    display: flex;
+    flex-direction: column;
+    transition: width 0.28s cubic-bezier(.16,1,.3,1), border-color 0.28s ease;
+  }
+  .sidebar.open {
+    width: 240px;
+    border-right: 1px solid var(--chip-border);
+  }
+
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    gap: 8px;
+  }
+  .sidebar-header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+  .logo-mark-wrap {
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+    display: flex;
+  }
+  .logo-mark-wrap svg { width: 100%; height: 100%; }
+  .sidebar-title {
+    font-family: "Fraunces", Georgia, "Times New Roman", serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .sidebar-header-right {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .sidebar-header .icon-btn { width: 30px; height: 30px; }
+  .sidebar-header .icon-btn svg { width: 14px; height: 14px; }
+
+  .sidebar-inner {
+    width: 240px;
+    min-width: 240px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    padding: 2px 10px 10px;
+    gap: 1px;
+  }
+  .sidebar-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 9px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .sidebar-nav-item svg { width: 16px; height: 16px; color: var(--text-dim); flex-shrink: 0; }
+
+  .sidebar-section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: var(--text-faint);
+    padding: 12px 14px 6px;
+    border-top: 1px solid var(--chip-border);
+    margin-top: 4px;
+  }
+
+  .sidebar-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 4px 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .sidebar-item {
+    padding: 9px 10px;
+    border-radius: 9px;
+    font-size: 13px;
+    color: var(--text-dim);
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .sidebar-item.active {
+    background: var(--chip);
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .activity-summary {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12.5px;
+    color: var(--text-faint);
+    cursor: pointer;
+    margin: 2px 0 6px;
+    user-select: none;
+  }
+  .activity-summary svg.activity-icon { width: 13px; height: 13px; flex-shrink: 0; color: var(--text-faint); }
+  .activity-summary .activity-text { }
+  .activity-summary .chev {
+    width: 11px;
+    height: 11px;
+    color: var(--text-faint);
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+  }
+  .activity-summary.expanded .chev { transform: rotate(90deg); }
+  .activity-details {
+    display: none;
+    flex-direction: column;
+    gap: 0;
+    margin: 4px 0 10px 20px;
+    font-size: 12.5px;
+    color: var(--text-dim);
+    position: relative;
+  }
+  .activity-summary.expanded + .activity-details { display: flex; }
+  .activity-details::before {
+    content: "";
+    position: absolute;
+    top: 12px;
+    bottom: 12px;
+    left: 9.5px;
+    width: 1px;
+    background: var(--chip-border);
+  }
+  .activity-details .step {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 5px 0;
+    position: relative;
+    z-index: 1;
+  }
+  .activity-details .step-icon-box {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .activity-details .step-icon-box svg { width: 15px; height: 15px; color: var(--text-dim); }
+  @keyframes workspaceIn {
+    0% { opacity: 0; transform: translateY(14px) scale(0.985); filter: blur(6px); }
+    100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+  }
+
+  .chat-panel, .canvas-panel {
+    background: var(--panel);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+  .chat-panel {
+    border-right: 1px solid var(--chip-border);
+    width: 420px;
+    flex-shrink: 0;
+    transition: width 0.28s cubic-bezier(.16,1,.3,1);
+  }
+  .chat-panel.expanded { width: 100%; border-right: none; }
+  .chat-panel.resizing { transition: none; }
+
+  .panel-resizer {
+    width: 5px;
+    flex-shrink: 0;
+    cursor: col-resize;
+    position: relative;
+    z-index: 20;
+  }
+  .panel-resizer::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 2px;
+    width: 1px;
+    background: var(--chip-border);
+  }
+  .panel-resizer:hover::after,
+  .panel-resizer.active::after {
+    left: 1px;
+    width: 3px;
+    background: var(--text-faint);
+  }
+  .chat-panel.expanded .chat-messages,
+  .chat-panel.expanded .chat-input-box {
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .canvas-panel {
+    flex: 1;
+    min-width: 0;
+    transition: flex 0.28s cubic-bezier(.16,1,.3,1), width 0.28s cubic-bezier(.16,1,.3,1), opacity 0.22s ease;
+  }
+  .canvas-panel.collapsed {
+    flex: 0 0 0px;
+    width: 0;
+    min-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    padding: 0;
+    border: none;
+  }
+  .chat-panel::after, .canvas-panel::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+    pointer-events: none;
+  }
+
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 22px 22px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .chat-msg-wrap {
+    display: flex;
+    flex-direction: column;
+    max-width: 90%;
+  }
+  .chat-msg-wrap.user { align-self: flex-end; align-items: flex-end; }
+  .chat-msg-wrap.agent { align-self: flex-start; align-items: flex-start; }
+  .chat-msg {
+    max-width: 100%;
+    font-size: 14px;
+    line-height: 1.45;
+    padding: 8px 12px;
+    border-radius: 12px;
+    animation: msgIn 0.35s cubic-bezier(.16,1,.3,1) both;
+  }
+  @keyframes msgIn {
+    0% { opacity: 0; transform: translateY(6px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  .chat-msg.user {
+    align-self: flex-end;
+    background: var(--accent);
+    color: var(--bg);
+    border-radius: 10px;
+  }
+  .chat-msg.agent {
+    align-self: flex-start;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    padding: 4px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .agent-body {
+    display: flex;
+    flex-direction: column;
+  }
+  .agent-avatar {
+    display: grid;
+    grid-template-columns: repeat(3, 2.5px);
+    grid-template-rows: repeat(3, 2.5px);
+    gap: 1.5px;
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+  .agent-avatar .dot {
+    width: 2.5px;
+    height: 2.5px;
+    border-radius: 1px;
+    background: #d4d4d8;
+    transition: background 0.32s ease-out, transform 0.32s ease-out;
+  }
+  .agent-avatar .dot.lit {
+    background: #000;
+  }
+  .agent-msg-text { padding-top: 2px; }
+
+  .thinking-text {
+    padding-top: 2px;
+    font-weight: 500;
+    background: linear-gradient(
+      90deg,
+      #a8a8b0 0%,
+      #a8a8b0 42%,
+      #ffffff 50%,
+      #a8a8b0 58%,
+      #a8a8b0 100%
+    );
+    background-size: 220% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: #a8a8b0;
+    animation: shimmerSweep 1.6s linear infinite;
+  }
+  @keyframes shimmerSweep {
+    0% { background-position: 120% 0; }
+    100% { background-position: -120% 0; }
+  }
+
+  .chat-input-box {
+    padding: 12px 16px 16px;
+  }
+  .chat-input-wrap {
+    background: var(--panel-inset);
+    border: 1px solid var(--chip-border);
+    border-radius: 20px;
+    padding: 14px 14px 10px;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.5) inset;
+  }
+  .chat-input {
+    width: 100%;
+    resize: none;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+    padding: 0 2px 10px;
+    max-height: 100px;
+  }
+  .chat-input::placeholder { color: var(--text-faint); }
+
+  .chat-input-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .chat-toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .model-select-wrap { position: relative; }
+  .model-select {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12.5px;
+    color: var(--text);
+    cursor: pointer;
+    padding: 4px 2px;
+  }
+  .model-select .model-name { font-weight: 700; }
+  .model-select .model-tier { color: var(--text-faint); font-weight: 500; }
+  .model-select .chev { width: 12px; height: 12px; color: var(--text-faint); }
+
+  .model-dropdown {
+    display: block;
+    position: absolute;
+    bottom: calc(100% + 10px);
+    right: 0;
+    width: 240px;
+    background: var(--panel-inset);
+    border: 1px solid var(--chip-border);
+    border-radius: 14px;
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    box-shadow: 0 20px 44px -12px rgba(0,0,0,0.18), 0 4px 12px rgba(0,0,0,0.06);
+    padding: 6px;
+    z-index: 50;
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+    pointer-events: none;
+    transform-origin: bottom right;
+    transition: opacity 0.16s ease, transform 0.16s cubic-bezier(.16,1,.3,1);
+  }
+  .model-dropdown.open {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
+
+  .model-option {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: 9px;
+    cursor: pointer;
+  }
+  .model-option:hover { background: var(--chip); }
+  .model-option-text { display: flex; flex-direction: column; gap: 1px; }
+  .model-option-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .model-option-desc { font-size: 11.5px; color: var(--text-faint); }
+  .model-check { width: 15px; height: 15px; color: var(--text); flex-shrink: 0; margin-top: 2px; }
+
+  .model-dropdown-divider {
+    height: 1px;
+    background: var(--chip-border);
+    margin: 4px 4px;
+  }
+
+  .model-dropdown-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 10px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .model-dropdown-row:hover { background: var(--chip); }
+  .model-dropdown-row .row-value {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--text-faint);
+  }
+  .model-dropdown-row svg { width: 13px; height: 13px; color: var(--text-faint); }
+
+  .chat-input-toolbar .icon-btn {
+    width: 30px;
+    height: 30px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+  .chat-input-toolbar .icon-btn svg { width: 15px; height: 15px; }
+  .chat-input-toolbar .send-btn {
+    width: 30px;
+    height: 30px;
+  }
+  .chat-input-toolbar .send-btn svg { width: 14px; height: 14px; }
+  .send-btn.is-stop svg { width: 12px; height: 12px; }
+
+  .canvas-panel { padding: 12px 12px 14px; gap: 8px; background: var(--bg-2); }
+
+  .canvas-icon-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .canvas-icon-btn svg { width: 15px; height: 15px; }
+  .canvas-icon-btn.active { background: var(--chip); color: var(--text); }
+
+  .canvas-toolbar-bottom {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-right: 86px;
+  }
+  .canvas-addr-bar {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    height: 30px;
+    padding: 0 12px;
+    border-radius: 8px;
+    background: var(--panel-inset);
+    border: 1px solid var(--chip-border);
+    color: var(--text-faint);
+    font-size: 12.5px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+
+  .canvas-stage {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+    overflow: auto;
+  }
+
+  .canvas-panel.fullscreen {
+    border-radius: 0;
+  }
+  .canvas-panel.fullscreen .canvas-toolbar-bottom { display: none; }
+  .canvas-panel.fullscreen .canvas-stage { padding: 0; }
+  .canvas-panel.fullscreen .video-frame { border-radius: 0; border: none; }
+
+  .fullscreen-close {
+    display: none;
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 102;
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    background: rgba(20,20,22,0.6);
+    border: 1px solid rgba(255,255,255,0.14);
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    color: #fff;
+    align-items: center;
+    justify-content: center;
+  }
+  .fullscreen-close svg { width: 15px; height: 15px; }
+  .canvas-panel.fullscreen .fullscreen-close { display: flex; }
+
+  .fullscreen-edit-bar {
+    display: none;
+    position: fixed;
+    bottom: 26px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 101;
+    width: min(560px, calc(100vw - 48px));
+    align-items: center;
+    gap: 10px;
+    padding: 8px 8px 8px 18px;
+    border-radius: 26px;
+    background: rgba(20,20,22,0.72);
+    border: 1px solid rgba(255,255,255,0.12);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+  }
+  .canvas-panel.fullscreen .fullscreen-edit-bar { display: flex; }
+  .fullscreen-edit-input {
+    flex: 1;
+    resize: none;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #f2f2f4;
+    font-family: inherit;
+    font-size: 13.5px;
+    padding: 6px 0;
+    max-height: 80px;
+  }
+  .fullscreen-edit-input::placeholder { color: rgba(255,255,255,0.4); }
+  .fullscreen-edit-bar .send-btn { width: 32px; height: 32px; flex-shrink: 0; }
+  .fullscreen-edit-bar .send-btn svg { width: 14px; height: 14px; }
+
+  .video-frame {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    border-radius: 16px;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(140,170,255,0.10), transparent 45%),
+      radial-gradient(circle at 75% 80%, rgba(255,170,210,0.10), transparent 45%),
+      var(--bg);
+    border: 1px solid var(--chip-border);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.5) inset, 0 14px 30px -10px rgba(0,0,0,0.10);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: width 0.28s cubic-bezier(.16,1,.3,1), max-width 0.28s cubic-bezier(.16,1,.3,1);
+  }
+  .canvas-stage.squished .video-frame {
+    width: 380px;
+    max-width: 380px;
+    aspect-ratio: 9 / 16;
+    height: auto;
+  }
+  .video-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-faint);
+    font-size: 13px;
+  }
+  .video-placeholder svg {
+    width: 40px;
+    height: 40px;
+    color: var(--text-faint);
+    opacity: 0.7;
+  }
+
+  .timeline-panel {
+    flex-shrink: 0;
+    background: var(--panel);
+    border: 1px solid var(--chip-border);
+    border-radius: 14px;
+    padding: 10px 12px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .timeline-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .timeline-header-left, .timeline-header-right {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .timeline-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #e8843c;
+    margin-right: 6px;
+  }
+  .timeline-label svg { width: 14px; height: 14px; fill: #e8843c; stroke: #e8843c; }
+  .timeline-header .canvas-icon-btn { width: 26px; height: 26px; }
+  .timeline-header .canvas-icon-btn svg { width: 13px; height: 13px; }
+  .timeline-time {
+    font-size: 11.5px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-dim);
+  }
+  .timeline-zoom {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 6px;
+  }
+  .timeline-zoom .canvas-icon-btn { width: 22px; height: 22px; }
+  .timeline-zoom .canvas-icon-btn svg { width: 11px; height: 11px; }
+  .timeline-zoom-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--text);
+  }
+
+  .timeline-track {
+    display: flex;
+    align-items: stretch;
+    gap: 2px;
+    height: 56px;
+    overflow-x: auto;
+  }
+  .timeline-clip {
+    position: relative;
+    flex: 1;
+    min-width: 60px;
+    border-radius: 8px;
+    background:
+      linear-gradient(160deg, rgba(140,170,255,0.16), rgba(255,170,210,0.14)),
+      var(--chip);
+    border: 1.5px solid transparent;
+    display: flex;
+    align-items: flex-end;
+    padding: 5px;
+    cursor: pointer;
+  }
+  .timeline-clip.active { border-color: var(--text); }
+  .clip-num {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-dim);
+    background: rgba(255,255,255,0.7);
+    border-radius: 4px;
+    padding: 1px 5px;
+  }
+  .timeline-add {
+    flex-shrink: 0;
+    width: 32px;
+    border-radius: 8px;
+    background: var(--chip);
+    border: 1px dashed var(--chip-border);
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .timeline-add svg { width: 14px; height: 14px; }
+
   button { cursor: pointer; }
 
   .signin:hover { color: var(--text-dim); }
@@ -520,6 +1303,7 @@
 </header>
 
 <main>
+  <div id="landingView">
   <h1><canvas id="headlineCanvas" width="900" height="80"></canvas></h1>
 
   <div class="prompt-box">
@@ -587,7 +1371,209 @@
   </div>
 
   <div class="projects-box">Sign in to see your projects.</div>
+  </div>
 </main>
+
+<div id="workspaceView" class="workspace" hidden>
+  <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+  </button>
+
+  <button class="fullscreen-toggle-float" id="fullscreenToggle" aria-label="Fullscreen">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-maximize2-icon lucide-maximize-2"><path d="M15 3h6v6"/><path d="m21 3-7 7"/><path d="m3 21 7-7"/><path d="M9 21H3v-6"/></svg>
+  </button>
+
+  <button class="rightpanel-toggle" id="rightPanelToggle" aria-label="Collapse canvas panel">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-panel-right-icon lucide-panel-right"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M15 3v18"/></svg>
+  </button>
+
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-inner">
+    <div class="sidebar-header">
+      <div class="sidebar-header-left">
+        <span class="logo-mark-wrap">
+          <svg viewBox="0 0 100 100" fill="none">
+            <circle cx="50" cy="50" r="11" fill="#17171a" stroke="none"/>
+            <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#17171a" stroke-width="6" transform="rotate(45 50 50)"/>
+            <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#17171a" stroke-width="6" transform="rotate(-45 50 50)"/>
+          </svg>
+        </span>
+        <span class="sidebar-title">Solis Agent</span>
+      </div>
+      <div class="sidebar-header-right">
+        <button class="icon-btn" aria-label="Search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="sidebar-nav">
+      <div class="sidebar-nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle-plus-icon lucide-message-circle-plus"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
+        <span>New</span>
+      </div>
+      <div class="sidebar-nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-folder-git2-icon lucide-folder-git-2"><path d="M18 19a5 5 0 0 1-5-5v8"/><path d="M9 20H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H20a2 2 0 0 1 2 2v5"/><circle cx="13" cy="12" r="2"/><circle cx="20" cy="19" r="2"/></svg>
+        <span>Projects</span>
+      </div>
+      <div class="sidebar-nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-paintbrush-icon lucide-paintbrush"><path d="m14.622 17.897-10.68-2.913"/><path d="M18.376 2.622a1 1 0 1 1 3.002 3.002L17.36 9.643a.5.5 0 0 0 0 .707l.944.944a2.41 2.41 0 0 1 0 3.408l-.944.944a.5.5 0 0 1-.707 0L8.354 7.348a.5.5 0 0 1 0-.707l.944-.944a2.41 2.41 0 0 1 3.408 0l.944.944a.5.5 0 0 0 .707 0z"/><path d="M9 8c-1.804 2.71-3.97 3.46-6.583 3.948a.507.507 0 0 0-.302.819l7.32 8.883a1 1 0 0 0 1.185.204C12.735 20.405 16 16.792 16 15"/></svg>
+        <span>Design</span>
+      </div>
+      <div class="sidebar-nav-item">
+        <svg viewBox="0 0 100 100" fill="none">
+          <circle cx="50" cy="50" r="12" fill="#ea580c" stroke="none"/>
+          <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#ea580c" stroke-width="6" transform="rotate(45 50 50)"/>
+          <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#ea580c" stroke-width="6" transform="rotate(-45 50 50)"/>
+        </svg>
+        <span>Solis AI</span> <span class="solisai">main</span>
+      </div>
+    </div>
+      <style>
+        .solisai {
+           background: linear-gradient(145deg, #ff8a55 0%, #ff6b35 42%, #ff4f1a 100%);
+          color: #fff;
+          padding: 2px 5px;
+          border-radius: 5px;
+          font-size: 10px;
+          font-weight: 500;
+        }
+      </style>
+    <div class="sidebar-section-label">Chats and tasks</div>
+    <div class="sidebar-list">
+      <div class="sidebar-item active">Test Task</div>
+    </div>
+    </div>
+
+  </div>
+
+  <div class="chat-panel">
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-input-box">
+      <div class="chat-input-wrap">
+      <textarea class="chat-input" id="chatInput" placeholder="Tell the agent what to do next..." rows="1"></textarea>
+      <div class="chat-input-toolbar">
+        <button class="icon-btn" aria-label="Add">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
+        <div class="chat-toolbar-right">
+          <div class="model-select-wrap">
+            <div class="model-select" id="modelSelectBtn">
+              <span class="model-name">Muse 2.1</span>
+              <span class="model-tier">Low</span>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="model-dropdown" id="modelDropdown">
+              <div class="model-option selected">
+                <div class="model-option-text">
+                  <span class="model-option-name">Muse 2.1</span>
+                  <span class="model-option-desc">Most efficient for everyday tasks</span>
+                </div>
+                <svg class="model-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+              </div>
+              <div class="model-dropdown-divider"></div>
+              <div class="model-dropdown-row">
+                <span>Effort</span>
+                <span class="row-value">Low
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+                </span>
+              </div>
+              <div class="model-dropdown-row">
+                <span>More models</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+              </div>
+            </div>
+          </div>
+          <button class="icon-btn" aria-label="Voice input">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4M9 22h6"/></svg>
+          </button>
+          <button class="send-btn" id="chatSendBtn" aria-label="Send">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3.5c.4 0 .78.16 1.06.44l6.5 6.5a1.5 1.5 0 0 1-2.12 2.12l-3.94-3.94V19a1.5 1.5 0 0 1-3 0V8.62l-3.94 3.94a1.5 1.5 0 0 1-2.12-2.12l6.5-6.5c.28-.28.66-.44 1.06-.44z"/></svg>
+          </button>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-resizer" id="panelResizer"></div>
+
+  <div class="canvas-panel">
+    <div class="canvas-toolbar-bottom">
+      <button class="canvas-icon-btn" aria-label="Back">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left-icon lucide-arrow-left"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+      </button>
+      <button class="canvas-icon-btn" aria-label="Forward">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right-icon lucide-arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </button>
+      <button class="canvas-icon-btn" aria-label="Refresh">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-cw-icon lucide-rotate-cw"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+      </button>
+      <div class="canvas-addr-bar">/</div>
+    </div>
+
+    <button class="fullscreen-close" id="fullscreenClose" aria-label="Exit fullscreen">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-minimize2-icon lucide-minimize-2"><path d="M14 10 21 3"/><path d="M3 21l7-7"/><path d="M21 16v5h-5"/><path d="M3 8V3h5"/></svg>
+    </button>
+
+    <div class="canvas-stage" id="canvasStage">
+      <div class="video-frame" id="videoFrame">
+        <div class="video-placeholder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3V9z" fill="currentColor" stroke="none"/></svg>
+          <span>Your video will appear here</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-panel">
+      <div class="timeline-header">
+        <div class="timeline-header-left">
+          <div class="timeline-label">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-play-icon lucide-play"><path d="M6 3v18l16-9z"/></svg>
+            <span>Timeline</span>
+          </div>
+          <button class="canvas-icon-btn" aria-label="Duplicate">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy-icon lucide-copy"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+          </button>
+          <button class="canvas-icon-btn" aria-label="Delete">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+          </button>
+        </div>
+        <div class="timeline-header-right">
+          <span class="timeline-time" id="timelineTime">00:00.0 / 00:34.0</span>
+          <div class="timeline-zoom">
+            <button class="canvas-icon-btn" id="zoomOut" aria-label="Zoom out">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-minus-icon lucide-minus"><path d="M5 12h14"/></svg>
+            </button>
+            <span class="timeline-zoom-dot"></span>
+            <button class="canvas-icon-btn" id="zoomIn" aria-label="Zoom in">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-icon lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-track" id="timelineTrack">
+        <div class="timeline-clip" data-n="01"><span class="clip-num">01</span></div>
+        <div class="timeline-clip" data-n="02"><span class="clip-num">02</span></div>
+        <div class="timeline-clip active" data-n="03"><span class="clip-num">03</span></div>
+        <div class="timeline-clip" data-n="04"><span class="clip-num">04</span></div>
+        <div class="timeline-clip" data-n="05"><span class="clip-num">05</span></div>
+        <div class="timeline-clip" data-n="06"><span class="clip-num">06</span></div>
+        <button class="timeline-add" aria-label="Add clip">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="fullscreen-edit-bar" id="fullscreenEditBar">
+      <textarea class="fullscreen-edit-input" placeholder="Describe your edit, @ to reference images" rows="1"></textarea>
+      <button class="send-btn" id="fullscreenSendBtn" aria-label="Send">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3.5c.4 0 .78.16 1.06.44l6.5 6.5a1.5 1.5 0 0 1-2.12 2.12l-3.94-3.94V19a1.5 1.5 0 0 1-3 0V8.62l-3.94 3.94a1.5 1.5 0 0 1-2.12-2.12l6.5-6.5c.28-.28.66-.44 1.06-.44z"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
 
 <script>
   const headlines = [
@@ -595,7 +1581,7 @@
     "Turn one video into ten.",
     "Long-form to short-form, fast.",
     "Repurpose your best moments.",
-    "What's the next clip today?"
+    "What are we making today?"
   ];
   let idx = 0;
   const canvas = document.getElementById('headlineCanvas');
@@ -755,6 +1741,315 @@
   particles = sampleTextParticles(headlines[0]);
   drawCrispText(headlines[0]);
   setTimeout(startBlow, 3200);
+
+  const landingView = document.getElementById('landingView');
+  const workspaceView = document.getElementById('workspaceView');
+  const promptInput = document.querySelector('.prompt-input');
+  const promptSendBtn = document.querySelector('.prompt-box .send-btn');
+  const chatMessages = document.getElementById('chatMessages');
+  const chatInput = document.getElementById('chatInput');
+  const chatSendBtn = document.getElementById('chatSendBtn');
+
+  const sidebar = document.getElementById('sidebar');
+  const sidebarToggle = document.getElementById('sidebarToggle');
+  sidebarToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    sidebarToggle.classList.toggle('docked', sidebar.classList.contains('open'));
+  });
+  sidebar.querySelectorAll('.sidebar-item').forEach(item => {
+    item.addEventListener('click', () => {
+      sidebar.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
+    });
+  });
+
+  const canvasStage = document.getElementById('canvasStage');
+
+  const modelSelectBtn = document.getElementById('modelSelectBtn');
+  const modelDropdown = document.getElementById('modelDropdown');
+  modelSelectBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    modelDropdown.classList.toggle('open');
+  });
+  document.addEventListener('click', (e) => {
+    if (!modelDropdown.contains(e.target) && !modelSelectBtn.contains(e.target)) {
+      modelDropdown.classList.remove('open');
+    }
+  });
+
+  const panelResizer = document.getElementById('panelResizer');
+  let resizing = false;
+  panelResizer.addEventListener('pointerdown', (e) => {
+    if (chatPanelEl.classList.contains('expanded')) return;
+    resizing = true;
+    chatPanelEl.classList.add('resizing');
+    panelResizer.classList.add('active');
+    document.body.style.cursor = 'col-resize';
+    e.preventDefault();
+  });
+  window.addEventListener('pointermove', (e) => {
+    if (!resizing) return;
+    const min = 300, max = window.innerWidth - 360;
+    const w = Math.max(min, Math.min(max, e.clientX));
+    chatPanelEl.style.width = w + 'px';
+  });
+  window.addEventListener('pointerup', () => {
+    if (!resizing) return;
+    resizing = false;
+    chatPanelEl.classList.remove('resizing');
+    panelResizer.classList.remove('active');
+    document.body.style.cursor = '';
+  });
+
+  const canvasPanelEl = document.querySelector('.canvas-panel');
+  const chatPanelEl = document.querySelector('.chat-panel');
+  const fullscreenToggle = document.getElementById('fullscreenToggle');
+  const FS_DURATION = 340;
+  const FS_EASE = 'cubic-bezier(.16,1,.3,1)';
+
+  function setFsTransition(on) {
+    canvasPanelEl.style.transition = on
+      ? `top ${FS_DURATION}ms ${FS_EASE}, left ${FS_DURATION}ms ${FS_EASE}, width ${FS_DURATION}ms ${FS_EASE}, height ${FS_DURATION}ms ${FS_EASE}, border-radius ${FS_DURATION}ms ease`
+      : '';
+  }
+
+  function enterFullscreen() {
+    const rect = canvasPanelEl.getBoundingClientRect();
+    canvasPanelEl.style.position = 'fixed';
+    canvasPanelEl.style.top = rect.top + 'px';
+    canvasPanelEl.style.left = rect.left + 'px';
+    canvasPanelEl.style.width = rect.width + 'px';
+    canvasPanelEl.style.height = rect.height + 'px';
+    canvasPanelEl.style.zIndex = '100';
+    canvasPanelEl.classList.add('fullscreen');
+    fullscreenToggle.classList.add('active');
+    setFsTransition(false);
+    canvasPanelEl.offsetHeight; // force reflow
+    setFsTransition(true);
+    requestAnimationFrame(() => {
+      canvasPanelEl.style.top = '0px';
+      canvasPanelEl.style.left = '0px';
+      canvasPanelEl.style.width = '100vw';
+      canvasPanelEl.style.height = '100vh';
+    });
+  }
+
+  function exitFullscreen() {
+    if (!canvasPanelEl.classList.contains('fullscreen')) return;
+    const chatRect = chatPanelEl.getBoundingClientRect();
+    const targetLeft = canvasPanelEl.classList.contains('collapsed') ? window.innerWidth : chatRect.right;
+    setFsTransition(true);
+    canvasPanelEl.style.top = '0px';
+    canvasPanelEl.style.left = targetLeft + 'px';
+    canvasPanelEl.style.width = (window.innerWidth - targetLeft) + 'px';
+    canvasPanelEl.style.height = window.innerHeight + 'px';
+    canvasPanelEl.classList.remove('fullscreen');
+    fullscreenToggle.classList.remove('active');
+    setTimeout(() => {
+      canvasPanelEl.style.position = '';
+      canvasPanelEl.style.top = '';
+      canvasPanelEl.style.left = '';
+      canvasPanelEl.style.width = '';
+      canvasPanelEl.style.height = '';
+      canvasPanelEl.style.zIndex = '';
+      setFsTransition(false);
+    }, FS_DURATION);
+  }
+
+  fullscreenToggle.addEventListener('click', () => {
+    if (canvasPanelEl.classList.contains('fullscreen')) {
+      exitFullscreen();
+    } else {
+      enterFullscreen();
+    }
+  });
+  document.getElementById('fullscreenClose').addEventListener('click', exitFullscreen);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && canvasPanelEl.classList.contains('fullscreen')) {
+      exitFullscreen();
+    }
+  });
+
+  const rightPanelToggle = document.getElementById('rightPanelToggle');
+  rightPanelToggle.addEventListener('click', () => {
+    canvasPanelEl.classList.toggle('collapsed');
+    chatPanelEl.classList.toggle('expanded');
+    rightPanelToggle.classList.toggle('active');
+  });
+
+  function addMessage(role, html) {
+    const wrap = document.createElement('div');
+    wrap.className = 'chat-msg-wrap ' + role;
+    const el = document.createElement('div');
+    el.className = 'chat-msg ' + role;
+    el.innerHTML = html;
+    wrap.appendChild(el);
+    chatMessages.appendChild(wrap);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    return el;
+  }
+
+  const AVATAR_DOTS_HTML = [1,2,3,4,5,6,7,8,9]
+    .map(() => '<div class="dot"></div>')
+    .join('');
+
+  const SWEEP_ORDER = [3, 2, 1, 4, 5, 6, 9, 8, 7];
+  const STEP_MS = 150;
+  const FADE_HOLD_MS = 480; // longer hold so several dots overlap and the S reads clearly
+
+  function runSweep(avatarEl, onFullLoopDone) {
+    const dots = avatarEl.querySelectorAll('.dot');
+    let step = 0;
+    const timer = setInterval(() => {
+      const nth = SWEEP_ORDER[step];
+      const dot = dots[nth - 1];
+      dot.classList.add('lit');
+      setTimeout(() => dot.classList.remove('lit'), FADE_HOLD_MS);
+      step++;
+      if (step === SWEEP_ORDER.length) {
+        clearInterval(timer);
+        if (onFullLoopDone) {
+          setTimeout(onFullLoopDone, FADE_HOLD_MS + 150); // let the last dot finish fading before revealing text
+        }
+      }
+    }, STEP_MS);
+    return timer;
+  }
+
+  const STOP_ICON = '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="3"/></svg>';
+  const SEND_ICON = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3.5c.4 0 .78.16 1.06.44l6.5 6.5a1.5 1.5 0 0 1-2.12 2.12l-3.94-3.94V19a1.5 1.5 0 0 1-3 0V8.62l-3.94 3.94a1.5 1.5 0 0 1-2.12-2.12l6.5-6.5c.28-.28.66-.44 1.06-.44z"/></svg>';
+
+  function setGenerating(isGenerating) {
+    chatSendBtn.innerHTML = isGenerating ? STOP_ICON : SEND_ICON;
+    chatSendBtn.classList.toggle('is-stop', isGenerating);
+  }
+
+  function agentTypingThenReply(replyText, activitySteps) {
+    setGenerating(true);
+    const typing = addMessage('agent',
+      '<div class="agent-body"><span class="thinking-text">Thinking</span></div>' +
+      '<div class="agent-avatar" id="avatar-' + (msgCounter++) + '"></div>'
+    );
+    const avatar = typing.querySelector('.agent-avatar');
+    avatar.innerHTML = AVATAR_DOTS_HTML;
+    const body = typing.querySelector('.agent-body');
+    const thinkingEl = body.querySelector('.thinking-text');
+
+    runSweep(avatar, () => {
+      thinkingEl.remove();
+      setGenerating(false);
+      if (activitySteps && activitySteps.length) {
+        const summary = document.createElement('div');
+        summary.className = 'activity-summary';
+        summary.innerHTML =
+          '<span class="activity-text">' + activitySteps.map(s => s.label).join(', ') + '</span>' +
+          '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
+        const details = document.createElement('div');
+        details.className = 'activity-details';
+        details.innerHTML = activitySteps.map(s =>
+          '<div class="step">' +
+            '<div class="step-icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + s.icon + '</svg></div>' +
+            '<span>' + s.label + '</span>' +
+          '</div>'
+        ).join('');
+        summary.addEventListener('click', () => summary.classList.toggle('expanded'));
+        body.appendChild(summary);
+        body.appendChild(details);
+      }
+      const textEl = document.createElement('span');
+      textEl.className = 'agent-msg-text';
+      textEl.textContent = replyText;
+      body.appendChild(textEl);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    });
+  }
+  let msgCounter = 0;
+
+  function enterWorkspace(firstMessage) {
+
+landingView.style.display = 'none';
+
+document.querySelector('header').style.display = 'none';
+
+workspaceView.hidden = false;
+
+workspaceView.classList.add('active');
+
+document.body.style.overflow = 'hidden';
+
+chatMessages.innerHTML = '';
+
+addMessage('user', firstMessage.replace(/\</g, '&lt;'));
+
+agentTypingThenReply(
+  "Got it — pulling that video in now. I'll find the strongest moments and start cutting a few short-form clips, or I can keep it long-form if you'd rather trim the full thing down. Let me know which direction you want.",
+  [
+    {
+      label: 'Read the video',
+      icon: '<path d="m17 2-5 5-5-5"/><rect width="20" height="15" x="2" y="7" rx="2"/>'
+    },
+    {
+      label: 'Analyzed transcript',
+      icon: '<path d="M11.1 22H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.589 3.588A2.4 2.4 0 0 1 20 8v3.25"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="m21 22-2.88-2.88"/><circle cx="16" cy="17" r="3"/>'
+    },
+    {
+      label: 'found 3 highlights',
+      icon: '<path d="m12 3-1.5 4.5L6 9l4.5 1.5L12 15l1.5-4.5L18 9l-4.5-1.5L12 3Z"/><path d="m19 14-.75 2.25L16 17l2.25.75L19 20l.75-2.25L22 17l-2.25-.75L19 14Z"/><path d="m5 14-.5 1.5L3 16l1.5.5L5 18l.5-1.5L7 16l-1.5-.5L5 14Z"/>'
+    },
+    {
+     label: '1 note',
+     icon: '<path d="M8 2v4"/><path d="M12 2v4"/><path d="M16 2v4"/><rect width="16" height="18" x="4" y="4" rx="2"/><path d="M8 10h6"/><path d="M8 14h8"/><path d="M8 18h5"/>'
+    }
+  ]
+);
+
+}
+
+  function handleLandingSubmit() {
+    const val = promptInput.value.trim();
+    if (!val) return;
+    enterWorkspace(val);
+  }
+  promptSendBtn.addEventListener('click', handleLandingSubmit);
+  promptInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleLandingSubmit();
+    }
+  });
+
+  function handleChatSubmit() {
+    const val = chatInput.value.trim();
+    if (!val) return;
+    addMessage('user', val.replace(/</g, '&lt;'));
+    chatInput.value = '';
+    agentTypingThenReply("On it — working through that now.");
+  }
+  chatSendBtn.addEventListener('click', handleChatSubmit);
+  chatInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleChatSubmit();
+    }
+  });
+
+  const fullscreenInput = document.getElementById('fullscreenEditInput') || document.querySelector('.fullscreen-edit-input');
+  const fullscreenSendBtn = document.getElementById('fullscreenSendBtn');
+  function handleFullscreenEditSubmit() {
+    const val = fullscreenInput.value.trim();
+    if (!val) return;
+    exitFullscreen();
+    fullscreenInput.value = '';
+    addMessage('user', val.replace(/</g, '&lt;'));
+    agentTypingThenReply("Got it — applying that edit now.");
+  }
+  fullscreenSendBtn.addEventListener('click', handleFullscreenEditSubmit);
+  fullscreenInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleFullscreenEditSubmit();
+    }
+  });
 </script>
 
 </body>

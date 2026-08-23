@@ -941,7 +941,7 @@
             <div class="plan-price-now">
               <span class="plan-price-currency">$</span>
               <span class="plan-price-int">14</span>
-              <span class="plan-price-dec">.49</span>
+              <span class="plan-price-dec">.39</span>
             </div>
             <div class="plan-price-meta">
               <span class="plan-price-save">40% OFF</span>
@@ -1050,7 +1050,7 @@
                   </th>
                   <th class="col-plan-prime">
                     <div class="col-plan-name name-prime">Prime <span class="prime-badge">POPULAR</span></div>
-                    <div class="col-plan-price"><s>$23.99</s>$14.49</div>
+                    <div class="col-plan-price"><s>$23.99</s>$14.39</div>
                   </th>
                   <th>
                     <div class="col-plan-name name-elite">Elite</div>
@@ -1135,7 +1135,7 @@
           Prime
           <span class="prime-tag">POPULAR</span>
         </div>
-        <div class="_cta-price" id="_ctaPrice"><strong>$14.49</strong>/mo · first 2 months</div>
+        <div class="_cta-price" id="_ctaPrice"><strong>$14.39</strong>/mo · first 2 months</div>
       </div>
       <button type="button" class="_cta-btn">
         Start free
@@ -1180,7 +1180,7 @@
       document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setMenuOpen(false); });
       var stickyCtaPrice = $('#_ctaPrice');
       if (stickyCtaPrice) {
-        stickyCtaPrice.innerHTML = '<strong>$14.49</strong>/mo · first 2 months';
+        stickyCtaPrice.innerHTML = '<strong>$14.39</strong>/mo · first 2 months';
       }
       var compareCue = $('.compare-scroll-cue');
       var compareCueKey = 'solis_compare_cue_seen';
@@ -1251,9 +1251,8 @@
         { q: 'Is video length metered?', a: "No. One upload costs one upload whether your source is a short clip or a long podcast. What changes by tier is how many uploads you get per day and how many clips you can keep in your library." },
         { q: 'Can I switch tiers later?', a: "Yes, upgrade or downgrade at any time from your dashboard. Upgrades take effect immediately and we prorate the difference. Downgrades take effect at the end of your current billing cycle, so you keep the higher limits until then." },
         { q: "What counts as an upload?", a: "One upload is one source URL you submit. We analyze the video once (VideoDNA), then render the clips you chose for that run. On paid plans you can get multiple clips per upload without re-analyzing or re-downloading. Each finished clip uses one saved video slot. Submitting the same source again with a different template counts as a new upload. Failed renders caused by platform-side errors are automatically refunded to your daily quota." },
-        { q: 'Do you offer refunds?', a: "If you started with a free trial, you can cancel within 5 days of your first charge and receive a full refund - no questions asked. Annual plans are refundable on a prorated basis within the first 14 days. See our <a href='/refund.html'>Refund Policy</a> for the full policy." },
-        { q: 'Is there a free trial?', a: "Currently, 'Prime' tier includes a 3-day free trial. You won't be charged until the trial ends and you can cancel anytime from your dashboard before the trial expires with no charge."},
-        { q: 'What is the 40% off launch offer?', a: "For a limited time, Basic and Prime are 40% off for your first 2 months. Basic is $5.99/mo and Prime is $14.49/mo for those first two months, then billing returns to the regular price ($9.99 / $23.99). Elite is $39.99/mo. Cancel anytime."},
+        { q: 'Do you offer refunds?', a: "You can cancel within 5 days of your first charge and receive a full refund - no questions asked. Annual plans are refundable on a prorated basis within the first 14 days. See our <a href='/refund.html'>Refund Policy</a> for the full policy." },
+        { q: 'What is the 40% off launch offer?', a: "For a limited time, Basic and Prime are 40% off for your first 2 months. Basic is $5.99/mo and Prime is $14.39/mo for those first two months, then billing returns to the regular price ($9.99 / $23.99). Elite is $39.99/mo. Cancel anytime."},
         { q: 'What payment methods do you accept?', a: 'We accept all major credit and debit cards through Paddle, our merchant of record. Apple Pay, Google Pay, and PayPal are also supported at checkout.' },
         { q: 'How does the priority queue work on Elite?', a: "Elite subscribers' renders are placed at the front of our global render queue, ahead of Basic and Prime subscribers. During peak hours this typically reduces wait time by 60–80% versus the standard queue." },
         { q: 'What happens to my clips if I cancel?', a: "All clips you've already rendered and downloaded remain yours forever, they're watermark-free on every tier. If you cancel, your saved videos in the Solis library are retained for 30 days, then permanently deleted unless you re-subscribe." },
@@ -1350,7 +1349,7 @@
     })();
   </script>
   <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
-  <script src="/js/core/paddle-config.js?v=8"></script>
+  <script src="/js/core/paddle-config.js?v=9"></script>
   <script src="/js/payment/payment-flow.js?v=2"></script>
   <script src="/js/s_new/qwqs.js?v=6"></script>
   <script src="/js/payment/premium-page.js?v=6"></script>

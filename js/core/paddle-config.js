@@ -240,6 +240,18 @@ class PaddleManager {
         successUrl: `${window.location.origin}/dashboard.html?payment=success&plan=${encodeURIComponent(t)}`
       }
     };
+    const c = String(t || "").toLowerCase();
+    if (c === "basic" || c === "prime") {
+      const e = n.discountId || this.config?.plans?.[c]?.discountId || this.config?.launchDiscountId || null;
+      const t = n.discountCode || this.config?.plans?.[c]?.discountCode || this.config?.launchDiscountCode || null;
+      if (e) {
+        a.discountId = String(e);
+      } else if (t) {
+        a.discountCode = String(t);
+      } else {
+        console.warn("[Paddle] No launch discount configured — checkout will charge full price. " + "Set PADDLE_DISCOUNT_LAUNCH=dsc_… on the API host.");
+      }
+    }
     if (n.email && !this._customerRetryUsed) {
       a.customer = {
         email: String(n.email)

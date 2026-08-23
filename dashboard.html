@@ -47,7 +47,7 @@
     <link rel="stylesheet" href="/style/ss/ios-pill-nav.css?v=29">
     <link rel="stylesheet" href="/style/ss/mobile-nav.css?v=28">
     <link rel="stylesheet" href="/style/ss/customize.css?v=27">
-    <link rel="stylesheet" href="/style/ss/clips.css?v=107">
+    <link rel="stylesheet" href="/style/ss/clips.css?v=113">
     <link rel="stylesheet" href="/style/ss/profile.css?v=29">
     <link rel="stylesheet" href="/style/ss/tasks-panel-v2-demo.css?v=18">
     <link rel="stylesheet" href="/style/ss/solis-gen-stage.css?v=26">
@@ -66,7 +66,8 @@
     <script src="/js/ui/solis-gen-stage.js?v=24"></script>
     <script src="/js/generation-recovery.js?v=6"></script>
     <script src="/js/i_dq/ranking-customizer.js?v=24"></script>
-    <script src="/js/s_new/solis-memory.js?v=62"></script>
+    <script src="/js/s_new/solis-style-pack.js?v=3"></script>
+    <script src="/js/s_new/solis-memory.js?v=66"></script>
     <script src="/js/s_new/instant-recipe.js?v=6"></script>
     <script src="/js/settings/settings-manager.js?v=2"></script>
     <script src="/js/payment/payment-flow.js?v=1"></script>
@@ -77,7 +78,7 @@
     <script src="/js/ui/plan-selector.js?v=63"></script>
     <script src="/js/core/video-preview-system.js?v=2"></script>
     <script src="/js/s_new/clip-card.js?v=23"></script>
-    <script src="/js/s.js?v=268"></script>
+    <script src="/js/s.js?v=272"></script>
     <script src="/js/s_new/procc.js?v=2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -3570,6 +3571,7 @@
             <button class="template-button template-use-btn" data-template="ranked_compilation">Use Template</button>
         </div>
     </div>
+
     <div class="template-card" data-template="splitscreen">
         <div class="template-image-placeholder">
             <svg class="template-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -3696,10 +3698,6 @@
                             onclick="activatePreviewToolbar(this); openSubtitleAnimations()"
                             title="Caption presets" aria-label="Presets">
                             <i data-lucide="sparkles"></i>
-                            <span class="pill-anim-nudge" id="pillAnimNudge" hidden aria-hidden="true">
-                                <span class="pill-anim-nudge-stem"></span>
-                                <span class="pill-anim-nudge-head"></span>
-                            </span>
                         </button>
                         <button type="button" class="tool-btn tool-btn-modifiers" data-tool="modifiers"
                             onclick="activatePreviewToolbar(this); togglePreviewModifiersMenu(event)"
@@ -3711,10 +3709,10 @@
                     <div class="preview-modifiers-menu" id="previewModifiersMenu" hidden role="menu" aria-label="Modifiers">
                         <div class="preview-modifiers-row" role="menuitem" data-modifier-preview="auto-modes">
                             <div class="preview-modifiers-copy">
-                                <span class="preview-modifiers-label">Auto Modes</span>
+                                <span class="preview-modifiers-label">Auto Mode</span>
                                 <span class="preview-modifiers-beta" title="Beta">Beta</span>
                             </div>
-                            <label class="stgToggle is-on" id="autoModesToggleLabel" title="Auto Modes: Solis picks Reframe, Blur, or Focus for you" role="switch" aria-checked="true" aria-label="Toggle Auto Modes">
+                            <label class="stgToggle is-on" id="autoModesToggleLabel" title="Auto Mode: Solis picks Reframe, Blur, or Focus for you" role="switch" aria-checked="true" aria-label="Toggle Auto Mode">
                                 <input type="checkbox" id="autoModesToggle" class="stgToggleInput" tabindex="-1" checked>
                                 <span class="stgToggleKnob" aria-hidden="true"></span>
                             </label>
@@ -3769,7 +3767,7 @@
                             <span class="template-use-fab-label" aria-hidden="true">Use Template</span>
                         </button>
                         <div class="solis-mod-stripes solis-mod-stripes--fab" id="solisModStripesFab" role="group" aria-label="modifier previews">
-                            <button type="button" class="solis-mod-stripe" data-mod="auto-modes" aria-label="Auto Modes">
+                            <button type="button" class="solis-mod-stripe" data-mod="auto-modes" aria-label="Auto Mode">
                                 <span class="solis-mod-stripe-bar" aria-hidden="true"></span>
                             </button>
                             <button type="button" class="solis-mod-stripe" data-mod="ai-text" aria-label="AI Text Generation">
@@ -4155,7 +4153,7 @@
                                     <span class="template-use-confirm-label">Use Template</span>
                                 </button>
                                 <div class="solis-mod-stripes" id="solisModStripes" role="group" aria-label="Modifier previews">
-                                    <button type="button" class="solis-mod-stripe" data-mod="auto-modes" aria-label="Auto Modes" title="Auto Modes">
+                                    <button type="button" class="solis-mod-stripe" data-mod="auto-modes" aria-label="Auto Mode" title="Auto Mode">
                                         <span class="solis-mod-stripe-bar" aria-hidden="true"></span>
                                     </button>
                                     <button type="button" class="solis-mod-stripe" data-mod="ai-text" aria-label="AI Text Generation" title="AI Text Generation">
@@ -6112,8 +6110,8 @@
    (function initSolisModStripes() {
        const MODS = {
            'auto-modes': {
-               label: 'Auto Modes',
-               icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="18" rx="1.5"/><rect x="14" y="8" width="7" height="13" rx="1.5"/><path d="M14 5h7"/></svg>',
+               label: 'Auto Mode',
+               icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="8" x="3" y="3" rx="2"/><path d="M7 11v4a2 2 0 0 0 2 2h4"/><rect width="8" height="8" x="13" y="13" rx="2"/><path d="M19 1.5l.65 1.85L21.5 4l-1.85.65L19 6.5l-.65-1.85L16.5 4l1.85-.65L19 1.5z"/></svg>',
                desc: 'Solis picks Reframe, Blur, or Focus for you.',
                demo: '<div class="modes-demo"><span>Reframe</span><span>Blur</span><span class="on">Focus</span></div>',
            },
@@ -6242,7 +6240,7 @@
 
            const tipH = Math.max(el.getBoundingClientRect().height || 0, 160);
            const gap = 10;
-           const placeAbove = r.top >= 160;
+           const placeAbove = r.top >= tipH + gap + 12;
            let top;
            if (placeAbove) {
                top = Math.max(12, r.top - tipH - gap);
@@ -6262,6 +6260,13 @@
        }
 
        function syncEnabled() {
+           let hideAll = false;
+           try {
+               hideAll = !!window.clipsStudio?.currentTemplateForPreview?.isLibraryPreview;
+           } catch (_) {
+               hideAll = false;
+           }
+
            const states = {
                'auto-modes': !!(window.solisAutoModesEnabled ?? document.getElementById('autoModesToggle')?.checked ?? true),
                'ai-text': !!(window.solisAiTitleGenerationEnabled ?? document.getElementById('aiTitleGenerationToggle')?.checked ?? true),
@@ -6270,7 +6275,7 @@
            };
 
            document.querySelectorAll('.solis-mod-stripe').forEach((stripe) => {
-               const on = !!states[stripe.dataset.mod];
+               const on = !hideAll && !!states[stripe.dataset.mod];
                const unfinished = stripe.dataset.mod === 'series-mode';
                stripe.classList.toggle('is-off', !on);
                stripe.classList.toggle('is-unfinished', unfinished);
@@ -6279,9 +6284,12 @@
                if (unfinished) stripe.setAttribute('title', 'Series Mode coming soon');
            });
            document.querySelectorAll('.solis-mod-stripes').forEach((root) => {
-               const anyOn = [...root.querySelectorAll('.solis-mod-stripe')].some((s) => !s.classList.contains('is-off'));
+               const anyOn = !hideAll && [...root.querySelectorAll('.solis-mod-stripe')].some((s) => !s.classList.contains('is-off'));
                root.classList.toggle('is-empty', !anyOn);
                root.hidden = !anyOn;
+           });
+           document.querySelectorAll('.template-use-confirm-shell').forEach((shell) => {
+               shell.classList.toggle('is-post-gen', hideAll);
            });
        }
        window.syncSolisModStripes = syncEnabled;
@@ -6782,8 +6790,8 @@
 .overlay-text-block.selected:not(.overlay-editing) .sub-text-inner{
     cursor:var(--solis-preview-cursor)!important;user-select:text;-webkit-user-select:text;
 }
-.overlay-text-block.overlay-editing{cursor:text;}
-.overlay-text-block.overlay-editing .sub-text-inner{cursor:text;}
+.overlay-text-block.overlay-editing{cursor:var(--solis-preview-cursor-text);}
+.overlay-text-block.overlay-editing .sub-text-inner{cursor:var(--solis-preview-cursor-text);}
 .overlay-text-block .overlay-placeholder,
 .overlay-text-block[data-placeholder="1"] .sub-text-inner{
     opacity:.92;
@@ -6823,30 +6831,30 @@
 .overlay-text-block[data-ai-hook="1"].overlay-editing,
 .overlay-text-block[data-ai-hook="1"].overlay-editing .sub-text-inner{
     user-select:text !important;-webkit-user-select:text !important;
-    cursor:text !important;
+    cursor:var(--solis-preview-cursor-text) !important;
 }
 
 @keyframes sub-suggest-fade-in{
     0%{border-color:transparent;box-shadow:0 0 0 0 transparent;background:transparent;}
     100%{
-        border-color:rgba(249,115,22,.88);
-        box-shadow:0 0 0 3px rgba(249,115,22,.16),0 8px 22px rgba(0,0,0,.12);
+        border-color:rgba(34,197,94,.88);
+        box-shadow:0 0 0 3px rgba(34,197,94,.18),0 8px 22px rgba(0,0,0,.12);
         background:transparent;
     }
 }
 @keyframes sub-suggest-breathe{
     0%,100%{
-        border-color:rgba(249,115,22,.72);
-        box-shadow:0 0 0 2.5px rgba(249,115,22,.12),0 6px 18px rgba(0,0,0,.1);
+        border-color:rgba(34,197,94,.7);
+        box-shadow:0 0 0 2.5px rgba(34,197,94,.14),0 6px 18px rgba(0,0,0,.1);
     }
     50%{
-        border-color:rgba(249,115,22,.95);
-        box-shadow:0 0 0 4px rgba(249,115,22,.22),0 8px 24px rgba(249,115,22,.1);
+        border-color:rgba(34,197,94,.95);
+        box-shadow:0 0 0 4px rgba(34,197,94,.24),0 8px 24px rgba(34,197,94,.12);
     }
 }
 .sub-text-block.sub-suggest{
     overflow:visible;z-index:85;
-    border-color:rgba(249,115,22,.88);
+    border-color:rgba(34,197,94,.88);
     background:transparent !important;
     animation:
         sub-suggest-fade-in .55s ease forwards,
@@ -6932,7 +6940,7 @@
         box-shadow .12s ease,transform .1s ease;
 }
 .sub-mem-btn:active{transform:scale(.95);}
-.sub-mem-btn svg{display:block;flex-shrink:0;width:14px;height:14px;}
+.sub-mem-btn svg{display:block;flex-shrink:0;width:20px;height:20px;}
 .sub-mem-accept{
     width:28px;height:28px;padding:0;min-width:28px;
     background:linear-gradient(145deg,#34d399 0%,#16a34a 100%);
@@ -8634,9 +8642,8 @@
     position:absolute !important;inset:0 !important;z-index:20 !important;
     display:block;overflow:hidden;
     background:
-        radial-gradient(ellipse 90% 70% at 25% 35%, rgba(255,255,255,.95), transparent 55%),
-        radial-gradient(ellipse 80% 60% at 80% 65%, rgba(255,248,240,.9), transparent 50%),
-        linear-gradient(160deg, #ffffff 0%, #f3f4f6 100%);
+        radial-gradient(ellipse 85% 70% at 30% 40%, rgba(40,44,52,.55), transparent 60%),
+        linear-gradient(165deg, #1a1c22 0%, #0e1014 100%);
     pointer-events:none;
     opacity:0;visibility:hidden;
     transition:
@@ -8652,9 +8659,9 @@
     width:100%;height:100%;
     object-fit:cover;object-position:center center;
     background:transparent !important;
-    filter:blur(56px) saturate(1.2) brightness(1.28) contrast(0.96);
-    -webkit-filter:blur(56px) saturate(1.2) brightness(1.28) contrast(0.96);
-    transform:scale(1.7);
+    filter:blur(22px) saturate(1.35) brightness(0.92) contrast(1.05);
+    -webkit-filter:blur(22px) saturate(1.35) brightness(0.92) contrast(1.05);
+    transform:scale(1.28);
     transform-origin:center center;
     pointer-events:none;
     display:block;
@@ -8668,20 +8675,20 @@
 #splitscreenBlankPanel.mode-black,
 #splitscreenBlankPanel.mode-blur{
     background:
-        radial-gradient(ellipse 90% 70% at 25% 35%, rgba(255,255,255,.98), transparent 55%),
-        linear-gradient(160deg, #ffffff 0%, #eef0f3 100%);
+        radial-gradient(ellipse 90% 70% at 25% 35%, rgba(28,30,36,.4), transparent 55%),
+        linear-gradient(160deg, #16181e 0%, #0c0d11 100%);
 }
 #splitscreenBlankPanel.mode-black .gp-blank-blur-vid,
 #splitscreenBlankPanel.mode-blur .gp-blank-blur-vid{
     opacity:1 !important;visibility:visible !important;
     background:transparent !important;
-    filter:blur(64px) saturate(1.22) brightness(1.26) contrast(0.95);
-    -webkit-filter:blur(64px) saturate(1.22) brightness(1.26) contrast(0.95);
+    filter:blur(22px) saturate(1.4) brightness(0.9) contrast(1.06);
+    -webkit-filter:blur(22px) saturate(1.4) brightness(0.9) contrast(1.06);
 }
 #splitscreenBlankPanel.mode-blur::after,
 #splitscreenBlankPanel.mode-black::after{
     content:'';position:absolute;inset:0;z-index:1;pointer-events:none;
-    background:linear-gradient(180deg, rgba(255,255,255,.34), transparent 55%, rgba(255,255,255,.18));
+    background:linear-gradient(180deg, rgba(0,0,0,.28), transparent 45%, rgba(0,0,0,.22));
     opacity:1;
 }
 
@@ -8706,8 +8713,8 @@
     flex-shrink:0;pointer-events:none;z-index:15;
     opacity:0;visibility:hidden;
     background:
-        radial-gradient(ellipse 90% 70% at 30% 40%, rgba(255,255,255,.95), transparent 55%),
-        linear-gradient(160deg, #ffffff 0%, #f3f4f6 100%) !important;
+        radial-gradient(ellipse 90% 70% at 30% 40%, rgba(28,30,36,.45), transparent 55%),
+        linear-gradient(160deg, #16181e 0%, #0c0d11 100%) !important;
     transition:opacity .28s cubic-bezier(.22,.8,.28,1), visibility .28s;
 }
 #splitscreenBlurBottom.visible{
@@ -8718,15 +8725,15 @@
     width:100%;height:100%;
     object-fit:cover;object-position:center center;
     background:transparent !important;
-    filter:blur(64px) saturate(1.22) brightness(1.26) contrast(0.95);
-    -webkit-filter:blur(64px) saturate(1.22) brightness(1.26) contrast(0.95);
-    transform:scale(1.7);
+    filter:blur(22px) saturate(1.4) brightness(0.9) contrast(1.06);
+    -webkit-filter:blur(22px) saturate(1.4) brightness(0.9) contrast(1.06);
+    transform:scale(1.28);
     transform-origin:center center;
     pointer-events:none;display:block;opacity:1 !important;visibility:visible !important;z-index:0;
 }
 #splitscreenBlurBottom.mode-blur::after{
     content:'';position:absolute;inset:0;z-index:1;pointer-events:none;
-    background:linear-gradient(0deg, rgba(255,255,255,.32), transparent 55%, rgba(255,255,255,.16));
+    background:linear-gradient(0deg, rgba(0,0,0,.26), transparent 50%, rgba(0,0,0,.18));
 }
 #splitscreenRoot.ss-letterbox-blur #splitscreenBottom.ss-blank-fill{
 }
@@ -9261,6 +9268,11 @@
     function fontWeightFor(name){
         const anim=String(curAnim||active?.dataset?.subAnim||'').toLowerCase();
         if((name||curFont)==='Montserrat' && anim==='popcolor') return '900';
+        try{
+            const bag=window.SolisStylePack?.fontWeights?.()||{};
+            const w=bag[name||curFont||'Montserrat'];
+            if(w) return w;
+        }catch(_){}
         return FW[name||curFont||'Montserrat']||'700';
     }
     function isBeastAnim(id){
@@ -9374,38 +9386,31 @@
             }, 180);
         }
     }
-    const ANIMS=[
-        {id:'beast',name:'Beast',anim:'beast',borderRadius:'12px',fixedWpc:2},
-        {id:'karaoke',name:'Karaoke',anim:'karaoke',borderRadius:'12px',fixedWpc:3},
-        {id:'blur',name:'Blur',anim:'blur',borderRadius:'12px'},
-        {id:'static',name:'Static',anim:'static',borderRadius:'12px'},
-        {id:'fade',name:'Fade',anim:'fade',borderRadius:'12px'},
-    ];
-    const CAPTION_PRESETS={
-        beast:{
-            anim:'beast', name:'Beast', font:'Komika Axis', shadow:'thick-outline',
-            color:'#ffffff', highlight:null, words_per_chunk:2,
-        },
-        karaoke:{
-            anim:'karaoke', name:'Karaoke', font:'Montserrat', shadow:'none',
-            color:'#ffffff', highlight:'#FFFFFF', words_per_chunk:3,
-        },
-        blur:{
-            anim:'blur', name:'Blur', font:'Bebas Neue', shadow:'none',
-            color:'#ffffff', highlight:null, words_per_chunk:3,
-        },
-        static:{
-            anim:'static', name:'Static', font:'Anton', shadow:'none',
-            color:'#ffffff', highlight:null, words_per_chunk:3,
-        },
-        fade:{
-            anim:'fade', name:'Fade', font:'Poppins', shadow:'none',
-            color:'#ffffff', highlight:null, words_per_chunk:3,
-        },
-    };
+    const ANIMS=[]; // filled from auth-only SolisStylePack — do not embed recipes here
+    let activeCaptionPresetId=null;
+    function captionAnims(){
+        try{
+            const list=window.SolisStylePack?.anims?.();
+            if(Array.isArray(list)&&list.length) return list;
+        }catch(_){}
+        return ANIMS;
+    }
+    function captionPresets(){
+        try{ return window.SolisStylePack?.presets?.()||{}; }catch(_){ return {}; }
+    }
+    function shadowCss(type){
+        try{
+            const bag=window.SolisStylePack?.shadows?.()||{};
+            if(bag[type]!=null) return bag[type];
+        }catch(_){}
+        return type==='none'?'none':'none';
+    }
     function applyCaptionPreset(presetId, block){
-        const pack=CAPTION_PRESETS[presetId]||CAPTION_PRESETS[String(presetId||'').toLowerCase()];
+        const pack=window.SolisStylePack?.preset?.(presetId)
+            || captionPresets()[presetId]
+            || captionPresets()[String(presetId||'').toLowerCase()];
         if(!pack) return null;
+        activeCaptionPresetId=String(presetId||pack.anim||'').toLowerCase();
         const host=block||active||animPinnedBlock;
         curAnim=pack.anim;
         curFont=pack.font;
@@ -9424,6 +9429,7 @@
         }
         if(host){
             host.dataset.subAnim=pack.anim;
+            host.dataset.captionPreset=activeCaptionPresetId;
             host.dataset.wordsPerChunk=String(pack.words_per_chunk||3);
             host.style.fontFamily=fontStack(pack.font);
             host.style.fontWeight=fontWeightFor(pack.font);
@@ -9444,7 +9450,7 @@
             }else{
                 host.style.letterSpacing='-.015em';
                 host.style.textTransform='';
-                host.style.textShadow=curShadow!=='none'?(SH[curShadow]||'none'):'none';
+                host.style.textShadow=curShadow!=='none'?shadowCss(curShadow):'none';
             }
         }
         syncFontDdHighlight(pack.font);
@@ -9465,7 +9471,9 @@
     const BGCOLS=['#ffffff','#FF6A3D','#3b82f6'];
     const CUSTOM_COLS_KEY='solis_sub_custom_cols';
     const FW={'Montserrat':'700','Fredoka':'700','Bebas Neue':'400','Anton':'400','Luckiest Guy':'400','Poppins':'600','Roboto':'700','Komika Axis':'400'};
-    const SH={none:'none',outline:'2px 0 0 #000,-2px 0 0 #000,0 2px 0 #000,0 -2px 0 #000,1px 1px 0 #000,-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000','thick-outline':'3px 0 0 #000,-3px 0 0 #000,0 3px 0 #000,0 -3px 0 #000,2px 2px 0 #000,-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000'};
+    const SH={none:'none'};
+    Object.defineProperty(SH,'outline',{get(){ return shadowCss('outline'); },enumerable:true});
+    Object.defineProperty(SH,'thick-outline',{get(){ return shadowCss('thick-outline'); },enumerable:true});
     let pill,ddFont,ddColor,ddAnim,posBadge,guideH,guideV,halfLine;
     let active=null,curAnim=null,animIvs=[],animFullIv=null,animFullRunner=null,animPreviewSavedText=null,animPreviewActiveId=null,animPreviewLeaveT=null,animPreviewSwapT=null,animLivePinned=false,animPinnedBlock=null,animPreviewPillFreeze=null,subPillPosFreeze=null,curFont='Montserrat',curShadow='none',curTextCol='#ffffff',curHighlightCol=null,bgCol=null,previewTextCol=null,previewHighlightCol=undefined,previewBgCol=undefined,previewShadow=null,shadowPreviewSaved=undefined,openDdBeforeDrag=null,colorTarget='text',spectrumHue=18;
     let pendingSubMem=null,subMemGhost=null,subMemActions=null,subMemCooldownUntil=0;
@@ -9646,7 +9654,7 @@
         if(!hex) return;
         const block=active||animPinnedBlock;
         if(!block) return;
-        const an=ANIMS.find(a=>a.id===(curAnim||block.dataset.subAnim));
+        const an=captionAnims().find(a=>a.id===(curAnim||block.dataset.subAnim));
         if(!an) return;
         const container=getAnimTarget(block);
         if(!container) return;
@@ -10217,7 +10225,7 @@
         }
         const inner=block.querySelector('.sub-text-inner');
         if(inner){
-            ANIMS.forEach(a=>{
+            captionAnims().forEach(a=>{
                 inner.querySelectorAll('.sub-preview-word').forEach(span=>{
                     span.classList.remove(`sub-anim-${a.anim}`);
                     span.style.transform='';
@@ -11757,7 +11765,7 @@
         const block=active||animPinnedBlock;
         if(!block||isOverlayText(block)) return;
         if(!animLivePinned && !animFullRunner) return;
-        const an=ANIMS.find(a=>a.id===(curAnim||block.dataset.subAnim));
+        const an=captionAnims().find(a=>a.id===(curAnim||block.dataset.subAnim));
         if(!an) return;
         const container=getAnimTarget(block);
         if(!container) return;
@@ -12286,7 +12294,7 @@
     }
 
     function showAnimFullPreview(animId, previewOpts){
-        const an=ANIMS.find(a=>a.id===animId);
+        const an=captionAnims().find(a=>a.id===animId);
         const block=previewOpts?.block||active||animPinnedBlock;
         if(!an||!block||isOverlayText(block))return;
 
@@ -12669,7 +12677,7 @@
                 inner.textContent=demoCaptionWords().slice(0, 6).join(' ');
             }
         }catch(_){}
-        const ids=ANIMS.map(a=>a.id);
+        const ids=captionAnims().map(a=>a.id);
         const tick=()=>{
             if(!block.isConnected){ clearTeachCycleTimer(); return; }
             const id=ids[teachAnimIdx%ids.length];
@@ -12708,7 +12716,27 @@
         window._animCardRunners=[];
     }
 
-    function buildAnimDD(){
+    function buildAnimDD(opts){
+        const allowFetch = !!(opts && opts.fetch);
+        if(!window.SolisStylePack?.ready?.()){
+            if(allowFetch && !buildAnimDD._warming){
+                buildAnimDD._warming=true;
+                Promise.resolve(typeof window.SolisStylePack?.ensure==='function'
+                    ? window.SolisStylePack.ensure()
+                    : (typeof window.SolisStylePack?.load==='function' ? window.SolisStylePack.load() : null))
+                    .catch(()=>{})
+                    .finally(()=>{
+                        buildAnimDD._warming=false;
+                        if(window.SolisStylePack?.ready?.()){
+                            try{ buildAnimDD({fetch:false}); }catch(_){}
+                        }
+                    });
+            }
+            if(!captionAnims().length){
+                ddAnim.innerHTML='<div class="sub-preset-head"><div class="sub-preset-title">Presets</div></div>';
+                return;
+            }
+        }
         ddAnim.innerHTML='';
         stopAnimCardLoops();
         const cardRuns=[];
@@ -12720,7 +12748,7 @@
         ddAnim.appendChild(head);
 
         function makeCard(an){
-            const pack=CAPTION_PRESETS[an.id]||null;
+            const pack=captionPresets()[an.id]||window.SolisStylePack?.preset?.(an.id)||null;
             const card=document.createElement('div');
             card.className='sub-acard';
             card.dataset.aid=an.id;
@@ -12819,7 +12847,7 @@
 
         const grid=document.createElement('div');
         grid.className='sub-anim-grid';
-        ANIMS.forEach(an=>grid.appendChild(makeCard(an)));
+        captionAnims().forEach(an=>grid.appendChild(makeCard(an)));
         ddAnim.appendChild(grid);
 
         const tick=()=>{ cardRuns.forEach(fn=>{ try{fn();}catch(_){} }); };
@@ -12861,7 +12889,7 @@
                 if(animLivePinned&&curAnim) showAnimFullPreview(curAnim);
                 return;
             }
-            buildAnimDD();
+            buildAnimDD({fetch:true});
             openDD(ddAnim,e.currentTarget);
             if(curAnim) setTimeout(()=>showAnimFullPreview(curAnim),40);
         });
@@ -12875,7 +12903,7 @@
         wirePillHoverOpen(animBtn, ddAnim, {
             gate:()=>!isOverlayText(active),
             prep:()=>{
-                buildAnimDD();
+                buildAnimDD({fetch:true});
                 if(curAnim) setTimeout(()=>showAnimFullPreview(curAnim),40);
             },
         });
@@ -13189,7 +13217,7 @@
         if(!active||!which) return;
         if(which==='anim'){
             if(isOverlayText(active)) return;
-            buildAnimDD();
+            buildAnimDD({fetch:true});
             const btn=document.getElementById('subBtnAnims');
             if(!btn) return;
             openDD(ddAnim,btn);
@@ -13284,7 +13312,7 @@
                 return;
             }
             const animId=curAnim||active.dataset.subAnim||'karaoke';
-            const anim=ANIMS.find(a=>a.id===animId)||{id:animId};
+            const anim=captionAnims().find(a=>a.id===animId)||{id:animId};
             const inner=getAnimTarget();
             const ownsPaint=usesMergedFill(anim)||anim.id==='static'||anim.id==='beast';
 
@@ -14047,7 +14075,7 @@
     function applyAnimBlock(id, opts){
         opts=opts||{};
         if(!active||isOverlayText(active))return;
-        const an=ANIMS.find(a=>a.id===id);
+        const an=captionAnims().find(a=>a.id===id);
         if(!an)return;
         curAnim=an.id;
         active.dataset.subAnim=an.id;
@@ -14604,15 +14632,19 @@
                 window.setLiveCaptionTimedWords([]);
             }
         }catch(_){}
-        try{
-            if(typeof window.clearSubtitleMemorySuggest==='function'){
-                window.clearSubtitleMemorySuggest({cooldown:false});
+        if(clearCaptions && o.keepMemorySuggest!==true){
+            try{
+                if(typeof window.clearSubtitleMemorySuggest==='function'){
+                    window.clearSubtitleMemorySuggest({cooldown:false});
+                }
+            }catch(_){}
+            try{ window.__solisPendingSubMem=null; }catch(_){}
+        }
+        if(clearCaptions && o.keepCaptionOptIn!==true && o.keepMemorySuggest!==true){
+            if (!window.__solisPendingGenerateCaptions) {
+                try{ window.__solisCaptionsOptedIn=false; }catch(_){}
+                try{ window.__solisCaptionsClearedForGenerate=true; }catch(_){}
             }
-        }catch(_){}
-        try{ window.__solisPendingSubMem=null; }catch(_){}
-        if (!window.__solisPendingGenerateCaptions) {
-            try{ window.__solisCaptionsOptedIn=false; }catch(_){}
-            try{ window.__solisCaptionsClearedForGenerate=true; }catch(_){}
         }
         try{ window.syncPillAnimNudge?.(); }catch(_){}
     };
@@ -14677,27 +14709,7 @@
     function init(){
         buildUI();
     }
-    window.syncPillAnimNudge=function(){
-        const nudge=document.getElementById('pillAnimNudge');
-        if(!nudge) return;
-        const pill=document.getElementById('previewEditorPill');
-        const wrap=document.getElementById('previewEditorToolbarWrap');
-        const pillVisible=!!(
-            pill
-            && wrap
-            && wrap.offsetParent!==null
-            && getComputedStyle(wrap).display!=='none'
-            && getComputedStyle(pill).visibility!=='hidden'
-        );
-        const cont=document.getElementById('templateVideoPreview');
-        const hasCaption=!!cont?.querySelector('.sub-text-block:not(.overlay-text-block)');
-        const closed=!!window.__solisCaptionsClearedForGenerate && !hasCaption;
-        const need=pillVisible && closed;
-        nudge.hidden=!need;
-        nudge.setAttribute('aria-hidden', need ? 'false' : 'true');
-        nudge.classList.toggle('is-on', need);
-        if(need) nudge.removeAttribute('hidden');
-    };
+    window.syncPillAnimNudge=function(){};
 
     window.openSubtitleAnimations=function(){
         const wasTeach=!!window.solisAnimTeachActive;
@@ -14712,7 +14724,7 @@
             const btn=document.getElementById('subBtnAnims');
             if(!btn||!ddAnim)return;
             closeDD();
-            buildAnimDD();
+            buildAnimDD({fetch:true});
             openDD(ddAnim,btn);
             btn.classList.add('sub-active');
             posMenu({force:true});
@@ -14737,13 +14749,13 @@
         subMemActions.id='subMemActions';
         subMemActions.innerHTML=`
             <button type="button" class="sub-mem-btn sub-mem-decline" id="subMemDecline" title="Dismiss" aria-label="Dismiss">
-                <svg width="14" height="14" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-                    <path d="M2.5 2.5l7 7M9.5 2.5l-7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                    <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2.35" stroke-linecap="round"/>
                 </svg>
             </button>
-            <button type="button" class="sub-mem-btn sub-mem-accept" id="subMemAccept" title="Apply" aria-label="Apply">
-                <svg width="14" height="14" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-                    <path d="M2.5 6.2l2.4 2.4 4.6-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <button type="button" class="sub-mem-btn sub-mem-accept" id="subMemAccept" title="Apply · Tab" aria-label="Apply">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                    <path d="M4.5 10.2l3.4 3.4 7.6-7.8" stroke="currentColor" stroke-width="2.35" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </button>`;
         document.body.appendChild(subMemActions);
@@ -14768,32 +14780,62 @@
         });
         return subMemActions;
     }
+    window.ensureSubMemActions=ensureSubMemActions;
 
     function posSubMemActions(anchorEl){
         const actions=ensureSubMemActions();
         if(actions.parentElement!==document.body) document.body.appendChild(actions);
         const cont=document.getElementById('templateVideoPreview');
         const cr=cont?.getBoundingClientRect();
-        const r=(anchorEl||cont)?.getBoundingClientRect();
+        const live=anchorEl
+            || cont?.querySelector('.sub-text-block.sub-suggest, .sub-text-block.sub-mem-pick, .sub-text-block:not(.overlay-text-block)')
+            || cont;
+        const r=live?.getBoundingClientRect?.();
         if(!cr&&!r) return;
         actions.classList.add('open');
         actions.style.pointerEvents='auto';
         actions.style.visibility='visible';
         actions.style.opacity='1';
-        const aw=actions.offsetWidth||110;
-        const ah=actions.offsetHeight||28;
-        const box=cr||r;
-        let left=Math.round(box.right-aw-6);
-        let top=r?Math.round(r.top-ah-6):Math.round(box.top+8);
-        if(cr){
-            if(top<cr.top+4) top=Math.round(cr.top+6);
-            if(top+ah>cr.bottom-4) top=Math.round(Math.max(cr.top+6, cr.bottom-ah-6));
-            left=Math.max(Math.round(cr.left+4), Math.min(left, Math.round(cr.right-aw-4)));
-        }
-        left=Math.max(8,Math.min(left,window.innerWidth-aw-8));
-        top=Math.max(8,Math.min(top,window.innerHeight-ah-8));
-        actions.style.left=`${left}px`;
-        actions.style.top=`${top}px`;
+        const aw=Math.max(actions.offsetWidth||0, 64);
+        const ah=Math.max(actions.offsetHeight||0, 34);
+        const gap=8;
+        const pad=10;
+        const vw=window.innerWidth;
+        const vh=window.innerHeight;
+        const box=r||cr;
+        const candidates=[
+            { left: box.right-aw, top: box.top-ah-gap, pref: 100 },
+            { left: box.right-aw+4, top: box.top-ah-gap, pref: 96 },
+            { left: box.right+gap, top: box.top, pref: 88 },
+            { left: box.right-aw, top: box.bottom+gap, pref: 70 },
+            { left: box.left+(box.width-aw)/2, top: box.top-ah-gap, pref: 60 },
+        ];
+        let best=null;
+        let bestScore=-Infinity;
+        candidates.forEach((c)=>{
+            let left=Math.round(c.left);
+            let top=Math.round(c.top);
+            left=Math.max(pad, Math.min(left, vw-aw-pad));
+            top=Math.max(pad, Math.min(top, vh-ah-pad));
+            let score=c.pref;
+            if(c.left<pad||c.left+aw>vw-pad) score-=25;
+            if(c.top<pad||c.top+ah>vh-pad) score-=25;
+            if(cr){
+                const cx=left+aw/2;
+                const cy=top+ah/2;
+                if(cx>=cr.left-4&&cx<=cr.right+4&&cy>=cr.top-4&&cy<=cr.bottom+4) score+=18;
+            }
+            const ix=Math.max(0, Math.min(left+aw, box.right)-Math.max(left, box.left));
+            const iy=Math.max(0, Math.min(top+ah, box.bottom)-Math.max(top, box.top));
+            score-=((ix*iy)/(Math.max(1,aw*ah)))*40;
+            if(score>bestScore){
+                bestScore=score;
+                best={left, top};
+            }
+        });
+        if(!best) return;
+        actions.style.left=`${best.left}px`;
+        actions.style.top=`${best.top}px`;
         actions.style.transform='none';
         actions.style.zIndex='99999';
     }
@@ -14849,6 +14891,7 @@
         if(!el){ posSubMemActions(subMemGhost); return; }
         posSubMemActions(el);
     }
+    window.placeSubtitleMemoryActionsNear=placeMemActionsNear;
 
     function clampCaptionYPct(v, fallback){
         const n=Number(v);
@@ -15101,6 +15144,13 @@
             }
         }catch(_){}
         closeDD();
+        setTimeout(()=>{
+            try{
+                if(typeof window.openSubtitleAnimations==='function'){
+                    window.openSubtitleAnimations();
+                }
+            }catch(_){}
+        }, style?.__tip ? 140 : 260);
     }
 
     window.applySubtitleStyle=function(style, opts){
@@ -15383,7 +15433,15 @@
         }
 
         if(wantSuggest && !isOverlayText(block)){
-            requestAnimationFrame(()=>markSubtitleSuggest(block));
+            requestAnimationFrame(()=>{
+                markSubtitleSuggest(block);
+                try{
+                    if(pendingSubMem || window.__solisPendingSubMem){
+                        placeMemActionsNear(block);
+                        ensureSubMemActions().classList.add('open');
+                    }
+                }catch(_){}
+            });
         }else if(opts?.accepted===true || wantAnim){
             clearSubtitleSuggest(block);
         }
@@ -15567,6 +15625,11 @@
             highlight=normalizeHex(curHighlightCol || block.dataset.subHighlight) || null;
         }
         const smartOn=window.solisSmartCaptionsEnabled !== false;
+        const presetId=(
+            activeCaptionPresetId
+            || block.dataset.captionPreset
+            || (captionPresets()[anim] ? anim : null)
+        );
         const snap={
             anim,
             font,
@@ -15584,6 +15647,7 @@
             crisper_mode: smartOn ? 'verbatim' : 'intended',
             remove_fillers: false,
         };
+        if(presetId) snap.preset_id=String(presetId).toLowerCase();
         try{
             window.__solisLastCaptionStyle=snap;
             const tid=window.clipsStudio?.currentTemplateForPreview?.id

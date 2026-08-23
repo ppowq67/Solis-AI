@@ -401,8 +401,8 @@ const PreviewTimeline = (() => {
   let R = null;
   let U = 0;
   let D = null;
-  let N = false;
   let F = false;
+  let N = false;
   const O = 180;
   const $ = 8;
   let G = [ 5, 4, 3, 2, 1 ];
@@ -653,7 +653,7 @@ const PreviewTimeline = (() => {
       clearTimeout(U);
       U = 0;
     }
-    F = false;
+    N = false;
   }
   function customizeSegment(e) {
     const t = Math.max(1, 5 - e);
@@ -727,7 +727,7 @@ const PreviewTimeline = (() => {
     if (!D || c === "segment") return;
     clearTimeout(U);
     U = 0;
-    if (isRankingEdit() && !F) return;
+    if (isRankingEdit() && !N) return;
     c = "segment";
     f = a ? !a.paused : false;
     if (a && !a.paused) a.pause();
@@ -753,8 +753,8 @@ const PreviewTimeline = (() => {
     clearSegHold();
     const n = getSegmentBounds();
     if (e < 0 || e >= n.length - 1) return;
-    N = false;
     F = false;
+    N = false;
     D = {
       index: e,
       pointerId: t.pointerId,
@@ -765,7 +765,7 @@ const PreviewTimeline = (() => {
     };
     U = setTimeout(() => {
       U = 0;
-      F = true;
+      N = true;
       D?.target?.classList.add("is-hold-ready");
     }, O);
   }
@@ -774,16 +774,16 @@ const PreviewTimeline = (() => {
     const t = Math.abs(e.clientX - D.startX);
     if (c === "segment") {
       e.preventDefault();
-      if (t >= $) N = true;
-      if (!N) return;
+      if (t >= $) F = true;
+      if (!F) return;
       paintSegmentMove(e.clientX);
       return;
     }
     if (isRankingEdit()) {
-      if (F && t >= $) {
+      if (N && t >= $) {
         beginSegmentDrag();
         if (c === "segment") {
-          N = true;
+          F = true;
           paintSegmentMove(e.clientX);
         }
       }
@@ -791,14 +791,14 @@ const PreviewTimeline = (() => {
     }
     if (t >= $) {
       beginSegmentDrag();
-      N = true;
+      F = true;
       paintSegmentMove(e.clientX);
     }
   }
   function onSegmentPointerUp(e) {
     if (!D) return;
     const t = D;
-    const n = N;
+    const n = F;
     const i = t.hoverIndex;
     clearSegHold();
     t.target?.classList.remove("is-dragging", "is-hold-ready");
@@ -1525,7 +1525,7 @@ const PreviewTimeline = (() => {
     c = null;
     clearSegHold();
     D = null;
-    N = false;
+    F = false;
     f = false;
     E = [];
     R = null;
@@ -2222,46 +2222,82 @@ function bindFaceReframePanHandlers() {
   let i = 0;
   let r = null;
   let o = false;
-  let s = false;
+  let s = null;
   let a = false;
   let l = null;
   let c = false;
-  const d = 6;
+  let d = null;
+  let p = 0;
+  const u = 6;
   const onMove = (l, c) => {
-    if (!o || !_librarySplitscreenCropState?.liveFaceEdit) return;
-    const p = _librarySplitscreenCropState;
-    const u = p.faceSrcW || p.srcW;
-    const m = p.faceSrcH || p.srcH;
-    if (!p?.faceCrop || !u || !m || !r) return;
-    const f = Math.hypot(l - n, c - i);
+    if (!o) return;
+    const m = _librarySplitscreenCropState;
+    const f = l - n;
+    const y = c - i;
+    const g = Math.hypot(f, y);
     if (!s) {
-      if (f < d) return;
-      s = true;
+      if (g < u) return;
+      const t = !!(m?.liveFaceEdit && r && (m.faceSrcW || m.srcW));
+      s = !t || Math.abs(y) >= Math.abs(f) * .85 ? "resize" : "pan";
       a = true;
       armPreviewModalDragGuard(800);
+      const n = _splitscreenQuery("splitscreenRoot");
+      if (s === "resize") {
+        if (n) {
+          n.classList.add("is-dragging");
+          n.dataset._didPanelDrag = "1";
+        }
+        notifySubtitleLayoutEdit();
+        d = n?.getBoundingClientRect() || null;
+        p = c;
+        e.style.cursor = "ns-resize";
+        if (d) {
+          applySplitscreenDrag(c, d, 1);
+        }
+        return;
+      }
       e.style.cursor = "grabbing";
     }
-    const y = _splitscreenQuery("splitscreenBottom") || t;
-    const g = e.closest(".ss-panel-crop-viewport") || y;
-    const h = g.clientWidth || y.clientWidth || 1;
-    const w = g.clientHeight || y.clientHeight || 1;
-    const v = r[2];
-    const b = r[3];
-    const S = Math.max(h / Math.max(1, v), w / Math.max(1, b));
-    const _ = (l - n) / S;
-    const k = (c - i) / S;
-    let L = r[0] - _;
-    let C = r[1] - k;
-    L = Math.max(0, Math.min(u - v, L));
-    C = Math.max(0, Math.min(m - b, C));
-    p.faceCrop = [ L, C, v, b ];
+    if (s === "resize") {
+      if (!d) {
+        const e = _splitscreenQuery("splitscreenRoot");
+        d = e?.getBoundingClientRect() || null;
+      }
+      if (!d) return;
+      p = c;
+      applySplitscreenDrag(c, d, 1);
+      armPreviewModalDragGuard(1200);
+      return;
+    }
+    if (!m?.liveFaceEdit || !r) return;
+    const h = m.faceSrcW || m.srcW;
+    const w = m.faceSrcH || m.srcH;
+    if (!h || !w) return;
+    const v = _splitscreenQuery("splitscreenBottom") || t;
+    const b = e.closest(".ss-panel-crop-viewport") || v;
+    const S = b.clientWidth || v.clientWidth || 1;
+    const _ = b.clientHeight || v.clientHeight || 1;
+    const k = r[2];
+    const L = r[3];
+    const C = Math.max(S / Math.max(1, k), _ / Math.max(1, L));
+    const I = (l - n) / C;
+    const P = (c - i) / C;
+    let E = r[0] - I;
+    let x = r[1] - P;
+    E = Math.max(0, Math.min(h - k, E));
+    x = Math.max(0, Math.min(w - L, x));
+    m.faceCrop = [ E, x, k, L ];
     syncLibrarySplitscreenCropPreview();
   };
   const endPan = (t = null) => {
     if (!o) return;
-    const n = s;
+    const n = !!s;
+    const i = s === "resize";
+    const r = p;
+    const c = d;
     o = false;
-    s = false;
+    s = null;
+    d = null;
     e.style.cursor = "grab";
     if (t != null && e.hasPointerCapture?.(t)) {
       try {
@@ -2269,6 +2305,15 @@ function bindFaceReframePanHandlers() {
       } catch (e) {}
     }
     l = null;
+    if (i && c) {
+      finishSplitscreenDrag(r, c, 1);
+      armPreviewModalDragGuard(800);
+      a = true;
+      setTimeout(() => {
+        a = false;
+      }, 50);
+      return;
+    }
     if (n) {
       markLibrarySplitscreenDirty();
       armPreviewModalDragGuard(800);
@@ -2279,31 +2324,37 @@ function bindFaceReframePanHandlers() {
     }
   };
   const beginTrack = (e, a, c = null) => {
-    const d = _librarySplitscreenCropState;
-    if (!d?.liveFaceEdit || splitscreenSecondaryType !== "face_track") return;
-    const p = d.faceSrcW || d.srcW;
-    const u = d.faceSrcH || d.srcH;
-    if (!p || !u) return;
-    if (!d.faceCrop || d.faceCrop.length < 4) {
-      const e = _splitscreenQuery("splitscreenBottom") || t;
-      const n = (e.clientWidth || 9) / Math.max(1, e.clientHeight || 16);
-      let i = u * .55;
-      let r = i * n;
-      if (r > p) {
-        r = p * .7;
-        i = r / n;
+    if (splitscreenSecondaryType !== "face_track") return;
+    const u = _librarySplitscreenCropState;
+    r = null;
+    if (u?.liveFaceEdit) {
+      const e = u.faceSrcW || u.srcW;
+      const n = u.faceSrcH || u.srcH;
+      if (e && n) {
+        if (!u.faceCrop || u.faceCrop.length < 4) {
+          const i = _splitscreenQuery("splitscreenBottom") || t;
+          const r = (i.clientWidth || 9) / Math.max(1, i.clientHeight || 16);
+          let o = n * .55;
+          let s = o * r;
+          if (s > e) {
+            s = e * .7;
+            o = s / r;
+          }
+          u.faceCrop = [ Math.max(0, (e - s) / 2), Math.max(0, (n - o) / 2), s, o ];
+        }
+        if (u.faceDisplayMode !== "live") {
+          u.faceDisplayMode = "live";
+          syncLibrarySplitscreenCropPreview();
+        }
+        r = u.faceCrop.slice();
       }
-      d.faceCrop = [ Math.max(0, (p - r) / 2), Math.max(0, (u - i) / 2), r, i ];
-    }
-    if (d.faceDisplayMode !== "live") {
-      d.faceDisplayMode = "live";
-      syncLibrarySplitscreenCropPreview();
     }
     o = true;
-    s = false;
+    s = null;
+    d = null;
+    p = a;
     n = e;
     i = a;
-    r = d.faceCrop.slice();
     l = c;
     armPreviewModalDragGuard(800);
   };
@@ -3964,7 +4015,17 @@ function showGameplayPillMenu(e, t) {
   positionGameplayPill();
   gpPill.classList.add("active");
   gpPillFocusMode = t || null;
-  closeGameplayDropdowns();
+  openModesPanelForUsers();
+}
+
+function openModesPanelForUsers() {
+  if (!gpPill || !gpDdClips) return;
+  const e = document.getElementById("gpBtnClips");
+  if (!e) return;
+  gpDdClips.dataset.panelMode = "fill";
+  rebuildGameplayClipsDropdown();
+  openGameplayDropdown(gpDdClips, e);
+  e.classList.add("gp-active");
 }
 
 function showSplitscreenCustomizer(e, t) {
@@ -7241,7 +7302,9 @@ class ClipsStudio {
         if (typeof window.clearPreviewCaptionOverlays === "function") {
           window.clearPreviewCaptionOverlays({
             hooks: true,
-            overlays: true
+            overlays: true,
+            captions: false,
+            keepMemorySuggest: true
           });
         }
         syncSplitscreenSubtitles(e);
@@ -7249,21 +7312,64 @@ class ClipsStudio {
     }
     const s = !!this.currentTemplateForPreview?.isLibraryPreview;
     if (!s && (t?.id === "splitscreen" || t?.id === "ranked_compilation")) {
-      setTimeout(() => {
+      const e = t.id;
+      const seedCaptionsAndSuggest = () => {
         try {
-          if (typeof window.openSubtitleAnimations === "function") {
-            window.openSubtitleAnimations();
-          } else if (typeof window.addSubtitleBlock === "function") {
-            window.addSubtitleBlock();
+          const t = document.getElementById("templateVideoPreview");
+          if (!t || t.querySelector(".preview-skel")) return false;
+          const n = !!t.querySelector(".sub-text-block:not(.overlay-text-block)");
+          if (!n && typeof window.applySubtitleStyle === "function") {
+            window.applySubtitleStyle({
+              anim: "karaoke",
+              font: "Montserrat",
+              color: "#ffffff",
+              highlight: "#FFFFFF",
+              shadow: "outline",
+              enabled: true,
+              y_pct: e === "ranked_compilation" ? .82 : .55
+            }, {
+              selectAfter: false,
+              playAnim: false,
+              markSuggest: true,
+              softClamp: true
+            });
+          } else if (n && typeof window.markSubtitleSuggest === "function") {
+            const e = t.querySelector(".sub-text-block:not(.overlay-text-block)");
+            if (e) window.markSubtitleSuggest(e);
           }
-        } catch (e) {}
-      }, 260);
+          const forceTip = () => {
+            try {
+              if (typeof window.SolisMemory?.offerFirstCaptionTip === "function") {
+                if (window.SolisMemory._forceCaptionTipReshow) {
+                  window.SolisMemory._forceCaptionTipReshow();
+                }
+                window.SolisMemory.offerFirstCaptionTip(e, {
+                  retries: 4,
+                  gapMs: 160,
+                  force: true
+                });
+              } else if (typeof window.SolisMemory?.retrySuggest === "function") {
+                window.SolisMemory.retrySuggest(e);
+              }
+            } catch (e) {}
+          };
+          forceTip();
+          setTimeout(forceTip, 220);
+          return true;
+        } catch (e) {
+          return false;
+        }
+      };
+      setTimeout(() => {
+        if (!seedCaptionsAndSuggest()) setTimeout(seedCaptionsAndSuggest, 220);
+      }, 90);
+      setTimeout(seedCaptionsAndSuggest, 400);
     }
   }
   generateTemplatePreviewHTML(e) {
     safeLog(`🎨 generateTemplatePreviewHTML - template.id: ${e?.id}, template.type: ${e?.type}`);
     const t = {
-      ranked_compilation: () => `\n                <style>\n                    .ranking-preview-container * {\n                        box-sizing: border-box;\n                    }\n                    .ranking-preview-container {\n                        position: absolute;\n                        inset: 0;\n                        width: 100%;\n                        height: 100%;\n                        padding: 14px 12px 16px;\n                        border-radius: inherit;\n                        display: flex;\n                        flex-direction: column;\n                        align-items: center;\n                        pointer-events: auto;\n                        overflow: hidden;\n                        background: transparent;\n                    }\n\n                    .ranking-preview-container::-webkit-scrollbar {\n                        width: 4px;\n                    }\n                    .ranking-preview-container::-webkit-scrollbar-track {\n                        background: transparent;\n                    }\n                    .ranking-preview-container::-webkit-scrollbar-thumb {\n                        background: rgba(255,255,255,0.3);\n                        border-radius: 2px;\n                    }\n                    .ranking-preview-container .text-stroke {\n                        font-weight: 400;\n                        text-shadow:\n                            2px 0 0 #000, -2px 0 0 #000, 0 2px 0 #000, 0 -2px 0 #000,\n                            1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;\n                        pointer-events: auto;\n                    }\n                    .ranking-preview-container .title {\n                        font-size: clamp(0.95rem, 5.2vw, 1.35rem);\n                        text-align: center;\n                        line-height: 1.12;\n                        text-transform: uppercase;\n                        margin-bottom: 4px;\n                        margin-top: 0;\n                        padding-top: 0;\n                        color: white;\n                        font-family: 'Luckiest Guy', cursive;\n                        font-weight: 400;\n                        pointer-events: auto;\n                        width: fit-content;\n                        max-width: calc(100% - 8px);\n                        margin-left: auto;\n                        margin-right: auto;\n                        overflow: visible;\n                    }\n                    .ranking-preview-container .funniest {\n                        color: #ff0000;\n                        pointer-events: auto;\n                    }\n                    .ranking-preview-container .ranking-list {\n                        list-style: none;\n                        padding: 0;\n                        margin: 6px 0 0 0;\n                        text-align: left;\n                        width: fit-content;\n                        max-width: 100%;\n                        align-self: flex-start;\n                        pointer-events: auto;\n                        flex: 0 0 auto;\n                        flex-shrink: 0;\n                        overflow: visible;\n                        display: flex;\n                        flex-direction: column;\n                        gap: 12px;\n                    }\n                    .ranking-preview-container .ranked-item {\n                        font-size: clamp(0.72rem, 3.8vw, 0.98rem);\n                        margin-bottom: 0;\n                        font-family: 'Luckiest Guy', cursive;\n                        line-height: 1.2;\n                        display: flex;\n                        align-items: baseline;\n                        justify-content: flex-start;\n                        font-weight: 400;\n                        pointer-events: auto;\n                        flex: 0 0 auto;\n                        flex-shrink: 0;\n                        overflow: visible;\n                        gap: 6px;\n                        width: fit-content;\n                        min-height: 1.2em;\n                    }\n                    .ranking-preview-container .ranked-item .rank-number {\n                        display: inline-block;\n                        pointer-events: auto;\n                        flex-shrink: 0;\n                        margin-right: 0.15em;\n                        padding: 0;\n                        width: max-content;\n                        letter-spacing: 0;\n                        line-height: 1.05;\n                    }\n                    .ranking-preview-container .rank-1 { color: #ffd700; pointer-events: auto; }\n                    .ranking-preview-container .rank-2 { color: #c0c0c0; pointer-events: auto; }\n                    .ranking-preview-container .rank-3 { color: #cd7f32; pointer-events: auto; }\n                    .ranking-preview-container .rank-4 { color: #ffffff; pointer-events: auto; }\n                    .ranking-preview-container .rank-5 { color: #ffffff; pointer-events: auto; }\n                    .ranking-editor-zone-header {\n                        display: flex;\n                        flex-direction: column;\n                        align-items: center;\n                        justify-content: flex-start;\n                        width: 100%;\n                        max-width: 100%;\n                        margin: 0 auto;\n                        text-align: center;\n                        overflow: visible;\n                        padding: 0 4px 4px;\n                        flex: 0 0 auto;\n                        flex-shrink: 0;\n                        position: relative;\n                        z-index: 6;\n                        box-sizing: border-box;\n                    }\n                    .ranking-preview-container .title .text-stroke,\n                    .ranking-preview-container h2.text-stroke {\n                        -webkit-text-stroke: 0;\n                        paint-order: stroke fill;\n                    }\n                    .ranking-editor-zone-ranks {\n                        width: fit-content;\n                        max-width: 100%;\n                        align-self: flex-start;\n                    }\n                    .ranking-preview-container [data-template-element-id] {\n                        transition: none;\n                    }\n                    .ranking-preview-container [data-template-element-id="title_channel"] {\n                        font-size: clamp(0.88rem, 4.8vw, 1.15rem);\n                        line-height: 1.1;\n                        margin: 2px auto 8px auto !important;\n                        max-width: calc(100% - 24px);\n                        display: block !important;\n                        width: fit-content;\n                        text-align: center;\n                        white-space: nowrap;\n                        overflow-wrap: normal;\n                        word-break: normal;\n                        box-sizing: border-box;\n                        position: relative;\n                        z-index: 7;\n                        float: none;\n                        transform: none;\n                    }\n                    .ranking-preview-container h1.title {\n                        display: block;\n                        white-space: nowrap;\n                        max-width: 100%;\n                        width: fit-content;\n                        margin: 0 auto 2px auto;\n                        text-align: center;\n                        position: relative;\n                        z-index: 7;\n                    }\n                    .ranking-preview-container [data-template-element-id="title_ranking"],\n                    .ranking-preview-container [data-template-element-id="title_funniest"] {\n                        display: inline-block;\n                        line-height: inherit;\n                        vertical-align: baseline;\n                        white-space: nowrap;\n                    }\n                    .ranking-preview-container .rank-title:empty::before {\n                        content: attr(data-placeholder);\n                        opacity: 0.42;\n                        font-style: italic;\n                    }\n                    .ranking-preview-container .rank-title {\n                        min-width: 2.5rem;\n                        cursor: text;\n                        text-transform: uppercase;\n                    }\n                </style>\n                <div class="ranking-preview-container">\n                    <div class="ranking-editor-zone ranking-editor-zone-header">\n                    <h1 class="title">\n                        <span data-template-element-id="title_ranking" class="text-stroke" style="color: white; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">RANKING</span> <span data-template-element-id="title_funniest" class="funniest text-stroke" style="color: #ff0000; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">BEST</span>\n                    </h1>\n                    <h2 data-template-element-id="title_channel" style="text-align: center; margin: 2px auto 12px auto; color: white !important; background: transparent !important; font-family: 'Luckiest Guy', cursive; font-weight: 400; max-width: calc(100% - 24px); pointer-events: auto; display: block; position: relative;" class="text-stroke">CHANNEL MOMENTS</h2>\n                    </div>\n                    <ul class="ranking-list ranking-editor-zone ranking-editor-zone-ranks">\n                        <li class="ranked-item rank-1">\n                            <span data-template-element-id="rank_1_number" class="rank-number text-stroke" style="color: #ffd700; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">1.</span>\n                            <span data-template-element-id="rank_1_title" class="rank-title text-stroke" style="color: #ffd700; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;"></span>\n                        </li>\n                        <li class="ranked-item rank-2">\n                            <span data-template-element-id="rank_2_number" class="rank-number text-stroke" style="color: #c0c0c0; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">2.</span>\n                            <span data-template-element-id="rank_2_title" class="rank-title text-stroke" style="color: #c0c0c0; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;"></span>\n                        </li>\n                        <li class="ranked-item rank-3">\n                            <span data-template-element-id="rank_3_number" class="rank-number text-stroke" style="color: #cd7f32; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">3.</span>\n                            <span data-template-element-id="rank_3_title" class="rank-title text-stroke" style="color: #cd7f32; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;"></span>\n                        </li>\n                        <li class="ranked-item rank-4">\n                            <span data-template-element-id="rank_4_number" class="rank-number text-stroke" style="color: #ffffff; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">4.</span>\n                            <span data-template-element-id="rank_4_title" class="rank-title text-stroke" style="color: #ffffff; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;"></span>\n                        </li>\n                        <li class="ranked-item rank-5">\n                            <span data-template-element-id="rank_5_number" class="rank-number text-stroke" style="color: #ffffff; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">5.</span>\n                            <span data-template-element-id="rank_5_title" class="rank-title text-stroke" style="color: #ffffff; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;"></span>\n                        </li>\n                    </ul>\n                </div>\n            `,
+      ranked_compilation: () => `\n                <style>\n                    .ranking-preview-container * {\n                        box-sizing: border-box;\n                    }\n                    .ranking-preview-container {\n                        position: absolute;\n                        inset: 0;\n                        width: 100%;\n                        height: 100%;\n                        padding: 14px 12px 16px;\n                        border-radius: inherit;\n                        display: flex;\n                        flex-direction: column;\n                        align-items: center;\n                        pointer-events: auto;\n                        overflow: hidden;\n                        background: transparent;\n                    }\n\n                    .ranking-preview-container::-webkit-scrollbar {\n                        width: 4px;\n                    }\n                    .ranking-preview-container::-webkit-scrollbar-track {\n                        background: transparent;\n                    }\n                    .ranking-preview-container::-webkit-scrollbar-thumb {\n                        background: rgba(255,255,255,0.3);\n                        border-radius: 2px;\n                    }\n                    .ranking-preview-container .text-stroke {\n                        font-weight: 400;\n                        text-shadow:\n                            2px 0 0 #000, -2px 0 0 #000, 0 2px 0 #000, 0 -2px 0 #000,\n                            1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;\n                        pointer-events: auto;\n                    }\n                    .ranking-preview-container .title {\n                        font-size: clamp(0.95rem, 5.2vw, 1.35rem);\n                        text-align: center;\n                        line-height: 1.12;\n                        text-transform: uppercase;\n                        margin-bottom: 4px;\n                        margin-top: 0;\n                        padding-top: 0;\n                        color: white;\n                        font-family: 'Luckiest Guy', cursive;\n                        font-weight: 400;\n                        pointer-events: auto;\n                        width: fit-content;\n                        max-width: calc(100% - 8px);\n                        margin-left: auto;\n                        margin-right: auto;\n                        overflow: visible;\n                    }\n                    .ranking-preview-container .funniest {\n                        color: #ff0000;\n                        pointer-events: auto;\n                    }\n                    .ranking-preview-container .ranking-list {\n                        list-style: none;\n                        padding: 0;\n                        margin: 6px 0 0 0;\n                        text-align: left;\n                        width: fit-content;\n                        max-width: 100%;\n                        align-self: flex-start;\n                        pointer-events: auto;\n                        flex: 0 0 auto;\n                        flex-shrink: 0;\n                        overflow: visible;\n                        display: flex;\n                        flex-direction: column;\n                        gap: 12px;\n                    }\n                    .ranking-preview-container .ranked-item {\n                        font-size: clamp(0.72rem, 3.8vw, 0.98rem);\n                        margin-bottom: 0;\n                        font-family: 'Luckiest Guy', cursive;\n                        line-height: 1.2;\n                        display: flex;\n                        align-items: baseline;\n                        justify-content: flex-start;\n                        font-weight: 400;\n                        pointer-events: auto;\n                        flex: 0 0 auto;\n                        flex-shrink: 0;\n                        overflow: visible;\n                        gap: 6px;\n                        width: fit-content;\n                        min-height: 1.2em;\n                    }\n                    .ranking-preview-container .ranked-item .rank-number {\n                        display: inline-block;\n                        pointer-events: auto;\n                        flex-shrink: 0;\n                        margin-right: 0.15em;\n                        padding: 0;\n                        width: max-content;\n                        letter-spacing: 0;\n                        line-height: 1.05;\n                    }\n                    .ranking-preview-container .rank-1 { color: #ffd700; pointer-events: auto; }\n                    .ranking-preview-container .rank-2 { color: #c0c0c0; pointer-events: auto; }\n                    .ranking-preview-container .rank-3 { color: #cd7f32; pointer-events: auto; }\n                    .ranking-preview-container .rank-4 { color: #ffffff; pointer-events: auto; }\n                    .ranking-preview-container .rank-5 { color: #ffffff; pointer-events: auto; }\n                    .ranking-editor-zone-header {\n                        display: flex;\n                        flex-direction: column;\n                        align-items: center;\n                        justify-content: flex-start;\n                        width: 100%;\n                        max-width: 100%;\n                        margin: 0 auto;\n                        text-align: center;\n                        overflow: visible;\n                        padding: 0 4px 4px;\n                        flex: 0 0 auto;\n                        flex-shrink: 0;\n                        position: relative;\n                        z-index: 6;\n                        box-sizing: border-box;\n                    }\n                    .ranking-preview-container .title .text-stroke,\n                    .ranking-preview-container h2.text-stroke {\n                        -webkit-text-stroke: 0;\n                        paint-order: stroke fill;\n                    }\n                    .ranking-editor-zone-ranks {\n                        width: fit-content;\n                        max-width: 100%;\n                        align-self: flex-start;\n                    }\n                    .ranking-preview-container [data-template-element-id] {\n                        transition: none;\n                    }\n                    .ranking-preview-container [data-template-element-id="title_channel"] {\n                        font-size: clamp(0.88rem, 4.8vw, 1.15rem);\n                        line-height: 1.1;\n                        margin: 2px auto 8px auto !important;\n                        max-width: calc(100% - 24px);\n                        display: block !important;\n                        width: fit-content;\n                        text-align: center;\n                        white-space: nowrap;\n                        overflow-wrap: normal;\n                        word-break: normal;\n                        box-sizing: border-box;\n                        position: relative;\n                        z-index: 7;\n                        float: none;\n                        transform: none;\n                    }\n                    .ranking-preview-container h1.title {\n                        display: block;\n                        white-space: nowrap;\n                        max-width: 100%;\n                        width: fit-content;\n                        margin: 0 auto 2px auto;\n                        text-align: center;\n                        position: relative;\n                        z-index: 7;\n                    }\n                    .ranking-preview-container [data-template-element-id="title_ranking"],\n                    .ranking-preview-container [data-template-element-id="title_funniest"] {\n                        display: inline-block;\n                        line-height: inherit;\n                        vertical-align: baseline;\n                        white-space: nowrap;\n                    }\n                    .ranking-preview-container .rank-title:empty::before {\n                        content: attr(data-placeholder);\n                        opacity: 0.42;\n                        font-style: italic;\n                    }\n                    .ranking-preview-container .rank-title {\n                        min-width: 2.5rem;\n                        cursor: var(--solis-preview-cursor-text);\n                        text-transform: uppercase;\n                    }\n                </style>\n                <div class="ranking-preview-container">\n                    <div class="ranking-editor-zone ranking-editor-zone-header">\n                    <h1 class="title">\n                        <span data-template-element-id="title_ranking" class="text-stroke" style="color: white; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">RANKING</span> <span data-template-element-id="title_funniest" class="funniest text-stroke" style="color: #ff0000; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">BEST</span>\n                    </h1>\n                    <h2 data-template-element-id="title_channel" style="text-align: center; margin: 2px auto 12px auto; color: white !important; background: transparent !important; font-family: 'Luckiest Guy', cursive; font-weight: 400; max-width: calc(100% - 24px); pointer-events: auto; display: block; position: relative;" class="text-stroke">CHANNEL MOMENTS</h2>\n                    </div>\n                    <ul class="ranking-list ranking-editor-zone ranking-editor-zone-ranks">\n                        <li class="ranked-item rank-1">\n                            <span data-template-element-id="rank_1_number" class="rank-number text-stroke" style="color: #ffd700; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">1.</span>\n                            <span data-template-element-id="rank_1_title" class="rank-title text-stroke" style="color: #ffd700; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;"></span>\n                        </li>\n                        <li class="ranked-item rank-2">\n                            <span data-template-element-id="rank_2_number" class="rank-number text-stroke" style="color: #c0c0c0; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">2.</span>\n                            <span data-template-element-id="rank_2_title" class="rank-title text-stroke" style="color: #c0c0c0; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;"></span>\n                        </li>\n                        <li class="ranked-item rank-3">\n                            <span data-template-element-id="rank_3_number" class="rank-number text-stroke" style="color: #cd7f32; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">3.</span>\n                            <span data-template-element-id="rank_3_title" class="rank-title text-stroke" style="color: #cd7f32; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;"></span>\n                        </li>\n                        <li class="ranked-item rank-4">\n                            <span data-template-element-id="rank_4_number" class="rank-number text-stroke" style="color: #ffffff; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">4.</span>\n                            <span data-template-element-id="rank_4_title" class="rank-title text-stroke" style="color: #ffffff; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;"></span>\n                        </li>\n                        <li class="ranked-item rank-5">\n                            <span data-template-element-id="rank_5_number" class="rank-number text-stroke" style="color: #ffffff; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">5.</span>\n                            <span data-template-element-id="rank_5_title" class="rank-title text-stroke" style="color: #ffffff; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;"></span>\n                        </li>\n                    </ul>\n                </div>\n            `,
       splitscreen: () => `\n                <div id="splitscreenRoot" style="display:flex;flex-direction:column;height:100%;width:100%;background:transparent;overflow:hidden;border-radius:inherit;user-select:none;">\n                    \x3c!-- TOP: Content slot — transparent so shared preview grey shows (same as ranking) --\x3e\n                    <div id="splitscreenTop" style="flex:0 0 50%;width:100%;min-height:0;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;">\n                        <div class="ss-content-placeholder" style="text-align:center;position:relative;z-index:2;">\n                            <div style="font-size:11px;color:#ff6a3d;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;display:flex;align-items:center;justify-content:center;gap:5px;">\n                                <span style="width:5px;height:5px;background:#ff6a3d;border-radius:50%;animation:splitscreen-pulse 2s infinite;display:inline-block;"></span>\n                                Your Content\n                            </div>\n                            <div style="font-size:12px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:.5px;">Video Preview</div>\n                        </div>\n                    </div>\n\n                    \x3c!-- DIVIDER — 1px seam; hit target expands via CSS ::before (no fat gap) --\x3e\n                    <div id="splitscreenDivider" style="flex:0 0 1px;width:100%;height:1px;min-height:1px;max-height:1px;cursor:var(--solis-preview-cursor-hand);display:flex;align-items:center;justify-content:center;position:relative;z-index:50;background:transparent;flex-shrink:0;overflow:visible;padding:0;margin:0;">\n                        <div id="dividerLine" class="ss-divider-grip" style="position:absolute;left:0;right:0;top:50%;width:100%;height:1px;background:rgba(148,163,184,0.85);border-radius:0;box-shadow:none;pointer-events:none;transform:translateY(-50%);"></div>\n                    </div>\n\n                    \x3c!-- BOTTOM: Secondary panel (gameplay / face) — default type is face_track via JS --\x3e\n                    <div id="splitscreenBottom" style="flex:1 1 0;width:100%;min-height:0;background:transparent;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;"\n                         data-no-text-select="true">\n                        <video style="width:100%;height:100%;object-fit:cover;display:none;pointer-events:none;" autoplay muted loop playsinline preload="auto" disablePictureInPicture controlslist="nodownload nofullscreen noremoteplayback" id="splitscreenGameplayVideo"></video>\n                    </div>\n                </div>\n            `
     };
     let n = t[e.id];
@@ -7448,6 +7554,12 @@ class ClipsStudio {
   }
   closeTemplatePreviewModal() {
     try {
+      const e = this.currentTemplateForPreview?.id || this.selectedTemplate || null;
+      if (e && window.SolisMemory?.snapshotSessionDraft) {
+        window.SolisMemory.snapshotSessionDraft(e);
+      }
+    } catch (e) {}
+    try {
       const e = this.currentTemplateForPreview?.id === "ranked_compilation" || this.selectedTemplate === "ranked_compilation" || !!document.querySelector("#templateVideoPreview .ranking-preview-container");
       if (e && window.rankingCustomizer) {
         try {
@@ -7494,7 +7606,10 @@ class ClipsStudio {
           window.clearPreviewCaptionOverlays({
             hooks: true,
             overlays: true,
-            container: t
+            captions: true,
+            container: t,
+            keepMemorySuggest: true,
+            keepCaptionOptIn: true
           });
         }
       } catch (e) {}
@@ -9472,6 +9587,11 @@ class ClipsStudio {
         PreviewTimeline.detach();
       }
     }
+    if (typeof window.syncSolisModStripes === "function") {
+      try {
+        window.syncSolisModStripes();
+      } catch (e) {}
+    }
   }
   async _isPrimeOrElitePlan() {
     try {
@@ -10038,19 +10158,24 @@ class ClipsStudio {
     e.style.opacity = "";
     if (typeof window.syncUseTemplateFab === "function") window.syncUseTemplateFab();
   }
-  _rollbackOptimisticStart(e) {
-    const t = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
-    if (t) {
-      t.cancelOptimisticGeneration();
-      if (t.activeGenerations.size === 0) {
-        t._unlockUrlSubmitButton();
+  _rollbackOptimisticStart(e, t = null) {
+    const n = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
+    if (n) {
+      const e = t && String(t).trim() || "Could not start generation — try again";
+      if (typeof n.failOptimisticStart === "function") {
+        n.failOptimisticStart(e);
+      } else {
+        n.cancelOptimisticGeneration();
+        if (n.activeGenerations.size === 0) {
+          n._unlockUrlSubmitButton();
+        }
       }
     }
     this._unlockGenerationButtons();
     if (e == null) return;
-    const n = this.processingItems.findIndex(t => t.id === e);
-    if (n === -1) return;
-    this.processingItems.splice(n, 1);
+    const i = this.processingItems.findIndex(t => t.id === e);
+    if (i === -1) return;
+    this.processingItems.splice(i, 1);
     this.saveProcessingItems();
     if (this.processingItems.length === 0) {
       this.stopLibraryPolling();
@@ -10430,7 +10555,7 @@ class ClipsStudio {
         }
       }
       if (f.status === 401) {
-        this._rollbackOptimisticStart(n);
+        this._rollbackOptimisticStart(n, "Session expired. Please try again.");
         showNotification("Session expired. Please try again.", "error");
         return;
       }
@@ -10438,19 +10563,19 @@ class ClipsStudio {
         const e = await f.json().catch(() => ({}));
         if (f.status === 429) {
           if (e.error_code === "CONCURRENT_GENERATION_BLOCKED") {
-            this._rollbackOptimisticStart(n);
+            this._rollbackOptimisticStart(n, e.error || "Another generation is already running.");
             showNotification(e.error, "error");
             return;
           }
           if (e.error_code === "GENERATION_COOLDOWN") {
-            this._rollbackOptimisticStart(n);
+            this._rollbackOptimisticStart(n, e.error || "Please wait before starting another generation.");
             const t = e.remaining_seconds || e.cooldown_seconds || 30;
             startCooldownTimer(t);
             showNotification(e.error, "error");
             return;
           }
           if (e.error_code === "MAX_EFFORT_LIMIT_REACHED") {
-            this._rollbackOptimisticStart(n);
+            this._rollbackOptimisticStart(n, e.error || "Max effort daily limit reached. Switch to Normal effort.");
             showNotification(e.error || "Max effort daily limit reached. Switch to Normal effort.", "error");
             try {
               if (typeof window.setSelectedEffortMode === "function") {
@@ -10463,7 +10588,7 @@ class ClipsStudio {
             return;
           }
           if (e.error_code === "DAILY_LIMIT_REACHED" || e.error_code === "MONTHLY_LIMIT_REACHED") {
-            this._rollbackOptimisticStart(n);
+            this._rollbackOptimisticStart(n, e.error || "Generation limit reached — upgrade or wait for reset.");
             this._notifyGenerationBlock(null, e);
             try {
               if (typeof window.refreshPlanSelector === "function") {
@@ -10473,25 +10598,26 @@ class ClipsStudio {
             return;
           }
           if (e.error_code === "VIDEO_LIMIT_REACHED") {
-            this._rollbackOptimisticStart(n);
+            this._rollbackOptimisticStart(n, e.error || "Library is full — free a slot or upgrade.");
             this._notifyGenerationBlock({
               storage_limit_reached: true,
               plan_type: e.plan_type
             }, e);
             return;
           }
-          this._rollbackOptimisticStart(n);
+          this._rollbackOptimisticStart(n, e.error || "Rate limit reached. Please try again later.");
           showNotification(e.error || "Rate limit reached. Please try again later.", "error");
           return;
         } else if (e.error_code === "VIDEO_TOO_LONG") {
-          this._rollbackOptimisticStart(n);
           const t = e.video_minutes || 0;
           const i = e.max_duration_minutes || 0;
-          showNotification(e.error || `Source exceeds the ${i}m safety limit (${t}m).`, "error");
+          const r = e.error || `Source exceeds the ${i}m safety limit (${t}m).`;
+          this._rollbackOptimisticStart(n, r);
+          showNotification(r, "error");
           return;
         } else {
           const t = e.error || "Failed to start processing";
-          this._rollbackOptimisticStart(n);
+          this._rollbackOptimisticStart(n, t);
           showNotification(t, "error");
           throw new Error(t);
         }
@@ -10587,7 +10713,7 @@ class ClipsStudio {
       } catch (e) {}
       this.cancelTemplateSelection();
     } catch (e) {
-      this._rollbackOptimisticStart(n);
+      this._rollbackOptimisticStart(n, e?.message ? `Failed to start: ${e.message}` : null);
       safeLog("startClipProcessingWithSlots error:", e);
       showNotification("Failed to start processing: " + e.message, "error");
     }

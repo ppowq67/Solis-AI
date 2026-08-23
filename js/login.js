@@ -96,14 +96,14 @@ function disableButtonWithCountdown(t, e = 3, n) {
   t.disabled = true;
   let o = e;
   const i = t.querySelector("span");
-  const a = n || i && i.textContent || "Try again";
-  const s = setInterval(() => {
+  const s = n || i && i.textContent || "Try again";
+  const a = setInterval(() => {
     if (i) i.textContent = `Try again in ${o}s`;
     o -= 1;
     if (o < 0) {
-      clearInterval(s);
+      clearInterval(a);
       t.disabled = false;
-      if (i) i.textContent = a;
+      if (i) i.textContent = s;
     }
   }, 1e3);
 }
@@ -139,18 +139,13 @@ async function handleOAuthLogin(t) {
   const e = OAUTH_PROVIDERS[t];
   if (!e) return;
   try {
-    const n = document.getElementById(e.btnId);
-    const o = document.getElementById(e.textId);
-    if (o) o.textContent = "Connecting…";
-    if (n) {
-      n.disabled = true;
-      n.setAttribute("aria-busy", "true");
+    const t = document.getElementById(e.btnId);
+    const n = document.getElementById(e.textId);
+    if (n) n.textContent = "Connecting…";
+    if (t) {
+      t.disabled = true;
+      t.setAttribute("aria-busy", "true");
     }
-    const i = apiBase();
-    await fetch(`${i}/auth/logout`, {
-      method: "POST",
-      credentials: "include"
-    }).catch(() => {});
     try {
       localStorage.removeItem("currentUser");
       localStorage.removeItem("solis_template_memory");
@@ -158,22 +153,9 @@ async function handleOAuthLogin(t) {
       localStorage.removeItem("solis_memory_owner_id");
     } catch (t) {}
     sessionStorage.removeItem(SKIP_AUTH_REDIRECT_KEY);
-    const a = oauthAuthUrl(e.path);
-    const s = await fetch(a, {
-      method: "GET",
-      credentials: "include"
-    });
-    if (!s.ok) {
-      const t = await s.json().catch(() => ({}));
-      throw new Error(t.error || t.message || `Server error: ${s.status}`);
-    }
-    const r = await s.json();
-    if (r.auth_url) {
-      resetOAuthButton(t);
-      window.location.href = r.auth_url;
-      return;
-    }
-    throw new Error("Authentication unavailable");
+    const o = oauthAuthUrl(e.path);
+    const i = o.includes("?") ? "&" : "?";
+    window.location.assign(`${o}${i}nav=1`);
   } catch (n) {
     sessionStorage.setItem(SKIP_AUTH_REDIRECT_KEY, "1");
     console.error("Login error:", n);
@@ -181,8 +163,8 @@ async function handleOAuthLogin(t) {
     const i = /failed to fetch|networkerror|load failed/i.test(o) ? "Could not reach Solis servers. Check your connection and try again." : o || "Login failed. Please check your connection and try again.";
     alert(i);
     resetOAuthButton(t);
-    const a = document.getElementById(e.btnId);
-    disableButtonWithCountdown(a, 3, e.label);
+    const s = document.getElementById(e.btnId);
+    disableButtonWithCountdown(s, 3, e.label);
   }
 }
 

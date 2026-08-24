@@ -409,8 +409,8 @@ const PreviewTimeline = (() => {
   const z = [];
   let j;
   let H;
-  let V;
   let q;
+  let V;
   let W;
   let Y;
   let Q;
@@ -423,8 +423,8 @@ const PreviewTimeline = (() => {
   function refreshEls() {
     j = document.getElementById("previewTimelineShell");
     H = document.getElementById("previewTimelineWrap");
-    V = document.getElementById("previewTimelineCurrent");
-    q = document.getElementById("previewTimelineDuration");
+    q = document.getElementById("previewTimelineCurrent");
+    V = document.getElementById("previewTimelineDuration");
     W = H;
     Y = document.getElementById("previewTimelineFilmstrip");
     Q = document.getElementById("previewTimelineSegments");
@@ -577,8 +577,8 @@ const PreviewTimeline = (() => {
   function paintChrome({rebuildSegments: e = false} = {}) {
     const t = c === "start" || c === "end" || c === "bound" || c === "segment";
     if (!t) {
-      if (V) V.textContent = fmt(m);
-      if (q) q.textContent = fmt(u || 0);
+      if (q) q.textContent = fmt(m);
+      if (V) V.textContent = fmt(u || 0);
     }
     if (!u || I <= 0) return;
     const i = d / u * I;
@@ -1440,11 +1440,11 @@ const PreviewTimeline = (() => {
         preventScroll: true
       });
     };
-    V?.addEventListener("pointerdown", onTimeChipDown);
     q?.addEventListener("pointerdown", onTimeChipDown);
+    V?.addEventListener("pointerdown", onTimeChipDown);
     z.push(() => {
-      V?.removeEventListener("pointerdown", onTimeChipDown);
       q?.removeEventListener("pointerdown", onTimeChipDown);
+      V?.removeEventListener("pointerdown", onTimeChipDown);
     });
     const onKey = e => {
       if (!a || !u) return;
@@ -7207,16 +7207,34 @@ class ClipsStudio {
     });
     this._setSolisUpgradeBilling = setBilling;
   }
-  openWatermarkPlanPopover() {
-    const e = document.getElementById("watermarkPlanPopover");
-    if (!e) return;
-    if (e.parentElement !== document.body) {
-      document.body.appendChild(e);
+  openWatermarkPlanPopover(e = {}) {
+    const t = document.getElementById("watermarkPlanPopover");
+    if (!t) return;
+    if (t.parentElement !== document.body) {
+      document.body.appendChild(t);
     }
+    const i = e.reason === "quota" ? "quota" : "watermark";
+    const applyCopy = e => {
+      if (!e) return;
+      const t = i === "quota" ? "copyQuota" : "copyWatermark";
+      const n = e.dataset?.[t];
+      if (n) e.textContent = n;
+    };
+    applyCopy(document.getElementById("solisUpgradeEyebrow"));
+    applyCopy(document.getElementById("solisUpgradeTitle"));
+    applyCopy(document.getElementById("solisUpgradeSub"));
+    t.dataset.reason = i;
     this._setSolisUpgradeBilling?.("launch");
-    e.hidden = false;
-    e.setAttribute("aria-hidden", "false");
+    clearTimeout(this._wmPlanCloseTimer);
+    t.hidden = false;
+    t.setAttribute("aria-hidden", "false");
+    t.classList.remove("is-closing");
     document.body.classList.add("solis-upgrade-modal-open");
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        t.classList.add("is-open");
+      });
+    });
     try {
       document.getElementById("watermarkPlanPopoverClose")?.focus?.({
         preventScroll: true
@@ -7225,10 +7243,16 @@ class ClipsStudio {
   }
   closeWatermarkPlanPopover() {
     const e = document.getElementById("watermarkPlanPopover");
-    if (!e) return;
-    e.hidden = true;
+    if (!e || e.hidden) return;
+    e.classList.remove("is-open");
+    e.classList.add("is-closing");
     e.setAttribute("aria-hidden", "true");
-    document.body.classList.remove("solis-upgrade-modal-open");
+    clearTimeout(this._wmPlanCloseTimer);
+    this._wmPlanCloseTimer = setTimeout(() => {
+      e.hidden = true;
+      e.classList.remove("is-closing");
+      document.body.classList.remove("solis-upgrade-modal-open");
+    }, 280);
   }
   loadVideoPreviewWithTemplate() {
     const e = document.getElementById("templateVideoPreview");
@@ -11092,8 +11116,14 @@ class ClipsStudio {
     }
   }
   openUrlSubmitUpgrade() {
+    try {
+      this.openWatermarkPlanPopover({
+        reason: "quota"
+      });
+      return;
+    } catch (e) {}
     const e = "Free upload used";
-    const t = "You’ve used your free upload for today. Upgrade anytime for more daily clips.";
+    const t = "You've used your free upload for today. Upgrade anytime for more daily clips.";
     if (typeof window.showUpgradeModal === "function") {
       window.showUpgradeModal(e, t);
     } else if (typeof openUpgradeModal === "function") {
@@ -11413,6 +11443,11 @@ class ClipsStudio {
         if (n.daily_limit_reached || e === 0) {
           this.showUrlSubmitUpgradeCta();
           try {
+            this.openWatermarkPlanPopover({
+              reason: "quota"
+            });
+          } catch (e) {}
+          try {
             if (typeof window.updateUrlQuotaRail === "function") {
               window.updateUrlQuotaRail(n);
             }
@@ -11429,6 +11464,11 @@ class ClipsStudio {
         }
         if (n.monthly_limit_reached || n.monthly?.limit > 0 && t === 0) {
           this.showUrlSubmitUpgradeCta();
+          try {
+            this.openWatermarkPlanPopover({
+              reason: "quota"
+            });
+          } catch (e) {}
           try {
             if (typeof window.refreshPlanSelector === "function") {
               window.refreshPlanSelector();

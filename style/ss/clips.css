@@ -10879,10 +10879,10 @@ body.modal-open { overflow: hidden !important; }
 }
 :root {
     --solis-preview-cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAADnUlEQVR4nO2YMUwbVxjHv/fuzoaESqy0ys6AuiAxdGEsQpBQkIWIZIulIlXSgNylE5ilA4ux3KSjh0pVMQNBHjKwMEbqUokBiYggkcECIVEg5uznu/evvuNO9dAs4Wxzyv2kp3f3fPf0/d/3f+/dM1FMTExMTMznCgBJUQeAoCgC4D6A7/1rg6IGgF4ANQA/+fdWpLIBIAngAwDtOM6PkZsTAHoAXF5fXwOA0yLCpCiwsrLCAq7W1tZ0Pp9nEVBKPY+MnUZHRz0By8vLICK3UqlozoRt2886aSd52w4SiQQJIWQqlaKNjQ3Z09OzXqvVngkhdCfsZN62AwBeaTabIpPJQEpppFKpolJKCCGKbCcicoQQnKnQkWF1ZFkWcdCZTEZvbW3Bsqy8bdtPhRBNImrbfJBhdaS1Jikl1et1OTc3R+Vyme1UuLq6etpOO5lhdhaIaDQaIp1Oa8MwjJmZmV+VUjxPXrTDTpJCJhChlJIsYnt7m+20rpR60g47SWoDgQjbtuXs7Cxtbm6almUVLy8vfwjbTia1CRZhGIZnJ57YlmWZU1NTLxyHHSRehmUnGV7IxD73SoDrul7NE3t6etotl8swDCOvlFrw7XR3MhAEznsCX3M9PDxMfX19np201kapVKKhoaHE4ODgS54jQojf+JPjNlkITUCwofF+wPbh0Z+YmKBcLkeO4zSklNp1XQOAK29YB2AT0e++6Jt0ddpCgW14qcxms7pYLCKwTqFQ0Kenp2Sa5lsp5WPLsr5LJBIpInpERFwfcwwcfMc//oKPudXVVU4/stksB+ExMjLitXFZWFjg9trFxcU3dJcY9QXkcjmk02nHPxRUABzs7OzwJqbZ2/39/e7+/j7//KZQKPAhyGwpRtcEHB0deQeaw8NDXteZSqlU4rY034yPj7tBFubn571nGo3G4ztzcgOQdF33Hz/4P6vV6n1u90f5r93dXfT29rqchWQy6e7t7bGIv09OTvpYQNcPPLg5UqLZbP7BYvw2b1Wr1+sP2VGTk5MON/PuOzY25mrtJeJJ67NdAwCPJC+F9/x7b1S5Pj4+5n8sXh8cHPD5gDcsDAwMqPPzc1bwrlarfRm8Q10UIIJJ2GqHlrZvAVwvLS01FxcXVbVaDRap9wC+7rqAgP/zciDCcZxXQdQADgH8DOCLj73XcT4WRNAOYNgP/Jezs7OvKIoAeNByHa2/IPFfJow74fdPIbKBx8TExHwe/At9ycKu2r1fywAAAABJRU5ErkJggg==') 15 11,
-        url('/style/cursor.png?v=21') 15 11,
+        url('/style/cursor.png?v=29') 15 11,
         auto;
     --solis-preview-cursor-hand: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAFfklEQVR4nO1Yb2hTVxQ/9+a9JE3tH21rEwlzmpiQ9MtmLRTGZEzHvg6hMhx0ML+UFWRSHMiwf2BuKuIH8Yuigmg3HKU63OigjTqpYqcfpFhbmjCkitSVtiavaWzfe/eMc33JajcZrb6ujvwgvPPu7bv3/M4595xzC5BHHnnkkUceefw/wF4gvz5ARIaInDH2WpFg1rMGAH4GgF8B4KN5c8sb0WjUqShKfNeuXXj06FF0u90ZRVHesaYdsIzBOOf09Pl8Pv3BgwcmIs7s2bMHAeAHRCTluZ2e4K9oHeZwOMxUKsV1XVfr6+uF2+1+3+VyBRhjwvICW44EEJGMDdrU1NTs5OQkqKrK1q5di7W1tWWzs7NRh8MBnHODMYYWCUaHfM5BZ/8lgSyLdDKZvBePx+VrUVERRCIRkt/atGnTKiHEu4jooznOOQohOP0450QKLQ8piyHz0gTIA06nUyBi38DAgByidYPBIMmf9Pf3D0UikSsej2cIAD4TQtQxxmL0E0J8biluMsYM69slgyRPoUD5HwC2b9myBTVNMyiuOjs7UVVV3LdvHyaTSTx79iwpJ0KhUPrEiRN4/PhxDAQC5JHtAPAekQWAgqVKvzKOqWgFg0GXqqo0FiwuLtbu3r1L3hB37tzBNWvWiK6uLnqXcLvduHv3bhIpW5mtra0mAIytX78+tW7dOiL4fUtLC7c7hMg6pMQHFAaJROKWrutfVVdXz6ZSqd5EIkHzZiAQgMLCQjYxMUHVGYQQEA6HsaysDHVd54ZhcJ/PR/uXx2KxokuXLmFFRcXHbW1tfis125q1IgUFBRMHDx7E9vZ23Lp1K1mvmzH2S3NzM5GTYXThwgUcGRnJOgB7e3sxHo/n3hOJBJ47d056bHJyUoTD4Vmq6HYSUK3FGzZv3pxV1MxkMsbOnTtljO/YsQPnwzQpYp6HYUiOEkIIHBsbw1AoZNhNQLHy94d+v994+PCh0HVdxrimaWZtbS2uXr06p7Cu6/hvmJmZkc/R0VEMBoM6ALxtJwFalFdXV9Op7di2bRtZ0sgqQQd37969z1n3/PnzePPmTSmfPHkyJ585cwavXbuW+7vh4WH0+/0zAPCmnQTkwuSFaDTqBYDBtrY2GQVzlZ6Lmpoa3L9/v5Srqqrw8OHDUt64cSNa30rcuHEDS0tLNQDwWF62LQvRfnxwcHBUUZRPW1tbtZ6eHnA4HEQCTJMy418oLi4Gl8sl5ZKSEip6ufGCgmzaB7x//z7Vi9/r6urIC7YSIFDcK0KI3xDx66amJkZhZPU989nKFCo/EiInE1HTNLPzZldXF6Xbny5evEgHiC1FK2EKIRw+n+9Yf3//rQMHDjio8yQvzAWRmitnw4NkRKR3cfnyZd7R0fFkxYoV7bquLyj+X4aAbMQeP348XVhY+OWRI0eMnp4eRu3DXBKapkE6nZZyMpmE6enpnIyI+PTpU2xoaOCZTObbdDp9z2rsnrlpiUBdJT2/8Pv92NfXJwsT5XYC9UBXr16VMvU/169fl/Lp06fx9u3bZmNjIxnix5aWFsXuy8+LQBtS+JDcXFFRgbFY7G+ZyZKJVW5waGgIV65cmXE6nSHLCK/qgrUocEUhI0KT1+vNDAwMiPlVmFoLInjo0CFJprOzExVFobDhCzm4doJZJK5Q7tc0DR89eoTj4+OyD6qsrKRe55iqquPd3d146tQpCp9hAHAuJPfbCmqHGWPflZeX61VVVTMbNmwwwuGwXlpaSvn9G0vRRo/HM+X1eokQXeOeFYdFwC7aqwDgDSumKauQpf/gnI8IIaiSUwhVUj2j+wAAPFnsRnb2G7mcT6Ccb/0DQN4nsnP4bGzx+7ysogtcG/9hHm3UIY888sgjjzxgWeNPUu+/9R/WU4AAAAAASUVORK5CYII=') 19 12,
-        url('/style/cursor-hand.png?v=21') 19 12,
+        url('/style/cursor-hand.png?v=29') 19 12,
         pointer;
     --solis-preview-cursor-grabbing: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAEe0lEQVR4nO1Y3UsjVxQ/M5mJbppoLNqkakpDNCEqC1UqPhT8C2ofxD70tQWLviwWfGzyIC6sPvShfVBIQLQVFDFQKIKGVvxARbAgLmLFTUHS4Kw1wUbNx9xTzmUSohS2u8TZLZ0fHObcyczc+zvn3HPODYABAwYMGDBgwMD/F4IO38V7mqNsBIQSYfyGIKAgCICIJELhHl0L4/sm9m/BF06LJSnBOwDwEQC8SwNRFGnhIgnpGiRN7isKXoiCZenSDAAdXV1dDwDgU1mW//T7/XmLxZICgC8A4DMA+FmTAeJU8u7rs7zD4XgLAJ5IkqRYrVYKiZ9MJtMfY2NjmEqlcGZmhu5hU1NTZnJyEicmJtDj8ZAbiNAnGrEHJd/UDYVQ+Njr9WI0GsWDgwPW09NDsY+KojDUUFlZyYaGhkhVSYLBoCoIwoXb7c663W4iOBsIBIpxpRsBimcA+LK3t5cWm0VEFolE8mazmSUSCWSMoaqq2NHRwUZGRlg2m8VcLse9QF6JxWK4v7+PdXV1NH5PM4huXhAkSQJZlh96PJ7s6empqqoqu7i4wEgkgjc3NwUH4ObmJh4eHhbHx8fHFFpEmp5nPp8vCwAf6kWAT9DS0mIGgM8BYAIAkouLi7S2YtiQ5UnuIp/PF3XykKIo6PV683oSELu7uyn1fdPW1oaDg4PocrlYa2srXxAJhcmLkMlk+DWRSNAGzwHAB3oQECntVVRUNNlstvO9vT1ubLoODw/fWvjc3Bzu7OxwPRQK4dbWFtenp6dxbW2t+NzR0RE2NjZmAOB9XQhokzysr6+/OTk5oZAohk0pOjs7cXR0lOvknfHxca63t7djMBi8tT/sdvslAFhetSa8VPqi1qC2tlaJx+PPzs7O0GQykeVBVdVbz9lsNjCbaZsAVFdXF/WqqiqwWCzFz8ViMaoXz/r6+sgL906ArC0qipIAgPVwOEwmU00mE5DcJcoYb4v4taATURL6nYZLS0sCIv4YiURox7+SC162gFDfQ7N/FwqFns/OzsqiKDLyQilKCZFeCA/SafGCILCVlRVxfn4+abVav9fe14WAqm3mXxHx0cDAQD4ajQqyLNN+KD50eXkJ6XSa66lUCq6urrieTCaJAK8T/f394vX19eN0Ov2UuBU6Wb0galZ+5HK5cHt7mxcmSqME6oFWV1e5Tj3QxsYG18PhMO7u7qqUfgEgEggEJM2Iund1NKGkhcbX1A5QP0QkSouVphOr4k2qyjU1Nddms7lZe1/3PqgUIrUUAPCV0+m8pobubsWlKk0EqUMlMgsLCyhJ0lOtnxLgDYCghdMvlO+TySTG43E8Pz/H9fV1dDgc1Ot8K8vy+fLyMk5NTVH6PQIA8+s8D9wFbewfnE5nzu/3Z5qbm/M+ny9nt9spv49qCx20WCx/NTQ0ZEVR/I0IQBlQThO8TW2xFtPkEtqoiiiKvzPGePpFRDpq2gHgjJISlAFl9eHds7F2qC/Mww/6JIXCVg6UOwj/6Xul/z68Uf9IGDBgwIABAwYMwH8cfwNJ+SIDFw/1jgAAAABJRU5ErkJggg==') 23 23,
         url('/style/cursor-hand-grabbing.png?v=1') 23 23,
@@ -13521,9 +13521,20 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     justify-content: center;
     padding: 20px 14px;
     box-sizing: border-box;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.28s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .solis-upgrade-modal[hidden] {
     display: none !important;
+}
+.solis-upgrade-modal.is-open {
+    opacity: 1;
+    pointer-events: auto;
+}
+.solis-upgrade-modal.is-closing {
+    opacity: 0;
+    pointer-events: none;
 }
 .solis-upgrade-modal-backdrop {
     position: absolute;
@@ -13531,6 +13542,15 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     background: rgba(15, 18, 28, 0.42);
     backdrop-filter: blur(10px) saturate(120%);
     -webkit-backdrop-filter: blur(10px) saturate(120%);
+    opacity: 0;
+    transition: opacity 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.solis-upgrade-modal.is-open .solis-upgrade-modal-backdrop {
+    opacity: 1;
+}
+.solis-upgrade-modal.is-closing .solis-upgrade-modal-backdrop {
+    opacity: 0;
+    transition-duration: 0.22s;
 }
 .solis-upgrade-modal-panel {
     position: relative;
@@ -13550,6 +13570,39 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
         0 8px 24px rgba(120, 90, 60, 0.08);
     font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
     -webkit-overflow-scrolling: touch;
+    opacity: 0;
+    transform: scale(0.94);
+    filter: blur(2px);
+    transition:
+        opacity 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+        filter 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform, filter;
+}
+.solis-upgrade-modal.is-open .solis-upgrade-modal-panel {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+}
+.solis-upgrade-modal.is-closing .solis-upgrade-modal-panel {
+    opacity: 0;
+    transform: scale(0.97);
+    filter: blur(1px);
+    transition-duration: 0.22s, 0.24s, 0.22s;
+}
+@media (prefers-reduced-motion: reduce) {
+    .solis-upgrade-modal,
+    .solis-upgrade-modal-backdrop,
+    .solis-upgrade-modal-panel {
+        transition: none !important;
+        filter: none !important;
+        transform: none !important;
+    }
+    .solis-upgrade-modal.is-open,
+    .solis-upgrade-modal.is-open .solis-upgrade-modal-backdrop,
+    .solis-upgrade-modal.is-open .solis-upgrade-modal-panel {
+        opacity: 1;
+    }
 }
 .solis-upgrade-modal-close.template-preview-close {
     position: absolute;
@@ -13687,15 +13740,16 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     top: 0;
     left: 50%;
     z-index: 4;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, calc(-50% - 2px));
     width: auto;
     min-width: 108px;
-    padding: 5px 12px;
+    padding: 4px 12px 6px;
     text-align: center;
     border-radius: 999px;
     font-size: 10.5px;
     font-weight: 800;
     letter-spacing: 0.02em;
+    line-height: 1.15;
     color: #fff;
     background: linear-gradient(
         145deg,
@@ -13739,14 +13793,16 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
 }
 .solis-upgrade-card-chip {
     flex-shrink: 0;
-    padding: 3px 8px;
+    padding: 2px 8px 4px;
     border-radius: 999px;
     font-size: 10.5px;
     font-weight: 800;
     letter-spacing: 0.02em;
+    line-height: 1.15;
     color: rgba(87, 83, 78, 0.9);
     background: rgba(168, 162, 158, 0.16);
     border: 1px solid rgba(168, 162, 158, 0.22);
+    transform: translateY(-1px);
 }
 .solis-upgrade-card-chip--hot {
     color: #c2410c;
@@ -13832,46 +13888,92 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     letter-spacing: -0.01em;
     text-decoration: none;
     color: #fff;
-    cursor: pointer;
-    border: 1px solid rgba(255, 255, 255, 0.35);
-    background: linear-gradient(
-        145deg,
-        rgba(255, 122, 80, 0.95) 0%,
-        rgba(232, 90, 42, 0.92) 55%,
-        rgba(220, 78, 32, 0.94) 100%
-    );
+    cursor: var(--solis-preview-cursor-hand);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    background: linear-gradient(165deg, #ff8a5c 0%, #ff6b35 48%, #f05428 100%);
     box-shadow:
-        0 6px 18px rgba(232, 90, 42, 0.28),
-        0 1px 3px rgba(120, 50, 20, 0.12),
-        inset 0 1px 0 rgba(255, 255, 255, 0.35);
+        0 1px 0 rgba(255, 255, 255, 0.28) inset,
+        0 4px 14px rgba(240, 84, 40, 0.28);
     overflow: hidden;
-    transition: box-shadow 0.2s ease;
+    isolation: isolate;
+    transition:
+        background 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        border-color 0.4s cubic-bezier(0.22, 1, 0.36, 1);
     box-sizing: border-box;
 }
-.solis-upgrade-card-cta::after {
+.solis-upgrade-card-cta-label {
+    position: relative;
+    z-index: 1;
+}
+.solis-upgrade-card-cta--primary {
+    --use-tpl-dot: rgba(255, 255, 255, 0.42);
+}
+.solis-upgrade-card-cta--primary::before {
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: inherit;
-    background: rgba(255, 255, 255, 0);
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.18) 0%,
+        rgba(255, 255, 255, 0) 42%
+    );
+    opacity: 1;
     pointer-events: none;
-    transition: background 0.2s ease;
+    z-index: 0;
+    transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.solis-upgrade-card-cta:hover {
+.solis-upgrade-card-cta--primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(
+        circle,
+        var(--use-tpl-dot) 0.9px,
+        transparent 1.15px
+    );
+    background-size: 7px 7px;
+    background-position: 0 0;
+    opacity: 0;
+    transform: scale(1.035);
+    transition:
+        opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+    z-index: 0;
+    mix-blend-mode: soft-light;
+    will-change: opacity, transform;
+}
+.solis-upgrade-card-cta--primary:hover {
+    background: linear-gradient(165deg, #ff945f 0%, #ff6230 50%, #e84820 100%);
+    border-color: rgba(255, 255, 255, 0.32);
     box-shadow:
-        0 6px 18px rgba(232, 90, 42, 0.32),
-        0 1px 3px rgba(120, 50, 20, 0.12),
-        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        0 1px 0 rgba(255, 255, 255, 0.34) inset,
+        0 8px 22px rgba(240, 84, 40, 0.34);
 }
-.solis-upgrade-card-cta:hover::after {
-    background: rgba(255, 255, 255, 0.18);
+.solis-upgrade-card-cta--primary:hover::before {
+    opacity: 0.72;
+}
+.solis-upgrade-card-cta--primary:hover::after {
+    opacity: 0.9;
+    transform: scale(1);
+}
+.solis-upgrade-card-cta--primary:active {
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.2) inset,
+        0 2px 8px rgba(240, 84, 40, 0.28);
+}
+.solis-upgrade-card-cta--primary:active::after {
+    opacity: 0.55;
 }
 .solis-upgrade-card-cta--ghost {
     color: rgba(68, 64, 60, 0.88);
     background: #fff;
     border: 1px solid rgba(214, 208, 200, 0.95);
     box-shadow: none;
+    cursor: var(--solis-preview-cursor-hand);
 }
+.solis-upgrade-card-cta--ghost::before,
 .solis-upgrade-card-cta--ghost::after {
     display: none;
 }

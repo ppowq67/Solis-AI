@@ -1,28 +1,102 @@
-<header class="fixed top-0 z-50 w-full" style="position: fixed; top: 0; left: 0; right: 0; z-index: 50; width: 100%;">
-    <div class="relative px-3 sm:px-5 xl:px-10" style="position: relative; padding: 0 20px;">
-      <div class="mx-auto w-full max-w-[1360px]" style="max-width: 1360px; margin: 0 auto;">
-        <div class="relative isolate w-full rounded-b-[1.875rem] border-x border-b border-solid border-[rgba(211,207,229,0.3)] bg-white py-3 pr-3 pl-8 min-h-14 overflow-visible" style="background-color: white; border-radius: 0 0 30px 30px; border: 1px solid rgba(211,207,229,0.3); border-top: none; display: flex; align-items: center; justify-content: space-between;">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viktor Header</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-dark': '#1C1929',
+                        'nav-text': '#334155', // Tailwind slate-700 approx
+                        'bg-page': '#FDFBF9',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #F8F5F1; /* Matching the outer background color from the image */
+            display: flex;
+            justify-content: center;
+            padding-top: 1rem;
+        }
+    </style>
+</head>
+<body>
 
-          <a href="/" style="display: block; width: 80px; height: 24px;">
-            <img src="/assets/brand/logos/viktor-logo-color.svg" alt="Viktor" style="width: 100%;">
-          </a>
+    <header class="bg-white w-[1380px] h-[72px] rounded-bl-[16px] rounded-br-[16px] flex items-center justify-between px-8 shadow-sm">
 
-          <nav style="display: flex; align-items: center; gap: 8px;">
-            <div style="display: flex; align-items: center; gap: 4px; padding: 6px 12px; font-size: 14px; color: #1A182B; cursor: pointer;">
-              <span>Solution</span>
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: #9693A3;">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M9.94784 3.25953C10.1596 2.83611 10.6744 2.6645 11.0978 2.8762C11.5212 3.08791 11.6928 3.60277 11.4811 4.02618C10.3705 6.24748 9.21439 7.54719 7.18042 8.70053C6.44881 9.1153 5.5516 9.1153 4.81998 8.70053C2.78598 7.54719 1.62992 6.24748 0.519267 4.02618C0.307563 3.60277 0.479183 3.08791 0.902597 2.8762C1.326 2.6645 1.84087 2.83611 2.05257 3.25953C3.03202 5.21844 3.96607 6.24562 5.66554 7.20925C5.87268 7.3267 6.12773 7.3267 6.33487 7.20925C8.03434 6.24562 8.96839 5.21844 9.94784 3.25953Z" fill="currentColor"></path>
-              </svg>
-            </div>
-            <a href="/pricing" style="text-decoration: none; color: #1A182B; font-size: 14px; padding: 6px 12px;">Pricing</a>
-          </nav>
-
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <a href="/contact-sales" style="text-decoration: none; color: #1A182B; font-size: 14px; font-weight: 500; border: 1px solid rgba(26, 24, 43, 0.1); padding: 8px 24px; border-radius: 9999px;">Book a Demo</a>
-            <a href="/signup" style="text-decoration: none; background: #1A182B; color: white; font-size: 14px; font-weight: 500; padding: 8px 24px; border-radius: 9999px;">Get Started for Free</a>
-          </div>
-
+        <div class="flex items-center">
+            <a href="#" class="font-bold text-3xl tracking-tighter text-brand-dark flex items-center" style="font-family: Arial, Helvetica, sans-serif; letter-spacing: -2px;">
+                <svg width="100" height="30" viewBox="0 0 100 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12.95 23.45L4.55 5.25H0V28H4.2V11.2L11.55 28H14.35L21.7 11.2V28H25.9V5.25H21.35L12.95 23.45Z" fill="#1A1523"/>
+                    <path d="M29.05 11.2V28H33.25V11.2H29.05Z" fill="#1A1523"/>
+                    <path d="M31.15 8.75C32.3098 8.75 33.25 7.8098 33.25 6.65C33.25 5.4902 32.3098 4.55 31.15 4.55C29.9902 4.55 29.05 5.4902 29.05 6.65C29.05 7.8098 29.9902 8.75 31.15 8.75Z" fill="#1A1523"/>
+                    <path d="M43.05 28L40.6 23.45H39.55V28H35.35V5.25H39.55V19.6H40.25L47.25 5.25H51.8L44.45 19.6L52.5 28H47.6L41.3 19.6L43.05 28Z" fill="#1A1523"/>
+                    <path d="M57.75 28V11.2H53.55V7.35H57.75V4.2C57.75 1.75 59.5 0 62.65 0H65.45V3.85H63.35C62.3 3.85 61.95 4.55 61.95 5.6V7.35H66.15V11.2H61.95V28H57.75Z" fill="#1A1523"/>
+                    <path d="M78.75 18.55C78.75 24.15 74.55 28.35 68.95 28.35C63.35 28.35 59.15 24.15 59.15 18.55C59.15 12.95 63.35 8.75 68.95 8.75C74.55 8.75 78.75 12.95 78.75 18.55ZM74.55 18.55C74.55 15.05 72.1 12.6 68.95 12.6C65.8 12.6 63.35 15.05 63.35 18.55C63.35 22.05 65.8 24.5 68.95 24.5C72.1 24.5 74.55 22.05 74.55 18.55Z" fill="#1A1523"/>
+                    <path d="M83.65 28V11.2H87.85V13.65C88.9 11.9 90.65 10.85 92.75 10.85V15.05C90.3 15.05 87.85 16.45 87.85 19.6V28H83.65Z" fill="#1A1523"/>
+                </svg>
+            </a>
         </div>
-      </div>
-    </div>
-  </header>
+
+        <nav class="hidden md:flex items-center gap-8 absolute left-1/2 transform -translate-x-1/2">
+
+            <a href="#" class="text-nav-text font-medium text-[15px] hover:text-brand-dark transition-colors flex items-center gap-1.5">
+                Solution
+                <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-slate-400 mt-0.5">
+                    <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
+
+            <a href="#" class="text-nav-text font-medium text-[15px] hover:text-brand-dark transition-colors flex items-center gap-1.5">
+                For Teams
+                <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-slate-400 mt-0.5">
+                    <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
+
+            <a href="#" class="text-nav-text font-medium text-[15px] hover:text-brand-dark transition-colors flex items-center gap-1.5">
+                Resources
+                <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-slate-400 mt-0.5">
+                    <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
+
+            <a href="#" class="text-nav-text font-medium text-[15px] hover:text-brand-dark transition-colors">
+                Customers
+            </a>
+
+            <a href="#" class="text-nav-text font-medium text-[15px] hover:text-brand-dark transition-colors">
+                Security
+            </a>
+
+            <a href="#" class="text-nav-text font-medium text-[15px] hover:text-brand-dark transition-colors">
+                Pricing
+            </a>
+        </nav>
+
+        <div class="flex items-center gap-4">
+            <a href="#" class="px-5 py-2.5 rounded-full border border-gray-200 text-brand-dark font-medium text-[15px] hover:bg-gray-50 transition-colors">
+                Book a Demo
+            </a>
+            <a href="#" class="px-5 py-2.5 rounded-full bg-brand-dark text-white font-medium text-[15px] hover:bg-opacity-90 transition-colors">
+                Get Started for Free
+            </a>
+        </div>
+
+    </header>
+
+</body>
+</html>

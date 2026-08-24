@@ -10,10 +10,10 @@
   const a = 999;
   const c = 40;
   const u = 1200;
-  const p = 45 * 1e3;
-  const f = 18 * 1e3;
-  const y = 20 * 1e3;
-  const g = new Set;
+  const f = 45 * 1e3;
+  const p = 18 * 1e3;
+  const g = 20 * 1e3;
+  const y = new Set;
   function isRankingTemplate(e) {
     const t = String(e || "").toLowerCase();
     return t === "ranked_compilation" || t === "ranking" || t.includes("rank");
@@ -114,11 +114,11 @@
     const a = memColorName(o?.color || o?.highlight || o?.fill);
     const c = memFontShort(o?.font);
     const u = [ a, l, c ].filter(Boolean);
-    const p = u.length ? u.slice(0, 2).join(" ") : "your look";
-    const f = u.length ? u.join(" · ") : "your look";
-    const y = `${s}|${i}|${f}|${String(o?.__tip || "")}`;
+    const f = u.length ? u.slice(0, 2).join(" ") : "your look";
+    const p = u.length ? u.join(" · ") : "your look";
+    const g = `${s}|${i}|${p}|${String(o?.__tip || "")}`;
     if (s === "tip" || o?.__tip === "animations" || o?.__tip === "captions") {
-      return memPick([ "Captions on — keep them?", "Add captions to this clip?", "Keep captions?", "Captions ready — apply?" ], y);
+      return memPick([ "Captions on — keep them?", "Add captions to this clip?", "Keep captions?", "Captions ready — apply?" ], g);
     }
     if (s === "ranking") {
       let e = "your ranking look";
@@ -132,14 +132,14 @@
           }
         }
       } catch (e) {}
-      return memPick([ `Keep ${e}?`, "Your ranking style — apply?", "Same ranking look as last time", "One click. Your ranking again.", "Still you on the board?", `Back to ${e}?` ], y + e);
+      return memPick([ `Keep ${e}?`, "Your ranking style — apply?", "Same ranking look as last time", "One click. Your ranking again.", "Still you on the board?", `Back to ${e}?` ], g + e);
     }
     if (s === "layout") {
       const e = String(n?.splitscreen_secondary_type || "").replace(/_/g, " ");
       const t = e ? `your ${e} split` : "your split";
-      return memPick([ `${t} — keep it?`, "Same split as last time", "Pick up your layout?", "Don’t rebuild the split", "Your composition. Apply?" ], y + e);
+      return memPick([ `${t} — keep it?`, "Same split as last time", "Pick up your layout?", "Don’t rebuild the split", "Your composition. Apply?" ], g + e);
     }
-    return memPick([ `Your ${p} — keep it?`, `Still rocking ${p}?`, `This is yours. Apply?`, `Back to ${p}?`, "Your signature. One click.", "Don’t start from zero", "Pick up where you left off", `${f} — still you?`, `Solis remembered ${p}`, c ? `Keep ${c}?` : `Keep ${p}?` ], y);
+    return memPick([ `Your ${f} — keep it?`, `Still rocking ${f}?`, `This is yours. Apply?`, `Back to ${f}?`, "Your signature. One click.", "Don’t start from zero", "Pick up where you left off", `${p} — still you?`, `Solis remembered ${f}`, c ? `Keep ${c}?` : `Keep ${f}?` ], g);
   }
   function trustFields(e, t, {resetOnFpChange: n = true} = {}) {
     const s = !!(e && e.fingerprint && t && e.fingerprint === t);
@@ -192,6 +192,7 @@
   }
   function shouldAutoApply(e, t) {
     if (!isEnabled() || !isSuggestEnabled()) return false;
+    if (isRankingTemplate(e)) return false;
     t = t || getTemplateMemory(e);
     if (!t) return false;
     if (t.autoApply === false) return false;
@@ -898,8 +899,8 @@
     if (!(a && Object.keys(a).length) && !(c && Object.keys(c).length) && !layoutUseful(u)) {
       return;
     }
-    const p = fingerprint(a, c, u);
-    const f = trustFields(r, p);
+    const f = fingerprint(a, c, u);
+    const p = trustFields(r, f);
     o.templates[e] = {
       updatedAt: (new Date).toISOString(),
       styles: a ? JSON.parse(JSON.stringify(a)) : null,
@@ -907,14 +908,14 @@
       lastGeneratedCaptions: r.lastGeneratedCaptions ? JSON.parse(JSON.stringify(r.lastGeneratedCaptions)) : null,
       lastGeneratedStyles: r.lastGeneratedStyles ? JSON.parse(JSON.stringify(r.lastGeneratedStyles)) : null,
       layout: u ? JSON.parse(JSON.stringify(u)) : null,
-      fingerprint: p,
-      rejectCount: r.fingerprint === p ? r.rejectCount || 0 : 0,
-      lastRejectedFingerprint: r.fingerprint === p ? r.lastRejectedFingerprint || null : null,
-      lastSuggestedAt: r.fingerprint === p ? r.lastSuggestedAt : null,
-      acceptStreak: f.acceptStreak,
-      acceptFingerprint: f.acceptFingerprint,
-      autoApply: f.autoApply,
-      lastAcceptedAt: f.lastAcceptedAt,
+      fingerprint: f,
+      rejectCount: r.fingerprint === f ? r.rejectCount || 0 : 0,
+      lastRejectedFingerprint: r.fingerprint === f ? r.lastRejectedFingerprint || null : null,
+      lastSuggestedAt: r.fingerprint === f ? r.lastSuggestedAt : null,
+      acceptStreak: p.acceptStreak,
+      acceptFingerprint: p.acceptFingerprint,
+      autoApply: p.autoApply,
+      lastAcceptedAt: p.lastAcceptedAt,
       source: i || r.source || "edit"
     };
     if (c) rememberCaptionSnap(e, c);
@@ -936,23 +937,23 @@
     if (i.captions && (!a || !Object.keys(a).length)) {
       a = recallCaptionSnap(e);
     }
-    const p = sanitizeForTemplate(e, {
+    const f = sanitizeForTemplate(e, {
       styles: l,
       captions: a,
       layout: u
     });
-    l = p.styles;
-    a = p.captions;
-    u = p.layout;
+    l = f.styles;
+    a = f.captions;
+    u = f.layout;
     if (i.layout && !u && layoutUseful(r.layout)) {
       u = normalizeLayout(r.layout);
     }
     if (!(l && Object.keys(l).length) && !(a && Object.keys(a).length) && !layoutUseful(u)) {
       return;
     }
-    const f = fingerprint(l, a, u);
-    const y = r.fingerprint === f;
-    const d = trustFields(r, f);
+    const p = fingerprint(l, a, u);
+    const g = r.fingerprint === p;
+    const d = trustFields(r, p);
     o.templates[e] = {
       updatedAt: (new Date).toISOString(),
       styles: l ? JSON.parse(JSON.stringify(l)) : null,
@@ -960,21 +961,21 @@
       lastGeneratedCaptions: a ? JSON.parse(JSON.stringify(a)) : r.lastGeneratedCaptions || null,
       lastGeneratedStyles: l ? JSON.parse(JSON.stringify(l)) : r.lastGeneratedStyles || null,
       layout: u ? JSON.parse(JSON.stringify(u)) : null,
-      fingerprint: f,
-      rejectCount: y ? r.rejectCount || 0 : 0,
-      lastRejectedFingerprint: y ? r.lastRejectedFingerprint || null : null,
-      lastRejectedAt: y ? r.lastRejectedAt || null : null,
-      lastSuggestedAt: y ? r.lastSuggestedAt : null,
+      fingerprint: p,
+      rejectCount: g ? r.rejectCount || 0 : 0,
+      lastRejectedFingerprint: g ? r.lastRejectedFingerprint || null : null,
+      lastRejectedAt: g ? r.lastRejectedAt || null : null,
+      lastSuggestedAt: g ? r.lastSuggestedAt : null,
       acceptStreak: d.acceptStreak,
       acceptFingerprint: d.acceptFingerprint,
-      autoApply: y ? d.autoApply : true,
+      autoApply: g ? d.autoApply : true,
       lastAcceptedAt: d.lastAcceptedAt,
       source: "generate"
     };
     o.usageLog.unshift({
       templateId: e,
       at: (new Date).toISOString(),
-      fingerprint: f
+      fingerprint: p
     });
     o.usageLog = o.usageLog.slice(0, c);
     if (a) rememberCaptionSnap(e, a);
@@ -989,7 +990,7 @@
       sync: true
     });
     w = 0;
-    g.delete(e);
+    y.delete(e);
     syncSettingsUI();
   }
   function recordLayout(e, t) {
@@ -1050,7 +1051,7 @@
   function shouldSuggest(e) {
     if (!isSuggestEnabled() || !e) return false;
     if (h) return false;
-    if (g.has(e)) return false;
+    if (y.has(e)) return false;
     const t = getTemplateMemory(e);
     if (!t) return false;
     const n = stylesForSuggest(t, e);
@@ -1061,8 +1062,8 @@
     if (!s && !o && !r) return false;
     if (t.lastRejectedFingerprint && t.lastRejectedFingerprint === t.fingerprint) {
       const n = Date.parse(t.lastRejectedAt || 0);
-      if (Number.isFinite(n) && Date.now() - n < p) return false;
-      if (!Number.isFinite(n) || Date.now() - n >= p) {
+      if (Number.isFinite(n) && Date.now() - n < f) return false;
+      if (!Number.isFinite(n) || Date.now() - n >= f) {
         try {
           const t = readState();
           if (t.templates[e]) {
@@ -1086,7 +1087,7 @@
     if (!S && !w && !b) return false;
     const _ = Date.parse(t.lastSuggestedAt || 0);
     if (Number.isFinite(_)) {
-      const n = isRankingTemplate(e) ? y : f;
+      const n = isRankingTemplate(e) ? g : p;
       if (Date.now() - _ < n) {
         const e = b && layoutDiffers(t.layout, c);
         if (!e) return false;
@@ -1104,17 +1105,16 @@
   }
   function flushDeferredRankingCustoms() {
     if (!window.__solisRankingDeferCustoms) return;
-    window.__solisRankingDeferCustoms = false;
     try {
-      const e = b || "ranked_compilation";
-      const t = getTemplateMemory(e);
-      const n = stylesForSuggest(t, e);
-      if (n && Object.keys(n).length && isRankingTemplate(e)) {
-        applyStyles(e, n);
+      const e = document.getElementById("solisMemorySuggest");
+      if (e && !e.hidden && e.classList.contains("open") && e.dataset.mode === "styles-only") {
         return;
       }
-      if (window.rankingCustomizer && typeof window.rankingCustomizer.applyCustomizations === "function") {
-        window.rankingCustomizer.applyCustomizations();
+    } catch (e) {}
+    window.__solisRankingDeferCustoms = false;
+    try {
+      if (typeof window.RankingTextPill?.seedDefaultSizes === "function") {
+        window.RankingTextPill.seedDefaultSizes();
       }
     } catch (e) {}
   }
@@ -1253,41 +1253,29 @@
   }
   function stylesForSuggest(e, t) {
     const n = t || b || window.clipsStudio?.currentTemplateForPreview?.id || null;
-    const s = n ? readSessionDraft(n) : null;
-    if (!e || typeof e !== "object") {
-      if (s?.styles && typeof s.styles === "object" && Object.keys(s.styles).length) {
-        return JSON.parse(JSON.stringify(s.styles));
+    if (!e || typeof e !== "object") return null;
+    const s = e.lastGeneratedStyles;
+    if (!(s && typeof s === "object" && Object.keys(s).length)) return null;
+    const i = n ? readSessionDraft(n) : null;
+    if (i?.styles && typeof i.styles === "object") {
+      try {
+        const e = JSON.parse(JSON.stringify(s));
+        Object.entries(i.styles).forEach(([t, n]) => {
+          if (t === "__ranking_layout") {
+            e[t] = n;
+            return;
+          }
+          if (n && typeof n === "object") e[t] = {
+            ...e[t] || {},
+            ...n
+          }; else if (n != null) e[t] = n;
+        });
+        return e;
+      } catch (e) {
+        return s;
       }
-      return null;
     }
-    const i = e.lastGeneratedStyles;
-    if (i && typeof i === "object" && Object.keys(i).length) {
-      if (s?.styles && typeof s.styles === "object") {
-        try {
-          const e = JSON.parse(JSON.stringify(i));
-          Object.entries(s.styles).forEach(([t, n]) => {
-            if (t === "__ranking_layout") {
-              e[t] = n;
-              return;
-            }
-            if (n && typeof n === "object") e[t] = {
-              ...e[t] || {},
-              ...n
-            }; else if (n != null) e[t] = n;
-          });
-          return e;
-        } catch (e) {
-          return i;
-        }
-      }
-      return i;
-    }
-    if (s?.styles && typeof s.styles === "object" && Object.keys(s.styles).length) {
-      return JSON.parse(JSON.stringify(s.styles));
-    }
-    const o = e.styles;
-    if (o && typeof o === "object" && Object.keys(o).length) return o;
-    return null;
+    return s;
   }
   function rankingStylesReady(e) {
     const t = e || "ranked_compilation";
@@ -1454,7 +1442,7 @@
   function canOfferFirstAnimTip(e) {
     if (!isSuggestEnabled() || !e) return false;
     if (h) return false;
-    if (g.has(e)) return false;
+    if (y.has(e)) return false;
     if (isLibraryPreviewOpen()) return false;
     const t = getTemplateMemory(e);
     if (captionsForSuggest(t, e)) return false;
@@ -1464,7 +1452,7 @@
     const n = e || b;
     if (!n || !isSuggestEnabled()) return false;
     if (isLibraryPreviewOpen()) return false;
-    if (g.has(n)) return false;
+    if (y.has(n)) return false;
     const s = !!(t && t.force);
     const actionsOpen = () => !!document.getElementById("subMemActions")?.classList.contains("open");
     const softCap = () => !!document.querySelector("#templateVideoPreview .sub-text-block.sub-suggest, #templateVideoPreview .sub-text-block.sub-mem-pick, .sub-mem-ghost");
@@ -1607,7 +1595,7 @@
       }
       document.getElementById("subPillMenu")?.classList.remove("active");
     } catch (e) {}
-    window.__solisRankingDeferCustoms = false;
+    window.__solisRankingDeferCustoms = true;
     const r = ensureSuggestEl();
     const l = r.querySelector("#solisMemorySuggestTitle");
     if (l) {
@@ -1630,14 +1618,10 @@
     } catch (e) {
       r._solisMemStyles = n;
     }
+    r._solisMemStylesPreviewed = false;
     try {
-      const t = collectLiveStyles(e);
-      r._solisMemStylesBackup = t ? JSON.parse(JSON.stringify(t)) : JSON.parse(JSON.stringify(window.rankingCustomizer?.customizations || {}));
-      applyStyles(e, n);
-      r._solisMemStylesPreviewed = true;
-    } catch (e) {
-      r._solisMemStylesPreviewed = false;
-    }
+      delete r._solisMemStylesBackup;
+    } catch (e) {}
     placeSuggestNearPreview();
     revealSuggestEl(r);
     return true;
@@ -1645,14 +1629,14 @@
   function continueSuggestAfterCaption(e) {
     const t = e || b;
     if (!t || !isSuggestEnabled()) return;
-    if (g.has(t)) return;
+    if (y.has(t)) return;
     const n = getTemplateMemory(t);
     if (!n) return;
     if (n.lastRejectedFingerprint && n.lastRejectedFingerprint === n.fingerprint) return;
     setTimeout(() => {
       const e = document.getElementById("templatePreviewModal");
       if (!e || !e.classList.contains("active")) return;
-      if (g.has(t)) return;
+      if (y.has(t)) return;
       if (!isSplitscreenTemplate(t) && wantsLayoutSuggest(t, n) && offerLayoutSuggest(t, n)) return;
       offerRankingStylesSuggest(t, n);
     }, 180);
@@ -1660,13 +1644,13 @@
   function continueSuggestAfterLayout(e) {
     const t = e || b;
     if (!t || !isSuggestEnabled()) return;
-    if (g.has(t)) return;
+    if (y.has(t)) return;
     const n = getTemplateMemory(t);
     if (!n) return;
     setTimeout(() => {
       const e = document.getElementById("templatePreviewModal");
       if (!e || !e.classList.contains("active")) return;
-      if (g.has(t)) return;
+      if (y.has(t)) return;
       if (!isRankingTemplate(t) && offerCaptionSuggest(t, n)) {
         h = true;
         return;
@@ -1682,7 +1666,7 @@
     const t = e.dataset.templateId || b;
     const n = e.dataset.mode || "all";
     if (n === "captions-pending") {
-      if (t) g.delete(t);
+      if (t) y.delete(t);
       try {
         if (typeof window.acceptSubtitleMemorySuggest === "function") {
           window.acceptSubtitleMemorySuggest();
@@ -1694,7 +1678,7 @@
       return;
     }
     hideSuggest();
-    if (t) g.delete(t);
+    if (t) y.delete(t);
     const s = getTemplateMemory(t);
     if (!s && n !== "instant-recipe") return;
     if (n === "instant-recipe") {
@@ -1824,7 +1808,7 @@
       w = 0;
       if (!window.__solisRecipeSkipCaptions) {
         setTimeout(() => {
-          if (!t || g.has(t)) return;
+          if (!t || y.has(t)) return;
           const e = getTemplateMemory(t);
           if (e && offerCaptionSuggest(t, e)) {
             h = true;
@@ -1862,7 +1846,7 @@
       h = false;
       w = 0;
       setTimeout(() => {
-        if (!t || g.has(t)) return;
+        if (!t || y.has(t)) return;
         if (isRankingTemplate(t)) return;
         const e = getTemplateMemory(t);
         if (!e) return;
@@ -1874,11 +1858,6 @@
     }
     hideSuggest();
     markSuggestionRejected(t);
-    if (n === "styles-only" && e._solisMemStylesPreviewed && e._solisMemStylesBackup) {
-      try {
-        applyStyles(t, e._solisMemStylesBackup);
-      } catch (e) {}
-    }
     try {
       delete e._solisMemStyles;
       delete e._solisMemStylesBackup;
@@ -1886,6 +1865,11 @@
       e.classList.remove("solis-memory-suggest--ranking");
     } catch (e) {}
     window.__solisRankingDeferCustoms = false;
+    try {
+      if (typeof window.RankingTextPill?.seedDefaultSizes === "function") {
+        window.RankingTextPill.seedDefaultSizes();
+      }
+    } catch (e) {}
     if (typeof window.clearSubtitleMemorySuggest === "function") {
       window.clearSubtitleMemorySuggest({
         cooldown: true,
@@ -1896,7 +1880,7 @@
   function markSuggestionRejected(e) {
     const t = e || b;
     if (!t) return;
-    g.add(t);
+    y.add(t);
     h = true;
     w = 0;
     if (S) {
@@ -2079,12 +2063,12 @@
     w = 0;
     hideSuggest();
     try {
-      g.delete(e);
+      y.delete(e);
       const t = getTemplateMemory(e);
       if (t?.lastRejectedAt && t?.lastRejectedFingerprint && t.lastRejectedFingerprint === t.fingerprint) {
         const n = Date.parse(t.lastRejectedAt);
-        if (Number.isFinite(n) && Date.now() - n < p) {
-          g.add(e);
+        if (Number.isFinite(n) && Date.now() - n < f) {
+          y.add(e);
         } else {
           const t = readState();
           if (t.templates[e]) {

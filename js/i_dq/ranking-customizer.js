@@ -302,6 +302,18 @@ class RankingCustomizer {
         window.SolisMemory.noteEdit(t);
       }
     } catch (t) {}
+    try {
+      const t = window.clipsStudio;
+      if (t?.currentTemplateForPreview?.isLibraryPreview && t._libraryRankingEditable) {
+        t._libraryRankingDirty = true;
+        const e = document.getElementById("confirmUseTemplateBtn");
+        if (e) {
+          e.textContent = "Apply & Download";
+          e.classList.add("library-download-mode");
+        }
+        if (typeof window.syncUseTemplateFab === "function") window.syncUseTemplateFab();
+      }
+    } catch (t) {}
   }
   countFonts(t) {
     if (!t || typeof t !== "object") return 0;

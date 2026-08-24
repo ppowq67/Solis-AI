@@ -7,30 +7,23 @@
     try {
       const t = document.getElementById("navContainer");
       if (!t) return;
-      const i = localStorage.getItem("sidebarActiveIndex");
-      const n = t.querySelectorAll(".nav-item");
-      const o = i !== null ? parseInt(i, 10) : -1;
-      const a = o >= 0 ? n[o] : null;
-      if (a && !a.classList.contains("disabled")) {
-        e = o;
-        n.forEach(e => e.classList.remove("active"));
-        a.classList.add("active");
-        setTimeout(() => updateIndicator(a), 0);
-        const t = a.getAttribute("data-target");
-        if (t) switchSection(t);
-      } else {
-        const t = Array.from(n).find(e => !e.classList.contains("disabled"));
-        if (t) {
-          e = Array.from(n).indexOf(t);
-          n.forEach(e => e.classList.remove("active"));
-          t.classList.add("active");
-          setTimeout(() => updateIndicator(t), 0);
-          const i = t.getAttribute("data-target");
-          if (i) switchSection(i);
-        }
-        if (a && a.classList.contains("disabled")) {
-          localStorage.removeItem("sidebarActiveIndex");
-        }
+      const i = t.querySelectorAll(".nav-item");
+      const n = t.querySelector('.nav-item[data-target="clips"]') || Array.from(i).find(e => !e.classList.contains("disabled"));
+      if (!n) return;
+      e = Array.from(i).indexOf(n);
+      i.forEach(e => e.classList.remove("active"));
+      n.classList.add("active");
+      setTimeout(() => updateIndicator(n), 0);
+      try {
+        localStorage.setItem("sidebarActiveIndex", String(e));
+        localStorage.setItem("currentNavigationTarget", "clips");
+        localStorage.setItem("clipsActiveTab", "create");
+        localStorage.setItem("clipsStudioCurrentTab", "create");
+      } catch (e) {}
+      switchSection("clips");
+      if (typeof window.switchClipsTab === "function") {
+        const e = document.querySelector('.clips-tab[data-tab="create"], .clips-sub-item[data-tab="create"]');
+        window.switchClipsTab("create", e);
       }
     } catch (e) {
       console.error("Failed to restore sidebar state:", e);
@@ -249,18 +242,18 @@
     const a = document.getElementById("portalContainer");
     const s = document.getElementById("clipsContainer");
     const r = document.getElementById("customEditorContainer");
-    const l = document.querySelector(".input-section");
+    const c = document.querySelector(".input-section");
     [ o, a, s, r ].forEach(e => {
       if (!e) return;
       if (n && e === n) return;
       e.style.display = "none";
       e.classList.remove("active");
     });
-    if (l) {
-      l.classList.remove("active");
-      l.style.cssText = "display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; z-index: -10000 !important;";
+    if (c) {
+      c.classList.remove("active");
+      c.style.cssText = "display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; z-index: -10000 !important;";
     }
-    const c = document.getElementById("clipsSubNav");
+    const l = document.getElementById("clipsSubNav");
     const d = window.innerWidth <= 768;
     const u = e === "Portal";
     document.body.classList.toggle("mnav-on-portal", d && u);
@@ -268,25 +261,25 @@
       o.style.display = "block";
       o.classList.add("active");
       if (window.analyticsManager) window.analyticsManager.updateCharts();
-      if (c && !d) c.style.display = "none";
+      if (l && !d) l.style.display = "none";
     } else if (e === "Portal" && a) {
       a.style.display = "block";
       a.classList.add("active");
-      if (c && !d) c.style.display = "none";
+      if (l && !d) l.style.display = "none";
     } else if (e === "clips" && s) {
       s.style.display = "block";
       s.classList.add("active");
-      if (c) {
-        c.style.display = "";
-        c.style.removeProperty("display");
+      if (l) {
+        l.style.display = "";
+        l.style.removeProperty("display");
       }
       if (window.clipsStudio && !window.clipsStudio.initialized) {
         window.clipsStudio.init();
       }
     }
-    if (d && c) {
-      c.style.display = "";
-      c.style.removeProperty("display");
+    if (d && l) {
+      l.style.display = "";
+      l.style.removeProperty("display");
     }
   }
   function _clearMnavAnimClasses(e) {
@@ -409,14 +402,14 @@
     if (typeof window.switchClipsTab === "function") {
       window.switchClipsTab(e, r);
     }
-    const l = document.getElementById(`${e}Section`);
-    if (l && s) {
-      l.classList.remove("clips-slide-from-left", "clips-slide-from-right");
-      void l.offsetWidth;
-      l.classList.add(s === "left" ? "clips-slide-from-right" : "clips-slide-from-left");
-      clearTimeout(l._clipsSlideT);
-      l._clipsSlideT = setTimeout(() => {
-        l.classList.remove("clips-slide-from-left", "clips-slide-from-right");
+    const c = document.getElementById(`${e}Section`);
+    if (c && s) {
+      c.classList.remove("clips-slide-from-left", "clips-slide-from-right");
+      void c.offsetWidth;
+      c.classList.add(s === "left" ? "clips-slide-from-right" : "clips-slide-from-left");
+      clearTimeout(c._clipsSlideT);
+      c._clipsSlideT = setTimeout(() => {
+        c.classList.remove("clips-slide-from-left", "clips-slide-from-right");
       }, 400);
     }
     requestAnimationFrame(() => updateMobileClipsPillIndicator(e));
@@ -433,8 +426,8 @@
     let a = 0;
     let s = 0;
     let r = 0;
-    let l = false;
-    let c = null;
+    let c = false;
+    let l = null;
     let d = null;
     let u = 0;
     function activeSectionEl() {
@@ -470,41 +463,41 @@
       if (!e.touches || e.touches.length !== 1) return;
       const t = e.target;
       if (t && t.closest && t.closest('input, textarea, select, [contenteditable="true"],' + ".preview-placeholder, .sub-text-block, .url-input-wrapper," + ".preview-timeline-wrap, .template-preview-modal, .stgModal," + ".mobile-clips-bar, .clips-sub-nav")) {
-        l = false;
+        c = false;
         return;
       }
       a = e.touches[0].clientX;
       s = e.touches[0].clientY;
       r = Date.now();
-      l = true;
-      c = null;
+      c = true;
+      l = null;
       u = 0;
       d = activeSectionEl();
     }, {
       passive: true
     });
     e.addEventListener("touchmove", e => {
-      if (!l || window.innerWidth > 768) return;
+      if (!c || window.innerWidth > 768) return;
       if (!e.touches || e.touches.length !== 1) return;
       const n = e.touches[0];
       const o = n.clientX - a;
       const r = n.clientY - s;
-      if (!c) {
+      if (!l) {
         if (Math.abs(o) < i && Math.abs(r) < i) return;
         if (Math.abs(r) >= Math.abs(o)) {
-          c = "y";
-          l = false;
+          l = "y";
+          c = false;
           clearDragStyles(d, false);
           d = null;
           return;
         }
-        c = "x";
+        l = "x";
         if (d) {
           d.classList.add("clips-drag");
           d.classList.remove("clips-drag-snap", "clips-slide-from-left", "clips-slide-from-right");
         }
       }
-      if (c !== "x") return;
+      if (l !== "x") return;
       if (e.cancelable) e.preventDefault();
       const m = currentTabIndex();
       let p = o;
@@ -520,14 +513,14 @@
       passive: false
     });
     function finishSwipe(e) {
-      if (!l && c !== "x") {
-        c = null;
+      if (!c && l !== "x") {
+        l = null;
         d = null;
         return;
       }
-      const i = c === "x";
-      l = false;
-      c = null;
+      const i = l === "x";
+      c = false;
+      l = null;
       if (!i) {
         clearDragStyles(d, false);
         d = null;
@@ -702,9 +695,8 @@
       });
     }
     if (window.innerWidth <= 768) {
-      const e = localStorage.getItem("clipsActiveTab") || "create";
-      goMobileClipsTab(e);
-      requestAnimationFrame(() => updateMobileClipsPillIndicator(e));
+      goMobileClipsTab("create");
+      requestAnimationFrame(() => updateMobileClipsPillIndicator("create"));
     }
     window.addEventListener("resize", () => {
       if (window.innerWidth <= 768) updateMobileClipsPillIndicator();

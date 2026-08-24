@@ -388,8 +388,8 @@ const PreviewTimeline = (() => {
   let S = null;
   let _ = false;
   let k = 0;
-  let L = 0;
   let C = 0;
+  let L = 0;
   let I = 0;
   let P = 1;
   let E = [];
@@ -1005,15 +1005,15 @@ const PreviewTimeline = (() => {
     S = Math.max(0, Math.min(u || e, e));
     const n = performance.now();
     const i = t ? 0 : Math.max(0, r - (n - k));
-    if (L) {
-      clearTimeout(L);
-      L = 0;
+    if (C) {
+      clearTimeout(C);
+      C = 0;
     }
     if (i === 0) {
       flushSeek();
     } else {
-      L = setTimeout(() => {
-        L = 0;
+      C = setTimeout(() => {
+        C = 0;
         flushSeek();
       }, i);
     }
@@ -1498,13 +1498,13 @@ const PreviewTimeline = (() => {
   function detach() {
     y += 1;
     destroyCaptureVideo();
-    if (L) {
-      clearTimeout(L);
-      L = 0;
-    }
     if (C) {
       clearTimeout(C);
       C = 0;
+    }
+    if (L) {
+      clearTimeout(L);
+      L = 0;
     }
     if (w) {
       cancelAnimationFrame(w);
@@ -1544,22 +1544,22 @@ const PreviewTimeline = (() => {
     hide();
   }
   function scheduleFilmstripBuild(e = 450) {
-    if (C) {
-      clearTimeout(C);
-      C = 0;
+    if (L) {
+      clearTimeout(L);
+      L = 0;
     }
     const run = () => {
-      C = 0;
+      L = 0;
       buildFilmstripFromVideo();
     };
     if (typeof requestIdleCallback === "function") {
-      C = setTimeout(() => {
+      L = setTimeout(() => {
         requestIdleCallback(() => run(), {
           timeout: 1200
         });
       }, e);
     } else {
-      C = setTimeout(run, e);
+      L = setTimeout(run, e);
     }
   }
   function attach(e) {
@@ -2278,15 +2278,15 @@ function bindFaceReframePanHandlers() {
     const S = b.clientWidth || v.clientWidth || 1;
     const _ = b.clientHeight || v.clientHeight || 1;
     const k = r[2];
-    const L = r[3];
-    const C = Math.max(S / Math.max(1, k), _ / Math.max(1, L));
-    const I = (l - n) / C;
-    const P = (c - i) / C;
+    const C = r[3];
+    const L = Math.max(S / Math.max(1, k), _ / Math.max(1, C));
+    const I = (l - n) / L;
+    const P = (c - i) / L;
     let E = r[0] - I;
     let x = r[1] - P;
     E = Math.max(0, Math.min(h - k, E));
-    x = Math.max(0, Math.min(w - L, x));
-    m.faceCrop = [ E, x, k, L ];
+    x = Math.max(0, Math.min(w - C, x));
+    m.faceCrop = [ E, x, k, C ];
     syncLibrarySplitscreenCropPreview();
   };
   const endPan = (t = null) => {
@@ -3008,7 +3008,7 @@ async function verifyToken() {
     }
     checkYouTubeConnection();
     const n = currentUser?.id ?? currentUser?.user_id;
-    if (window.SolisFirstLanding && window.SolisFirstLanding.needsLanding(n)) {
+    if (window.SolisFirstLanding && typeof window.SolisFirstLanding.applyCreateLanding === "function") {
       window.SolisFirstLanding.applyCreateLanding();
     }
     if (window.SolisMemory?.setUserId) {
@@ -6165,15 +6165,12 @@ class ClipsStudio {
       } else {
         safeLog("ðŸ“ No processing items from previous session - polling idle");
       }
-      const e = window.SolisFirstLanding && window.SolisFirstLanding.needsLanding();
-      const t = localStorage.getItem("clipsStudioCurrentTab");
-      if (e) {
-        this.switchTab("create");
-      } else if (t && [ "templates", "create", "processing", "library", "editor" ].includes(t)) {
-        this.switchTab(t);
-      } else {
-        this.switchTab("create");
-      }
+      this.switchTab("create");
+      try {
+        localStorage.setItem("clipsStudioCurrentTab", "create");
+        localStorage.setItem("clipsActiveTab", "create");
+        localStorage.setItem("currentNavigationTarget", "clips");
+      } catch (e) {}
       this.moveSlider();
       window.addEventListener("resize", () => this.moveSlider());
     } catch (e) {

@@ -47,7 +47,7 @@
     <link rel="stylesheet" href="/style/ss/ios-pill-nav.css?v=29">
     <link rel="stylesheet" href="/style/ss/mobile-nav.css?v=28">
     <link rel="stylesheet" href="/style/ss/customize.css?v=27">
-    <link rel="stylesheet" href="/style/ss/clips.css?v=121">
+    <link rel="stylesheet" href="/style/ss/clips.css?v=122">
     <link rel="stylesheet" href="/style/ss/profile.css?v=29">
     <link rel="stylesheet" href="/style/ss/tasks-panel-v2-demo.css?v=18">
     <link rel="stylesheet" href="/style/ss/solis-gen-stage.css?v=26">
@@ -78,7 +78,7 @@
     <script src="/js/ui/plan-selector.js?v=63"></script>
     <script src="/js/core/video-preview-system.js?v=2"></script>
     <script src="/js/s_new/clip-card.js?v=23"></script>
-    <script src="/js/s.js?v=282"></script>
+    <script src="/js/s.js?v=283"></script>
 
     <script src="/js/s_new/procc.js?v=2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -3822,49 +3822,6 @@
                                     <input type="checkbox" id="watermarkToggle" class="stgToggleInput" tabindex="-1">
                                     <span class="stgToggleKnob" aria-hidden="true"></span>
                                 </label>
-                            </div>
-                            <div class="wm-plan-popover" id="watermarkPlanPopover" hidden role="dialog" aria-label="Upgrade to remove watermark">
-                                <div class="wm-plan-popover-card stgPlanBanner" data-plan="free">
-                                    <button type="button" class="wm-plan-popover-close" id="watermarkPlanPopoverClose" aria-label="Close">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                                    </button>
-                                    <p class="wm-plan-popover-lead">Remove the Solis mark — pick a plan</p>
-                                    <div class="stgPlanCompare wm-plan-ranks">
-                                        <div class="stgPlanCompareCol stgPlanCompareCol--current">
-                                            <p class="stgPlanCompareEyebrow">Current</p>
-                                            <p class="stgPlanCompareName">Free</p>
-                                            <p class="stgPlanComparePrice">$0</p>
-                                            <ul class="stgPlanCompareList">
-                                                <li>Solis watermark on exports</li>
-                                                <li>1 upload / day</li>
-                                                <li>720p export</li>
-                                            </ul>
-                                        </div>
-                                        <div class="stgPlanCompareRule" aria-hidden="true"></div>
-                                        <div class="stgPlanCompareCol stgPlanCompareCol--upgrade">
-                                            <p class="stgPlanCompareEyebrow">Recommended</p>
-                                            <p class="stgPlanCompareName">Basic</p>
-                                            <p class="stgPlanComparePrice">
-                                                <span class="stgPlanCompareWas">$9.99</span>
-                                                $5.99<span class="stgPlanComparePeriod">/mo</span>
-                                            </p>
-                                            <p class="stgPlanCompareDeal">40% off · first 2 months</p>
-                                            <ul class="stgPlanCompareList">
-                                                <li>No watermark</li>
-                                                <li>5 uploads / day</li>
-                                                <li>Up to 3 clips · 1080p</li>
-                                            </ul>
-                                            <a class="stgUpgrade stgUpgrade--compare" id="watermarkPlanUpgradeBtn" href="/premium.html">
-                                                <svg class="stgUpgrade-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                                    <path d="M10.5 3 8 9l4 13 4-13-2.5-6"/>
-                                                    <path d="M17 3a2 2 0 0 1 1.6.8l3 4a2 2 0 0 1 .013 2.382l-7.99 10.986a2 2 0 0 1-3.247 0l-7.99-10.986A2 2 0 0 1 2.4 7.8l2.998-3.997A2 2 0 0 1 7 3z"/>
-                                                    <path d="M2 9h20"/>
-                                                </svg>
-                                                <span>Get 40% off</span>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
 
@@ -15710,5 +15667,106 @@
     if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
 })();
 </script>
+
+<div class="solis-upgrade-modal" id="watermarkPlanPopover" hidden aria-hidden="true">
+    <div class="solis-upgrade-modal-backdrop" id="watermarkPlanPopoverBackdrop"></div>
+    <div class="solis-upgrade-modal-panel" role="dialog" aria-modal="true" aria-labelledby="solisUpgradeTitle">
+        <button type="button" class="solis-upgrade-modal-close" id="watermarkPlanPopoverClose" aria-label="Close">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+
+        <header class="solis-upgrade-modal-head">
+            <h2 class="solis-upgrade-modal-title" id="solisUpgradeTitle">Upgrade your plan</h2>
+            <p class="solis-upgrade-modal-sub">Remove the Solis mark, unlock more uploads, and get every edit tool.</p>
+            <div class="solis-upgrade-billing" role="group" aria-label="Billing period">
+                <button type="button" class="solis-upgrade-billing-opt" data-billing="full" id="solisUpgradeBillingFull">Monthly</button>
+                <button type="button" class="solis-upgrade-billing-opt is-active" data-billing="launch" id="solisUpgradeBillingLaunch" aria-pressed="true">
+                    Launch
+                    <span class="solis-upgrade-billing-badge">40% OFF</span>
+                </button>
+            </div>
+        </header>
+
+        <div class="solis-upgrade-cards" id="solisUpgradeCards" data-billing="launch">
+            <article class="solis-upgrade-card" data-plan="basic">
+                <svg class="solis-upgrade-card-poly" viewBox="0 0 280 160" preserveAspectRatio="xMaxYMin slice" aria-hidden="true">
+                    <polygon points="280,0 210,0 245,36" fill="rgba(120,155,200,0.22)"/>
+                    <polygon points="210,0 140,0 175,42" fill="rgba(140,170,210,0.16)"/>
+                    <polygon points="140,0 80,0 110,28" fill="rgba(100,140,185,0.12)"/>
+                    <polygon points="280,0 245,36 280,48" fill="rgba(95,135,180,0.24)"/>
+                    <polygon points="210,0 245,36 175,42" fill="rgba(130,165,205,0.18)"/>
+                    <polygon points="140,0 175,42 110,28" fill="rgba(110,150,190,0.14)"/>
+                    <polygon points="245,36 280,48 230,78" fill="rgba(125,160,200,0.2)"/>
+                    <polygon points="245,36 175,42 230,78" fill="rgba(100,140,185,0.16)"/>
+                    <polygon points="175,42 110,28 150,72" fill="rgba(135,168,208,0.14)"/>
+                    <polygon points="280,48 280,120 230,78" fill="rgba(90,130,175,0.22)"/>
+                    <polygon points="230,78 280,120 200,120" fill="rgba(118,155,195,0.16)"/>
+                    <polygon points="175,42 230,78 150,72" fill="rgba(125,160,200,0.14)"/>
+                </svg>
+                <div class="solis-upgrade-card-body">
+                    <h3 class="solis-upgrade-card-name">Basic</h3>
+                    <p class="solis-upgrade-card-tag">Clean exports, no watermark.</p>
+                    <div class="solis-upgrade-card-price">
+                        <span class="solis-upgrade-card-was" data-price-was-full="$9.99" data-price-was-launch="$9.99">$9.99</span>
+                        <span class="solis-upgrade-card-now" data-price-full="$9.99" data-price-launch="$5.99">$5.99</span>
+                        <span class="solis-upgrade-card-off" data-billing-only="launch">40% OFF</span>
+                    </div>
+                    <p class="solis-upgrade-card-period">/month</p>
+                    <p class="solis-upgrade-card-note" data-note-full="Billed monthly" data-note-launch="First 2 months, then $9.99/mo">First 2 months, then $9.99/mo</p>
+                    <a class="solis-upgrade-card-cta" href="/premium.html?plan=basic">Get Basic</a>
+                    <ul class="solis-upgrade-card-features">
+                        <li>No watermark</li>
+                        <li>5 uploads / day</li>
+                        <li>Up to 3 clips per upload</li>
+                        <li>1080p export</li>
+                        <li>Unlimited library clips</li>
+                    </ul>
+                </div>
+            </article>
+
+            <article class="solis-upgrade-card is-popular" data-plan="prime">
+                <span class="solis-upgrade-card-ribbon">Most Popular</span>
+                <svg class="solis-upgrade-card-poly" viewBox="0 0 280 160" preserveAspectRatio="xMaxYMin slice" aria-hidden="true">
+                    <polygon points="280,0 200,0 240,40" fill="rgba(45,212,191,0.22)"/>
+                    <polygon points="200,0 120,0 160,48" fill="rgba(45,212,191,0.14)"/>
+                    <polygon points="120,0 50,0 85,36" fill="rgba(167,243,208,0.18)"/>
+                    <polygon points="280,0 240,40 280,56" fill="rgba(13,148,136,0.26)"/>
+                    <polygon points="200,0 240,40 160,48" fill="rgba(20,184,166,0.2)"/>
+                    <polygon points="120,0 160,48 85,36" fill="rgba(110,231,183,0.16)"/>
+                    <polygon points="240,40 280,56 220,72" fill="rgba(45,212,191,0.22)"/>
+                    <polygon points="240,40 160,48 220,72" fill="rgba(20,184,166,0.16)"/>
+                    <polygon points="160,48 85,36 130,78" fill="rgba(45,212,191,0.15)"/>
+                    <polygon points="280,56 280,130 220,72" fill="rgba(13,148,136,0.28)"/>
+                    <polygon points="220,72 280,130 190,130" fill="rgba(20,184,166,0.2)"/>
+                    <polygon points="160,48 220,72 130,78" fill="rgba(45,212,191,0.16)"/>
+                </svg>
+                <div class="solis-upgrade-card-body">
+                    <h3 class="solis-upgrade-card-name">Prime</h3>
+                    <p class="solis-upgrade-card-tag">Daily shipping power for viral shorts.</p>
+                    <div class="solis-upgrade-card-price">
+                        <span class="solis-upgrade-card-was" data-price-was-full="$23.99" data-price-was-launch="$23.99">$23.99</span>
+                        <span class="solis-upgrade-card-now" data-price-full="$23.99" data-price-launch="$14.39">$14.39</span>
+                        <span class="solis-upgrade-card-off" data-billing-only="launch">40% OFF</span>
+                    </div>
+                    <p class="solis-upgrade-card-period">/month</p>
+                    <p class="solis-upgrade-card-note" data-note-full="Billed monthly" data-note-launch="First 2 months, then $23.99/mo">First 2 months, then $23.99/mo</p>
+                    <a class="solis-upgrade-card-cta solis-upgrade-card-cta--prime" href="/premium.html?plan=prime">Get Prime</a>
+                    <ul class="solis-upgrade-card-features">
+                        <li>Everything in Basic</li>
+                        <li>10 uploads / day</li>
+                        <li>Up to 5 clips per upload</li>
+                        <li>1440p export</li>
+                        <li>200 uploads / month</li>
+                    </ul>
+                </div>
+            </article>
+        </div>
+
+        <footer class="solis-upgrade-modal-foot">
+            <a class="solis-upgrade-modal-link" href="/premium.html">See all plans</a>
+            <p class="solis-upgrade-modal-help">Need Elite? <a href="/premium.html?plan=elite">View Elite</a></p>
+        </footer>
+    </div>
+</div>
 </body>
 </html>

@@ -7150,54 +7150,58 @@ class ClipsStudio {
     if (this._wmPlanPopoverBound) return;
     this._wmPlanPopoverBound = true;
     const e = document.getElementById("watermarkPlanPopoverClose");
+    const t = document.getElementById("watermarkPlanPopoverBackdrop");
     e?.addEventListener("click", e => {
       e.preventDefault();
       e.stopPropagation();
       this.closeWatermarkPlanPopover();
     });
-    document.addEventListener("pointerdown", e => {
-      const t = document.getElementById("watermarkPlanPopover");
-      const i = document.getElementById("watermarkContainer");
-      if (!t || t.hidden) return;
-      if (t.contains(e.target)) return;
-      if (i && i.contains(e.target)) return;
+    t?.addEventListener("click", e => {
+      e.preventDefault();
       this.closeWatermarkPlanPopover();
-    }, true);
+    });
     document.addEventListener("keydown", e => {
       if (e.key === "Escape") this.closeWatermarkPlanPopover();
     });
-    window.addEventListener("resize", () => {
-      const e = document.getElementById("watermarkPlanPopover");
-      if (e && !e.hidden) this.openWatermarkPlanPopover();
-    });
+    const i = document.getElementById("solisUpgradeCards");
+    const setBilling = e => {
+      const t = e === "launch";
+      document.getElementById("solisUpgradeBillingLaunch")?.classList.toggle("is-active", t);
+      document.getElementById("solisUpgradeBillingFull")?.classList.toggle("is-active", !t);
+      document.getElementById("solisUpgradeBillingLaunch")?.setAttribute("aria-pressed", t ? "true" : "false");
+      document.getElementById("solisUpgradeBillingFull")?.setAttribute("aria-pressed", t ? "false" : "true");
+      if (i) i.dataset.billing = t ? "launch" : "full";
+      i?.querySelectorAll(".solis-upgrade-card").forEach(e => {
+        const i = e.querySelector(".solis-upgrade-card-now");
+        const n = e.querySelector(".solis-upgrade-card-was");
+        const r = e.querySelector(".solis-upgrade-card-note");
+        if (i) {
+          i.textContent = t ? i.dataset.priceLaunch || i.textContent : i.dataset.priceFull || i.textContent;
+        }
+        if (n) {
+          n.textContent = t ? n.dataset.priceWasLaunch || n.textContent : n.dataset.priceWasFull || n.textContent;
+        }
+        if (r) {
+          r.textContent = t ? r.dataset.noteLaunch || r.textContent : r.dataset.noteFull || r.textContent;
+        }
+      });
+    };
+    document.getElementById("solisUpgradeBillingLaunch")?.addEventListener("click", () => setBilling("launch"));
+    document.getElementById("solisUpgradeBillingFull")?.addEventListener("click", () => setBilling("full"));
+    this._setSolisUpgradeBilling = setBilling;
   }
   openWatermarkPlanPopover() {
     const e = document.getElementById("watermarkPlanPopover");
-    const t = document.getElementById("watermarkToggleLabel") || document.getElementById("watermarkContainer");
-    if (!e || !t) return;
+    if (!e) return;
     if (e.parentElement !== document.body) {
       document.body.appendChild(e);
     }
+    this._setSolisUpgradeBilling?.("launch");
     e.hidden = false;
-    e.classList.add("is-open");
-    const place = () => {
-      const i = t.getBoundingClientRect();
-      const n = 10;
-      const r = Math.min(340, window.innerWidth - n * 2);
-      const o = e.offsetHeight || 240;
-      let s = Math.min(Math.max(n, i.right - r), window.innerWidth - r - n);
-      let a = i.bottom + 8;
-      if (a + o > window.innerHeight - n) {
-        a = Math.max(n, i.top - o - 8);
-      }
-      e.style.width = `${Math.round(r)}px`;
-      e.style.left = `${Math.round(s)}px`;
-      e.style.top = `${Math.round(a)}px`;
-    };
-    place();
-    requestAnimationFrame(place);
+    e.setAttribute("aria-hidden", "false");
+    document.body.classList.add("solis-upgrade-modal-open");
     try {
-      e.querySelector("#watermarkPlanUpgradeBtn")?.focus?.({
+      document.getElementById("watermarkPlanPopoverClose")?.focus?.({
         preventScroll: true
       });
     } catch (e) {}
@@ -7206,10 +7210,8 @@ class ClipsStudio {
     const e = document.getElementById("watermarkPlanPopover");
     if (!e) return;
     e.hidden = true;
-    e.classList.remove("is-open");
-    e.style.left = "";
-    e.style.top = "";
-    e.style.width = "";
+    e.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("solis-upgrade-modal-open");
   }
   loadVideoPreviewWithTemplate() {
     const e = document.getElementById("templateVideoPreview");

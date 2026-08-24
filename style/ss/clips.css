@@ -13502,70 +13502,403 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     display: none !important;
 }
 
-#watermarkContainer {
-    position: relative;
-}
-.wm-plan-popover {
+.solis-upgrade-modal {
     position: fixed;
-    z-index: 12050;
-    width: min(340px, calc(100vw - 24px));
-    filter: drop-shadow(0 18px 40px rgba(60, 40, 20, 0.16));
-    pointer-events: auto;
+    inset: 0;
+    z-index: 13000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 14px;
+    box-sizing: border-box;
 }
-.wm-plan-popover.is-open {
-    display: block !important;
-}
-.wm-plan-popover[hidden] {
+.solis-upgrade-modal[hidden] {
     display: none !important;
 }
-.wm-plan-popover-card {
-    margin: 0 !important;
-    padding: 14px 14px 12px !important;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-}
-.wm-plan-popover-close {
+.solis-upgrade-modal-backdrop {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 2;
-    width: 28px;
-    height: 28px;
+    inset: 0;
+    background: rgba(24, 18, 14, 0.42);
+    backdrop-filter: blur(10px) saturate(120%);
+    -webkit-backdrop-filter: blur(10px) saturate(120%);
+}
+.solis-upgrade-modal-panel {
+    position: relative;
+    z-index: 1;
+    width: min(720px, 100%);
+    max-height: min(92dvh, 880px);
+    overflow: auto;
+    border-radius: 28px;
+    padding: 28px 28px 20px;
+    background:
+        linear-gradient(
+            160deg,
+            rgba(255, 255, 255, 0.97) 0%,
+            rgba(255, 252, 248, 0.96) 48%,
+            rgba(255, 244, 236, 0.94) 100%
+        );
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    box-shadow:
+        0 28px 80px rgba(60, 35, 15, 0.22),
+        0 8px 24px rgba(120, 70, 30, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 1);
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    -webkit-overflow-scrolling: touch;
+}
+.solis-upgrade-modal-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 3;
+    width: 36px;
+    height: 36px;
     border: none;
     border-radius: 999px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.72);
-    color: rgba(55, 65, 81, 0.8);
+    background: rgba(255, 255, 255, 0.88);
+    color: rgba(55, 45, 38, 0.78);
     cursor: pointer;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    box-shadow:
+        0 2px 8px rgba(80, 50, 20, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 1);
+    border: 1px solid rgba(200, 185, 170, 0.35);
 }
-.wm-plan-popover-close:hover {
-    background: rgba(255, 255, 255, 0.92);
-    color: #111827;
+.solis-upgrade-modal-close:hover {
+    background: #fff;
+    color: #18120e;
 }
-.wm-plan-popover-lead {
-    margin: 0 28px 2px 0;
+.solis-upgrade-modal-head {
+    text-align: center;
+    max-width: 440px;
+    margin: 0 auto 22px;
+}
+.solis-upgrade-modal-title {
+    margin: 0 0 8px;
+    font-size: clamp(1.45rem, 2.4vw, 1.75rem);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    color: #18120e;
+}
+.solis-upgrade-modal-sub {
+    margin: 0 0 16px;
+    font-size: 13.5px;
+    line-height: 1.45;
+    font-weight: 500;
+    color: #7a6a5c;
+}
+.solis-upgrade-billing {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 4px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid rgba(200, 185, 170, 0.4);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+.solis-upgrade-billing-opt {
+    appearance: none;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-family: inherit;
     font-size: 12.5px;
     font-weight: 700;
-    letter-spacing: -0.01em;
-    color: rgba(28, 25, 23, 0.88);
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #7a6a5c;
+    transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+}
+.solis-upgrade-billing-opt.is-active {
+    background: #fff;
+    color: #18120e;
+    box-shadow:
+        0 2px 8px rgba(120, 70, 30, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+.solis-upgrade-billing-badge {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: #ea580c;
+    background: rgba(249, 115, 22, 0.12);
+    padding: 2px 6px;
+    border-radius: 999px;
+}
+.solis-upgrade-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    align-items: stretch;
+}
+.solis-upgrade-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border-radius: 22px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid rgba(200, 185, 170, 0.38);
+    box-shadow:
+        0 8px 24px rgba(80, 50, 20, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+.solis-upgrade-card.is-popular {
+    border-color: rgba(249, 115, 22, 0.45);
+    box-shadow:
+        0 12px 32px rgba(249, 115, 22, 0.14),
+        0 0 0 1px rgba(249, 115, 22, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+.solis-upgrade-card-poly {
+    position: absolute;
+    inset: 0 0 auto auto;
+    width: 70%;
+    height: 120px;
+    pointer-events: none;
+    z-index: 0;
+}
+.solis-upgrade-card-ribbon {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    color: #fff;
+    background: linear-gradient(145deg, #ff8a5c 0%, #f97316 50%, #ea580c 100%);
+    box-shadow: 0 4px 12px rgba(234, 88, 12, 0.28);
+    white-space: nowrap;
+}
+.solis-upgrade-card-body {
     position: relative;
     z-index: 1;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 28px 18px 18px;
+    gap: 0;
 }
-.wm-plan-ranks {
-    gap: 12px 14px;
+.solis-upgrade-card.is-popular .solis-upgrade-card-body {
+    padding-top: 36px;
 }
-.wm-plan-popover .stgUpgrade--compare {
-    margin-top: 10px;
-    width: 100%;
+.solis-upgrade-card-name {
+    margin: 0 0 4px;
+    font-size: 1.2rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: #18120e;
+}
+.solis-upgrade-card[data-plan="prime"] .solis-upgrade-card-name {
+    color: #0f766e;
+}
+.solis-upgrade-card-tag {
+    margin: 0 0 14px;
+    font-size: 12.5px;
+    line-height: 1.35;
+    font-weight: 500;
+    color: #7a6a5c;
+    min-height: 2.5em;
+}
+.solis-upgrade-card-price {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 6px 8px;
+}
+.solis-upgrade-card-was {
+    font-size: 15px;
+    font-weight: 600;
+    color: #b5a498;
+    text-decoration: line-through;
+}
+.solis-upgrade-cards[data-billing="full"] .solis-upgrade-card-was {
+    display: none;
+}
+.solis-upgrade-card-now {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: #18120e;
+    line-height: 1;
+}
+.solis-upgrade-card-off {
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: #ea580c;
+    background: rgba(249, 115, 22, 0.12);
+    padding: 3px 7px;
+    border-radius: 999px;
+    align-self: center;
+}
+.solis-upgrade-cards[data-billing="full"] .solis-upgrade-card-off {
+    display: none;
+}
+.solis-upgrade-card-period {
+    margin: 4px 0 0;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #9e8878;
+}
+.solis-upgrade-card-note {
+    margin: 6px 0 14px;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: #9e8878;
+    min-height: 1.3em;
+}
+.solis-upgrade-card-cta {
+    display: flex;
+    align-items: center;
     justify-content: center;
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 14px;
+    font-size: 13.5px;
+    font-weight: 750;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    color: #fff;
+    background: linear-gradient(
+        145deg,
+        rgba(255, 122, 80, 0.98) 0%,
+        rgba(232, 90, 42, 0.95) 55%,
+        rgba(220, 78, 32, 0.96) 100%
+    );
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    box-shadow:
+        0 6px 18px rgba(232, 90, 42, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    transition: transform 0.15s ease, box-shadow 0.2s ease;
 }
-.wm-plan-popover .stgPlanCompareDeal {
-    margin: -4px 0 8px;
+.solis-upgrade-card-cta:hover {
+    box-shadow:
+        0 8px 22px rgba(232, 90, 42, 0.34),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    transform: translateY(-1px);
+}
+.solis-upgrade-card-cta--prime {
+    background: linear-gradient(
+        145deg,
+        #2dd4bf 0%,
+        #14b8a6 48%,
+        #0d9488 100%
+    );
+    box-shadow:
+        0 6px 18px rgba(13, 148, 136, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+.solis-upgrade-card-cta--prime:hover {
+    box-shadow:
+        0 8px 22px rgba(13, 148, 136, 0.34),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+.solis-upgrade-card-features {
+    list-style: none;
+    margin: 16px 0 0;
+    padding: 14px 0 0;
+    border-top: 1px solid rgba(200, 185, 170, 0.35);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.solis-upgrade-card-features li {
+    position: relative;
+    padding-left: 22px;
+    font-size: 12.5px;
+    line-height: 1.35;
+    font-weight: 500;
+    color: #4a4038;
+}
+.solis-upgrade-card-features li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 3px;
+    width: 14px;
+    height: 14px;
+    border-radius: 999px;
+    background: rgba(249, 115, 22, 0.14);
+    box-shadow: inset 0 0 0 1.5px rgba(249, 115, 22, 0.55);
+}
+.solis-upgrade-card-features li::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 6px;
+    width: 5px;
+    height: 3px;
+    border-left: 1.6px solid #ea580c;
+    border-bottom: 1.6px solid #ea580c;
+    transform: rotate(-45deg);
+}
+.solis-upgrade-card[data-plan="prime"] .solis-upgrade-card-features li::before {
+    background: rgba(20, 184, 166, 0.14);
+    box-shadow: inset 0 0 0 1.5px rgba(13, 148, 136, 0.55);
+}
+.solis-upgrade-card[data-plan="prime"] .solis-upgrade-card-features li::after {
+    border-color: #0f766e;
+}
+.solis-upgrade-modal-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 18px;
+    padding-top: 4px;
+}
+.solis-upgrade-modal-link {
+    font-size: 13px;
+    font-weight: 700;
+    color: #18120e;
+    text-decoration: none;
+}
+.solis-upgrade-modal-link:hover {
+    color: #ea580c;
+}
+.solis-upgrade-modal-link::before {
+    content: '← ';
+}
+.solis-upgrade-modal-help {
+    margin: 0;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: #9e8878;
+}
+.solis-upgrade-modal-help a {
+    color: #18120e;
+    font-weight: 700;
+    text-decoration: none;
+}
+.solis-upgrade-modal-help a:hover {
+    color: #ea580c;
+}
+body.solis-upgrade-modal-open {
+    overflow: hidden;
+}
+@media (max-width: 640px) {
+    .solis-upgrade-modal-panel {
+        padding: 22px 16px 16px;
+        border-radius: 22px;
+        max-height: 94dvh;
+    }
+    .solis-upgrade-cards {
+        grid-template-columns: 1fr;
+    }
+    .solis-upgrade-modal-foot {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
 
 .multi-gen-card {

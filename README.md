@@ -13,4 +13,4 @@ Auto-staged from the SolisAI monorepo via `python scripts/push_frontend.py`.
 Vercel (or any static host) from this repo root. `_review/` must not be published.
 API CORS / cookies must allow `https://solisai.video`.
 
-Generated: 2026-08-24T08:36:53.128718+00:00
+Generated: 2026-08-24T08:40:53.901730+00:00

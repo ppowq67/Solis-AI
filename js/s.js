@@ -11177,6 +11177,27 @@ class ClipsStudio {
       } catch (e) {}
     }
   }
+  _highlightMostUsedTemplate(e) {
+    const t = e || "splitscreen";
+    document.querySelectorAll(".template-card").forEach(e => {
+      const i = e.dataset.template === t;
+      e.classList.toggle("is-most-used", i);
+      e.classList.toggle("selected", i);
+      let n = e.querySelector(".most-used-outline-tag");
+      if (i) {
+        if (!n) {
+          n = document.createElement("span");
+          n.className = "most-used-outline-tag";
+          n.textContent = "MOST USED";
+          e.appendChild(n);
+        }
+        n.hidden = false;
+        n.removeAttribute("hidden");
+      } else if (n) {
+        n.hidden = true;
+      }
+    });
+  }
   _continueAfterUrlReady(e) {
     try {
       this._writeAutoPreviewState({
@@ -11186,9 +11207,7 @@ class ClipsStudio {
     const t = this._pickBestTemplateId();
     this.selectedTemplate = t;
     this._forceTemplatesSection();
-    document.querySelectorAll(".template-card").forEach(e => {
-      e.classList.toggle("selected", e.dataset.template === t);
-    });
+    this._highlightMostUsedTemplate(t);
     const i = document.querySelector(`.template-card[data-template="${t}"]`);
     const n = document.getElementById("clipPreviewContainer");
     if (n) n.style.display = "block";
@@ -11227,9 +11246,9 @@ class ClipsStudio {
     const t = this.currentTemplateForPreview?.id;
     if (t && e && t !== e) {
       this._writeAutoPreviewState({
-        mode: "off",
+        mode: "auto",
         preferredTemplateId: e,
-        closes: (this._readAutoPreviewState().closes || 0) + 1
+        closes: this._readAutoPreviewState().closes || 0
       });
       this._autoOpenedPreview = false;
     }

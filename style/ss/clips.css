@@ -493,16 +493,10 @@
 }
 
 .template-badge.popular {
-    top: auto;
-    right: auto;
-    left: 50%;
-    bottom: 12px;
-    transform: translateX(-50%);
-    z-index: 12;
-    background: rgba(234, 88, 12, 0.92);
+    background: rgba(234, 88, 12, 0.88);
     box-shadow:
-        0 2px 10px rgba(234, 88, 12, 0.45),
-        inset 0 1px 0 rgba(255, 255, 255, 0.35);
+        0 2px 8px rgba(234, 88, 12, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 .template-badge.trending {
@@ -524,12 +518,60 @@
         top: 8px; right: 8px;
         padding: 3px 8px; font-size: 9px;
     }
-    .template-badge.popular {
-        top: auto;
-        right: auto;
-        left: 50%;
-        bottom: 10px;
-        transform: translateX(-50%);
+}
+
+.template-card.is-most-used {
+    overflow: visible;
+    border-color: rgba(255, 255, 255, 0.95);
+    outline: 1.5px solid rgba(255, 255, 255, 0.72);
+    outline-offset: 4px;
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.35),
+        0 12px 40px rgba(0, 0, 0, 0.08),
+        0 0 28px rgba(255, 255, 255, 0.45),
+        0 0 18px rgba(255, 140, 90, 0.18),
+        inset 0 1.5px 2px rgba(255, 255, 255, 0.9);
+}
+
+.template-card.is-most-used .template-image-placeholder {
+    border-radius: 26px 26px 0 0;
+    overflow: hidden;
+}
+
+.template-card .most-used-outline-tag {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translate(-50%, 50%);
+    z-index: 20;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(30, 30, 30, 0.78);
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.95);
+    box-shadow:
+        0 2px 10px rgba(0, 0, 0, 0.08),
+        0 0 0 1px rgba(255, 255, 255, 0.5);
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.template-card .most-used-outline-tag[hidden] {
+    display: none !important;
+}
+
+@media (max-width: 768px) {
+    .template-card.is-most-used {
+        outline-offset: 3px;
+    }
+    .template-card .most-used-outline-tag {
+        font-size: 8px;
+        padding: 3px 8px;
     }
 }
 

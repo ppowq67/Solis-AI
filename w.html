@@ -1,137 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Viktor Layout Clone</title>
-    <style>
-        body {
-            font-family: 'Gellix', ui-sans-serif, system-ui, -apple-system, sans-serif;
-            background-color: #f9f9fb;
-            color: #1a182b;
-            margin: 0;
-            padding: 0;
-        }
+<header class="fixed top-0 z-50 w-full" style="position: fixed; top: 0; left: 0; right: 0; z-index: 50; width: 100%;">
+    <div class="relative px-3 sm:px-5 xl:px-10" style="position: relative; padding: 0 20px;">
+      <div class="mx-auto w-full max-w-[1360px]" style="max-width: 1360px; margin: 0 auto;">
+        <div class="relative isolate w-full rounded-b-[1.875rem] border-x border-b border-solid border-[rgba(211,207,229,0.3)] bg-white py-3 pr-3 pl-8 min-h-14 overflow-visible" style="background-color: white; border-radius: 0 0 30px 30px; border: 1px solid rgba(211,207,229,0.3); border-top: none; display: flex; align-items: center; justify-content: space-between;">
 
-        .header-container {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 50;
-            padding: 20px 40px;
-            box-sizing: border-box;
-        }
+          <a href="/" style="display: block; width: 80px; height: 24px;">
+            <img src="/assets/brand/logos/viktor-logo-color.svg" alt="Viktor" style="width: 100%;">
+          </a>
 
-        .nav-bar {
-            max-width: 1360px;
-            margin: 0 auto;
-            background: white;
-            border: 1px solid rgba(211, 207, 229, 0.3);
-            border-radius: 0 0 30px 30px;
-            padding: 12px 12px 12px 32px;
-            display: grid;
-            grid-template-columns: auto 1fr auto;
-            align-items: center;
-            gap: 40px;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 8px;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        .nav-link {
-            padding: 6px 12px;
-            font-size: 14px;
-            font-weight: 500;
-            text-decoration: none;
-            color: #1a182b;
-            border-radius: 9999px;
-            transition: background 0.2s;
-        }
-
-        .nav-link:hover {
-            background: rgba(0, 0, 0, 0.05);
-        }
-
-        .buttons {
-            display: flex;
-            gap: 12px;
-        }
-
-        .btn {
-            padding: 10px 24px;
-            border-radius: 9999px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            border: none;
-            transition: all 0.2s;
-        }
-
-        .btn-secondary {
-            background: #f3f3f6;
-            color: #1a182b;
-        }
-
-        .btn-primary {
-            background: #6e47ff;
-            color: white;
-        }
-
-        .hero {
-            padding-top: 160px;
-            text-align: center;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        h1 {
-            font-family: 'UlmGrotesk', sans-serif;
-            font-size: 72px;
-            line-height: 1.1;
-            margin-bottom: 24px;
-            font-weight: 400;
-        }
-
-        .subheadline {
-            font-size: 18px;
-            color: #716f7e;
-            font-weight: 500;
-            line-height: 1.6;
-            margin-bottom: 8px;
-        }
-    </style>
-</head>
-<body>
-
-    <header class="header-container">
-        <nav class="nav-bar">
-            <div class="logo">
-                <strong>VIKTOR</strong>
+          <nav style="display: flex; align-items: center; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 4px; padding: 6px 12px; font-size: 14px; color: #1A182B; cursor: pointer;">
+              <span>Solution</span>
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: #9693A3;">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M9.94784 3.25953C10.1596 2.83611 10.6744 2.6645 11.0978 2.8762C11.5212 3.08791 11.6928 3.60277 11.4811 4.02618C10.3705 6.24748 9.21439 7.54719 7.18042 8.70053C6.44881 9.1153 5.5516 9.1153 4.81998 8.70053C2.78598 7.54719 1.62992 6.24748 0.519267 4.02618C0.307563 3.60277 0.479183 3.08791 0.902597 2.8762C1.326 2.6645 1.84087 2.83611 2.05257 3.25953C3.03202 5.21844 3.96607 6.24562 5.66554 7.20925C5.87268 7.3267 6.12773 7.3267 6.33487 7.20925C8.03434 6.24562 8.96839 5.21844 9.94784 3.25953Z" fill="currentColor"></path>
+              </svg>
             </div>
-            <ul class="nav-links">
-                <li><a href="#" class="nav-link">Solutions</a></li>
-                <li><a href="#" class="nav-link">For Teams</a></li>
-                <li><a href="#" class="nav-link">Resources</a></li>
-                <li><a href="#" class="nav-link">Pricing</a></li>
-            </ul>
-            <div class="buttons">
-                <button class="btn btn-secondary">Book a Demo</button>
-                <button class="btn btn-primary">Get Started for Free</button>
-            </div>
-        </nav>
-    </header>
+            <a href="/pricing" style="text-decoration: none; color: #1A182B; font-size: 14px; padding: 6px 12px;">Pricing</a>
+          </nav>
 
-    <main class="hero">
-        <h1>Not a tool.<br>A hire.</h1>
-        <p class="subheadline">Hire Viktor and run your company like it's twice the size.</p>
-        <p class="subheadline">The AI employee that lives in Slack and Teams.</p>
-    </main>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <a href="/contact-sales" style="text-decoration: none; color: #1A182B; font-size: 14px; font-weight: 500; border: 1px solid rgba(26, 24, 43, 0.1); padding: 8px 24px; border-radius: 9999px;">Book a Demo</a>
+            <a href="/signup" style="text-decoration: none; background: #1A182B; color: white; font-size: 14px; font-weight: 500; padding: 8px 24px; border-radius: 9999px;">Get Started for Free</a>
+          </div>
 
-</body>
-</html>
+        </div>
+      </div>
+    </div>
+  </header>

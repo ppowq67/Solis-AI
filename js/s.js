@@ -388,8 +388,8 @@ const PreviewTimeline = (() => {
   let S = null;
   let _ = false;
   let k = 0;
-  let C = 0;
   let L = 0;
+  let C = 0;
   let P = 0;
   let I = 1;
   let E = [];
@@ -1005,15 +1005,15 @@ const PreviewTimeline = (() => {
     S = Math.max(0, Math.min(u || e, e));
     const i = performance.now();
     const n = t ? 0 : Math.max(0, r - (i - k));
-    if (C) {
-      clearTimeout(C);
-      C = 0;
+    if (L) {
+      clearTimeout(L);
+      L = 0;
     }
     if (n === 0) {
       flushSeek();
     } else {
-      C = setTimeout(() => {
-        C = 0;
+      L = setTimeout(() => {
+        L = 0;
         flushSeek();
       }, n);
     }
@@ -1498,13 +1498,13 @@ const PreviewTimeline = (() => {
   function detach() {
     y += 1;
     destroyCaptureVideo();
-    if (C) {
-      clearTimeout(C);
-      C = 0;
-    }
     if (L) {
       clearTimeout(L);
       L = 0;
+    }
+    if (C) {
+      clearTimeout(C);
+      C = 0;
     }
     if (w) {
       cancelAnimationFrame(w);
@@ -1544,22 +1544,22 @@ const PreviewTimeline = (() => {
     hide();
   }
   function scheduleFilmstripBuild(e = 450) {
-    if (L) {
-      clearTimeout(L);
-      L = 0;
+    if (C) {
+      clearTimeout(C);
+      C = 0;
     }
     const run = () => {
-      L = 0;
+      C = 0;
       buildFilmstripFromVideo();
     };
     if (typeof requestIdleCallback === "function") {
-      L = setTimeout(() => {
+      C = setTimeout(() => {
         requestIdleCallback(() => run(), {
           timeout: 1200
         });
       }, e);
     } else {
-      L = setTimeout(run, e);
+      C = setTimeout(run, e);
     }
   }
   function attach(e) {
@@ -2278,15 +2278,15 @@ function bindFaceReframePanHandlers() {
     const S = b.clientWidth || v.clientWidth || 1;
     const _ = b.clientHeight || v.clientHeight || 1;
     const k = r[2];
-    const C = r[3];
-    const L = Math.max(S / Math.max(1, k), _ / Math.max(1, C));
-    const P = (l - i) / L;
-    const I = (c - n) / L;
+    const L = r[3];
+    const C = Math.max(S / Math.max(1, k), _ / Math.max(1, L));
+    const P = (l - i) / C;
+    const I = (c - n) / C;
     let E = r[0] - P;
     let T = r[1] - I;
     E = Math.max(0, Math.min(h - k, E));
-    T = Math.max(0, Math.min(w - C, T));
-    m.faceCrop = [ E, T, k, C ];
+    T = Math.max(0, Math.min(w - L, T));
+    m.faceCrop = [ E, T, k, L ];
     syncLibrarySplitscreenCropPreview();
   };
   const endPan = (t = null) => {
@@ -7201,6 +7201,10 @@ class ClipsStudio {
     };
     document.getElementById("solisUpgradeBillingLaunch")?.addEventListener("click", () => setBilling("launch"));
     document.getElementById("solisUpgradeBillingFull")?.addEventListener("click", () => setBilling("full"));
+    document.getElementById("solisUpgradeStayFree")?.addEventListener("click", e => {
+      e.preventDefault();
+      this.closeWatermarkPlanPopover();
+    });
     this._setSolisUpgradeBilling = setBilling;
   }
   openWatermarkPlanPopover() {

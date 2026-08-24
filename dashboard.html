@@ -47,7 +47,7 @@
     <link rel="stylesheet" href="/style/ss/ios-pill-nav.css?v=29">
     <link rel="stylesheet" href="/style/ss/mobile-nav.css?v=28">
     <link rel="stylesheet" href="/style/ss/customize.css?v=27">
-    <link rel="stylesheet" href="/style/ss/clips.css?v=128">
+    <link rel="stylesheet" href="/style/ss/clips.css?v=129">
     <link rel="stylesheet" href="/style/ss/profile.css?v=29">
     <link rel="stylesheet" href="/style/ss/tasks-panel-v2-demo.css?v=18">
     <link rel="stylesheet" href="/style/ss/solis-gen-stage.css?v=26">
@@ -78,7 +78,7 @@
     <script src="/js/ui/plan-selector.js?v=63"></script>
     <script src="/js/core/video-preview-system.js?v=2"></script>
     <script src="/js/s_new/clip-card.js?v=23"></script>
-    <script src="/js/s.js?v=284"></script>
+    <script src="/js/s.js?v=285"></script>
 
     <script src="/js/s_new/procc.js?v=2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -15676,8 +15676,9 @@
         </button>
 
         <header class="solis-upgrade-modal-head">
-            <h2 class="solis-upgrade-modal-title" id="solisUpgradeTitle">Remove Watermark &amp; Unlock More</h2>
-            <p class="solis-upgrade-modal-sub">Clean exports, more uploads, and every edit tool. Launch pricing for your first 2 months.</p>
+            <p class="solis-upgrade-modal-eyebrow">Upgrade</p>
+            <h2 class="solis-upgrade-modal-title" id="solisUpgradeTitle">Export without the watermark</h2>
+            <p class="solis-upgrade-modal-sub">Free keeps the Solis mark on every clip. Paid removes it and unlocks cleaner, client-ready exports.</p>
             <div class="solis-upgrade-billing" role="group" aria-label="Billing period">
                 <button type="button" class="solis-upgrade-billing-opt" data-billing="full" id="solisUpgradeBillingFull">Monthly</button>
                 <button type="button" class="solis-upgrade-billing-opt is-active" data-billing="launch" id="solisUpgradeBillingLaunch" aria-pressed="true">
@@ -15688,10 +15689,41 @@
         </header>
 
         <div class="solis-upgrade-cards" id="solisUpgradeCards" data-billing="launch">
-            <article class="solis-upgrade-card" data-plan="basic">
+            <article class="solis-upgrade-card solis-upgrade-card--free" data-plan="free">
                 <div class="solis-upgrade-card-body">
-                    <h3 class="solis-upgrade-card-name">Basic</h3>
-                    <p class="solis-upgrade-card-tag">Clean exports, no watermark.</p>
+                    <div class="solis-upgrade-card-topline">
+                        <h3 class="solis-upgrade-card-name">Free</h3>
+                        <span class="solis-upgrade-card-chip">Current</span>
+                    </div>
+                    <p class="solis-upgrade-card-tag">Good for testing ideas. Not for posting as yours.</p>
+                    <div class="solis-upgrade-card-price">
+                        <span class="solis-upgrade-card-amount">
+                            <span class="solis-upgrade-card-now">$0</span>
+                            <span class="solis-upgrade-card-period">/month</span>
+                        </span>
+                    </div>
+                    <p class="solis-upgrade-card-note">Watermark stays on every export</p>
+                    <button type="button" class="solis-upgrade-card-cta solis-upgrade-card-cta--ghost" id="solisUpgradeStayFree">Stay on Free</button>
+                    <div class="solis-upgrade-card-features-wrap">
+                        <ul class="solis-upgrade-card-features">
+                            <li class="is-limit">Solis watermark on exports</li>
+                            <li class="is-limit">1 upload / day</li>
+                            <li class="is-limit">1 clip per upload</li>
+                            <li class="is-limit">720p export</li>
+                            <li class="is-limit">10 clips in library</li>
+                        </ul>
+                    </div>
+                </div>
+            </article>
+
+            <article class="solis-upgrade-card is-popular solis-upgrade-card--paid" data-plan="basic">
+                <span class="solis-upgrade-card-ribbon">Recommended</span>
+                <div class="solis-upgrade-card-body">
+                    <div class="solis-upgrade-card-topline">
+                        <h3 class="solis-upgrade-card-name">Paid</h3>
+                        <span class="solis-upgrade-card-chip solis-upgrade-card-chip--hot">No watermark</span>
+                    </div>
+                    <p class="solis-upgrade-card-tag">Clean brand exports. Built for creators who ship daily.</p>
                     <div class="solis-upgrade-card-price">
                         <span class="solis-upgrade-card-was" data-price-was-full="$9.99" data-price-was-launch="$9.99">$9.99</span>
                         <span class="solis-upgrade-card-amount">
@@ -15700,68 +15732,28 @@
                         </span>
                         <span class="solis-upgrade-card-off" data-billing-only="launch">40% OFF</span>
                     </div>
-                    <p class="solis-upgrade-card-note" data-note-full="Billed monthly" data-note-launch="First 2 months, then $9.99/mo">First 2 months, then $9.99/mo</p>
-                    <a class="solis-upgrade-card-cta" href="/premium.html?plan=basic">Get Basic</a>
+                    <p class="solis-upgrade-card-note" data-note-full="Billed monthly. Cancel anytime." data-note-launch="First 2 months at launch price, then $9.99/mo">First 2 months at launch price, then $9.99/mo</p>
+                    <a class="solis-upgrade-card-cta" href="/premium.html?plan=basic">Remove watermark</a>
                     <div class="solis-upgrade-card-features-wrap">
                         <svg class="solis-upgrade-card-poly" viewBox="0 0 480 120" preserveAspectRatio="xMaxYMid slice" aria-hidden="true" fill="none">
-                            <polygon points="480,0 410,0 450,35" fill="rgba(120,155,200,0.10)"/>
-                            <polygon points="410,0 330,0 370,48" fill="rgba(140,170,210,0.08)"/>
-                            <polygon points="330,0 250,0 290,30" fill="rgba(100,140,185,0.07)"/>
-                            <polygon points="480,0 450,35 480,50" fill="rgba(95,135,180,0.11)"/>
-                            <polygon points="410,0 450,35 370,48" fill="rgba(130,165,205,0.09)"/>
-                            <polygon points="450,35 480,50 420,78" fill="rgba(125,160,200,0.09)"/>
-                            <polygon points="450,35 370,48 420,78" fill="rgba(100,140,185,0.08)"/>
-                            <polygon points="480,50 480,120 420,78" fill="rgba(90,130,175,0.10)"/>
-                            <polygon points="420,78 480,120 360,120" fill="rgba(118,155,195,0.08)"/>
-                            <polygon points="370,48 420,78 340,70" fill="rgba(125,160,200,0.07)"/>
-                            <polygon points="340,70 360,120 280,120" fill="rgba(115,152,190,0.07)"/>
+                            <polygon points="480,0 410,0 450,35" fill="rgba(255,122,80,0.10)"/>
+                            <polygon points="410,0 330,0 370,48" fill="rgba(255,122,80,0.07)"/>
+                            <polygon points="330,0 250,0 290,30" fill="rgba(232,90,42,0.08)"/>
+                            <polygon points="480,0 450,35 480,50" fill="rgba(220,78,32,0.10)"/>
+                            <polygon points="410,0 450,35 370,48" fill="rgba(255,122,80,0.08)"/>
+                            <polygon points="450,35 480,50 420,78" fill="rgba(255,122,80,0.08)"/>
+                            <polygon points="450,35 370,48 420,78" fill="rgba(232,90,42,0.07)"/>
+                            <polygon points="480,50 480,120 420,78" fill="rgba(220,78,32,0.09)"/>
+                            <polygon points="420,78 480,120 360,120" fill="rgba(255,122,80,0.07)"/>
+                            <polygon points="370,48 420,78 340,70" fill="rgba(255,122,80,0.06)"/>
+                            <polygon points="340,70 360,120 280,120" fill="rgba(232,90,42,0.06)"/>
                         </svg>
                         <ul class="solis-upgrade-card-features">
-                            <li>No watermark</li>
-                            <li>5 uploads / day</li>
-                            <li>Up to 3 clips per upload</li>
-                            <li>1080p export</li>
-                            <li>Unlimited library clips</li>
-                        </ul>
-                    </div>
-                </div>
-            </article>
-
-            <article class="solis-upgrade-card is-popular" data-plan="prime">
-                <span class="solis-upgrade-card-ribbon">Most Popular</span>
-                <div class="solis-upgrade-card-body">
-                    <h3 class="solis-upgrade-card-name">Prime</h3>
-                    <p class="solis-upgrade-card-tag">Built for daily viral shorts.</p>
-                    <div class="solis-upgrade-card-price">
-                        <span class="solis-upgrade-card-was" data-price-was-full="$23.99" data-price-was-launch="$23.99">$23.99</span>
-                        <span class="solis-upgrade-card-amount">
-                            <span class="solis-upgrade-card-now" data-price-full="$23.99" data-price-launch="$14.39">$14.39</span>
-                            <span class="solis-upgrade-card-period">/month</span>
-                        </span>
-                        <span class="solis-upgrade-card-off" data-billing-only="launch">40% OFF</span>
-                    </div>
-                    <p class="solis-upgrade-card-note" data-note-full="Billed monthly" data-note-launch="First 2 months, then $23.99/mo">First 2 months, then $23.99/mo</p>
-                    <a class="solis-upgrade-card-cta solis-upgrade-card-cta--prime" href="/premium.html?plan=prime">Get Prime</a>
-                    <div class="solis-upgrade-card-features-wrap">
-                        <svg class="solis-upgrade-card-poly" viewBox="0 0 480 120" preserveAspectRatio="xMaxYMid slice" aria-hidden="true" fill="none">
-                            <polygon points="480,0 400,0 440,40" fill="rgba(45,212,191,0.10)"/>
-                            <polygon points="400,0 320,0 360,48" fill="rgba(45,212,191,0.07)"/>
-                            <polygon points="320,0 240,0 280,36" fill="rgba(167,243,208,0.09)"/>
-                            <polygon points="480,0 440,40 480,56" fill="rgba(13,148,136,0.11)"/>
-                            <polygon points="400,0 440,40 360,48" fill="rgba(20,184,166,0.09)"/>
-                            <polygon points="440,40 480,56 420,72" fill="rgba(45,212,191,0.09)"/>
-                            <polygon points="440,40 360,48 420,72" fill="rgba(20,184,166,0.07)"/>
-                            <polygon points="480,56 480,120 420,72" fill="rgba(13,148,136,0.11)"/>
-                            <polygon points="420,72 480,120 380,120" fill="rgba(20,184,166,0.08)"/>
-                            <polygon points="360,48 420,72 320,78" fill="rgba(45,212,191,0.07)"/>
-                            <polygon points="320,78 380,120 280,120" fill="rgba(45,212,191,0.08)"/>
-                        </svg>
-                        <ul class="solis-upgrade-card-features">
-                            <li>Everything in Basic</li>
-                            <li>10 uploads / day</li>
-                            <li>Up to 5 clips per upload</li>
-                            <li>1440p export</li>
-                            <li>200 uploads / month</li>
+                            <li class="is-win">No Solis watermark</li>
+                            <li class="is-win">5 uploads / day</li>
+                            <li class="is-win">Up to 3 clips per upload</li>
+                            <li class="is-win">1080p export</li>
+                            <li class="is-win">Unlimited library clips</li>
                         </ul>
                     </div>
                 </div>
@@ -15770,10 +15762,10 @@
 
         <footer class="solis-upgrade-modal-foot">
             <a class="solis-upgrade-modal-link" href="/premium.html">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
-                <span>See all plans</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                <span>Compare all plans</span>
             </a>
-            <p class="solis-upgrade-modal-help">Need Elite? <a href="/premium.html?plan=elite">View Elite</a></p>
+            <p class="solis-upgrade-modal-help">Need more power? <a href="/premium.html?plan=prime">See Prime &amp; Elite</a></p>
         </footer>
     </div>
 </div>

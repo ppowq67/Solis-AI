@@ -10,23 +10,23 @@ let _authLogoutArmed = false;
 
 window.fetch = async function(...e) {
   const t = String(e[0]);
-  const n = e[1] || {};
-  let i;
+  const i = e[1] || {};
+  let n;
   try {
-    i = await originalFetch.apply(this, e);
+    n = await originalFetch.apply(this, e);
   } catch (e) {
     throw e;
   }
-  if (i.status === 502 || i.status === 503 || i.status === 504) {
-    return i;
+  if (n.status === 502 || n.status === 503 || n.status === 504) {
+    return n;
   }
-  if (i.status !== 401) return i;
+  if (n.status !== 401) return n;
   if (t.includes("/auth/logout") || t.includes("/auth/check") || t.includes("/auth/refresh")) {
-    return i;
+    return n;
   }
-  if (n._authRetried) return i;
+  if (i._authRetried) return n;
   const r = {
-    ...n,
+    ...i,
     _authRetried: true
   };
   try {
@@ -39,13 +39,13 @@ window.fetch = async function(...e) {
       body: "{}"
     });
     if (e.ok) {
-      i = await originalFetch(t, r);
-      if (i.status !== 401) return i;
+      n = await originalFetch(t, r);
+      if (n.status !== 401) return n;
     } else if (e.status >= 500 || e.status === 0) {
-      return i;
+      return n;
     }
     await new Promise(e => setTimeout(e, 1800));
-    const n = await originalFetch(`${window.API_BASE_URL}/auth/refresh`, {
+    const i = await originalFetch(`${window.API_BASE_URL}/auth/refresh`, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -53,9 +53,9 @@ window.fetch = async function(...e) {
       },
       body: "{}"
     });
-    if (n.ok) {
-      i = await originalFetch(t, r);
-      if (i.status !== 401) return i;
+    if (i.ok) {
+      n = await originalFetch(t, r);
+      if (n.status !== 401) return n;
     }
     const o = await originalFetch(`${window.API_BASE_URL}/auth/check`, {
       method: "GET",
@@ -67,16 +67,16 @@ window.fetch = async function(...e) {
     if (o.ok) {
       const e = await o.json();
       if (e.authenticated && e.user) {
-        i = await originalFetch(t, r);
-        if (i.status !== 401) return i;
+        n = await originalFetch(t, r);
+        if (n.status !== 401) return n;
       }
     } else if (o.status >= 500) {
-      return i;
+      return n;
     }
   } catch (e) {
-    return i;
+    return n;
   }
-  if (i.status === 401 && !_authLogoutArmed && !window.location.pathname.includes("login")) {
+  if (n.status === 401 && !_authLogoutArmed && !window.location.pathname.includes("login")) {
     _authLogoutArmed = true;
     console.error("[GLOBAL 401 HANDLER] Session unrecoverable — redirecting to login");
     window.currentUser = null;
@@ -87,7 +87,7 @@ window.fetch = async function(...e) {
       window.location.href = "/login.html";
     }, 100);
   }
-  return i;
+  return n;
 };
 
 let cooldownTimer = null;
@@ -98,18 +98,18 @@ function startCooldownTimer(e) {
   if (cooldownTimer) {
     clearInterval(cooldownTimer);
   }
-  let n = Math.max(0, e);
-  const i = '<i class="fas fa-arrow-right"></i>';
+  let i = Math.max(0, e);
+  const n = '<i class="fas fa-arrow-right"></i>';
   t.disabled = true;
   t.classList.add("is-generating");
   t.style.opacity = "0.5";
   t.style.cursor = "not-allowed";
-  t.innerHTML = `${n}s`;
+  t.innerHTML = `${i}s`;
   t.style.fontSize = "0.85em";
   cooldownTimer = setInterval(() => {
-    n--;
-    if (n > 0) {
-      t.innerHTML = `${n}s`;
+    i--;
+    if (i > 0) {
+      t.innerHTML = `${i}s`;
     } else {
       clearInterval(cooldownTimer);
       cooldownTimer = null;
@@ -117,7 +117,7 @@ function startCooldownTimer(e) {
       t.classList.remove("is-generating");
       t.style.opacity = "1";
       t.style.cursor = "pointer";
-      t.innerHTML = i;
+      t.innerHTML = n;
       t.style.fontSize = "1em";
     }
   }, 1e3);
@@ -297,10 +297,10 @@ const PREVIEW_AUDIO_ICON_ON = `<svg viewBox="0 0 24 24" aria-hidden="true"><path
 function getPreviewAudioVideos(e) {
   const t = e || document.getElementById("templateVideoPreview");
   if (!t) return [];
-  const n = t.querySelector("#splitscreenContentVideo");
-  const i = t.querySelector("video.library-preview-video");
-  if (n?.src || n?.currentSrc) return [ n ];
+  const i = t.querySelector("#splitscreenContentVideo");
+  const n = t.querySelector("video.library-preview-video");
   if (i?.src || i?.currentSrc) return [ i ];
+  if (n?.src || n?.currentSrc) return [ n ];
   return Array.from(t.querySelectorAll("video")).filter(e => {
     if (!e.src && !e.currentSrc) return false;
     if (e.id === "splitscreenReframeVideo" || e.id === "splitscreenGameplayVideo") return false;
@@ -312,9 +312,9 @@ function getPreviewAudioVideos(e) {
 function applyPreviewAudioState(e) {
   const t = e || document.getElementById("templateVideoPreview");
   if (!t) return;
-  const n = new Set(getPreviewAudioVideos(t));
+  const i = new Set(getPreviewAudioVideos(t));
   t.querySelectorAll("video").forEach(e => {
-    if (n.has(e)) {
+    if (i.has(e)) {
       e.muted = !_previewAudioEnabled;
       if (_previewAudioEnabled) e.volume = 1;
       e.loop = true;
@@ -325,33 +325,33 @@ function applyPreviewAudioState(e) {
       e.muted = true;
     }
   });
-  const i = document.getElementById("previewAudioToggle") || t.querySelector(".preview-audio-toggle");
-  if (i) {
-    i.hidden = false;
-    i.classList.toggle("is-unmuted", _previewAudioEnabled);
-    i.setAttribute("aria-pressed", _previewAudioEnabled ? "true" : "false");
-    i.title = _previewAudioEnabled ? "Mute preview" : "Unmute preview";
-    i.setAttribute("aria-label", _previewAudioEnabled ? "Mute preview" : "Unmute preview");
-    i.innerHTML = _previewAudioEnabled ? PREVIEW_AUDIO_ICON_ON : PREVIEW_AUDIO_ICON_MUTED;
+  const n = document.getElementById("previewAudioToggle") || t.querySelector(".preview-audio-toggle");
+  if (n) {
+    n.hidden = false;
+    n.classList.toggle("is-unmuted", _previewAudioEnabled);
+    n.setAttribute("aria-pressed", _previewAudioEnabled ? "true" : "false");
+    n.title = _previewAudioEnabled ? "Mute preview" : "Unmute preview";
+    n.setAttribute("aria-label", _previewAudioEnabled ? "Mute preview" : "Unmute preview");
+    n.innerHTML = _previewAudioEnabled ? PREVIEW_AUDIO_ICON_ON : PREVIEW_AUDIO_ICON_MUTED;
   }
 }
 
 function ensurePreviewAudioToggle(e) {
   const t = e || document.getElementById("templateVideoPreview");
   if (!t) return null;
-  let n = document.getElementById("previewAudioToggle");
-  if (!n) {
-    n = document.createElement("button");
-    n.type = "button";
-    n.id = "previewAudioToggle";
-    n.className = "preview-audio-toggle";
-    t.appendChild(n);
-  } else if (n.parentElement !== t) {
-    t.appendChild(n);
+  let i = document.getElementById("previewAudioToggle");
+  if (!i) {
+    i = document.createElement("button");
+    i.type = "button";
+    i.id = "previewAudioToggle";
+    i.className = "preview-audio-toggle";
+    t.appendChild(i);
+  } else if (i.parentElement !== t) {
+    t.appendChild(i);
   }
-  if (!n.dataset.bound) {
-    n.dataset.bound = "1";
-    n.addEventListener("click", e => {
+  if (!i.dataset.bound) {
+    i.dataset.bound = "1";
+    i.addEventListener("click", e => {
       e.preventDefault();
       e.stopPropagation();
       _previewAudioEnabled = !_previewAudioEnabled;
@@ -360,14 +360,14 @@ function ensurePreviewAudioToggle(e) {
   }
   _previewAudioEnabled = false;
   applyPreviewAudioState(t);
-  return n;
+  return i;
 }
 
 const PreviewTimeline = (() => {
   const e = .25;
   const t = 14;
-  const n = 56;
-  const i = 100;
+  const i = 56;
+  const n = 100;
   const r = 100;
   const o = 24;
   const s = new Map;
@@ -390,11 +390,11 @@ const PreviewTimeline = (() => {
   let k = 0;
   let C = 0;
   let L = 0;
-  let I = 0;
-  let P = 1;
-  let E = [];
-  let x = -1;
-  let T = 0;
+  let P = 0;
+  let I = 1;
+  let T = [];
+  let E = -1;
+  let x = 0;
   let M = 1;
   let B = null;
   let A = false;
@@ -487,39 +487,39 @@ const PreviewTimeline = (() => {
   function segmentIndexAtClientX(e) {
     const t = getSegmentBounds();
     if (t.length < 2) return -1;
-    const n = timeFromClientX(e);
+    const i = timeFromClientX(e);
     for (let e = 0; e < t.length - 1; e++) {
-      if (n >= t[e] - .001 && n <= t[e + 1] + .001) return e;
+      if (i >= t[e] - .001 && i <= t[e + 1] + .001) return e;
     }
-    if (n < t[0]) return 0;
+    if (i < t[0]) return 0;
     return t.length - 2;
   }
   function rebuildSplitsFromLengths(t) {
     if (!t.length) return;
-    let n = d;
-    E = [];
-    for (let i = 0; i < t.length - 1; i++) {
-      n += Math.max(e, Number(t[i]) || e);
-      if (n < p - .04) E.push(n);
+    let i = d;
+    T = [];
+    for (let n = 0; n < t.length - 1; n++) {
+      i += Math.max(e, Number(t[n]) || e);
+      if (i < p - .04) T.push(i);
     }
-    const i = t.reduce((t, n) => t + Math.max(e, Number(n) || e), 0);
-    const r = d + i;
+    const n = t.reduce((t, i) => t + Math.max(e, Number(i) || e), 0);
+    const r = d + n;
     if (r > d + e) {
       p = Math.min(u, r);
     }
   }
-  function applySegmentReorder(t, n) {
-    const i = getSegmentBounds();
-    const r = i.length - 1;
-    if (t < 0 || n < 0 || t >= r || n >= r || t === n) return false;
+  function applySegmentReorder(t, i) {
+    const n = getSegmentBounds();
+    const r = n.length - 1;
+    if (t < 0 || i < 0 || t >= r || i >= r || t === i) return false;
     const o = getClipOrder();
     const [s] = o.splice(t, 1);
-    o.splice(n, 0, s);
+    o.splice(i, 0, s);
     G = o;
     const a = [];
-    for (let t = 0; t < r; t++) a.push(Math.max(e, i[t + 1] - i[t]));
+    for (let t = 0; t < r; t++) a.push(Math.max(e, n[t + 1] - n[t]));
     const [l] = a.splice(t, 1);
-    a.splice(n, 0, l);
+    a.splice(i, 0, l);
     rebuildSplitsFromLengths(a);
     try {
       window.clipsStudio?.onRankingClipReorder?.(G.slice());
@@ -530,30 +530,30 @@ const PreviewTimeline = (() => {
     if (!D || !isRankingEdit()) return;
     const t = segmentIndexAtClientX(e);
     D.hoverIndex = t;
-    const n = Array.from(Q?.children || []);
-    n.forEach((e, n) => {
-      e.classList.toggle("is-drop-target", n === t && n !== D.index);
-      e.classList.toggle("is-dragging", n === D.index);
+    const i = Array.from(Q?.children || []);
+    i.forEach((e, i) => {
+      e.classList.toggle("is-drop-target", i === t && i !== D.index);
+      e.classList.toggle("is-dragging", i === D.index);
     });
-    const i = e - D.startX;
-    const r = n[D.index];
+    const n = e - D.startX;
+    const r = i[D.index];
     if (r) {
       const e = (() => {
         const e = getSegmentBounds();
-        return e[D.index] / u * P;
+        return e[D.index] / u * I;
       })();
-      r.style.transform = `translate3d(${e + i}px,0,0)`;
+      r.style.transform = `translate3d(${e + n}px,0,0)`;
       r.style.zIndex = "5";
     }
   }
   function fmt(e) {
     if (!Number.isFinite(e) || e < 0) e = 0;
     const t = Math.floor(e / 60);
-    const n = Math.floor(e % 60);
-    return `${t}:${String(n).padStart(2, "0")}`;
+    const i = Math.floor(e % 60);
+    return `${t}:${String(i).padStart(2, "0")}`;
   }
-  function cacheKey(e, n) {
-    return `${e}|${Math.round(n * 10) / 10}|${t}`;
+  function cacheKey(e, i) {
+    return `${e}|${Math.round(i * 10) / 10}|${t}`;
   }
   function rememberCache(e, t) {
     if (s.has(e)) s.delete(e);
@@ -566,12 +566,12 @@ const PreviewTimeline = (() => {
   function cacheTrackMetrics() {
     if (!W) return;
     const e = W.getBoundingClientRect();
-    I = e.left;
-    P = Math.max(1, e.width);
+    P = e.left;
+    I = Math.max(1, e.width);
   }
   function timeFromClientX(e) {
     if (!u) return 0;
-    const t = (e - I) / P;
+    const t = (e - P) / I;
     return Math.max(0, Math.min(u, t * u));
   }
   function paintChrome({rebuildSegments: e = false} = {}) {
@@ -580,19 +580,19 @@ const PreviewTimeline = (() => {
       if (V) V.textContent = fmt(m);
       if (q) q.textContent = fmt(u || 0);
     }
-    if (!u || P <= 0) return;
-    const n = d / u * P;
-    const i = p / u * P;
-    const r = Math.max(2, i - n);
+    if (!u || I <= 0) return;
+    const i = d / u * I;
+    const n = p / u * I;
+    const r = Math.max(2, n - i);
     if (K) {
       K.style.width = `${r}px`;
-      K.style.transform = `translate3d(${n}px,0,0)`;
+      K.style.transform = `translate3d(${i}px,0,0)`;
     }
-    if (J) J.style.width = `${n}px`;
-    if (X) X.style.width = `${Math.max(0, P - i)}px`;
+    if (J) J.style.width = `${i}px`;
+    if (X) X.style.width = `${Math.max(0, I - n)}px`;
     if (te && !t) {
       const e = Math.max(d, Math.min(p, m));
-      const t = e / u * P;
+      const t = e / u * I;
       te.style.transform = `translate3d(${t}px,0,0) translateX(-50%)`;
     }
     if (!t && W) {
@@ -610,43 +610,43 @@ const PreviewTimeline = (() => {
   }
   function cloneFilmInto(e) {
     if (!Y) return;
-    const n = Y.querySelectorAll(".preview-timeline-frame");
-    if (!n.length) {
-      for (let n = 0; n < t; n++) {
+    const i = Y.querySelectorAll(".preview-timeline-frame");
+    if (!i.length) {
+      for (let i = 0; i < t; i++) {
         const t = document.createElement("div");
         t.className = "preview-timeline-frame";
         e.appendChild(t);
       }
       return;
     }
-    n.forEach(t => {
-      const n = document.createElement("div");
-      n.className = "preview-timeline-frame";
-      const i = t.querySelector("canvas");
-      if (i) {
+    i.forEach(t => {
+      const i = document.createElement("div");
+      i.className = "preview-timeline-frame";
+      const n = t.querySelector("canvas");
+      if (n) {
         const e = document.createElement("canvas");
-        e.width = i.width;
-        e.height = i.height;
-        e.getContext("2d")?.drawImage(i, 0, 0);
-        n.appendChild(e);
+        e.width = n.width;
+        e.height = n.height;
+        e.getContext("2d")?.drawImage(n, 0, 0);
+        i.appendChild(e);
       }
-      e.appendChild(n);
+      e.appendChild(i);
     });
   }
-  const ne = 6;
+  const ie = 6;
   function getSegmentBounds() {
-    const e = E.filter(e => e > d + .04 && e < p - .04);
+    const e = T.filter(e => e > d + .04 && e < p - .04);
     return [ d, ...e, p ];
   }
   function makeSegHandle(e, t) {
-    const n = document.createElement("button");
-    n.type = "button";
-    n.className = `preview-timeline-handle ${e}`;
-    n.setAttribute("aria-label", e === "left" ? "Drag clip start" : "Drag clip end");
-    n.title = e === "left" ? "Drag to adjust start" : "Drag to adjust end";
-    n.dataset.boundIndex = String(t);
-    n.addEventListener("pointerdown", e => startBoundDrag(t, e));
-    return n;
+    const i = document.createElement("button");
+    i.type = "button";
+    i.className = `preview-timeline-handle ${e}`;
+    i.setAttribute("aria-label", e === "left" ? "Drag clip start" : "Drag clip end");
+    i.title = e === "left" ? "Drag to adjust start" : "Drag to adjust end";
+    i.dataset.boundIndex = String(t);
+    i.addEventListener("pointerdown", e => startBoundDrag(t, e));
+    return i;
   }
   function clearSegHold() {
     if (U) {
@@ -657,10 +657,10 @@ const PreviewTimeline = (() => {
   }
   function customizeSegment(e) {
     const t = Math.max(1, 5 - e);
-    const n = document.querySelector("#templateVideoPreview .ranking-preview-container, .ranking-preview-container");
-    const i = n?.querySelector(`[data-template-element-id="rank_${t}_number"]`);
-    const r = n?.querySelector(`[data-template-element-id="rank_${t}_title"]`);
-    const o = i || r;
+    const i = document.querySelector("#templateVideoPreview .ranking-preview-container, .ranking-preview-container");
+    const n = i?.querySelector(`[data-template-element-id="rank_${t}_number"]`);
+    const r = i?.querySelector(`[data-template-element-id="rank_${t}_title"]`);
+    const o = n || r;
     if (!o) return;
     const s = getSegmentBounds();
     if (s[e] != null) {
@@ -679,13 +679,13 @@ const PreviewTimeline = (() => {
     Q?.querySelectorAll(".preview-timeline-segment.is-selected").forEach(e => e.classList.remove("is-selected"));
     Q?.children?.[e]?.classList.add("is-selected");
   }
-  function applySegmentTimes(t, n, i) {
+  function applySegmentTimes(t, i, n) {
     const r = getSegmentBounds();
     if (t < 0 || t >= r.length - 1) return;
     const o = t === 0 ? 0 : r[t - 1] + e;
     const s = t >= r.length - 2 ? u : r[t + 2] - e;
-    const a = Math.max(e, i - n);
-    let l = Math.max(o, Math.min(n, s - a));
+    const a = Math.max(e, n - i);
+    let l = Math.max(o, Math.min(i, s - a));
     let c = l + a;
     if (c > s) {
       c = s;
@@ -693,34 +693,34 @@ const PreviewTimeline = (() => {
     }
     if (t === 0) d = l; else {
       const e = r[t];
-      const n = E.findIndex(t => Math.abs(t - e) < .05);
-      if (n >= 0) E[n] = l; else E.push(l);
+      const i = T.findIndex(t => Math.abs(t - e) < .05);
+      if (i >= 0) T[i] = l; else T.push(l);
     }
     if (t === r.length - 2) p = c; else {
       const e = r[t + 1];
-      const n = E.findIndex(t => Math.abs(t - e) < .05);
-      if (n >= 0) E[n] = c; else E.push(c);
+      const i = T.findIndex(t => Math.abs(t - e) < .05);
+      if (i >= 0) T[i] = c; else T.push(c);
     }
-    E = E.filter(e => e > d + .04 && e < p - .04).sort((e, t) => e - t);
+    T = T.filter(e => e > d + .04 && e < p - .04).sort((e, t) => e - t);
   }
   function paintSegmentMove(e) {
-    if (!D || !u || P <= 0) return;
+    if (!D || !u || I <= 0) return;
     if (isRankingEdit()) {
       paintSegmentReorderGhost(e);
       return;
     }
-    const {index: t, startX: n, startA: i, startB: r} = D;
-    const o = (e - n) / P * u;
-    applySegmentTimes(t, i + o, r + o);
-    m = Math.max(d, Math.min(p, i + o));
-    const s = d / u * P;
-    const a = p / u * P;
+    const {index: t, startX: i, startA: n, startB: r} = D;
+    const o = (e - i) / I * u;
+    applySegmentTimes(t, n + o, r + o);
+    m = Math.max(d, Math.min(p, n + o));
+    const s = d / u * I;
+    const a = p / u * I;
     if (K) {
       K.style.width = `${Math.max(2, a - s)}px`;
       K.style.transform = `translate3d(${s}px,0,0)`;
     }
     if (J) J.style.width = `${s}px`;
-    if (X) X.style.width = `${Math.max(0, P - a)}px`;
+    if (X) X.style.width = `${Math.max(0, I - a)}px`;
     paintSegmentsFast();
   }
   function beginSegmentDrag() {
@@ -751,16 +751,16 @@ const PreviewTimeline = (() => {
     }
     cacheTrackMetrics();
     clearSegHold();
-    const n = getSegmentBounds();
-    if (e < 0 || e >= n.length - 1) return;
+    const i = getSegmentBounds();
+    if (e < 0 || e >= i.length - 1) return;
     F = false;
     N = false;
     D = {
       index: e,
       pointerId: t.pointerId,
       startX: t.clientX,
-      startA: n[e],
-      startB: n[e + 1],
+      startA: i[e],
+      startB: i[e + 1],
       target: t.currentTarget
     };
     U = setTimeout(() => {
@@ -798,14 +798,14 @@ const PreviewTimeline = (() => {
   function onSegmentPointerUp(e) {
     if (!D) return;
     const t = D;
-    const n = F;
-    const i = t.hoverIndex;
+    const i = F;
+    const n = t.hoverIndex;
     clearSegHold();
     t.target?.classList.remove("is-dragging", "is-hold-ready");
     Q?.children?.[t.index]?.classList.remove("is-dragging");
     Q?.querySelectorAll(".is-drop-target").forEach(e => e.classList.remove("is-drop-target"));
     W?.classList.remove("is-reordering");
-    if (c === "segment" && !n) {
+    if (c === "segment" && !i) {
       c = null;
       D = null;
       W?.classList.remove("is-dragging", "is-trimming");
@@ -814,8 +814,8 @@ const PreviewTimeline = (() => {
       customizeSegment(t.index);
       return;
     }
-    if (n) {
-      const e = isRankingEdit() && i != null && i !== t.index && applySegmentReorder(t.index, i);
+    if (i) {
+      const e = isRankingEdit() && n != null && n !== t.index && applySegmentReorder(t.index, n);
       c = null;
       D = null;
       markRankingTimelineDirty();
@@ -837,28 +837,28 @@ const PreviewTimeline = (() => {
     customizeSegment(t.index);
   }
   function paintSegments(e) {
-    if (!Q || !u || P <= 0) return;
+    if (!Q || !u || I <= 0) return;
     const t = getSegmentBounds();
     Q.innerHTML = "";
-    for (let n = 0; n < t.length - 1; n++) {
-      const i = t[n];
-      const r = t[n + 1];
-      let o = i / u * P;
-      let s = r / u * P;
-      if (n > 0) o += ne / 2;
-      if (n < t.length - 2) s -= ne / 2;
+    for (let i = 0; i < t.length - 1; i++) {
+      const n = t[i];
+      const r = t[i + 1];
+      let o = n / u * I;
+      let s = r / u * I;
+      if (i > 0) o += ie / 2;
+      if (i < t.length - 2) s -= ie / 2;
       const a = Math.max(8, s - o);
       const l = document.createElement("div");
       l.className = "preview-timeline-segment";
-      l.dataset.segIndex = String(n);
-      if (e != null && (Math.abs(i - e) < .03 || Math.abs(r - e) < .03)) {
+      l.dataset.segIndex = String(i);
+      if (e != null && (Math.abs(n - e) < .03 || Math.abs(r - e) < .03)) {
         l.classList.add("is-new");
       }
       l.style.width = `${a}px`;
       l.style.transform = `translate3d(${o}px,0,0)`;
       const c = document.createElement("div");
       c.className = "preview-timeline-segment-clip";
-      const d = getClipOrder()[n] || 5 - n;
+      const d = getClipOrder()[i] || 5 - i;
       c.title = isRankingEdit() ? `Hold & drag to reorder · #${d}` : "Click to customize · Drag to move";
       c.setAttribute("role", "button");
       c.tabIndex = 0;
@@ -866,156 +866,156 @@ const PreviewTimeline = (() => {
       if (isRankingEdit()) {
         const e = document.createElement("span");
         e.className = "preview-timeline-seg-rank";
-        e.textContent = `#${5 - n}`;
+        e.textContent = `#${5 - i}`;
         c.appendChild(e);
       }
       const p = document.createElement("div");
       p.className = "preview-timeline-segment-film";
-      p.style.width = `${P}px`;
+      p.style.width = `${I}px`;
       p.style.transform = `translate3d(${-o}px,0,0)`;
       cloneFilmInto(p);
       c.appendChild(p);
-      c.addEventListener("pointerdown", e => onSegmentPointerDown(n, e));
+      c.addEventListener("pointerdown", e => onSegmentPointerDown(i, e));
       c.addEventListener("pointermove", onSegmentPointerMove);
       c.addEventListener("pointerup", onSegmentPointerUp);
       c.addEventListener("pointercancel", onSegmentPointerUp);
       l.appendChild(c);
-      if (n === 0) l.appendChild(makeSegHandle("left", n));
-      l.appendChild(makeSegHandle("right", n + 1));
+      if (i === 0) l.appendChild(makeSegHandle("left", i));
+      l.appendChild(makeSegHandle("right", i + 1));
       Q.appendChild(l);
     }
   }
   function paintSegmentsFast() {
-    if (!Q || !u || P <= 0) return;
+    if (!Q || !u || I <= 0) return;
     const e = Array.from(Q.children);
     const t = getSegmentBounds();
     if (e.length !== t.length - 1) {
       paintSegments();
       return;
     }
-    for (let n = 0; n < t.length - 1; n++) {
-      const i = t[n];
-      const r = t[n + 1];
-      let o = i / u * P;
-      let s = r / u * P;
-      if (n > 0) o += ne / 2;
-      if (n < t.length - 2) s -= ne / 2;
+    for (let i = 0; i < t.length - 1; i++) {
+      const n = t[i];
+      const r = t[i + 1];
+      let o = n / u * I;
+      let s = r / u * I;
+      if (i > 0) o += ie / 2;
+      if (i < t.length - 2) s -= ie / 2;
       const a = Math.max(6, s - o);
-      const l = e[n];
+      const l = e[i];
       l.style.width = `${a}px`;
       l.style.transform = `translate3d(${o}px,0,0)`;
       const c = l.querySelector(".preview-timeline-segment-film");
       if (c) {
-        c.style.width = `${P}px`;
+        c.style.width = `${I}px`;
         c.style.transform = `translate3d(${-o}px,0,0)`;
       }
       const d = l.querySelector(".preview-timeline-handle.left");
       const p = l.querySelector(".preview-timeline-handle.right");
-      if (d) d.dataset.boundIndex = String(n);
-      if (p) p.dataset.boundIndex = String(n + 1);
+      if (d) d.dataset.boundIndex = String(i);
+      if (p) p.dataset.boundIndex = String(i + 1);
     }
   }
   function applyBoundTime(e) {
-    if (x === 0) {
+    if (E === 0) {
       d = e;
       return;
     }
     const t = getSegmentBounds();
-    if (x >= t.length - 1) {
+    if (E >= t.length - 1) {
       p = e;
       return;
     }
     if (B != null) {
-      const t = E.findIndex(e => Math.abs(e - B) < .05);
-      if (t >= 0) E[t] = e; else E.push(e);
+      const t = T.findIndex(e => Math.abs(e - B) < .05);
+      if (t >= 0) T[t] = e; else T.push(e);
       B = e;
     } else {
-      E.push(e);
+      T.push(e);
     }
-    E.sort((e, t) => e - t);
+    T.sort((e, t) => e - t);
   }
   function paintBoundFast(e) {
-    if (!u || P <= 0 || x < 0) return;
+    if (!u || I <= 0 || E < 0) return;
     const t = timeFromClientX(e);
-    const n = Math.max(T, Math.min(M, t));
-    applyBoundTime(n);
-    m = n;
-    const i = d / u * P;
-    const r = p / u * P;
+    const i = Math.max(x, Math.min(M, t));
+    applyBoundTime(i);
+    m = i;
+    const n = d / u * I;
+    const r = p / u * I;
     if (K) {
-      K.style.width = `${Math.max(2, r - i)}px`;
-      K.style.transform = `translate3d(${i}px,0,0)`;
+      K.style.width = `${Math.max(2, r - n)}px`;
+      K.style.transform = `translate3d(${n}px,0,0)`;
     }
-    if (J) J.style.width = `${i}px`;
-    if (X) X.style.width = `${Math.max(0, P - r)}px`;
+    if (J) J.style.width = `${n}px`;
+    if (X) X.style.width = `${Math.max(0, I - r)}px`;
     paintSegmentsFast();
   }
-  function startBoundDrag(t, n) {
+  function startBoundDrag(t, i) {
     if (!A && !j?.classList.contains("is-ranking-edit")) return;
     if (!A) setHandlesUnlocked(true);
-    if (n.pointerType === "mouse" && n.button !== 0) return;
-    n.preventDefault();
-    n.stopPropagation();
+    if (i.pointerType === "mouse" && i.button !== 0) return;
+    i.preventDefault();
+    i.stopPropagation();
     cacheTrackMetrics();
-    const i = getSegmentBounds();
-    if (t < 0 || t >= i.length) return;
+    const n = getSegmentBounds();
+    if (t < 0 || t >= n.length) return;
     c = "bound";
-    x = t;
-    T = t === 0 ? 0 : i[t - 1] + e;
-    M = t === i.length - 1 ? u : i[t + 1] - e;
-    B = t > 0 && t < i.length - 1 ? i[t] : null;
+    E = t;
+    x = t === 0 ? 0 : n[t - 1] + e;
+    M = t === n.length - 1 ? u : n[t + 1] - e;
+    B = t > 0 && t < n.length - 1 ? n[t] : null;
     f = a ? !a.paused : false;
     if (a && !a.paused) a.pause();
     W?.classList.add("is-dragging", "is-trimming");
-    n.currentTarget?.classList.add("is-dragging");
-    if (n.currentTarget?.setPointerCapture && n.pointerId != null) {
+    i.currentTarget?.classList.add("is-dragging");
+    if (i.currentTarget?.setPointerCapture && i.pointerId != null) {
       try {
-        n.currentTarget.setPointerCapture(n.pointerId);
+        i.currentTarget.setPointerCapture(i.pointerId);
       } catch (e) {}
     }
-    paintBoundFast(n.clientX);
+    paintBoundFast(i.clientX);
   }
   function paintTrimFast(t) {
-    if (!u || P <= 0) return;
+    if (!u || I <= 0) return;
     if (c === "bound") {
       paintBoundFast(t);
       return;
     }
-    const n = timeFromClientX(t);
+    const i = timeFromClientX(t);
     if (c === "start") {
-      d = Math.max(0, Math.min(n, p - e));
+      d = Math.max(0, Math.min(i, p - e));
     } else if (c === "end") {
-      p = Math.min(u, Math.max(n, d + e));
+      p = Math.min(u, Math.max(i, d + e));
     } else {
       return;
     }
-    const i = d / u * P;
-    const r = p / u * P;
-    const o = Math.max(2, r - i);
+    const n = d / u * I;
+    const r = p / u * I;
+    const o = Math.max(2, r - n);
     if (K) {
       K.style.width = `${o}px`;
-      K.style.transform = `translate3d(${i}px,0,0)`;
+      K.style.transform = `translate3d(${n}px,0,0)`;
     }
-    if (J) J.style.width = `${i}px`;
-    if (X) X.style.width = `${Math.max(0, P - r)}px`;
+    if (J) J.style.width = `${n}px`;
+    if (X) X.style.width = `${Math.max(0, I - r)}px`;
     paintSegmentsFast();
   }
   function scheduleSeek(e, t = false) {
     if (!a || !Number.isFinite(e)) return;
     S = Math.max(0, Math.min(u || e, e));
-    const n = performance.now();
-    const i = t ? 0 : Math.max(0, r - (n - k));
+    const i = performance.now();
+    const n = t ? 0 : Math.max(0, r - (i - k));
     if (C) {
       clearTimeout(C);
       C = 0;
     }
-    if (i === 0) {
+    if (n === 0) {
       flushSeek();
     } else {
       C = setTimeout(() => {
         C = 0;
         flushSeek();
-      }, i);
+      }, n);
     }
   }
   function flushSeek() {
@@ -1047,17 +1047,17 @@ const PreviewTimeline = (() => {
       _ = false;
     }
   }
-  function waitEvent(e, t, n = 2e3) {
-    return new Promise(i => {
+  function waitEvent(e, t, i = 2e3) {
+    return new Promise(n => {
       let r = false;
       const finish = () => {
         if (r) return;
         r = true;
         e.removeEventListener(t, finish);
-        i();
+        n();
       };
       e.addEventListener(t, finish);
-      setTimeout(finish, n);
+      setTimeout(finish, i);
     });
   }
   async function seekCapture(e, t) {
@@ -1069,10 +1069,10 @@ const PreviewTimeline = (() => {
       }
     } catch (e) {}
     await new Promise(t => {
-      let n = false;
+      let i = false;
       const done = () => {
-        if (n) return;
-        n = true;
+        if (i) return;
+        i = true;
         t();
       };
       if (typeof e.requestVideoFrameCallback === "function") {
@@ -1112,14 +1112,14 @@ const PreviewTimeline = (() => {
         cache: "force-cache"
       });
       if (!t.ok) return e;
-      const n = await t.blob();
-      if (!n.size) return e;
+      const i = await t.blob();
+      if (!i.size) return e;
       if (h) {
         try {
           URL.revokeObjectURL(h);
         } catch (e) {}
       }
-      h = URL.createObjectURL(n.type ? n : new Blob([ n ], {
+      h = URL.createObjectURL(i.type ? i : new Blob([ i ], {
         type: "video/mp4"
       }));
       return h;
@@ -1130,22 +1130,22 @@ const PreviewTimeline = (() => {
   function mountFilmstripCanvases(e) {
     if (!Y) return;
     Y.innerHTML = "";
-    const n = document.createDocumentFragment();
-    for (let i = 0; i < t; i++) {
+    const i = document.createDocumentFragment();
+    for (let n = 0; n < t; n++) {
       const t = document.createElement("div");
       t.className = "preview-timeline-frame";
-      const r = e?.[i];
+      const r = e?.[n];
       if (r) {
         const e = document.createElement("canvas");
         e.width = r.width;
         e.height = r.height;
-        const n = e.getContext("2d");
-        n?.drawImage(r, 0, 0);
+        const i = e.getContext("2d");
+        i?.drawImage(r, 0, 0);
         t.appendChild(e);
       }
-      n.appendChild(t);
+      i.appendChild(t);
     }
-    Y.appendChild(n);
+    Y.appendChild(i);
     paintSegments();
   }
   function buildPlaceholderFilmstrip() {
@@ -1192,8 +1192,8 @@ const PreviewTimeline = (() => {
         await seekCapture(c, s);
         if (l !== y) return;
         const a = document.createElement("canvas");
-        a.width = n;
-        a.height = i;
+        a.width = i;
+        a.height = n;
         const d = a.getContext("2d", {
           alpha: false
         });
@@ -1202,15 +1202,15 @@ const PreviewTimeline = (() => {
           continue;
         }
         d.fillStyle = "#334155";
-        d.fillRect(0, 0, n, i);
+        d.fillRect(0, 0, i, n);
         const p = c.videoWidth || 0;
         const u = c.videoHeight || 0;
         if (p > 2 && u > 2) {
-          const e = Math.max(n / p, i / u);
+          const e = Math.max(i / p, n / u);
           const t = p * e;
           const r = u * e;
           try {
-            d.drawImage(c, (n - t) / 2, (i - r) / 2, t, r);
+            d.drawImage(c, (i - t) / 2, (n - r) / 2, t, r);
           } catch (e) {}
         }
         o.push(a);
@@ -1262,8 +1262,8 @@ const PreviewTimeline = (() => {
       return;
     }
     if (c === "scrub") {
-      const n = timeFromClientX(e);
-      m = Math.max(d, Math.min(p, n));
+      const i = timeFromClientX(e);
+      m = Math.max(d, Math.min(p, i));
       paintChrome();
       if (t) scheduleSeek(m);
     }
@@ -1317,7 +1317,7 @@ const PreviewTimeline = (() => {
       w = 0;
     }
     c = null;
-    x = -1;
+    E = -1;
     B = null;
     if (e === "start" || e === "end" || e === "bound") {
       m = Math.max(d, Math.min(p, m));
@@ -1462,9 +1462,9 @@ const PreviewTimeline = (() => {
     const onSplitClick = t => {
       t.preventDefault();
       t.stopPropagation();
-      const n = Number.isFinite(a?.currentTime) ? a.currentTime : m;
-      const i = splitAt(n);
-      if (!i && E.length >= 4) {
+      const i = Number.isFinite(a?.currentTime) ? a.currentTime : m;
+      const n = splitAt(i);
+      if (!n && T.length >= 4) {
         e?.classList.remove("is-flash");
         void e?.offsetWidth;
         e?.classList.add("is-flash");
@@ -1491,8 +1491,8 @@ const PreviewTimeline = (() => {
     if (j) j.hidden = true;
     const t = document.getElementById("previewAudioToggle");
     if (t) t.hidden = true;
-    const n = document.getElementById("previewTimelineHookLane");
-    if (n) n.hidden = true;
+    const i = document.getElementById("previewTimelineHookLane");
+    if (i) i.hidden = true;
     if (typeof PreviewCtxMenu !== "undefined") PreviewCtxMenu.close();
   }
   function detach() {
@@ -1527,7 +1527,7 @@ const PreviewTimeline = (() => {
     D = null;
     F = false;
     f = false;
-    E = [];
+    T = [];
     R = null;
     A = false;
     if (j) {
@@ -1644,16 +1644,16 @@ const PreviewTimeline = (() => {
       R = t.slice();
       return false;
     }
-    const n = [];
+    const i = [];
     for (const e of t) {
       const t = Number(e);
       if (!Number.isFinite(t)) continue;
-      const i = Math.max(d + .05, Math.min(p - .05, t));
-      if (n.some(e => Math.abs(e - i) < .08)) continue;
-      n.push(i);
+      const n = Math.max(d + .05, Math.min(p - .05, t));
+      if (i.some(e => Math.abs(e - n) < .08)) continue;
+      i.push(n);
     }
-    n.sort((e, t) => e - t);
-    E = n.slice(0, 4);
+    i.sort((e, t) => e - t);
+    T = i.slice(0, 4);
     R = null;
     cacheTrackMetrics();
     paintChrome({
@@ -1662,7 +1662,7 @@ const PreviewTimeline = (() => {
     return true;
   }
   function clearSplits() {
-    E = [];
+    T = [];
     if (l) {
       cacheTrackMetrics();
       paintChrome({
@@ -1683,14 +1683,14 @@ const PreviewTimeline = (() => {
       return;
     }
     cacheTrackMetrics();
-    const n = Number.isFinite(t) ? t : m;
-    const i = Math.min(2.5, Math.max(.8, u * .12));
+    const i = Number.isFinite(t) ? t : m;
+    const n = Math.min(2.5, Math.max(.8, u * .12));
     const r = p - d;
     if (r >= u * .95) {
-      d = Math.max(0, n - i * .35);
-      p = Math.min(u, Math.max(d + e, n + i * .65));
+      d = Math.max(0, i - n * .35);
+      p = Math.min(u, Math.max(d + e, i + n * .65));
     }
-    m = Math.max(d, Math.min(p, n));
+    m = Math.max(d, Math.min(p, i));
     paintChrome({
       rebuildSegments: true
     });
@@ -1715,16 +1715,16 @@ const PreviewTimeline = (() => {
     cacheTrackMetrics();
     let t = Number.isFinite(e) ? e : m;
     t = Math.max(d + .05, Math.min(p - .05, t));
-    if (E.some(e => Math.abs(e - t) < .08)) {
+    if (T.some(e => Math.abs(e - t) < .08)) {
       paintSegments(t);
       return false;
     }
-    if (E.length >= 4) {
+    if (T.length >= 4) {
       paintSegments(t);
       return false;
     }
-    E.push(t);
-    E.sort((e, t) => e - t);
+    T.push(t);
+    T.sort((e, t) => e - t);
     m = t;
     paintChrome();
     paintSegments(t);
@@ -1732,7 +1732,7 @@ const PreviewTimeline = (() => {
     return true;
   }
   function getSplits() {
-    return E.slice();
+    return T.slice();
   }
   return {
     attach: attach,
@@ -1760,8 +1760,8 @@ window.PreviewTimeline = PreviewTimeline;
 const PreviewCtxMenu = (() => {
   let e = null;
   let t = 0;
-  let n = 0;
-  let i = false;
+  let i = 0;
+  let n = false;
   function ensure() {
     e = document.getElementById("previewCtxMenu");
     if (e && e.parentElement !== document.body) {
@@ -1778,14 +1778,14 @@ const PreviewCtxMenu = (() => {
     return Boolean(document.querySelector(".template-preview-content.is-library-preview"));
   }
   function placeAt(e, t) {
-    const i = ensure();
-    if (!i) return;
-    i.hidden = false;
-    i.style.left = "0px";
-    i.style.top = "0px";
+    const n = ensure();
+    if (!n) return;
+    n.hidden = false;
+    n.style.left = "0px";
+    n.style.top = "0px";
     const r = 8;
     const o = 8;
-    const s = i.getBoundingClientRect();
+    const s = n.getBoundingClientRect();
     let a = e + 10;
     let l = t - s.height - o;
     if (a + s.width > window.innerWidth - r) {
@@ -1794,9 +1794,9 @@ const PreviewCtxMenu = (() => {
     if (l < r) {
       l = Math.max(r, t - s.height - 4);
     }
-    i.style.left = `${Math.round(Math.max(r, a))}px`;
-    i.style.top = `${Math.round(l)}px`;
-    n = performance.now();
+    n.style.left = `${Math.round(Math.max(r, a))}px`;
+    n.style.top = `${Math.round(l)}px`;
+    i = performance.now();
     if (typeof lucide !== "undefined") {
       lucide.createIcons({
         attrs: {
@@ -1807,24 +1807,24 @@ const PreviewCtxMenu = (() => {
     }
   }
   function timeAtEvent(e, t) {
-    const n = typeof PreviewTimeline !== "undefined" ? PreviewTimeline.getTrim?.() : null;
-    const i = n?.duration || 0;
-    if (!t || !i) return n ? document.querySelector("#templateVideoPreview video")?.currentTime || 0 : 0;
+    const i = typeof PreviewTimeline !== "undefined" ? PreviewTimeline.getTrim?.() : null;
+    const n = i?.duration || 0;
+    if (!t || !n) return i ? document.querySelector("#templateVideoPreview video")?.currentTime || 0 : 0;
     const r = t.getBoundingClientRect();
     const o = r.width ? (e.clientX - r.left) / r.width : 0;
-    return Math.max(0, Math.min(i, o * i));
+    return Math.max(0, Math.min(n, o * n));
   }
   function openFromEvent(e) {
     if (!isLibraryPreview()) return false;
-    const n = e.target;
-    if (!(n instanceof Element)) return false;
-    const i = n.closest("#previewTimelineWrap, #previewTimelineShell");
-    const r = n.closest("#templateVideoPreview");
-    if (!i && !r) return false;
+    const i = e.target;
+    if (!(i instanceof Element)) return false;
+    const n = i.closest("#previewTimelineWrap, #previewTimelineShell");
+    const r = i.closest("#templateVideoPreview");
+    if (!n && !r) return false;
     e.preventDefault();
     e.stopPropagation();
     const o = document.getElementById("previewTimelineWrap");
-    t = i ? timeAtEvent(e, o) : document.querySelector("#templateVideoPreview video")?.currentTime || 0;
+    t = n ? timeAtEvent(e, o) : document.querySelector("#templateVideoPreview video")?.currentTime || 0;
     placeAt(e.clientX, e.clientY);
     return true;
   }
@@ -1851,14 +1851,14 @@ const PreviewCtxMenu = (() => {
     if (!t) return;
     e.preventDefault();
     e.stopPropagation();
-    const n = t.getAttribute("data-ctx-action");
-    if (n === "split" || n === "trim") onSplit(); else if (n === "text") onAddText();
+    const i = t.getAttribute("data-ctx-action");
+    if (i === "split" || i === "trim") onSplit(); else if (i === "text") onAddText();
   }
   function onDocPointerDown(e) {
     const t = ensure();
     if (!t || t.hidden) return;
     if (e.button === 2) return;
-    if (performance.now() - n < 180) return;
+    if (performance.now() - i < 180) return;
     if (t.contains(e.target)) return;
     close();
   }
@@ -1866,8 +1866,8 @@ const PreviewCtxMenu = (() => {
     if (e.key === "Escape") close();
   }
   function bindTargets() {
-    if (i) return;
-    i = true;
+    if (n) return;
+    n = true;
     ensure();
     document.addEventListener("contextmenu", e => {
       openFromEvent(e);
@@ -1916,12 +1916,12 @@ async function cloneBlobUrlForSecondVideo(e) {
   if (!e || !String(e).startsWith("blob:")) return e;
   const t = await fetch(e);
   if (!t.ok) throw new Error(`Blur blob clone failed (${t.status})`);
-  const n = await t.blob();
-  if (!n.size) throw new Error("Empty blur blob clone");
-  const i = n.type ? n : new Blob([ n ], {
+  const i = await t.blob();
+  if (!i.size) throw new Error("Empty blur blob clone");
+  const n = i.type ? i : new Blob([ i ], {
     type: "video/mp4"
   });
-  const r = URL.createObjectURL(i);
+  const r = URL.createObjectURL(n);
   _librarySplitscreenObjectUrls.push(r);
   return r;
 }
@@ -1944,13 +1944,13 @@ async function fetchSecureVideoObjectUrl(e) {
   if (!t.ok) {
     throw new Error(`Media fetch failed (${t.status})`);
   }
-  const n = t.headers.get("content-type") || "";
-  if (n.includes("application/json")) {
+  const i = t.headers.get("content-type") || "";
+  if (i.includes("application/json")) {
     throw new Error("Media endpoint returned JSON instead of video");
   }
-  const i = await t.blob();
-  if (!i.size) throw new Error("Empty media response");
-  const r = URL.createObjectURL(i.type ? i : new Blob([ i ], {
+  const n = await t.blob();
+  if (!n.size) throw new Error("Empty media response");
+  const r = URL.createObjectURL(n.type ? n : new Blob([ n ], {
     type: "video/mp4"
   }));
   _librarySplitscreenObjectUrls.push(r);
@@ -1965,13 +1965,13 @@ async function fetchSecureVideoObjectUrlPair(e) {
   if (!t.ok) {
     throw new Error(`Media fetch failed (${t.status})`);
   }
-  const n = t.headers.get("content-type") || "";
-  if (n.includes("application/json")) {
+  const i = t.headers.get("content-type") || "";
+  if (i.includes("application/json")) {
     throw new Error("Media endpoint returned JSON instead of video");
   }
-  const i = await t.blob();
-  if (!i.size) throw new Error("Empty media response");
-  const r = i.type ? i : new Blob([ i ], {
+  const n = await t.blob();
+  if (!n.size) throw new Error("Empty media response");
+  const r = n.type ? n : new Blob([ n ], {
     type: "video/mp4"
   });
   const o = URL.createObjectURL(r);
@@ -1995,21 +1995,21 @@ function bindLibrarySplitscreenPlaybackSync(e, t) {
     e.muted = false;
     t.muted = true;
   }
-  let n = 0;
-  let i = null;
+  let i = 0;
+  let n = null;
   let r = false;
   const playBoth = () => {
     if (e.paused) e.play().catch(() => {});
     if (t.paused) t.play().catch(() => {});
   };
-  const syncSlaveTime = (i = false) => {
+  const syncSlaveTime = (n = false) => {
     if (r || e.seeking || t.seeking) return;
     if (!Number.isFinite(e.currentTime)) return;
     const o = Math.abs((t.currentTime || 0) - (e.currentTime || 0));
     const s = performance.now();
-    if (!i && o < .45) return;
-    if (!i && s - n < 1800) return;
-    n = s;
+    if (!n && o < .45) return;
+    if (!n && s - i < 1800) return;
+    i = s;
     r = true;
     try {
       t.currentTime = e.currentTime;
@@ -2038,15 +2038,15 @@ function bindLibrarySplitscreenPlaybackSync(e, t) {
   t.addEventListener("pause", onSlavePause);
   playBoth();
   setTimeout(() => syncSlaveTime(true), 200);
-  i = window.setInterval(() => {
+  n = window.setInterval(() => {
     if (!e.isConnected || !t.isConnected) return;
     playBoth();
     syncSlaveTime(false);
   }, 2500);
   _libraryPlaybackSyncCleanup = () => {
-    if (i) {
-      clearInterval(i);
-      i = null;
+    if (n) {
+      clearInterval(n);
+      n = null;
     }
     e.removeEventListener("play", onMasterPlay);
     e.removeEventListener("playing", onMasterPlay);
@@ -2057,17 +2057,17 @@ function bindLibrarySplitscreenPlaybackSync(e, t) {
 
 function playBothLibraryPanels(e) {
   const t = e || _splitscreenScopeEl || document;
-  const n = new Set(getPreviewAudioVideos(t));
+  const i = new Set(getPreviewAudioVideos(t));
   [ "splitscreenContentVideo", "splitscreenReframeVideo" ].forEach(e => {
-    const i = t.querySelector && t.querySelector(`#${e}`) || document.getElementById(e);
-    if (!i?.src) return;
-    if (n.has(i)) {
-      i.muted = !_previewAudioEnabled;
+    const n = t.querySelector && t.querySelector(`#${e}`) || document.getElementById(e);
+    if (!n?.src) return;
+    if (i.has(n)) {
+      n.muted = !_previewAudioEnabled;
     } else {
-      i.muted = true;
+      n.muted = true;
     }
-    i.loop = true;
-    i.play().catch(() => {});
+    n.loop = true;
+    n.play().catch(() => {});
   });
 }
 
@@ -2077,16 +2077,16 @@ function setLibrarySplitscreenCropState(e) {
     return;
   }
   const t = Number.isFinite(Number(e.cropX)) ? Number(e.cropX) : null;
-  let n = null;
-  const i = e.faceCrop;
-  if (Array.isArray(i) && i.length >= 4 && i.every(e => Number.isFinite(Number(e)))) {
-    n = i.slice(0, 4).map(e => Number(e));
-  } else if (i && typeof i === "object" && Number.isFinite(Number(i.w))) {
-    n = [ Number(i.x) || 0, Number(i.y) || 0, Number(i.w) || 0, Number(i.h) || 0 ];
+  let i = null;
+  const n = e.faceCrop;
+  if (Array.isArray(n) && n.length >= 4 && n.every(e => Number.isFinite(Number(e)))) {
+    i = n.slice(0, 4).map(e => Number(e));
+  } else if (n && typeof n === "object" && Number.isFinite(Number(n.w))) {
+    i = [ Number(n.x) || 0, Number(n.y) || 0, Number(n.w) || 0, Number(n.h) || 0 ];
   }
   _librarySplitscreenCropState = {
     cropX: t,
-    faceCrop: n,
+    faceCrop: i,
     srcW: Number.isFinite(Number(e.srcW)) ? Number(e.srcW) : 0,
     srcH: Number.isFinite(Number(e.srcH)) ? Number(e.srcH) : 0,
     faceSrcW: Number.isFinite(Number(e.faceSrcW)) ? Number(e.faceSrcW) : 0,
@@ -2120,12 +2120,12 @@ function forceLibraryPanelVideoFill(e) {
   e.style.setProperty("pointer-events", e.id === "splitscreenReframeVideo" ? "auto" : "none", "important");
 }
 
-function applyPanelCropPreviewBox(e, t, n, i, r) {
-  if (!e || !t || !n || !i || !r) return;
-  const o = Number(n[0]) || 0;
-  const s = Number(n[1]) || 0;
-  const a = Math.max(1, Number(n[2]) || i);
-  const l = Math.max(1, Number(n[3]) || r);
+function applyPanelCropPreviewBox(e, t, i, n, r) {
+  if (!e || !t || !i || !n || !r) return;
+  const o = Number(i[0]) || 0;
+  const s = Number(i[1]) || 0;
+  const a = Math.max(1, Number(i[2]) || n);
+  const l = Math.max(1, Number(i[3]) || r);
   const c = e.closest(".ss-panel-crop-viewport") || t;
   const d = c.clientWidth || t.clientWidth || 1;
   const p = c.clientHeight || t.clientHeight || 1;
@@ -2140,7 +2140,7 @@ function applyPanelCropPreviewBox(e, t, n, i, r) {
   e.style.setProperty("top", `${-s * u}px`, "important");
   e.style.setProperty("right", "auto", "important");
   e.style.setProperty("bottom", "auto", "important");
-  e.style.setProperty("width", `${i * u}px`, "important");
+  e.style.setProperty("width", `${n * u}px`, "important");
   e.style.setProperty("height", `${r * u}px`, "important");
   e.style.setProperty("max-width", "none", "important");
   e.style.setProperty("object-fit", "fill", "important");
@@ -2150,8 +2150,8 @@ function applyPanelCropPreviewBox(e, t, n, i, r) {
   e.style.setProperty("opacity", "1", "important");
 }
 
-function applyContentCropPreview(e, t, n, i, r) {
-  if (!e || !t || !i || !r) return;
+function applyContentCropPreview(e, t, i, n, r) {
+  if (!e || !t || !n || !r) return;
   const o = e.closest(".ss-panel-crop-viewport") || t;
   const s = o.clientWidth || t.clientWidth || 1;
   const a = o.clientHeight || t.clientHeight || 1;
@@ -2162,48 +2162,48 @@ function applyContentCropPreview(e, t, n, i, r) {
   const l = s / a;
   let c = r;
   let d = c * l;
-  if (d > i) {
-    d = i;
+  if (d > n) {
+    d = n;
     c = d / l;
   }
-  const p = n != null && Number(n) >= 0 ? Number(n) : Math.max(0, (i - d) / 2);
+  const p = i != null && Number(i) >= 0 ? Number(i) : Math.max(0, (n - d) / 2);
   const u = Math.max(0, (r - c) / 2);
-  applyPanelCropPreviewBox(e, t, [ p, u, d, c ], i, r);
+  applyPanelCropPreviewBox(e, t, [ p, u, d, c ], n, r);
 }
 
 function syncLibrarySplitscreenCropPreview() {
   if (!_librarySplitscreenCropState || !window.clipsStudio?._librarySplitscreenCustomize) return;
   const e = _librarySplitscreenCropState;
   const t = _splitscreenQuery("splitscreenContentVideo");
-  const n = _splitscreenQuery("splitscreenTop");
-  const i = _splitscreenQuery("splitscreenReframeVideo");
+  const i = _splitscreenQuery("splitscreenTop");
+  const n = _splitscreenQuery("splitscreenReframeVideo");
   const r = _splitscreenQuery("splitscreenBottom");
   const o = _splitscreenQuery("splitscreenGameplayVideo");
   if (e.useLayers && t) {
     forceLibraryPanelVideoFill(t);
-  } else if (t && n && e.srcW && e.srcH) {
-    applyContentCropPreview(t, n, e.cropX, e.srcW, e.srcH);
+  } else if (t && i && e.srcW && e.srcH) {
+    applyContentCropPreview(t, i, e.cropX, e.srcW, e.srcH);
   } else if (t) {
     forceLibraryPanelVideoFill(t);
   }
-  if (splitscreenSecondaryType === "face_track" && i) {
+  if (splitscreenSecondaryType === "face_track" && n) {
     if (o) {
       o.style.setProperty("display", "none", "important");
     }
     if (e.faceDisplayMode === "baked" || !e.liveFaceEdit && e.secondaryFromLayer) {
-      forceLibraryPanelVideoFill(i);
+      forceLibraryPanelVideoFill(n);
       return;
     }
     const t = e.faceSrcW || e.srcW;
-    const n = e.faceSrcH || e.srcH;
-    if (t && n && r && e.faceCrop && e.faceCrop.length === 4) {
-      applyPanelCropPreviewBox(i, r, e.faceCrop, t, n);
+    const i = e.faceSrcH || e.srcH;
+    if (t && i && r && e.faceCrop && e.faceCrop.length === 4) {
+      applyPanelCropPreviewBox(n, r, e.faceCrop, t, i);
       if (e.liveFaceEdit) {
-        i.style.setProperty("pointer-events", "auto", "important");
-        i.style.cursor = "grab";
+        n.style.setProperty("pointer-events", "auto", "important");
+        n.style.cursor = "grab";
       }
     } else {
-      forceLibraryPanelVideoFill(i);
+      forceLibraryPanelVideoFill(n);
     }
     return;
   }
@@ -2218,8 +2218,8 @@ function bindFaceReframePanHandlers() {
   if (!e || !t) return;
   if (e.dataset.facePanBound === "true") return;
   e.dataset.facePanBound = "true";
-  let n = 0;
   let i = 0;
+  let n = 0;
   let r = null;
   let o = false;
   let s = null;
@@ -2232,8 +2232,8 @@ function bindFaceReframePanHandlers() {
   const onMove = (l, c) => {
     if (!o) return;
     const m = _librarySplitscreenCropState;
-    const f = l - n;
-    const y = c - i;
+    const f = l - i;
+    const y = c - n;
     const g = Math.hypot(f, y);
     if (!s) {
       if (g < u) return;
@@ -2241,14 +2241,14 @@ function bindFaceReframePanHandlers() {
       s = !t || Math.abs(y) >= Math.abs(f) * .85 ? "resize" : "pan";
       a = true;
       armPreviewModalDragGuard(800);
-      const n = _splitscreenQuery("splitscreenRoot");
+      const i = _splitscreenQuery("splitscreenRoot");
       if (s === "resize") {
-        if (n) {
-          n.classList.add("is-dragging");
-          n.dataset._didPanelDrag = "1";
+        if (i) {
+          i.classList.add("is-dragging");
+          i.dataset._didPanelDrag = "1";
         }
         notifySubtitleLayoutEdit();
-        d = n?.getBoundingClientRect() || null;
+        d = i?.getBoundingClientRect() || null;
         p = c;
         e.style.cursor = "ns-resize";
         if (d) {
@@ -2280,19 +2280,19 @@ function bindFaceReframePanHandlers() {
     const k = r[2];
     const C = r[3];
     const L = Math.max(S / Math.max(1, k), _ / Math.max(1, C));
-    const I = (l - n) / L;
-    const P = (c - i) / L;
-    let E = r[0] - I;
-    let x = r[1] - P;
-    E = Math.max(0, Math.min(h - k, E));
-    x = Math.max(0, Math.min(w - C, x));
-    m.faceCrop = [ E, x, k, C ];
+    const P = (l - i) / L;
+    const I = (c - n) / L;
+    let T = r[0] - P;
+    let E = r[1] - I;
+    T = Math.max(0, Math.min(h - k, T));
+    E = Math.max(0, Math.min(w - C, E));
+    m.faceCrop = [ T, E, k, C ];
     syncLibrarySplitscreenCropPreview();
   };
   const endPan = (t = null) => {
     if (!o) return;
-    const n = !!s;
-    const i = s === "resize";
+    const i = !!s;
+    const n = s === "resize";
     const r = p;
     const c = d;
     o = false;
@@ -2305,7 +2305,7 @@ function bindFaceReframePanHandlers() {
       } catch (e) {}
     }
     l = null;
-    if (i && c) {
+    if (n && c) {
       finishSplitscreenDrag(r, c, 1);
       armPreviewModalDragGuard(800);
       a = true;
@@ -2314,7 +2314,7 @@ function bindFaceReframePanHandlers() {
       }, 50);
       return;
     }
-    if (n) {
+    if (i) {
       markLibrarySplitscreenDirty();
       armPreviewModalDragGuard(800);
       a = true;
@@ -2329,18 +2329,18 @@ function bindFaceReframePanHandlers() {
     r = null;
     if (u?.liveFaceEdit) {
       const e = u.faceSrcW || u.srcW;
-      const n = u.faceSrcH || u.srcH;
-      if (e && n) {
+      const i = u.faceSrcH || u.srcH;
+      if (e && i) {
         if (!u.faceCrop || u.faceCrop.length < 4) {
-          const i = _splitscreenQuery("splitscreenBottom") || t;
-          const r = (i.clientWidth || 9) / Math.max(1, i.clientHeight || 16);
-          let o = n * .55;
+          const n = _splitscreenQuery("splitscreenBottom") || t;
+          const r = (n.clientWidth || 9) / Math.max(1, n.clientHeight || 16);
+          let o = i * .55;
           let s = o * r;
           if (s > e) {
             s = e * .7;
             o = s / r;
           }
-          u.faceCrop = [ Math.max(0, (e - s) / 2), Math.max(0, (n - o) / 2), s, o ];
+          u.faceCrop = [ Math.max(0, (e - s) / 2), Math.max(0, (i - o) / 2), s, o ];
         }
         if (u.faceDisplayMode !== "live") {
           u.faceDisplayMode = "live";
@@ -2353,8 +2353,8 @@ function bindFaceReframePanHandlers() {
     s = null;
     d = null;
     p = a;
-    n = e;
-    i = a;
+    i = e;
+    n = a;
     l = c;
     armPreviewModalDragGuard(800);
   };
@@ -2413,44 +2413,44 @@ function bindFaceReframePanHandlers() {
 async function promoteReframeToLiveEdit() {
   const e = _librarySplitscreenCropState;
   const t = getLibraryPreviewProjectId();
-  const n = _splitscreenQuery("splitscreenReframeVideo");
-  const i = _splitscreenQuery("splitscreenContentVideo");
-  if (!e || !t || !n) return;
+  const i = _splitscreenQuery("splitscreenReframeVideo");
+  const n = _splitscreenQuery("splitscreenContentVideo");
+  if (!e || !t || !i) return;
   if (e.faceDisplayMode === "live" && !e.secondaryFromLayer) return;
   const r = `${API_BASE_URL}/clips/projects/${encodeURIComponent(t)}/splitscreen-segment`;
-  const o = i?.currentTime || 0;
+  const o = n?.currentTime || 0;
   try {
     const t = await fetchSecureVideoObjectUrl(r);
     await new Promise(e => {
-      let i = false;
+      let n = false;
       const finish = () => {
-        if (i) return;
-        i = true;
+        if (n) return;
+        n = true;
         e();
       };
-      n.addEventListener("loadeddata", finish, {
+      i.addEventListener("loadeddata", finish, {
         once: true
       });
-      n.addEventListener("error", finish, {
+      i.addEventListener("error", finish, {
         once: true
       });
-      n.src = t;
-      n.load();
+      i.src = t;
+      i.load();
       setTimeout(finish, 6e3);
     });
-    if (n.videoWidth) {
-      e.faceSrcW = n.videoWidth;
-      e.faceSrcH = n.videoHeight;
+    if (i.videoWidth) {
+      e.faceSrcW = i.videoWidth;
+      e.faceSrcH = i.videoHeight;
     }
     e.secondaryFromLayer = false;
     e.faceDisplayMode = "live";
     e.liveFaceEdit = true;
     try {
-      if (Number.isFinite(o)) n.currentTime = o;
+      if (Number.isFinite(o)) i.currentTime = o;
     } catch (e) {}
-    n.play().catch(() => {});
+    i.play().catch(() => {});
     syncLibrarySplitscreenCropPreview();
-    if (i) bindLibrarySplitscreenPlaybackSync(i, n);
+    if (n) bindLibrarySplitscreenPlaybackSync(n, i);
   } catch (e) {
     safeLog("promoteReframeToLiveEdit failed:", e);
   }
@@ -2467,9 +2467,9 @@ function bindLibrarySplitscreenCropObserver(e) {
   });
   _librarySplitscreenCropObserver.observe(e);
   const t = e.querySelector("#splitscreenTop");
-  const n = e.querySelector("#splitscreenBottom");
+  const i = e.querySelector("#splitscreenBottom");
   if (t) _librarySplitscreenCropObserver.observe(t);
-  if (n) _librarySplitscreenCropObserver.observe(n);
+  if (i) _librarySplitscreenCropObserver.observe(i);
 }
 
 function teardownLibrarySplitscreenCropObserver() {
@@ -2495,14 +2495,14 @@ function applySplitscreenConfigFromServer(e = {}) {
   splitscreenSavedRatio = splitscreenContentRatio;
   splitscreenInverted = e.splitscreen_inverted != null ? Boolean(e.splitscreen_inverted) : true;
   splitscreenSecondaryCollapsed = Boolean(e.splitscreen_secondary_collapsed);
-  let n = e.splitscreen_secondary_type || "face_track";
-  if (n === "gameplay") {
-    n = "face_track";
+  let i = e.splitscreen_secondary_type || "face_track";
+  if (i === "gameplay") {
+    i = "face_track";
     splitscreenSecondaryCollapsed = true;
   }
-  if (n === "face_track") {
+  if (i === "face_track") {
     splitscreenSecondaryType = "face_track";
-  } else if (n === "blank" || n === "blank_blur" || n === "blur") {
+  } else if (i === "blank" || i === "blank_blur" || i === "blur") {
     splitscreenSecondaryType = "blank_blur";
     splitscreenCanvasMode = "blank_blur";
     splitscreenInverted = true;
@@ -2564,14 +2564,14 @@ function syncUseTemplateFab() {
   const e = document.getElementById("confirmUseTemplateBtn");
   const t = document.getElementById("confirmUseTemplateFab");
   if (!e || !t) return;
-  const n = e.style.display === "none" || e.getAttribute("data-pro-locked") === "1" || window.getComputedStyle(e).display === "none";
-  t.style.display = n ? "none" : "";
-  t.hidden = n;
-  t.disabled = !!e.disabled || n;
+  const i = e.style.display === "none" || e.getAttribute("data-pro-locked") === "1" || window.getComputedStyle(e).display === "none";
+  t.style.display = i ? "none" : "";
+  t.hidden = i;
+  t.disabled = !!e.disabled || i;
   t.classList.toggle("library-download-mode", e.classList.contains("library-download-mode"));
-  const i = t.querySelector(".template-use-fab-label");
+  const n = t.querySelector(".template-use-fab-label");
   const r = (e.textContent || "").trim() || "Use Template";
-  if (i) i.textContent = r;
+  if (n) n.textContent = r;
   t.setAttribute("aria-label", r);
   t.title = r;
 }
@@ -2585,13 +2585,13 @@ function isClipIntentEnabled() {
 function syncClipIntentFeatureUi() {
   const e = document.getElementById("clipIntentToggleBtn");
   const t = document.getElementById("templateUseCtaCluster");
-  const n = isClipIntentEnabled();
+  const i = isClipIntentEnabled();
   if (e) {
-    e.hidden = !n;
-    e.style.display = n ? "" : "none";
+    e.hidden = !i;
+    e.style.display = i ? "" : "none";
   }
-  if (!n) resetClipIntentMode();
-  if (t) t.classList.toggle("clip-intent-disabled", !n);
+  if (!i) resetClipIntentMode();
+  if (t) t.classList.toggle("clip-intent-disabled", !i);
 }
 
 window.isClipIntentEnabled = isClipIntentEnabled;
@@ -2608,25 +2608,25 @@ function getClipIntentText() {
 function resetClipIntentMode() {
   const e = document.getElementById("templateUseCtaCluster");
   const t = document.getElementById("clipIntentToggleBtn");
-  const n = document.getElementById("clipIntentRow");
-  const i = document.getElementById("clipIntentInput");
+  const i = document.getElementById("clipIntentRow");
+  const n = document.getElementById("clipIntentInput");
   if (e) e.classList.remove("is-intent-mode");
   if (t) t.setAttribute("aria-pressed", "false");
-  if (n) n.hidden = true;
-  if (i) i.value = "";
+  if (i) i.hidden = true;
+  if (n) n.value = "";
 }
 
 function toggleClipIntentMode(e) {
   if (!isClipIntentEnabled()) return false;
   const t = document.getElementById("templateUseCtaCluster");
-  const n = document.getElementById("clipIntentToggleBtn");
-  const i = document.getElementById("clipIntentRow");
+  const i = document.getElementById("clipIntentToggleBtn");
+  const n = document.getElementById("clipIntentRow");
   const r = document.getElementById("clipIntentInput");
-  if (!t || !n || !i) return false;
+  if (!t || !i || !n) return false;
   const o = typeof e === "boolean" ? e : !t.classList.contains("is-intent-mode");
   t.classList.toggle("is-intent-mode", o);
-  n.setAttribute("aria-pressed", o ? "true" : "false");
-  i.hidden = !o;
+  i.setAttribute("aria-pressed", o ? "true" : "false");
+  n.hidden = !o;
   if (o && r) {
     requestAnimationFrame(() => {
       try {
@@ -2647,8 +2647,8 @@ function bindClipIntentControls(e) {
   syncClipIntentFeatureUi();
   if (!isClipIntentEnabled()) return;
   const t = document.getElementById("clipIntentToggleBtn");
-  const n = document.getElementById("clipIntentSubmitBtn");
-  const i = document.getElementById("clipIntentInput");
+  const i = document.getElementById("clipIntentSubmitBtn");
+  const n = document.getElementById("clipIntentInput");
   if (!t || t.dataset.bound === "1") return;
   t.dataset.bound = "1";
   t.addEventListener("click", e => {
@@ -2659,17 +2659,17 @@ function bindClipIntentControls(e) {
   const submitIntent = t => {
     t?.preventDefault?.();
     t?.stopPropagation?.();
-    const n = document.getElementById("confirmUseTemplateBtn");
-    if (n?.disabled || n?.getAttribute("data-pro-locked") === "1") return;
+    const i = document.getElementById("confirmUseTemplateBtn");
+    if (i?.disabled || i?.getAttribute("data-pro-locked") === "1") return;
     if (e && typeof e.confirmTemplateUse === "function") {
       e.confirmTemplateUse();
     } else {
-      n?.click();
+      i?.click();
     }
   };
-  if (n) n.addEventListener("click", submitIntent);
-  if (i) {
-    i.addEventListener("keydown", e => {
+  if (i) i.addEventListener("click", submitIntent);
+  if (n) {
+    n.addEventListener("keydown", e => {
       if (e.key === "Enter") {
         e.preventDefault();
         submitIntent(e);
@@ -2688,8 +2688,8 @@ function bindUseTemplateFabIdleHint() {
   const t = document.getElementById("templatePreviewModal");
   if (!e || e.dataset.idleHintBound === "1") return;
   e.dataset.idleHintBound = "1";
-  const n = 2600;
-  const i = 3200;
+  const i = 2600;
+  const n = 3200;
   let r = null;
   let o = null;
   const clearTimers = () => {
@@ -2714,13 +2714,13 @@ function bindUseTemplateFabIdleHint() {
     if (window.innerWidth > 768) return;
     if (t && (t.style.display === "none" || t.style.visibility === "hidden")) return;
     e.classList.add("is-hinting");
-    o = setTimeout(collapse, i);
+    o = setTimeout(collapse, n);
   };
   const bump = () => {
     collapse();
     clearTimers();
     if (window.innerWidth > 768) return;
-    r = setTimeout(showHint, n);
+    r = setTimeout(showHint, i);
   };
   [ "pointerdown", "touchstart", "keydown" ].forEach(e => {
     document.addEventListener(e, bump, {
@@ -2739,8 +2739,8 @@ function collectLibraryOverlayTexts() {
   const e = document.getElementById("templateVideoPreview");
   if (!e) return [];
   const t = e.getBoundingClientRect();
-  const n = Math.max(1, t.width);
-  const i = Math.max(1, t.height);
+  const i = Math.max(1, t.width);
+  const n = Math.max(1, t.height);
   const r = [];
   e.querySelectorAll(".overlay-text-block").forEach(e => {
     if (e.dataset.placeholder === "1") return;
@@ -2749,8 +2749,8 @@ function collectLibraryOverlayTexts() {
     let s = (o?.textContent || "").replace(/\u00a0/g, " ").trim();
     if (!s || s.toLowerCase() === "text") return;
     const a = e.getBoundingClientRect();
-    const l = (a.left + a.width / 2 - t.left) / n;
-    const c = (a.top + a.height / 2 - t.top) / i;
+    const l = (a.left + a.width / 2 - t.left) / i;
+    const c = (a.top + a.height / 2 - t.top) / n;
     const d = getComputedStyle(e);
     const p = parseFloat(e.style.fontSize) || parseFloat(d.fontSize) || 28;
     const u = (e.style.fontFamily || d.fontFamily || "Luckiest Guy").split(",")[0].replace(/['"]/g, "").trim();
@@ -2762,7 +2762,7 @@ function collectLibraryOverlayTexts() {
       text: s.slice(0, 200),
       x: Math.max(0, Math.min(1, l)),
       y: Math.max(0, Math.min(1, c)),
-      font_size_ratio: p / i,
+      font_size_ratio: p / n,
       font: u || "Luckiest Guy",
       color: m,
       shadow: y
@@ -2804,13 +2804,13 @@ function toggleNavWrapperCollapse(e) {
     e.stopPropagation();
   }
   const t = document.getElementById("mobileMenuPanel");
-  const n = document.getElementById("mobileMenuBackdrop");
-  const i = document.getElementById("mobileMenuFab");
+  const i = document.getElementById("mobileMenuBackdrop");
+  const n = document.getElementById("mobileMenuFab");
   if (!t) return;
   const r = !!t.hidden;
   t.hidden = !r;
-  if (n) n.hidden = !r;
-  if (i) i.setAttribute("aria-expanded", r ? "true" : "false");
+  if (i) i.hidden = !r;
+  if (n) n.setAttribute("aria-expanded", r ? "true" : "false");
 }
 
 function toggleClipsExpansion(e) {
@@ -2856,13 +2856,13 @@ function navigateToClipsLibrary() {
 function dockInputInstantly() {
   const e = document.querySelector(".input-section");
   const t = e ? e.querySelector(".input-container") : null;
-  const n = parseInt(localStorage.getItem("sidebarActiveIndex") || "0");
+  const i = parseInt(localStorage.getItem("sidebarActiveIndex") || "0");
   if (t) {
     t.classList.remove("first-prompt", "animate-down", "animate-up");
   }
   if (e) {
     e.classList.remove("is-first-prompt");
-    if (n === 0) {
+    if (i === 0) {
       e.style.cssText = "display: flex !important; visibility: visible !important; opacity: 1 !important; pointer-events: all !important; z-index: 1000 !important;";
     } else {
       e.style.cssText = "display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; z-index: -10000 !important;";
@@ -2895,31 +2895,31 @@ function initAuth() {
 function sanitizeErrorMessage(e) {
   if (!e) return "Unknown error";
   const t = String(e.message || e).trim();
-  const n = [ "timeout", "network", "failed", "unauthorized", "not found", "invalid", "error" ];
-  const i = t.toLowerCase();
-  if (n.some(e => i.includes(e))) {
+  const i = [ "timeout", "network", "failed", "unauthorized", "not found", "invalid", "error" ];
+  const n = t.toLowerCase();
+  if (i.some(e => n.includes(e))) {
     return t.substring(0, 100);
   }
   return "An error occurred";
 }
 
-function validateInputLength(e, t = 1e3, n = "input") {
+function validateInputLength(e, t = 1e3, i = "input") {
   if (typeof e !== "string") {
     return {
       valid: false,
-      error: `${n} must be a string`
+      error: `${i} must be a string`
     };
   }
   if (e.length > t) {
     return {
       valid: false,
-      error: `${n} exceeds ${t} character limit`
+      error: `${i} exceeds ${t} character limit`
     };
   }
   if (e.length === 0) {
     return {
       valid: false,
-      error: `${n} cannot be empty`
+      error: `${i} cannot be empty`
     };
   }
   return {
@@ -2929,16 +2929,16 @@ function validateInputLength(e, t = 1e3, n = "input") {
 }
 
 function validateURLInput(e, t = 512) {
-  const n = validateInputLength(e, t, "URL");
-  if (!n.valid) {
-    return n;
+  const i = validateInputLength(e, t, "URL");
+  if (!i.valid) {
+    return i;
   }
   try {
-    const e = n.value.startsWith("http") ? n.value : "https://" + n.value;
+    const e = i.value.startsWith("http") ? i.value : "https://" + i.value;
     const t = new URL(e);
     return {
       valid: true,
-      value: n.value
+      value: i.value
     };
   } catch (e) {
     return {
@@ -3007,12 +3007,12 @@ async function verifyToken() {
       updateProfileDropdown(currentUser).catch(e => console.warn("Profile dropdown update error:", e));
     }
     checkYouTubeConnection();
-    const n = currentUser?.id ?? currentUser?.user_id;
+    const i = currentUser?.id ?? currentUser?.user_id;
     if (window.SolisFirstLanding && typeof window.SolisFirstLanding.applyCreateLanding === "function") {
       window.SolisFirstLanding.applyCreateLanding();
     }
     if (window.SolisMemory?.setUserId) {
-      window.SolisMemory.setUserId(n);
+      window.SolisMemory.setUserId(i);
     }
     if (window.SolisMemory?.pullServerMemory) {
       await window.SolisMemory.pullServerMemory();
@@ -3099,20 +3099,20 @@ function stopTokenRefreshInterval() {
 function updateUIForLoggedInUser() {
   const e = document.querySelector(".user-name");
   const t = document.querySelector(".user-email");
-  const n = document.querySelector(".user-avatar");
+  const i = document.querySelector(".user-avatar");
   if (e) e.textContent = currentUser.name;
   if (t) t.textContent = currentUser.email;
-  if (n) {
+  if (i) {
     const e = typeof resolveAvatarUrl === "function" ? resolveAvatarUrl(currentUser) : currentUser.picture;
     if (e) {
       const t = document.createElement("img");
       t.src = e;
       t.alt = currentUser.name;
       t.style.cssText = "width: 100%; height: 100%; border-radius: 50%; object-fit: cover;";
-      n.innerHTML = "";
-      n.appendChild(t);
+      i.innerHTML = "";
+      i.appendChild(t);
     } else {
-      n.innerHTML = `\n                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n                    <path d="M2 21a8 8 0 0 1 11.873-7"/>\n                    <circle cx="10" cy="8" r="5"/>\n                    <path d="m17 17 5 5"/>\n                    <path d="m22 17-5 5"/>\n                </svg>\n            `;
+      i.innerHTML = `\n                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n                    <path d="M2 21a8 8 0 0 1 11.873-7"/>\n                    <circle cx="10" cy="8" r="5"/>\n                    <path d="m17 17 5 5"/>\n                    <path d="m22 17-5 5"/>\n                </svg>\n            `;
     }
   }
   if (signInDisplay) signInDisplay.style.display = "none";
@@ -3126,11 +3126,11 @@ function updateUIForLoggedInUser() {
 function updateUIForGuest() {
   const e = document.querySelector(".user-name");
   const t = document.querySelector(".user-email");
-  const n = document.querySelector(".user-avatar");
+  const i = document.querySelector(".user-avatar");
   if (e) e.textContent = "Guest User";
   if (t) t.textContent = "Sign in to continue";
-  if (n) {
-    n.innerHTML = `\n            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n                <path d="M2 21a8 8 0 0 1 11.873-7"/>\n                <circle cx="10" cy="8" r="5"/>\n                <path d="m17 17 5 5"/>\n                <path d="m22 17-5 5"/>\n            </svg>\n        `;
+  if (i) {
+    i.innerHTML = `\n            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n                <path d="M2 21a8 8 0 0 1 11.873-7"/>\n                <circle cx="10" cy="8" r="5"/>\n                <path d="m17 17 5 5"/>\n                <path d="m22 17-5 5"/>\n            </svg>\n        `;
   }
   if (signInDisplay) signInDisplay.style.display = "flex";
   if (signInBtn) {
@@ -3154,17 +3154,17 @@ async function fetchAndUpdateSubscriptionStatus(e = false) {
     if (!t) throw new Error("No subscription data");
     window.tier = t.plan;
     document.querySelectorAll(".settings-option").forEach(e => {
-      const n = e.querySelector(".option-name");
-      if (!n) return;
-      if (n.textContent === "Subscription Status") {
-        const n = e.querySelector(".option-description");
-        if (n) {
-          n.textContent = `${t.plan_name} Plan - ${t.videos_per_day_limit} videos/day, ${t.storage_limit_gb}GB storage`;
+      const i = e.querySelector(".option-name");
+      if (!i) return;
+      if (i.textContent === "Subscription Status") {
+        const i = e.querySelector(".option-description");
+        if (i) {
+          i.textContent = `${t.plan_name} Plan - ${t.videos_per_day_limit} videos/day, ${t.storage_limit_gb}GB storage`;
         }
       }
-      if (n.textContent === "Current Plan") {
-        const n = e.querySelector(".option-description");
-        if (n) n.textContent = t.plan_name;
+      if (i.textContent === "Current Plan") {
+        const i = e.querySelector(".option-description");
+        if (i) i.textContent = t.plan_name;
       }
     });
   } catch (e) {
@@ -3236,39 +3236,39 @@ async function loadAvailableGameplayClips(e = false) {
 window._subCache = (() => {
   let e = null;
   let t = 0;
-  let n = null;
-  const i = 6e4;
+  let i = null;
+  const n = 6e4;
   async function _doFetch() {
-    const i = await fetch(`${API_BASE_URL}/auth/subscription`, {
+    const n = await fetch(`${API_BASE_URL}/auth/subscription`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json"
       },
       credentials: "include"
     });
-    if (!i.ok) throw new Error(`subscription fetch failed: ${i.status}`);
-    const r = await i.json();
+    if (!n.ok) throw new Error(`subscription fetch failed: ${n.status}`);
+    const r = await n.json();
     e = r.subscription || null;
     t = Date.now();
-    n = null;
+    i = null;
     return e;
   }
   return {
     async get(r = false) {
       const o = Date.now();
-      if (!r && e && o - t < i) return e;
-      if (n) return n;
-      n = _doFetch().catch(e => {
-        n = null;
+      if (!r && e && o - t < n) return e;
+      if (i) return i;
+      i = _doFetch().catch(e => {
+        i = null;
         throw e;
       });
-      return n;
+      return i;
     },
     peek() {
       return e;
     },
-    set(n) {
-      e = n;
+    set(i) {
+      e = i;
       t = Date.now();
     },
     invalidate() {
@@ -3280,10 +3280,10 @@ window._subCache = (() => {
 
 function applyPortalTierUI(e) {
   const t = String(e || "free").toLowerCase().trim();
-  const n = t.charAt(0).toUpperCase() + t.slice(1);
-  const i = document.getElementById("currentTier");
+  const i = t.charAt(0).toUpperCase() + t.slice(1);
+  const n = document.getElementById("currentTier");
   const r = document.getElementById("tierInfoCard");
-  if (i) i.textContent = n;
+  if (n) n.textContent = i;
   if (r) {
     r.classList.remove("tier-free", "tier-basic", "tier-prime", "tier-elite");
     const e = [ "free", "basic", "prime", "elite" ].includes(t) ? t : "free";
@@ -3307,17 +3307,17 @@ async function loadTierInfo() {
       safeLog("⚠ï¸ Could not load tier info");
       return;
     }
-    const n = String(t.plan || e || "free").toLowerCase();
-    applyPortalTierUI(t.plan_name || n);
-    const i = document.getElementById("currentTierExpiry");
-    if (i) {
-      if (n === "free") {
-        i.textContent = "";
+    const i = String(t.plan || e || "free").toLowerCase();
+    applyPortalTierUI(t.plan_name || i);
+    const n = document.getElementById("currentTierExpiry");
+    if (n) {
+      if (i === "free") {
+        n.textContent = "";
       } else if (t.plan_expires_at) {
         const e = Math.ceil((new Date(t.plan_expires_at) - new Date) / (1e3 * 60 * 60 * 24));
-        if (e < 0) i.textContent = "Expired"; else if (e === 0) i.textContent = "Expires today"; else if (e === 1) i.textContent = "Expires tomorrow"; else i.textContent = `Expires in ${e} days`;
+        if (e < 0) n.textContent = "Expired"; else if (e === 0) n.textContent = "Expires today"; else if (e === 1) n.textContent = "Expires tomorrow"; else n.textContent = `Expires in ${e} days`;
       } else {
-        i.textContent = "";
+        n.textContent = "";
       }
     }
     if (typeof updateStorageDisplayOnDashboard === "function") {
@@ -3389,16 +3389,16 @@ function buildSplitscreenFormatDropdown() {
   gpDdLayout.innerHTML = '<div class="gp-dd-title">Stack order</div>';
   SPLITSCREEN_FORMATS.forEach(e => {
     const t = e.id === "inverted" === splitscreenInverted;
-    const n = document.createElement("button");
-    n.type = "button";
-    n.className = "gp-layout-item" + (t ? " on" : "");
-    const i = e.id === "inverted" ? "gp-lp--reframe-top" : "gp-lp--content-top";
+    const i = document.createElement("button");
+    i.type = "button";
+    i.className = "gp-layout-item" + (t ? " on" : "");
+    const n = e.id === "inverted" ? "gp-lp--reframe-top" : "gp-lp--content-top";
     const r = e.id === "inverted" ? "AI Reframe" : "Content";
     const o = e.id === "inverted" ? "Content" : "AI Reframe";
-    n.innerHTML = `\n            <div class="gp-layout-preview ${i}" aria-hidden="true">\n                <span class="gp-lp-a">${r}</span>\n                <span class="gp-lp-b">${o}</span>\n            </div>\n            <div class="gp-layout-text">\n                <span class="gp-layout-label">${e.label}</span>\n                <span class="gp-layout-desc">${e.desc}</span>\n            </div>\n            <span class="gp-layout-check" aria-hidden="true">\n                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>\n            </span>\n        `;
-    n.addEventListener("pointerenter", () => previewGpLayoutOption(e.id === "inverted"));
-    n.addEventListener("pointerleave", () => endGpLayoutPreview());
-    n.addEventListener("click", t => {
+    i.innerHTML = `\n            <div class="gp-layout-preview ${n}" aria-hidden="true">\n                <span class="gp-lp-a">${r}</span>\n                <span class="gp-lp-b">${o}</span>\n            </div>\n            <div class="gp-layout-text">\n                <span class="gp-layout-label">${e.label}</span>\n                <span class="gp-layout-desc">${e.desc}</span>\n            </div>\n            <span class="gp-layout-check" aria-hidden="true">\n                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>\n            </span>\n        `;
+    i.addEventListener("pointerenter", () => previewGpLayoutOption(e.id === "inverted"));
+    i.addEventListener("pointerleave", () => endGpLayoutPreview());
+    i.addEventListener("click", t => {
       t.stopPropagation();
       if (_gpCommittedLayout != null) _gpCommittedLayout = null;
       splitscreenInverted = e.id === "inverted";
@@ -3410,7 +3410,7 @@ function buildSplitscreenFormatDropdown() {
       closeGameplayDropdowns();
       document.getElementById("gpBtnLayout")?.classList.remove("gp-active");
     });
-    gpDdLayout.appendChild(n);
+    gpDdLayout.appendChild(i);
   });
 }
 
@@ -3434,25 +3434,25 @@ function resolveGameplayMediaUrl(e) {
   const t = String(e || "").trim();
   if (!t) return "";
   if (/^(https?:|blob:|data:)/i.test(t)) return t;
-  const n = apiOriginBase();
+  const i = apiOriginBase();
   if (t.startsWith("/")) {
-    return n ? `${n}${t}` : t;
+    return i ? `${i}${t}` : t;
   }
-  return n ? `${n}/assets/${t.replace(/^\/+/, "")}` : `/assets/${t.replace(/^\/+/, "")}`;
+  return i ? `${i}/assets/${t.replace(/^\/+/, "")}` : `/assets/${t.replace(/^\/+/, "")}`;
 }
 
 function resolveGameplayClipMeta(e) {
   const t = String(e || selectedGameplayClip || "minecraft_1");
-  const n = getGameplayClipsForUI().find(e => e.id === t);
-  if (n) return n;
-  const i = t.match(/^([a-z][a-z0-9]*)_(\d+)$/i);
-  if (i) {
-    const e = i[1];
-    const n = i[2];
-    const r = `${e.charAt(0).toUpperCase()}${e.slice(1)}_${n}.mp4`;
+  const i = getGameplayClipsForUI().find(e => e.id === t);
+  if (i) return i;
+  const n = t.match(/^([a-z][a-z0-9]*)_(\d+)$/i);
+  if (n) {
+    const e = n[1];
+    const i = n[2];
+    const r = `${e.charAt(0).toUpperCase()}${e.slice(1)}_${i}.mp4`;
     return {
       id: t,
-      title: `${e.charAt(0).toUpperCase()}${e.slice(1)} ${n}`,
+      title: `${e.charAt(0).toUpperCase()}${e.slice(1)} ${i}`,
       filename: r,
       group: e.toLowerCase(),
       group_label: e.charAt(0).toUpperCase() + e.slice(1),
@@ -3471,7 +3471,7 @@ function resolveGameplayClipMeta(e) {
 
 function gameplayGroupMeta(e) {
   const t = String(e?.group || String(e?.id || "").split("_")[0] || "gameplay").toLowerCase();
-  const n = e?.group_label || {
+  const i = e?.group_label || {
     minecraft: "Minecraft",
     roblox: "Roblox",
     subway: "Subway Surfers",
@@ -3480,7 +3480,7 @@ function gameplayGroupMeta(e) {
   }[t] || t.charAt(0).toUpperCase() + t.slice(1);
   return {
     id: t,
-    label: n
+    label: i
   };
 }
 
@@ -3497,14 +3497,14 @@ function buildGameplayClipCard(e) {
   t.className = "gp-clip-card" + (isGameplayOptionSelected(e.id) ? " on" : "");
   t.dataset.clipId = e.id;
   t.dataset.group = gameplayGroupMeta(e).id;
-  const n = e.title || e.id;
-  const i = gameplayClipPreviewSrc(e);
+  const i = e.title || e.id;
+  const n = gameplayClipPreviewSrc(e);
   const r = e.filename ? resolveGameplayMediaUrl(`/assets/${e.filename}`) : "";
-  t.innerHTML = `\n        <span class="gp-clip-media">\n            <span class="gp-clip-skel" aria-hidden="true">\n                <span class="gp-clip-skel-shine"></span>\n                <span class="gp-clip-skel-grid">\n                    <i></i><i></i><i></i><i></i><i></i><i></i>\n                    <i></i><i></i><i></i><i></i><i></i><i></i>\n                </span>\n            </span>\n            <img class="gp-clip-thumb" alt="" decoding="async" draggable="false" />\n        </span>\n        <span class="gp-clip-label">${n}</span>\n        <span class="gp-clip-check" aria-hidden="true">\n            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 13l4 4L19 7"/></svg>\n        </span>\n    `;
+  t.innerHTML = `\n        <span class="gp-clip-media">\n            <span class="gp-clip-skel" aria-hidden="true">\n                <span class="gp-clip-skel-shine"></span>\n                <span class="gp-clip-skel-grid">\n                    <i></i><i></i><i></i><i></i><i></i><i></i>\n                    <i></i><i></i><i></i><i></i><i></i><i></i>\n                </span>\n            </span>\n            <img class="gp-clip-thumb" alt="" decoding="async" draggable="false" />\n        </span>\n        <span class="gp-clip-label">${i}</span>\n        <span class="gp-clip-check" aria-hidden="true">\n            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 13l4 4L19 7"/></svg>\n        </span>\n    `;
   const o = t.querySelector("img.gp-clip-thumb");
   const s = t.querySelector(".gp-clip-media");
   const reveal = () => t.classList.add("is-ready");
-  if (o && i) {
+  if (o && n) {
     o.addEventListener("load", reveal, {
       once: true
     });
@@ -3533,7 +3533,7 @@ function buildGameplayClipCard(e) {
     }, {
       once: true
     });
-    o.src = i;
+    o.src = n;
   } else if (o && r) {
     o.remove();
     const e = document.createElement("video");
@@ -3562,12 +3562,12 @@ function buildGameplayClipCard(e) {
   return t;
 }
 
-function buildModeTile({id: e, title: t, hint: n, previewClass: i, previewHtml: r, suggested: o}) {
+function buildModeTile({id: e, title: t, hint: i, previewClass: n, previewHtml: r, suggested: o}) {
   const s = document.createElement("button");
   s.type = "button";
   s.className = "gp-mode-tile" + (isGameplayOptionSelected(e) ? " on" : "") + (o ? " gp-mode-suggested" : "");
   s.setAttribute("data-mode", e);
-  s.innerHTML = `\n        <span class="gp-mode-preview ${i}" aria-hidden="true">${r || ""}</span>\n        <span class="gp-mode-meta">\n            <span class="gp-mode-label">${t}${o ? '<em class="gp-ai-tag">AI</em>' : ""}</span>\n            ${n ? `<span class="gp-mode-hint">${n}</span>` : ""}\n        </span>\n        <span class="gp-mode-check" aria-hidden="true">\n            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><path d="M5 13l4 4L19 7"/></svg>\n        </span>\n    `;
+  s.innerHTML = `\n        <span class="gp-mode-preview ${n}" aria-hidden="true">${r || ""}</span>\n        <span class="gp-mode-meta">\n            <span class="gp-mode-label">${t}${o ? '<em class="gp-ai-tag">AI</em>' : ""}</span>\n            ${i ? `<span class="gp-mode-hint">${i}</span>` : ""}\n        </span>\n        <span class="gp-mode-check" aria-hidden="true">\n            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><path d="M5 13l4 4L19 7"/></svg>\n        </span>\n    `;
   s.addEventListener("pointerenter", () => {
     if (e === "focus") return;
     previewGpSecondaryOption(e === "blur" ? "blank_blur" : e);
@@ -3594,12 +3594,12 @@ function getSuggestedClipMode() {
 }
 
 function setSuggestedClipMode(e, t) {
-  let n = e || "face_track";
-  if (n === "blank") n = "blank_blur";
+  let i = e || "face_track";
+  if (i === "blank") i = "blank_blur";
   window._solisClipModeSuggestion = {
-    secondary: n,
+    secondary: i,
     collapsed: !!t,
-    splitscreen_secondary_type: n
+    splitscreen_secondary_type: i
   };
 }
 
@@ -3631,10 +3631,10 @@ function buildModesRow() {
     hint: "Content first",
     previewClass: "gp-prev-focus",
     previewHtml: `<span class="gp-prev-focus-frame" aria-hidden="true"></span>`
-  } ].forEach(n => {
+  } ].forEach(i => {
     t.appendChild(buildModeTile({
-      ...n,
-      suggested: e === n.id
+      ...i,
+      suggested: e === i.id
     }));
   });
   return t;
@@ -3644,24 +3644,24 @@ function isCanvasSelected() {
   return splitscreenSecondaryType === "blank" || splitscreenSecondaryType === "blank_blur";
 }
 
-function clampCanvasPanelHeights(e, t, n) {
-  const i = Math.max(1, Number(n) || 1);
+function clampCanvasPanelHeights(e, t, i) {
+  const n = Math.max(1, Number(i) || 1);
   let r = Number(e) || 0;
   let o = Number(t) || 0;
   if (!isCanvasSelected()) {
     return {
       contentH: r,
       secondaryH: o,
-      avail: i
+      avail: n
     };
   }
-  const s = Math.round(i * (SPLITSCREEN_CANVAS_MAX / 2));
+  const s = Math.round(n * (SPLITSCREEN_CANVAS_MAX / 2));
   o = Math.max(0, Math.min(s, o));
-  r = Math.max(0, i - o * 2);
+  r = Math.max(0, n - o * 2);
   return {
     contentH: r,
     secondaryH: o,
-    avail: i
+    avail: n
   };
 }
 
@@ -3698,16 +3698,16 @@ function selectClipMode(e, t) {
     } catch (e) {}
   }
   if (e === "blank") e = "blur";
-  const n = currentClipModeId();
-  if (n === "face_track" || n === "blur") {
+  const i = currentClipModeId();
+  if (i === "face_track" || i === "blur") {
     const e = Number(splitscreenContentRatio);
     if (Number.isFinite(e) && e > .05 && e < .98) {
-      _clipModeRatioMemory[n] = e;
+      _clipModeRatioMemory[i] = e;
     }
   }
-  const i = !t || t.animate !== false;
+  const n = !t || t.animate !== false;
   const r = _splitscreenQuery("splitscreenRoot");
-  if (i && r) {
+  if (n && r) {
     r.classList.add("ss-mode-fade");
     clearTimeout(r._modeFadeT);
     r._modeFadeT = setTimeout(() => r.classList.remove("ss-mode-fade"), 220);
@@ -3769,9 +3769,9 @@ function selectClipMode(e, t) {
 
 function cycleClipMode(e) {
   const t = currentClipModeId();
-  const n = Math.max(0, CLIP_MODE_ORDER.indexOf(t));
-  const i = CLIP_MODE_ORDER[(n + (e < 0 ? -1 : 1) + CLIP_MODE_ORDER.length) % CLIP_MODE_ORDER.length];
-  selectClipMode(i, {
+  const i = Math.max(0, CLIP_MODE_ORDER.indexOf(t));
+  const n = CLIP_MODE_ORDER[(i + (e < 0 ? -1 : 1) + CLIP_MODE_ORDER.length) % CLIP_MODE_ORDER.length];
+  selectClipMode(n, {
     animate: true
   });
 }
@@ -3901,10 +3901,10 @@ function rebuildGameplayClipsDropdown() {
   const t = getSuggestedClipMode();
   e.innerHTML = `\n        <div class="gp-clips-head-text">\n            <span class="gp-clips-kicker">Modes</span>\n            <span class="gp-clips-current">${fillSelectionLabel()}</span>\n        </div>\n        ${t ? `<span class="gp-clips-ai-hint">Solis suggests ${t === "face_track" ? "AI Reframe" : t === "blur" ? "Blur" : t === "blank" ? "Blank" : "Focus"}</span>` : ""}\n    `;
   gpDdClips.appendChild(e);
-  const n = document.createElement("div");
-  n.className = "gp-dd-section gp-clips-face";
-  n.appendChild(buildModesRow());
-  gpDdClips.appendChild(n);
+  const i = document.createElement("div");
+  i.className = "gp-dd-section gp-clips-face";
+  i.appendChild(buildModesRow());
+  gpDdClips.appendChild(i);
 }
 
 window.rebuildGameplayClipsDropdown = rebuildGameplayClipsDropdown;
@@ -3915,9 +3915,9 @@ function openGameplayDropdown(e, t) {
   e.classList.add("open");
   const place = () => {
     const t = gpPill.getBoundingClientRect();
-    const n = e.classList.contains("gp-clips-dd");
-    const i = e.offsetWidth || (n ? 360 : 280);
-    const r = e.offsetHeight || (n ? 360 : 220);
+    const i = e.classList.contains("gp-clips-dd");
+    const n = e.offsetWidth || (i ? 360 : 280);
+    const r = e.offsetHeight || (i ? 360 : 220);
     const o = {
       w: window.innerWidth,
       h: window.innerHeight
@@ -3938,13 +3938,13 @@ function openGameplayDropdown(e, t) {
     let u;
     if (l) {
       u = l.right + s;
-      if (u + i > o.w - 12) {
-        u = Math.max(l.right + 6, o.w - i - 12);
+      if (u + n > o.w - 12) {
+        u = Math.max(l.right + 6, o.w - n - 12);
       }
-      if (u < l.right) u = Math.min(l.right + s, Math.max(12, o.w - i - 12));
+      if (u < l.right) u = Math.min(l.right + s, Math.max(12, o.w - n - 12));
     } else {
       u = t.right + s;
-      if (u + i > o.w - 12) u = Math.max(12, o.w - i - 12);
+      if (u + n > o.w - 12) u = Math.max(12, o.w - n - 12);
     }
     e.style.top = Math.round(p) + "px";
     e.style.left = Math.round(u) + "px";
@@ -3968,8 +3968,8 @@ function positionGameplayPill() {
   if (!gpPill) return;
   const e = 22;
   const t = 28;
-  const n = gpPill.offsetWidth || 88;
-  const i = gpPill.offsetHeight || 46;
+  const i = gpPill.offsetWidth || 88;
+  const n = gpPill.offsetHeight || 46;
   const r = {
     w: window.innerWidth,
     h: window.innerHeight
@@ -3978,20 +3978,20 @@ function positionGameplayPill() {
   let s;
   if (gpPillAnchor) {
     o = gpPillAnchor.x + e + t;
-    s = gpPillAnchor.y - i / 2;
-    if (o + n > r.w - 8) {
-      o = gpPillAnchor.x - n - e;
+    s = gpPillAnchor.y - n / 2;
+    if (o + i > r.w - 8) {
+      o = gpPillAnchor.x - i - e;
     }
   } else {
     const e = document.getElementById("splitscreenRoot") || document.getElementById("templateVideoPreview");
     const t = document.getElementById("splitscreenBottom");
-    const i = (t || e)?.getBoundingClientRect();
-    if (!i) return;
-    o = i.left + i.width * .62 - n / 2;
-    s = i.top + Math.min(56, i.height * .12);
+    const n = (t || e)?.getBoundingClientRect();
+    if (!n) return;
+    o = n.left + n.width * .62 - i / 2;
+    s = n.top + Math.min(56, n.height * .12);
   }
-  o = Math.max(8, Math.min(o, r.w - n - 8));
-  s = Math.max(8, Math.min(s, r.h - i - 8));
+  o = Math.max(8, Math.min(o, r.w - i - 8));
+  s = Math.max(8, Math.min(s, r.h - n - 8));
   gpPill.style.left = o + "px";
   gpPill.style.top = s + "px";
 }
@@ -4121,15 +4121,15 @@ function ensureBlurLetterboxBar() {
 
 function syncBlurLetterboxBar(e) {
   const t = _splitscreenQuery("splitscreenRoot");
-  const n = ensureBlurLetterboxBar();
-  if (!t || !n) return;
-  const i = splitscreenSecondaryType === "blank_blur" && !splitscreenSecondaryCollapsed;
-  t.classList.toggle("ss-letterbox-blur", i);
-  n.classList.toggle("visible", i);
-  if (!i) {
-    n.style.flex = "0 0 0px";
-    n.style.display = "none";
-    const e = n.querySelector(".gp-blank-blur-vid");
+  const i = ensureBlurLetterboxBar();
+  if (!t || !i) return;
+  const n = splitscreenSecondaryType === "blank_blur" && !splitscreenSecondaryCollapsed;
+  t.classList.toggle("ss-letterbox-blur", n);
+  i.classList.toggle("visible", n);
+  if (!n) {
+    i.style.flex = "0 0 0px";
+    i.style.display = "none";
+    const e = i.querySelector(".gp-blank-blur-vid");
     if (e) {
       try {
         e.pause();
@@ -4138,14 +4138,14 @@ function syncBlurLetterboxBar(e) {
     return;
   }
   const r = Math.max(0, Math.round(Number(e) || 0));
-  n.style.display = "";
-  n.style.flex = `0 0 ${r}px`;
-  n.style.minHeight = "0";
-  n.style.overflow = "hidden";
-  n.classList.add("mode-blur");
+  i.style.display = "";
+  i.style.flex = `0 0 ${r}px`;
+  i.style.minHeight = "0";
+  i.style.overflow = "hidden";
+  i.classList.add("mode-blur");
   const o = _splitscreenQuery("splitscreenBlankPanel");
   const s = o?.querySelector(".gp-blank-blur-vid");
-  const a = n.querySelector(".gp-blank-blur-vid");
+  const a = i.querySelector(".gp-blank-blur-vid");
   if (s && a) {
     const e = s.currentSrc || s.src || "";
     if (e && a.dataset.currentSrc !== e) {
@@ -4182,9 +4182,9 @@ function syncBlankBlurVideo() {
   const e = _splitscreenQuery("splitscreenBlankPanel");
   const t = e?.querySelector(".gp-blank-blur-vid");
   if (!e || !t) return;
-  const n = _resolveBlankBlurSourceVideo();
-  const i = n ? n.currentSrc || n.src || "" : "";
-  if (!i) {
+  const i = _resolveBlankBlurSourceVideo();
+  const n = i ? i.currentSrc || i.src || "" : "";
+  if (!n) {
     if (!t._blankSrcRetry) {
       t._blankSrcRetry = () => {
         t._blankSrcRetry = null;
@@ -4219,10 +4219,10 @@ function syncBlankBlurVideo() {
   e.classList.remove("mode-black");
   const wireSyncAndPlay = () => {
     const sync = () => {
-      if (!n) return;
+      if (!i) return;
       try {
-        if (Math.abs((t.currentTime || 0) - (n.currentTime || 0)) > .35) {
-          t.currentTime = n.currentTime || 0;
+        if (Math.abs((t.currentTime || 0) - (i.currentTime || 0)) > .35) {
+          t.currentTime = i.currentTime || 0;
         }
       } catch (e) {}
     };
@@ -4232,8 +4232,8 @@ function syncBlankBlurVideo() {
       } catch (e) {}
     }
     t._blankSync = sync;
-    t._blankSyncTarget = n;
-    n.addEventListener("timeupdate", sync);
+    t._blankSyncTarget = i;
+    i.addEventListener("timeupdate", sync);
     const kick = () => {
       t.play().catch(() => {});
     };
@@ -4242,22 +4242,22 @@ function syncBlankBlurVideo() {
     });
     kick();
   };
-  if (t.dataset.currentSrc === i && t.src) {
+  if (t.dataset.currentSrc === n && t.src) {
     wireSyncAndPlay();
     return;
   }
-  t.dataset.currentSrc = i;
-  const r = `${i}|${Date.now()}`;
+  t.dataset.currentSrc = n;
+  const r = `${n}|${Date.now()}`;
   t._blurLoadToken = r;
   const assignSrc = e => {
     if (t._blurLoadToken !== r) return;
-    if (t.dataset.currentSrc !== i) return;
+    if (t.dataset.currentSrc !== n) return;
     t.src = e;
     t.load();
     wireSyncAndPlay();
   };
-  if (String(i).startsWith("blob:")) {
-    cloneBlobUrlForSecondVideo(i).then(e => {
+  if (String(n).startsWith("blob:")) {
+    cloneBlobUrlForSecondVideo(n).then(e => {
       if (t._blurLoadToken !== r) {
         if (e && e !== _blankBlurObjectUrl) {
           _librarySplitscreenObjectUrls = _librarySplitscreenObjectUrls.filter(t => t !== e);
@@ -4271,28 +4271,28 @@ function syncBlankBlurVideo() {
       _blankBlurObjectUrl = e;
       assignSrc(e);
     }).catch(() => {
-      if (t._blurLoadToken === r) assignSrc(i);
+      if (t._blurLoadToken === r) assignSrc(n);
     });
     return;
   }
   revokeBlankBlurObjectUrl();
-  assignSrc(i);
+  assignSrc(n);
 }
 
 function reorderSplitscreenPanels() {
   const e = _splitscreenQuery("splitscreenRoot");
   const t = _splitscreenQuery("splitscreenTop");
-  const n = _splitscreenQuery("splitscreenDivider");
-  const i = _splitscreenQuery("splitscreenBottom");
-  if (!e || !t || !n || !i) return;
+  const i = _splitscreenQuery("splitscreenDivider");
+  const n = _splitscreenQuery("splitscreenBottom");
+  if (!e || !t || !i || !n) return;
   if (splitscreenInverted) {
-    e.appendChild(i);
     e.appendChild(n);
+    e.appendChild(i);
     e.appendChild(t);
   } else {
     e.appendChild(t);
-    e.appendChild(n);
     e.appendChild(i);
+    e.appendChild(n);
   }
   const r = _splitscreenQuery("splitscreenBlurBottom");
   if (r) e.appendChild(r);
@@ -4301,23 +4301,23 @@ function reorderSplitscreenPanels() {
 function getSplitscreenLayout() {
   const e = _splitscreenQuery("splitscreenRoot");
   const t = _splitscreenQuery("splitscreenTop");
-  const n = _splitscreenQuery("splitscreenBottom");
+  const i = _splitscreenQuery("splitscreenBottom");
   return {
     root: e,
     divider: _splitscreenQuery("splitscreenDivider"),
     dividerLine: _splitscreenQuery("dividerLine"),
     top: t,
-    bottom: n,
+    bottom: i,
     content: t,
-    secondary: n
+    secondary: i
   };
 }
 
-function calcSplitscreenHeights(e, t, n) {
-  const i = Math.max(0, Math.min(2, Number(n) || 1));
-  const r = Math.max(1, t.height - i);
+function calcSplitscreenHeights(e, t, i) {
+  const n = Math.max(0, Math.min(2, Number(i) || 1));
+  const r = Math.max(1, t.height - n);
   const o = e - t.top;
-  const s = Math.max(0, Math.min(r, o - i / 2));
+  const s = Math.max(0, Math.min(r, o - n / 2));
   let a;
   let l;
   if (splitscreenSecondaryType === "blank_blur" && !splitscreenSecondaryCollapsed) {
@@ -4335,20 +4335,20 @@ function calcSplitscreenHeights(e, t, n) {
   return clampCanvasPanelHeights(a, l, r);
 }
 
-function setSplitscreenPanelHeights(e, t, n) {
-  const {root: i, divider: r, content: o, secondary: s} = getSplitscreenLayout();
-  if (!i || !r || !o || !s || splitscreenSecondaryCollapsed) return;
+function setSplitscreenPanelHeights(e, t, i) {
+  const {root: n, divider: r, content: o, secondary: s} = getSplitscreenLayout();
+  if (!n || !r || !o || !s || splitscreenSecondaryCollapsed) return;
   if (_reframeImmersive) return;
   const a = splitscreenSecondaryType === "blank_blur";
   const l = 1;
-  const c = i.clientHeight || i.getBoundingClientRect().height || i.offsetHeight;
-  const d = Math.max(1, Number(n) > 0 ? Number(n) : c - l);
+  const c = n.clientHeight || n.getBoundingClientRect().height || n.offsetHeight;
+  const d = Math.max(1, Number(i) > 0 ? Number(i) : c - l);
   let p;
   let u;
   if (a) {
-    const n = clampCanvasPanelHeights(Number(e) || 0, Number(t) || 0, d);
-    p = n.secondaryH;
-    u = n.contentH;
+    const i = clampCanvasPanelHeights(Number(e) || 0, Number(t) || 0, d);
+    p = i.secondaryH;
+    u = i.contentH;
     splitscreenContentRatio = d > 0 ? u / d : .78;
   } else {
     u = Math.max(0, Math.min(d, Number(e) || 0));
@@ -4402,7 +4402,7 @@ function isReframeImmersive() {
   return Boolean(_reframeImmersive);
 }
 
-async function probeProjectFaces(e, t, n) {
+async function probeProjectFaces(e, t, i) {
   if (!e) return {
     has_face: false,
     face_crop: null
@@ -4410,17 +4410,17 @@ async function probeProjectFaces(e, t, n) {
   if (_reframeFaceProbeCache.has(e)) {
     return _reframeFaceProbeCache.get(e);
   }
-  const i = _librarySplitscreenCropState?.faceCrop;
-  if (Array.isArray(i) && i.length === 4 && i[2] > 1) {
+  const n = _librarySplitscreenCropState?.faceCrop;
+  if (Array.isArray(n) && n.length === 4 && n[2] > 1) {
     const t = {
       has_face: true,
-      face_crop: i.slice(0, 4)
+      face_crop: n.slice(0, 4)
     };
     _reframeFaceProbeCache.set(e, t);
     return t;
   }
   try {
-    const i = await fetch(`${API_BASE_URL}/clips/projects/${encodeURIComponent(e)}/splitscreen-face-probe`, {
+    const n = await fetch(`${API_BASE_URL}/clips/projects/${encodeURIComponent(e)}/splitscreen-face-probe`, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -4429,11 +4429,11 @@ async function probeProjectFaces(e, t, n) {
       },
       body: JSON.stringify({
         panel_w: t || 1080,
-        panel_h: n || 1920
+        panel_h: i || 1920
       })
     });
-    if (!i.ok) throw new Error(`face-probe ${i.status}`);
-    const r = await i.json();
+    if (!n.ok) throw new Error(`face-probe ${n.status}`);
+    const r = await n.json();
     const o = {
       has_face: Boolean(r.has_face && r.face_crop),
       face_crop: Array.isArray(r.face_crop) ? r.face_crop.slice(0, 4).map(Number) : null
@@ -4442,21 +4442,21 @@ async function probeProjectFaces(e, t, n) {
     return o;
   } catch (t) {
     safeLog("Face probe failed:", t);
-    const n = {
+    const i = {
       has_face: false,
       face_crop: null
     };
-    _reframeFaceProbeCache.set(e, n);
-    return n;
+    _reframeFaceProbeCache.set(e, i);
+    return i;
   }
 }
 
 function applyImmersiveOverlayLayout(e = 0) {
   const t = _splitscreenQuery("splitscreenRoot");
-  const n = _splitscreenQuery("splitscreenTop");
-  const i = _splitscreenQuery("splitscreenBottom");
+  const i = _splitscreenQuery("splitscreenTop");
+  const n = _splitscreenQuery("splitscreenBottom");
   const r = _splitscreenQuery("splitscreenDivider");
-  if (!t || !n || !i) return;
+  if (!t || !i || !n) return;
   t.classList.add("reframe-immersive");
   t.classList.toggle("reframe-immersive-peek", _reframeImmersiveMode === "peek");
   t.classList.toggle("reframe-immersive-face", _reframeImmersiveMode === "face");
@@ -4465,38 +4465,38 @@ function applyImmersiveOverlayLayout(e = 0) {
     r.style.opacity = "0";
     r.style.pointerEvents = "none";
   }
-  n.style.display = "";
-  n.style.opacity = "1";
-  n.style.position = "absolute";
-  n.style.inset = "0";
-  n.style.flex = "none";
-  n.style.width = "100%";
-  n.style.height = "100%";
-  n.style.zIndex = "1";
   i.style.display = "";
   i.style.opacity = "1";
   i.style.position = "absolute";
-  i.style.left = "0";
-  i.style.right = "0";
-  i.style.top = "0";
-  i.style.bottom = "0";
+  i.style.inset = "0";
   i.style.flex = "none";
   i.style.width = "100%";
   i.style.height = "100%";
-  i.style.zIndex = "3";
-  i.style.transition = e ? "none" : "transform 0.22s cubic-bezier(.2,.9,.4,1)";
-  i.style.transform = e ? `translateY(${Math.max(0, e)}px)` : "";
-  i.style.pointerEvents = "auto";
+  i.style.zIndex = "1";
+  n.style.display = "";
+  n.style.opacity = "1";
+  n.style.position = "absolute";
+  n.style.left = "0";
+  n.style.right = "0";
+  n.style.top = "0";
+  n.style.bottom = "0";
+  n.style.flex = "none";
+  n.style.width = "100%";
+  n.style.height = "100%";
+  n.style.zIndex = "3";
+  n.style.transition = e ? "none" : "transform 0.22s cubic-bezier(.2,.9,.4,1)";
+  n.style.transform = e ? `translateY(${Math.max(0, e)}px)` : "";
+  n.style.pointerEvents = "auto";
 }
 
 function clearImmersiveOverlayLayout() {
   const e = _splitscreenQuery("splitscreenRoot");
   const t = _splitscreenQuery("splitscreenTop");
-  const n = _splitscreenQuery("splitscreenBottom");
+  const i = _splitscreenQuery("splitscreenBottom");
   if (e) {
     e.classList.remove("reframe-immersive", "reframe-immersive-peek", "reframe-immersive-face");
   }
-  [ t, n ].forEach(e => {
+  [ t, i ].forEach(e => {
     if (!e) return;
     e.style.position = "";
     e.style.inset = "";
@@ -4530,11 +4530,11 @@ async function enterReframeImmersive() {
   }
   applyImmersiveOverlayLayout(0);
   armPreviewModalDragGuard(600);
-  const n = _splitscreenQuery("splitscreenReframeVideo");
-  forceLibraryPanelVideoFill(n);
-  if (n) {
-    n.style.setProperty("pointer-events", "none", "important");
-    n.style.cursor = "grab";
+  const i = _splitscreenQuery("splitscreenReframeVideo");
+  forceLibraryPanelVideoFill(i);
+  if (i) {
+    i.style.setProperty("pointer-events", "none", "important");
+    i.style.cursor = "grab";
   }
   syncLibrarySplitscreenCropPreview();
   bindReframePeekHandlers();
@@ -4582,22 +4582,22 @@ function ensureImmersiveExitGrip() {
   }
   if (t.dataset.bound === "true") return;
   t.dataset.bound = "true";
-  let n = 0;
-  let i = false;
+  let i = 0;
+  let n = false;
   let r = null;
   const onMove = e => {
-    if (!i || !_reframeImmersive) return;
-    const t = Math.max(0, e - n);
+    if (!n || !_reframeImmersive) return;
+    const t = Math.max(0, e - i);
     _reframePeekOffsetY = t;
     applyImmersiveOverlayLayout(t);
     armPreviewModalDragGuard(600);
   };
   const onUp = () => {
-    if (!i) return;
-    i = false;
+    if (!n) return;
+    n = false;
     const e = _splitscreenQuery("splitscreenRoot");
-    const n = e?.clientHeight || 1;
-    const o = _reframePeekOffsetY / n;
+    const i = e?.clientHeight || 1;
+    const o = _reframePeekOffsetY / i;
     if (r != null && t.hasPointerCapture?.(r)) {
       try {
         t.releasePointerCapture(r);
@@ -4616,8 +4616,8 @@ function ensureImmersiveExitGrip() {
     if (e.button != null && e.button !== 0) return;
     e.preventDefault();
     e.stopPropagation();
-    i = true;
-    n = e.clientY;
+    n = true;
+    i = e.clientY;
     r = e.pointerId;
     try {
       t.setPointerCapture(e.pointerId);
@@ -4625,12 +4625,12 @@ function ensureImmersiveExitGrip() {
     armPreviewModalDragGuard(600);
   });
   t.addEventListener("pointermove", e => {
-    if (!i) return;
+    if (!n) return;
     e.preventDefault();
     onMove(e.clientY);
   });
   t.addEventListener("pointerup", e => {
-    if (!i) return;
+    if (!n) return;
     e.preventDefault();
     e.stopPropagation();
     onUp();
@@ -4643,27 +4643,27 @@ function bindReframePeekHandlers() {
   if (!e || _reframePeekBound) return;
   _reframePeekBound = true;
   let t = 0;
-  let n = false;
-  let i = null;
+  let i = false;
+  let n = null;
   const onMove = e => {
-    if (!n || !_reframeImmersive || _reframeImmersiveMode !== "peek") return;
-    const i = Math.max(0, e - t);
-    _reframePeekOffsetY = i;
-    applyImmersiveOverlayLayout(i);
+    if (!i || !_reframeImmersive || _reframeImmersiveMode !== "peek") return;
+    const n = Math.max(0, e - t);
+    _reframePeekOffsetY = n;
+    applyImmersiveOverlayLayout(n);
     armPreviewModalDragGuard(600);
   };
   const onUp = () => {
-    if (!n) return;
-    n = false;
+    if (!i) return;
+    i = false;
     const t = _splitscreenQuery("splitscreenRoot");
     const r = t?.clientHeight || 1;
     const o = _reframePeekOffsetY / r;
-    if (i != null && e.hasPointerCapture?.(i)) {
+    if (n != null && e.hasPointerCapture?.(n)) {
       try {
-        e.releasePointerCapture(i);
+        e.releasePointerCapture(n);
       } catch (e) {}
     }
-    i = null;
+    n = null;
     if (o >= SPLITSCREEN_PEEK_EXIT) {
       exitReframeImmersive();
       return;
@@ -4676,21 +4676,21 @@ function bindReframePeekHandlers() {
     if (r.button != null && r.button !== 0) return;
     r.preventDefault();
     r.stopPropagation();
-    n = true;
+    i = true;
     t = r.clientY;
-    i = r.pointerId;
+    n = r.pointerId;
     try {
       e.setPointerCapture(r.pointerId);
     } catch (e) {}
     armPreviewModalDragGuard(600);
   };
   e._peekPointerMove = e => {
-    if (!n) return;
+    if (!i) return;
     e.preventDefault();
     onMove(e.clientY);
   };
   e._peekPointerUp = e => {
-    if (!n) return;
+    if (!i) return;
     e.preventDefault();
     e.stopPropagation();
     onUp();
@@ -4716,7 +4716,7 @@ function unbindReframePeekHandlers() {
   }
 }
 
-function maybeEnterReframeImmersiveFromDrag(e, t, n) {
+function maybeEnterReframeImmersiveFromDrag(e, t, i) {
   return false;
 }
 
@@ -4748,8 +4748,8 @@ function resetReframeImmersiveState() {
 }
 
 function smoothCollapseSplitscreenSecondary() {
-  const {root: e, divider: t, content: n, secondary: i} = getSplitscreenLayout();
-  if (!e || !t || !n || !i) return;
+  const {root: e, divider: t, content: i, secondary: n} = getSplitscreenLayout();
+  if (!e || !t || !i || !n) return;
   notifySubtitleLayoutEdit();
   const r = 1;
   const o = e.getBoundingClientRect().height || e.offsetHeight;
@@ -4761,24 +4761,24 @@ function smoothCollapseSplitscreenSecondary() {
   const finish = () => {
     if (l) return;
     l = true;
-    i.removeEventListener("transitionend", onTransitionEnd);
+    n.removeEventListener("transitionend", onTransitionEnd);
     collapseSplitscreenSecondary();
   };
   const onTransitionEnd = e => {
-    if (e.target !== i || e.propertyName !== "flex-basis") return;
+    if (e.target !== n || e.propertyName !== "flex-basis") return;
     finish();
   };
-  i.addEventListener("transitionend", onTransitionEnd);
+  n.addEventListener("transitionend", onTransitionEnd);
   window.setTimeout(finish, SPLITSCREEN_COLLAPSE_ANIM_MS + 40);
 }
 
 function expandSplitscreenSecondary(e) {
   const {root: t} = getSplitscreenLayout();
-  const n = Number.isFinite(splitscreenSavedRatio) ? splitscreenSavedRatio : .5;
-  const i = e ?? (Number.isFinite(n) ? n : .5);
+  const i = Number.isFinite(splitscreenSavedRatio) ? splitscreenSavedRatio : .5;
+  const n = e ?? (Number.isFinite(i) ? i : .5);
   notifySubtitleLayoutEdit();
   splitscreenSecondaryCollapsed = false;
-  splitscreenContentRatio = i;
+  splitscreenContentRatio = n;
   removeSplitscreenCollapseHandle();
   applySplitscreenRatio();
   markLibrarySplitscreenDirty();
@@ -4786,9 +4786,9 @@ function expandSplitscreenSecondary(e) {
   if (!t) return;
   const {contentH: r, secondaryH: o} = (() => {
     const e = 1;
-    const n = t.getBoundingClientRect().height || t.offsetHeight;
-    const r = Math.max(1, n - e);
-    const o = Math.round(r * i);
+    const i = t.getBoundingClientRect().height || t.offsetHeight;
+    const r = Math.max(1, i - e);
+    const o = Math.round(r * n);
     return {
       contentH: o,
       secondaryH: r - o
@@ -4808,28 +4808,28 @@ function ensureKeptReframePanelLoaded() {
     const e = window.clipsStudio?.currentTemplateForPreview?.projectId || window.clipsStudio?._libraryPreviewProjectId;
     if (!e || typeof API_BASE_URL === "undefined") return;
     const t = _splitscreenQuery("splitscreenReframeVideo");
-    const n = _splitscreenQuery("splitscreenGameplayVideo");
-    const i = `${API_BASE_URL}/clips/projects/${encodeURIComponent(e)}/splitscreen-layer/secondary`;
+    const i = _splitscreenQuery("splitscreenGameplayVideo");
+    const n = `${API_BASE_URL}/clips/projects/${encodeURIComponent(e)}/splitscreen-layer/secondary`;
     if (splitscreenSecondaryType === "face_track" && t) {
       const e = Boolean(t.currentSrc || t.src);
       if (!e || t.error) {
         t.style.setProperty("display", "block", "important");
-        t.src = i;
+        t.src = n;
         t.load();
         t.play().catch(() => {});
       }
-      const n = _splitscreenQuery("splitscreenContentVideo");
-      if (n) bindLibrarySplitscreenPlaybackSync(n, t);
+      const i = _splitscreenQuery("splitscreenContentVideo");
+      if (i) bindLibrarySplitscreenPlaybackSync(i, t);
       syncLibrarySplitscreenCropPreview();
       return;
     }
-    if (splitscreenSecondaryType === "gameplay" && n) {
-      const e = Boolean(n.currentSrc || n.src);
-      if (!e || n.error) {
-        n.style.setProperty("display", "block", "important");
-        n.src = i;
-        n.load();
-        n.play().catch(() => {});
+    if (splitscreenSecondaryType === "gameplay" && i) {
+      const e = Boolean(i.currentSrc || i.src);
+      if (!e || i.error) {
+        i.style.setProperty("display", "block", "important");
+        i.src = n;
+        i.load();
+        i.play().catch(() => {});
       }
     }
   } catch (e) {}
@@ -4861,28 +4861,28 @@ function initSplitscreenCollapseHandle(e) {
     if (!t) return;
     t.classList.add("is-dragging");
     notifySubtitleLayoutEdit();
-    const n = t.getBoundingClientRect();
-    const i = 1;
-    const r = n.height - i;
+    const i = t.getBoundingClientRect();
+    const n = 1;
+    const r = i.height - n;
     let o = false;
     const onMove = e => {
-      const t = e.clientY - n.top;
-      let i;
+      const t = e.clientY - i.top;
+      let n;
       let s;
       if (splitscreenInverted) {
         s = Math.max(0, Math.min(r, t));
         if (s <= 1) return;
-        i = r - s;
+        n = r - s;
       } else {
-        i = Math.max(0, Math.min(r, t));
-        s = r - i;
+        n = Math.max(0, Math.min(r, t));
+        s = r - n;
         if (s <= 1) return;
       }
       o = true;
       splitscreenSecondaryCollapsed = false;
       removeSplitscreenCollapseHandle();
-      splitscreenContentRatio = i / r;
-      setSplitscreenPanelHeights(i, s, r);
+      splitscreenContentRatio = n / r;
+      setSplitscreenPanelHeights(n, s, r);
     };
     const onUp = () => {
       t.classList.remove("is-dragging");
@@ -4927,13 +4927,13 @@ function initSplitscreenCollapseHandle(e) {
   });
 }
 
-function applySplitscreenDrag(e, t, n) {
-  const {root: i} = getSplitscreenLayout();
-  if (!i) return null;
+function applySplitscreenDrag(e, t, i) {
+  const {root: n} = getSplitscreenLayout();
+  if (!n) return null;
   _splitscreenDragPending = {
     clientY: e,
     rootRect: t,
-    dividerH: n
+    dividerH: i
   };
   if (_splitscreenDragRaf) return null;
   _splitscreenDragRaf = requestAnimationFrame(() => {
@@ -4941,37 +4941,37 @@ function applySplitscreenDrag(e, t, n) {
     const e = _splitscreenDragPending;
     _splitscreenDragPending = null;
     if (!e) return;
-    const {contentH: t, secondaryH: n, avail: i} = calcSplitscreenHeights(e.clientY, e.rootRect, e.dividerH);
+    const {contentH: t, secondaryH: i, avail: n} = calcSplitscreenHeights(e.clientY, e.rootRect, e.dividerH);
     splitscreenSecondaryCollapsed = false;
-    setSplitscreenPanelHeights(t, n, i);
-    syncSplitscreenSubtitles(getSplitscreenPreviewContainer(), getDividerCenterYFromHeights(t, n));
+    setSplitscreenPanelHeights(t, i, n);
+    syncSplitscreenSubtitles(getSplitscreenPreviewContainer(), getDividerCenterYFromHeights(t, i));
   });
   return null;
 }
 
-function finishSplitscreenDrag(e, t, n) {
-  const {root: i} = getSplitscreenLayout();
+function finishSplitscreenDrag(e, t, i) {
+  const {root: n} = getSplitscreenLayout();
   if (_splitscreenDragRaf) {
     cancelAnimationFrame(_splitscreenDragRaf);
     _splitscreenDragRaf = 0;
   }
   _splitscreenDragPending = null;
-  const {contentH: r, secondaryH: o, avail: s} = calcSplitscreenHeights(e, t, n);
+  const {contentH: r, secondaryH: o, avail: s} = calcSplitscreenHeights(e, t, i);
   if (o <= SPLITSCREEN_COLLAPSE_SNAP && !isCanvasSelected()) {
-    i?.classList.remove("is-dragging");
+    n?.classList.remove("is-dragging");
     collapseSplitscreenSecondary();
     notifySubtitleLayoutIdle();
     return;
   }
   const a = r / Math.max(1, s);
   if (splitscreenSecondaryType !== "face_track" && !isCanvasSelected() && a >= SPLITSCREEN_IMMERSIVE_ENTER) {
-    i?.classList.remove("is-dragging");
+    n?.classList.remove("is-dragging");
     collapseSplitscreenSecondary();
     notifySubtitleLayoutIdle();
     return;
   }
   if (maybeEnterReframeImmersiveFromDrag(r, o, s)) {
-    i?.classList.remove("is-dragging");
+    n?.classList.remove("is-dragging");
     notifySubtitleLayoutIdle();
     return;
   }
@@ -4992,7 +4992,7 @@ function finishSplitscreenDrag(e, t, n) {
   }
   setSplitscreenPanelHeights(l, c, s);
   requestAnimationFrame(() => {
-    i?.classList.remove("is-dragging");
+    n?.classList.remove("is-dragging");
     syncSplitscreenSubtitles(getSplitscreenPreviewContainer());
     syncLibrarySplitscreenCropPreview();
     markLibrarySplitscreenDirty();
@@ -5006,8 +5006,8 @@ function finishSplitscreenDrag(e, t, n) {
 }
 
 function applySplitscreenRatio() {
-  const {root: e, divider: t, content: n, secondary: i} = getSplitscreenLayout();
-  if (!e || !t || !n || !i) return;
+  const {root: e, divider: t, content: i, secondary: n} = getSplitscreenLayout();
+  if (!e || !t || !i || !n) return;
   if (_reframeImmersive) {
     applyImmersiveOverlayLayout(_reframePeekOffsetY);
     return;
@@ -5016,11 +5016,11 @@ function applySplitscreenRatio() {
   e.classList.toggle("secondary-collapsed", splitscreenSecondaryCollapsed);
   if (splitscreenSecondaryCollapsed) {
     t.style.display = "none";
-    i.style.display = "none";
-    i.style.flex = "0 0 0px";
-    i.style.opacity = "0";
-    n.style.flex = "1 1 100%";
-    n.style.minHeight = "0";
+    n.style.display = "none";
+    n.style.flex = "0 0 0px";
+    n.style.opacity = "0";
+    i.style.flex = "1 1 100%";
+    i.style.minHeight = "0";
     ensureSplitscreenCollapseHandle();
     syncSplitscreenSubtitles(getSplitscreenPreviewContainer());
     syncLibrarySplitscreenCropPreview();
@@ -5030,13 +5030,13 @@ function applySplitscreenRatio() {
   t.style.display = "";
   t.style.opacity = "1";
   t.style.pointerEvents = "";
-  i.style.display = "";
-  i.style.opacity = "1";
   n.style.display = "";
   n.style.opacity = "1";
-  n.style.flex = "";
-  n.style.minHeight = "";
+  i.style.display = "";
+  i.style.opacity = "1";
   i.style.flex = "";
+  i.style.minHeight = "";
+  n.style.flex = "";
   const r = e.clientHeight || e.getBoundingClientRect().height || e.offsetHeight;
   t.style.flex = "0 0 1px";
   t.style.minHeight = "1px";
@@ -5067,8 +5067,8 @@ function applySecondaryVisual() {
   ensureSplitscreenSecondaryPanels();
   const e = _splitscreenQuery("splitscreenGameplayVideo");
   const t = _splitscreenQuery("splitscreenReframeVideo");
-  const n = _splitscreenQuery("splitscreenFacePanel");
-  const i = _splitscreenQuery("splitscreenBlankPanel");
+  const i = _splitscreenQuery("splitscreenFacePanel");
+  const n = _splitscreenQuery("splitscreenBlankPanel");
   const r = Boolean(window.clipsStudio?._librarySplitscreenCustomize);
   const hideGameplay = () => {
     if (e) e.style.setProperty("display", "none", "important");
@@ -5081,11 +5081,11 @@ function applySecondaryVisual() {
     }
   };
   const hideFace = () => {
-    if (n) n.classList.remove("visible");
+    if (i) i.classList.remove("visible");
   };
   const hideBlank = () => {
-    if (!i) return;
-    i.classList.remove("visible");
+    if (!n) return;
+    n.classList.remove("visible");
     const e = _splitscreenQuery("splitscreenBottom");
     if (e) e.classList.remove("ss-blank-fill", "ss-reframe-fill");
     const t = _splitscreenQuery("splitscreenSecondaryViewport");
@@ -5094,11 +5094,11 @@ function applySecondaryVisual() {
       t.style.removeProperty("visibility");
       t.style.removeProperty("pointer-events");
     }
-    clearTimeout(i._modeClearT);
-    i._modeClearT = setTimeout(() => {
-      if (!i.classList.contains("visible")) {
-        i.classList.remove("mode-black", "mode-blur");
-        const e = i.querySelector(".gp-blank-blur-vid");
+    clearTimeout(n._modeClearT);
+    n._modeClearT = setTimeout(() => {
+      if (!n.classList.contains("visible")) {
+        n.classList.remove("mode-black", "mode-blur");
+        const e = n.querySelector(".gp-blank-blur-vid");
         if (e) {
           try {
             e.pause();
@@ -5125,17 +5125,17 @@ function applySecondaryVisual() {
       t.style.setProperty("visibility", "hidden", "important");
       t.style.setProperty("opacity", "0", "important");
     }
-    const n = _splitscreenQuery("splitscreenBottom");
-    if (n) {
-      n.classList.remove("ss-reframe-fill");
-      n.classList.add("ss-blank-fill");
-    }
+    const i = _splitscreenQuery("splitscreenBottom");
     if (i) {
-      clearTimeout(i._modeClearT);
-      i.classList.add("visible", "mode-blur");
-      i.classList.remove("mode-black");
+      i.classList.remove("ss-reframe-fill");
+      i.classList.add("ss-blank-fill");
+    }
+    if (n) {
+      clearTimeout(n._modeClearT);
+      n.classList.add("visible", "mode-blur");
+      n.classList.remove("mode-black");
       syncBlankBlurVideo();
-      const e = i.querySelector(".gp-blank-blur-vid");
+      const e = n.querySelector(".gp-blank-blur-vid");
       if (e) {
         e.style.setProperty("opacity", "1", "important");
         e.style.setProperty("visibility", "visible", "important");
@@ -5148,10 +5148,10 @@ function applySecondaryVisual() {
       }
     }
   } else if (splitscreenSecondaryType === "face_track") {
-    const i = _splitscreenQuery("splitscreenBottom");
-    if (i) {
-      i.classList.remove("ss-blank-fill");
-      i.classList.add("ss-reframe-fill");
+    const n = _splitscreenQuery("splitscreenBottom");
+    if (n) {
+      n.classList.remove("ss-blank-fill");
+      n.classList.add("ss-reframe-fill");
     }
     hideBlank();
     hideFace();
@@ -5172,9 +5172,9 @@ function applySecondaryVisual() {
     if (r && t) {
       forceLibraryPanelVideoFill(t);
       syncLibrarySplitscreenCropPreview();
-    } else if (n) {
+    } else if (i) {
       hideReframe();
-      n.classList.add("visible");
+      i.classList.add("visible");
     } else if (t) {
       t.style.visibility = "visible";
       t.style.opacity = "1";
@@ -5193,8 +5193,8 @@ function applySecondaryVisual() {
       e.style.removeProperty("opacity");
     }
     hideReframe();
-    const n = r && _librarySplitscreenCropState?.secondaryFromLayer && e?.src && String(e.src).includes("/splitscreen-layer/");
-    if (n) {
+    const i = r && _librarySplitscreenCropState?.secondaryFromLayer && e?.src && String(e.src).includes("/splitscreen-layer/");
+    if (i) {
       syncLibrarySplitscreenCropPreview();
     } else {
       applyGameplayClip(selectedGameplayClip);
@@ -5234,24 +5234,24 @@ function secondaryPanelHintLabel() {
 
 function ensureSplitscreenPanelHint(e, t) {
   if (!e) return null;
-  let n = e.querySelector(":scope > .ss-panel-hover-hint");
-  if (!n) {
-    n = document.createElement("span");
-    n.className = "ss-panel-hover-hint";
-    n.setAttribute("aria-hidden", "true");
-    e.appendChild(n);
+  let i = e.querySelector(":scope > .ss-panel-hover-hint");
+  if (!i) {
+    i = document.createElement("span");
+    i.className = "ss-panel-hover-hint";
+    i.setAttribute("aria-hidden", "true");
+    e.appendChild(i);
   }
-  n.textContent = t || "";
-  return n;
+  i.textContent = t || "";
+  return i;
 }
 
 function wireSplitscreenPanelHoverHints() {
   const e = _splitscreenQuery("splitscreenRoot");
   const t = _splitscreenQuery("splitscreenTop");
-  const n = _splitscreenQuery("splitscreenBottom");
-  if (!e || !t || !n) return;
+  const i = _splitscreenQuery("splitscreenBottom");
+  if (!e || !t || !i) return;
   ensureSplitscreenPanelHint(t, "Your content");
-  ensureSplitscreenPanelHint(n, secondaryPanelHintLabel());
+  ensureSplitscreenPanelHint(i, secondaryPanelHintLabel());
   if (e.dataset.hoverHintsWired === "1") return;
   e.dataset.hoverHintsWired = "1";
   const clearAll = () => {
@@ -5261,11 +5261,11 @@ function wireSplitscreenPanelHoverHints() {
   };
   const bind = (e, t) => {
     e.classList.add("ss-hover-panel");
-    e.addEventListener("pointerenter", n => {
-      if (n.pointerType === "touch") return;
+    e.addEventListener("pointerenter", i => {
+      if (i.pointerType === "touch") return;
       clearAll();
-      const i = t === "content" ? "Your content" : secondaryPanelHintLabel();
-      ensureSplitscreenPanelHint(e, i);
+      const n = t === "content" ? "Your content" : secondaryPanelHintLabel();
+      ensureSplitscreenPanelHint(e, n);
       e.classList.add("ss-panel-outlined", "ss-panel-hint-visible");
     });
     e.addEventListener("pointerleave", () => {
@@ -5273,59 +5273,59 @@ function wireSplitscreenPanelHoverHints() {
     });
   };
   bind(t, "content");
-  bind(n, "secondary");
+  bind(i, "secondary");
 }
 
 function applyGameplayClip(e) {
   selectedGameplayClip = e || selectedGameplayClip || "minecraft_1";
   const t = resolveGameplayClipMeta(selectedGameplayClip);
-  const n = _splitscreenQuery("splitscreenGameplayVideo");
-  if (!n || !t?.filename) return;
-  n.style.position = "";
-  n.style.left = "";
-  n.style.top = "";
-  n.style.width = "100%";
-  n.style.height = "100%";
-  n.style.objectFit = "cover";
-  n.style.maxWidth = "";
-  n.style.transform = "";
-  n.style.transition = "opacity .28s cubic-bezier(.22,.8,.28,1)";
-  n.style.setProperty("display", "block", "important");
-  n.style.removeProperty("visibility");
-  n.style.removeProperty("opacity");
-  const i = resolveGameplayMediaUrl(`/assets/${t.filename}`);
-  if (n.dataset.currentSrc === i && !n.paused && n.readyState >= 2) {
-    n.style.opacity = "1";
+  const i = _splitscreenQuery("splitscreenGameplayVideo");
+  if (!i || !t?.filename) return;
+  i.style.position = "";
+  i.style.left = "";
+  i.style.top = "";
+  i.style.width = "100%";
+  i.style.height = "100%";
+  i.style.objectFit = "cover";
+  i.style.maxWidth = "";
+  i.style.transform = "";
+  i.style.transition = "opacity .28s cubic-bezier(.22,.8,.28,1)";
+  i.style.setProperty("display", "block", "important");
+  i.style.removeProperty("visibility");
+  i.style.removeProperty("opacity");
+  const n = resolveGameplayMediaUrl(`/assets/${t.filename}`);
+  if (i.dataset.currentSrc === n && !i.paused && i.readyState >= 2) {
+    i.style.opacity = "1";
     return;
   }
-  n.dataset.currentSrc = i;
-  n.muted = true;
-  n.loop = true;
-  n.playsInline = true;
-  n.preload = "auto";
-  n.setAttribute("playsinline", "");
-  n.style.opacity = "0";
-  const r = n.querySelector("source");
+  i.dataset.currentSrc = n;
+  i.muted = true;
+  i.loop = true;
+  i.playsInline = true;
+  i.preload = "auto";
+  i.setAttribute("playsinline", "");
+  i.style.opacity = "0";
+  const r = i.querySelector("source");
   if (r) r.remove();
   if (splitscreenVideoCanPlayHandler) {
-    n.removeEventListener("canplay", splitscreenVideoCanPlayHandler);
+    i.removeEventListener("canplay", splitscreenVideoCanPlayHandler);
   }
   splitscreenVideoCanPlayHandler = () => {
-    n.play().catch(() => {});
+    i.play().catch(() => {});
     requestAnimationFrame(() => {
-      n.style.opacity = "1";
+      i.style.opacity = "1";
     });
-    n.removeEventListener("canplay", splitscreenVideoCanPlayHandler);
+    i.removeEventListener("canplay", splitscreenVideoCanPlayHandler);
     splitscreenVideoCanPlayHandler = null;
   };
-  n.addEventListener("canplay", splitscreenVideoCanPlayHandler);
-  n.addEventListener("error", () => {
-    safeLog("Gameplay clip failed to load:", i);
+  i.addEventListener("canplay", splitscreenVideoCanPlayHandler);
+  i.addEventListener("error", () => {
+    safeLog("Gameplay clip failed to load:", n);
   }, {
     once: true
   });
-  n.src = i;
-  n.load();
+  i.src = n;
+  i.load();
 }
 
 window.getSplitscreenConfig = function() {
@@ -5340,7 +5340,7 @@ window.getSplitscreenConfig = function() {
 
 window.applySplitscreenMemoryLayout = function(e, t) {
   if (!e || typeof e !== "object") return false;
-  const n = !t || t.commit !== false;
+  const i = !t || t.commit !== false;
   try {
     if (e.splitscreen_inverted != null) {
       splitscreenInverted = !!e.splitscreen_inverted;
@@ -5349,22 +5349,22 @@ window.applySplitscreenMemoryLayout = function(e, t) {
       splitscreenContentRatio = Number(e.splitscreen_content_ratio);
     }
     const t = String(e.splitscreen_secondary_type || splitscreenSecondaryType || "").toLowerCase();
-    const i = t === "gameplay" ? "face_track" : t;
+    const n = t === "gameplay" ? "face_track" : t;
     const r = !!e.splitscreen_secondary_collapsed || t === "gameplay";
-    if (i === "blank" || i === "blank_blur" || i === "blur") {
-      splitscreenSecondaryType = i === "blur" ? "blank_blur" : i;
+    if (n === "blank" || n === "blank_blur" || n === "blur") {
+      splitscreenSecondaryType = n === "blur" ? "blank_blur" : n;
       splitscreenContentRatio = clampCanvasContentRatio(splitscreenContentRatio);
     } else {
       splitscreenContentRatio = Math.max(.02, Math.min(.98, Number(splitscreenContentRatio) || .5));
     }
     splitscreenSavedRatio = splitscreenContentRatio;
     if (r) {
-      splitscreenSecondaryType = i === "blank" || i === "blank_blur" ? i : "face_track";
+      splitscreenSecondaryType = n === "blank" || n === "blank_blur" ? n : "face_track";
       setSuggestedClipMode(splitscreenSecondaryType, true);
       selectClipMode("focus");
-    } else if (i === "face_track" || i === "blank" || i === "blank_blur" || i === "blur") {
-      const e = i === "blank_blur" || i === "blur" ? "blur" : i;
-      setSuggestedClipMode(i === "blur" ? "blank_blur" : i, false);
+    } else if (n === "face_track" || n === "blank" || n === "blank_blur" || n === "blur") {
+      const e = n === "blank_blur" || n === "blur" ? "blur" : n;
+      setSuggestedClipMode(n === "blur" ? "blank_blur" : n, false);
       selectClipMode(e);
     } else {
       setSuggestedClipMode("face_track", false);
@@ -5377,7 +5377,7 @@ window.applySplitscreenMemoryLayout = function(e, t) {
       applySplitscreenPreview();
       syncSplitscreenSubtitles(getSplitscreenPreviewContainer());
     }
-    if (n) {
+    if (i) {
       markLibrarySplitscreenDirty();
       try {
         rebuildGameplayClipsDropdown();
@@ -5396,22 +5396,22 @@ window.applySplitscreenMemoryLayout = function(e, t) {
 
 window.offerSplitscreenMemorySuggest = function(e, t) {
   if (!e || typeof e !== "object") return false;
-  const n = document.getElementById("templatePreviewModal");
-  if (!n || !n.classList.contains("active")) return false;
-  const i = typeof window.getSplitscreenConfig === "function" ? window.getSplitscreenConfig() : {};
+  const i = document.getElementById("templatePreviewModal");
+  if (!i || !i.classList.contains("active")) return false;
+  const n = typeof window.getSplitscreenConfig === "function" ? window.getSplitscreenConfig() : {};
   window.__solisSsMemPreview = {
-    ratio: Number(i.splitscreen_content_ratio),
-    inverted: !!i.splitscreen_inverted,
-    collapsed: !!i.splitscreen_secondary_collapsed,
-    secondary_type: i.splitscreen_secondary_type,
-    gameplay_clip_id: i.gameplay_clip_id
+    ratio: Number(n.splitscreen_content_ratio),
+    inverted: !!n.splitscreen_inverted,
+    collapsed: !!n.splitscreen_secondary_collapsed,
+    secondary_type: n.splitscreen_secondary_type,
+    gameplay_clip_id: n.gameplay_clip_id
   };
   const r = String(e.splitscreen_secondary_type || "").toLowerCase();
-  const o = r && (String(i.splitscreen_secondary_type || "") !== r || r === "gameplay" && i.gameplay_clip_id !== e.gameplay_clip_id);
+  const o = r && (String(n.splitscreen_secondary_type || "") !== r || r === "gameplay" && n.gameplay_clip_id !== e.gameplay_clip_id);
   const s = Number(e.splitscreen_content_ratio);
-  const a = Number(i.splitscreen_content_ratio);
+  const a = Number(n.splitscreen_content_ratio);
   const l = Number.isFinite(s) && (!Number.isFinite(a) || Math.abs(s - a) > .015);
-  const c = e.splitscreen_inverted != null && !!e.splitscreen_inverted !== !!i.splitscreen_inverted;
+  const c = e.splitscreen_inverted != null && !!e.splitscreen_inverted !== !!n.splitscreen_inverted;
   try {
     hideGameplayPillMenu();
   } catch (e) {}
@@ -5506,37 +5506,37 @@ function getSplitscreenPreviewContainer() {
 function getDividerCenterY(e) {
   const t = e?.querySelector("#splitscreenDivider");
   if (!t || !e) return null;
-  const n = e.getBoundingClientRect();
-  const i = t.getBoundingClientRect();
-  return i.top + i.height / 2 - n.top;
+  const i = e.getBoundingClientRect();
+  const n = t.getBoundingClientRect();
+  return n.top + n.height / 2 - i.top;
 }
 
 function getDividerCenterYFromHeights(e, t) {
-  const n = 1;
+  const i = 1;
   if (typeof splitscreenInverted !== "undefined" && splitscreenInverted) {
-    return (Number(t) || 0) + n / 2;
+    return (Number(t) || 0) + i / 2;
   }
-  return (Number(e) || 0) + n / 2;
+  return (Number(e) || 0) + i / 2;
 }
 
 function storeSubtitleDividerOffset(e, t) {
   if (!e || !t) return;
   if (e.dataset.dividerPinned !== "1") return;
-  const n = getDividerCenterY(t);
-  if (n === null) return;
-  const i = t.getBoundingClientRect();
+  const i = getDividerCenterY(t);
+  if (i === null) return;
+  const n = t.getBoundingClientRect();
   const r = e.getBoundingClientRect();
-  const o = r.top + r.height / 2 - i.top;
+  const o = r.top + r.height / 2 - n.top;
   if (!Number.isFinite(o)) return;
-  e.dataset.dividerOffsetY = String(o - n);
+  e.dataset.dividerOffsetY = String(o - i);
 }
 
 function syncSplitscreenSubtitles(e, t) {
   e = e || getSplitscreenPreviewContainer();
   if (!e || !e.querySelector("#splitscreenDivider")) return;
-  const n = Number.isFinite(t) ? t : getDividerCenterY(e);
-  if (n === null || !Number.isFinite(n)) return;
-  const i = e.getBoundingClientRect().height;
+  const i = Number.isFinite(t) ? t : getDividerCenterY(e);
+  if (i === null || !Number.isFinite(i)) return;
+  const n = e.getBoundingClientRect().height;
   const r = !!e.querySelector("#splitscreenRoot.is-dragging");
   e.querySelectorAll(".sub-text-block").forEach(t => {
     if (t.classList.contains("is-resizing") || t.classList.contains("is-dragging")) {
@@ -5568,11 +5568,11 @@ function syncSplitscreenSubtitles(e, t) {
             window.placeCaptionAtYPct(t, e, l);
           } catch (e) {}
         } else {
-          const e = Math.round(l * i - s / 2);
-          t.style.top = `${Math.max(0, Math.min(Math.max(0, i - s), e))}px`;
+          const e = Math.round(l * n - s / 2);
+          t.style.top = `${Math.max(0, Math.min(Math.max(0, n - s), e))}px`;
         }
-      } else if (Number.isFinite(a) && i > 0) {
-        const e = (a + s / 2) / i;
+      } else if (Number.isFinite(a) && n > 0) {
+        const e = (a + s / 2) / n;
         t.dataset.yPct = String(Math.max(.02, Math.min(.98, e)).toFixed(3));
       }
       return;
@@ -5585,7 +5585,7 @@ function syncSplitscreenSubtitles(e, t) {
     }
     const c = parseFloat(t.dataset.dividerOffsetY || "0");
     if (!Number.isFinite(c)) return;
-    const d = Math.max(0, Math.min(Math.max(0, i - s), Math.round(n + c - s / 2)));
+    const d = Math.max(0, Math.min(Math.max(0, n - s), Math.round(i + c - s / 2)));
     t.style.top = `${d}px`;
     if (typeof window.lockSubtitleCenterX === "function") {
       window.lockSubtitleCenterX(t);
@@ -5601,8 +5601,8 @@ window.storeSubtitleDividerOffset = storeSubtitleDividerOffset;
 window.syncSplitscreenSubtitles = syncSplitscreenSubtitles;
 
 function initializeSplitscreenDivider() {
-  const {divider: e, dividerLine: t, root: n, top: i} = getSplitscreenLayout();
-  if (!e || !t || !n || !i) {
+  const {divider: e, dividerLine: t, root: i, top: n} = getSplitscreenLayout();
+  if (!e || !t || !i || !n) {
     safeLog("⚠ï¸ Missing splitscreen elements");
     return;
   }
@@ -5610,7 +5610,7 @@ function initializeSplitscreenDivider() {
   e.dataset.splitscreenInit = "true";
   e.addEventListener("mousedown", e => e.stopPropagation());
   e.addEventListener("click", e => e.stopPropagation());
-  n.addEventListener("click", e => {
+  i.addEventListener("click", e => {
     if (e.target.closest("#splitscreenDivider")) return;
     if (e.target.closest("#splitscreenCollapseHandle")) {
       if (splitscreenSecondaryCollapsed) expandSplitscreenSecondary();
@@ -5619,14 +5619,14 @@ function initializeSplitscreenDivider() {
     if (e.target.closest(".sub-text-block")) return;
     if (e.target.closest("#ssModeDots")) return;
     if (e.target.closest(".gp-pill-menu") || e.target.closest(".gp-dropdown")) return;
-    if (e.target.closest("#splitscreenReframeVideo") && e.detail > 0 && n.dataset._didPanelDrag === "1") {
-      n.dataset._didPanelDrag = "0";
+    if (e.target.closest("#splitscreenReframeVideo") && e.detail > 0 && i.dataset._didPanelDrag === "1") {
+      i.dataset._didPanelDrag = "0";
       return;
     }
     if (e.target.closest(".preview-audio-toggle")) return;
     const t = e.target.closest("#splitscreenTop");
-    const i = e.target.closest("#splitscreenBottom");
-    if (t || i || e.target.closest(".ss-content-placeholder")) {
+    const n = e.target.closest("#splitscreenBottom");
+    if (t || n || e.target.closest(".ss-content-placeholder")) {
       if (gpPill?.classList.contains("active")) {
         hideGameplayPillMenu();
       } else {
@@ -5634,8 +5634,8 @@ function initializeSplitscreenDivider() {
       }
     }
   });
-  const setDividerHover = n => {
-    e.classList.toggle("is-divider-hot", !!n);
+  const setDividerHover = i => {
+    e.classList.toggle("is-divider-hot", !!i);
     if (!t) return;
     t.style.width = "100%";
     t.style.maxWidth = "none";
@@ -5649,7 +5649,7 @@ function initializeSplitscreenDivider() {
   e.addEventListener("mouseleave", () => setDividerHover(false));
   const startDividerDrag = e => {
     setDividerHover(true);
-    n.classList.add("is-dragging");
+    i.classList.add("is-dragging");
     armPreviewModalDragGuard(1200);
     notifySubtitleLayoutEdit();
     const t = getSplitscreenPreviewContainer();
@@ -5658,10 +5658,10 @@ function initializeSplitscreenDivider() {
       if (e != null) {
         t.querySelectorAll(".sub-text-block:not(.overlay-text-block)").forEach(t => {
           if (t.dataset.aiHook === "1") return;
-          const n = t.offsetHeight || 0;
-          const i = parseFloat(t.style.top);
-          if (!Number.isFinite(i)) return;
-          const r = i + n / 2;
+          const i = t.offsetHeight || 0;
+          const n = parseFloat(t.style.top);
+          if (!Number.isFinite(n)) return;
+          const r = n + i / 2;
           if (t.dataset.dividerPinned === "1" || Math.abs(r - e) < 100) {
             t.dataset.dividerPinned = "1";
             t.dataset.dividerOffsetY = String(r - e);
@@ -5670,10 +5670,10 @@ function initializeSplitscreenDivider() {
         });
       }
     }
-    const i = n.getBoundingClientRect();
+    const n = i.getBoundingClientRect();
     const r = 1;
     let o = e;
-    applySplitscreenDrag(o, i, r);
+    applySplitscreenDrag(o, n, r);
     if (_splitscreenDragRaf) {
       cancelAnimationFrame(_splitscreenDragRaf);
       _splitscreenDragRaf = 0;
@@ -5681,19 +5681,19 @@ function initializeSplitscreenDivider() {
     if (_splitscreenDragPending) {
       const e = _splitscreenDragPending;
       _splitscreenDragPending = null;
-      const {contentH: t, secondaryH: n, avail: i} = calcSplitscreenHeights(e.clientY, e.rootRect, e.dividerH);
+      const {contentH: t, secondaryH: i, avail: n} = calcSplitscreenHeights(e.clientY, e.rootRect, e.dividerH);
       splitscreenSecondaryCollapsed = false;
-      setSplitscreenPanelHeights(t, n, i);
-      syncSplitscreenSubtitles(getSplitscreenPreviewContainer(), getDividerCenterYFromHeights(t, n));
+      setSplitscreenPanelHeights(t, i, n);
+      syncSplitscreenSubtitles(getSplitscreenPreviewContainer(), getDividerCenterYFromHeights(t, i));
     }
     const onMove = e => {
       o = e.clientY;
-      applySplitscreenDrag(o, i, r);
+      applySplitscreenDrag(o, n, r);
       armPreviewModalDragGuard(1200);
     };
     const onUp = () => {
       setDividerHover(false);
-      finishSplitscreenDrag(o, i, r);
+      finishSplitscreenDrag(o, n, r);
       armPreviewModalDragGuard(800);
       document.removeEventListener("mousemove", onMove);
       document.removeEventListener("mouseup", onUp);
@@ -5719,11 +5719,11 @@ function initializeSplitscreenDivider() {
     startDividerDrag(e);
   };
   e.addEventListener("mousedown", t => {
-    const n = e.style.pointerEvents;
+    const i = e.style.pointerEvents;
     e.style.pointerEvents = "none";
-    const i = document.elementFromPoint(t.clientX, t.clientY);
-    e.style.pointerEvents = n;
-    if (i?.closest?.(".sub-text-block, .sub-resize-handle, .overlay-text-block, .sub-pill-menu")) {
+    const n = document.elementFromPoint(t.clientX, t.clientY);
+    e.style.pointerEvents = i;
+    if (n?.closest?.(".sub-text-block, .sub-resize-handle, .overlay-text-block, .sub-pill-menu")) {
       return;
     }
     t.preventDefault();
@@ -5734,13 +5734,13 @@ function initializeSplitscreenDivider() {
     startDividerDrag(t.clientY);
   });
   e.addEventListener("touchstart", t => {
-    const n = t.touches?.[0];
-    if (n) {
+    const i = t.touches?.[0];
+    if (i) {
       const t = e.style.pointerEvents;
       e.style.pointerEvents = "none";
-      const i = document.elementFromPoint(n.clientX, n.clientY);
+      const n = document.elementFromPoint(i.clientX, i.clientY);
       e.style.pointerEvents = t;
-      if (i?.closest?.(".sub-text-block, .sub-resize-handle, .overlay-text-block, .sub-pill-menu")) {
+      if (n?.closest?.(".sub-text-block, .sub-resize-handle, .overlay-text-block, .sub-pill-menu")) {
         return;
       }
     }
@@ -5753,20 +5753,20 @@ function initializeSplitscreenDivider() {
   }, {
     passive: false
   });
-  bindSeamHoldDrag(n, startDividerDrag);
+  bindSeamHoldDrag(i, startDividerDrag);
 }
 
 function bindSeamHoldDrag(e, t) {
   if (!e || e.dataset.seamHoldBound === "1") return;
   e.dataset.seamHoldBound = "1";
-  const n = 10;
-  let i = null;
+  const i = 10;
+  let n = null;
   const clear = () => {
-    if (!i) return;
-    window.removeEventListener("pointermove", i.onMove, true);
-    window.removeEventListener("pointerup", i.onUp, true);
-    window.removeEventListener("pointercancel", i.onUp, true);
-    i = null;
+    if (!n) return;
+    window.removeEventListener("pointermove", n.onMove, true);
+    window.removeEventListener("pointerup", n.onUp, true);
+    window.removeEventListener("pointercancel", n.onUp, true);
+    n = null;
   };
   e.addEventListener("pointerdown", r => {
     if (r.pointerType === "mouse" && r.button !== 0) return;
@@ -5779,27 +5779,27 @@ function bindSeamHoldDrag(e, t) {
     const a = o.getBoundingClientRect();
     const l = s.getBoundingClientRect();
     const c = r.clientY;
-    const d = splitscreenInverted ? c >= a.bottom - n && c <= l.top + n : c >= l.bottom - n && c <= a.top + n;
+    const d = splitscreenInverted ? c >= a.bottom - i && c <= l.top + i : c >= l.bottom - i && c <= a.top + i;
     if (!d) return;
     const p = r.clientY;
     const u = r.clientX;
-    const onMove = n => {
-      if (!i) return;
-      const r = n.clientY - p;
-      const o = n.clientX - u;
-      if (!i.started) {
+    const onMove = i => {
+      if (!n) return;
+      const r = i.clientY - p;
+      const o = i.clientX - u;
+      if (!n.started) {
         if (Math.abs(r) < 10) return;
         if (Math.abs(o) > Math.abs(r) * 1.1) {
           clear();
           return;
         }
-        i.started = true;
+        n.started = true;
         e.dataset._didPanelDrag = "1";
-        t(n.clientY);
+        t(i.clientY);
       }
     };
     const onUp = () => clear();
-    i = {
+    n = {
       onMove: onMove,
       onUp: onUp,
       started: false
@@ -5831,8 +5831,8 @@ function confirmGameplayClip() {
 }
 
 function showNotification(e, t = "info") {
-  const n = typeof CONFIG !== "undefined" && CONFIG.UI?.NOTIFICATION_DURATION_MS || 4e3;
-  const i = 320;
+  const i = typeof CONFIG !== "undefined" && CONFIG.UI?.NOTIFICATION_DURATION_MS || 4e3;
+  const n = 320;
   let r = document.getElementById("notificationContainer");
   if (!r) {
     r = document.createElement("div");
@@ -5866,9 +5866,9 @@ function showNotification(e, t = "info") {
     o.classList.add("is-leaving");
     o._removeTimer = setTimeout(() => {
       o.remove();
-    }, i);
+    }, n);
   };
-  o._hideTimer = setTimeout(dismiss, n);
+  o._hideTimer = setTimeout(dismiss, i);
   o.addEventListener("click", dismiss);
 }
 
@@ -5885,10 +5885,10 @@ function handleGoogleCallback() {
     setTimeout(() => window.location.href = "/login.html", 2e3);
     return;
   }
-  const n = e.get("token");
-  if (n) {
+  const i = e.get("token");
+  if (i) {
     try {
-      sessionStorage.setItem("auth_token", n);
+      sessionStorage.setItem("auth_token", i);
       safeLog("✅ Auth token saved for WebSocket connection");
     } catch (e) {
       safeLog("⚠ï¸ Failed to save auth token to sessionStorage:", e.message);
@@ -5919,8 +5919,8 @@ function init() {
   document.documentElement.setAttribute("data-theme", e);
   currentTheme = e;
   const t = new URLSearchParams(window.location.search);
-  const n = t.get("token");
-  if (n) {
+  const i = t.get("token");
+  if (i) {
     handleGoogleCallback();
     return;
   }
@@ -5933,8 +5933,8 @@ function init() {
   chatHistory = [];
   setupEventListeners();
   updateTokenDisplay();
-  const i = localStorage.getItem("sidebarExpanded");
-  if (i === "true") {
+  const n = localStorage.getItem("sidebarExpanded");
+  if (n === "true") {
     sidebar.classList.add("expanded");
   }
   const r = document.querySelector(".input-section");
@@ -5959,10 +5959,10 @@ function init() {
   }
   document.addEventListener("click", function(e) {
     const t = document.getElementById("featuresTabContainer");
-    const n = document.getElementById("plusFeaturesBtn");
+    const i = document.getElementById("plusFeaturesBtn");
     if (t && !e.target.closest("#featuresTabContainer") && !e.target.closest("#plusFeaturesBtn")) {
       t.classList.remove("active");
-      if (n) n.classList.remove("active");
+      if (i) i.classList.remove("active");
     }
   });
   const a = document.createElement("link");
@@ -6016,18 +6016,18 @@ function isValidImageUrl(e) {
 }
 
 function debounce(e, t) {
-  let n;
-  let i = 0;
+  let i;
+  let n = 0;
   return function debounced(...r) {
     const o = Date.now();
-    const s = o - i;
-    clearTimeout(n);
+    const s = o - n;
+    clearTimeout(i);
     if (s >= t) {
-      i = o;
+      n = o;
       e.apply(this, r);
     } else {
-      n = setTimeout(() => {
-        i = Date.now();
+      i = setTimeout(() => {
+        n = Date.now();
         e.apply(this, r);
       }, t - s);
     }
@@ -6036,20 +6036,20 @@ function debounce(e, t) {
 
 function safeLog() {}
 
-async function fetchWithTimeout(e, t = {}, n = 1e4) {
-  const i = new AbortController;
-  const r = setTimeout(() => i.abort(), n);
+async function fetchWithTimeout(e, t = {}, i = 1e4) {
+  const n = new AbortController;
+  const r = setTimeout(() => n.abort(), i);
   try {
-    const n = await fetch(e, {
+    const i = await fetch(e, {
       ...t,
-      signal: i.signal
+      signal: n.signal
     });
     clearTimeout(r);
-    return n;
+    return i;
   } catch (e) {
     clearTimeout(r);
     if (e.name === "AbortError") {
-      throw new Error(`Request timeout after ${n}ms`);
+      throw new Error(`Request timeout after ${i}ms`);
     }
     throw e;
   }
@@ -6069,10 +6069,10 @@ class ClipSlotSystem {
   addClip(e) {
     const t = Object.values(this.slots).filter(e => e !== null).length;
     if (t < 5) {
-      const n = 5 - t;
-      this.slots[n] = {
+      const i = 5 - t;
+      this.slots[i] = {
         ...e,
-        slotNumber: n,
+        slotNumber: i,
         addedAt: (new Date).toISOString()
       };
     } else {
@@ -6124,6 +6124,10 @@ class ClipsStudio {
     this.currentProjectId = null;
     this.selectedTemplate = null;
     this._awaitingUrlForTemplate = false;
+    this._autoOpenedPreview = false;
+    this._pasteAutoSubmitT = null;
+    this._lastAutoSubmittedUrl = "";
+    this._lastAutoSubmittedAt = 0;
     this.templates = {};
     this.isMonitoring = false;
     this.monitoringIntervals = new Map;
@@ -6201,21 +6205,21 @@ class ClipsStudio {
     const e = document.getElementById("activityList");
     if (!e) return;
     const t = e.querySelector(".activity-item");
-    const n = this.libraryItems.sort((e, t) => t.timestamp - e.timestamp).slice(0, 3);
-    n.forEach(t => {
-      const n = this.getTimeAgo(t.timestamp);
-      const i = `\n                <div class="activity-item">\n                    <div class="activity-icon">\n                        <i class="fas fa-video"></i>\n                    </div>\n                    <div class="activity-content">\n                        <div class="activity-title">Created a clip</div>\n                        <div class="activity-description">${t.name || "Untitled Clip"}</div>\n                    </div>\n                    <div class="activity-time">${n}</div>\n                </div>\n            `;
-      e.insertAdjacentHTML("beforeend", i);
+    const i = this.libraryItems.sort((e, t) => t.timestamp - e.timestamp).slice(0, 3);
+    i.forEach(t => {
+      const i = this.getTimeAgo(t.timestamp);
+      const n = `\n                <div class="activity-item">\n                    <div class="activity-icon">\n                        <i class="fas fa-video"></i>\n                    </div>\n                    <div class="activity-content">\n                        <div class="activity-title">Created a clip</div>\n                        <div class="activity-description">${t.name || "Untitled Clip"}</div>\n                    </div>\n                    <div class="activity-time">${i}</div>\n                </div>\n            `;
+      e.insertAdjacentHTML("beforeend", n);
     });
   }
   getTimeAgo(e) {
     const t = new Date;
-    const n = t - new Date(e);
-    const i = Math.floor(n / 6e4);
-    const r = Math.floor(n / 36e5);
-    const o = Math.floor(n / 864e5);
-    if (i < 1) return "0 minutes ago";
-    if (i < 60) return `${i} minute${i > 1 ? "s" : ""} ago`;
+    const i = t - new Date(e);
+    const n = Math.floor(i / 6e4);
+    const r = Math.floor(i / 36e5);
+    const o = Math.floor(i / 864e5);
+    if (n < 1) return "0 minutes ago";
+    if (n < 60) return `${n} minute${n > 1 ? "s" : ""} ago`;
     if (r < 24) return `${r} hour${r > 1 ? "s" : ""} ago`;
     if (o < 7) return `${o} day${o > 1 ? "s" : ""} ago`;
     return e.toLocaleDateString();
@@ -6231,12 +6235,12 @@ class ClipsStudio {
       });
       if (t.ok) {
         const e = await t.json();
-        const n = Array.isArray(e.ids) ? e.ids : Object.keys(e.templates || e || {});
-        const i = this.getTemplateCatalog();
+        const i = Array.isArray(e.ids) ? e.ids : Object.keys(e.templates || e || {});
+        const n = this.getTemplateCatalog();
         this.templates = {};
-        n.forEach(e => {
-          if (i[e]) this.templates[e] = {
-            ...i[e]
+        i.forEach(e => {
+          if (n[e]) this.templates[e] = {
+            ...n[e]
           };
         });
         safeLog("✅ Templates loaded:", Object.keys(this.templates));
@@ -6279,13 +6283,13 @@ class ClipsStudio {
     });
     this.safeAddEventListener(".template-card", "click", e => {
       const t = e.currentTarget;
-      const n = t.dataset.template;
-      if (n === "splitscreen") {
+      const i = t.dataset.template;
+      if (i === "splitscreen") {
         e.preventDefault();
         e.stopPropagation();
-        this.checkTemplateAccess(n);
+        this.checkTemplateAccess(i);
       } else {
-        this.openTemplatePreviewModal(n, t);
+        this.openTemplatePreviewModal(i, t);
       }
     });
     this.safeAddEventListenerById("closeProFeatureModal", "click", () => {
@@ -6368,15 +6372,16 @@ class ClipsStudio {
         setTimeout(() => {
           _eagerWarm(e.value.trim());
           this.syncTemplateConfirmButton();
+          this._scheduleAutoSubmitFromPaste();
         }, 50);
       });
       e.addEventListener("input", () => {
         this.clearUrlSubmitUpgradeCta();
         clearTimeout(t);
-        const n = e.value.trim();
+        const i = e.value.trim();
         this.syncTemplateConfirmButton();
-        if (n && this.isValidMediaUrl(n)) {
-          t = setTimeout(() => _eagerWarm(n), 300);
+        if (i && this.isValidMediaUrl(i)) {
+          t = setTimeout(() => _eagerWarm(i), 300);
         }
       });
     }
@@ -6434,10 +6439,10 @@ class ClipsStudio {
       if (!e || e === document.body || e === document.documentElement) return false;
       const t = document.getElementById("youtubeUrlInput");
       if (e === t) return false;
-      const n = (e.tagName || "").toUpperCase();
+      const i = (e.tagName || "").toUpperCase();
       if (e.isContentEditable) return true;
-      if (n === "TEXTAREA" || n === "SELECT") return true;
-      if (n === "INPUT") {
+      if (i === "TEXTAREA" || i === "SELECT") return true;
+      if (i === "INPUT") {
         const t = String(e.type || "text").toLowerCase();
         return ![ "button", "submit", "checkbox", "radio", "file", "hidden", "reset", "image" ].includes(t);
       }
@@ -6453,10 +6458,10 @@ class ClipsStudio {
     const applyPastedUrl = e => {
       const t = String(e || "").trim();
       if (!t || !this.isValidMediaUrl(t)) return false;
-      const n = document.getElementById("youtubeUrlInput");
-      if (!n) return false;
-      const i = document.getElementById("createSection");
-      const r = !!i?.classList.contains("active");
+      const i = document.getElementById("youtubeUrlInput");
+      if (!i) return false;
+      const n = document.getElementById("createSection");
+      const r = !!n?.classList.contains("active");
       if (!r) {
         try {
           this.goToCreateUrlSubmit();
@@ -6466,28 +6471,23 @@ class ClipsStudio {
           } catch (e) {}
         }
       }
-      n.value = t;
+      i.value = t;
       try {
-        n.dispatchEvent(new Event("input", {
+        i.dispatchEvent(new Event("input", {
           bubbles: true
         }));
       } catch (e) {}
       try {
-        n.focus({
+        i.focus({
           preventScroll: true
         });
-        n.select();
+        i.select();
       } catch (e) {
         try {
-          n.focus();
+          i.focus();
         } catch (e) {}
       }
-      const o = document.getElementById("processUrlBtn");
-      if (o) {
-        o.classList.add("needs-url-pulse");
-        clearTimeout(o._pulseT);
-        o._pulseT = setTimeout(() => o.classList.remove("needs-url-pulse"), 1600);
-      }
+      this._scheduleAutoSubmitFromPaste();
       return true;
     };
     document.addEventListener("paste", e => {
@@ -6496,8 +6496,8 @@ class ClipsStudio {
         const t = document.getElementById("youtubeUrlInput");
         if (document.activeElement === t) return;
         if (isOtherEditable(document.activeElement)) return;
-        const n = e.clipboardData?.getData("text/plain") || "";
-        if (!applyPastedUrl(n)) return;
+        const i = e.clipboardData?.getData("text/plain") || "";
+        if (!applyPastedUrl(i)) return;
         e.preventDefault();
       } catch (e) {}
     });
@@ -6507,9 +6507,9 @@ class ClipsStudio {
       this._awaitingUrlForTemplate = false;
       const e = document.getElementById("portalContainer");
       const t = document.getElementById("clipsContainer");
-      const n = document.getElementById("dashboardContainer");
-      const i = document.getElementById("customEditorContainer");
-      [ e, n, i ].forEach(e => {
+      const i = document.getElementById("dashboardContainer");
+      const n = document.getElementById("customEditorContainer");
+      [ e, i, n ].forEach(e => {
         if (!e) return;
         e.style.display = "none";
         e.classList.remove("active");
@@ -6555,11 +6555,11 @@ class ClipsStudio {
             } catch (e) {}
           }
         }
-        const n = document.getElementById("processUrlBtn");
-        if (n) {
-          n.classList.add("needs-url-pulse");
-          clearTimeout(n._pulseT);
-          n._pulseT = setTimeout(() => n.classList.remove("needs-url-pulse"), 1800);
+        const i = document.getElementById("processUrlBtn");
+        if (i) {
+          i.classList.add("needs-url-pulse");
+          clearTimeout(i._pulseT);
+          i._pulseT = setTimeout(() => i.classList.remove("needs-url-pulse"), 1800);
         }
       };
       requestAnimationFrame(() => setTimeout(focusUrl, 60));
@@ -6584,9 +6584,9 @@ class ClipsStudio {
       t.classList.toggle("active", t.dataset.tab === e);
     });
     document.querySelectorAll(".clips-section").forEach(t => {
-      const n = t.id === `${e}Section`;
-      t.classList.toggle("active", n);
-      t.style.display = n ? "block" : "none";
+      const i = t.id === `${e}Section`;
+      t.classList.toggle("active", i);
+      t.style.display = i ? "block" : "none";
     });
     this.currentTab = e;
     this.moveSlider();
@@ -6595,17 +6595,17 @@ class ClipsStudio {
       localStorage.setItem("clipsActiveTab", e);
     } catch (e) {}
     const t = document.querySelector(`.clips-sub-item[data-tab="${e}"]`);
-    const n = document.getElementById("clipsSubPane");
-    const i = document.querySelector(".clips-sub-pill");
+    const i = document.getElementById("clipsSubPane");
+    const n = document.querySelector(".clips-sub-pill");
     if (typeof window.updateMobileClipsPillIndicator === "function" && window.innerWidth <= 768) {
       window.updateMobileClipsPillIndicator(e);
-    } else if (t && n && i) {
-      const e = window.getComputedStyle(i);
+    } else if (t && i && n) {
+      const e = window.getComputedStyle(n);
       if (e.display !== "contents") {
-        const e = i.getBoundingClientRect();
+        const e = n.getBoundingClientRect();
         const r = t.getBoundingClientRect();
-        n.style.left = `${r.left - e.left}px`;
-        n.style.transform = "";
+        i.style.left = `${r.left - e.left}px`;
+        i.style.transform = "";
       }
     }
     if (e === "processing") {
@@ -6619,9 +6619,9 @@ class ClipsStudio {
       }
       this.updateLibraryView();
       const t = this._libraryLastLoaded && Date.now() - this._libraryLastLoaded < e;
-      const n = Array.isArray(this.libraryCollections) && this.libraryCollections.length > 0;
-      const i = (!this.libraryItems || this.libraryItems.length === 0) && !n;
-      if ((!t || i) && typeof this.loadLibraryItems === "function") {
+      const i = Array.isArray(this.libraryCollections) && this.libraryCollections.length > 0;
+      const n = (!this.libraryItems || this.libraryItems.length === 0) && !i;
+      if ((!t || n) && typeof this.loadLibraryItems === "function") {
         this.loadLibraryItems({
           soft: true
         }).catch(() => {});
@@ -6652,8 +6652,8 @@ class ClipsStudio {
     t.classList.add("selected");
     this.selectedTemplate = e;
     this.showConfirmationButtons(true);
-    const n = this.templates[e];
-    if (n && n.supportsSlotSystem) {
+    const i = this.templates[e];
+    if (i && i.supportsSlotSystem) {
       this.showSlotSystemInfo();
     }
   }
@@ -6665,16 +6665,16 @@ class ClipsStudio {
     this.openTemplatePreviewModal(e, t);
   }
   showProFeatureModal(e, t) {
-    const n = document.querySelector(".pro-modal-overlay");
-    if (n) n.remove();
+    const i = document.querySelector(".pro-modal-overlay");
+    if (i) i.remove();
     if (!document.getElementById("pro-modal-styles")) {
       const e = document.createElement("style");
       e.id = "pro-modal-styles";
       e.textContent = `\n@keyframes fadeInOverlay {\n    from { opacity: 0; }\n    to { opacity: 1; }\n}\n\n@keyframes slideUp {\n    from { opacity: 0; transform: translateY(16px) scale(0.98); }\n    to { opacity: 1; transform: translateY(0) scale(1); }\n}\n\n@keyframes fadeUp {\n    from { opacity: 0; transform: translateY(10px); }\n    to { opacity: 1; transform: translateY(0); }\n}\n\n@keyframes popIn {\n    0%   { transform: scale(0.7); opacity: 0; }\n    70%  { transform: scale(1.05); opacity: 1; }\n    100% { transform: scale(1); opacity: 1; }\n}\n\n.pro-modal-overlay {\n    position: fixed !important;\n    inset: 0 !important;\n    background: rgba(0, 0, 0, 0.4) !important;\n    display: flex !important;\n    align-items: center !important;\n    justify-content: center !important;\n    z-index: 9999 !important;\n    padding: 20px !important;\n    opacity: 0;\n    animation: fadeInOverlay 0.25s ease forwards;\n}\n\n.pro-modal {\n    background: #fff;\n    border-radius: 24px;\n    width: 100%;\n    max-width: 800px;\n    display: flex;\n    box-shadow:\n        0 24px 64px rgba(0, 0, 0, 0.1),\n        0 0 0 1px rgba(0, 0, 0, 0.06);\n    opacity: 0;\n    transform: translateY(16px) scale(0.98);\n    animation: slideUp 0.35s cubic-bezier(0.4, 0, 0.2, 1) 0.08s forwards;\n    overflow: hidden;\n    min-height: 420px;\n}\n\n.pro-panel-left {\n    width: 52%;\n    background: #fdf8f6;\n    padding: 40px 36px;\n    display: flex;\n    flex-direction: column;\n    justify-content: space-between;\n    position: relative;\n    border-right: 1px solid #efefef;\n    overflow: hidden;\n}\n\n.pro-panel-left::before {\n    content: '';\n    position: absolute;\n    bottom: -80px;\n    left: -80px;\n    width: 220px;\n    height: 220px;\n    border-radius: 50%;\n    background: radial-gradient(circle, rgba(255, 107, 53, 0.12), transparent 70%);\n    pointer-events: none;\n}\n\n.pro-panel-left::after {\n    content: '';\n    position: absolute;\n    top: -60px;\n    right: -60px;\n    width: 180px;\n    height: 180px;\n    border-radius: 50%;\n    background: radial-gradient(circle, rgba(255, 107, 53, 0.08), transparent 70%);\n    pointer-events: none;\n}\n\n.pro-left-top {\n    position: relative;\n    z-index: 1;\n}\n\n.pro-lock-wrap {\n    width: 52px;\n    height: 52px;\n    background: #fff;\n    border-radius: 14px;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    margin-bottom: 20px;\n    border: 1px solid rgba(0, 0, 0, 0.07);\n    box-shadow: 0 2px 10px rgba(255, 107, 53, 0.1);\n    opacity: 0;\n    animation: popIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;\n}\n\n.pro-title {\n    font-family: 'Plus Jakarta Sans', sans-serif;\n    font-size: 26px;\n    font-weight: 800;\n    color: #111;\n    line-height: 1.2;\n    letter-spacing: -0.5px;\n    margin-bottom: 8px;\n    opacity: 0;\n    animation: fadeUp 0.3s ease 0.42s forwards;\n}\n\n.pro-subtitle {\n    font-size: 13px;\n    color: #666;\n    line-height: 1.6;\n    max-width: 260px;\n    opacity: 0;\n    animation: fadeUp 0.3s ease 0.5s forwards;\n}\n\n.pro-template-preview {\n    position: relative;\n    z-index: 1;\n    background: #fff;\n    border: 1px solid #efefef;\n    border-radius: 14px;\n    overflow: hidden;\n    opacity: 0;\n    animation: fadeUp 0.3s ease 0.58s forwards;\n}\n\n.pro-tpb-preview {\n    background: #f5f4f2;\n    height: 80px;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    position: relative;\n}\n\n.pro-tpb-pro {\n    position: absolute;\n    top: 8px;\n    right: 8px;\n    background: #ff6b35;\n    color: #fff;\n    font-size: 9px;\n    font-weight: 800;\n    letter-spacing: 0.6px;\n    padding: 3px 8px;\n    border-radius: 6px;\n    text-transform: uppercase;\n    font-family: 'Plus Jakarta Sans', sans-serif;\n}\n\n.pro-tpb-info {\n    padding: 10px 12px;\n    display: flex;\n    align-items: center;\n    justify-content: space-between;\n}\n\n.pro-tpb-info strong {\n    font-size: 12px;\n    font-weight: 700;\n    color: #111;\n    font-family: 'Plus Jakarta Sans', sans-serif;\n}\n\n.pro-tpb-info span {\n    font-size: 11px;\n    color: #bbb;\n}\n\n.pro-locked-overlay {\n    position: absolute;\n    inset: 0;\n    background: rgba(253, 248, 246, 0.6);\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.pro-panel-right {\n    width: 48%;\n    padding: 40px 32px;\n    display: flex;\n    flex-direction: column;\n    justify-content: space-between;\n    position: relative;\n    background: #fff;\n}\n\n.pro-close-btn {\n    position: absolute;\n    top: 16px;\n    right: 16px;\n    width: 30px;\n    height: 30px;\n    border-radius: 8px;\n    border: 1px solid #efefef;\n    background: transparent;\n    cursor: pointer;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    color: #bbb;\n    transition: background 0.15s ease, color 0.15s ease;\n    padding: 0;\n}\n\n.pro-close-btn:hover {\n    background: #f5f5f5;\n    color: #111;\n}\n\n.pro-plans-label {\n    font-size: 10px;\n    font-weight: 700;\n    letter-spacing: 0.9px;\n    text-transform: uppercase;\n    color: #bbb;\n    margin-bottom: 10px;\n    font-family: 'Plus Jakarta Sans', sans-serif;\n    opacity: 0;\n    animation: fadeUp 0.3s ease 0.55s forwards;\n}\n\n.pro-plan-options {\n    display: flex;\n    flex-direction: column;\n    gap: 7px;\n    flex: 1;\n    margin-bottom: 20px;\n    opacity: 0;\n    animation: fadeUp 0.3s ease 0.63s forwards;\n}\n\n.pro-plan-card {\n    border: 1.5px solid #efefef;\n    border-radius: 12px;\n    padding: 12px 14px;\n    display: flex;\n    align-items: center;\n    gap: 11px;\n    cursor: pointer;\n    transition: border-color 0.18s ease, background 0.18s ease;\n    background: #fff;\n    position: relative;\n}\n\n.pro-plan-card:hover {\n    border-color: rgba(255, 107, 53, 0.3);\n    background: #fff9f7;\n}\n\n.pro-plan-card.highlighted {\n    border-color: #ff6b35;\n    background: #fff9f7;\n}\n\n.pro-plan-card-icon {\n    width: 34px;\n    height: 34px;\n    border-radius: 9px;\n    background: #fff3ef;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    flex-shrink: 0;\n    border: 1px solid rgba(255, 107, 53, 0.15);\n    transition: background 0.18s ease;\n}\n\n.pro-plan-card.highlighted .pro-plan-card-icon {\n    background: #ff6b35;\n    border-color: #ff6b35;\n}\n\n.pro-plan-card-body {\n    flex: 1;\n}\n\n.pro-plan-card-body strong {\n    display: block;\n    font-size: 13px;\n    font-weight: 700;\n    color: #111;\n    margin-bottom: 1px;\n    font-family: 'Plus Jakarta Sans', sans-serif;\n}\n\n.pro-plan-card-body span {\n    font-size: 11px;\n    color: #aaa;\n}\n\n.pro-plan-card-price {\n    font-size: 13px;\n    font-weight: 700;\n    color: #666;\n    white-space: nowrap;\n    font-family: 'Plus Jakarta Sans', sans-serif;\n}\n\n.pro-plan-card.highlighted .pro-plan-card-price {\n    color: #ff6b35;\n}\n\n.pro-popular-tag {\n    position: absolute;\n    top: -1px;\n    right: 12px;\n    background: #ff6b35;\n    color: #fff;\n    font-size: 9px;\n    font-weight: 700;\n    letter-spacing: 0.4px;\n    text-transform: uppercase;\n    padding: 3px 8px;\n    border-radius: 0 0 6px 6px;\n    font-family: 'Plus Jakarta Sans', sans-serif;\n}\n\n.pro-right-footer {\n    opacity: 0;\n    animation: fadeUp 0.3s ease 0.72s forwards;\n}\n\n.pro-cta-btn {\n    width: 100%;\n    padding: 13px;\n    background: linear-gradient(135deg, #ff7a50, #ff6b35);\n    color: #fff;\n    border: none;\n    border-radius: 12px;\n    font-family: 'Plus Jakarta Sans', sans-serif;\n    font-size: 14px;\n    font-weight: 700;\n    cursor: pointer;\n    transition: box-shadow 0.2s ease, background 0.2s ease;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    gap: 8px;\n    margin-bottom: 10px;\n    box-shadow: 0 3px 12px rgba(255, 107, 53, 0.35);\n}\n\n.pro-cta-btn:hover {\n    background: linear-gradient(135deg, #ff6b35, #ff5722);\n    box-shadow: 0 5px 18px rgba(255, 107, 53, 0.45);\n}\n\n.pro-cta-btn:active {\n    transform: scale(0.98);\n}\n\n.pro-fine-print {\n    text-align: center;\n    font-size: 11px;\n    color: #bbb;\n}\n\n.pro-fine-print a {\n    color: #bbb;\n    text-decoration: underline;\n    text-underline-offset: 2px;\n    cursor: pointer;\n    transition: color 0.15s ease;\n}\n\n.pro-fine-print a:hover {\n    color: #666;\n}\n\n@media (max-width: 768px) {\n    .pro-modal {\n        flex-direction: column;\n        border-radius: 20px;\n    }\n\n    .pro-panel-left {\n        width: 100%;\n        border-right: none;\n        border-bottom: 1px solid #efefef;\n        padding: 32px 28px;\n    }\n\n    .pro-panel-right {\n        width: 100%;\n        padding: 32px 28px;\n    }\n}\n            `;
       document.head.appendChild(e);
     }
-    const i = document.createElement("div");
-    i.className = "pro-modal-overlay";
+    const n = document.createElement("div");
+    n.className = "pro-modal-overlay";
     const r = {
       splitscreen: {
         title: "This is a Pro template",
@@ -6684,32 +6684,32 @@ class ClipsStudio {
       }
     };
     const o = r[e] || r["splitscreen"];
-    i.innerHTML = `\n            <div class="pro-modal">\n                <div class="pro-panel-left">\n                    <div class="pro-left-top">\n                        <div class="pro-lock-wrap">\n                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FF6A3D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">\n                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>\n                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>\n                            </svg>\n                        </div>\n                        <h1 class="pro-title">${o.title}</h1>\n                        <p class="pro-subtitle">${o.subtitle}</p>\n                    </div>\n\n                    <div class="pro-template-preview">\n                        <div class="pro-tpb-preview">\n                            <div class="pro-tpb-pro">PRO</div>\n                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C8C4BE" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">\n                                <rect x="3" y="3" width="7" height="18" rx="1"/>\n                                <rect x="14" y="3" width="7" height="18" rx="1"/>\n                            </svg>\n                            <div class="pro-locked-overlay">\n                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF6A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>\n                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>\n                                </svg>\n                            </div>\n                        </div>\n                        <div class="pro-tpb-info">\n                            <div>\n                                <strong>${o.templateName}</strong>\n                                <span style="display:block;margin-top:2px;font-size:11px;color:#AAA">${o.templateDesc}</span>\n                            </div>\n                            <span style="font-size:11px;color:#FF6A3D;font-weight:600;background:#FFF3EF;padding:3px 9px;border-radius:100px;border:1px solid #FFD0C2">PRO</span>\n                        </div>\n                    </div>\n                </div>\n\n                <div class="pro-panel-right">\n                    <button class="pro-close-btn">\n                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">\n                            <line x1="18" y1="6" x2="6" y2="18"/>\n                            <line x1="6" y1="6" x2="18" y2="18"/>\n                        </svg>\n                    </button>\n\n                    <div>\n                        <div class="pro-plans-label">Unlock with a plan</div>\n                        <div class="pro-plan-options">\n                            <div class="pro-plan-card">\n                                <div class="pro-plan-card-icon">\n                                   <svg width="20" height="20" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">\n                                    <defs>\n                                        <linearGradient id="basicGrad" x1="0%" y1="0%" x2="100%" y2="100%">\n                                            <stop offset="0%" style="stop-color:#f1f5f9;stop-opacity:1"></stop>\n                                            <stop offset="50%" style="stop-color:#cbd5e1;stop-opacity:1"></stop>\n                                            <stop offset="100%" style="stop-color:#94a3b8;stop-opacity:1"></stop>\n                                        </linearGradient>\n                                    </defs>\n                                    <circle cx="50" cy="50" r="16" fill="url(#basicGrad)"></circle>\n                                    <ellipse rx="42" ry="18" cx="50" cy="50" stroke="url(#basicGrad)" stroke-width="10" fill="none" transform="rotate(45 50 50)" stroke-linecap="round"></ellipse>\n                                    <ellipse rx="42" ry="18" cx="50" cy="50" stroke="url(#basicGrad)" stroke-width="10" fill="none" transform="rotate(-45 50 50)" stroke-linecap="round"></ellipse>\n                                </svg>\n                                </div>\n                                <div class="pro-plan-card-body">\n                                    <strong>Basic</strong>\n                                    <span>Any length · 5 uploads/day · up to 3 clips</span>\n                                </div>\n                                <div class="pro-plan-card-price">$9.99/mo</div>\n                            </div>\n\n                            <div class="pro-plan-card highlighted">\n                                <div class="pro-popular-tag">Popular</div>\n                                <div class="pro-plan-card-icon">\n                                   <svg width="20" height="20" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">\n                                    <defs>\n                                        <linearGradient id="primeGrad" x1="0%" y1="0%" x2="100%" y2="100%">\n                                            <stop offset="0%" style="stop-color:#fff176;stop-opacity:1"></stop>\n                                            <stop offset="50%" style="stop-color:#ffd600;stop-opacity:1"></stop>\n                                            <stop offset="100%" style="stop-color:#ff9100;stop-opacity:1"></stop>\n                                        </linearGradient>\n                                    </defs>\n                                    <circle cx="50" cy="50" r="16" fill="url(#primeGrad)"></circle>\n                                    <ellipse rx="42" ry="18" cx="50" cy="50" stroke="url(#primeGrad)" stroke-width="12" fill="none" transform="rotate(45 50 50)" stroke-linecap="round"></ellipse>\n                                    <ellipse rx="42" ry="18" cx="50" cy="50" stroke="url(#primeGrad)" stroke-width="12" fill="none" transform="rotate(-45 50 50)" stroke-linecap="round"></ellipse>\n                                </svg>\n                                </div>\n                                <div class="pro-plan-card-body">\n                                    <strong>Prime</strong>\n                                    <span>Any length · 10/day · up to 5 clips</span>\n                                </div>\n                                <div class="pro-plan-card-price">$23.99/mo</div>\n                            </div>\n\n                            <div class="pro-plan-card">\n                                <div class="pro-plan-card-icon">\n                                <svg width="20" height="20" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">\n                                    <defs>\n                                        <linearGradient id="eliteGrad" x1="0%" y1="0%" x2="100%" y2="100%">\n                                            <stop offset="0%" style="stop-color:#ff6b3d;stop-opacity:1" />\n                                            <stop offset="50%" style="stop-color:#ff3d00;stop-opacity:1" />\n                                            <stop offset="100%" style="stop-color:#c70000;stop-opacity:1" />\n                                        </linearGradient>\n                                    </defs>\n                                    <circle cx="50" cy="50" r="16" fill="url(#eliteGrad)"></circle>\n                                    <ellipse rx="42" ry="18" cx="50" cy="50" stroke="url(#eliteGrad)" stroke-width="12" fill="none" transform="rotate(45 50 50)" stroke-linecap="round"></ellipse>\n                                    <ellipse rx="42" ry="18" cx="50" cy="50" stroke="url(#eliteGrad)" stroke-width="12" fill="none" transform="rotate(-45 50 50)" stroke-linecap="round"></ellipse>\n                                </svg>\n                                </div>\n                                <div class="pro-plan-card-body">\n                                    <strong>Elite</strong>\n                                    <span>Any length · 20/day · up to 10 clips</span>\n                                </div>\n                                <div class="pro-plan-card-price">$39.99/mo</div>\n                            </div>\n                        </div>\n                    </div>\n\n                    <div class="pro-right-footer">\n                        <button class="pro-cta-btn">\n                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">\n                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>\n                                <path d="M7 11V7a5 5 0 0 1 9.9-1"/>\n                            </svg>\n                            Unlock Clip\n                        </button>\n                        <p class="pro-fine-print"><a>Maybe later</a></p>\n                    </div>\n                </div>\n            </div>\n        `;
-    i.querySelector(".pro-close-btn").addEventListener("click", () => {
-      i.style.opacity = "0";
-      i.style.transition = "opacity 0.25s ease";
-      setTimeout(() => i.remove(), CONFIG.UI.MODAL_TRANSITION_MS);
+    n.innerHTML = `\n            <div class="pro-modal">\n                <div class="pro-panel-left">\n                    <div class="pro-left-top">\n                        <div class="pro-lock-wrap">\n                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FF6A3D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">\n                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>\n                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>\n                            </svg>\n                        </div>\n                        <h1 class="pro-title">${o.title}</h1>\n                        <p class="pro-subtitle">${o.subtitle}</p>\n                    </div>\n\n                    <div class="pro-template-preview">\n                        <div class="pro-tpb-preview">\n                            <div class="pro-tpb-pro">PRO</div>\n                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C8C4BE" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">\n                                <rect x="3" y="3" width="7" height="18" rx="1"/>\n                                <rect x="14" y="3" width="7" height="18" rx="1"/>\n                            </svg>\n                            <div class="pro-locked-overlay">\n                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF6A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>\n                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>\n                                </svg>\n                            </div>\n                        </div>\n                        <div class="pro-tpb-info">\n                            <div>\n                                <strong>${o.templateName}</strong>\n                                <span style="display:block;margin-top:2px;font-size:11px;color:#AAA">${o.templateDesc}</span>\n                            </div>\n                            <span style="font-size:11px;color:#FF6A3D;font-weight:600;background:#FFF3EF;padding:3px 9px;border-radius:100px;border:1px solid #FFD0C2">PRO</span>\n                        </div>\n                    </div>\n                </div>\n\n                <div class="pro-panel-right">\n                    <button class="pro-close-btn">\n                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">\n                            <line x1="18" y1="6" x2="6" y2="18"/>\n                            <line x1="6" y1="6" x2="18" y2="18"/>\n                        </svg>\n                    </button>\n\n                    <div>\n                        <div class="pro-plans-label">Unlock with a plan</div>\n                        <div class="pro-plan-options">\n                            <div class="pro-plan-card">\n                                <div class="pro-plan-card-icon">\n                                   <svg width="20" height="20" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">\n                                    <defs>\n                                        <linearGradient id="basicGrad" x1="0%" y1="0%" x2="100%" y2="100%">\n                                            <stop offset="0%" style="stop-color:#f1f5f9;stop-opacity:1"></stop>\n                                            <stop offset="50%" style="stop-color:#cbd5e1;stop-opacity:1"></stop>\n                                            <stop offset="100%" style="stop-color:#94a3b8;stop-opacity:1"></stop>\n                                        </linearGradient>\n                                    </defs>\n                                    <circle cx="50" cy="50" r="16" fill="url(#basicGrad)"></circle>\n                                    <ellipse rx="42" ry="18" cx="50" cy="50" stroke="url(#basicGrad)" stroke-width="10" fill="none" transform="rotate(45 50 50)" stroke-linecap="round"></ellipse>\n                                    <ellipse rx="42" ry="18" cx="50" cy="50" stroke="url(#basicGrad)" stroke-width="10" fill="none" transform="rotate(-45 50 50)" stroke-linecap="round"></ellipse>\n                                </svg>\n                                </div>\n                                <div class="pro-plan-card-body">\n                                    <strong>Basic</strong>\n                                    <span>Any length · 5 uploads/day · up to 3 clips</span>\n                                </div>\n                                <div class="pro-plan-card-price">$9.99/mo</div>\n                            </div>\n\n                            <div class="pro-plan-card highlighted">\n                                <div class="pro-popular-tag">Popular</div>\n                                <div class="pro-plan-card-icon">\n                                   <svg width="20" height="20" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">\n                                    <defs>\n                                        <linearGradient id="primeGrad" x1="0%" y1="0%" x2="100%" y2="100%">\n                                            <stop offset="0%" style="stop-color:#fff176;stop-opacity:1"></stop>\n                                            <stop offset="50%" style="stop-color:#ffd600;stop-opacity:1"></stop>\n                                            <stop offset="100%" style="stop-color:#ff9100;stop-opacity:1"></stop>\n                                        </linearGradient>\n                                    </defs>\n                                    <circle cx="50" cy="50" r="16" fill="url(#primeGrad)"></circle>\n                                    <ellipse rx="42" ry="18" cx="50" cy="50" stroke="url(#primeGrad)" stroke-width="12" fill="none" transform="rotate(45 50 50)" stroke-linecap="round"></ellipse>\n                                    <ellipse rx="42" ry="18" cx="50" cy="50" stroke="url(#primeGrad)" stroke-width="12" fill="none" transform="rotate(-45 50 50)" stroke-linecap="round"></ellipse>\n                                </svg>\n                                </div>\n                                <div class="pro-plan-card-body">\n                                    <strong>Prime</strong>\n                                    <span>Any length · 10/day · up to 5 clips</span>\n                                </div>\n                                <div class="pro-plan-card-price">$23.99/mo</div>\n                            </div>\n\n                            <div class="pro-plan-card">\n                                <div class="pro-plan-card-icon">\n                                <svg width="20" height="20" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">\n                                    <defs>\n                                        <linearGradient id="eliteGrad" x1="0%" y1="0%" x2="100%" y2="100%">\n                                            <stop offset="0%" style="stop-color:#ff6b3d;stop-opacity:1" />\n                                            <stop offset="50%" style="stop-color:#ff3d00;stop-opacity:1" />\n                                            <stop offset="100%" style="stop-color:#c70000;stop-opacity:1" />\n                                        </linearGradient>\n                                    </defs>\n                                    <circle cx="50" cy="50" r="16" fill="url(#eliteGrad)"></circle>\n                                    <ellipse rx="42" ry="18" cx="50" cy="50" stroke="url(#eliteGrad)" stroke-width="12" fill="none" transform="rotate(45 50 50)" stroke-linecap="round"></ellipse>\n                                    <ellipse rx="42" ry="18" cx="50" cy="50" stroke="url(#eliteGrad)" stroke-width="12" fill="none" transform="rotate(-45 50 50)" stroke-linecap="round"></ellipse>\n                                </svg>\n                                </div>\n                                <div class="pro-plan-card-body">\n                                    <strong>Elite</strong>\n                                    <span>Any length · 20/day · up to 10 clips</span>\n                                </div>\n                                <div class="pro-plan-card-price">$39.99/mo</div>\n                            </div>\n                        </div>\n                    </div>\n\n                    <div class="pro-right-footer">\n                        <button class="pro-cta-btn">\n                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">\n                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>\n                                <path d="M7 11V7a5 5 0 0 1 9.9-1"/>\n                            </svg>\n                            Unlock Clip\n                        </button>\n                        <p class="pro-fine-print"><a>Maybe later</a></p>\n                    </div>\n                </div>\n            </div>\n        `;
+    n.querySelector(".pro-close-btn").addEventListener("click", () => {
+      n.style.opacity = "0";
+      n.style.transition = "opacity 0.25s ease";
+      setTimeout(() => n.remove(), CONFIG.UI.MODAL_TRANSITION_MS);
     });
-    i.querySelectorAll(".pro-plan-card").forEach(e => {
+    n.querySelectorAll(".pro-plan-card").forEach(e => {
       e.addEventListener("click", () => {
-        i.querySelectorAll(".pro-plan-card").forEach(e => e.classList.remove("highlighted"));
+        n.querySelectorAll(".pro-plan-card").forEach(e => e.classList.remove("highlighted"));
         e.classList.add("highlighted");
       });
     });
-    i.querySelector(".pro-cta-btn").addEventListener("click", () => {});
-    i.querySelector(".pro-fine-print a").addEventListener("click", () => {
-      i.style.opacity = "0";
-      i.style.transition = "opacity 0.25s ease";
-      setTimeout(() => i.remove(), CONFIG.UI.MODAL_TRANSITION_MS);
+    n.querySelector(".pro-cta-btn").addEventListener("click", () => {});
+    n.querySelector(".pro-fine-print a").addEventListener("click", () => {
+      n.style.opacity = "0";
+      n.style.transition = "opacity 0.25s ease";
+      setTimeout(() => n.remove(), CONFIG.UI.MODAL_TRANSITION_MS);
     });
-    i.addEventListener("click", e => {
-      if (e.target === i) {
-        i.style.opacity = "0";
-        i.style.transition = "opacity 0.25s ease";
-        setTimeout(() => i.remove(), CONFIG.UI.MODAL_TRANSITION_MS);
+    n.addEventListener("click", e => {
+      if (e.target === n) {
+        n.style.opacity = "0";
+        n.style.transition = "opacity 0.25s ease";
+        setTimeout(() => n.remove(), CONFIG.UI.MODAL_TRANSITION_MS);
       }
     });
-    document.body.appendChild(i);
+    document.body.appendChild(n);
     safeLog("✅ Pro feature modal shown for:", e);
   }
   closeProFeatureModal() {
@@ -6718,10 +6718,16 @@ class ClipsStudio {
       e.style.display = "none";
     }
   }
-  openTemplatePreviewModal(e, t) {
-    const n = document.getElementById("templatePreviewModal");
-    const i = document.getElementById("templatePreviewLoading");
+  openTemplatePreviewModal(e, t, i = {}) {
+    const n = i && i.fromAuto ? i.fromAuto : false;
     if (!n) {
+      this._noteManualTemplateSwitch(e);
+    } else {
+      this._autoOpenedPreview = n;
+    }
+    const r = document.getElementById("templatePreviewModal");
+    const o = document.getElementById("templatePreviewLoading");
+    if (!r) {
       return;
     }
     safeLog(`📋 Opening template preview for: ${e}`);
@@ -6735,14 +6741,14 @@ class ClipsStudio {
     this._libraryOverlayDirty = false;
     this._librarySplitscreenCustomize = false;
     this._libraryEditingEnabled = false;
-    const r = document.getElementById("confirmUseTemplateBtn");
-    if (r) {
-      r.textContent = "Use Template";
-      r.classList.remove("library-download-mode");
-      r.disabled = false;
-      r.style.pointerEvents = "";
-      r.style.opacity = "";
-      delete r.dataset.applying;
+    const s = document.getElementById("confirmUseTemplateBtn");
+    if (s) {
+      s.textContent = "Use Template";
+      s.classList.remove("library-download-mode");
+      s.disabled = false;
+      s.style.pointerEvents = "";
+      s.style.opacity = "";
+      delete s.dataset.applying;
     }
     if (typeof window.syncUseTemplateFab === "function") window.syncUseTemplateFab();
     if (typeof window.syncPreviewModifiersForTemplate === "function") {
@@ -6759,9 +6765,9 @@ class ClipsStudio {
         safeLog("✅ Status-pill hidden when opening template preview");
       }
     }
-    const o = document.getElementById("templateVideoPreview");
-    if (o) {
-      o.querySelectorAll("video").forEach(e => {
+    const a = document.getElementById("templateVideoPreview");
+    if (a) {
+      a.querySelectorAll("video").forEach(e => {
         try {
           e.pause();
           e.removeAttribute("src");
@@ -6773,59 +6779,59 @@ class ClipsStudio {
           window.clearPreviewCaptionOverlays({
             hooks: true,
             overlays: true,
-            container: o
+            container: a
           });
         }
       } catch (e) {}
-      o.innerHTML = `<div class="preview-skel" aria-hidden="true"></div>`;
-      o.classList.remove("has-video", "library-splitscreen-preview", "library-ranking-edit");
+      a.innerHTML = `<div class="preview-skel" aria-hidden="true"></div>`;
+      a.classList.remove("has-video", "library-splitscreen-preview", "library-ranking-edit");
     }
-    if (i) {
-      i.classList.add("hidden");
-      i.style.display = "none";
-      i.style.visibility = "hidden";
-      i.style.opacity = "0";
-      i.style.pointerEvents = "none";
+    if (o) {
+      o.classList.add("hidden");
+      o.style.display = "none";
+      o.style.visibility = "hidden";
+      o.style.opacity = "0";
+      o.style.pointerEvents = "none";
     }
-    const s = document.getElementById("previewTemplateName");
-    const a = document.getElementById("previewTemplateDescription");
-    const l = document.getElementById("previewVideoDuration");
-    const c = document.getElementById("previewVideoFormat");
+    const l = document.getElementById("previewTemplateName");
+    const c = document.getElementById("previewTemplateDescription");
+    const d = document.getElementById("previewVideoDuration");
+    const p = document.getElementById("previewVideoFormat");
     safeLog("Elements found:", {
-      nameEl: !!s,
-      descEl: !!a,
-      durationEl: !!l,
-      formatEl: !!c
+      nameEl: !!l,
+      descEl: !!c,
+      durationEl: !!d,
+      formatEl: !!p
     });
-    if (s) {
+    if (l) {
       const t = e.replace(/_/g, " ").replace(/\b\w/g, e => e.toUpperCase());
-      s.textContent = t || "Template";
+      l.textContent = t || "Template";
       safeLog("✅ Template name set to:", t);
     } else {
       safeLog("⚠ï¸ nameEl not found");
     }
-    const d = document.getElementById("youtubeUrlInput")?.value.trim();
-    if (d) {
-      if (a) a.textContent = "Loading video info...";
-      if (l) l.textContent = "~60s";
-      if (c) c.textContent = "TikTok / Shorts";
+    const u = document.getElementById("youtubeUrlInput")?.value.trim();
+    if (u) {
+      if (c) c.textContent = "Loading video info...";
+      if (d) d.textContent = "~60s";
+      if (p) p.textContent = "TikTok / Shorts";
     } else {
-      if (a) a.textContent = "Paste a YouTube URL to see video details";
-      if (l) l.textContent = "~60s";
-      if (c) c.textContent = "TikTok / Shorts";
+      if (c) c.textContent = "Paste a YouTube URL to see video details";
+      if (d) d.textContent = "~60s";
+      if (p) p.textContent = "TikTok / Shorts";
     }
-    n.classList.add("active");
-    n.style.display = "flex";
-    n.style.visibility = "visible";
-    n.style.opacity = "1";
+    r.classList.add("active");
+    r.style.display = "flex";
+    r.style.visibility = "visible";
+    r.style.opacity = "1";
     document.body.classList.add("modal-open");
     safeLog("✅ Modal displayed");
     this.syncTemplateConfirmButton();
     if (typeof window.syncUseTemplateFab === "function") window.syncUseTemplateFab();
     if (typeof window.bindUseTemplateFabIdleHint === "function") window.bindUseTemplateFabIdleHint();
     if (typeof window._bumpUseTemplateFabIdle === "function") window._bumpUseTemplateFabIdle();
-    const p = document.querySelector(".template-preview-sidebar");
-    if (p) p.classList.remove("expanded");
+    const m = document.querySelector(".template-preview-sidebar");
+    if (m) m.classList.remove("expanded");
     const updateTemplatePreviewButtons = async () => {
       const e = document.getElementById("confirmUseTemplateBtn");
       const t = document.getElementById("templatePreviewProFooter");
@@ -6843,40 +6849,40 @@ class ClipsStudio {
       safeLog("📋 Setting up watermark toggle...");
       this.setupWatermarkToggle();
     }, 100);
-    const u = document.getElementById("navWrapper");
-    const m = document.querySelector(".profile-notif-wrapper");
-    if (u) {
-      u.classList.add("disabled");
-    }
-    if (m) {
-      m.classList.add("disabled");
-    }
-    const f = document.querySelector(".template-preview-sheet");
+    const f = document.getElementById("navWrapper");
+    const y = document.querySelector(".profile-notif-wrapper");
     if (f) {
-      f.classList.remove("expanded");
+      f.classList.add("disabled");
+    }
+    if (y) {
+      y.classList.add("disabled");
+    }
+    const g = document.querySelector(".template-preview-sheet");
+    if (g) {
+      g.classList.remove("expanded");
     }
     requestAnimationFrame(() => {
       const hideLoadingSpinner = () => {
-        if (!i) return;
-        i.classList.add("hidden");
-        i.style.visibility = "hidden";
-        i.style.pointerEvents = "none";
+        if (!o) return;
+        o.classList.add("hidden");
+        o.style.visibility = "hidden";
+        o.style.pointerEvents = "none";
         setTimeout(() => {
-          if (i.classList.contains("hidden")) {
-            i.style.display = "none";
+          if (o.classList.contains("hidden")) {
+            o.style.display = "none";
           }
         }, 180);
       };
-      const n = this.templates[e] || {};
-      const r = document.getElementById("watermarkToggle");
-      const o = r ? r.checked : false;
+      const i = this.templates[e] || {};
+      const n = document.getElementById("watermarkToggle");
+      const r = n ? n.checked : false;
       this.currentTemplateForPreview = {
         id: e,
         card: t,
-        data: n,
-        addWatermark: o,
+        data: i,
+        addWatermark: r,
         videoQuality: "auto",
-        videoUrl: d,
+        videoUrl: u,
         isLibraryPreview: false
       };
       const s = document.getElementById("aiPromptInput");
@@ -6902,11 +6908,11 @@ class ClipsStudio {
           window.SolisMemory.onTemplatePreviewOpen(e);
         }
       });
-      if (d) {
+      if (u) {
         const e = document.getElementById("previewTemplateDescription");
         const t = document.getElementById("previewVideoDuration");
-        const n = document.getElementById("previewVideoFormat");
-        this.fetchVideoMetadata(d, t, n, e);
+        const i = document.getElementById("previewVideoFormat");
+        this.fetchVideoMetadata(u, t, i, e);
       }
     });
   }
@@ -6920,16 +6926,16 @@ class ClipsStudio {
   }
   buildSolisWatermarkHTML(e = null) {
     const t = this.getWatermarkVariant(e);
-    const n = this.getWatermarkPlacement();
-    const i = n === "ranking" ? "is-ranking" : "is-splitscreen";
+    const i = this.getWatermarkPlacement();
+    const n = i === "ranking" ? "is-ranking" : "is-splitscreen";
     const r = String(window.API_BASE_URL || "").replace(/\/api\/?$/, "");
     if (t === "classic") {
       const e = "Watermark_v4.png";
       const t = "/assets/solis-watermark-classic.png";
       const o = r ? `${r}/assets/${e}` : t;
-      return `\n            <div class="solis-watermark ${i}" data-variant="classic" data-place="${n}" role="button" tabindex="0" aria-label="Solis AI">\n                <img class="solis-watermark-mark" src="${o}" alt="" draggable="false"\n                     onerror="this.onerror=null;this.src='${t}';" />\n            </div>\n        `;
+      return `\n            <div class="solis-watermark ${n}" data-variant="classic" data-place="${i}" role="button" tabindex="0" aria-label="Solis AI">\n                <img class="solis-watermark-mark" src="${o}" alt="" draggable="false"\n                     onerror="this.onerror=null;this.src='${t}';" />\n            </div>\n        `;
     }
-    return `\n            <div class="solis-watermark ${i}" data-variant="branded" data-place="${n}" role="button" tabindex="0" aria-label="Solis AI">\n                <div class="solis-watermark-icon" aria-hidden="true">\n                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">\n                        <circle cx="50" cy="50" r="12" fill="#ffffff" stroke="none"/>\n                        <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#ffffff" stroke-width="6" transform="rotate(45 50 50)"/>\n                        <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#ffffff" stroke-width="6" transform="rotate(-45 50 50)"/>\n                    </svg>\n                </div>\n                <div class="solis-watermark-label">SOLIS <span class="ai">AI</span></div>\n            </div>\n        `;
+    return `\n            <div class="solis-watermark ${n}" data-variant="branded" data-place="${i}" role="button" tabindex="0" aria-label="Solis AI">\n                <div class="solis-watermark-icon" aria-hidden="true">\n                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">\n                        <circle cx="50" cy="50" r="12" fill="#ffffff" stroke="none"/>\n                        <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#ffffff" stroke-width="6" transform="rotate(45 50 50)"/>\n                        <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#ffffff" stroke-width="6" transform="rotate(-45 50 50)"/>\n                    </svg>\n                </div>\n                <div class="solis-watermark-label">SOLIS <span class="ai">AI</span></div>\n            </div>\n        `;
   }
   getWatermarkVariant(e = null) {
     if (e === "classic" || e === "branded") return e;
@@ -6994,9 +7000,9 @@ class ClipsStudio {
   ensureSolisWatermark(e) {
     if (!e) return null;
     let t = e.querySelector(".solis-watermark");
-    const n = this.getWatermarkVariant();
-    const i = this.getWatermarkPlacement();
-    const r = !t || t.getAttribute("data-variant") !== n || t.getAttribute("data-place") !== i || n === "branded" && !t.querySelector(".solis-watermark-icon") || n === "classic" && !t.querySelector(".solis-watermark-mark");
+    const i = this.getWatermarkVariant();
+    const n = this.getWatermarkPlacement();
+    const r = !t || t.getAttribute("data-variant") !== i || t.getAttribute("data-place") !== n || i === "branded" && !t.querySelector(".solis-watermark-icon") || i === "classic" && !t.querySelector(".solis-watermark-mark");
     if (r) {
       if (t) t.remove();
       e.insertAdjacentHTML("beforeend", this.buildSolisWatermarkHTML());
@@ -7013,19 +7019,19 @@ class ClipsStudio {
     const e = document.getElementById("watermarkToggle");
     if (!e) return;
     const t = document.getElementById("templateVideoPreview");
-    const n = t ? t.querySelectorAll(".solis-watermark") : document.querySelectorAll(".solis-watermark");
-    if (!n.length) return;
-    const i = this.shouldShowSolisWatermark();
-    n.forEach(e => {
-      e.classList.toggle("is-hidden", !i);
+    const i = t ? t.querySelectorAll(".solis-watermark") : document.querySelectorAll(".solis-watermark");
+    if (!i.length) return;
+    const n = this.shouldShowSolisWatermark();
+    i.forEach(e => {
+      e.classList.toggle("is-hidden", !n);
     });
   }
   setupWatermarkToggle() {
     const e = document.getElementById("watermarkToggleLabel");
     const t = document.getElementById("watermarkUpgradeBtn");
-    const n = document.getElementById("watermarkNotice");
-    const i = document.getElementById("watermarkToggle");
-    if (!i) {
+    const i = document.getElementById("watermarkNotice");
+    const n = document.getElementById("watermarkToggle");
+    if (!n) {
       safeLog("⚠ï¸ watermarkToggle element not found");
       return;
     }
@@ -7047,8 +7053,8 @@ class ClipsStudio {
   }
   async resolveWatermarkPolicy(e = false) {
     const t = String(window.currentUser?.plan || "free").toLowerCase();
-    const n = t === "basic" || t === "prime" || t === "elite";
-    if (n) {
+    const i = t === "basic" || t === "prime" || t === "elite";
+    if (i) {
       return {
         showUpgrade: false,
         isPremium: true,
@@ -7067,12 +7073,12 @@ class ClipsStudio {
         }
       }
       const t = this._watermarkCheckCache || {};
-      const n = Number(t.used_lifetime || 0);
-      const i = t.show_upgrade != null ? !!t.show_upgrade : n >= 1;
+      const i = Number(t.used_lifetime || 0);
+      const n = t.show_upgrade != null ? !!t.show_upgrade : i >= 1;
       return {
-        showUpgrade: i,
+        showUpgrade: n,
         isPremium: false,
-        usedLifetime: n,
+        usedLifetime: i,
         data: t
       };
     } catch (e) {
@@ -7086,9 +7092,9 @@ class ClipsStudio {
   }
   applyWatermarkControls(e) {
     const t = document.getElementById("watermarkToggleLabel");
-    const n = document.getElementById("watermarkUpgradeBtn");
-    const i = document.getElementById("watermarkToggle");
-    if (!i) return;
+    const i = document.getElementById("watermarkUpgradeBtn");
+    const n = document.getElementById("watermarkToggle");
+    if (!n) return;
     const r = !!e?.isPremium;
     const o = Number(e?.usedLifetime ?? e?.data?.used_lifetime ?? 0);
     const s = !r && (e?.showUpgrade === true || o >= 1);
@@ -7097,34 +7103,34 @@ class ClipsStudio {
     safeLog(`Watermark UI — premium=${r} usedLifetime=${o} ` + `firstFree=${a} returningFree=${s}`);
     if (r) {
       const e = localStorage.getItem("watermarkEnabled");
-      i.checked = e === "true";
-      i.disabled = false;
+      n.checked = e === "true";
+      n.disabled = false;
     } else if (a) {
-      i.checked = false;
-      i.disabled = true;
+      n.checked = false;
+      n.disabled = true;
       try {
         localStorage.setItem("watermarkEnabled", "false");
       } catch (e) {}
     } else {
-      i.checked = true;
-      i.disabled = true;
+      n.checked = true;
+      n.disabled = true;
       try {
         localStorage.setItem("watermarkEnabled", "true");
       } catch (e) {}
     }
-    i.style.opacity = "";
-    i.style.cursor = "";
+    n.style.opacity = "";
+    n.style.cursor = "";
     if (t) {
       t.style.visibility = r ? "visible" : "hidden";
       t.style.display = r ? "inline-flex" : "none";
       t.setAttribute("data-premium-only", !r);
-      t.classList.toggle("is-on", Boolean(i.checked));
-      t.setAttribute("aria-checked", i.checked ? "true" : "false");
+      t.classList.toggle("is-on", Boolean(n.checked));
+      t.setAttribute("aria-checked", n.checked ? "true" : "false");
     }
-    if (n) {
-      n.hidden = !s;
-      n.style.visibility = s ? "visible" : "hidden";
-      n.style.display = s ? "flex" : "none";
+    if (i) {
+      i.hidden = !s;
+      i.style.visibility = s ? "visible" : "hidden";
+      i.style.display = s ? "flex" : "none";
     }
     if (s) {
       try {
@@ -7132,18 +7138,18 @@ class ClipsStudio {
       } catch (e) {}
     }
     if (this._watermarkChangeHandler) {
-      i.removeEventListener("change", this._watermarkChangeHandler);
+      n.removeEventListener("change", this._watermarkChangeHandler);
       this._watermarkChangeHandler = null;
     }
     if (r) {
       this._watermarkChangeHandler = () => {
-        const e = i.checked;
+        const e = n.checked;
         localStorage.setItem("watermarkEnabled", e ? "true" : "false");
         t?.classList.toggle("is-on", e);
         t?.setAttribute("aria-checked", e ? "true" : "false");
         this.updateWatermarkDisplay();
       };
-      i.addEventListener("change", this._watermarkChangeHandler);
+      n.addEventListener("change", this._watermarkChangeHandler);
     }
     this.updateWatermarkDisplay();
   }
@@ -7162,23 +7168,23 @@ class ClipsStudio {
   async fetchTemplatePreview(e, t) {
     try {
       safeLog(`ðŸ” fetchTemplatePreview - templateId: ${t}`);
-      const n = this.templates[t];
-      if (!n) {
+      const i = this.templates[t];
+      if (!i) {
         safeLog(`⚠ï¸ Template "${t}" not found in this.templates`, Object.keys(this.templates));
-        const n = {
+        const i = {
           id: t,
           name: t?.replace(/_/g, " ").replace(/\b\w/g, e => e.toUpperCase()) || "Template",
           description: "Video template preview",
           type: t || "default"
         };
-        return await this.renderTemplatePreview(e, n);
+        return await this.renderTemplatePreview(e, i);
       }
       safeLog(`✅ Found template in this.templates:`, {
         id: t,
-        type: n.type
+        type: i.type
       });
-      n.id = t;
-      return await this.renderTemplatePreview(e, n);
+      i.id = t;
+      return await this.renderTemplatePreview(e, i);
     } catch (t) {
       safeLog("Error in fetchTemplatePreview:", t);
       e.innerHTML = `\n                <div class="preview-video-placeholder">\n                    <i class="fas fa-exclamation-circle"></i>\n                    <p>Error loading preview</p>\n                </div>\n            `;
@@ -7190,9 +7196,9 @@ class ClipsStudio {
       showNotification("Invalid template", "error");
       return;
     }
-    const n = t?.id ? String(t.id).replace(/[<>"']/g, "") : "unknown";
-    safeLog("🎨 renderTemplatePreview called with container:", !!e, "template:", n);
-    const i = this.generateTemplatePreviewHTML(t);
+    const i = t?.id ? String(t.id).replace(/[<>"']/g, "") : "unknown";
+    safeLog("🎨 renderTemplatePreview called with container:", !!e, "template:", i);
+    const n = this.generateTemplatePreviewHTML(t);
     let r = "";
     const paintPreview = () => {
       window.RankingTextPill?.resetSession?.();
@@ -7206,7 +7212,7 @@ class ClipsStudio {
           });
         }
       } catch (e) {}
-      const t = `\n            <div class="solis-preview-frame" style="position: relative; width: 100%; height: 100%; background: #3a3a3a;">\n                ${i}\n                ${this.buildSolisWatermarkHTML()}\n                ${r}\n            </div>\n        `;
+      const t = `\n            <div class="solis-preview-frame" style="position: relative; width: 100%; height: 100%; background: #3a3a3a;">\n                ${n}\n                ${this.buildSolisWatermarkHTML()}\n                ${r}\n            </div>\n        `;
       e.innerHTML = t;
       this.updateWatermarkDisplay();
     };
@@ -7241,12 +7247,12 @@ class ClipsStudio {
       o.style.display = "";
       const e = o.querySelector('[data-tool="text"]');
       const t = o.querySelector('[data-tool="captions"]');
-      const n = o.querySelector('[data-tool="animations"]');
+      const i = o.querySelector('[data-tool="animations"]');
       if (e) e.style.display = "none";
       if (t) t.style.display = "";
-      if (n) n.style.display = "";
+      if (i) i.style.display = "";
       if (typeof window.activatePreviewToolbar === "function") {
-        const e = n || t;
+        const e = i || t;
         if (e) {
           const t = Array.from(o.querySelectorAll(".tool-btn")).filter(e => e.style.display !== "none");
           window.activatePreviewToolbar(e, Math.max(0, t.indexOf(e)));
@@ -7263,12 +7269,12 @@ class ClipsStudio {
         window.initializeRankingTemplateEditor();
         const e = !!this.currentTemplateForPreview?.isLibraryPreview;
         const t = window.SolisMemory?.isSuggestEnabled?.() !== false;
-        const n = !e && t && (typeof window.SolisMemory?.rankingStylesReady === "function" && window.SolisMemory.rankingStylesReady("ranked_compilation") || (() => {
+        const i = !e && t && (typeof window.SolisMemory?.rankingStylesReady === "function" && window.SolisMemory.rankingStylesReady("ranked_compilation") || (() => {
           const e = window.SolisMemory?.getTemplateMemory?.("ranked_compilation");
           const t = e?.lastGeneratedStyles || e?.styles;
           return !!(t && Object.keys(t).length);
         })());
-        if (n) {
+        if (i) {
           window.__solisRankingDeferCustoms = true;
         } else if (window.rankingCustomizer) {
           window.__solisRankingDeferCustoms = false;
@@ -7314,8 +7320,8 @@ class ClipsStudio {
         try {
           const t = document.getElementById("templateVideoPreview");
           if (!t || t.querySelector(".preview-skel")) return false;
-          const n = !!t.querySelector(".sub-text-block:not(.overlay-text-block)");
-          if (!n && typeof window.applySubtitleStyle === "function") {
+          const i = !!t.querySelector(".sub-text-block:not(.overlay-text-block)");
+          if (!i && typeof window.applySubtitleStyle === "function") {
             window.applySubtitleStyle({
               anim: "karaoke",
               font: "Montserrat",
@@ -7330,7 +7336,7 @@ class ClipsStudio {
               markSuggest: true,
               softClamp: true
             });
-          } else if (n && typeof window.markSubtitleSuggest === "function") {
+          } else if (i && typeof window.markSubtitleSuggest === "function") {
             const e = t.querySelector(".sub-text-block:not(.overlay-text-block)");
             if (e) window.markSubtitleSuggest(e);
           }
@@ -7369,17 +7375,17 @@ class ClipsStudio {
       ranked_compilation: () => `\n                <style>\n                    .ranking-preview-container * {\n                        box-sizing: border-box;\n                    }\n                    .ranking-preview-container {\n                        position: absolute;\n                        inset: 0;\n                        width: 100%;\n                        height: 100%;\n                        padding: 14px 12px 16px;\n                        border-radius: inherit;\n                        display: flex;\n                        flex-direction: column;\n                        align-items: center;\n                        pointer-events: auto;\n                        overflow: hidden;\n                        background: transparent;\n                    }\n\n                    .ranking-preview-container::-webkit-scrollbar {\n                        width: 4px;\n                    }\n                    .ranking-preview-container::-webkit-scrollbar-track {\n                        background: transparent;\n                    }\n                    .ranking-preview-container::-webkit-scrollbar-thumb {\n                        background: rgba(255,255,255,0.3);\n                        border-radius: 2px;\n                    }\n                    .ranking-preview-container .text-stroke {\n                        font-weight: 400;\n                        text-shadow:\n                            2px 0 0 #000, -2px 0 0 #000, 0 2px 0 #000, 0 -2px 0 #000,\n                            1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;\n                        pointer-events: auto;\n                    }\n                    .ranking-preview-container .title {\n                        font-size: clamp(0.95rem, 5.2vw, 1.35rem);\n                        text-align: center;\n                        line-height: 1.12;\n                        text-transform: uppercase;\n                        margin-bottom: 4px;\n                        margin-top: 0;\n                        padding-top: 0;\n                        color: white;\n                        font-family: 'Luckiest Guy', cursive;\n                        font-weight: 400;\n                        pointer-events: auto;\n                        width: fit-content;\n                        max-width: calc(100% - 8px);\n                        margin-left: auto;\n                        margin-right: auto;\n                        overflow: visible;\n                    }\n                    .ranking-preview-container .funniest {\n                        color: #ff0000;\n                        pointer-events: auto;\n                    }\n                    .ranking-preview-container .ranking-list {\n                        list-style: none;\n                        padding: 0;\n                        margin: 6px 0 0 0;\n                        text-align: left;\n                        width: fit-content;\n                        max-width: 100%;\n                        align-self: flex-start;\n                        pointer-events: auto;\n                        flex: 0 0 auto;\n                        flex-shrink: 0;\n                        overflow: visible;\n                        display: flex;\n                        flex-direction: column;\n                        gap: 12px;\n                    }\n                    .ranking-preview-container .ranked-item {\n                        font-size: clamp(0.72rem, 3.8vw, 0.98rem);\n                        margin-bottom: 0;\n                        font-family: 'Luckiest Guy', cursive;\n                        line-height: 1.2;\n                        display: flex;\n                        align-items: baseline;\n                        justify-content: flex-start;\n                        font-weight: 400;\n                        pointer-events: auto;\n                        flex: 0 0 auto;\n                        flex-shrink: 0;\n                        overflow: visible;\n                        gap: 6px;\n                        width: fit-content;\n                        min-height: 1.2em;\n                    }\n                    .ranking-preview-container .ranked-item .rank-number {\n                        display: inline-block;\n                        pointer-events: auto;\n                        flex-shrink: 0;\n                        margin-right: 0.15em;\n                        padding: 0;\n                        width: max-content;\n                        letter-spacing: 0;\n                        line-height: 1.05;\n                    }\n                    .ranking-preview-container .rank-1 { color: #ffd700; pointer-events: auto; }\n                    .ranking-preview-container .rank-2 { color: #c0c0c0; pointer-events: auto; }\n                    .ranking-preview-container .rank-3 { color: #cd7f32; pointer-events: auto; }\n                    .ranking-preview-container .rank-4 { color: #ffffff; pointer-events: auto; }\n                    .ranking-preview-container .rank-5 { color: #ffffff; pointer-events: auto; }\n                    .ranking-editor-zone-header {\n                        display: flex;\n                        flex-direction: column;\n                        align-items: center;\n                        justify-content: flex-start;\n                        width: 100%;\n                        max-width: 100%;\n                        margin: 0 auto;\n                        text-align: center;\n                        overflow: visible;\n                        padding: 0 4px 4px;\n                        flex: 0 0 auto;\n                        flex-shrink: 0;\n                        position: relative;\n                        z-index: 6;\n                        box-sizing: border-box;\n                    }\n                    .ranking-preview-container .title .text-stroke,\n                    .ranking-preview-container h2.text-stroke {\n                        -webkit-text-stroke: 0;\n                        paint-order: stroke fill;\n                    }\n                    .ranking-editor-zone-ranks {\n                        width: fit-content;\n                        max-width: 100%;\n                        align-self: flex-start;\n                    }\n                    .ranking-preview-container [data-template-element-id] {\n                        transition: none;\n                    }\n                    .ranking-preview-container [data-template-element-id="title_channel"] {\n                        font-size: clamp(0.88rem, 4.8vw, 1.15rem);\n                        line-height: 1.1;\n                        margin: 2px auto 8px auto !important;\n                        max-width: calc(100% - 24px);\n                        display: block !important;\n                        width: fit-content;\n                        text-align: center;\n                        white-space: nowrap;\n                        overflow-wrap: normal;\n                        word-break: normal;\n                        box-sizing: border-box;\n                        position: relative;\n                        z-index: 7;\n                        float: none;\n                        transform: none;\n                    }\n                    .ranking-preview-container h1.title {\n                        display: block;\n                        white-space: nowrap;\n                        max-width: 100%;\n                        width: fit-content;\n                        margin: 0 auto 2px auto;\n                        text-align: center;\n                        position: relative;\n                        z-index: 7;\n                    }\n                    .ranking-preview-container [data-template-element-id="title_ranking"],\n                    .ranking-preview-container [data-template-element-id="title_funniest"] {\n                        display: inline-block;\n                        line-height: inherit;\n                        vertical-align: baseline;\n                        white-space: nowrap;\n                    }\n                    .ranking-preview-container .rank-title:empty::before {\n                        content: attr(data-placeholder);\n                        opacity: 0.42;\n                        font-style: italic;\n                    }\n                    .ranking-preview-container .rank-title {\n                        min-width: 2.5rem;\n                        cursor: var(--solis-preview-cursor-text);\n                        text-transform: uppercase;\n                    }\n                </style>\n                <div class="ranking-preview-container">\n                    <div class="ranking-editor-zone ranking-editor-zone-header">\n                    <h1 class="title">\n                        <span data-template-element-id="title_ranking" class="text-stroke" style="color: white; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">RANKING</span> <span data-template-element-id="title_funniest" class="funniest text-stroke" style="color: #ff0000; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">BEST</span>\n                    </h1>\n                    <h2 data-template-element-id="title_channel" style="text-align: center; margin: 2px auto 12px auto; color: white !important; background: transparent !important; font-family: 'Luckiest Guy', cursive; font-weight: 400; max-width: calc(100% - 24px); pointer-events: auto; display: block; position: relative;" class="text-stroke">CHANNEL MOMENTS</h2>\n                    </div>\n                    <ul class="ranking-list ranking-editor-zone ranking-editor-zone-ranks">\n                        <li class="ranked-item rank-1">\n                            <span data-template-element-id="rank_1_number" class="rank-number text-stroke" style="color: #ffd700; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">1.</span>\n                            <span data-template-element-id="rank_1_title" class="rank-title text-stroke" style="color: #ffd700; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;"></span>\n                        </li>\n                        <li class="ranked-item rank-2">\n                            <span data-template-element-id="rank_2_number" class="rank-number text-stroke" style="color: #c0c0c0; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">2.</span>\n                            <span data-template-element-id="rank_2_title" class="rank-title text-stroke" style="color: #c0c0c0; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;"></span>\n                        </li>\n                        <li class="ranked-item rank-3">\n                            <span data-template-element-id="rank_3_number" class="rank-number text-stroke" style="color: #cd7f32; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">3.</span>\n                            <span data-template-element-id="rank_3_title" class="rank-title text-stroke" style="color: #cd7f32; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;"></span>\n                        </li>\n                        <li class="ranked-item rank-4">\n                            <span data-template-element-id="rank_4_number" class="rank-number text-stroke" style="color: #ffffff; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">4.</span>\n                            <span data-template-element-id="rank_4_title" class="rank-title text-stroke" style="color: #ffffff; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;"></span>\n                        </li>\n                        <li class="ranked-item rank-5">\n                            <span data-template-element-id="rank_5_number" class="rank-number text-stroke" style="color: #ffffff; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;">5.</span>\n                            <span data-template-element-id="rank_5_title" class="rank-title text-stroke" style="color: #ffffff; font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: inherit; pointer-events: auto;"></span>\n                        </li>\n                    </ul>\n                </div>\n            `,
       splitscreen: () => `\n                <div id="splitscreenRoot" style="display:flex;flex-direction:column;height:100%;width:100%;background:transparent;overflow:hidden;border-radius:inherit;user-select:none;">\n                    \x3c!-- TOP: Content slot — transparent so shared preview grey shows (same as ranking) --\x3e\n                    <div id="splitscreenTop" style="flex:0 0 50%;width:100%;min-height:0;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;">\n                        <div class="ss-content-placeholder" style="text-align:center;position:relative;z-index:2;">\n                            <div style="font-size:11px;color:#ff6a3d;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;display:flex;align-items:center;justify-content:center;gap:5px;">\n                                <span style="width:5px;height:5px;background:#ff6a3d;border-radius:50%;animation:splitscreen-pulse 2s infinite;display:inline-block;"></span>\n                                Your Content\n                            </div>\n                            <div style="font-size:12px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:.5px;">Video Preview</div>\n                        </div>\n                    </div>\n\n                    \x3c!-- DIVIDER — 1px seam; hit target expands via CSS ::before (no fat gap) --\x3e\n                    <div id="splitscreenDivider" style="flex:0 0 1px;width:100%;height:1px;min-height:1px;max-height:1px;cursor:var(--solis-preview-cursor-hand);display:flex;align-items:center;justify-content:center;position:relative;z-index:50;background:transparent;flex-shrink:0;overflow:visible;padding:0;margin:0;">\n                        <div id="dividerLine" class="ss-divider-grip" style="position:absolute;left:0;right:0;top:50%;width:100%;height:1px;background:rgba(148,163,184,0.85);border-radius:0;box-shadow:none;pointer-events:none;transform:translateY(-50%);"></div>\n                    </div>\n\n                    \x3c!-- BOTTOM: Secondary panel (gameplay / face) — default type is face_track via JS --\x3e\n                    <div id="splitscreenBottom" style="flex:1 1 0;width:100%;min-height:0;background:transparent;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;"\n                         data-no-text-select="true">\n                        <video style="width:100%;height:100%;object-fit:cover;display:none;pointer-events:none;" autoplay muted loop playsinline preload="auto" disablePictureInPicture controlslist="nodownload nofullscreen noremoteplayback" id="splitscreenGameplayVideo"></video>\n                    </div>\n                </div>\n            `
     };
-    let n = t[e.id];
-    if (!n) {
-      n = t[e.type];
+    let i = t[e.id];
+    if (!i) {
+      i = t[e.type];
       safeLog(`⚠ï¸ Template.id '${e.id}' not found, using template.type '${e.type}'`);
     }
-    if (!n) {
+    if (!i) {
       safeLog(`âŒ CRITICAL: Neither template.id '${e.id}' nor template.type '${e.type}' found in previewTemplates`);
       safeLog("Available template keys:", Object.keys(t));
-      n = () => `\n                <div class="preview-video-placeholder">\n                    <i class="fas fa-exclamation-circle"></i>\n                    <p>Template preview not available: ${e.id || e.type}</p>\n                </div>\n            `;
+      i = () => `\n                <div class="preview-video-placeholder">\n                    <i class="fas fa-exclamation-circle"></i>\n                    <p>Template preview not available: ${e.id || e.type}</p>\n                </div>\n            `;
     }
-    return `<style>@keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.7; } }</style>${n()}`;
+    return `<style>@keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.7; } }</style>${i()}`;
   }
   async loadYouTubeSubtitles(e) {
     try {
@@ -7387,7 +7393,7 @@ class ClipsStudio {
       if (t) {
         t.textContent = "Loading...";
       }
-      const n = await fetch("/api/youtube/subtitles", {
+      const i = await fetch("/api/youtube/subtitles", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -7396,16 +7402,16 @@ class ClipsStudio {
           video_id: e
         })
       });
-      let i = [];
-      if (n.ok) {
-        const e = await n.json();
-        i = e.subtitles || [];
+      let n = [];
+      if (i.ok) {
+        const e = await i.json();
+        n = e.subtitles || [];
       }
       if (t) {
-        t.textContent = i.length > 0 ? "Ready" : "No subs";
+        t.textContent = n.length > 0 ? "Ready" : "No subs";
       }
       if (typeof captionSystem !== "undefined") {
-        captionSystem.initializeCaptions(i);
+        captionSystem.initializeCaptions(n);
         captionSystem.playAnimation();
       }
     } catch (e) {
@@ -7418,8 +7424,8 @@ class ClipsStudio {
   }
   extractYouTubeVideoId(e) {
     const t = [ /(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([^&]+)/, /(?:https?:\/\/)?(?:www\.)?youtu\.be\/([^?]+)/, /(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([^?]+)/, /(?:https?:\/\/)?(?:www\.)?youtube\.com\/shorts\/([^?&]+)/ ];
-    for (const n of t) {
-      const t = e.match(n);
+    for (const i of t) {
+      const t = e.match(i);
       if (t && t[1]) {
         const e = t[1];
         if (/^[a-zA-Z0-9_-]{11}$/.test(e)) {
@@ -7453,13 +7459,13 @@ class ClipsStudio {
   isValidMediaUrl(e) {
     try {
       const t = new URL(e.startsWith("http") ? e : "https://" + e);
-      const n = t.hostname.toLowerCase();
-      const i = t.pathname.toLowerCase();
+      const i = t.hostname.toLowerCase();
+      const n = t.pathname.toLowerCase();
       const r = new Set([ "youtube.com", "www.youtube.com", "m.youtube.com", "youtu.be", "www.youtu.be" ]);
-      if (!r.has(n)) {
+      if (!r.has(i)) {
         return false;
       }
-      if (i.includes("..") || i.includes("//")) {
+      if (n.includes("..") || n.includes("//")) {
         return false;
       }
       const o = this.detectMediaPlatform(e);
@@ -7508,11 +7514,11 @@ class ClipsStudio {
     });
     document.body.appendChild(t);
   }
-  async fetchVideoMetadata(e, t, n, i) {
+  async fetchVideoMetadata(e, t, i, n) {
     try {
       const r = this.extractYouTubeVideoId(e);
       if (!r) {
-        if (i) i.textContent = "Invalid YouTube URL";
+        if (n) n.textContent = "Invalid YouTube URL";
         return;
       }
       const o = window.API_BASE_URL || "https://api.solisai.video/api";
@@ -7522,8 +7528,8 @@ class ClipsStudio {
         });
         if (s.ok) {
           const r = await s.json();
-          if (i && r.title) {
-            i.textContent = r.title;
+          if (n && r.title) {
+            n.textContent = r.title;
           }
           if (t && r.duration) {
             let e = r.duration;
@@ -7532,21 +7538,21 @@ class ClipsStudio {
             }
             t.textContent = e;
           }
-          if (n) {
+          if (i) {
             const t = this.isYouTubeShort(e) ? "YouTube Shorts" : "TikTok / Shorts";
-            n.textContent = t;
+            i.textContent = t;
           }
           return;
         }
       } catch (e) {
         safeLog("Backend metadata fetch failed, using fallback:", e.message);
       }
-      if (i) i.textContent = `YouTube Video (ID: ${r.substring(0, 8)}...)`;
-      if (n) n.textContent = this.isYouTubeShort(e) ? "YouTube Shorts" : "TikTok / Shorts";
+      if (n) n.textContent = `YouTube Video (ID: ${r.substring(0, 8)}...)`;
+      if (i) i.textContent = this.isYouTubeShort(e) ? "YouTube Shorts" : "TikTok / Shorts";
       if (t) t.textContent = "~60s";
     } catch (e) {
       safeLog("Error in fetchVideoMetadata:", e);
-      if (i) i.textContent = "Unable to fetch video info";
+      if (n) n.textContent = "Unable to fetch video info";
     }
   }
   closeTemplatePreviewModal() {
@@ -7555,6 +7561,9 @@ class ClipsStudio {
       if (e && window.SolisMemory?.snapshotSessionDraft) {
         window.SolisMemory.snapshotSessionDraft(e);
       }
+    } catch (e) {}
+    try {
+      this._noteAutoPreviewClosed();
     } catch (e) {}
     try {
       const e = this.currentTemplateForPreview?.id === "ranked_compilation" || this.selectedTemplate === "ranked_compilation" || !!document.querySelector("#templateVideoPreview .ranking-preview-container");
@@ -7627,16 +7636,16 @@ class ClipsStudio {
     this._libraryPreviewLoadGen += 1;
     this._libraryPreviewFailedId = null;
     this._hideLibraryPreviewLoading();
-    const n = document.querySelector(".template-preview-content");
-    if (n) n.classList.remove("is-library-preview");
+    const i = document.querySelector(".template-preview-content");
+    if (i) i.classList.remove("is-library-preview");
     if (typeof PreviewTimeline !== "undefined") {
       PreviewTimeline.detach();
     }
     teardownLibrarySplitscreenCropObserver();
     setSplitscreenScope(null);
-    const i = document.querySelector(".template-preview-sidebar");
-    if (i) {
-      i.classList.remove("expanded");
+    const n = document.querySelector(".template-preview-sidebar");
+    if (n) {
+      n.classList.remove("expanded");
     }
     const r = document.getElementById("navWrapper");
     const o = document.querySelector(".profile-notif-wrapper");
@@ -7719,13 +7728,13 @@ class ClipsStudio {
       }
     } catch (e) {}
   }
-  getLibraryPreviewVideoUrl(e, {bust: t = false, clean: n = false} = {}) {
+  getLibraryPreviewVideoUrl(e, {bust: t = false, clean: i = false} = {}) {
     if (!e) return "";
-    const i = `${API_BASE_URL}/clips/preview/${encodeURIComponent(e)}/1`;
+    const n = `${API_BASE_URL}/clips/preview/${encodeURIComponent(e)}/1`;
     const r = [];
-    if (n) r.push("clean=1");
+    if (i) r.push("clean=1");
     if (t) r.push(`_=${Date.now()}`);
-    return r.length ? `${i}?${r.join("&")}` : i;
+    return r.length ? `${n}?${r.join("&")}` : n;
   }
   _showLibraryPreviewLoading() {
     const e = document.querySelector(".template-preview-content");
@@ -7746,11 +7755,11 @@ class ClipsStudio {
     e.classList.remove("has-video");
     e.innerHTML = `<div class="preview-skel" aria-hidden="true"></div>`;
   }
-  _showLibraryPreviewError(e, t = "Could not load video preview", n = null) {
+  _showLibraryPreviewError(e, t = "Could not load video preview", i = null) {
     if (!e) return;
     e.classList.remove("has-video");
-    const i = n || this._libraryPreviewProjectId || this.currentTemplateForPreview?.projectId || "";
-    const r = String(i).replace(/"/g, "");
+    const n = i || this._libraryPreviewProjectId || this.currentTemplateForPreview?.projectId || "";
+    const r = String(n).replace(/"/g, "");
     e.innerHTML = `\n            <div class="preview-video-placeholder">\n                <i class="fas fa-exclamation-circle"></i>\n                <p>${t}</p>\n                ${r ? `<button type="button" class="library-preview-retry-btn" data-project-id="${r}">Retry</button>` : ""}\n            </div>\n        `;
     const o = e.querySelector(".library-preview-retry-btn");
     if (o && r) {
@@ -7765,15 +7774,15 @@ class ClipsStudio {
     }
     this._hideLibraryPreviewLoading();
   }
-  openLibraryPreviewWhenReady(e, t, n = 0) {
-    const i = t != null ? String(t) : "";
+  openLibraryPreviewWhenReady(e, t, i = 0) {
+    const n = t != null ? String(t) : "";
     const r = e != null ? e : t;
-    let o = this.libraryItems.find(e => String(e.id) === String(r) || String(e.projectId) === i || String(e.id) === i);
-    if (!o && i && n === 0) {
-      const e = (this.processingItems || []).find(e => String(e.projectId) === i || String(e.id) === String(r));
+    let o = this.libraryItems.find(e => String(e.id) === String(r) || String(e.projectId) === n || String(e.id) === n);
+    if (!o && n && i === 0) {
+      const e = (this.processingItems || []).find(e => String(e.projectId) === n || String(e.id) === String(r));
       o = {
-        id: r || i,
-        projectId: i,
+        id: r || n,
+        projectId: n,
         name: e?.name || "Clip Preview",
         template: e?.template || "Clip",
         templateName: e?.templateName || e?.template || "Clip",
@@ -7783,31 +7792,31 @@ class ClipsStudio {
       };
       this.libraryItems.unshift(o);
     }
-    const s = i ? document.querySelector(`.library-card[data-project-id="${CSS.escape(i)}"]`) : null;
-    if (o && (s || n >= 2)) {
-      this.openLibraryPreview(o.id, o.projectId || i, s, {
+    const s = n ? document.querySelector(`.library-card[data-project-id="${CSS.escape(n)}"]`) : null;
+    if (o && (s || i >= 2)) {
+      this.openLibraryPreview(o.id, o.projectId || n, s, {
         fast: true
       });
       return;
     }
-    if (n < 40) {
-      setTimeout(() => this.openLibraryPreviewWhenReady(r, i, n + 1), 120);
+    if (i < 40) {
+      setTimeout(() => this.openLibraryPreviewWhenReady(r, n, i + 1), 120);
       return;
     }
-    if (o || i) {
-      this.openLibraryPreview(o && o.id || r || i, o && o.projectId || i, s, {
+    if (o || n) {
+      this.openLibraryPreview(o && o.id || r || n, o && o.projectId || n, s, {
         fast: true
       });
     }
   }
-  openLibraryPreview(e, t, n, i = {}) {
+  openLibraryPreview(e, t, i, n = {}) {
     const r = document.getElementById("templatePreviewModal");
     if (!r) {
       return;
     }
     safeLog(`🎬 Opening library preview for: ${e} (project: ${t})`);
-    if (n) {
-      const e = n.querySelector(".status-pill");
+    if (i) {
+      const e = i.querySelector(".status-pill");
       if (e) {
         e.style.opacity = "0";
         e.style.transition = "opacity 0.3s ease";
@@ -7823,7 +7832,7 @@ class ClipsStudio {
     if (o) {
       this._setLibraryPreviewPlaceholder(o);
     }
-    const s = this.libraryItems.find(n => n.id == e || n.projectId == t || n.id == t || n.projectId == e);
+    const s = this.libraryItems.find(i => i.id == e || i.projectId == t || i.id == t || i.projectId == e);
     if (!s) {
       safeLog(`âŒ Library item not found: ${e}`);
       this.libraryPreviewModalOpen = false;
@@ -7878,7 +7887,7 @@ class ClipsStudio {
       type: h,
       templateId: h,
       isLibraryPreview: true,
-      card: n,
+      card: i,
       data: {
         name: s.name,
         template: s.template,
@@ -7926,58 +7935,58 @@ class ClipsStudio {
         this.mountLibraryPreviewVideo(e, t);
         return;
       }
-      const n = await fetch(`${API_BASE_URL}/clips/projects/${encodeURIComponent(t)}/splitscreen-state`, {
+      const i = await fetch(`${API_BASE_URL}/clips/projects/${encodeURIComponent(t)}/splitscreen-state`, {
         credentials: "include",
         headers: getAuthHeaders()
       });
-      if (!n.ok) {
+      if (!i.ok) {
         this.mountLibraryPreviewVideo(e, t);
         return;
       }
-      const i = await n.json();
+      const n = await i.json();
       this._libraryCustomizeMeta = {
-        can_customize: Boolean(i.can_customize),
-        customize_expired: Boolean(i.customize_expired),
-        customize_expires_at: i.customize_expires_at || null,
-        customize_ttl_hours: i.customize_ttl_hours,
-        customize_remaining_hours: i.customize_remaining_hours,
-        apply_consumes_quota: i.apply_consumes_quota !== false
+        can_customize: Boolean(n.can_customize),
+        customize_expired: Boolean(n.customize_expired),
+        customize_expires_at: n.customize_expires_at || null,
+        customize_ttl_hours: n.customize_ttl_hours,
+        customize_remaining_hours: n.customize_remaining_hours,
+        apply_consumes_quota: n.apply_consumes_quota !== false
       };
       this._updateLibraryCustomizeExpiryPill();
-      if (i.customize_expired) {
+      if (n.customize_expired) {
         try {
           showNotification("Customization window expired for this project. You can still download the last render.", "info");
         } catch (e) {}
         this.mountLibraryPreviewVideo(e, t);
         return;
       }
-      const r = i.layers || {};
-      const o = Boolean(i.has_segment || r.segment || r.content || r.secondary);
+      const r = n.layers || {};
+      const o = Boolean(n.has_segment || r.segment || r.content || r.secondary);
       if (!o) {
         this.mountLibraryPreviewVideo(e, t);
         return;
       }
-      if (!i.can_customize && !i.has_segment) {
+      if (!n.can_customize && !n.has_segment) {
         this.mountLibraryPreviewVideo(e, t);
         return;
       }
-      const s = Boolean(i.captions_burned || i.subtitles_enabled || i.caption_style && (i.caption_style.anim || i.caption_style.enabled));
+      const s = Boolean(n.captions_burned || n.subtitles_enabled || n.caption_style && (n.caption_style.anim || n.caption_style.enabled));
       this._libraryCaptionsOn = s;
-      if (s && !(i.can_customize || i.has_segment)) {
+      if (s && !(n.can_customize || n.has_segment)) {
         safeLog("ðŸ“ Captioned master → flat library preview (no editable layers)");
         this._librarySplitscreenCustomize = false;
         this._libraryPreviewProjectId = t;
-        applySplitscreenConfigFromServer(i);
+        applySplitscreenConfigFromServer(n);
         this.mountLibraryPreviewVideo(e, t);
         await this._configureLibraryEditingUI();
         return;
       }
-      applySplitscreenConfigFromServer(i);
-      const a = i.state || {};
+      applySplitscreenConfigFromServer(n);
+      const a = n.state || {};
       const l = splitscreenSecondaryType === "face_track";
       const c = Boolean(r.secondary);
       const d = Boolean(r.content);
-      const p = Boolean(i.has_segment || r.segment);
+      const p = Boolean(n.has_segment || r.segment);
       if (l && !c && !p) {
         splitscreenSecondaryCollapsed = true;
         splitscreenContentRatio = 1;
@@ -8006,7 +8015,7 @@ class ClipsStudio {
       const h = e.querySelector("#splitscreenReframeVideo");
       const w = e.querySelector("#splitscreenGameplayVideo");
       e.classList.add("library-splitscreen-preview");
-      const wireVideo = async (e, t, {secure: n = true} = {}) => {
+      const wireVideo = async (e, t, {secure: i = true} = {}) => {
         if (!e || !t) return false;
         forceLibraryPanelVideoFill(e);
         e.muted = true;
@@ -8015,21 +8024,21 @@ class ClipsStudio {
         e.preload = "auto";
         e.setAttribute("playsinline", "");
         e.removeAttribute("crossorigin");
-        let i = t;
-        if (n && typeof t === "string" && t.startsWith("http")) {
+        let n = t;
+        if (i && typeof t === "string" && t.startsWith("http")) {
           try {
-            i = await fetchSecureVideoObjectUrl(t);
+            n = await fetchSecureVideoObjectUrl(t);
           } catch (e) {
             safeLog("Layer blob fetch failed, trying direct src:", e);
-            i = t;
+            n = t;
           }
         }
         return new Promise(t => {
-          let n = false;
-          const finish = i => {
-            if (n) return;
-            n = true;
-            if (i && e.videoWidth && _librarySplitscreenCropState) {
+          let i = false;
+          const finish = n => {
+            if (i) return;
+            i = true;
+            if (n && e.videoWidth && _librarySplitscreenCropState) {
               _librarySplitscreenCropState.srcW = e.videoWidth;
               _librarySplitscreenCropState.srcH = e.videoHeight;
               if (e === h) {
@@ -8044,7 +8053,7 @@ class ClipsStudio {
                 syncBlankBlurVideo();
               }
             } catch (e) {}
-            t(i);
+            t(n);
           };
           e.addEventListener("loadeddata", () => finish(true), {
             once: true
@@ -8064,7 +8073,7 @@ class ClipsStudio {
           e.addEventListener("error", () => finish(false), {
             once: true
           });
-          e.src = i;
+          e.src = n;
           e.load();
           e.play().catch(() => {});
           setTimeout(() => finish(e.videoWidth > 0 && e.readyState >= 1), 1e4);
@@ -8113,10 +8122,10 @@ class ClipsStudio {
         } catch (e) {
           safeLog("Shared segment blob pair failed, streaming URLs:", e);
         }
-        const n = await wireVideo(g, e, {
+        const i = await wireVideo(g, e, {
           secure: false
         });
-        if (!n) throw new Error("Failed to load splitscreen segment");
+        if (!i) throw new Error("Failed to load splitscreen segment");
         if (h) {
           h.style.setProperty("display", "block", "important");
           h.style.touchAction = "none";
@@ -8214,7 +8223,7 @@ class ClipsStudio {
           document.querySelectorAll(".sub-mem-ghost,.sub-mem-actions").forEach(e => e.remove());
         } catch (e) {}
         if (s) {
-          const e = i.caption_style || {
+          const e = n.caption_style || {
             anim: "static",
             font: "Montserrat",
             color: "#ffffff",
@@ -8225,11 +8234,11 @@ class ClipsStudio {
             enabled: true
           };
           if (typeof window.setLiveCaptionTimedWords === "function") {
-            window.setLiveCaptionTimedWords(i.caption_preview_words || []);
+            window.setLiveCaptionTimedWords(n.caption_preview_words || []);
           }
-          let t = String(i.caption_preview_text || (typeof i.caption_style?.preview_text === "string" ? i.caption_style.preview_text : "") || "").trim();
-          if (!t && Array.isArray(i.caption_preview_words) && i.caption_preview_words.length) {
-            t = i.caption_preview_words.map(e => e && e.text != null ? String(e.text) : String(e || "")).filter(Boolean).join(" ").trim();
+          let t = String(n.caption_preview_text || (typeof n.caption_style?.preview_text === "string" ? n.caption_style.preview_text : "") || "").trim();
+          if (!t && Array.isArray(n.caption_preview_words) && n.caption_preview_words.length) {
+            t = n.caption_preview_words.map(e => e && e.text != null ? String(e.text) : String(e || "")).filter(Boolean).join(" ").trim();
           }
           if (typeof window.applySubtitleStyle === "function") {
             window.applySubtitleStyle(e, {
@@ -8242,14 +8251,14 @@ class ClipsStudio {
             });
           }
         }
-        const t = String(a && a.subtitle_text || i.ai_hook_text || "").trim();
+        const t = String(a && a.subtitle_text || n.ai_hook_text || "").trim();
         if (t && typeof window.ensureLibraryAiHookOverlay === "function") {
           const e = {
-            ...i.ai_hook_style || {},
-            secondary_type: i.splitscreen_secondary_type || (typeof splitscreenSecondaryType !== "undefined" ? splitscreenSecondaryType : "gameplay"),
-            inverted: i.splitscreen_inverted != null ? Boolean(i.splitscreen_inverted) : typeof splitscreenInverted !== "undefined" ? splitscreenInverted : false,
-            content_ratio: i.splitscreen_content_ratio ?? (typeof splitscreenContentRatio !== "undefined" ? splitscreenContentRatio : .5),
-            secondary_collapsed: i.splitscreen_secondary_collapsed != null ? Boolean(i.splitscreen_secondary_collapsed) : typeof splitscreenSecondaryCollapsed !== "undefined" ? splitscreenSecondaryCollapsed : false
+            ...n.ai_hook_style || {},
+            secondary_type: n.splitscreen_secondary_type || (typeof splitscreenSecondaryType !== "undefined" ? splitscreenSecondaryType : "gameplay"),
+            inverted: n.splitscreen_inverted != null ? Boolean(n.splitscreen_inverted) : typeof splitscreenInverted !== "undefined" ? splitscreenInverted : false,
+            content_ratio: n.splitscreen_content_ratio ?? (typeof splitscreenContentRatio !== "undefined" ? splitscreenContentRatio : .5),
+            secondary_collapsed: n.splitscreen_secondary_collapsed != null ? Boolean(n.splitscreen_secondary_collapsed) : typeof splitscreenSecondaryCollapsed !== "undefined" ? splitscreenSecondaryCollapsed : false
           };
           window.ensureLibraryAiHookOverlay(t, e);
           requestAnimationFrame(() => {
@@ -8272,29 +8281,29 @@ class ClipsStudio {
           const e = document.getElementById("templateVideoPreview");
           if (!e || typeof window.markSubtitleSuggest !== "function") return;
           const t = e.querySelector(".sub-text-block:not(.overlay-text-block)");
-          const n = e.querySelector('.overlay-text-block[data-ai-hook="1"]');
+          const i = e.querySelector('.overlay-text-block[data-ai-hook="1"]');
           if (t) window.markSubtitleSuggest(t);
-          if (n) window.markSubtitleSuggest(n);
+          if (i) window.markSubtitleSuggest(i);
         });
       } catch (e) {}
-    } catch (n) {
-      safeLog("Library splitscreen preview failed, using flat video:", n);
+    } catch (i) {
+      safeLog("Library splitscreen preview failed, using flat video:", i);
       this._librarySplitscreenCustomize = false;
       teardownLibrarySplitscreenCropObserver();
       setSplitscreenScope(null);
       this.mountLibraryPreviewVideo(e, t);
     }
   }
-  async runLibraryApplyWithSpinner(e, {needsRecompose: t, needsOverlayRender: n, needsRankingRecompose: i = false, overlays: r = null}) {
+  async runLibraryApplyWithSpinner(e, {needsRecompose: t, needsOverlayRender: i, needsRankingRecompose: n = false, overlays: r = null}) {
     const o = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
-    const s = t || n || i ? async () => {
-      if (i) {
+    const s = t || i || n ? async () => {
+      if (n) {
         await this.saveLibraryRankingCustomizations(e);
       }
       if (t) {
         await this.saveLibrarySplitscreenLayout(e);
       }
-      if (n) {
+      if (i) {
         await this.saveLibraryOverlayTexts(e, r);
       }
     } : null;
@@ -8316,11 +8325,11 @@ class ClipsStudio {
     showNotification("Download started!", "success");
   }
   async saveLibraryOverlayTexts(e, t = null) {
-    const n = Array.isArray(t) && t.length ? t : typeof window.collectLibraryOverlayTexts === "function" ? window.collectLibraryOverlayTexts() : [];
-    if (!n.length) {
+    const i = Array.isArray(t) && t.length ? t : typeof window.collectLibraryOverlayTexts === "function" ? window.collectLibraryOverlayTexts() : [];
+    if (!i.length) {
       throw new Error("Type some text on the preview first (not just “Text”)");
     }
-    const i = await fetch(`${API_BASE_URL}/clips/projects/${encodeURIComponent(e)}/overlay-text`, {
+    const n = await fetch(`${API_BASE_URL}/clips/projects/${encodeURIComponent(e)}/overlay-text`, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -8328,14 +8337,14 @@ class ClipsStudio {
         ...getAuthHeaders()
       },
       body: JSON.stringify({
-        overlays: n
+        overlays: i
       })
     });
-    if (!i.ok) {
-      const e = await i.json().catch(() => ({}));
-      throw this._libraryApplyError(e, i.status, "Overlay apply failed");
+    if (!n.ok) {
+      const e = await n.json().catch(() => ({}));
+      throw this._libraryApplyError(e, n.status, "Overlay apply failed");
     }
-    const r = await i.json().catch(() => ({}));
+    const r = await n.json().catch(() => ({}));
     this._libraryOverlayDirty = false;
     try {
       await this.refreshQuotaAfterApply(r);
@@ -8343,28 +8352,28 @@ class ClipsStudio {
   }
   async saveLibrarySplitscreenLayout(e) {
     const t = typeof window.getSplitscreenConfig === "function" ? window.getSplitscreenConfig() : {};
-    const n = _librarySplitscreenCropState || {};
-    const i = {
+    const i = _librarySplitscreenCropState || {};
+    const n = {
       splitscreen_content_ratio: t.splitscreen_content_ratio,
       splitscreen_inverted: t.splitscreen_inverted,
       splitscreen_secondary_collapsed: t.splitscreen_secondary_collapsed,
       splitscreen_secondary_type: t.splitscreen_secondary_type,
       gameplay_clip_id: t.gameplay_clip_id
     };
-    if (Array.isArray(n.faceCrop) && n.faceCrop.length === 4) {
-      i.face_crop = n.faceCrop.map(e => Number(e));
+    if (Array.isArray(i.faceCrop) && i.faceCrop.length === 4) {
+      n.face_crop = i.faceCrop.map(e => Number(e));
     }
-    if (n.cropX != null && Number.isFinite(Number(n.cropX))) {
-      i.crop_x = Number(n.cropX);
+    if (i.cropX != null && Number.isFinite(Number(i.cropX))) {
+      n.crop_x = Number(i.cropX);
     }
     try {
       const e = window.PreviewTimeline?.getTrim?.();
       if (e && e.duration > 0) {
         const t = Number(e.start) || 0;
-        const n = Number(e.end) || e.duration;
-        if (t > .05 || n < e.duration - .05) {
-          i.trim_start = Number(t.toFixed(3));
-          i.trim_end = Number(n.toFixed(3));
+        const i = Number(e.end) || e.duration;
+        if (t > .05 || i < e.duration - .05) {
+          n.trim_start = Number(t.toFixed(3));
+          n.trim_end = Number(i.toFixed(3));
         }
       }
     } catch (e) {}
@@ -8373,30 +8382,30 @@ class ClipsStudio {
       if (e && typeof window.collectSubtitleStyle === "function") {
         const e = window.collectSubtitleStyle();
         if (e && typeof e === "object") {
-          i.caption_style = e;
-          i.subtitles_enabled = true;
-          i.clear_captions = false;
+          n.caption_style = e;
+          n.subtitles_enabled = true;
+          n.clear_captions = false;
         }
       } else if (this._libraryCaptionsCleared || this._libraryCaptionsOn) {
         if (!e) {
-          i.clear_captions = true;
-          i.subtitles_enabled = false;
+          n.clear_captions = true;
+          n.subtitles_enabled = false;
         }
       }
     } catch (e) {}
     try {
       const e = typeof window.collectAiHookFromPreview === "function" ? window.collectAiHookFromPreview() : null;
       if (e?.present && e.text) {
-        i.ai_hook_text = e.text;
-        i.subtitle_text = e.text;
-        i.clear_ai_hook = false;
-        if (e.style) i.ai_hook_style = e.style;
+        n.ai_hook_text = e.text;
+        n.subtitle_text = e.text;
+        n.clear_ai_hook = false;
+        if (e.style) n.ai_hook_style = e.style;
       } else {
         const e = document.querySelector('#templateVideoPreview .overlay-text-block[data-ai-hook="1"]');
         if (!e) {
-          i.ai_hook_text = "";
-          i.subtitle_text = "";
-          i.clear_ai_hook = true;
+          n.ai_hook_text = "";
+          n.subtitle_text = "";
+          n.clear_ai_hook = true;
         }
       }
     } catch (e) {}
@@ -8407,7 +8416,7 @@ class ClipsStudio {
         "Content-Type": "application/json",
         ...getAuthHeaders()
       },
-      body: JSON.stringify(i)
+      body: JSON.stringify(n)
     });
     if (!r.ok) {
       const e = await r.json().catch(() => ({}));
@@ -8435,24 +8444,24 @@ class ClipsStudio {
         headers: getAuthHeaders()
       });
       if (!t.ok) return;
-      const n = await t.json();
+      const i = await t.json();
       this._libraryCustomizeMeta = {
-        can_customize: n.can_customize !== false && n.can_edit !== false,
-        customize_expired: Boolean(n.customize_expired),
-        customize_expires_at: n.customize_expires_at || null,
-        customize_ttl_hours: n.customize_ttl_hours,
-        customize_remaining_hours: n.customize_remaining_hours,
-        apply_consumes_quota: n.apply_consumes_quota !== false
+        can_customize: i.can_customize !== false && i.can_edit !== false,
+        customize_expired: Boolean(i.customize_expired),
+        customize_expires_at: i.customize_expires_at || null,
+        customize_ttl_hours: i.customize_ttl_hours,
+        customize_remaining_hours: i.customize_remaining_hours,
+        apply_consumes_quota: i.apply_consumes_quota !== false
       };
-      const i = Boolean(n.overlay_burned) && !Boolean(n.burn_deferred);
-      const r = typeof n.has_clean_master === "boolean" ? n.has_clean_master : Boolean(n.timeline_mode) || !i;
-      const o = Boolean(n.can_edit) && !n.customize_expired;
-      this._libraryRankingTimelineState = n;
-      if (o && (r || !i)) {
-        this._libraryRankingUseCleanVideo = r || !i;
-        this._libraryRankingOverlayPending = n;
+      const n = Boolean(i.overlay_burned) && !Boolean(i.burn_deferred);
+      const r = typeof i.has_clean_master === "boolean" ? i.has_clean_master : Boolean(i.timeline_mode) || !n;
+      const o = Boolean(i.can_edit) && !i.customize_expired;
+      this._libraryRankingTimelineState = i;
+      if (o && (r || !n)) {
+        this._libraryRankingUseCleanVideo = r || !n;
+        this._libraryRankingOverlayPending = i;
       } else {
-        this._libraryRankingEditable = Boolean(n.can_edit) && !n.customize_expired;
+        this._libraryRankingEditable = Boolean(i.can_edit) && !i.customize_expired;
         this._libraryRankingNeedsBurn = false;
       }
       this._updateLibraryCustomizeExpiryPill();
@@ -8472,12 +8481,12 @@ class ClipsStudio {
       }
       return "";
     }
-    const n = t - Date.now();
-    if (n <= 0) return "Customization expired — download only";
-    const i = Math.ceil(n / 6e4);
-    if (i >= 24 * 60) return `Customize expires in ${Math.ceil(i / (24 * 60))}d`;
-    if (i >= 60) return `Customize expires in ${Math.ceil(i / 60)}h`;
-    return `Customize expires in ${i}m`;
+    const i = t - Date.now();
+    if (i <= 0) return "Customization expired — download only";
+    const n = Math.ceil(i / 6e4);
+    if (n >= 24 * 60) return `Customize expires in ${Math.ceil(n / (24 * 60))}d`;
+    if (n >= 60) return `Customize expires in ${Math.ceil(n / 60)}h`;
+    return `Customize expires in ${n}m`;
   }
   _updateLibraryCustomizeExpiryPill() {
     const e = document.getElementById("libraryCustomizeExpiryPill");
@@ -8487,21 +8496,21 @@ class ClipsStudio {
       this._customizeExpiryTimer = null;
     }
     const t = Boolean(this.currentTemplateForPreview?.isLibraryPreview);
-    const n = this._libraryCustomizeMeta;
-    if (!t || !n || n.customize_ttl_hours == null) {
+    const i = this._libraryCustomizeMeta;
+    if (!t || !i || i.customize_ttl_hours == null) {
       e.hidden = true;
       e.textContent = "";
       return;
     }
-    const i = this._formatCustomizeExpiryLabel(n);
-    if (!i) {
+    const n = this._formatCustomizeExpiryLabel(i);
+    if (!n) {
       e.hidden = true;
       return;
     }
     e.hidden = false;
-    e.textContent = i;
-    e.classList.toggle("is-expired", Boolean(n.customize_expired));
-    if (!n.customize_expired && n.customize_expires_at) {
+    e.textContent = n;
+    e.classList.toggle("is-expired", Boolean(i.customize_expired));
+    if (!i.customize_expired && i.customize_expires_at) {
       this._customizeExpiryTimer = setInterval(() => {
         if (!this.libraryPreviewModalOpen) {
           clearInterval(this._customizeExpiryTimer);
@@ -8520,7 +8529,7 @@ class ClipsStudio {
       }, 3e4);
     }
   }
-  mountLibraryPreviewVideo(e, t, n = {}) {
+  mountLibraryPreviewVideo(e, t, i = {}) {
     if (this._libraryPreviewRetryTimer) {
       clearTimeout(this._libraryPreviewRetryTimer);
       this._libraryPreviewRetryTimer = null;
@@ -8533,13 +8542,13 @@ class ClipsStudio {
       URL.revokeObjectURL(this._libraryPreviewObjectUrl);
       this._libraryPreviewObjectUrl = null;
     }
-    const i = ++this._libraryPreviewLoadGen;
+    const n = ++this._libraryPreviewLoadGen;
     this._libraryPreviewProjectId = t;
     this._libraryPreviewFailedId = null;
     this.fetchSecureLibraryPreviewBlob(e, t, null, {
-      loadGen: i,
+      loadGen: n,
       attempt: 0,
-      clean: !!n.clean
+      clean: !!i.clean
     });
   }
   async maybeMountLibraryRankingOverlay(e, t) {
@@ -8558,32 +8567,32 @@ class ClipsStudio {
       return;
     }
     try {
-      const n = await fetch(`${API_BASE_URL}/clips/projects/${encodeURIComponent(t)}/ranking-edit-state`, {
+      const i = await fetch(`${API_BASE_URL}/clips/projects/${encodeURIComponent(t)}/ranking-edit-state`, {
         credentials: "include",
         headers: getAuthHeaders()
       });
-      if (!n.ok) return;
-      const i = await n.json();
+      if (!i.ok) return;
+      const n = await i.json();
       this._libraryCustomizeMeta = {
-        can_customize: i.can_customize !== false && i.can_edit !== false,
-        customize_expired: Boolean(i.customize_expired),
-        customize_expires_at: i.customize_expires_at || null,
-        customize_ttl_hours: i.customize_ttl_hours,
-        customize_remaining_hours: i.customize_remaining_hours,
-        apply_consumes_quota: i.apply_consumes_quota !== false
+        can_customize: n.can_customize !== false && n.can_edit !== false,
+        customize_expired: Boolean(n.customize_expired),
+        customize_expires_at: n.customize_expires_at || null,
+        customize_ttl_hours: n.customize_ttl_hours,
+        customize_remaining_hours: n.customize_remaining_hours,
+        apply_consumes_quota: n.apply_consumes_quota !== false
       };
-      const r = Boolean(i.overlay_burned) && !Boolean(i.burn_deferred);
-      const o = typeof i.has_clean_master === "boolean" ? i.has_clean_master : Boolean(i.timeline_mode) || !r;
-      const s = Boolean(i.can_edit) && !i.customize_expired;
+      const r = Boolean(n.overlay_burned) && !Boolean(n.burn_deferred);
+      const o = typeof n.has_clean_master === "boolean" ? n.has_clean_master : Boolean(n.timeline_mode) || !r;
+      const s = Boolean(n.can_edit) && !n.customize_expired;
       if (!s || r && !o) {
-        this._libraryRankingEditable = Boolean(i.can_edit) && !i.customize_expired;
+        this._libraryRankingEditable = Boolean(n.can_edit) && !n.customize_expired;
         this._libraryRankingNeedsBurn = false;
         this._updateLibraryCustomizeExpiryPill();
         return;
       }
       this._libraryRankingUseCleanVideo = o || !r;
-      this._libraryRankingTimelineState = i;
-      this.mountLibraryRankingOverlay(e, i);
+      this._libraryRankingTimelineState = n;
+      this.mountLibraryRankingOverlay(e, n);
       this._updateLibraryCustomizeExpiryPill();
     } catch (e) {
       safeLog("Ranking edit state failed:", e);
@@ -8592,17 +8601,17 @@ class ClipsStudio {
   mountLibraryRankingOverlay(e, t) {
     if (!e) return;
     if (e.querySelector(".ranking-preview-container.library-ranking-layer")) return;
-    const n = this.generateTemplatePreviewHTML({
+    const i = this.generateTemplatePreviewHTML({
       id: "ranked_compilation",
       type: "ranked_compilation"
     });
-    const i = document.createElement("div");
-    i.innerHTML = n;
-    const r = i.querySelector(".ranking-preview-container");
+    const n = document.createElement("div");
+    n.innerHTML = i;
+    const r = n.querySelector(".ranking-preview-container");
     if (!r) return;
     r.classList.add("library-ranking-layer");
     e.appendChild(r);
-    const o = i.querySelector("style");
+    const o = n.querySelector("style");
     if (o) {
       o.setAttribute("data-ranking-library", "1");
       const t = e.querySelector("style[data-ranking-library]");
@@ -8644,16 +8653,16 @@ class ClipsStudio {
     const c = t.ranking_customizations || {};
     const d = t.ai_text_pack && typeof t.ai_text_pack === "object" ? t.ai_text_pack : {};
     const mergePackContent = (e, t) => {
-      const n = String(t || "").trim();
-      if (!n) return;
-      const i = c[e] && typeof c[e] === "object" ? {
+      const i = String(t || "").trim();
+      if (!i) return;
+      const n = c[e] && typeof c[e] === "object" ? {
         ...c[e]
       } : {};
-      const r = String(i.content || "").trim();
+      const r = String(n.content || "").trim();
       const o = !r || /^(ranking|best|funniest|channel moments)$/i.test(r);
       if (o) {
-        i.content = n;
-        c[e] = i;
+        n.content = i;
+        c[e] = n;
       }
     };
     mergePackContent("title_ranking", d.header_line1);
@@ -8724,7 +8733,7 @@ class ClipsStudio {
           y_pct: .8,
           enabled: true
         };
-        const n = String(t.caption_preview_text || (typeof e.preview_text === "string" ? e.preview_text : "") || "").trim();
+        const i = String(t.caption_preview_text || (typeof e.preview_text === "string" ? e.preview_text : "") || "").trim();
         if (typeof window.setLiveCaptionTimedWords === "function") {
           window.setLiveCaptionTimedWords(t.caption_preview_words || []);
         }
@@ -8735,7 +8744,7 @@ class ClipsStudio {
             playAnim: false,
             markSuggest: true,
             softClamp: true,
-            previewText: n || null
+            previewText: i || null
           });
         }
         requestAnimationFrame(() => {
@@ -8784,18 +8793,18 @@ class ClipsStudio {
       });
     }
   }
-  seedLibraryRankingAiTexts(e, t, n) {
+  seedLibraryRankingAiTexts(e, t, i) {
     if (!e) return;
-    const i = e.querySelector?.(".ranking-preview-container") || e;
+    const n = e.querySelector?.(".ranking-preview-container") || e;
     const r = t && t.ai_text_pack && typeof t.ai_text_pack === "object" ? t.ai_text_pack : {};
-    const o = n && typeof n === "object" ? n : {};
+    const o = i && typeof i === "object" ? i : {};
     const s = Array.isArray(t?.moments) ? t.moments : this._libraryRankingMoments || [];
     const a = Array.isArray(r.moments) ? r.moments : [];
     const byRank = (e = []) => {
       const t = new Map;
       e.forEach(e => {
-        const n = Number(e?.rank);
-        if (n >= 1 && n <= 5 && !t.has(n)) t.set(n, e);
+        const i = Number(e?.rank);
+        if (i >= 1 && i <= 5 && !t.has(i)) t.set(i, e);
       });
       return t;
     };
@@ -8814,13 +8823,13 @@ class ClipsStudio {
       }
       return false;
     };
-    const setHeaderText = (e, t, {force: n = false} = {}) => {
-      const r = i.querySelector(`[data-template-element-id="${e}"]`);
+    const setHeaderText = (e, t, {force: i = false} = {}) => {
+      const r = n.querySelector(`[data-template-element-id="${e}"]`);
       if (!r) return;
       const s = o[e]?.content;
       const a = s != null ? String(s).trim() : "";
       const l = normalizeOverlayText(t, e.startsWith("title_") ? 32 : 48);
-      const c = a && !isClassicPlaceholder(a) && !n;
+      const c = a && !isClassicPlaceholder(a) && !i;
       const d = c ? normalizeOverlayText(a, e.startsWith("title_") ? 32 : 48) : l;
       if (!d) return;
       r.textContent = d;
@@ -8846,11 +8855,11 @@ class ClipsStudio {
     const y = {};
     for (let e = 1; e <= 5; e++) {
       const t = l.get(e);
-      const n = c.get(e);
+      const i = c.get(e);
       const r = String(window.rankingCustomizer?.customizations?.[`rank_${e}_title`]?.content || "").trim();
       const s = r || String(o[`rank_${e}_title`]?.content || "").trim();
       const a = s && !isClassicPlaceholder(s) ? s : "";
-      const d = normalizeOverlayText(a || t?.title || t?.text || n?.title || n?.text || "", 48);
+      const d = normalizeOverlayText(a || t?.title || t?.text || i?.title || i?.text || "", 48);
       y[e] = d;
       if (d && window.rankingCustomizer?.customizations) {
         const t = {
@@ -8859,7 +8868,7 @@ class ClipsStudio {
         };
         window.rankingCustomizer.customizations[`rank_${e}_title`] = t;
       }
-      const p = i.querySelector(`[data-template-element-id="rank_${e}_title"]`);
+      const p = n.querySelector(`[data-template-element-id="rank_${e}_title"]`);
       if (p) {
         p.setAttribute("data-rk-full-title", d || "");
         if (d) {
@@ -8876,42 +8885,42 @@ class ClipsStudio {
     this._libraryRankingTitleByRank = y;
     this._libraryRankingRevealState = t;
     try {
-      this.unifyLibraryRankingFonts(i);
+      this.unifyLibraryRankingFonts(n);
     } catch (e) {}
     this.wireLibraryRankingCountdownReveal(e, t);
   }
   unifyLibraryRankingFonts(e) {
     if (!e) return;
     const t = window.rankingCustomizer?.customizations || {};
-    const n = (() => {
+    const i = (() => {
       try {
         return window.rankingCustomizer?._readFontLock?.() || JSON.parse(sessionStorage.getItem("solisRankingFontLock") || "{}") || {};
       } catch (e) {
         return {};
       }
     })();
-    let i = null;
+    let n = null;
     for (let r = 1; r <= 5; r++) {
       const o = e.querySelector(`[data-template-element-id="rank_${r}_title"]`)?.getAttribute("data-rk-font");
-      const s = n[`rank_${r}_title`] || n[`rank_${r}_number`];
+      const s = i[`rank_${r}_title`] || i[`rank_${r}_number`];
       const a = t[`rank_${r}_title`]?.font || t[`rank_${r}_number`]?.font || s;
       if (o) {
-        i = o;
+        n = o;
         break;
       }
       if (a && window.rankingCustomizer?._displayFont) {
-        i = window.rankingCustomizer._displayFont(a);
+        n = window.rankingCustomizer._displayFont(a);
         break;
       }
       if (typeof a === "string" && a && !/\.ttf|\.otf|\.woff/i.test(a)) {
-        i = a;
+        n = a;
         break;
       }
     }
-    if (!i) {
+    if (!n) {
       return;
     }
-    const r = i === "Luckiest Guy" ? `'Luckiest Guy', cursive` : `'${i}', sans-serif`;
+    const r = n === "Luckiest Guy" ? `'Luckiest Guy', cursive` : `'${n}', sans-serif`;
     const o = {
       Fredoka: "700",
       Montserrat: "700",
@@ -8921,26 +8930,26 @@ class ClipsStudio {
       Poppins: "600",
       Roboto: "700"
     };
-    const s = o[i] || "400";
+    const s = o[n] || "400";
     for (let t = 1; t <= 5; t++) {
-      for (const n of [ "title", "number" ]) {
-        const o = `rank_${t}_${n}`;
+      for (const i of [ "title", "number" ]) {
+        const o = `rank_${t}_${i}`;
         const a = e.querySelector(`[data-template-element-id="${o}"]`);
         if (!a) continue;
         a.style.setProperty("font-family", r, "important");
         a.style.setProperty("font-weight", s, "important");
-        a.setAttribute("data-rk-font", i);
+        a.setAttribute("data-rk-font", n);
         if (window.rankingCustomizer?.setElementFontFile) {
-          window.rankingCustomizer.setElementFontFile(o, i);
+          window.rankingCustomizer.setElementFontFile(o, n);
         }
       }
     }
   }
   wireLibraryRankingCountdownReveal(e, t) {
     if (!e) return;
-    const n = e.querySelector?.(".ranking-preview-container") || e;
-    const i = e.querySelector("video.library-preview-video") || e.querySelector("video");
-    if (!i || !n) return;
+    const i = e.querySelector?.(".ranking-preview-container") || e;
+    const n = e.querySelector("video.library-preview-video") || e.querySelector("video");
+    if (!n || !i) return;
     const r = (() => {
       const e = t?.ranking_timeline?.segments;
       if (Array.isArray(e) && e.length) {
@@ -8950,12 +8959,12 @@ class ClipsStudio {
           end: Number(e.output_end) || 0
         })).filter(e => e.rank >= 1 && e.rank <= 5 && e.end > e.start);
       }
-      const n = [];
-      const i = t?.clip_windows;
+      const i = [];
+      const n = t?.clip_windows;
       const r = t?.base_durations || this._libraryRankingBaseDurations || {};
       for (let e = 5; e >= 1; e--) {
         let t = 0;
-        const o = i?.[String(e)] || i?.[e];
+        const o = n?.[String(e)] || n?.[e];
         if (o) {
           t = Number(o.duration);
           if (!(t > 0) && o.start != null && o.end != null) {
@@ -8963,18 +8972,18 @@ class ClipsStudio {
           }
         }
         if (!(t > 0)) t = Number(r[String(e)] || r[e] || 0);
-        if (t > 0) n.push({
+        if (t > 0) i.push({
           rank: e,
           duration: t
         });
       }
       let o = 0;
-      return n.map(({rank: e, duration: t}) => {
-        const n = o;
+      return i.map(({rank: e, duration: t}) => {
+        const i = o;
         o += t;
         return {
           rank: e,
-          start: n,
+          start: i,
           end: o
         };
       });
@@ -8984,22 +8993,22 @@ class ClipsStudio {
     let s = null;
     const paintTitle = (e, t) => {
       if (e.classList.contains("rk-inline-editing") || e.isContentEditable) return;
-      const n = String(e.textContent || "").trim();
-      if (n && !/^add title/i.test(n)) {
-        e.setAttribute("data-rk-full-title", n);
+      const i = String(e.textContent || "").trim();
+      if (i && !/^add title/i.test(i)) {
+        e.setAttribute("data-rk-full-title", i);
         if (this._libraryRankingTitleByRank) {
-          this._libraryRankingTitleByRank[t] = n;
+          this._libraryRankingTitleByRank[t] = i;
         }
         if (window.rankingCustomizer?.customizations) {
           window.rankingCustomizer.customizations[`rank_${t}_title`] = {
             ...window.rankingCustomizer.customizations[`rank_${t}_title`] || {},
-            content: n
+            content: i
           };
         }
       }
-      const i = e.getAttribute("data-rk-full-title") || o[t] || n || "";
-      if (i && !/^add title/i.test(i)) {
-        if (e.textContent !== i) e.textContent = i;
+      const n = e.getAttribute("data-rk-full-title") || o[t] || i || "";
+      if (n && !/^add title/i.test(n)) {
+        if (e.textContent !== n) e.textContent = n;
         e.classList.remove("rk-title-empty");
         e.removeAttribute("data-placeholder");
       } else {
@@ -9009,7 +9018,7 @@ class ClipsStudio {
       }
     };
     const applyReveal = (e = false) => {
-      const t = Number(i.currentTime) || 0;
+      const t = Number(n.currentTime) || 0;
       let o = r[0]?.rank ?? 5;
       for (const e of r) {
         if (t >= e.start - .02 && t < e.end - .02) {
@@ -9021,26 +9030,26 @@ class ClipsStudio {
       if (!e && o === s) return;
       s = o;
       for (let e = 1; e <= 5; e++) {
-        const t = n.querySelector(`[data-template-element-id="rank_${e}_title"]`);
+        const t = i.querySelector(`[data-template-element-id="rank_${e}_title"]`);
         if (!t) continue;
         paintTitle(t, e);
         t.classList.toggle("rk-title-active", e === o);
       }
     };
-    if (i._rkRevealCleanup) {
+    if (n._rkRevealCleanup) {
       try {
-        i._rkRevealCleanup();
+        n._rkRevealCleanup();
       } catch (e) {}
     }
     const onTick = () => applyReveal(false);
-    i.addEventListener("timeupdate", onTick);
-    i.addEventListener("seeked", onTick);
-    i.addEventListener("play", onTick);
-    i._rkRevealCleanup = () => {
-      i.removeEventListener("timeupdate", onTick);
-      i.removeEventListener("seeked", onTick);
-      i.removeEventListener("play", onTick);
-      delete i._rkRevealCleanup;
+    n.addEventListener("timeupdate", onTick);
+    n.addEventListener("seeked", onTick);
+    n.addEventListener("play", onTick);
+    n._rkRevealCleanup = () => {
+      n.removeEventListener("timeupdate", onTick);
+      n.removeEventListener("seeked", onTick);
+      n.removeEventListener("play", onTick);
+      delete n._rkRevealCleanup;
     };
     applyReveal(true);
   }
@@ -9049,43 +9058,43 @@ class ClipsStudio {
     const splitsFromTimeline = () => {
       const t = e?.ranking_timeline?.segments;
       if (!Array.isArray(t) || t.length < 2) return [];
-      const n = t.slice().sort((e, t) => Number(e?.output_start || 0) - Number(t?.output_start || 0));
-      const i = [];
-      for (let e = 0; e < n.length - 1 && i.length < 4; e++) {
-        const t = Number(n[e]?.output_end);
-        if (Number.isFinite(t) && t > .05) i.push(t);
+      const i = t.slice().sort((e, t) => Number(e?.output_start || 0) - Number(t?.output_start || 0));
+      const n = [];
+      for (let e = 0; e < i.length - 1 && n.length < 4; e++) {
+        const t = Number(i[e]?.output_end);
+        if (Number.isFinite(t) && t > .05) n.push(t);
       }
-      return i;
+      return n;
     };
     const t = [];
-    const n = Array.isArray(e?.clip_order) && e.clip_order.length >= 3 ? e.clip_order.map(e => Math.max(1, Math.min(5, Number(e) || 0))).filter(Boolean) : [ 5, 4, 3, 2, 1 ];
-    const i = e?.clip_windows;
-    if (i && typeof i === "object" && !Array.isArray(i)) {
-      for (const e of n) {
-        const n = i[String(e)] || i[e];
-        if (!n) continue;
-        let r = Number(n.duration);
-        if (!(r > 0) && n.start != null && n.end != null) {
-          r = Number(n.end) - Number(n.start);
+    const i = Array.isArray(e?.clip_order) && e.clip_order.length >= 3 ? e.clip_order.map(e => Math.max(1, Math.min(5, Number(e) || 0))).filter(Boolean) : [ 5, 4, 3, 2, 1 ];
+    const n = e?.clip_windows;
+    if (n && typeof n === "object" && !Array.isArray(n)) {
+      for (const e of i) {
+        const i = n[String(e)] || n[e];
+        if (!i) continue;
+        let r = Number(i.duration);
+        if (!(r > 0) && i.start != null && i.end != null) {
+          r = Number(i.end) - Number(i.start);
         }
         if (r > 0) t.push(r);
       }
     }
     if (t.length < 2) {
-      const i = e?.base_durations || this._libraryRankingBaseDurations || {};
+      const n = e?.base_durations || this._libraryRankingBaseDurations || {};
       const r = (e?.moments || this._libraryRankingMoments || []).slice().sort((e, t) => Number(e.rank || 0) - Number(t.rank || 0));
-      for (const e of n) {
-        let n = Number(i[String(e)] || i[e] || 0);
-        if (!(n > 0)) {
+      for (const e of i) {
+        let i = Number(n[String(e)] || n[e] || 0);
+        if (!(i > 0)) {
           const t = r.find(t => Number(t.rank) === e);
           if (t) {
-            n = Number(t.duration);
-            if (!(n > 0) && t.start != null && t.end != null) {
-              n = Number(t.end) - Number(t.start);
+            i = Number(t.duration);
+            if (!(i > 0) && t.start != null && t.end != null) {
+              i = Number(t.end) - Number(t.start);
             }
           }
         }
-        if (n > 0) t.push(n);
+        if (i > 0) t.push(i);
       }
     }
     const applySeed = () => {
@@ -9095,15 +9104,15 @@ class ClipsStudio {
           const e = document.querySelector("#templateVideoPreview video") || document.getElementById("previewVideo");
           if (e) PreviewTimeline.attach(e);
         }
-        PreviewTimeline.setClipOrder?.(n);
+        PreviewTimeline.setClipOrder?.(i);
       } catch (e) {}
       const e = splitsFromTimeline();
       if (e.length) {
         PreviewTimeline.setSplits(e);
         return;
       }
-      const i = PreviewTimeline.getTrim?.();
-      const r = Number(i?.duration) || 0;
+      const n = PreviewTimeline.getTrim?.();
+      const r = Number(n?.duration) || 0;
       if (!(r > 0) || t.length < 2) {
         if (r > 0) {
           PreviewTimeline.setSplits([ r * .2, r * .4, r * .6, r * .8 ]);
@@ -9130,60 +9139,60 @@ class ClipsStudio {
     const e = this._libraryRankingBaseDurations || {};
     const t = typeof PreviewTimeline !== "undefined" && PreviewTimeline.getSegmentBounds ? PreviewTimeline.getSegmentBounds() : [];
     if (!t || t.length < 2) return {};
-    const n = typeof PreviewTimeline !== "undefined" && PreviewTimeline.getClipOrder ? PreviewTimeline.getClipOrder() : [ 5, 4, 3, 2, 1 ];
-    const i = {};
+    const i = typeof PreviewTimeline !== "undefined" && PreviewTimeline.getClipOrder ? PreviewTimeline.getClipOrder() : [ 5, 4, 3, 2, 1 ];
+    const n = {};
     const r = Math.min(5, t.length - 1);
     for (let o = 0; o < r; o++) {
-      const r = n[o] || 5 - o;
+      const r = i[o] || 5 - o;
       const s = Number(e[String(r)] || e[r] || 0);
       const a = Math.max(1.5, Number(t[o + 1]) - Number(t[o]));
       if (!(s > 0)) {
-        i[String(r)] = {
+        n[String(r)] = {
           start: 0,
           end: a
         };
         continue;
       }
       if (a >= s - .08) {
-        i[String(r)] = {
+        n[String(r)] = {
           start: 0,
           end: s
         };
       } else {
         const e = Math.max(0, (s - a) / 2);
-        i[String(r)] = {
+        n[String(r)] = {
           start: e,
           end: e + a
         };
       }
     }
-    return i;
+    return n;
   }
   onRankingClipReorder(e) {
     if (!Array.isArray(e) || !e.length) return;
     this._libraryRankingClipOrder = e.slice();
     const t = document.querySelector("#templateVideoPreview .ranking-preview-container, .ranking-preview-container");
     if (!t) return;
-    const n = this._libraryRankingClipOrderPrev || [ 5, 4, 3, 2, 1 ];
-    const i = {};
+    const i = this._libraryRankingClipOrderPrev || [ 5, 4, 3, 2, 1 ];
+    const n = {};
     for (let e = 0; e < 5; e++) {
       const r = 5 - e;
-      const o = n[e] || r;
+      const o = i[e] || r;
       const s = t.querySelector(`[data-template-element-id="rank_${r}_title"]`);
       const a = (s?.getAttribute("data-rk-full-title") || s?.textContent || this._libraryRankingTitleByRank?.[r] || "").trim();
-      i[o] = a;
+      n[o] = a;
       if (this._libraryRankingTitleByPhysical == null) this._libraryRankingTitleByPhysical = {};
       if (a) this._libraryRankingTitleByPhysical[o] = a;
     }
     const r = {
       ...this._libraryRankingTitleByPhysical || {},
-      ...i
+      ...n
     };
-    for (let n = 0; n < e.length; n++) {
-      const i = 5 - n;
-      const o = e[n];
+    for (let i = 0; i < e.length; i++) {
+      const n = 5 - i;
+      const o = e[i];
       const s = r[o] || "";
-      const a = t.querySelector(`[data-template-element-id="rank_${i}_title"]`);
+      const a = t.querySelector(`[data-template-element-id="rank_${n}_title"]`);
       if (a) {
         if (s && !/^add title/i.test(s)) {
           a.textContent = s;
@@ -9193,10 +9202,10 @@ class ClipsStudio {
         }
       }
       if (this._libraryRankingTitleByRank) {
-        this._libraryRankingTitleByRank[i] = s;
+        this._libraryRankingTitleByRank[n] = s;
       }
       if (window.rankingCustomizer?.customizations) {
-        const e = `rank_${i}_title`;
+        const e = `rank_${n}_title`;
         window.rankingCustomizer.customizations[e] = {
           ...window.rankingCustomizer.customizations[e] || {},
           content: s
@@ -9214,12 +9223,12 @@ class ClipsStudio {
           window.rankingCustomizer.customizations = {};
         }
         for (let t = 1; t <= 5; t++) {
-          const n = e.querySelector(`[data-template-element-id="rank_${t}_title"]`);
-          const i = n?.getAttribute("data-rk-full-title") || this._libraryRankingTitleByRank?.[t] || "";
-          if (i) {
+          const i = e.querySelector(`[data-template-element-id="rank_${t}_title"]`);
+          const n = i?.getAttribute("data-rk-full-title") || this._libraryRankingTitleByRank?.[t] || "";
+          if (n) {
             window.rankingCustomizer.customizations[`rank_${t}_title`] = {
               ...window.rankingCustomizer.customizations[`rank_${t}_title`] || {},
-              content: String(i).trim()
+              content: String(n).trim()
             };
           }
         }
@@ -9237,8 +9246,8 @@ class ClipsStudio {
       } catch (e) {}
     }
     const t = window.rankingCustomizer?.collectCustomizations?.() || {};
-    const n = this.collectLibraryRankingClipWindows();
-    const i = typeof PreviewTimeline !== "undefined" && PreviewTimeline.getClipOrder ? PreviewTimeline.getClipOrder() : this._libraryRankingClipOrder || null;
+    const i = this.collectLibraryRankingClipWindows();
+    const n = typeof PreviewTimeline !== "undefined" && PreviewTimeline.getClipOrder ? PreviewTimeline.getClipOrder() : this._libraryRankingClipOrder || null;
     let r = null;
     try {
       if (typeof window.collectSubtitleStyle === "function") {
@@ -9259,8 +9268,8 @@ class ClipsStudio {
       body: JSON.stringify({
         ranking_customizations: t,
         channel_name: this._libraryRankingChannel || undefined,
-        clip_windows: n,
-        clip_order: i || undefined,
+        clip_windows: i,
+        clip_order: n || undefined,
         caption_style: r || undefined,
         subtitles_enabled: o
       })
@@ -9295,21 +9304,21 @@ class ClipsStudio {
       } catch (e) {}
     }
   }
-  _libraryApplyError(e, t, n) {
-    const i = e?.error_code || "";
-    if (i === "CUSTOMIZE_EXPIRED") {
+  _libraryApplyError(e, t, i) {
+    const n = e?.error_code || "";
+    if (n === "CUSTOMIZE_EXPIRED") {
       return new Error(e.error || "Customization window expired for this project.");
     }
-    if (i === "DAILY_LIMIT_REACHED" || i === "MONTHLY_LIMIT_REACHED" || t === 429) {
+    if (n === "DAILY_LIMIT_REACHED" || n === "MONTHLY_LIMIT_REACHED" || t === 429) {
       return new Error(e.error || "Applying changes uses 1 daily upload — quota reached. Try again after reset, or upgrade.");
     }
-    return new Error(e?.error || `${n} (${t})`);
+    return new Error(e?.error || `${i} (${t})`);
   }
-  async fetchSecureLibraryPreviewBlob(e, t, n = null, i = {}) {
-    const r = i.loadGen != null ? i.loadGen : ++this._libraryPreviewLoadGen;
-    const o = Math.max(0, Number(i.attempt) || 0);
-    const s = i.clean ? 2 : 3;
-    const a = !!i.clean;
+  async fetchSecureLibraryPreviewBlob(e, t, i = null, n = {}) {
+    const r = n.loadGen != null ? n.loadGen : ++this._libraryPreviewLoadGen;
+    const o = Math.max(0, Number(n.attempt) || 0);
+    const s = n.clean ? 2 : 3;
+    const a = !!n.clean;
     if (this._libraryPreviewFetchController) {
       this._libraryPreviewFetchController.abort();
       this._libraryPreviewFetchController = null;
@@ -9317,9 +9326,9 @@ class ClipsStudio {
     const l = new AbortController;
     this._libraryPreviewFetchController = l;
     const isStale = () => r !== this._libraryPreviewLoadGen || !this.libraryPreviewModalOpen || this._libraryPreviewProjectId && String(this._libraryPreviewProjectId) !== String(t);
-    const giveUp = n => {
+    const giveUp = i => {
       if (isStale()) return;
-      if (!a && !i.cleanFallbackTried) {
+      if (!a && !n.cleanFallbackTried) {
         safeLog("Preview burned path failed — trying clean master");
         this.fetchSecureLibraryPreviewBlob(e, t, null, {
           loadGen: r,
@@ -9329,19 +9338,19 @@ class ClipsStudio {
         });
         return;
       }
-      safeLog("Preview load gave up:", n);
+      safeLog("Preview load gave up:", i);
       this._libraryPreviewFailedId = String(t);
       this._showLibraryPreviewError(e, "Could not load video preview", t);
     };
-    const retrySoon = n => {
+    const retrySoon = i => {
       if (isStale()) return;
       if (String(this._libraryPreviewFailedId) === String(t)) return;
       if (o + 1 >= s) {
-        giveUp(n);
+        giveUp(i);
         return;
       }
       const l = Math.min(4e3, 900 + o * 900);
-      safeLog(`Preview not ready (${n}) — retry ${o + 1}/${s} in ${l}ms`);
+      safeLog(`Preview not ready (${i}) — retry ${o + 1}/${s} in ${l}ms`);
       if (o === 0 && !e.querySelector("video")) {
         this._setLibraryPreviewPlaceholder(e);
       }
@@ -9355,12 +9364,12 @@ class ClipsStudio {
           loadGen: r,
           attempt: o + 1,
           clean: a,
-          cleanFallbackTried: !!i.cleanFallbackTried
+          cleanFallbackTried: !!n.cleanFallbackTried
         });
       }, l);
     };
     try {
-      const n = this.getLibraryPreviewVideoUrl(t, {
+      const i = this.getLibraryPreviewVideoUrl(t, {
         bust: o === 0,
         clean: a
       });
@@ -9371,19 +9380,19 @@ class ClipsStudio {
         this._libraryRankingEditable = false;
         this._libraryRankingNeedsBurn = false;
       }
-      const i = document.createElement("video");
-      i.className = "library-preview-video";
-      i.controls = false;
-      i.removeAttribute("controls");
-      i.playsInline = true;
-      i.muted = true;
-      i.autoplay = true;
-      i.preload = "auto";
-      i.setAttribute("playsinline", "");
-      i.setAttribute("controlslist", "nodownload nofullscreen noremoteplayback noplaybackrate");
-      i.disablePictureInPicture = true;
-      i.style.cssText = "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:transparent;z-index:2;display:block;visibility:visible;opacity:0;";
-      i.removeAttribute("crossorigin");
+      const n = document.createElement("video");
+      n.className = "library-preview-video";
+      n.controls = false;
+      n.removeAttribute("controls");
+      n.playsInline = true;
+      n.muted = true;
+      n.autoplay = true;
+      n.preload = "auto";
+      n.setAttribute("playsinline", "");
+      n.setAttribute("controlslist", "nodownload nofullscreen noremoteplayback noplaybackrate");
+      n.disablePictureInPicture = true;
+      n.style.cssText = "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:transparent;z-index:2;display:block;visibility:visible;opacity:0;";
+      n.removeAttribute("crossorigin");
       e.querySelectorAll("video").forEach(e => e.remove());
       if (!e.querySelector(".preview-skel")) {
         const t = document.createElement("div");
@@ -9391,7 +9400,7 @@ class ClipsStudio {
         t.setAttribute("aria-hidden", "true");
         e.appendChild(t);
       }
-      e.appendChild(i);
+      e.appendChild(n);
       e.classList.remove("has-video");
       let r = false;
       let s = false;
@@ -9402,22 +9411,22 @@ class ClipsStudio {
       };
       const reveal = () => {
         if (r || isStale()) return;
-        const n = i.videoWidth > 0 && i.videoHeight > 0;
-        if (!n && i.readyState < 2) return;
-        if (!n) return;
+        const i = n.videoWidth > 0 && n.videoHeight > 0;
+        if (!i && n.readyState < 2) return;
+        if (!i) return;
         r = true;
         e.classList.add("has-video");
-        i.style.setProperty("display", "block", "important");
-        i.style.setProperty("visibility", "visible", "important");
-        i.style.setProperty("opacity", "1", "important");
-        i.style.setProperty("background", "#000", "important");
+        n.style.setProperty("display", "block", "important");
+        n.style.setProperty("visibility", "visible", "important");
+        n.style.setProperty("opacity", "1", "important");
+        n.style.setProperty("background", "#000", "important");
         e.querySelector(".preview-skel")?.remove();
         this._hideLibraryPreviewLoading();
         ensurePreviewAudioToggle(e);
         if (typeof PreviewTimeline !== "undefined") {
-          PreviewTimeline.attach(i);
+          PreviewTimeline.attach(n);
         }
-        i.play().catch(() => {});
+        n.play().catch(() => {});
         this.maybeMountLibraryRankingOverlay(e, t).catch(() => {});
         if (this._isCurrentLibraryRanking?.() && this._libraryRankingTimelineState) {
           try {
@@ -9425,11 +9434,11 @@ class ClipsStudio {
           } catch (e) {}
         }
       };
-      i.addEventListener("loadedmetadata", reveal);
-      i.addEventListener("loadeddata", reveal);
-      i.addEventListener("canplay", reveal);
-      i.addEventListener("playing", reveal);
-      i.addEventListener("error", () => {
+      n.addEventListener("loadedmetadata", reveal);
+      n.addEventListener("loadeddata", reveal);
+      n.addEventListener("canplay", reveal);
+      n.addEventListener("playing", reveal);
+      n.addEventListener("error", () => {
         scheduleRetry("video decode error");
       }, {
         once: true
@@ -9441,7 +9450,7 @@ class ClipsStudio {
           return;
         }
         l += 1;
-        if (i.videoWidth > 0 && i.readyState >= 1) {
+        if (n.videoWidth > 0 && n.readyState >= 1) {
           clearInterval(c);
           reveal();
           return;
@@ -9449,16 +9458,16 @@ class ClipsStudio {
         if (l >= 24) clearInterval(c);
       }, 250);
       setTimeout(() => {
-        if (!r && !isStale() && i.videoWidth > 0) {
+        if (!r && !isStale() && n.videoWidth > 0) {
           reveal();
         }
       }, 800);
       setTimeout(() => {
         scheduleRetry("video stall");
       }, 9e3);
-      i.src = n;
-      i.load();
-      i.play().catch(() => {});
+      n.src = i;
+      n.load();
+      n.play().catch(() => {});
     } catch (e) {
       if (e?.name === "AbortError") return;
       if (isStale()) return;
@@ -9483,13 +9492,13 @@ class ClipsStudio {
     if (!e) return null;
     try {
       const t = typeof getAuthHeaders === "function" ? getAuthHeaders() : {};
-      const n = await fetch(`${API_BASE_URL}/clips/projects/${encodeURIComponent(e)}/report-card`, {
+      const i = await fetch(`${API_BASE_URL}/clips/projects/${encodeURIComponent(e)}/report-card`, {
         credentials: "include",
         headers: t
       });
-      if (!n.ok) return null;
-      const i = await n.json();
-      return i && i.virality ? i.virality : null;
+      if (!i.ok) return null;
+      const n = await i.json();
+      return n && n.virality ? n.virality : null;
     } catch (e) {
       return null;
     }
@@ -9497,26 +9506,26 @@ class ClipsStudio {
   async _renderPreviewViralityRail(e) {
     const t = document.getElementById("previewViralityRail");
     if (!t) return;
-    let n = e;
-    let i = window.SolisClipCard && typeof SolisClipCard.railHTML === "function" ? SolisClipCard.railHTML(n) : "";
-    if (!i && n) {
-      const e = n.projectId || n.id;
+    let i = e;
+    let n = window.SolisClipCard && typeof SolisClipCard.railHTML === "function" ? SolisClipCard.railHTML(i) : "";
+    if (!n && i) {
+      const e = i.projectId || i.id;
       const t = await this._fetchPreviewReportCard(e);
       if (t) {
-        n = {
-          ...n,
+        i = {
+          ...i,
           virality: t
         };
         const r = this.libraryItems.find(t => String(t.projectId || t.id) === String(e));
         if (r) r.virality = t;
-        i = SolisClipCard.railHTML(n);
+        n = SolisClipCard.railHTML(i);
       }
     }
-    if (!i) {
+    if (!n) {
       this._hidePreviewViralityRail();
       return;
     }
-    t.innerHTML = i;
+    t.innerHTML = n;
     t.hidden = false;
     if (typeof SolisClipCard.bindRail === "function") {
       SolisClipCard.bindRail(t);
@@ -9524,17 +9533,17 @@ class ClipsStudio {
   }
   toggleLibraryPreviewLayout(e) {
     const t = document.getElementById("templateInfoPanel");
-    const n = document.getElementById("libraryInfoPanel");
-    const i = document.getElementById("previewDurationRow");
+    const i = document.getElementById("libraryInfoPanel");
+    const n = document.getElementById("previewDurationRow");
     const r = document.getElementById("multiGenCard");
     const o = document.getElementById("previewEditorPill");
     const s = o?.querySelector('[data-tool="text"]');
     const a = this._isCurrentLibraryRanking();
     const visibleToolbarBtns = () => o ? Array.from(o.querySelectorAll(".tool-btn")).filter(e => e.style.display !== "none" && getComputedStyle(e).display !== "none") : [];
     if (!e) this._hidePreviewViralityRail();
-    if (i) {
-      i.hidden = !e;
-      i.style.display = e ? "" : "none";
+    if (n) {
+      n.hidden = !e;
+      n.style.display = e ? "" : "none";
     }
     if (r) {
       r.hidden = !!e;
@@ -9549,13 +9558,13 @@ class ClipsStudio {
     }
     if (e) {
       if (t) t.style.display = "";
-      if (n) n.style.display = "block";
+      if (i) i.style.display = "block";
       if (o) o.style.display = "";
       if (s) s.style.display = a ? "none" : "";
       const e = o?.querySelector('[data-tool="captions"]');
-      const i = o?.querySelector('[data-tool="animations"]');
+      const n = o?.querySelector('[data-tool="animations"]');
       if (e) e.style.display = "";
-      if (i) i.style.display = "";
+      if (n) n.style.display = "";
       if (typeof lucide !== "undefined") {
         lucide.createIcons({
           attrs: {
@@ -9572,7 +9581,7 @@ class ClipsStudio {
       this._configureLibraryEditingUI();
     } else {
       if (t) t.style.display = "";
-      if (n) n.style.display = "none";
+      if (i) i.style.display = "none";
       if (o) o.style.display = "";
       if (s) s.style.display = a ? "none" : "";
       const e = visibleToolbarBtns();
@@ -9611,8 +9620,8 @@ class ClipsStudio {
       return true;
     }
     const t = e.data || {};
-    const n = `${e.id || ""} ${e.type || ""} ${e.templateId || ""} ${t.template || ""} ${t.templateName || ""}`.toLowerCase();
-    return n.includes("ranked") || n.includes("ranking");
+    const i = `${e.id || ""} ${e.type || ""} ${e.templateId || ""} ${t.template || ""} ${t.templateName || ""}`.toLowerCase();
+    return i.includes("ranked") || i.includes("ranking");
   }
   async _configureLibraryEditingUI() {
     const e = document.getElementById("previewEditorPill");
@@ -9623,12 +9632,12 @@ class ClipsStudio {
       this._librarySplitscreenCustomize = this._isCurrentLibrarySplitScreen();
     }
     e.style.display = "";
-    const n = e.querySelector('[data-tool="text"]');
-    const i = e.querySelector('[data-tool="captions"]');
+    const i = e.querySelector('[data-tool="text"]');
+    const n = e.querySelector('[data-tool="captions"]');
     const r = e.querySelector('[data-tool="animations"]');
     const o = this._isCurrentLibraryRanking();
-    if (n) n.style.display = o ? "none" : "";
-    if (i) i.style.display = "";
+    if (i) i.style.display = o ? "none" : "";
+    if (n) n.style.display = "";
     if (r) r.style.display = "";
     if (typeof lucide !== "undefined") {
       lucide.createIcons({
@@ -9647,17 +9656,17 @@ class ClipsStudio {
   async downloadRenderedLibraryClip(e) {
     const t = `${API_BASE_URL}/clips/render/${encodeURIComponent(e)}`;
     try {
-      const n = await fetch(t, {
+      const i = await fetch(t, {
         method: "GET",
         credentials: "include",
         headers: getAuthHeaders()
       });
-      if (!n.ok) {
-        throw new Error(`Render failed (${n.status})`);
+      if (!i.ok) {
+        throw new Error(`Render failed (${i.status})`);
       }
-      const i = await n.blob();
-      if (!i.size) throw new Error("Rendered file is empty");
-      const r = URL.createObjectURL(i);
+      const n = await i.blob();
+      if (!n.size) throw new Error("Rendered file is empty");
+      const r = URL.createObjectURL(n);
       const o = document.createElement("a");
       o.href = r;
       o.download = `clip_${e}.mp4`;
@@ -9680,37 +9689,37 @@ class ClipsStudio {
   }
   handleSocialButtonClick(e) {
     const t = e.currentTarget.getAttribute("data-platform");
-    const n = this.currentTemplateForPreview?.projectId;
-    if (!n) {
+    const i = this.currentTemplateForPreview?.projectId;
+    if (!i) {
       alert("No project selected");
       return;
     }
-    safeLog(`📤 Share to ${t}: ${n}`);
-    const i = `Share to ${t.toUpperCase()} coming soon!`;
-    alert(i);
+    safeLog(`📤 Share to ${t}: ${i}`);
+    const n = `Share to ${t.toUpperCase()} coming soon!`;
+    alert(n);
   }
   async updateWatermarkToggleState() {
     const e = document.getElementById("watermarkFreeNotice");
     const t = document.getElementById("watermarkPaidSection");
-    const n = document.getElementById("watermarkToggle");
-    if (!n) return;
+    const i = document.getElementById("watermarkToggle");
+    if (!i) return;
     try {
-      const i = await window._subCache.get();
-      const r = (i?.plan_name || i?.plan || "free").toLowerCase();
+      const n = await window._subCache.get();
+      const r = (n?.plan_name || n?.plan || "free").toLowerCase();
       const o = [ "basic", "prime", "elite" ].includes(r);
       if (o) {
         if (t) t.style.display = "block";
         if (e) e.style.display = "none";
-        n.disabled = false;
-        n.checked = false;
+        i.disabled = false;
+        i.checked = false;
         this.currentTemplateForPreview.addWatermark = false;
       } else {
         if (e) e.style.display = "block";
         if (t) t.style.display = "none";
         this.currentTemplateForPreview.addWatermark = true;
       }
-    } catch (n) {
-      safeLog("Error checking watermark eligibility:", n);
+    } catch (i) {
+      safeLog("Error checking watermark eligibility:", i);
       if (t) t.style.display = "block";
       if (e) e.style.display = "none";
     }
@@ -9718,8 +9727,8 @@ class ClipsStudio {
   handleWatermarkToggle(e) {
     if (!this.currentTemplateForPreview) return;
     const t = document.getElementById("watermarkToggle");
-    const n = t.checked;
-    this.currentTemplateForPreview.addWatermark = n;
+    const i = t.checked;
+    this.currentTemplateForPreview.addWatermark = i;
   }
   async confirmTemplateUse() {
     const e = document.getElementById("confirmUseTemplateBtn");
@@ -9738,22 +9747,22 @@ class ClipsStudio {
       if (e) e.blur();
     } catch (e) {}
     const t = this.currentTemplateForPreview.id;
-    const n = this.currentTemplateForPreview.isLibraryPreview || false;
-    const i = this.currentTemplateForPreview.projectId;
+    const i = this.currentTemplateForPreview.isLibraryPreview || false;
+    const n = this.currentTemplateForPreview.projectId;
     const r = this.templates[t];
     safeLog("ðŸ” confirmTemplateUse:", {
       templateId: t,
-      isLibraryPreview: n,
-      projectId: i,
+      isLibraryPreview: i,
+      projectId: n,
       availableTemplates: Object.keys(this.templates),
       foundTemplate: !!r,
       cachedData: this.currentTemplateForPreview.data
     });
-    if (n && i) {
-      safeLog(`📥 Library mode: Downloading clip ${i}`);
+    if (i && n) {
+      safeLog(`📥 Library mode: Downloading clip ${n}`);
       const t = Boolean(this._libraryHookCleared);
-      const n = Boolean(this._libraryCaptionsCleared);
-      const r = Boolean(this._librarySplitscreenCustomize && (this._librarySplitscreenDirty || t || n));
+      const i = Boolean(this._libraryCaptionsCleared);
+      const r = Boolean(this._librarySplitscreenCustomize && (this._librarySplitscreenDirty || t || i));
       const o = typeof window.collectLibraryOverlayTexts === "function" ? window.collectLibraryOverlayTexts() : [];
       const s = Boolean(this._libraryOverlayDirty);
       const a = Boolean(this._libraryRankingEditable && (this._libraryRankingDirty || this._libraryRankingNeedsBurn));
@@ -9777,7 +9786,7 @@ class ClipsStudio {
               showNotification("Applying changes uses 1 daily upload.", "info");
             } catch (e) {}
           }
-          await this.runLibraryApplyWithSpinner(i, {
+          await this.runLibraryApplyWithSpinner(n, {
             needsRecompose: r,
             needsOverlayRender: s,
             needsRankingRecompose: a,
@@ -9786,7 +9795,7 @@ class ClipsStudio {
           this.closeTemplatePreviewModal();
         } else {
           this.closeTemplatePreviewModal();
-          await this.downloadClip(i);
+          await this.downloadClip(n);
         }
       } catch (e) {
         showNotification(`Save failed: ${e.message}`, "error");
@@ -9861,19 +9870,19 @@ class ClipsStudio {
         if (!e || !Object.keys(e).length || t === 0) {
           try {
             const t = JSON.parse(sessionStorage.getItem("solisRankingStyleLock") || "null");
-            const n = window.rankingCustomizer.countFonts?.(t) || 0;
-            if (n > 0) {
+            const i = window.rankingCustomizer.countFonts?.(t) || 0;
+            if (i > 0) {
               e = {
                 ...t || {},
                 ...e || {}
               };
-              Object.entries(t).forEach(([t, n]) => {
-                if (!n || typeof n !== "object") return;
+              Object.entries(t).forEach(([t, i]) => {
+                if (!i || typeof i !== "object") return;
                 if (!e[t]) e[t] = {
-                  ...n
-                }; else if (n.font && !e[t].font) e[t].font = n.font;
+                  ...i
+                }; else if (i.font && !e[t].font) e[t].font = i.font;
               });
-              safeLog("[RankingStyles] Recovered fonts from prior style lock:", n);
+              safeLog("[RankingStyles] Recovered fonts from prior style lock:", i);
             }
           } catch (e) {}
         }
@@ -9888,9 +9897,9 @@ class ClipsStudio {
         } catch (e) {}
         try {
           const t = Object.entries(e).filter(([e, t]) => e !== "__ranking_layout" && t && t.font).map(([e, t]) => `${e}:${t.font}`);
-          const n = Object.entries(e).filter(([e, t]) => e !== "__ranking_layout" && t && t.font_size).map(([e, t]) => `${e}:${t.font_size}`);
+          const i = Object.entries(e).filter(([e, t]) => e !== "__ranking_layout" && t && t.font_size).map(([e, t]) => `${e}:${t.font_size}`);
           safeLog("[RankingStyles] LOCK fonts:", t.slice(0, 14));
-          safeLog("[RankingStyles] LOCK sizes:", n.slice(0, 14));
+          safeLog("[RankingStyles] LOCK sizes:", i.slice(0, 14));
           if (!t.length) {
             safeLog("[RankingStyles] WARNING: style lock has no fonts — burn may look default");
           }
@@ -9926,10 +9935,10 @@ class ClipsStudio {
     });
     this.switchTab("create");
     const t = document.getElementById("youtubeUrlInput");
-    const n = document.getElementById("processUrlBtn");
-    const i = document.getElementById("urlInputStack") || document.querySelector(".url-input-container");
-    if (i) {
-      i.scrollIntoView({
+    const i = document.getElementById("processUrlBtn");
+    const n = document.getElementById("urlInputStack") || document.querySelector(".url-input-container");
+    if (n) {
+      n.scrollIntoView({
         behavior: "smooth",
         block: "center"
       });
@@ -9942,11 +9951,11 @@ class ClipsStudio {
         t.select();
       } catch (e) {}
     }
-    if (n) {
-      n.classList.add("needs-url-pulse");
+    if (i) {
+      i.classList.add("needs-url-pulse");
       clearTimeout(this._urlPulseTimer);
       this._urlPulseTimer = setTimeout(() => {
-        n.classList.remove("needs-url-pulse");
+        i.classList.remove("needs-url-pulse");
       }, 4200);
     }
   }
@@ -9965,14 +9974,14 @@ class ClipsStudio {
   }
   showConfirmationButtons(e) {
     const t = document.getElementById("confirmTemplateBtn");
-    const n = document.getElementById("cancelTemplateBtn");
-    if (t && n) {
+    const i = document.getElementById("cancelTemplateBtn");
+    if (t && i) {
       if (e) {
         t.style.display = "flex";
-        n.style.display = "flex";
+        i.style.display = "flex";
       } else {
         t.style.display = "none";
-        n.style.display = "none";
+        i.style.display = "none";
       }
     }
   }
@@ -9998,13 +10007,13 @@ class ClipsStudio {
     this.showTemplateConfirmation(this.selectedTemplate, e);
   }
   showTemplateConfirmation(e, t) {
-    const n = this.templates[e];
-    if (!n) {
+    const i = this.templates[e];
+    if (!i) {
       showNotification("Template not found", "error");
       return;
     }
-    const i = n.supportsSlotSystem ? "\n\n🎯 Using Slot System: New clips will fill from slot 5 upward" : "";
-    if (confirm(`Create "${n.name}" from this YouTube URL?\n\nURL: ${t}\n\n${n.description}\n${n.duration}${i}\n\nThis may take a few minutes to process.`)) {
+    const n = i.supportsSlotSystem ? "\n\n🎯 Using Slot System: New clips will fill from slot 5 upward" : "";
+    if (confirm(`Create "${i.name}" from this YouTube URL?\n\nURL: ${t}\n\n${i.description}\n${i.duration}${n}\n\nThis may take a few minutes to process.`)) {
       this.startClipProcessingWithSlots(t, e);
     }
   }
@@ -10058,45 +10067,45 @@ class ClipsStudio {
     const t = document.getElementById("processUrlBtn");
     t?.classList.add("is-cancelling");
     try {
-      let n = null;
+      let i = null;
       if (e?.activeGenerations?.size) {
-        n = [ ...e.activeGenerations.keys() ][0];
+        i = [ ...e.activeGenerations.keys() ][0];
       }
-      if (!n && this.processingItems?.length) {
+      if (!i && this.processingItems?.length) {
         const e = this.processingItems.find(e => {
           const t = String(e.status || "").toLowerCase();
           return e.projectId && [ "queued", "downloading", "processing" ].includes(t);
         });
-        n = e?.projectId || null;
+        i = e?.projectId || null;
       }
-      if (!n && e?._lastKnownProjectId) {
-        n = e._lastKnownProjectId;
+      if (!i && e?._lastKnownProjectId) {
+        i = e._lastKnownProjectId;
       }
-      if (!n) {
+      if (!i) {
         try {
           const e = JSON.parse(localStorage.getItem("solisAI_activeGenerations") || "[]");
-          if (Array.isArray(e) && e.length) n = e[0];
+          if (Array.isArray(e) && e.length) i = e[0];
         } catch (e) {}
       }
-      if (e?.optimisticPending && !n) {
+      if (e?.optimisticPending && !i) {
         e.cancelOptimisticGeneration?.();
         this._unlockGenerationButtons();
         return;
       }
-      if (e?.optimisticPending && n) {
+      if (e?.optimisticPending && i) {
         e.optimisticPending = false;
       }
-      if (!n) {
+      if (!i) {
         e?.cancelOptimisticGeneration?.();
         this._unlockGenerationButtons();
         return;
       }
-      e?._markUserCancelled?.(n);
-      const i = window.API_BASE_URL || window.API_BASE || "/api";
+      e?._markUserCancelled?.(i);
+      const n = window.API_BASE_URL || window.API_BASE || "/api";
       const r = typeof getAuthHeaders === "function" ? getAuthHeaders() : {
         "Content-Type": "application/json"
       };
-      const o = await fetch(`${i}/clips/${encodeURIComponent(n)}/cancel`, {
+      const o = await fetch(`${n}/clips/${encodeURIComponent(i)}/cancel`, {
         method: "POST",
         headers: r,
         credentials: "include"
@@ -10110,13 +10119,13 @@ class ClipsStudio {
         return;
       }
       if (e?.stopGeneration) {
-        e.stopGeneration(n, "Stopped");
+        e.stopGeneration(i, "Stopped");
       } else if (e?.failGeneration) {
-        e.failGeneration(n, "Stopped");
+        e.failGeneration(i, "Stopped");
       } else {
         this._unlockGenerationButtons();
       }
-      const a = this.processingItems?.find(e => e.projectId === n);
+      const a = this.processingItems?.find(e => e.projectId === i);
       if (a) {
         a.status = "cancelled";
         a.message = "Stopped";
@@ -10156,23 +10165,23 @@ class ClipsStudio {
     if (typeof window.syncUseTemplateFab === "function") window.syncUseTemplateFab();
   }
   _rollbackOptimisticStart(e, t = null) {
-    const n = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
-    if (n) {
+    const i = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
+    if (i) {
       const e = t && String(t).trim() || "Could not start generation — try again";
-      if (typeof n.failOptimisticStart === "function") {
-        n.failOptimisticStart(e);
+      if (typeof i.failOptimisticStart === "function") {
+        i.failOptimisticStart(e);
       } else {
-        n.cancelOptimisticGeneration();
-        if (n.activeGenerations.size === 0) {
-          n._unlockUrlSubmitButton();
+        i.cancelOptimisticGeneration();
+        if (i.activeGenerations.size === 0) {
+          i._unlockUrlSubmitButton();
         }
       }
     }
     this._unlockGenerationButtons();
     if (e == null) return;
-    const i = this.processingItems.findIndex(t => t.id === e);
-    if (i === -1) return;
-    this.processingItems.splice(i, 1);
+    const n = this.processingItems.findIndex(t => t.id === e);
+    if (n === -1) return;
+    this.processingItems.splice(n, 1);
     this.saveProcessingItems();
     if (this.processingItems.length === 0) {
       this.stopLibraryPolling();
@@ -10182,14 +10191,14 @@ class ClipsStudio {
     }
   }
   _notifyGenerationBlock(e, t = null) {
-    const n = e?.daily || t?.daily || {};
-    const i = e?.monthly || t?.monthly || {};
-    const r = t?.daily_count ?? n.used;
-    const o = t?.daily_limit ?? n.limit;
-    const s = n.remaining ?? (o != null && r != null ? Math.max(0, o - r) : null);
-    const a = t?.monthly_count ?? i.used;
-    const l = t?.monthly_limit ?? i.limit;
-    const c = i.remaining ?? (l != null && a != null ? Math.max(0, l - a) : null);
+    const i = e?.daily || t?.daily || {};
+    const n = e?.monthly || t?.monthly || {};
+    const r = t?.daily_count ?? i.used;
+    const o = t?.daily_limit ?? i.limit;
+    const s = i.remaining ?? (o != null && r != null ? Math.max(0, o - r) : null);
+    const a = t?.monthly_count ?? n.used;
+    const l = t?.monthly_limit ?? n.limit;
+    const c = n.remaining ?? (l != null && a != null ? Math.max(0, l - a) : null);
     const d = e?.storage?.videos?.used ?? t?.current_count ?? (typeof window.clipsStudio?.libraryItems?.length === "number" ? window.clipsStudio.libraryItems.length : null);
     const p = e?.storage?.videos?.limit ?? t?.limit ?? null;
     const showStorageFullModal = (e, t) => {
@@ -10200,16 +10209,16 @@ class ClipsStudio {
       }
     };
     if (e?.daily_limit_reached || t?.error_code === "DAILY_LIMIT_REACHED" || s === 0) {
-      const e = n.resets_at || t?.daily?.resets_at;
-      let i = "";
+      const e = i.resets_at || t?.daily?.resets_at;
+      let n = "";
       if (e) {
         try {
           const t = String(e).trim();
-          const n = /[zZ]|[+-]\d{2}:?\d{2}$/.test(t);
-          const r = n ? t.replace(" ", "T") : `${t.replace(" ", "T")}Z`;
+          const i = /[zZ]|[+-]\d{2}:?\d{2}$/.test(t);
+          const r = i ? t.replace(" ", "T") : `${t.replace(" ", "T")}Z`;
           const o = new Date(r);
           if (!Number.isNaN(o.getTime())) {
-            i = o.toLocaleString([], {
+            n = o.toLocaleString([], {
               month: "short",
               day: "numeric",
               hour: "numeric",
@@ -10218,7 +10227,7 @@ class ClipsStudio {
           }
         } catch (e) {}
       }
-      showNotification(i ? `Daily quota reached (${r ?? "?"}/${o ?? "?"}). Resets around ${i}.` : `Daily quota reached (${r ?? "?"}/${o ?? "?"}). Resets 24h after you started generating.`, "warning");
+      showNotification(n ? `Daily quota reached (${r ?? "?"}/${o ?? "?"}). Resets around ${n}.` : `Daily quota reached (${r ?? "?"}/${o ?? "?"}). Resets 24h after you started generating.`, "warning");
       return;
     }
     if (e?.monthly_limit_reached || t?.error_code === "MONTHLY_LIMIT_REACHED" || l > 0 && c === 0) {
@@ -10229,8 +10238,8 @@ class ClipsStudio {
     if (u > 0) {
       const e = Math.floor(u / 60);
       const t = u % 60;
-      const n = e > 0 ? `${e}m ${t}s` : `${t}s`;
-      showNotification(`Please wait ${n} before your next upload.`, "warning");
+      const i = e > 0 ? `${e}m ${t}s` : `${t}s`;
+      showNotification(`Please wait ${i} before your next upload.`, "warning");
       return;
     }
     if (e?.library_limit_reached || e?.block_reason === "library_full" || t?.error_code === "VIDEO_LIMIT_REACHED") {
@@ -10239,9 +10248,9 @@ class ClipsStudio {
     }
     if (e?.storage_limit_reached || e?.block_reason === "storage_full" || t?.error_code === "INSUFFICIENT_STORAGE") {
       const t = e?.storage?.space_mb?.used;
-      const n = e?.storage?.space_mb?.total;
-      const i = t != null && n != null ? ` (${t} MB / ${n} MB used)` : "";
-      showStorageFullModal("Disk Storage Full", `Your plan storage is almost full${i}. Delete old projects or upgrade your plan to continue.`);
+      const i = e?.storage?.space_mb?.total;
+      const n = t != null && i != null ? ` (${t} MB / ${i} MB used)` : "";
+      showStorageFullModal("Disk Storage Full", `Your plan storage is almost full${n}. Delete old projects or upgrade your plan to continue.`);
       return;
     }
     if (e?.block_reason === "in_progress" || e?.is_generating) {
@@ -10264,11 +10273,11 @@ class ClipsStudio {
       safeLog("Duration preflight failed (continuing):", e?.message || e);
     }
     if (this._generationStartInFlight) return;
-    let n = null;
+    let i = null;
     try {
-      const i = this.templates[t];
-      const r = i?.name || t;
-      n = Date.now();
+      const n = this.templates[t];
+      const r = n?.name || t;
+      i = Date.now();
       this._generationStartInFlight = true;
       this._lockGenerationButtons();
       this.switchTab("library");
@@ -10278,17 +10287,17 @@ class ClipsStudio {
       const o = typeof initGenerationProgressSpinner === "function" ? initGenerationProgressSpinner() : typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
       if (o) {
         const e = document.getElementById("youtubeUrlInput")?.value?.trim() || "";
-        const n = {
+        const i = {
           ...t === "splitscreen" && typeof window.getSplitscreenConfig === "function" ? {
             secondaryType: window.getSplitscreenConfig().splitscreen_secondary_type
           } : {},
           videoTitle: `${r}` + (e ? ` · ${e}` : ""),
           title: r
         };
-        o.beginOptimisticGeneration("Starting...", t, n);
+        o.beginOptimisticGeneration("Starting...", t, i);
       }
       const s = {
-        id: n,
+        id: i,
         projectId: null,
         optimistic: true,
         name: `${r} from YouTube`,
@@ -10317,16 +10326,16 @@ class ClipsStudio {
           const t = {};
           e.forEach(e => {
             if (!e || typeof e !== "object") return;
-            Object.entries(e).forEach(([e, n]) => {
-              if (!n || typeof n !== "object") {
-                if (n != null) t[e] = n;
+            Object.entries(e).forEach(([e, i]) => {
+              if (!i || typeof i !== "object") {
+                if (i != null) t[e] = i;
                 return;
               }
-              const i = t[e] && typeof t[e] === "object" ? t[e] : {};
+              const n = t[e] && typeof t[e] === "object" ? t[e] : {};
               const r = {
-                ...i
+                ...n
               };
-              Object.entries(n).forEach(([e, t]) => {
+              Object.entries(i).forEach(([e, t]) => {
                 if (t !== undefined && t !== null && t !== "") r[e] = t;
               });
               t[e] = r;
@@ -10346,50 +10355,50 @@ class ClipsStudio {
         } catch (e) {
           t = null;
         }
-        let n = null;
+        let i = null;
         try {
           const e = window.currentUser?.id || window.currentUser?.user_id || null;
           const t = e != null ? `rankingCustomizations:u${e}` : "rankingCustomizations";
-          n = JSON.parse(localStorage.getItem(t) || "null");
-          if (!n && t !== "rankingCustomizations") {
-            n = JSON.parse(localStorage.getItem("rankingCustomizations") || "null");
-          }
-        } catch (e) {
-          n = null;
-        }
-        let i = null;
-        try {
-          if (window.rankingCustomizer?.captureGenerateLock && document.querySelector("#templateVideoPreview .ranking-preview-container")) {
-            i = window.rankingCustomizer.captureGenerateLock();
-          } else if (window.rankingCustomizer?.customizations) {
-            i = JSON.parse(JSON.stringify(window.rankingCustomizer.customizations));
+          i = JSON.parse(localStorage.getItem(t) || "null");
+          if (!i && t !== "rankingCustomizations") {
+            i = JSON.parse(localStorage.getItem("rankingCustomizations") || "null");
           }
         } catch (e) {
           i = null;
         }
-        p = mergeStyleMaps(n, e, i, window.__solisPendingGenerateRankingCustoms, window.__solisRankingStyleLock, t);
+        let n = null;
+        try {
+          if (window.rankingCustomizer?.captureGenerateLock && document.querySelector("#templateVideoPreview .ranking-preview-container")) {
+            n = window.rankingCustomizer.captureGenerateLock();
+          } else if (window.rankingCustomizer?.customizations) {
+            n = JSON.parse(JSON.stringify(window.rankingCustomizer.customizations));
+          }
+        } catch (e) {
+          n = null;
+        }
+        p = mergeStyleMaps(i, e, n, window.__solisPendingGenerateRankingCustoms, window.__solisRankingStyleLock, t);
         const countFonts = e => {
           if (!e || typeof e !== "object") return 0;
           return Object.entries(e).filter(([e, t]) => e !== "__ranking_layout" && t && typeof t === "object" && t.font).length;
         };
         if (countFonts(p) === 0) {
-          const i = mergeStyleMaps(p, n, e, t, window.__solisRankingStyleLock, window.rankingCustomizer?.customizations);
-          if (countFonts(i) > 0) {
-            p = i;
-            safeLog("[RankingStyles] Rescued fonts after empty merge:", countFonts(i));
+          const n = mergeStyleMaps(p, i, e, t, window.__solisRankingStyleLock, window.rankingCustomizer?.customizations);
+          if (countFonts(n) > 0) {
+            p = n;
+            safeLog("[RankingStyles] Rescued fonts after empty merge:", countFonts(n));
           }
         }
         window.__solisPendingGenerateRankingCustoms = null;
         try {
           sessionStorage.setItem("solisPendingRankingCustoms", JSON.stringify(p || {}));
           const e = countFonts(p);
-          const n = countFonts(t);
+          const i = countFonts(t);
           if (e > 0) {
             sessionStorage.setItem("solisRankingStyleLock", JSON.stringify(p || {}));
             window.__solisRankingStyleLock = p;
-          } else if (n > 0) {
+          } else if (i > 0) {
             p = mergeStyleMaps(p, t);
-            safeLog("[RankingStyles] Kept prior style lock fonts:", n);
+            safeLog("[RankingStyles] Kept prior style lock fonts:", i);
           } else {
             sessionStorage.setItem("solisRankingStyleLock", JSON.stringify(p || {}));
             window.__solisRankingStyleLock = p;
@@ -10459,15 +10468,15 @@ class ClipsStudio {
         }
         if (!e && typeof window.collectSubtitleStyle === "function") {
           const t = window.collectSubtitleStyle();
-          const n = !!document.getElementById("templateVideoPreview")?.querySelector(".sub-text-block:not(.overlay-text-block)");
-          if (t && n) e = t;
+          const i = !!document.getElementById("templateVideoPreview")?.querySelector(".sub-text-block:not(.overlay-text-block)");
+          if (t && i) e = t;
         }
-        const n = !!document.getElementById("templateVideoPreview")?.querySelector(".sub-text-block:not(.overlay-text-block)");
-        const i = !!(e && typeof e === "object");
-        const r = !!window.__solisCaptionsClearedForGenerate && !i;
-        const o = !!window.__solisCaptionsOptedIn || n || i;
+        const i = !!document.getElementById("templateVideoPreview")?.querySelector(".sub-text-block:not(.overlay-text-block)");
+        const n = !!(e && typeof e === "object");
+        const r = !!window.__solisCaptionsClearedForGenerate && !n;
+        const o = !!window.__solisCaptionsOptedIn || i || n;
         window.__solisCaptionsClearedForGenerate = false;
-        if (r && !n && !i) {
+        if (r && !i && !n) {
           u.subtitles_enabled = false;
           delete u.caption_style;
           safeLog("Captions removed in preview — skipping burn");
@@ -10482,7 +10491,7 @@ class ClipsStudio {
           };
           u.subtitles_enabled = true;
           safeLog("Sending caption style:", u.caption_style);
-        } else if (n && o) {
+        } else if (i && o) {
           u.caption_style = {
             anim: "karaoke",
             enabled: true,
@@ -10552,7 +10561,7 @@ class ClipsStudio {
         }
       }
       if (f.status === 401) {
-        this._rollbackOptimisticStart(n, "Session expired. Please try again.");
+        this._rollbackOptimisticStart(i, "Session expired. Please try again.");
         showNotification("Session expired. Please try again.", "error");
         return;
       }
@@ -10560,19 +10569,19 @@ class ClipsStudio {
         const e = await f.json().catch(() => ({}));
         if (f.status === 429) {
           if (e.error_code === "CONCURRENT_GENERATION_BLOCKED") {
-            this._rollbackOptimisticStart(n, e.error || "Another generation is already running.");
+            this._rollbackOptimisticStart(i, e.error || "Another generation is already running.");
             showNotification(e.error, "error");
             return;
           }
           if (e.error_code === "GENERATION_COOLDOWN") {
-            this._rollbackOptimisticStart(n, e.error || "Please wait before starting another generation.");
+            this._rollbackOptimisticStart(i, e.error || "Please wait before starting another generation.");
             const t = e.remaining_seconds || e.cooldown_seconds || 30;
             startCooldownTimer(t);
             showNotification(e.error, "error");
             return;
           }
           if (e.error_code === "MAX_EFFORT_LIMIT_REACHED") {
-            this._rollbackOptimisticStart(n, e.error || "Max effort daily limit reached. Switch to Normal effort.");
+            this._rollbackOptimisticStart(i, e.error || "Max effort daily limit reached. Switch to Normal effort.");
             showNotification(e.error || "Max effort daily limit reached. Switch to Normal effort.", "error");
             try {
               if (typeof window.setSelectedEffortMode === "function") {
@@ -10585,7 +10594,7 @@ class ClipsStudio {
             return;
           }
           if (e.error_code === "DAILY_LIMIT_REACHED" || e.error_code === "MONTHLY_LIMIT_REACHED") {
-            this._rollbackOptimisticStart(n, e.error || "Generation limit reached — upgrade or wait for reset.");
+            this._rollbackOptimisticStart(i, e.error || "Generation limit reached — upgrade or wait for reset.");
             this._notifyGenerationBlock(null, e);
             try {
               if (typeof window.refreshPlanSelector === "function") {
@@ -10595,26 +10604,26 @@ class ClipsStudio {
             return;
           }
           if (e.error_code === "VIDEO_LIMIT_REACHED") {
-            this._rollbackOptimisticStart(n, e.error || "Library is full — free a slot or upgrade.");
+            this._rollbackOptimisticStart(i, e.error || "Library is full — free a slot or upgrade.");
             this._notifyGenerationBlock({
               storage_limit_reached: true,
               plan_type: e.plan_type
             }, e);
             return;
           }
-          this._rollbackOptimisticStart(n, e.error || "Rate limit reached. Please try again later.");
+          this._rollbackOptimisticStart(i, e.error || "Rate limit reached. Please try again later.");
           showNotification(e.error || "Rate limit reached. Please try again later.", "error");
           return;
         } else if (e.error_code === "VIDEO_TOO_LONG") {
           const t = e.video_minutes || 0;
-          const i = e.max_duration_minutes || 0;
-          const r = e.error || `Source exceeds the ${i}m safety limit (${t}m).`;
-          this._rollbackOptimisticStart(n, r);
+          const n = e.max_duration_minutes || 0;
+          const r = e.error || `Source exceeds the ${n}m safety limit (${t}m).`;
+          this._rollbackOptimisticStart(i, r);
           showNotification(r, "error");
           return;
         } else {
           const t = e.error || "Failed to start processing";
-          this._rollbackOptimisticStart(n, t);
+          this._rollbackOptimisticStart(i, t);
           showNotification(t, "error");
           throw new Error(t);
         }
@@ -10626,7 +10635,7 @@ class ClipsStudio {
         const e = await this.resolveWatermarkPolicy(true);
         this.applyWatermarkControls(e);
       } catch (e) {}
-      const g = this.processingItems.find(e => e.id === n);
+      const g = this.processingItems.find(e => e.id === i);
       if (g) {
         g.projectId = this.currentProjectId;
         g.optimistic = false;
@@ -10636,7 +10645,7 @@ class ClipsStudio {
         this.saveProcessingItems();
       } else {
         const e = {
-          id: n,
+          id: i,
           projectId: this.currentProjectId,
           name: `${y.template.name} from YouTube`,
           template: t,
@@ -10656,9 +10665,9 @@ class ClipsStudio {
         const e = t === "splitscreen" && typeof window.getSplitscreenConfig === "function" ? {
           secondaryType: window.getSplitscreenConfig().splitscreen_secondary_type
         } : {};
-        const n = y?.queue?.queue_status;
-        const i = Number(y?.queue?.users_ahead);
-        const r = n === "waiting" || Number.isFinite(i) && i > 0;
+        const i = y?.queue?.queue_status;
+        const n = Number(y?.queue?.users_ahead);
+        const r = i === "waiting" || Number.isFinite(n) && n > 0;
         const s = y?.message || (r ? "Queued — waiting for an open slot..." : "Starting upload...");
         o.startGeneration(y.project_id, s, t, e);
         if (y?.queue) {
@@ -10677,19 +10686,19 @@ class ClipsStudio {
       try {
         const e = window.clipsStudio?.libraryItems?.length ?? Number(document.getElementById("storageUsedBadge")?.textContent || 0);
         const t = (document.getElementById("storagePlanBadge")?.textContent || "free").toLowerCase();
-        const n = typeof window.isUnlimitedLibrary === "function" && window.isUnlimitedLibrary(null, t);
-        const i = n ? null : Number(document.getElementById("storageTotalBadge")?.textContent || 0) || 10;
+        const i = typeof window.isUnlimitedLibrary === "function" && window.isUnlimitedLibrary(null, t);
+        const n = i ? null : Number(document.getElementById("storageTotalBadge")?.textContent || 0) || 10;
         if (typeof window.applyStorageBadgeUI === "function") {
           window.applyStorageBadgeUI({
             used: e,
-            limit: i,
+            limit: n,
             plan: t,
-            unlimited: n
+            unlimited: i
           });
         }
-        if (!n) {
-          const n = window.getStoragePhase?.(e, i, t)?.phase;
-          if ((n === "high" || n === "full") && typeof window.pulseStorageBadgeWarning === "function") {
+        if (!i) {
+          const i = window.getStoragePhase?.(e, n, t)?.phase;
+          if ((i === "high" || i === "full") && typeof window.pulseStorageBadgeWarning === "function") {
             window.pulseStorageBadgeWarning();
           }
         }
@@ -10697,20 +10706,23 @@ class ClipsStudio {
       if (solisWSClient && y.project_id) {
         solisWSClient.registerTask(y.project_id, "processing");
       }
-      this.startMonitoring(n);
+      this.startMonitoring(i);
       this._generationStartInFlight = false;
       try {
         if (window.SolisMemory && typeof window.SolisMemory.recordFromGeneration === "function") {
           const e = t === "ranked_compilation" || String(t || "").toLowerCase().includes("rank");
-          const n = e ? p || d || null : null;
-          const i = e ? null : u && u.caption_style || null;
+          const i = e ? p || d || null : null;
+          const n = e ? null : u && u.caption_style || null;
           const r = t === "splitscreen" && typeof window.getSplitscreenConfig === "function" ? window.getSplitscreenConfig() : null;
-          window.SolisMemory.recordFromGeneration(t, n, i, r);
+          window.SolisMemory.recordFromGeneration(t, i, n, r);
         }
+      } catch (e) {}
+      try {
+        this._noteSuccessfulGenerate(t);
       } catch (e) {}
       this.cancelTemplateSelection();
     } catch (e) {
-      this._rollbackOptimisticStart(n, e?.message ? `Failed to start: ${e.message}` : null);
+      this._rollbackOptimisticStart(i, e?.message ? `Failed to start: ${e.message}` : null);
       safeLog("startClipProcessingWithSlots error:", e);
       showNotification("Failed to start processing: " + e.message, "error");
     }
@@ -10724,8 +10736,8 @@ class ClipsStudio {
         return;
       }
       try {
-        const n = window.generationProgressSpinner;
-        if (n?.activeGenerations?.has?.(t.projectId)) {
+        const i = window.generationProgressSpinner;
+        if (i?.activeGenerations?.has?.(t.projectId)) {
           if (t.status === "processing") return;
           this.stopMonitoring(e);
           return;
@@ -10755,13 +10767,13 @@ class ClipsStudio {
     try {
       const t = this.processingItems.find(t => t.id === e);
       if (!t || !t.projectId || t.optimistic) return;
-      const n = getAuthHeaders();
-      const i = await fetch(`${API_BASE_URL}/clips/status/${t.projectId}`, {
-        headers: n,
+      const i = getAuthHeaders();
+      const n = await fetch(`${API_BASE_URL}/clips/status/${t.projectId}`, {
+        headers: i,
         credentials: "include"
       });
-      if (!i.ok) return;
-      const r = await i.json();
+      if (!n.ok) return;
+      const r = await n.json();
       const o = t.status !== r.status || t.progress !== r.progress;
       if (o) {
         t.status = r.status;
@@ -10774,13 +10786,13 @@ class ClipsStudio {
         }
         const e = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
         if (e) {
-          const n = r.message || {
+          const i = r.message || {
             downloading: "Downloading video...",
             processing: "Processing moments...",
             rendering: "Rendering video...",
             completed: "Complete!"
           }[r.status] || `${r.status}...`;
-          e.updateProgress(t.projectId, r.progress, n, true);
+          e.updateProgress(t.projectId, r.progress, i, true);
         }
         this.updateProcessingView();
         if (this.currentTab === "library") {
@@ -10790,9 +10802,9 @@ class ClipsStudio {
       }
       if (r.status === "completed") {
         t.status = "completed";
-        const n = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
-        if (n) {
-          n.completeGeneration(t.projectId);
+        const i = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
+        if (i) {
+          i.completeGeneration(t.projectId);
         }
         this._unlockGenerationButtons();
         this.moveToLibrary(t);
@@ -10830,9 +10842,9 @@ class ClipsStudio {
       } else if (r.status === "cancelled" || r.status === "canceled") {
         t.status = "cancelled";
         t.message = r.message || "Stopped";
-        const n = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
-        if (n?.stopGeneration) {
-          n.stopGeneration(t.projectId, t.message);
+        const i = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
+        if (i?.stopGeneration) {
+          i.stopGeneration(t.projectId, t.message);
         } else {
           this._unlockGenerationButtons();
         }
@@ -10842,16 +10854,16 @@ class ClipsStudio {
       } else if (r.status === "error" || r.status === "failed" || r.status === "timeout") {
         t.status = "failed";
         t.message = r.message;
-        const n = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
-        if (n?.failGeneration) {
-          n.failGeneration(t.projectId, r.message || "There was an error — try again");
+        const i = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
+        if (i?.failGeneration) {
+          i.failGeneration(t.projectId, r.message || "There was an error — try again");
         }
         this._unlockGenerationButtons();
         this.stopMonitoring(e);
-        const i = document.getElementById("processUrlBtn");
-        if (i) {
-          i.disabled = false;
-          i.classList.remove("is-generating", "is-cancelling");
+        const n = document.getElementById("processUrlBtn");
+        if (n) {
+          n.disabled = false;
+          n.classList.remove("is-generating", "is-cancelling");
         }
         setTimeout(() => {
           this.processingItems = this.processingItems.filter(t => t.id !== e);
@@ -10894,12 +10906,12 @@ class ClipsStudio {
             const e = o.match(/\d+/g);
             if (e && e.length >= 2) {
               const t = parseInt(e[e.length - 2]);
-              const n = parseInt(e[e.length - 1]);
-              if (t > 0 && n > 0 && t > n) {
-                safeLog("✓ Video too long detected (fallback):", t, "max:", n);
+              const i = parseInt(e[e.length - 1]);
+              if (t > 0 && i > 0 && t > i) {
+                safeLog("✓ Video too long detected (fallback):", t, "max:", i);
                 setTimeout(() => {
                   if (window && typeof window.openVideoTooLongModal === "function") {
-                    window.openVideoTooLongModal(t, n);
+                    window.openVideoTooLongModal(t, i);
                   }
                 }, 100);
               }
@@ -11020,11 +11032,11 @@ class ClipsStudio {
     const e = document.getElementById("processUrlBtn");
     if (!e) return;
     const t = sessionStorage.getItem("urlButtonLocked") === "true";
-    const n = sessionStorage.getItem("urlButtonLockeduntil");
-    if (t && n) {
-      const t = parseInt(n, 10);
-      const i = Date.now();
-      const r = t - i;
+    const i = sessionStorage.getItem("urlButtonLockeduntil");
+    if (t && i) {
+      const t = parseInt(i, 10);
+      const n = Date.now();
+      const r = t - n;
       if (r > 0) {
         const t = CONFIG.RATE_LIMITING.YOUTUBE_PROCESS_MIN_MS || 3e3;
         if (r < t + 5e3) {
@@ -11047,6 +11059,171 @@ class ClipsStudio {
         sessionStorage.removeItem("urlButtonLockeduntil");
       }
     }
+  }
+  _autoPreviewStorageKey() {
+    try {
+      const e = window.currentUser?.id || window.currentUser?.user_id || "anon";
+      return `solis_auto_preview_v1_${e}`;
+    } catch (e) {
+      return "solis_auto_preview_v1_anon";
+    }
+  }
+  _readAutoPreviewState() {
+    try {
+      const e = localStorage.getItem(this._autoPreviewStorageKey());
+      if (e) {
+        const t = JSON.parse(e);
+        if (t && typeof t === "object") {
+          return {
+            mode: [ "auto", "suggest", "off" ].includes(t.mode) ? t.mode : "auto",
+            preferredTemplateId: t.preferredTemplateId || null,
+            closes: Number(t.closes) || 0
+          };
+        }
+      }
+    } catch (e) {}
+    return {
+      mode: "auto",
+      preferredTemplateId: null,
+      closes: 0
+    };
+  }
+  _writeAutoPreviewState(e) {
+    try {
+      const t = {
+        ...this._readAutoPreviewState(),
+        ...e || {}
+      };
+      localStorage.setItem(this._autoPreviewStorageKey(), JSON.stringify(t));
+      return t;
+    } catch (e) {
+      return this._readAutoPreviewState();
+    }
+  }
+  _userPlanSlug() {
+    try {
+      return String(window.currentUser?.plan || window.currentUser?.plan_type || "free").toLowerCase();
+    } catch (e) {
+      return "free";
+    }
+  }
+  _canPreferClipTemplate() {
+    const e = new Set([ "basic", "prime", "elite", "pro", "nextgen" ]);
+    return e.has(this._userPlanSlug());
+  }
+  _pickBestTemplateId() {
+    const e = this._readAutoPreviewState();
+    const t = this.templates || this.getTemplateCatalog?.() || {};
+    const valid = e => e && t[e];
+    if (valid(e.preferredTemplateId)) return e.preferredTemplateId;
+    try {
+      const e = window.SolisMemory?.readState?.();
+      const t = Array.isArray(e?.usageLog) ? e.usageLog : [];
+      for (const e of t) {
+        const t = e?.templateId || e?.template_id || e?.id;
+        if (valid(t)) return t;
+      }
+      for (const e of [ "splitscreen", "ranked_compilation" ]) {
+        const t = window.SolisMemory?.getTemplateMemory?.(e);
+        if (t && (t.lastGeneratedCaptions || t.lastGeneratedStyles || t.styles) && valid(e)) {
+          return e;
+        }
+      }
+    } catch (e) {}
+    if (this._canPreferClipTemplate() && valid("splitscreen")) return "splitscreen";
+    if (valid("ranked_compilation")) return "ranked_compilation";
+    if (valid("splitscreen")) return "splitscreen";
+    return Object.keys(t)[0] || "ranked_compilation";
+  }
+  _scheduleAutoSubmitFromPaste(e = {}) {
+    clearTimeout(this._pasteAutoSubmitT);
+    const t = e.quiet ? 380 : 90;
+    this._pasteAutoSubmitT = setTimeout(() => {
+      try {
+        const e = document.getElementById("youtubeUrlInput")?.value.trim() || "";
+        if (!e || !this.isValidMediaUrl(e)) return;
+        if (this._urlAnalyzeInFlight || this._generationStartInFlight) return;
+        const t = document.getElementById("processUrlBtn");
+        if (t?.classList.contains("is-generating") || t?.classList.contains("is-upgrade-cta")) return;
+        if (document.getElementById("templatePreviewModal")?.classList.contains("active")) return;
+        if (this._awaitingUrlForTemplate) return;
+        if (this._lastAutoSubmittedUrl === e && Date.now() - (this._lastAutoSubmittedAt || 0) < 2800) {
+          return;
+        }
+        this._lastAutoSubmittedUrl = e;
+        this._lastAutoSubmittedAt = Date.now();
+        this.processYouTubeUrl();
+      } catch (e) {}
+    }, t);
+  }
+  _continueAfterUrlReady(e) {
+    const t = this._readAutoPreviewState();
+    const i = this._pickBestTemplateId();
+    this.selectedTemplate = i;
+    document.querySelectorAll(".template-card").forEach(e => {
+      e.classList.toggle("selected", e.dataset.template === i);
+    });
+    const n = document.querySelector(`.template-card[data-template="${i}"]`);
+    if (t.mode === "off") {
+      this.switchTab("templates");
+      const e = document.getElementById("clipPreviewContainer");
+      if (e) e.style.display = "block";
+      if (typeof showNotification === "function") {
+        showNotification("Pick a template — or reopen Clip when you're ready.", "info");
+      }
+      return;
+    }
+    const r = t.mode === "suggest" ? "suggest" : true;
+    if (t.mode === "suggest" && typeof showNotification === "function") {
+      const e = i === "splitscreen" ? "Clip" : this.templates?.[i]?.name || "your usual style";
+      showNotification(`Suggested: ${e} — captions ready. Tweak or Generate.`, "info");
+    }
+    try {
+      this.switchTab("create");
+    } catch (e) {}
+    this.openTemplatePreviewModal(i, n, {
+      fromAuto: r
+    });
+  }
+  _noteAutoPreviewClosed() {
+    if (!this._autoOpenedPreview) return;
+    const e = this._readAutoPreviewState();
+    const t = this.currentTemplateForPreview?.id || this.selectedTemplate || e.preferredTemplateId;
+    if (this._autoOpenedPreview === "suggest" || e.closes >= 1) {
+      this._writeAutoPreviewState({
+        mode: "off",
+        preferredTemplateId: t || e.preferredTemplateId,
+        closes: (e.closes || 0) + 1
+      });
+    } else {
+      this._writeAutoPreviewState({
+        mode: "suggest",
+        preferredTemplateId: t || e.preferredTemplateId,
+        closes: (e.closes || 0) + 1
+      });
+    }
+    this._autoOpenedPreview = false;
+  }
+  _noteManualTemplateSwitch(e) {
+    if (!this._autoOpenedPreview) return;
+    const t = this.currentTemplateForPreview?.id;
+    if (t && e && t !== e) {
+      this._writeAutoPreviewState({
+        mode: "off",
+        preferredTemplateId: e,
+        closes: (this._readAutoPreviewState().closes || 0) + 1
+      });
+      this._autoOpenedPreview = false;
+    }
+  }
+  _noteSuccessfulGenerate(e) {
+    if (!e) return;
+    this._writeAutoPreviewState({
+      mode: "auto",
+      preferredTemplateId: e,
+      closes: 0
+    });
+    this._autoOpenedPreview = false;
   }
   async processYouTubeUrl() {
     if (this._urlAnalyzeInFlight || this._generationStartInFlight) {
@@ -11089,21 +11266,21 @@ class ClipsStudio {
         }
       }
       this.toggleUrlButtonLoading(true);
-      const n = this._getCachedDurationCheck(t);
-      const i = await this._getCachedLimitCheck(true);
-      if (i) {
+      const i = this._getCachedDurationCheck(t);
+      const n = await this._getCachedLimitCheck(true);
+      if (n) {
         try {
           if (typeof window.updateUrlQuotaRail === "function") {
-            window.updateUrlQuotaRail(i);
+            window.updateUrlQuotaRail(n);
           }
         } catch (e) {}
-        const e = i.daily?.remaining;
-        const t = i.monthly?.remaining;
-        if (i.daily_limit_reached || e === 0) {
+        const e = n.daily?.remaining;
+        const t = n.monthly?.remaining;
+        if (n.daily_limit_reached || e === 0) {
           this.showUrlSubmitUpgradeCta();
           try {
             if (typeof window.updateUrlQuotaRail === "function") {
-              window.updateUrlQuotaRail(i);
+              window.updateUrlQuotaRail(n);
             }
           } catch (e) {}
           try {
@@ -11116,7 +11293,7 @@ class ClipsStudio {
           } catch (e) {}
           return;
         }
-        if (i.monthly_limit_reached || i.monthly?.limit > 0 && t === 0) {
+        if (n.monthly_limit_reached || n.monthly?.limit > 0 && t === 0) {
           this.showUrlSubmitUpgradeCta();
           try {
             if (typeof window.refreshPlanSelector === "function") {
@@ -11125,26 +11302,26 @@ class ClipsStudio {
           } catch (e) {}
           return;
         }
-        const n = i.max_effort;
-        if (n && n.limit > 0 && n.remaining <= 0 && typeof window.getSelectedEffortMode === "function" && window.getSelectedEffortMode() === "max") {
+        const i = n.max_effort;
+        if (i && i.limit > 0 && i.remaining <= 0 && typeof window.getSelectedEffortMode === "function" && window.getSelectedEffortMode() === "max") {
           if (typeof window.setSelectedEffortMode === "function") {
             window.setSelectedEffortMode("normal");
           }
         }
-        if (!i.can_generate) {
-          if (i.block_reason === "library_full" || i.block_reason === "storage_full") {
-            this._notifyGenerationBlock(i);
+        if (!n.can_generate) {
+          if (n.block_reason === "library_full" || n.block_reason === "storage_full") {
+            this._notifyGenerationBlock(n);
             if (typeof window.syncStorageLimitsFromStatus === "function") {
-              window.syncStorageLimitsFromStatus(i);
+              window.syncStorageLimitsFromStatus(n);
             }
-          } else if (i.is_generating || i.block_reason === "in_progress") {
+          } else if (n.is_generating || n.block_reason === "in_progress") {
             showNotification("An upload may still be finishing. You can pick a template — we'll retry when you confirm.", "warning");
-          } else if ((i.generation?.cooldown_remaining_seconds || 0) > 0) {
-            this._notifyGenerationBlock(i);
+          } else if ((n.generation?.cooldown_remaining_seconds || 0) > 0) {
+            this._notifyGenerationBlock(n);
           }
         }
       }
-      const r = await Promise.race([ n, new Promise(e => setTimeout(() => e({
+      const r = await Promise.race([ i, new Promise(e => setTimeout(() => e({
         allowed: true,
         pending: true
       }), 500)) ]);
@@ -11152,40 +11329,38 @@ class ClipsStudio {
       if (r.pending) {
         if (o) {
           showNotification("Checking video length…", "info");
-          this._pendingDurationCheck = n;
-          n.then(e => {
-            if (this._pendingDurationCheck !== n) return;
+          this._pendingDurationCheck = i;
+          i.then(e => {
+            if (this._pendingDurationCheck !== i) return;
             this._pendingDurationCheck = null;
             if (!e.allowed) return;
             this._rememberVideoDuration(e);
-            const i = document.getElementById("processUrlBtn");
-            i?.classList.remove("needs-url-pulse");
+            const n = document.getElementById("processUrlBtn");
+            n?.classList.remove("needs-url-pulse");
             this._awaitingUrlForTemplate = false;
             this.startClipProcessingWithSlots(t, this.selectedTemplate);
           });
           return;
         }
-        this.switchTab("templates");
         showNotification("Checking video length…", "info");
-        this._pendingDurationCheck = n;
-        n.then(e => {
-          if (this._pendingDurationCheck !== n) return;
+        this._pendingDurationCheck = i;
+        i.then(e => {
+          if (this._pendingDurationCheck !== i) return;
           this._pendingDurationCheck = null;
           if (!e.allowed) {
             this.switchTab("create");
-          } else {
-            this._rememberVideoDuration(e);
+            return;
           }
+          this._rememberVideoDuration(e);
+          this._continueAfterUrlReady(t);
         });
-        const e = document.getElementById("clipPreviewContainer");
-        if (e) e.style.display = "block";
         return;
       }
       if (!r.allowed) {
         return;
       }
       this._rememberVideoDuration(r);
-      const s = typeof window.syncStorageLimitsFromStatus === "function" ? window.syncStorageLimitsFromStatus(i) : null;
+      const s = typeof window.syncStorageLimitsFromStatus === "function" ? window.syncStorageLimitsFromStatus(n) : null;
       if (s?.phase === "high" || s?.phase === "full") {
         if (typeof window.pulseStorageBadgeWarning === "function") {
           window.pulseStorageBadgeWarning();
@@ -11198,9 +11373,7 @@ class ClipsStudio {
         this.startClipProcessingWithSlots(t, this.selectedTemplate);
         return;
       }
-      this.switchTab("templates");
-      const a = document.getElementById("clipPreviewContainer");
-      if (a) a.style.display = "block";
+      this._continueAfterUrlReady(t);
     } finally {
       this._urlAnalyzeInFlight = false;
       if (!this._urlUpgradeCtaPending && !document.getElementById("processUrlBtn")?.classList.contains("is-upgrade-cta")) {
@@ -11211,13 +11384,13 @@ class ClipsStudio {
   _rememberVideoDuration(e) {
     if (!e || typeof e !== "object") return;
     const t = Number(e.duration_seconds);
-    const n = Number(e.duration);
+    const i = Number(e.duration);
     if (Number.isFinite(t) && t > 0) {
       this._lastVideoDurationSeconds = t;
       this._lastVideoDurationMinutes = t / 60;
-    } else if (Number.isFinite(n) && n > 0) {
-      this._lastVideoDurationMinutes = n;
-      this._lastVideoDurationSeconds = n * 60;
+    } else if (Number.isFinite(i) && i > 0) {
+      this._lastVideoDurationMinutes = i;
+      this._lastVideoDurationSeconds = i * 60;
     }
   }
   _getCachedDurationCheck(e) {
@@ -11230,7 +11403,7 @@ class ClipsStudio {
     if (this._durationInflight[e]) {
       return this._durationInflight[e];
     }
-    const n = this.checkVideoDurationBeforeTemplates(e).then(t => {
+    const i = this.checkVideoDurationBeforeTemplates(e).then(t => {
       this._durationCheckCache[e] = {
         result: t,
         at: Date.now()
@@ -11241,8 +11414,8 @@ class ClipsStudio {
       delete this._durationInflight[e];
       throw t;
     });
-    this._durationInflight[e] = n;
-    return n;
+    this._durationInflight[e] = i;
+    return i;
   }
   _getCachedLimitCheck(e = false) {
     const t = this._limitCheckCache;
@@ -11271,7 +11444,7 @@ class ClipsStudio {
   async checkVideoDurationBeforeTemplates(e) {
     try {
       const t = getAuthHeaders();
-      const n = await fetch(`${API_BASE_URL}/clips/duration`, {
+      const i = await fetch(`${API_BASE_URL}/clips/duration`, {
         method: "POST",
         headers: t,
         credentials: "include",
@@ -11279,28 +11452,28 @@ class ClipsStudio {
           url: e
         })
       });
-      const i = await n.json();
-      if (!n.ok) {
-        if (i.error_code === "VIDEO_TOO_LONG") {
-          const e = i.video_minutes || 0;
-          const t = i.max_duration_minutes || 0;
-          showNotification(i.error || `This source exceeds the ${t}-minute safety limit (${e}m).`, "error");
+      const n = await i.json();
+      if (!i.ok) {
+        if (n.error_code === "VIDEO_TOO_LONG") {
+          const e = n.video_minutes || 0;
+          const t = n.max_duration_minutes || 0;
+          showNotification(n.error || `This source exceeds the ${t}-minute safety limit (${e}m).`, "error");
           return {
             allowed: false
           };
         }
-        showNotification("Error checking video: " + (i.error || "Unknown error"), "error");
+        showNotification("Error checking video: " + (n.error || "Unknown error"), "error");
         return {
           allowed: false
         };
       }
-      const r = i.duration_minutes || 0;
-      const o = i.ai_budget_minutes || i.max_duration_minutes || 0;
-      const s = Boolean(i.ai_budget_capped);
+      const r = n.duration_minutes || 0;
+      const o = n.ai_budget_minutes || n.max_duration_minutes || 0;
+      const s = Boolean(n.ai_budget_capped);
       return {
         allowed: true,
         duration: r,
-        duration_seconds: i.duration_seconds ?? (Number.isFinite(i.duration_minutes) ? i.duration_minutes * 60 : null),
+        duration_seconds: n.duration_seconds ?? (Number.isFinite(n.duration_minutes) ? n.duration_minutes * 60 : null),
         maxAllowed: o,
         aiBudgetMinutes: o,
         aiBudgetCapped: s
@@ -11339,15 +11512,15 @@ class ClipsStudio {
   oldUpdateProcessingView_old() {
     const e = document.getElementById("processingList");
     const t = document.getElementById("processingSection");
-    const n = document.getElementById("emptyProcessingState");
-    if (!e || !n || !t) return;
+    const i = document.getElementById("emptyProcessingState");
+    if (!e || !i || !t) return;
     if (this.processingItems.length === 0) {
-      n.style.display = "block";
+      i.style.display = "block";
       e.innerHTML = "";
       t.style.display = "none";
       return;
     }
-    n.style.display = "none";
+    i.style.display = "none";
     t.style.display = "block";
     e.innerHTML = this.processingItems.map(e => {
       const t = e.progress || 0;
@@ -11367,7 +11540,7 @@ class ClipsStudio {
   }
   renderLoaderParts(e) {
     const t = 100 - e;
-    const n = [ {
+    const i = [ {
       opacity: t >= 25 ? 1 : 0
     }, {
       opacity: t >= 50 ? 1 : 0
@@ -11376,14 +11549,14 @@ class ClipsStudio {
     }, {
       opacity: t >= 100 ? 1 : 0
     } ];
-    return n.map((e, t) => `<div class="loader-part loader-part-${t + 1}" style="opacity: ${e.opacity}; transition: opacity 0.4s ease;"></div>`).join("");
+    return i.map((e, t) => `<div class="loader-part loader-part-${t + 1}" style="opacity: ${e.opacity}; transition: opacity 0.4s ease;"></div>`).join("");
   }
   publicPreviewUrl(e) {
     const t = String(e || "").trim();
     if (!t.startsWith("prj_")) return "";
-    const n = location.hostname;
-    const i = n === "localhost" || n === "127.0.0.1" ? location.origin : "https://solisai.video";
-    return `${i}/preview/${encodeURIComponent(t)}`;
+    const i = location.hostname;
+    const n = i === "localhost" || i === "127.0.0.1" ? location.origin : "https://solisai.video";
+    return `${n}/preview/${encodeURIComponent(t)}`;
   }
   async copyPublicPreviewLink(e) {
     const t = this.publicPreviewUrl(e);
@@ -11406,7 +11579,7 @@ class ClipsStudio {
     }
   }
   async downloadClip(e, t = {}) {
-    const {skipModalClose: n = false, quiet: i = false, light: r = false} = t;
+    const {skipModalClose: i = false, quiet: n = false, light: r = false} = t;
     window.__solisDownloadBusy = true;
     try {
       if (!r) {
@@ -11430,8 +11603,8 @@ class ClipsStudio {
               document.body.appendChild(t);
               t.click();
               document.body.removeChild(t);
-              if (!i) showNotification("Download started!", "success");
-              if (!n) this.closeTemplatePreviewModal();
+              if (!n) showNotification("Download started!", "success");
+              if (!i) this.closeTemplatePreviewModal();
               document.querySelectorAll("[data-project-id]").forEach(t => {
                 if (t.getAttribute("data-project-id") === e) {
                   const e = t.querySelector(".status-pill");
@@ -11476,10 +11649,10 @@ class ClipsStudio {
       c.click();
       document.body.removeChild(c);
       setTimeout(() => URL.revokeObjectURL(l), 3e4);
-      if (!i) {
+      if (!n) {
         showNotification("Download started!", "success");
       }
-      if (!n) {
+      if (!i) {
         this.closeTemplatePreviewModal();
       }
       const d = document.querySelectorAll("[data-project-id]");
@@ -11514,12 +11687,12 @@ class ClipsStudio {
   deleteProcessingItem(e) {
     const t = this.processingItems.findIndex(t => t.id === e);
     if (t !== -1) {
-      const n = this.processingItems[t];
-      if (n.status === "processing") {
+      const i = this.processingItems[t];
+      if (i.status === "processing") {
         showNotification("Cannot delete items while processing. Wait for completion or cancel first.", "warning");
         return;
       }
-      this.deleteProjectFromServer(n.projectId);
+      this.deleteProjectFromServer(i.projectId);
       this.processingItems.splice(t, 1);
       this.stopMonitoring(e);
       this.updateProcessingView();
@@ -11527,7 +11700,7 @@ class ClipsStudio {
       if (this.processingItems.length === 0) {
         this.stopLibraryPolling();
       }
-      showNotification(`${n.name} deleted successfully`, "success");
+      showNotification(`${i.name} deleted successfully`, "success");
     }
   }
   retryProcessing(e) {
@@ -11559,31 +11732,31 @@ class ClipsStudio {
       virality: e.virality || null,
       _optimistic: true
     };
-    const n = document.querySelector(`[data-processing-id="${e.id}"]`);
-    if (n) {
-      n.style.transition = "all 0.5s ease";
-      n.style.opacity = "0.5";
+    const i = document.querySelector(`[data-processing-id="${e.id}"]`);
+    if (i) {
+      i.style.transition = "all 0.5s ease";
+      i.style.opacity = "0.5";
       setTimeout(() => {
-        n.innerHTML = "";
-        n.classList.add("solis-clip-card");
-        n.innerHTML = window.SolisClipCard && SolisClipCard.buildHTML(t) || `<div class="scc-meta"><h2 class="card-title">${sanitizeHTML(t.name)}</h2></div>`;
-        if (window.SolisClipCard) SolisClipCard.bind(n, t, this);
-        n.removeAttribute("data-processing-id");
-        n.classList.add("library-card", "solis-clip-card");
-        n.setAttribute("data-id", t.id);
-        n.setAttribute("data-project-id", t.projectId);
-        n.style.opacity = "0";
-        n.style.transition = "opacity 0.3s ease";
+        i.innerHTML = "";
+        i.classList.add("solis-clip-card");
+        i.innerHTML = window.SolisClipCard && SolisClipCard.buildHTML(t) || `<div class="scc-meta"><h2 class="card-title">${sanitizeHTML(t.name)}</h2></div>`;
+        if (window.SolisClipCard) SolisClipCard.bind(i, t, this);
+        i.removeAttribute("data-processing-id");
+        i.classList.add("library-card", "solis-clip-card");
+        i.setAttribute("data-id", t.id);
+        i.setAttribute("data-project-id", t.projectId);
+        i.style.opacity = "0";
+        i.style.transition = "opacity 0.3s ease";
         setTimeout(() => {
-          n.style.opacity = "1";
+          i.style.opacity = "1";
         }, 10);
-        this.attachLibraryCardListeners(n, t.id, t.projectId);
-        this.fetchAndUpdateDuration(n, t.projectId);
+        this.attachLibraryCardListeners(i, t.id, t.projectId);
+        this.fetchAndUpdateDuration(i, t.projectId);
       }, 300);
     }
     this.processingItems = this.processingItems.filter(t => t.id !== e.id);
-    const i = this.libraryItems.some(e => String(e.projectId || e.id) === String(t.projectId));
-    if (!i) {
+    const n = this.libraryItems.some(e => String(e.projectId || e.id) === String(t.projectId));
+    if (!n) {
       this.libraryItems.unshift(t);
     }
     this.saveProcessingItems();
@@ -11594,7 +11767,7 @@ class ClipsStudio {
     this.loadAndDisplayStorageInfo();
     this.updateRecentActivity();
     safeLog(`✅ Card transformed: ${e.name}`);
-    if (!n) {
+    if (!i) {
       this.updateLibraryView();
     }
     this.loadLibraryItems({
@@ -11611,9 +11784,9 @@ class ClipsStudio {
       return;
     }
     if (window.__solisDownloadBusy) return;
-    const n = `${API_BASE_URL}/clips/duration/${encodeURIComponent(t)}`;
+    const i = `${API_BASE_URL}/clips/duration/${encodeURIComponent(t)}`;
     const attempt = t => {
-      fetch(n, {
+      fetch(i, {
         method: "GET",
         credentials: "include"
       }).then(e => {
@@ -11622,8 +11795,8 @@ class ClipsStudio {
       }).then(t => {
         if (t.duration_formatted && e) {
           if (window.SolisClipCard) SolisClipCard.setDuration(e, t.duration_formatted); else {
-            const n = e.querySelector(".duration-text");
-            if (n) n.textContent = t.duration_formatted;
+            const i = e.querySelector(".duration-text");
+            if (i) i.textContent = t.duration_formatted;
           }
         }
       }).catch(e => {
@@ -11632,17 +11805,17 @@ class ClipsStudio {
     };
     attempt(0);
   }
-  attachLibraryCardListeners(e, t, n) {
-    const i = e.querySelector(".library-download-btn");
+  attachLibraryCardListeners(e, t, i) {
+    const n = e.querySelector(".library-download-btn");
     const r = e.querySelector(".library-delete-btn");
-    if (i) {
-      i.addEventListener("click", e => {
+    if (n) {
+      n.addEventListener("click", e => {
         e.preventDefault();
         e.stopPropagation();
-        if (n && this.validateProjectId(n) && clipsStudio) {
-          clipsStudio.downloadClip(n);
+        if (i && this.validateProjectId(i) && clipsStudio) {
+          clipsStudio.downloadClip(i);
         } else {
-          safeLog(`âŒ SECURITY: Invalid projectId for download: ${n}`);
+          safeLog(`âŒ SECURITY: Invalid projectId for download: ${i}`);
         }
       });
     }
@@ -11659,11 +11832,11 @@ class ClipsStudio {
     }
     if (!e.dataset.previewBound) {
       e.dataset.previewBound = "1";
-      e.addEventListener("click", i => {
-        if (i.target.closest(".library-download-btn, .library-delete-btn, .scc-ico, .scc-viral")) return;
-        i.preventDefault();
-        i.stopPropagation();
-        this.openLibraryPreview(t, n, e);
+      e.addEventListener("click", n => {
+        if (n.target.closest(".library-download-btn, .library-delete-btn, .scc-ico, .scc-viral")) return;
+        n.preventDefault();
+        n.stopPropagation();
+        this.openLibraryPreview(t, i, e);
       });
     }
   }
@@ -11671,19 +11844,19 @@ class ClipsStudio {
     const t = document.getElementById("libraryGrid");
     if (!t) return;
     if (t.querySelector(".library-card, .library-collection-folder")) return;
-    const n = document.getElementById("emptyLibraryState");
-    if (n) n.style.display = "none";
+    const i = document.getElementById("emptyLibraryState");
+    if (i) i.style.display = "none";
     Array.from(t.children).forEach(e => {
       if (!e.classList.contains("empty-state")) e.remove();
     });
-    const i = document.createDocumentFragment();
+    const n = document.createDocumentFragment();
     for (let t = 0; t < e; t++) {
       const e = document.createElement("div");
       e.className = "library-card-skeleton library-card-skeleton--clip";
       e.innerHTML = `\n                <div class="skeleton-block skeleton-preview"></div>\n                <div class="skeleton-block skeleton-title"></div>\n                <div class="skeleton-block skeleton-meta"></div>`;
-      i.appendChild(e);
+      n.appendChild(e);
     }
-    t.appendChild(i);
+    t.appendChild(n);
   }
   hideLibrarySkeleton() {
     const e = document.getElementById("libraryGrid");
@@ -11692,17 +11865,17 @@ class ClipsStudio {
   }
   async loadLibraryItems(e = {}) {
     const t = e.force === true;
-    const n = 5 * 60 * 1e3;
-    const i = Array.isArray(this.libraryItems) && this.libraryItems.length > 0;
+    const i = 5 * 60 * 1e3;
+    const n = Array.isArray(this.libraryItems) && this.libraryItems.length > 0;
     const r = Array.isArray(this.libraryCollections) && this.libraryCollections.length > 0;
-    const o = this._libraryLastLoaded && Date.now() - this._libraryLastLoaded < n;
-    if (!t && i && o) {
+    const o = this._libraryLastLoaded && Date.now() - this._libraryLastLoaded < i;
+    if (!t && n && o) {
       if (this.libraryPreviewModalOpen) this._libraryRefreshPending = true; else this.updateLibraryView();
       return;
     }
     const s = document.getElementById("libraryGrid");
     const a = !!(s && s.querySelector(".library-card, .library-collection-folder"));
-    const l = e.soft === true || i || r || a || Array.isArray(this.processingItems) && this.processingItems.length > 0;
+    const l = e.soft === true || n || r || a || Array.isArray(this.processingItems) && this.processingItems.length > 0;
     if (!l) {
       this.showLibrarySkeleton(6);
     }
@@ -11714,7 +11887,7 @@ class ClipsStudio {
       });
       if (t.ok) {
         const e = await t.json();
-        const n = e.projects.filter(e => e && e.id).map(e => ({
+        const i = e.projects.filter(e => e && e.id).map(e => ({
           id: e.id,
           projectId: e.id,
           name: e.video_title || e.template_name || "Clip",
@@ -11739,17 +11912,17 @@ class ClipsStudio {
           createdAt: e.created_at,
           updatedAt: e.updated_at
         }));
-        const i = new Set(n.map(e => String(e.id)));
+        const n = new Set(i.map(e => String(e.id)));
         const r = (this.libraryItems || []).filter(e => {
           const t = String(e.projectId || e.id || "");
-          if (!t || i.has(t)) return false;
+          if (!t || n.has(t)) return false;
           if (e._optimistic || e._justCompleted) return true;
           return false;
         });
-        this.libraryItems = [ ...r, ...n ];
+        this.libraryItems = [ ...r, ...i ];
         for (const e of this.libraryItems) {
           const t = String(e.projectId || e.id || "");
-          if (i.has(t)) {
+          if (n.has(t)) {
             e._optimistic = false;
             e._justCompleted = false;
           }
@@ -11810,22 +11983,22 @@ class ClipsStudio {
       const e = this._librarySessionCacheKey();
       const t = String(currentUser?.id || window.currentUser?.id || "");
       if (!e || !t) return false;
-      const n = sessionStorage.getItem(e);
-      if (!n) return false;
-      const i = JSON.parse(n);
-      if (!i || String(i.uid) !== t || !Array.isArray(i.items)) return false;
-      if (Date.now() - Number(i.at || 0) > 15 * 60 * 1e3) {
+      const i = sessionStorage.getItem(e);
+      if (!i) return false;
+      const n = JSON.parse(i);
+      if (!n || String(n.uid) !== t || !Array.isArray(n.items)) return false;
+      if (Date.now() - Number(n.at || 0) > 15 * 60 * 1e3) {
         sessionStorage.removeItem(e);
         return false;
       }
-      this.libraryItems = i.items.map(e => ({
+      this.libraryItems = n.items.map(e => ({
         ...e,
         timestamp: e.timestamp ? new Date(e.timestamp) : new Date
       }));
-      if (Array.isArray(i.collections)) {
-        this.libraryCollections = i.collections;
+      if (Array.isArray(n.collections)) {
+        this.libraryCollections = n.collections;
       }
-      this._libraryLastLoaded = Number(i.at) || Date.now();
+      this._libraryLastLoaded = Number(n.at) || Date.now();
       return this.libraryItems.length > 0 || Array.isArray(this.libraryCollections) && this.libraryCollections.length > 0;
     } catch (e) {
       return false;
@@ -11858,35 +12031,35 @@ class ClipsStudio {
         for (const t of this.processingItems) {
           try {
             try {
-              const n = window.generationProgressSpinner;
-              if (n?.activeGenerations?.has?.(t.projectId)) {
+              const i = window.generationProgressSpinner;
+              if (i?.activeGenerations?.has?.(t.projectId)) {
                 e.push(t);
                 continue;
               }
             } catch (e) {}
-            const n = getAuthHeaders();
-            const i = await fetch(`${API_BASE_URL}/clips/status/${t.projectId}`, {
-              headers: n,
+            const i = getAuthHeaders();
+            const n = await fetch(`${API_BASE_URL}/clips/status/${t.projectId}`, {
+              headers: i,
               credentials: "include",
               solisOptionalPoll: true
             });
-            if (i.ok) {
-              const n = await i.json();
-              if (n.status && [ "processing", "waiting", "pending", "queued", "downloading" ].includes(n.status)) {
+            if (n.ok) {
+              const i = await n.json();
+              if (i.status && [ "processing", "waiting", "pending", "queued", "downloading" ].includes(i.status)) {
                 e.push(t);
-              } else if (n.status === "cancelled" || n.status === "canceled") {
+              } else if (i.status === "cancelled" || i.status === "canceled") {
                 const e = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
                 if (e?.stopGeneration) {
-                  e.stopGeneration(t.projectId, n.message || "Stopped");
+                  e.stopGeneration(t.projectId, i.message || "Stopped");
                 }
                 this.stopMonitoring?.(t.id);
-              } else if (n.status === "error" || n.status === "failed" || n.status === "timeout") {
+              } else if (i.status === "error" || i.status === "failed" || i.status === "timeout") {
                 const e = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
                 if (e?.failGeneration) {
-                  e.failGeneration(t.projectId, n.message || "There was an error — try again");
+                  e.failGeneration(t.projectId, i.message || "There was an error — try again");
                 }
                 this.stopMonitoring?.(t.id);
-              } else if (n.status === "completed") {
+              } else if (i.status === "completed") {
                 const e = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
                 if (e?.completeGeneration) {
                   e.completeGeneration(t.projectId);
@@ -11895,14 +12068,14 @@ class ClipsStudio {
                 this.moveToLibrary(t);
                 this.stopMonitoring?.(t.id);
               } else {
-                safeLog(`Removing stale card during polling: ${t.name} (status: ${n.status})`);
+                safeLog(`Removing stale card during polling: ${t.name} (status: ${i.status})`);
               }
-            } else if (i.status >= 500) {
+            } else if (n.status >= 500) {
               e.push(t);
             } else {
               safeLog(`Backend check failed for ${t.name}, removing from processing`);
             }
-          } catch (n) {
+          } catch (i) {
             e.push(t);
           }
         }
@@ -11941,18 +12114,18 @@ class ClipsStudio {
   }
   updateStorageDisplay(e) {
     const t = this.libraryItems.length;
-    const n = (e.plan || "free").toLowerCase();
-    const i = e.library_unlimited === true || typeof window.isUnlimitedLibrary === "function" && window.isUnlimitedLibrary(null, n);
-    const r = i ? null : e.video_limit || e.videos_space_limit || 10;
+    const i = (e.plan || "free").toLowerCase();
+    const n = e.library_unlimited === true || typeof window.isUnlimitedLibrary === "function" && window.isUnlimitedLibrary(null, i);
+    const r = n ? null : e.video_limit || e.videos_space_limit || 10;
     if (typeof window.applyStorageBadgeUI === "function") {
       window.applyStorageBadgeUI({
         used: t,
         limit: r,
-        plan: n,
-        unlimited: i
+        plan: i,
+        unlimited: n
       });
     }
-    safeLog(i ? `📊 Library storage: ${t} clips (${n})` : `📊 Library storage: ${t} / ${r} (${n})`);
+    safeLog(n ? `📊 Library storage: ${t} clips (${i})` : `📊 Library storage: ${t} / ${r} (${i})`);
   }
   handleSubscriptionExpiration() {
     if (!this.loadAndDisplayStorageInfo) return;
@@ -11961,8 +12134,8 @@ class ClipsStudio {
         return;
       }
       const t = new Date(e.subscription_end_date);
-      const n = new Date;
-      if (n > t && e.plan !== "free") {
+      const i = new Date;
+      if (i > t && e.plan !== "free") {
         showNotification("Your subscription has expired. You are now on the Free plan.", "warning");
         if (this.libraryItems && this.libraryItems.length > 2) {
           showNotification("Your storage has been limited to 2 videos per the Free plan.", "warning");
@@ -12000,10 +12173,10 @@ class ClipsStudio {
         this._librarySentinelObserver.disconnect();
         this._librarySentinelObserver = null;
       }
-      const n = document.getElementById("libraryNavBackBtn");
-      const i = document.getElementById("libraryNavForwardBtn");
-      if (n) n.disabled = true;
+      const i = document.getElementById("libraryNavBackBtn");
+      const n = document.getElementById("libraryNavForwardBtn");
       if (i) i.disabled = true;
+      if (n) n.disabled = true;
       return;
     }
     t.style.display = "none";
@@ -12013,7 +12186,7 @@ class ClipsStudio {
     }
     this._libraryRenderFrame = requestAnimationFrame(() => {
       this._libraryRenderFrame = null;
-      const n = 8;
+      const i = 8;
       if (this._librarySentinelObserver) {
         this._librarySentinelObserver.disconnect();
         this._librarySentinelObserver = null;
@@ -12023,11 +12196,11 @@ class ClipsStudio {
         this._durationObservers.forEach(e => e.disconnect());
       }
       this._durationObservers = [];
-      const i = this.openCollectionId ? this._findCollection(this.openCollectionId) : null;
+      const n = this.openCollectionId ? this._findCollection(this.openCollectionId) : null;
       let r;
       let o = [];
-      if (i) {
-        r = this._getCollectionClips(i.id);
+      if (n) {
+        r = this._getCollectionClips(n.id);
       } else {
         r = this._getLibraryRootItems();
         o = (this.libraryCollections || []).filter(e => (e.clipCount || this._getCollectionClips(e.id).length) > 0);
@@ -12041,14 +12214,14 @@ class ClipsStudio {
         t.setAttribute("data-collection-id", e.id);
         t.setAttribute("role", "button");
         t.tabIndex = 0;
-        const n = e.title || "Project";
-        const i = sanitizeHTML(n);
+        const i = e.title || "Project";
+        const n = sanitizeHTML(i);
         const r = e.clipCount || this._getCollectionClips(e.id).length;
         const o = `${r} clip${r !== 1 ? "s" : ""}`;
         const s = sanitizeHTML(o);
         const a = sanitizeHTML(e.planLabel || "Project");
         const l = e.thumbnailUrl ? `<img class="scc-collection-thumb" src="${sanitizeHTML(e.thumbnailUrl)}" alt="" draggable="false" loading="lazy">` : `<div class="scc-collection-thumb scc-collection-thumb-empty"><i class="fas fa-folder"></i></div>`;
-        t.innerHTML = `\n                <div class="scc-collection-stack">\n                    <div class="scc-collection-hover-title" title="${i}">${i}</div>\n                    <span class="scc-collection-layer scc-collection-layer--2" aria-hidden="true"></span>\n                    <span class="scc-collection-layer scc-collection-layer--1" aria-hidden="true"></span>\n                    <div class="scc-collection-preview">\n                        ${l}\n                        <div class="scc-collection-expiry">${s}</div>\n                    </div>\n                </div>\n                <div class="scc-collection-meta">\n                    <div class="scc-collection-title-row">\n                        <h2 class="scc-collection-title" title="${i}">${i}</h2>\n                        <button type="button" class="scc-collection-menu" aria-label="Project options" aria-haspopup="menu" aria-expanded="false">···</button>\n                    </div>\n                    <p class="scc-collection-sub">${a}</p>\n                    <div class="scc-collection-dropdown" role="menu" hidden>\n                        <button type="button" class="scc-collection-dd-item" data-action="zip" role="menuitem">\n                            <span>Download zip</span><span class="scc-collection-dd-ext">ZIP</span>\n                        </button>\n                        <div class="scc-collection-dd-sep" aria-hidden="true"></div>\n                        <button type="button" class="scc-collection-dd-item" data-action="delete" role="menuitem">Delete</button>\n                    </div>\n                </div>`;
+        t.innerHTML = `\n                <div class="scc-collection-stack">\n                    <div class="scc-collection-hover-title" title="${n}">${n}</div>\n                    <span class="scc-collection-layer scc-collection-layer--2" aria-hidden="true"></span>\n                    <span class="scc-collection-layer scc-collection-layer--1" aria-hidden="true"></span>\n                    <div class="scc-collection-preview">\n                        ${l}\n                        <div class="scc-collection-expiry">${s}</div>\n                    </div>\n                </div>\n                <div class="scc-collection-meta">\n                    <div class="scc-collection-title-row">\n                        <h2 class="scc-collection-title" title="${n}">${n}</h2>\n                        <button type="button" class="scc-collection-menu" aria-label="Project options" aria-haspopup="menu" aria-expanded="false">···</button>\n                    </div>\n                    <p class="scc-collection-sub">${a}</p>\n                    <div class="scc-collection-dropdown" role="menu" hidden>\n                        <button type="button" class="scc-collection-dd-item" data-action="zip" role="menuitem">\n                            <span>Download zip</span><span class="scc-collection-dd-ext">ZIP</span>\n                        </button>\n                        <div class="scc-collection-dd-sep" aria-hidden="true"></div>\n                        <button type="button" class="scc-collection-dd-item" data-action="delete" role="menuitem">Delete</button>\n                    </div>\n                </div>`;
         t.addEventListener("click", t => {
           if (t.target.closest(".library-delete-btn, .scc-collection-menu, .scc-collection-dropdown")) return;
           this.openLibraryCollection(e.id);
@@ -12085,23 +12258,23 @@ class ClipsStudio {
             }
           });
         }
-        const n = String(e.projectId);
-        const i = e.duration || this._durationCache[n];
-        if (i) {
-          if (window.SolisClipCard) SolisClipCard.setDuration(t, i); else {
+        const i = String(e.projectId);
+        const n = e.duration || this._durationCache[i];
+        if (n) {
+          if (window.SolisClipCard) SolisClipCard.setDuration(t, n); else {
             const e = t.querySelector(".duration-text");
-            if (e) e.textContent = i;
+            if (e) e.textContent = n;
           }
-          if (n) this._durationCache[n] = i;
+          if (i) this._durationCache[i] = n;
         }
         return t;
       };
       const appendBatch = () => {
-        const t = !i && !l && o.length > 0;
+        const t = !n && !l && o.length > 0;
         if (a >= s.length && !t) return;
-        const r = Math.min(a + n, s.length);
+        const r = Math.min(a + i, s.length);
         const c = document.createDocumentFragment();
-        if (!i && !l && o.length) {
+        if (!n && !l && o.length) {
           o.forEach(e => c.appendChild(buildCollectionCard(e)));
           l = true;
         }
@@ -12118,11 +12291,11 @@ class ClipsStudio {
         e.appendChild(c);
         if (a < s.length) {
           const t = s.length - a;
-          const n = document.createElement("div");
-          n.className = "library-scroll-sentinel";
-          n.setAttribute("aria-hidden", "true");
-          e.appendChild(n);
-          const i = document.getElementById("clipsContainer");
+          const i = document.createElement("div");
+          i.className = "library-scroll-sentinel";
+          i.setAttribute("aria-hidden", "true");
+          e.appendChild(i);
+          const n = document.getElementById("clipsContainer");
           this._librarySentinelObserver = new IntersectionObserver(e => {
             if (!e.some(e => e.isIntersecting)) return;
             if (a >= s.length) return;
@@ -12134,11 +12307,11 @@ class ClipsStudio {
               this._libraryAppending = false;
             }
           }, {
-            root: i || null,
+            root: n || null,
             rootMargin: "280px 0px",
             threshold: 0
           });
-          this._librarySentinelObserver.observe(n);
+          this._librarySentinelObserver.observe(i);
           const r = document.createElement("button");
           r.type = "button";
           r.id = "libraryLoadMoreFab";
@@ -12146,7 +12319,7 @@ class ClipsStudio {
           r.setAttribute("aria-label", `Load more — ${t} clip${t !== 1 ? "s" : ""} left`);
           r.title = "Load more";
           r.innerHTML = `\n                    <span class="library-load-hint" aria-hidden="true">\n                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-down-icon lucide-arrow-down"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>\n                    </span>`;
-          (i || e).appendChild(r);
+          (n || e).appendChild(r);
           r.addEventListener("click", e => {
             e.preventDefault();
             e.stopPropagation();
@@ -12157,10 +12330,10 @@ class ClipsStudio {
             } finally {
               this._libraryAppending = false;
             }
-            if (i) {
+            if (n) {
               requestAnimationFrame(() => {
-                const e = Math.round(Math.min(i.clientHeight * .55, 420));
-                i.scrollBy({
+                const e = Math.round(Math.min(n.clientHeight * .55, 420));
+                n.scrollBy({
                   top: e,
                   behavior: "smooth"
                 });
@@ -12175,9 +12348,9 @@ class ClipsStudio {
         if (!e.classList.contains("empty-state")) e.remove();
       });
       document.getElementById("libraryLoadMoreFab")?.remove();
-      if (!s.length && !o.length && !i) {
-        const n = Array.isArray(this.libraryCollections) && this.libraryCollections.length > 0;
-        if (n) {
+      if (!s.length && !o.length && !n) {
+        const i = Array.isArray(this.libraryCollections) && this.libraryCollections.length > 0;
+        if (i) {
           t.style.display = "none";
           e.classList.remove("is-empty");
           appendBatch();
@@ -12186,20 +12359,20 @@ class ClipsStudio {
         t.style.display = "block";
         e.classList.add("is-empty");
         if (!t.isConnected) e.appendChild(t);
-        const i = t.querySelector("h3");
+        const n = t.querySelector("h3");
         const r = t.querySelector("p");
-        if (i) i.textContent = "No clips for this sort";
+        if (n) n.textContent = "No clips for this sort";
         if (r) r.textContent = "Try Newest, or another filter.";
         return;
       }
-      if (i && !s.length) {
+      if (n && !s.length) {
         e.classList.remove("is-empty");
         t.style.display = "none";
         appendBatch();
-        const n = document.createElement("p");
-        n.className = "library-collection-empty";
-        n.textContent = "No clips in this project yet — drag clips here from the library.";
-        e.appendChild(n);
+        const i = document.createElement("p");
+        i.className = "library-collection-empty";
+        i.textContent = "No clips in this project yet — drag clips here from the library.";
+        e.appendChild(i);
         return;
       }
       const c = t.querySelector("h3");
@@ -12215,23 +12388,23 @@ class ClipsStudio {
           if (t) {
             e.preventDefault();
             e.stopPropagation();
-            const n = t.getAttribute("data-project-id");
-            if (n && clipsStudio) clipsStudio.copyPublicPreviewLink(n);
+            const i = t.getAttribute("data-project-id");
+            if (i && clipsStudio) clipsStudio.copyPublicPreviewLink(i);
             return;
           }
-          const n = e.target.closest(".library-download-btn");
-          if (n) {
-            e.preventDefault();
-            e.stopPropagation();
-            const t = n.getAttribute("data-project-id");
-            if (t && clipsStudio) clipsStudio.downloadClip(t);
-            return;
-          }
-          const i = e.target.closest(".library-delete-btn");
+          const i = e.target.closest(".library-download-btn");
           if (i) {
             e.preventDefault();
             e.stopPropagation();
-            const t = i.getAttribute("data-item-id");
+            const t = i.getAttribute("data-project-id");
+            if (t && clipsStudio) clipsStudio.downloadClip(t);
+            return;
+          }
+          const n = e.target.closest(".library-delete-btn");
+          if (n) {
+            e.preventDefault();
+            e.stopPropagation();
+            const t = n.getAttribute("data-item-id");
             if (t && clipsStudio) clipsStudio.deleteClip(t);
             return;
           }
@@ -12240,8 +12413,8 @@ class ClipsStudio {
             e.preventDefault();
             e.stopPropagation();
             const t = r.getAttribute("data-id");
-            const n = r.getAttribute("data-project-id");
-            if (t && clipsStudio) clipsStudio.openLibraryPreview(t, n, r);
+            const i = r.getAttribute("data-project-id");
+            if (t && clipsStudio) clipsStudio.openLibraryPreview(t, i, r);
           }
         });
       }
@@ -12261,17 +12434,17 @@ class ClipsStudio {
       showNotification("Cannot delete items while processing. Wait for completion or cancel first.", "warning");
       return;
     }
-    const n = document.getElementById("deleteConfirmationModal");
-    const i = document.getElementById("deleteModalTitle");
+    const i = document.getElementById("deleteConfirmationModal");
+    const n = document.getElementById("deleteModalTitle");
     const r = document.getElementById("deleteConfirmationText");
-    const o = n?.querySelector(".delete-modal-warning");
+    const o = i?.querySelector(".delete-modal-warning");
     let s = document.getElementById("confirmDeleteBtn");
-    if (!n || !r || !s) {
+    if (!i || !r || !s) {
       showNotification("Error: Delete modal not available", "error");
       return;
     }
     safeLog("Modal elements found, showing confirmation");
-    if (i) i.textContent = "Delete clip";
+    if (n) n.textContent = "Delete clip";
     if (o) o.textContent = "Associated files are deleted and cannot be recovered.";
     s.textContent = "Delete clip";
     const a = t.name || "this clip";
@@ -12291,7 +12464,7 @@ class ClipsStudio {
       safeLog(`🔄 Confirm button clicked for item: ${e}`);
       l.abort();
       try {
-        n.classList.remove("show");
+        i.classList.remove("show");
         showNotification("Deleting clip...", "info");
         if (t.projectId) {
           safeLog(`📤 Deleting project from server: ${t.projectId}`);
@@ -12323,17 +12496,17 @@ class ClipsStudio {
       } catch (e) {
         showNotification("Failed to delete clip: " + e.message, "error");
       } finally {
-        n.classList.remove("show");
+        i.classList.remove("show");
       }
     }, {
       once: true
     });
-    n.classList.add("show");
+    i.classList.add("show");
     safeLog("📋 Modal displayed");
     const closeOnBackdropClick = e => {
-      if (e.target === n) {
+      if (e.target === i) {
         safeLog("🚫 Modal closed by backdrop click");
-        n.classList.remove("show");
+        i.classList.remove("show");
         document.removeEventListener("click", closeOnBackdropClick);
       }
     };
@@ -12348,16 +12521,16 @@ class ClipsStudio {
         throw new Error("Invalid project ID format");
       }
       const t = getAuthHeaders();
-      const n = await fetch(`${API_BASE_URL}/clips/project/${e}`, {
+      const i = await fetch(`${API_BASE_URL}/clips/project/${e}`, {
         method: "DELETE",
         headers: t,
         credentials: "include"
       });
-      if (!n.ok) {
-        const e = await n.json().catch(() => ({}));
-        throw new Error(e.error || `Server error: ${n.status}`);
+      if (!i.ok) {
+        const e = await i.json().catch(() => ({}));
+        throw new Error(e.error || `Server error: ${i.status}`);
       }
-      const i = await n.json();
+      const n = await i.json();
       return true;
     } catch (e) {
       const t = sanitizeErrorMessage(e);
@@ -12382,10 +12555,10 @@ class ClipsStudio {
       this._libraryNavStack = [ null ];
       this._libraryNavIndex = 0;
     }
-    const n = Math.max(0, Math.min(this._libraryNavIndex || 0, this._libraryNavStack.length - 1));
-    this._libraryNavIndex = n;
-    if (e) e.disabled = n <= 0;
-    if (t) t.disabled = n >= this._libraryNavStack.length - 1;
+    const i = Math.max(0, Math.min(this._libraryNavIndex || 0, this._libraryNavStack.length - 1));
+    this._libraryNavIndex = i;
+    if (e) e.disabled = i <= 0;
+    if (t) t.disabled = i >= this._libraryNavStack.length - 1;
     if (!this._libraryNavBound) {
       this._libraryNavBound = true;
       e?.addEventListener("click", e => {
@@ -12402,15 +12575,15 @@ class ClipsStudio {
   }
   _pushLibraryNav(e) {
     const t = e || null;
-    const n = (this._libraryNavStack || [ null ])[this._libraryNavIndex || 0] || null;
-    if (String(n || "") === String(t || "")) {
+    const i = (this._libraryNavStack || [ null ])[this._libraryNavIndex || 0] || null;
+    if (String(i || "") === String(t || "")) {
       this._syncLibraryNavArrows();
       return;
     }
-    const i = (this._libraryNavStack || [ null ]).slice(0, (this._libraryNavIndex || 0) + 1);
-    i.push(t);
-    this._libraryNavStack = i;
-    this._libraryNavIndex = i.length - 1;
+    const n = (this._libraryNavStack || [ null ]).slice(0, (this._libraryNavIndex || 0) + 1);
+    n.push(t);
+    this._libraryNavStack = n;
+    this._libraryNavIndex = n.length - 1;
     this._syncLibraryNavArrows();
   }
   libraryNavBack() {
@@ -12443,20 +12616,20 @@ class ClipsStudio {
   async moveClipToCollection(e, t) {
     if (!e) return false;
     try {
-      const n = {
+      const i = {
         ...getAuthHeaders(),
         "Content-Type": "application/json"
       };
-      const i = await fetch(`${API_BASE_URL}/clips/projects/${encodeURIComponent(e)}/collection`, {
+      const n = await fetch(`${API_BASE_URL}/clips/projects/${encodeURIComponent(e)}/collection`, {
         method: "PATCH",
-        headers: n,
+        headers: i,
         credentials: "include",
         body: JSON.stringify({
           collection_id: t
         })
       });
-      if (!i.ok) {
-        const e = await i.json().catch(() => ({}));
+      if (!n.ok) {
+        const e = await n.json().catch(() => ({}));
         showNotification(e.error || "Could not move clip", "warning");
         return false;
       }
@@ -12484,13 +12657,13 @@ class ClipsStudio {
     if (!e || !t || e.dataset.dragBound === "1") return;
     e.dataset.dragBound = "1";
     e.setAttribute("draggable", "true");
-    e.addEventListener("dragstart", n => {
-      const i = t.projectId || t.id;
-      this._dragClipId = i;
+    e.addEventListener("dragstart", i => {
+      const n = t.projectId || t.id;
+      this._dragClipId = n;
       e.classList.add("library-card-dragging");
-      n.dataTransfer.effectAllowed = "move";
+      i.dataTransfer.effectAllowed = "move";
       try {
-        n.dataTransfer.setData("text/plain", String(i));
+        i.dataTransfer.setData("text/plain", String(n));
       } catch (e) {}
       document.getElementById("librarySection")?.classList.add("library-drag-active");
     });
@@ -12507,39 +12680,39 @@ class ClipsStudio {
     document.querySelectorAll(".library-collection-folder.is-menu-open").forEach(e => {
       e.classList.remove("is-menu-open");
       const t = e.querySelector(".scc-collection-menu");
-      const n = e.querySelector(".scc-collection-dropdown");
+      const i = e.querySelector(".scc-collection-dropdown");
       if (t) t.setAttribute("aria-expanded", "false");
-      if (n) n.hidden = true;
+      if (i) i.hidden = true;
     });
   }
   _bindCollectionMenu(e, t) {
     if (!e || !t || e.dataset.menuBound === "1") return;
     e.dataset.menuBound = "1";
-    const n = e.querySelector(".scc-collection-menu");
-    const i = e.querySelector(".scc-collection-dropdown");
-    if (!n || !i) return;
-    n.addEventListener("click", t => {
+    const i = e.querySelector(".scc-collection-menu");
+    const n = e.querySelector(".scc-collection-dropdown");
+    if (!i || !n) return;
+    i.addEventListener("click", t => {
       t.preventDefault();
       t.stopPropagation();
-      const r = !i.hidden;
+      const r = !n.hidden;
       this._closeAllCollectionMenus();
       if (!r) {
-        i.hidden = false;
-        n.setAttribute("aria-expanded", "true");
+        n.hidden = false;
+        i.setAttribute("aria-expanded", "true");
         e.classList.add("is-menu-open");
       }
     });
-    i.addEventListener("click", async e => {
+    n.addEventListener("click", async e => {
       e.stopPropagation();
-      const n = e.target.closest(".scc-collection-dd-item");
-      if (!n) return;
-      const i = n.dataset.action;
+      const i = e.target.closest(".scc-collection-dd-item");
+      if (!i) return;
+      const n = i.dataset.action;
       this._closeAllCollectionMenus();
-      if (i === "zip") {
+      if (n === "zip") {
         showNotification("Zip download coming soon", "info");
         return;
       }
-      if (i === "delete") {
+      if (n === "delete") {
         const e = window.confirm(`Delete project folder "${t.title || "Project"}"? Clips stay in your library.`);
         if (!e) return;
         await this.dissolveCollection(t.id);
@@ -12579,12 +12752,12 @@ class ClipsStudio {
     e.addEventListener("dragleave", () => {
       e.classList.remove("is-drop-target");
     });
-    e.addEventListener("drop", async n => {
-      n.preventDefault();
+    e.addEventListener("drop", async i => {
+      i.preventDefault();
       e.classList.remove("is-drop-target");
-      const i = this._dragClipId || n.dataTransfer.getData("text/plain");
-      if (!i || !t) return;
-      await this.moveClipToCollection(i, t);
+      const n = this._dragClipId || i.dataTransfer.getData("text/plain");
+      if (!n || !t) return;
+      await this.moveClipToCollection(n, t);
     });
   }
   filterLibrary(e) {
@@ -12634,19 +12807,19 @@ class ClipsStudio {
     const ts = e => {
       const t = e?.timestamp;
       if (t instanceof Date) return t.getTime();
-      const n = Date.parse(t);
-      return Number.isFinite(n) ? n : 0;
+      const i = Date.parse(t);
+      return Number.isFinite(i) ? i : 0;
     };
-    let n = t;
+    let i = t;
     if (this.librarySortMode === "ranking") {
-      n = t.filter(e => this._isRankingLibraryItem(e));
+      i = t.filter(e => this._isRankingLibraryItem(e));
     } else if (this.librarySortMode === "split") {
-      n = t.filter(e => this._isSplitLibraryItem(e));
+      i = t.filter(e => this._isSplitLibraryItem(e));
     }
     if (this.librarySortMode === "oldest") {
-      return n.sort((e, t) => ts(e) - ts(t));
+      return i.sort((e, t) => ts(e) - ts(t));
     }
-    return n.sort((e, t) => ts(t) - ts(e));
+    return i.sort((e, t) => ts(t) - ts(e));
   }
   setLibrarySortMode(e) {
     if (![ "newest", "oldest", "ranking", "split" ].includes(e)) return;
@@ -12755,15 +12928,15 @@ class ClipsStudio {
       if (e) {
         this.processingItems = JSON.parse(e);
         const t = Date.now();
-        const n = 2 * 60 * 60 * 1e3;
+        const i = 2 * 60 * 60 * 1e3;
         this.processingItems = this.processingItems.filter(e => {
           if (e.status === "completed" || e.status === "failed") {
             safeLog(`🧹 Cleaning up ${e.status} item: ${e.name}`);
             return false;
           }
-          const i = t - (e.timestamp ? new Date(e.timestamp).getTime() : t);
-          if (i > n) {
-            safeLog(`🧹 Removing stale processing item (${Math.round(i / 1e3 / 60)} min old): ${e.name}`);
+          const n = t - (e.timestamp ? new Date(e.timestamp).getTime() : t);
+          if (n > i) {
+            safeLog(`🧹 Removing stale processing item (${Math.round(n / 1e3 / 60)} min old): ${e.name}`);
             return false;
           }
           return true;
@@ -12872,32 +13045,32 @@ class ClipsStudio {
     }
     this._webSocketHandlersSetup = true;
     solisWSClient.on("progress", e => {
-      const {taskId: t, progress: n, step: i, status: r, project_id: o} = e;
+      const {taskId: t, progress: i, step: n, status: r, project_id: o} = e;
       const s = o || t;
-      if (typeof n !== "number" || isNaN(n) || n < 0 || n > 100) {
-        safeLog(`⚠ï¸ Invalid progress value received: ${n}`);
+      if (typeof i !== "number" || isNaN(i) || i < 0 || i > 100) {
+        safeLog(`⚠ï¸ Invalid progress value received: ${i}`);
         return;
       }
       const a = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
       if (a?.updateProgress && s) {
         const e = a._resolveActiveProjectId?.(s) || s;
         if (a.activeGenerations?.has?.(e) || a.activeGenerations?.has?.(s)) {
-          a.updateProgress(e, n, i || r || "Processing...", true);
+          a.updateProgress(e, i, n || r || "Processing...", true);
         }
       }
     });
     solisWSClient.on("complete", e => {
-      const {taskId: t, result: n} = e;
+      const {taskId: t, result: i} = e;
       safeLog(`✅ Video ${t} completed, moving to library...`);
-      const i = this.processingItems.findIndex(e => e.id === t);
-      if (i === -1) {
+      const n = this.processingItems.findIndex(e => e.id === t);
+      if (n === -1) {
         safeLog(`âŒ Processing item not found: ${t}`);
         return;
       }
-      const r = this.processingItems[i];
+      const r = this.processingItems[n];
       const o = document.querySelector(`[data-processing-id="${t}"]`);
       const s = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
-      const a = n?.project_id || r?.projectId;
+      const a = i?.project_id || r?.projectId;
       if (s?.completeGeneration && a) {
         s.completeGeneration(a);
       }
@@ -12905,24 +13078,24 @@ class ClipsStudio {
         const e = this.processingItems.findIndex(e => e.id === t);
         if (e !== -1) this.processingItems.splice(e, 1);
         this.saveProcessingItems();
-        const i = {
-          id: n?.project_id || t,
-          projectId: n?.project_id || t,
+        const n = {
+          id: i?.project_id || t,
+          projectId: i?.project_id || t,
           name: r.name,
           template: r.template || r.templateName || "Clip",
           templateName: r.templateName || r.template || "Clip",
-          thumbnailUrl: n?.thumbnail_url || r.thumbnailUrl || "",
-          duration: n?.duration || r.duration || "0s",
+          thumbnailUrl: i?.thumbnail_url || r.thumbnailUrl || "",
+          duration: i?.duration || r.duration || "0s",
           timestamp: (new Date).toISOString(),
           status: "completed",
-          virality: n?.virality || r.virality || null,
+          virality: i?.virality || r.virality || null,
           _optimistic: true
         };
-        this.libraryItems = this.libraryItems.filter(e => String(e.projectId || e.id) !== String(i.projectId));
-        this.libraryItems.unshift(i);
+        this.libraryItems = this.libraryItems.filter(e => String(e.projectId || e.id) !== String(n.projectId));
+        this.libraryItems.unshift(n);
         this.saveLibraryItems();
         this.updateLibraryView();
-        this.openLibraryPreviewWhenReady(i.id, i.projectId);
+        this.openLibraryPreviewWhenReady(n.id, n.projectId);
         this.loadStorageInfo();
         safeLog(`✅ Moved ${r.name} to library`);
       };
@@ -12934,19 +13107,19 @@ class ClipsStudio {
       }
     });
     solisWSClient.on("error", e => {
-      const {taskId: t, error: n} = e;
-      safeLog(`âŒ Video ${t} failed: ${n}`);
-      const i = document.querySelector(`[data-processing-id="${t}"]`);
-      if (i) {
-        i.style.opacity = "0.5";
-        const e = i.querySelector(".card-title");
+      const {taskId: t, error: i} = e;
+      safeLog(`âŒ Video ${t} failed: ${i}`);
+      const n = document.querySelector(`[data-processing-id="${t}"]`);
+      if (n) {
+        n.style.opacity = "0.5";
+        const e = n.querySelector(".card-title");
         if (e) {
           e.textContent = "Failed - " + e.textContent;
         }
       }
       const r = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
       if (r?.failGeneration && t) {
-        r.failGeneration(t, n || "There was an error — try again");
+        r.failGeneration(t, i || "There was an error — try again");
       }
       const o = this.processingItems.findIndex(e => e.id === t);
       if (o !== -1) {
@@ -12955,8 +13128,8 @@ class ClipsStudio {
       }
     });
     solisWSClient.on("processing_error", e => {
-      const {taskId: t, error: n, message: i} = e;
-      const r = i || n || "Unknown processing error";
+      const {taskId: t, error: i, message: n} = e;
+      const r = n || i || "Unknown processing error";
       safeLog(`âŒ Processing failed: ${r}`);
       const o = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
       if (o?.failGeneration && t) {
@@ -12990,35 +13163,35 @@ class ClipsStudio {
     });
     safeLog("✅ WebSocket handlers initialized");
   }
-  safeAddEventListener(e, t, n) {
-    const i = document.querySelectorAll(e);
-    i.forEach(i => {
-      if (!i._eventControllers) i._eventControllers = {};
+  safeAddEventListener(e, t, i) {
+    const n = document.querySelectorAll(e);
+    n.forEach(n => {
+      if (!n._eventControllers) n._eventControllers = {};
       const r = `${t}_${e}`;
-      if (i._eventControllers[r]) {
-        i._eventControllers[r].abort();
+      if (n._eventControllers[r]) {
+        n._eventControllers[r].abort();
       }
       const o = new AbortController;
-      i._eventControllers[r] = o;
-      i.addEventListener(t, n, {
+      n._eventControllers[r] = o;
+      n.addEventListener(t, i, {
         signal: o.signal
       });
     });
   }
-  safeAddEventListenerById(e, t, n) {
-    const i = document.getElementById(e);
-    if (i) {
+  safeAddEventListenerById(e, t, i) {
+    const n = document.getElementById(e);
+    if (n) {
       safeLog(`✅ Found element with id: ${e}`);
-      if (!i._eventControllers) {
-        i._eventControllers = {};
+      if (!n._eventControllers) {
+        n._eventControllers = {};
       }
       const r = `${t}_${e}`;
-      if (i._eventControllers[r]) {
-        i._eventControllers[r].abort();
+      if (n._eventControllers[r]) {
+        n._eventControllers[r].abort();
       }
       const o = new AbortController;
-      i._eventControllers[r] = o;
-      i.addEventListener(t, n, {
+      n._eventControllers[r] = o;
+      n.addEventListener(t, i, {
         signal: o.signal
       });
     } else {
@@ -13053,8 +13226,8 @@ class ClipsStudio {
     const t = document.querySelector(".template-preview-sidebar");
     if (!e || !t || e.dataset.dragBound === "1") return;
     e.dataset.dragBound = "1";
-    let n = false;
-    let i = 0;
+    let i = false;
+    let n = 0;
     let r = 0;
     let o = 0;
     let s = 0;
@@ -13068,8 +13241,8 @@ class ClipsStudio {
     const onDown = l => {
       if (window.innerWidth > 768) return;
       if (l.pointerType === "mouse" && l.button !== 0) return;
-      n = true;
-      i = l.clientY;
+      i = true;
+      n = l.clientY;
       o = l.clientY;
       s = performance.now();
       a = 0;
@@ -13082,9 +13255,9 @@ class ClipsStudio {
       l.preventDefault();
     };
     const onMove = e => {
-      if (!n) return;
+      if (!i) return;
       const l = performance.now();
-      const c = e.clientY - i;
+      const c = e.clientY - n;
       const d = peekY();
       let p = Math.min(d, Math.max(0, r + c));
       t.style.transform = `translateY(${p}px)`;
@@ -13094,15 +13267,15 @@ class ClipsStudio {
       s = l;
     };
     const onUp = () => {
-      if (!n) return;
-      n = false;
+      if (!i) return;
+      i = false;
       t.classList.remove("is-dragging");
       t.style.transition = "";
       const e = peekY();
-      const i = readY();
+      const n = readY();
       const r = a < -.45;
       const o = a > .45;
-      const s = r || !o && i < e * .55;
+      const s = r || !o && n < e * .55;
       t.style.transform = "";
       t.classList.toggle("expanded", s);
     };
@@ -13120,7 +13293,7 @@ class ClipsStudio {
     });
     e.addEventListener("click", e => {
       if (window.innerWidth > 768) return;
-      if (Math.abs(o - i) > 10) {
+      if (Math.abs(o - n) > 10) {
         e.preventDefault();
         e.stopPropagation();
         return;
@@ -13227,9 +13400,9 @@ function setupEventListeners() {
       (window._comprehensiveLogout || logout)();
     });
   }
-  const n = document.getElementById("menuSettings");
-  if (n) {
-    n.addEventListener("click", e => {
+  const i = document.getElementById("menuSettings");
+  if (i) {
+    i.addEventListener("click", e => {
       e.stopPropagation();
       openSettings();
     });
@@ -13240,9 +13413,9 @@ function setupEventListeners() {
   if (closeSettings) {
     closeSettings.addEventListener("click", closeSettingsPanel);
   }
-  const i = document.getElementById("clearChatHistoryBtn");
-  if (i) {
-    i.addEventListener("click", () => {
+  const n = document.getElementById("clearChatHistoryBtn");
+  if (n) {
+    n.addEventListener("click", () => {
       if (confirm("Are you sure you want to delete all chat history? This action cannot be undone.")) {
         clearChat();
         clipsStudio.showNotification("Chat history cleared", "success");
@@ -13297,9 +13470,9 @@ if (clipsToggle) {
   clipsToggle.addEventListener("click", function(e) {
     e.stopPropagation();
     const t = document.getElementById("clips-submenu");
-    const n = this.querySelector(".chevron-icon");
+    const i = this.querySelector(".chevron-icon");
     if (t) t.classList.toggle("open");
-    if (n) n.classList.toggle("rotated");
+    if (i) i.classList.toggle("rotated");
   });
 }
 
@@ -13394,11 +13567,11 @@ function closeSettingsPanel() {
 async function checkYouTubeConnection() {
   const e = document.getElementById("analyticsLockOverlay");
   const t = document.getElementById("dashboardGrid");
-  const n = document.querySelector(".dashboard-charts");
+  const i = document.querySelector(".dashboard-charts");
   if (!e) return;
   e.style.display = "flex";
   if (t) t.classList.add("analytics-locked");
-  if (n) n.classList.add("analytics-locked");
+  if (i) i.classList.add("analytics-locked");
   if (!currentUser) currentUser = {};
   currentUser.youtube_connected = false;
 }
@@ -13428,18 +13601,18 @@ function initiateYouTubeConnection() {
     }
     safeLog("✓ Got OAuth URL from backend");
     const t = 500;
-    const n = 600;
-    const i = (window.innerWidth - t) / 2;
-    const r = (window.innerHeight - n) / 2;
-    const o = window.open(e.auth_url, "YouTubeOAuth", `width=${t},height=${n},left=${i},top=${r},noopener,noreferrer`);
+    const i = 600;
+    const n = (window.innerWidth - t) / 2;
+    const r = (window.innerHeight - i) / 2;
+    const o = window.open(e.auth_url, "YouTubeOAuth", `width=${t},height=${i},left=${n},top=${r},noopener,noreferrer`);
     if (!o) {
       safeLog("⚠ï¸ Popup blocked, falling back to redirect");
       window.location.href = e.auth_url;
     } else {
       safeLog("✓ OAuth window opened");
       const e = function handleOAuthMessage(e) {
-        const n = [ window.location.origin ];
-        if (!n.includes(e.origin)) {
+        const i = [ window.location.origin ];
+        if (!i.includes(e.origin)) {
           safeLog("🔒 Blocked postMessage from untrusted origin:", e.origin);
           return;
         }
@@ -13508,27 +13681,27 @@ async function handleClipCompilationRequest(e, t) {
 }
 
 function showClipConfirmationDialog(e, t) {
-  const n = document.createElement("div");
-  n.className = "clip-confirm-modal";
-  n.innerHTML = `\n        <style>\n            .clip-confirm-modal {\n                position: fixed;\n                top: 0;\n                left: 0;\n                right: 0;\n                bottom: 0;\n                background: rgba(0, 0, 0, 0.6);\n                display: flex;\n                align-items: center;\n                justify-content: center;\n                z-index: 10000;\n                animation: fadeIn 0.2s ease;\n            }\n\n            @keyframes fadeIn {\n                from { opacity: 0; }\n                to { opacity: 1; }\n            }\n\n            .clip-confirm-dialog {\n                background: var(--surface);\n                border: 1px solid var(--border);\n                border-radius: 12px;\n                padding: 32px;\n                max-width: 420px;\n                animation: slideUp 0.3s ease;\n                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);\n            }\n\n            @keyframes slideUp {\n                from { transform: translateY(20px); opacity: 0; }\n                to { transform: translateY(0); opacity: 1; }\n            }\n\n            .clip-confirm-header {\n                display: flex;\n                align-items: center;\n                gap: 12px;\n                margin-bottom: 16px;\n            }\n\n            .clip-confirm-header h2 {\n                margin: 0;\n                font-size: 18px;\n                color: var(--text);\n                font-weight: 600;\n            }\n\n            .clip-confirm-content {\n                margin-bottom: 24px;\n            }\n\n            .clip-confirm-content p {\n                margin: 0 0 12px 0;\n                color: var(--muted);\n                font-size: 14px;\n                line-height: 1.6;\n            }\n\n            .clip-confirm-url {\n                padding: 12px;\n                background: rgba(255, 107, 53, 0.1);\n                border: 1px solid rgba(255, 107, 53, 0.2);\n                border-radius: 6px;\n                font-size: 12px;\n                color: var(--muted);\n                word-break: break-all;\n                font-family: monospace;\n            }\n\n            .clip-confirm-actions {\n                display: flex;\n                gap: 12px;\n                justify-content: flex-end;\n            }\n\n            .clip-btn {\n                padding: 10px 20px;\n                border: none;\n                border-radius: 8px;\n                cursor: pointer;\n                font-weight: 600;\n                font-size: 14px;\n                transition: all 0.2s ease;\n            }\n\n            .clip-btn-reject {\n                background: rgba(255, 107, 53, 0.1);\n                color: var(--muted);\n            }\n\n            .clip-btn-reject:hover {\n                background: rgba(255, 107, 53, 0.2);\n            }\n\n            .clip-btn-accept {\n                background: linear-gradient(135deg, #ff6b35 0%, #ff8856 100%);\n                color: white;\n            }\n\n            .clip-btn-accept:hover {\n                transform: translateY(-2px);\n                box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);\n            }\n        </style>\n\n        <div class="clip-confirm-dialog">\n            <div class="clip-confirm-header">\n                <span style="font-size: 20px;">🎬</span>\n                <h2>Create Clip Compilation</h2>\n            </div>\n\n            <div class="clip-confirm-content">\n                <p>Ready to create a clip compilation from your YouTube video?</p>\n                <div class="clip-confirm-url" id="urlDisplay"></div>\n                <p style="margin-top: 12px; font-size: 12px; opacity: 0.7;">This may take a few minutes. You can monitor progress in the Processing tab.</p>\n            </div>\n\n            <div class="clip-confirm-actions">\n                <button class="clip-btn clip-btn-reject" id="clipConfirmCancel">\n                    ✕ Cancel\n                </button>\n                <button class="clip-btn clip-btn-accept" id="clipConfirmAccept">\n                    ✓ Create Compilation\n                </button>\n            </div>\n        </div>\n    `;
-  document.body.appendChild(n);
-  const i = document.getElementById("urlDisplay");
-  if (i) {
-    i.textContent = t;
+  const i = document.createElement("div");
+  i.className = "clip-confirm-modal";
+  i.innerHTML = `\n        <style>\n            .clip-confirm-modal {\n                position: fixed;\n                top: 0;\n                left: 0;\n                right: 0;\n                bottom: 0;\n                background: rgba(0, 0, 0, 0.6);\n                display: flex;\n                align-items: center;\n                justify-content: center;\n                z-index: 10000;\n                animation: fadeIn 0.2s ease;\n            }\n\n            @keyframes fadeIn {\n                from { opacity: 0; }\n                to { opacity: 1; }\n            }\n\n            .clip-confirm-dialog {\n                background: var(--surface);\n                border: 1px solid var(--border);\n                border-radius: 12px;\n                padding: 32px;\n                max-width: 420px;\n                animation: slideUp 0.3s ease;\n                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);\n            }\n\n            @keyframes slideUp {\n                from { transform: translateY(20px); opacity: 0; }\n                to { transform: translateY(0); opacity: 1; }\n            }\n\n            .clip-confirm-header {\n                display: flex;\n                align-items: center;\n                gap: 12px;\n                margin-bottom: 16px;\n            }\n\n            .clip-confirm-header h2 {\n                margin: 0;\n                font-size: 18px;\n                color: var(--text);\n                font-weight: 600;\n            }\n\n            .clip-confirm-content {\n                margin-bottom: 24px;\n            }\n\n            .clip-confirm-content p {\n                margin: 0 0 12px 0;\n                color: var(--muted);\n                font-size: 14px;\n                line-height: 1.6;\n            }\n\n            .clip-confirm-url {\n                padding: 12px;\n                background: rgba(255, 107, 53, 0.1);\n                border: 1px solid rgba(255, 107, 53, 0.2);\n                border-radius: 6px;\n                font-size: 12px;\n                color: var(--muted);\n                word-break: break-all;\n                font-family: monospace;\n            }\n\n            .clip-confirm-actions {\n                display: flex;\n                gap: 12px;\n                justify-content: flex-end;\n            }\n\n            .clip-btn {\n                padding: 10px 20px;\n                border: none;\n                border-radius: 8px;\n                cursor: pointer;\n                font-weight: 600;\n                font-size: 14px;\n                transition: all 0.2s ease;\n            }\n\n            .clip-btn-reject {\n                background: rgba(255, 107, 53, 0.1);\n                color: var(--muted);\n            }\n\n            .clip-btn-reject:hover {\n                background: rgba(255, 107, 53, 0.2);\n            }\n\n            .clip-btn-accept {\n                background: linear-gradient(135deg, #ff6b35 0%, #ff8856 100%);\n                color: white;\n            }\n\n            .clip-btn-accept:hover {\n                transform: translateY(-2px);\n                box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);\n            }\n        </style>\n\n        <div class="clip-confirm-dialog">\n            <div class="clip-confirm-header">\n                <span style="font-size: 20px;">🎬</span>\n                <h2>Create Clip Compilation</h2>\n            </div>\n\n            <div class="clip-confirm-content">\n                <p>Ready to create a clip compilation from your YouTube video?</p>\n                <div class="clip-confirm-url" id="urlDisplay"></div>\n                <p style="margin-top: 12px; font-size: 12px; opacity: 0.7;">This may take a few minutes. You can monitor progress in the Processing tab.</p>\n            </div>\n\n            <div class="clip-confirm-actions">\n                <button class="clip-btn clip-btn-reject" id="clipConfirmCancel">\n                    ✕ Cancel\n                </button>\n                <button class="clip-btn clip-btn-accept" id="clipConfirmAccept">\n                    ✓ Create Compilation\n                </button>\n            </div>\n        </div>\n    `;
+  document.body.appendChild(i);
+  const n = document.getElementById("urlDisplay");
+  if (n) {
+    n.textContent = t;
   }
   document.getElementById("clipConfirmCancel").addEventListener("click", () => {
-    n.remove();
+    i.remove();
   });
   document.getElementById("clipConfirmAccept").addEventListener("click", async () => {
-    n.remove();
+    i.remove();
     window.location.hash = "#/clips";
     setTimeout(() => {
       startClipCompilation(t);
     }, 500);
   });
-  n.addEventListener("click", e => {
-    if (e.target === n) {
-      n.remove();
+  i.addEventListener("click", e => {
+    if (e.target === i) {
+      i.remove();
     }
   });
 }
@@ -13536,15 +13709,15 @@ function showClipConfirmationDialog(e, t) {
 async function startClipCompilation(e) {
   try {
     const t = getAuthHeaders();
-    const n = clipsStudio ? clipsStudio.extractYouTubeVideoId(e) : null;
+    const i = clipsStudio ? clipsStudio.extractYouTubeVideoId(e) : null;
     sessionStorage.setItem("clipProcessing", JSON.stringify({
-      videoId: n,
+      videoId: i,
       startTime: Date.now()
     }));
-    const i = document.createElement("div");
-    i.id = "clip-processing-modal";
-    i.innerHTML = `\n            <style>\n                #clip-processing-modal {\n                    position: fixed;\n                    top: 0;\n                    left: 0;\n                    right: 0;\n                    bottom: 0;\n                    background: linear-gradient(135deg, #fff5eb 0%, #ffe4d1 100%);\n                    display: flex;\n                    flex-direction: column;\n                    align-items: center;\n                    justify-content: center;\n                    z-index: 99999;\n                    overflow: hidden;\n                }\n\n                .clip-processing-container {\n                    text-align: center;\n                    position: relative;\n                    z-index: 10;\n                }\n\n                .clip-atom {\n                    width: 140px;\n                    height: 140px;\n                    margin: 0 auto 32px;\n                }\n\n                .clip-atom svg {\n                    width: 100%;\n                    height: 100%;\n                    filter: drop-shadow(0 0 20px rgba(255, 107, 53, 0.3));\n                }\n\n                .clip-nucleus {\n                    animation: nucleusPulse 1.5s ease-in-out infinite;\n                    transform-origin: center;\n                }\n\n                @keyframes nucleusPulse {\n                    0% { transform: scale(0.8); opacity: 0.6; }\n                    50% { transform: scale(1); opacity: 1; }\n                    100% { transform: scale(0.8); opacity: 0.6; }\n                }\n\n                .clip-orbit {\n                    transform-origin: 50px 50px;\n                    stroke-dasharray: 300;\n                    stroke-dashoffset: 300;\n                }\n\n                .clip-orbit-1 {\n                    transform: rotate(75deg);\n                    animation: drawOrbit 1.5s ease-in-out infinite;\n                }\n\n                .clip-orbit-2 {\n                    transform: rotate(-20deg);\n                    animation: drawOrbit 1.5s ease-in-out 0.3s infinite;\n                }\n\n                @keyframes drawOrbit {\n                    0% { stroke-dashoffset: 300; opacity: 0.3; }\n                    50% { stroke-dashoffset: 0; opacity: 0.7; }\n                    100% { stroke-dashoffset: 300; opacity: 0.3; }\n                }\n\n                .clip-title {\n                    font-size: 28px;\n                    font-weight: 700;\n                    color: #1a1a1a;\n                    margin-bottom: 8px;\n                }\n\n                .clip-subtitle {\n                    font-size: 14px;\n                    color: #666;\n                    margin-bottom: 32px;\n                }\n\n                .clip-progress-container {\n                    width: 280px;\n                    margin: 0 auto 24px;\n                }\n\n                .clip-progress-bar {\n                    width: 100%;\n                    height: 4px;\n                    background: rgba(255, 107, 53, 0.15);\n                    border-radius: 2px;\n                    overflow: hidden;\n                    margin-bottom: 12px;\n                }\n\n                .clip-progress-fill {\n                    height: 100%;\n                    background: linear-gradient(90deg, #ff6b35 0%, #ff8856 100%);\n                    width: 0%;\n                    transition: width 0.4s ease;\n                    border-radius: 2px;\n                }\n\n                .clip-stats {\n                    display: flex;\n                    justify-content: space-between;\n                    gap: 20px;\n                    margin-top: 24px;\n                    padding: 16px;\n                    background: rgba(255, 107, 53, 0.08);\n                    border-radius: 8px;\n                }\n\n                .clip-stat {\n                    text-align: center;\n                }\n\n                .clip-stat-value {\n                    font-size: 20px;\n                    font-weight: 700;\n                    color: #ff6b35;\n                }\n\n                .clip-stat-label {\n                    font-size: 11px;\n                    color: #999;\n                    margin-top: 4px;\n                    text-transform: uppercase;\n                    letter-spacing: 0.05em;\n                }\n            </style>\n\n            <div class="clip-processing-container">\n                <div class="clip-atom">\n                    <svg width="140" height="140" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">\n                        <g class="clip-nucleus">\n                            <circle cx="50" cy="50" r="8" fill="#ff6b35"/>\n                            <circle cx="50" cy="50" r="12" fill="#ff6b35" opacity="0.3"/>\n                        </g>\n                        <ellipse class="clip-orbit clip-orbit-1" rx="45" ry="25" cx="50" cy="50" stroke="#ff6b35" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.7"/>\n                        <ellipse class="clip-orbit clip-orbit-2" rx="45" ry="25" cx="50" cy="50" stroke="#ff6b35" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.7"/>\n                    </svg>\n                </div>\n\n                <h1 class="clip-title">Cooking!</h1>\n                <p class="clip-subtitle" id="clipStatus">HAHAHAHA</p>\n\n                <div class="clip-progress-container">\n                    <div class="clip-progress-bar">\n                        <div class="clip-progress-fill" id="clipProgressFill"></div>\n                    </div>\n                    <div style="display: flex; justify-content: space-between; gap: 12px;">\n                        <span id="clipProgress" style="font-size: 12px; color: #999;">0%</span>\n                        <span id="clipTimeLeft" style="font-size: 12px; color: #999;">--:--</span>\n                    </div>\n                </div>\n\n                <div class="clip-stats">\n                    <div class="clip-stat">\n                        <div class="clip-stat-value" id="clipStatDownload">0%</div>\n                        <div class="clip-stat-label">Downloading</div>\n                    </div>\n                    <div class="clip-stat">\n                        <div class="clip-stat-value" id="clipStatProcessing">0%</div>\n                        <div class="clip-stat-label">Processing</div>\n                    </div>\n                    <div class="clip-stat">\n                        <div class="clip-stat-value" id="clipStatRendering">0%</div>\n                        <div class="clip-stat-label">Rendering</div>\n                    </div>\n                </div>\n            </div>\n        `;
-    document.body.appendChild(i);
+    const n = document.createElement("div");
+    n.id = "clip-processing-modal";
+    n.innerHTML = `\n            <style>\n                #clip-processing-modal {\n                    position: fixed;\n                    top: 0;\n                    left: 0;\n                    right: 0;\n                    bottom: 0;\n                    background: linear-gradient(135deg, #fff5eb 0%, #ffe4d1 100%);\n                    display: flex;\n                    flex-direction: column;\n                    align-items: center;\n                    justify-content: center;\n                    z-index: 99999;\n                    overflow: hidden;\n                }\n\n                .clip-processing-container {\n                    text-align: center;\n                    position: relative;\n                    z-index: 10;\n                }\n\n                .clip-atom {\n                    width: 140px;\n                    height: 140px;\n                    margin: 0 auto 32px;\n                }\n\n                .clip-atom svg {\n                    width: 100%;\n                    height: 100%;\n                    filter: drop-shadow(0 0 20px rgba(255, 107, 53, 0.3));\n                }\n\n                .clip-nucleus {\n                    animation: nucleusPulse 1.5s ease-in-out infinite;\n                    transform-origin: center;\n                }\n\n                @keyframes nucleusPulse {\n                    0% { transform: scale(0.8); opacity: 0.6; }\n                    50% { transform: scale(1); opacity: 1; }\n                    100% { transform: scale(0.8); opacity: 0.6; }\n                }\n\n                .clip-orbit {\n                    transform-origin: 50px 50px;\n                    stroke-dasharray: 300;\n                    stroke-dashoffset: 300;\n                }\n\n                .clip-orbit-1 {\n                    transform: rotate(75deg);\n                    animation: drawOrbit 1.5s ease-in-out infinite;\n                }\n\n                .clip-orbit-2 {\n                    transform: rotate(-20deg);\n                    animation: drawOrbit 1.5s ease-in-out 0.3s infinite;\n                }\n\n                @keyframes drawOrbit {\n                    0% { stroke-dashoffset: 300; opacity: 0.3; }\n                    50% { stroke-dashoffset: 0; opacity: 0.7; }\n                    100% { stroke-dashoffset: 300; opacity: 0.3; }\n                }\n\n                .clip-title {\n                    font-size: 28px;\n                    font-weight: 700;\n                    color: #1a1a1a;\n                    margin-bottom: 8px;\n                }\n\n                .clip-subtitle {\n                    font-size: 14px;\n                    color: #666;\n                    margin-bottom: 32px;\n                }\n\n                .clip-progress-container {\n                    width: 280px;\n                    margin: 0 auto 24px;\n                }\n\n                .clip-progress-bar {\n                    width: 100%;\n                    height: 4px;\n                    background: rgba(255, 107, 53, 0.15);\n                    border-radius: 2px;\n                    overflow: hidden;\n                    margin-bottom: 12px;\n                }\n\n                .clip-progress-fill {\n                    height: 100%;\n                    background: linear-gradient(90deg, #ff6b35 0%, #ff8856 100%);\n                    width: 0%;\n                    transition: width 0.4s ease;\n                    border-radius: 2px;\n                }\n\n                .clip-stats {\n                    display: flex;\n                    justify-content: space-between;\n                    gap: 20px;\n                    margin-top: 24px;\n                    padding: 16px;\n                    background: rgba(255, 107, 53, 0.08);\n                    border-radius: 8px;\n                }\n\n                .clip-stat {\n                    text-align: center;\n                }\n\n                .clip-stat-value {\n                    font-size: 20px;\n                    font-weight: 700;\n                    color: #ff6b35;\n                }\n\n                .clip-stat-label {\n                    font-size: 11px;\n                    color: #999;\n                    margin-top: 4px;\n                    text-transform: uppercase;\n                    letter-spacing: 0.05em;\n                }\n            </style>\n\n            <div class="clip-processing-container">\n                <div class="clip-atom">\n                    <svg width="140" height="140" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">\n                        <g class="clip-nucleus">\n                            <circle cx="50" cy="50" r="8" fill="#ff6b35"/>\n                            <circle cx="50" cy="50" r="12" fill="#ff6b35" opacity="0.3"/>\n                        </g>\n                        <ellipse class="clip-orbit clip-orbit-1" rx="45" ry="25" cx="50" cy="50" stroke="#ff6b35" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.7"/>\n                        <ellipse class="clip-orbit clip-orbit-2" rx="45" ry="25" cx="50" cy="50" stroke="#ff6b35" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.7"/>\n                    </svg>\n                </div>\n\n                <h1 class="clip-title">Cooking!</h1>\n                <p class="clip-subtitle" id="clipStatus">HAHAHAHA</p>\n\n                <div class="clip-progress-container">\n                    <div class="clip-progress-bar">\n                        <div class="clip-progress-fill" id="clipProgressFill"></div>\n                    </div>\n                    <div style="display: flex; justify-content: space-between; gap: 12px;">\n                        <span id="clipProgress" style="font-size: 12px; color: #999;">0%</span>\n                        <span id="clipTimeLeft" style="font-size: 12px; color: #999;">--:--</span>\n                    </div>\n                </div>\n\n                <div class="clip-stats">\n                    <div class="clip-stat">\n                        <div class="clip-stat-value" id="clipStatDownload">0%</div>\n                        <div class="clip-stat-label">Downloading</div>\n                    </div>\n                    <div class="clip-stat">\n                        <div class="clip-stat-value" id="clipStatProcessing">0%</div>\n                        <div class="clip-stat-label">Processing</div>\n                    </div>\n                    <div class="clip-stat">\n                        <div class="clip-stat-value" id="clipStatRendering">0%</div>\n                        <div class="clip-stat-label">Rendering</div>\n                    </div>\n                </div>\n            </div>\n        `;
+    document.body.appendChild(n);
     const r = await fetch(`${API_BASE_URL}/clips/start`, {
       method: "POST",
       headers: {
@@ -13566,27 +13739,27 @@ async function startClipCompilation(e) {
       let e = "Failed to start processing";
       let t = "";
       try {
-        const n = await r.json();
-        e = n.error || e;
-        t = n.error_code || "";
+        const i = await r.json();
+        e = i.error || e;
+        t = i.error_code || "";
       } catch (t) {
         e = `Server error: ${r.status}`;
       }
       if (t === "GENERATION_COOLDOWN") {
         const t = await r.json();
-        const n = t.remaining_seconds || t.cooldown_seconds || 30;
-        const i = Math.floor(n / 60);
-        const o = n % 60;
-        startCooldownTimer(n);
+        const i = t.remaining_seconds || t.cooldown_seconds || 30;
+        const n = Math.floor(i / 60);
+        const o = i % 60;
+        startCooldownTimer(i);
         let s = "";
-        if (i > 0) {
-          s = `in ${i}m ${o}s`;
+        if (n > 0) {
+          s = `in ${n}m ${o}s`;
         } else {
-          s = `in ${n}s`;
+          s = `in ${i}s`;
         }
         e = `You can generate another video ${s}.`;
       }
-      i.innerHTML = `\n                <div style="text-align: center;">\n                    <div style="font-size: 48px; margin-bottom: 16px;">âŒ</div>\n                    <h1 style="font-size: 24px; color: var(--text); margin-bottom: 8px;">Error</h1>\n                    <p style="color: var(--muted); margin-bottom: 24px;">${e}</p>\n                    <button onclick="this.closest('#clip-processing-modal').remove()" style="\n                        padding: 10px 20px;\n                        background: linear-gradient(135deg, #ff6b35 0%, #ff8856 100%);\n                        color: white;\n                        border: none;\n                        border-radius: 8px;\n                        cursor: pointer;\n                        font-weight: 600;\n                    ">Close</button>\n                </div>\n            `;
+      n.innerHTML = `\n                <div style="text-align: center;">\n                    <div style="font-size: 48px; margin-bottom: 16px;">âŒ</div>\n                    <h1 style="font-size: 24px; color: var(--text); margin-bottom: 8px;">Error</h1>\n                    <p style="color: var(--muted); margin-bottom: 24px;">${e}</p>\n                    <button onclick="this.closest('#clip-processing-modal').remove()" style="\n                        padding: 10px 20px;\n                        background: linear-gradient(135deg, #ff6b35 0%, #ff8856 100%);\n                        color: white;\n                        border: none;\n                        border-radius: 8px;\n                        cursor: pointer;\n                        font-weight: 600;\n                    ">Close</button>\n                </div>\n            `;
       return;
     }
     const o = await r.json();
@@ -13618,7 +13791,7 @@ async function startClipCompilation(e) {
             await new Promise(e => setTimeout(e, 2e3));
             continue;
           }
-          const n = t.status || "processing";
+          const i = t.status || "processing";
           const r = t.progress || 0;
           const o = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
           if (o) {
@@ -13628,7 +13801,7 @@ async function startClipCompilation(e) {
               rendering: "Rendering video...",
               completed: "Complete!"
             };
-            const t = e[n] || `${n}...`;
+            const t = e[i] || `${i}...`;
             o.updateProgress(s, r, t);
           }
           const a = Date.now() - p;
@@ -13640,25 +13813,25 @@ async function startClipCompilation(e) {
           const m = Math.floor(d / 6e4);
           const f = Math.floor(d % 6e4 / 1e3);
           const y = document.getElementById("clipStatus");
-          if (n === "downloading") {
+          if (i === "downloading") {
             document.getElementById("clipStatDownload").textContent = `${Math.min(r, 99)}%`;
-          } else if (n === "processing") {
+          } else if (i === "processing") {
             document.getElementById("clipStatProcessing").textContent = `${Math.min(r, 99)}%`;
-          } else if (n === "rendering") {
+          } else if (i === "rendering") {
             document.getElementById("clipStatRendering").textContent = `${Math.min(r, 99)}%`;
           }
-          if (n === "completed") {
+          if (i === "completed") {
             l = true;
             sessionStorage.removeItem("clipProcessing");
             const e = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
             if (e) {
               e.completeGeneration(s);
             }
-            i.innerHTML = `\n                            <div style="text-align: center; animation: slideUp 0.3s ease;">\n                                <div style="font-size: 80px; margin-bottom: 16px; animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);">✅</div>\n                                <h1 style="font-size: 32px; color: var(--text); margin-bottom: 8px; font-weight: 700;">Compilation Ready!</h1>\n                                <p style="color: var(--muted); margin-bottom: 32px;">Your video is ready to edit and publish</p>\n                                <button onclick="\n                                    document.getElementById('clip-processing-modal').remove();\n                                    window.location.hash = '#/clips';\n                                " style="\n                                    padding: 12px 24px;\n                                    background: linear-gradient(135deg, #ff6b35 0%, #ff8856 100%);\n                                    color: white;\n                                    border: none;\n                                    border-radius: 8px;\n                                    cursor: pointer;\n                                    font-weight: 600;\n                                    font-size: 14px;\n                                    transition: all 0.2s;\n                                " onmouseover="this.style.transform='translateY(-2px); this.style.boxShadow='0 4px 12px rgba(255, 107, 53, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'>\n                                    📎 Open Project\n                                </button>\n                            </div>\n                            <style>\n                                @keyframes popIn {\n                                    0% { transform: scale(0.3); opacity: 0; }\n                                    70% { transform: scale(1.1); }\n                                    100% { transform: scale(1); opacity: 1; }\n                                }\n                                @keyframes slideUp {\n                                    from { transform: translateY(20px); opacity: 0; }\n                                    to { transform: translateY(0); opacity: 1; }\n                                }\n                            </style>\n                        `;
-          } else if (n === "failed") {
+            n.innerHTML = `\n                            <div style="text-align: center; animation: slideUp 0.3s ease;">\n                                <div style="font-size: 80px; margin-bottom: 16px; animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);">✅</div>\n                                <h1 style="font-size: 32px; color: var(--text); margin-bottom: 8px; font-weight: 700;">Compilation Ready!</h1>\n                                <p style="color: var(--muted); margin-bottom: 32px;">Your video is ready to edit and publish</p>\n                                <button onclick="\n                                    document.getElementById('clip-processing-modal').remove();\n                                    window.location.hash = '#/clips';\n                                " style="\n                                    padding: 12px 24px;\n                                    background: linear-gradient(135deg, #ff6b35 0%, #ff8856 100%);\n                                    color: white;\n                                    border: none;\n                                    border-radius: 8px;\n                                    cursor: pointer;\n                                    font-weight: 600;\n                                    font-size: 14px;\n                                    transition: all 0.2s;\n                                " onmouseover="this.style.transform='translateY(-2px); this.style.boxShadow='0 4px 12px rgba(255, 107, 53, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'>\n                                    📎 Open Project\n                                </button>\n                            </div>\n                            <style>\n                                @keyframes popIn {\n                                    0% { transform: scale(0.3); opacity: 0; }\n                                    70% { transform: scale(1.1); }\n                                    100% { transform: scale(1); opacity: 1; }\n                                }\n                                @keyframes slideUp {\n                                    from { transform: translateY(20px); opacity: 0; }\n                                    to { transform: translateY(0); opacity: 1; }\n                                }\n                            </style>\n                        `;
+          } else if (i === "failed") {
             l = true;
             sessionStorage.removeItem("clipProcessing");
-            i.innerHTML = `\n                            <div style="text-align: center;">\n                                <div style="font-size: 48px; margin-bottom: 16px;">âŒ</div>\n                                <h1 style="font-size: 24px; color: var(--text); margin-bottom: 8px;">Processing Failed</h1>\n                                <p style="color: var(--muted); margin-bottom: 24px;">${t.message || "Unknown error"}</p>\n                                <button onclick="this.closest('#clip-processing-modal').remove()" style="\n                                    padding: 10px 20px;\n                                    background: linear-gradient(135deg, #ff6b35 0%, #ff8856 100%);\n                                    color: white;\n                                    border: none;\n                                    border-radius: 8px;\n                                    cursor: pointer;\n                                    font-weight: 600;\n                                ">Close</button>\n                            </div>\n                        `;
+            n.innerHTML = `\n                            <div style="text-align: center;">\n                                <div style="font-size: 48px; margin-bottom: 16px;">âŒ</div>\n                                <h1 style="font-size: 24px; color: var(--text); margin-bottom: 8px;">Processing Failed</h1>\n                                <p style="color: var(--muted); margin-bottom: 24px;">${t.message || "Unknown error"}</p>\n                                <button onclick="this.closest('#clip-processing-modal').remove()" style="\n                                    padding: 10px 20px;\n                                    background: linear-gradient(135deg, #ff6b35 0%, #ff8856 100%);\n                                    color: white;\n                                    border: none;\n                                    border-radius: 8px;\n                                    cursor: pointer;\n                                    font-weight: 600;\n                                ">Close</button>\n                            </div>\n                        `;
           }
         }
       } catch (e) {
@@ -13670,7 +13843,7 @@ async function startClipCompilation(e) {
     }
     if (!l) {
       sessionStorage.removeItem("clipProcessing");
-      i.innerHTML = `\n                <div style="text-align: center;">\n                    <div style="font-size: 48px; margin-bottom: 16px;">â±ï¸</div>\n                    <h1 style="font-size: 24px; color: var(--text); margin-bottom: 8px;">Processing Timeout</h1>\n                    <p style="color: var(--muted); margin-bottom: 24px;">Your compilation is still being processed. Check back in a moment.</p>\n                    <button onclick="this.closest('#clip-processing-modal').remove(); window.location.hash = '#/clips'" style="\n                        padding: 10px 20px;\n                        background: linear-gradient(135deg, #ff6b35 0%, #ff8856 100%);\n                        color: white;\n                        border: none;\n                        border-radius: 8px;\n                        cursor: pointer;\n                        font-weight: 600;\n                    ">View in Clips</button>\n                </div>\n            `;
+      n.innerHTML = `\n                <div style="text-align: center;">\n                    <div style="font-size: 48px; margin-bottom: 16px;">â±ï¸</div>\n                    <h1 style="font-size: 24px; color: var(--text); margin-bottom: 8px;">Processing Timeout</h1>\n                    <p style="color: var(--muted); margin-bottom: 24px;">Your compilation is still being processed. Check back in a moment.</p>\n                    <button onclick="this.closest('#clip-processing-modal').remove(); window.location.hash = '#/clips'" style="\n                        padding: 10px 20px;\n                        background: linear-gradient(135deg, #ff6b35 0%, #ff8856 100%);\n                        color: white;\n                        border: none;\n                        border-radius: 8px;\n                        cursor: pointer;\n                        font-weight: 600;\n                    ">View in Clips</button>\n                </div>\n            `;
     }
   } catch (e) {
     safeLog("Clip compilation error:", e);
@@ -13687,23 +13860,23 @@ async function generateVideoIdeas() {
     userInput.focus();
     userInput.dispatchEvent(new Event("input"));
   }
-  const n = document.getElementById("shuffleIdeasBtn");
-  if (n) {
-    n.style.animation = "none";
+  const i = document.getElementById("shuffleIdeasBtn");
+  if (i) {
+    i.style.animation = "none";
     setTimeout(() => {
-      n.style.animation = "spin 0.6s ease-in-out";
+      i.style.animation = "spin 0.6s ease-in-out";
     }, 10);
   }
 }
 
 function addMessageToChat(e, t) {
   if (!chatContainer) return;
-  const n = document.createElement("div");
-  n.className = `message-row ${e}-message-row`;
   const i = document.createElement("div");
-  i.className = `message ${e}-message`;
-  i.innerHTML = `\n        <div class="message-content">\n            ${formatMessageContent(t)}\n        </div>\n        <div class="message-actions">\n            <button class="message-action copy-btn" title="Copy">\n                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy-icon lucide-copy"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>\n            </button>\n        </div>\n    `;
-  const r = i.querySelector(".copy-btn");
+  i.className = `message-row ${e}-message-row`;
+  const n = document.createElement("div");
+  n.className = `message ${e}-message`;
+  n.innerHTML = `\n        <div class="message-content">\n            ${formatMessageContent(t)}\n        </div>\n        <div class="message-actions">\n            <button class="message-action copy-btn" title="Copy">\n                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy-icon lucide-copy"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>\n            </button>\n        </div>\n    `;
+  const r = n.querySelector(".copy-btn");
   r.addEventListener("click", () => {
     navigator.clipboard.writeText(t).then(() => {
       r.classList.add("copied");
@@ -13716,8 +13889,8 @@ function addMessageToChat(e, t) {
       safeLog("Failed to copy:", e);
     });
   });
-  n.appendChild(i);
-  chatContainer.appendChild(n);
+  i.appendChild(n);
+  chatContainer.appendChild(i);
   chatContainer.scrollTop = chatContainer.scrollHeight;
   window.dispatchEvent(new CustomEvent("messageAdded"));
   if (e === "user" || !isGenerating) {
@@ -13755,9 +13928,9 @@ function clearChat() {
   }
   promptCount = 0;
   const t = document.querySelector(".input-section");
-  const n = t ? t.querySelector(".input-container") : null;
-  if (n) {
-    n.classList.add("first-prompt");
+  const i = t ? t.querySelector(".input-container") : null;
+  if (i) {
+    i.classList.add("first-prompt");
   }
   if (t) {
     t.classList.add("is-first-prompt");
@@ -13846,21 +14019,21 @@ function loadSaved() {
 
 function viewSavedItem(e) {
   const t = JSON.parse(localStorage.getItem("savedResults") || "[]");
-  const n = t[e];
-  if (n) {
-    alert(`Saved ${n.type}:\n\n${n.content}`);
+  const i = t[e];
+  if (i) {
+    alert(`Saved ${i.type}:\n\n${i.content}`);
   }
 }
 
 function showError(e, t) {
-  const n = document.getElementById(e);
-  if (!n) return;
-  n.style.display = "block";
-  n.innerHTML = "";
-  const i = document.createElement("div");
-  i.className = "error-message";
-  i.textContent = t;
-  n.appendChild(i);
+  const i = document.getElementById(e);
+  if (!i) return;
+  i.style.display = "block";
+  i.innerHTML = "";
+  const n = document.createElement("div");
+  n.className = "error-message";
+  n.textContent = t;
+  i.appendChild(n);
 }
 
 function copyToClipboard(e) {
@@ -13870,13 +14043,13 @@ function copyToClipboard(e) {
 }
 
 function saveResult(e, t) {
-  const n = JSON.parse(localStorage.getItem("savedResults") || "[]");
-  n.push({
+  const i = JSON.parse(localStorage.getItem("savedResults") || "[]");
+  i.push({
     type: e,
     content: t,
     timestamp: (new Date).toISOString()
   });
-  localStorage.setItem("savedResults", JSON.stringify(n));
+  localStorage.setItem("savedResults", JSON.stringify(i));
   showNotification("Saved successfully!", "success");
 }
 
@@ -13888,13 +14061,13 @@ function saveResult(e, t) {
 window.testTemplatePreview = function() {
   const e = document.getElementById("previewTemplateName");
   const t = document.getElementById("previewTemplateDescription");
-  const n = document.getElementById("previewVideoDuration");
-  const i = document.getElementById("previewVideoFormat");
+  const i = document.getElementById("previewVideoDuration");
+  const n = document.getElementById("previewVideoFormat");
   safeLog("🧪 TEMPLATE PREVIEW TEST:");
   safeLog("  previewTemplateName:", e ? "✅ FOUND" : "âŒ NOT FOUND");
   safeLog("  previewTemplateDescription:", t ? "✅ FOUND" : "âŒ NOT FOUND");
-  safeLog("  previewVideoDuration:", n ? "✅ FOUND" : "âŒ NOT FOUND");
-  safeLog("  previewVideoFormat:", i ? "✅ FOUND" : "âŒ NOT FOUND");
+  safeLog("  previewVideoDuration:", i ? "✅ FOUND" : "âŒ NOT FOUND");
+  safeLog("  previewVideoFormat:", n ? "✅ FOUND" : "âŒ NOT FOUND");
   if (e) {
     e.textContent = "TEST: Ranking Moments";
     safeLog("  ✅ Updated template name");
@@ -13903,12 +14076,12 @@ window.testTemplatePreview = function() {
     t.textContent = "TEST: This is a test video title";
     safeLog("  ✅ Updated template description");
   }
-  if (n) {
-    n.textContent = "~3m 20s";
+  if (i) {
+    i.textContent = "~3m 20s";
     safeLog("  ✅ Updated duration");
   }
-  if (i) {
-    i.textContent = "YouTube Shorts";
+  if (n) {
+    n.textContent = "YouTube Shorts";
     safeLog("  ✅ Updated format");
   }
   safeLog("If you see the TEST values in the template preview, the elements work!");
@@ -13926,19 +14099,19 @@ async function restoreGenerationStateFromServer() {
     });
     if (t.ok) {
       const e = await t.json();
-      const n = document.getElementById("processUrlBtn");
-      if (!n) return;
+      const i = document.getElementById("processUrlBtn");
+      if (!i) return;
       if (e.is_generating) {
-        n.disabled = true;
-        n.style.opacity = "0.5";
-        n.style.cursor = "not-allowed";
-        n.classList.add("is-generating");
+        i.disabled = true;
+        i.style.opacity = "0.5";
+        i.style.cursor = "not-allowed";
+        i.classList.add("is-generating");
         showNotification("A video is already being generated. Please wait for it to complete.", "warning");
       } else {
-        n.disabled = false;
-        n.style.opacity = "1";
-        n.style.cursor = "pointer";
-        n.classList.remove("is-generating");
+        i.disabled = false;
+        i.style.opacity = "1";
+        i.style.cursor = "pointer";
+        i.classList.remove("is-generating");
         sessionStorage.removeItem("urlButtonLocked");
         sessionStorage.removeItem("urlButtonLockeduntil");
       }
@@ -13980,9 +14153,9 @@ window.getWatermarkState = function() {
   if (e) return Boolean(e.checked);
   const t = localStorage.getItem("watermarkEnabled");
   if (t != null) return t === "true";
-  const n = String(window.currentUser?.plan || "free").toLowerCase();
-  const i = n === "basic" || n === "prime" || n === "elite";
-  return !i;
+  const i = String(window.currentUser?.plan || "free").toLowerCase();
+  const n = i === "basic" || i === "prime" || i === "elite";
+  return !n;
 };
 
 window.goToCreateUrlSubmit = function() {

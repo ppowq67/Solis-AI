@@ -11179,8 +11179,10 @@ class ClipsStudio {
       showNotification(`Suggested: ${e} — captions ready. Tweak or Generate.`, "info");
     }
     try {
-      this.switchTab("create");
+      this.switchTab("templates");
     } catch (e) {}
+    const o = document.getElementById("clipPreviewContainer");
+    if (o) o.style.display = "block";
     this.openTemplatePreviewModal(i, n, {
       fromAuto: r
     });

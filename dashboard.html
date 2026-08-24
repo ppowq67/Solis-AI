@@ -47,7 +47,7 @@
     <link rel="stylesheet" href="/style/ss/ios-pill-nav.css?v=29">
     <link rel="stylesheet" href="/style/ss/mobile-nav.css?v=28">
     <link rel="stylesheet" href="/style/ss/customize.css?v=27">
-    <link rel="stylesheet" href="/style/ss/clips.css?v=117">
+    <link rel="stylesheet" href="/style/ss/clips.css?v=118">
     <link rel="stylesheet" href="/style/ss/profile.css?v=29">
     <link rel="stylesheet" href="/style/ss/tasks-panel-v2-demo.css?v=18">
     <link rel="stylesheet" href="/style/ss/solis-gen-stage.css?v=26">
@@ -6840,7 +6840,11 @@
 .sub-text-block.selected.sub-anim-previewing > .sub-text-inner,
 .sub-text-block.is-resizing > .sub-text-inner{
     max-width:100% !important;
-    overflow:hidden !important;
+    overflow:visible !important;
+    white-space:normal !important;
+    flex-wrap:wrap !important;
+    word-break:break-word !important;
+    overflow-wrap:anywhere !important;
     box-sizing:border-box !important;
 }
 .overlay-text-block[data-ai-hook="1"].overlay-editing,
@@ -9923,8 +9927,8 @@
         b=b||getSubtitlePreviewBounds(cont, block);
         const cH=b.cH||cont?.clientHeight||500;
         const maxW=Math.max(40, b.maxW||b.cW||280);
-        const byH=Math.floor(cH*0.12);
-        const byW=Math.floor(maxW*0.62);
+        const byH=Math.floor(cH*0.18);
+        const byW=Math.floor(maxW*0.85);
         let hardMax=Math.min(byH, byW);
         if(isAiHook(block)){
             const panelH=Math.max(24, b.maxH||Math.floor(cH*0.4));
@@ -9933,13 +9937,13 @@
                 Math.floor(maxW*0.55)
             );
         }else if(isOverlayText(block)){
-            hardMax=Math.min(Math.max(hardMax, 40), 56);
+            hardMax=Math.min(Math.max(hardMax, 40), 72);
         }else if(isBeastAnim(block?.dataset?.subAnim||curAnim)){
-            hardMax=Math.min(hardMax, Math.max(16, Math.floor(cH*0.085)));
+            hardMax=Math.min(hardMax, Math.max(16, Math.floor(cH*0.14)));
         }else if(String(block?.dataset?.subAnim||curAnim||'').toLowerCase()==='popcolor'){
-            hardMax=Math.min(hardMax, Math.max(16, Math.floor(cH*0.078)));
+            hardMax=Math.min(hardMax, Math.max(16, Math.floor(cH*0.14)));
         }else{
-            hardMax=Math.min(Math.max(hardMax, Math.floor(cH*0.09)), 56);
+            hardMax=Math.min(Math.max(hardMax, Math.floor(cH*0.12)), 72);
         }
         return Math.max(16, hardMax);
     }
@@ -9989,21 +9993,12 @@
 
         if(opts.resizing){
             block.style.maxWidth=b.maxW+'px';
+            block.style.overflow='visible';
+            if(!isOverlayText(block) && !isAiHook(block)){
+                try{ syncWordsPerChunkFromSize(block, cont); }catch(_){}
+            }
             if(anim==='popcolor') applyBounceLayout();
             else lockSubtitleCenterX(block,cont);
-            if(!isOverlayText(block) && !isAiHook(block)){
-                const hostInner=block.querySelector('.sub-text-inner');
-                let guard=0;
-                while(size>10 && guard++<48){
-                    const contentW=Math.max(hostInner?.scrollWidth||0, block.scrollWidth||0);
-                    if(contentW<=b.maxW+2) break;
-                    size-=1;
-                    block.style.fontSize=size+'px';
-                    if(guard%3===0){
-                        try{ syncWordsPerChunkFromSize(block, cont); }catch(_){}
-                    }
-                }
-            }
             return size;
         }
 
@@ -10012,74 +10007,25 @@
                 try{ syncWordsPerChunkFromSize(block, cont); }catch(_){}
             }
             block.style.maxWidth=b.maxW+'px';
-            if(opts.keepUserSize || (block.dataset.subUserSized==='1' && !opts.forceFit)){
-                if(anim==='popcolor') applyBounceLayout();
-                else lockSubtitleCenterX(block,cont);
-                return size;
-            }
-            const floor=Math.max(14, captionReadableFloor(cont));
-            if(anim==='popcolor'){
-                while(size>floor && bounceSingleWordTooWide(block, cont)){
-                    size-=1;
-                    block.style.fontSize=size+'px';
-                }
-                applyBounceLayout();
-            }else{
-                const hostInner=block.querySelector('.sub-text-inner');
-                let guard=0;
-                while(size>floor && guard++<40){
-                    const contentW=Math.max(hostInner?.scrollWidth||0, block.scrollWidth||0);
-                    if(contentW<=b.maxW+8) break;
-                    if(guard===1 || guard===6){
-                        try{ syncWordsPerChunkFromSize(block, cont); }catch(_){}
-                    }
-                    size-=1;
-                    block.style.fontSize=size+'px';
-                }
-                lockSubtitleCenterX(block,cont);
-            }
+            block.style.overflow='visible';
+            if(anim==='popcolor') applyBounceLayout();
+            else lockSubtitleCenterX(block,cont);
             return size;
         }
 
         if((anim==='popcolor' || anim==='karaoke') && !isOverlayText(block) && !isAiHook(block)){
+            block.style.overflow='visible';
+            block.style.maxWidth=b.maxW+'px';
+            try{ syncWordsPerChunkFromSize(block, cont); }catch(_){}
             applyBounceLayout();
-            if(anim==='popcolor'){
-                while(size>minSize && bounceSingleWordTooWide(block, cont)){
-                    size-=1;
-                    block.style.fontSize=size+'px';
-                }
-            }else{
-                block.style.overflow='hidden';
-                block.style.maxWidth=b.maxW+'px';
-            }
             return size;
         }
 
-        const captionWidthOverflows=()=>{
-            const hostInner=block.querySelector('.sub-text-inner');
-            const extra=captionOverflowExtra(block, anim);
-            const w=Math.max(
-                block.scrollWidth||0,
-                hostInner?.scrollWidth||0
-            )+extra.x;
-            return w>b.maxW+1;
-        };
         if(!isOverlayText(block) && !isAiHook(block)){
             const wpc=fitWordsPerChunk(block, cont, anim);
             block.dataset.wordsPerChunk=String(wpc);
         }
-        if(userSized){
-            lockSubtitleCenterX(block,cont);
-            return size;
-        }
-        while(size>minSize && captionWidthOverflows()){
-            size-=1;
-            block.style.fontSize=size+'px';
-            if(!isOverlayText(block) && !isAiHook(block) && size%2===0){
-                const wpc=fitWordsPerChunk(block, cont, anim);
-                block.dataset.wordsPerChunk=String(wpc);
-            }
-        }
+        block.style.overflow='visible';
         lockSubtitleCenterX(block,cont);
         return size;
     }

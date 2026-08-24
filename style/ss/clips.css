@@ -13525,26 +13525,16 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
     -webkit-overflow-scrolling: touch;
 }
-.solis-upgrade-modal-close {
+.solis-upgrade-modal-close.template-preview-close {
     position: absolute;
-    top: 12px;
-    right: 12px;
+    top: 14px;
+    right: 14px;
     z-index: 3;
-    width: 34px;
-    height: 34px;
-    border: none;
-    border-radius: 999px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: #f5f3f1;
-    color: rgba(80, 70, 60, 0.75);
-    cursor: pointer;
-    border: 1px solid rgba(228, 220, 212, 0.8);
 }
-.solis-upgrade-modal-close:hover {
-    background: #ebe7e3;
-    color: #1c1917;
+.solis-upgrade-modal-close.template-preview-close:hover {
+    background: rgba(255, 122, 80, 0.15);
+    border-color: rgba(255, 122, 80, 0.3);
+    color: #ff7a50;
 }
 .solis-upgrade-modal-head {
     text-align: center;
@@ -13700,7 +13690,9 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     display: flex;
     flex-direction: column;
     flex: 1;
+    height: 100%;
     padding: 22px 18px 16px;
+    box-sizing: border-box;
 }
 .solis-upgrade-card.is-popular .solis-upgrade-card-body {
     padding-top: 38px;
@@ -13721,13 +13713,13 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     line-height: 1.35;
     font-weight: 500;
     color: rgba(107, 114, 128, 0.95);
-    min-height: 2.5em;
+    min-height: 2.7em;
 }
 .solis-upgrade-card-price {
     display: flex;
     align-items: baseline;
     flex-wrap: wrap;
-    gap: 6px 8px;
+    gap: 4px 8px;
 }
 .solis-upgrade-card-was {
     font-size: 14px;
@@ -13745,6 +13737,13 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     color: var(--text-dark, #1c1917);
     line-height: 1;
 }
+.solis-upgrade-card-period {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(107, 114, 128, 0.95);
+    line-height: 1;
+}
 .solis-upgrade-card-off {
     font-size: 10.5px;
     font-weight: 800;
@@ -13758,14 +13757,8 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
 .solis-upgrade-cards[data-billing="full"] .solis-upgrade-card-off {
     display: none;
 }
-.solis-upgrade-card-period {
-    margin: 4px 0 0;
-    font-size: 12px;
-    font-weight: 600;
-    color: rgba(107, 114, 128, 0.95);
-}
 .solis-upgrade-card-note {
-    margin: 6px 0 14px;
+    margin: 6px 0 0;
     font-size: 11.5px;
     font-weight: 500;
     color: rgba(107, 114, 128, 0.9);
@@ -13777,6 +13770,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     align-items: center;
     justify-content: center;
     width: 100%;
+    margin-top: auto;
     padding: 11px 14px;
     border-radius: 999px;
     font-size: 13px;
@@ -13815,6 +13809,16 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
 }
 .solis-upgrade-card-cta:hover::after {
     background: rgba(255, 255, 255, 0.18);
+}
+.solis-upgrade-card-features-wrap {
+    position: relative;
+    margin-top: 14px;
+    padding: 14px 12px 12px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #faf9f8;
+    border: 1px solid rgba(236, 231, 226, 0.95);
+    flex-shrink: 0;
 }
 .solis-upgrade-card-features {
     position: relative;
@@ -13856,16 +13860,28 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     padding-top: 2px;
 }
 .solis-upgrade-modal-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px 8px 10px;
+    border-radius: 999px;
     font-size: 13px;
     font-weight: 700;
     color: var(--text-dark, #1c1917);
     text-decoration: none;
+    background: #f5f3f1;
+    border: 1px solid rgba(228, 220, 212, 0.95);
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.solis-upgrade-modal-link svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
 }
 .solis-upgrade-modal-link:hover {
     color: #ff7a50;
-}
-.solis-upgrade-modal-link::before {
-    content: '← ';
+    background: rgba(255, 122, 80, 0.1);
+    border-color: rgba(255, 122, 80, 0.28);
 }
 .solis-upgrade-modal-help {
     margin: 0;

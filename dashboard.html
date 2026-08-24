@@ -47,7 +47,7 @@
     <link rel="stylesheet" href="/style/ss/ios-pill-nav.css?v=29">
     <link rel="stylesheet" href="/style/ss/mobile-nav.css?v=28">
     <link rel="stylesheet" href="/style/ss/customize.css?v=27">
-    <link rel="stylesheet" href="/style/ss/clips.css?v=124">
+    <link rel="stylesheet" href="/style/ss/clips.css?v=125">
     <link rel="stylesheet" href="/style/ss/profile.css?v=29">
     <link rel="stylesheet" href="/style/ss/tasks-panel-v2-demo.css?v=18">
     <link rel="stylesheet" href="/style/ss/solis-gen-stage.css?v=26">
@@ -15671,8 +15671,8 @@
 <div class="solis-upgrade-modal" id="watermarkPlanPopover" hidden aria-hidden="true">
     <div class="solis-upgrade-modal-backdrop" id="watermarkPlanPopoverBackdrop"></div>
     <div class="solis-upgrade-modal-panel" role="dialog" aria-modal="true" aria-labelledby="solisUpgradeTitle">
-        <button type="button" class="solis-upgrade-modal-close" id="watermarkPlanPopoverClose" aria-label="Close">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        <button type="button" class="template-preview-close solis-upgrade-modal-close" id="watermarkPlanPopoverClose" aria-label="Close">
+            <i class="fas fa-times"></i>
         </button>
 
         <header class="solis-upgrade-modal-head">
@@ -15695,9 +15695,9 @@
                     <div class="solis-upgrade-card-price">
                         <span class="solis-upgrade-card-was" data-price-was-full="$9.99" data-price-was-launch="$9.99">$9.99</span>
                         <span class="solis-upgrade-card-now" data-price-full="$9.99" data-price-launch="$5.99">$5.99</span>
+                        <span class="solis-upgrade-card-period">/month</span>
                         <span class="solis-upgrade-card-off" data-billing-only="launch">40% OFF</span>
                     </div>
-                    <p class="solis-upgrade-card-period">/month</p>
                     <p class="solis-upgrade-card-note" data-note-full="Billed monthly" data-note-launch="First 2 months, then $9.99/mo">First 2 months, then $9.99/mo</p>
                     <a class="solis-upgrade-card-cta" href="/premium.html?plan=basic">Get Basic</a>
                     <div class="solis-upgrade-card-features-wrap">
@@ -15733,9 +15733,9 @@
                     <div class="solis-upgrade-card-price">
                         <span class="solis-upgrade-card-was" data-price-was-full="$23.99" data-price-was-launch="$23.99">$23.99</span>
                         <span class="solis-upgrade-card-now" data-price-full="$23.99" data-price-launch="$14.39">$14.39</span>
+                        <span class="solis-upgrade-card-period">/month</span>
                         <span class="solis-upgrade-card-off" data-billing-only="launch">40% OFF</span>
                     </div>
-                    <p class="solis-upgrade-card-period">/month</p>
                     <p class="solis-upgrade-card-note" data-note-full="Billed monthly" data-note-launch="First 2 months, then $23.99/mo">First 2 months, then $23.99/mo</p>
                     <a class="solis-upgrade-card-cta solis-upgrade-card-cta--prime" href="/premium.html?plan=prime">Get Prime</a>
                     <div class="solis-upgrade-card-features-wrap">
@@ -15765,7 +15765,10 @@
         </div>
 
         <footer class="solis-upgrade-modal-foot">
-            <a class="solis-upgrade-modal-link" href="/premium.html">See all plans</a>
+            <a class="solis-upgrade-modal-link" href="/premium.html">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+                <span>See all plans</span>
+            </a>
             <p class="solis-upgrade-modal-help">Need Elite? <a href="/premium.html?plan=elite">View Elite</a></p>
         </footer>
     </div>

@@ -388,8 +388,8 @@ const PreviewTimeline = (() => {
   let S = null;
   let _ = false;
   let k = 0;
-  let L = 0;
   let C = 0;
+  let L = 0;
   let P = 0;
   let I = 1;
   let E = [];
@@ -1005,15 +1005,15 @@ const PreviewTimeline = (() => {
     S = Math.max(0, Math.min(u || e, e));
     const i = performance.now();
     const n = t ? 0 : Math.max(0, r - (i - k));
-    if (L) {
-      clearTimeout(L);
-      L = 0;
+    if (C) {
+      clearTimeout(C);
+      C = 0;
     }
     if (n === 0) {
       flushSeek();
     } else {
-      L = setTimeout(() => {
-        L = 0;
+      C = setTimeout(() => {
+        C = 0;
         flushSeek();
       }, n);
     }
@@ -1498,13 +1498,13 @@ const PreviewTimeline = (() => {
   function detach() {
     y += 1;
     destroyCaptureVideo();
-    if (L) {
-      clearTimeout(L);
-      L = 0;
-    }
     if (C) {
       clearTimeout(C);
       C = 0;
+    }
+    if (L) {
+      clearTimeout(L);
+      L = 0;
     }
     if (w) {
       cancelAnimationFrame(w);
@@ -1544,22 +1544,22 @@ const PreviewTimeline = (() => {
     hide();
   }
   function scheduleFilmstripBuild(e = 450) {
-    if (C) {
-      clearTimeout(C);
-      C = 0;
+    if (L) {
+      clearTimeout(L);
+      L = 0;
     }
     const run = () => {
-      C = 0;
+      L = 0;
       buildFilmstripFromVideo();
     };
     if (typeof requestIdleCallback === "function") {
-      C = setTimeout(() => {
+      L = setTimeout(() => {
         requestIdleCallback(() => run(), {
           timeout: 1200
         });
       }, e);
     } else {
-      C = setTimeout(run, e);
+      L = setTimeout(run, e);
     }
   }
   function attach(e) {
@@ -2278,15 +2278,15 @@ function bindFaceReframePanHandlers() {
     const S = b.clientWidth || v.clientWidth || 1;
     const _ = b.clientHeight || v.clientHeight || 1;
     const k = r[2];
-    const L = r[3];
-    const C = Math.max(S / Math.max(1, k), _ / Math.max(1, L));
-    const P = (l - i) / C;
-    const I = (c - n) / C;
+    const C = r[3];
+    const L = Math.max(S / Math.max(1, k), _ / Math.max(1, C));
+    const P = (l - i) / L;
+    const I = (c - n) / L;
     let E = r[0] - P;
     let T = r[1] - I;
     E = Math.max(0, Math.min(h - k, E));
-    T = Math.max(0, Math.min(w - L, T));
-    m.faceCrop = [ E, T, k, L ];
+    T = Math.max(0, Math.min(w - C, T));
+    m.faceCrop = [ E, T, k, C ];
     syncLibrarySplitscreenCropPreview();
   };
   const endPan = (t = null) => {
@@ -3008,9 +3008,6 @@ async function verifyToken() {
     }
     checkYouTubeConnection();
     const i = currentUser?.id ?? currentUser?.user_id;
-    if (window.SolisFirstLanding && typeof window.SolisFirstLanding.applyCreateLanding === "function") {
-      window.SolisFirstLanding.applyCreateLanding();
-    }
     if (window.SolisMemory?.setUserId) {
       window.SolisMemory.setUserId(i);
     }
@@ -6169,12 +6166,28 @@ class ClipsStudio {
       } else {
         safeLog("ðŸ“ No processing items from previous session - polling idle");
       }
-      this.switchTab("create");
-      try {
-        localStorage.setItem("clipsStudioCurrentTab", "create");
-        localStorage.setItem("clipsActiveTab", "create");
-        localStorage.setItem("currentNavigationTarget", "clips");
-      } catch (e) {}
+      const e = (() => {
+        try {
+          return localStorage.getItem("clipsActiveTab") || localStorage.getItem("clipsStudioCurrentTab") || "";
+        } catch (e) {
+          return "";
+        }
+      })();
+      const t = !(window.SolisFirstLanding && window.SolisFirstLanding.hasSeen && window.SolisFirstLanding.hasSeen());
+      if (t || !e || e === "create") {
+        this.switchTab("create");
+        try {
+          localStorage.setItem("clipsStudioCurrentTab", "create");
+          localStorage.setItem("clipsActiveTab", "create");
+          localStorage.setItem("currentNavigationTarget", "clips");
+        } catch (e) {}
+      } else {
+        try {
+          this.switchTab(e);
+        } catch (e) {
+          this.switchTab("create");
+        }
+      }
       this.moveSlider();
       window.addEventListener("resize", () => this.moveSlider());
     } catch (e) {

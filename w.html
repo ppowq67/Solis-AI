@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viktor Layout Clone</title>
+    <style>
+        body {
+            font-family: 'Gellix', ui-sans-serif, system-ui, -apple-system, sans-serif;
+            background-color: #f9f9fb;
+            color: #1a182b;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header-container {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 50;
+            padding: 20px 40px;
+            box-sizing: border-box;
+        }
+
+        .nav-bar {
+            max-width: 1360px;
+            margin: 0 auto;
+            background: white;
+            border: 1px solid rgba(211, 207, 229, 0.3);
+            border-radius: 0 0 30px 30px;
+            padding: 12px 12px 12px 32px;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 40px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-link {
+            padding: 6px 12px;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            color: #1a182b;
+            border-radius: 9999px;
+            transition: background 0.2s;
+        }
+
+        .nav-link:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border-radius: 9999px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary {
+            background: #f3f3f6;
+            color: #1a182b;
+        }
+
+        .btn-primary {
+            background: #6e47ff;
+            color: white;
+        }
+
+        .hero {
+            padding-top: 160px;
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-family: 'UlmGrotesk', sans-serif;
+            font-size: 72px;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            font-weight: 400;
+        }
+
+        .subheadline {
+            font-size: 18px;
+            color: #716f7e;
+            font-weight: 500;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header-container">
+        <nav class="nav-bar">
+            <div class="logo">
+                <strong>VIKTOR</strong>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#" class="nav-link">Solutions</a></li>
+                <li><a href="#" class="nav-link">For Teams</a></li>
+                <li><a href="#" class="nav-link">Resources</a></li>
+                <li><a href="#" class="nav-link">Pricing</a></li>
+            </ul>
+            <div class="buttons">
+                <button class="btn btn-secondary">Book a Demo</button>
+                <button class="btn btn-primary">Get Started for Free</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="hero">
+        <h1>Not a tool.<br>A hire.</h1>
+        <p class="subheadline">Hire Viktor and run your company like it's twice the size.</p>
+        <p class="subheadline">The AI employee that lives in Slack and Teams.</p>
+    </main>
+
+</body>
+</html>

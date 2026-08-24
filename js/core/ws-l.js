@@ -8,22 +8,25 @@
       const t = document.getElementById("navContainer");
       if (!t) return;
       const i = t.querySelectorAll(".nav-item");
-      const n = t.querySelector('.nav-item[data-target="clips"]') || Array.from(i).find(e => !e.classList.contains("disabled"));
-      if (!n) return;
-      e = Array.from(i).indexOf(n);
+      if (window.SolisFirstLanding && typeof window.SolisFirstLanding.needsLanding === "function" && window.SolisFirstLanding.needsLanding() && typeof window.SolisFirstLanding.applyCreateLanding === "function") {
+        window.SolisFirstLanding.applyCreateLanding();
+      }
+      const n = localStorage.getItem("currentNavigationTarget") || "clips";
+      const o = t.querySelector(`.nav-item[data-target="${n}"]`) || t.querySelector('.nav-item[data-target="clips"]') || Array.from(i).find(e => !e.classList.contains("disabled"));
+      if (!o) return;
+      e = Array.from(i).indexOf(o);
       i.forEach(e => e.classList.remove("active"));
-      n.classList.add("active");
-      setTimeout(() => updateIndicator(n), 0);
+      o.classList.add("active");
+      setTimeout(() => updateIndicator(o), 0);
       try {
         localStorage.setItem("sidebarActiveIndex", String(e));
-        localStorage.setItem("currentNavigationTarget", "clips");
-        localStorage.setItem("clipsActiveTab", "create");
-        localStorage.setItem("clipsStudioCurrentTab", "create");
       } catch (e) {}
-      switchSection("clips");
-      if (typeof window.switchClipsTab === "function") {
-        const e = document.querySelector('.clips-tab[data-tab="create"], .clips-sub-item[data-tab="create"]');
-        window.switchClipsTab("create", e);
+      const a = o.getAttribute("data-target") || "clips";
+      switchSection(a);
+      if ((a === "clips" || a === "clips-studio" || a === "clipsContainer") && typeof window.switchClipsTab === "function") {
+        const e = localStorage.getItem("clipsActiveTab") || localStorage.getItem("clipsStudioCurrentTab") || "create";
+        const t = document.querySelector(`.clips-tab[data-tab="${e}"], .clips-sub-item[data-tab="${e}"]`);
+        window.switchClipsTab(e, t);
       }
     } catch (e) {
       console.error("Failed to restore sidebar state:", e);
@@ -230,6 +233,12 @@
     }
     const a = t.getAttribute("data-target");
     if (a) {
+      try {
+        localStorage.setItem("currentNavigationTarget", a);
+      } catch (e) {}
+      try {
+        window.SolisFirstLanding?.markSeen?.();
+      } catch (e) {}
       switchSection(a);
     }
   }
@@ -238,6 +247,9 @@
   function switchSection(e, t) {
     const i = t || {};
     const n = i.keepVisible || null;
+    try {
+      if (e) localStorage.setItem("currentNavigationTarget", e);
+    } catch (e) {}
     const o = document.getElementById("dashboardContainer");
     const a = document.getElementById("portalContainer");
     const s = document.getElementById("clipsContainer");
@@ -531,12 +543,12 @@
       const p = Math.max(16, Date.now() - r);
       const f = Math.abs(m) / p;
       const v = Math.max(n, window.innerWidth * o);
-      const w = Math.abs(m) >= v || Math.abs(m) > 42 && f > .55;
-      const g = currentTabIndex();
-      let h = g;
-      const y = document.body.classList.contains("mnav-on-portal");
-      if (w) {
-        if (y) {
+      const g = Math.abs(m) >= v || Math.abs(m) > 42 && f > .55;
+      const w = currentTabIndex();
+      let y = w;
+      const h = document.body.classList.contains("mnav-on-portal");
+      if (g) {
+        if (h) {
           if (m < 0) {
             clearDragStyles(d, false);
             d = null;
@@ -547,18 +559,18 @@
           d = null;
           return;
         }
-        if (g === 0 && m > 0) {
+        if (w === 0 && m > 0) {
           clearDragStyles(d, false);
           d = null;
           goMobilePortal();
           return;
         }
-        h = m < 0 ? Math.min(t.length - 1, g + 1) : Math.max(0, g - 1);
+        y = m < 0 ? Math.min(t.length - 1, w + 1) : Math.max(0, w - 1);
       }
-      if (h !== g) {
+      if (y !== w) {
         clearDragStyles(d, false);
         d = null;
-        goMobileClipsTab(t[h]);
+        goMobileClipsTab(t[y]);
         return;
       }
       clearDragStyles(d, true);

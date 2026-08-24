@@ -47,7 +47,7 @@
     <link rel="stylesheet" href="/style/ss/ios-pill-nav.css?v=29">
     <link rel="stylesheet" href="/style/ss/mobile-nav.css?v=28">
     <link rel="stylesheet" href="/style/ss/customize.css?v=27">
-    <link rel="stylesheet" href="/style/ss/clips.css?v=119">
+    <link rel="stylesheet" href="/style/ss/clips.css?v=120">
     <link rel="stylesheet" href="/style/ss/profile.css?v=29">
     <link rel="stylesheet" href="/style/ss/tasks-panel-v2-demo.css?v=18">
     <link rel="stylesheet" href="/style/ss/solis-gen-stage.css?v=26">
@@ -58,7 +58,7 @@
     <script src="/js/i_dq/profile-notifications.js?t=20260815151000"></script>
     <script src="/js/s_new/qwsqa.js?v=6"></script>
     <script src="/js/s_new/qwe.js?v=21"></script>
-    <link rel="stylesheet" href="/style/ss/stg-modal.css?v=67">
+    <link rel="stylesheet" href="/style/ss/stg-modal.css?v=68">
     <script src="/js/s_new/stg.js?v=62"></script>
     <script src="/js/i_dq/video-generation-hook.js?v=1"></script>
     <script src="/js/ui/progress-ui.js?v=2"></script>
@@ -78,7 +78,7 @@
     <script src="/js/ui/plan-selector.js?v=63"></script>
     <script src="/js/core/video-preview-system.js?v=2"></script>
     <script src="/js/s_new/clip-card.js?v=23"></script>
-    <script src="/js/s.js?v=280"></script>
+    <script src="/js/s.js?v=281"></script>
 
     <script src="/js/s_new/procc.js?v=2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -1805,17 +1805,23 @@
                                     <li>Any video length</li>
                                     <li>1 clip per upload</li>
                                     <li>Export videos in 720p</li>
+                                    <li>Solis watermark on exports</li>
                                 </ul>
                             </div>
                             <div class="stgPlanCompareRule" aria-hidden="true"></div>
                             <div class="stgPlanCompareCol stgPlanCompareCol--upgrade">
                                 <p class="stgPlanCompareEyebrow">Recommended</p>
                                 <p class="stgPlanCompareName">Basic</p>
-                                <p class="stgPlanComparePrice">$9.99<span class="stgPlanComparePeriod">/mo</span></p>
+                                <p class="stgPlanComparePrice">
+                                    <span class="stgPlanCompareWas">$9.99</span>
+                                    $5.99<span class="stgPlanComparePeriod">/mo</span>
+                                </p>
+                                <p class="stgPlanCompareDeal">40% off · first 2 months</p>
                                 <ul class="stgPlanCompareList">
                                     <li>5 uploads / day</li>
                                     <li>Any video length</li>
                                     <li>Up to 3 clips · 1080p export</li>
+                                    <li>No watermark</li>
                                 </ul>
                                 <button type="button" class="stgUpgrade stgUpgrade--compare" id="stgCompareUpgradeBtn" onclick="window.location.href='/premium.html'">
                                     <svg class="stgUpgrade-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -1823,7 +1829,7 @@
                                         <path d="M17 3a2 2 0 0 1 1.6.8l3 4a2 2 0 0 1 .013 2.382l-7.99 10.986a2 2 0 0 1-3.247 0l-7.99-10.986A2 2 0 0 1 2.4 7.8l2.998-3.997A2 2 0 0 1 7 3z"/>
                                         <path d="M2 9h20"/>
                                     </svg>
-                                    <span>Upgrade to Pro</span>
+                                    <span>Get 40% off</span>
                                 </button>
                             </div>
                         </div>
@@ -3812,16 +3818,52 @@
                                 <span class="detail-label">Watermark</span>
                             </div>
                             <div id="watermarkControlsWrapper" class="tip-setting-controls">
-                                <label class="stgToggle" id="watermarkToggleLabel" style="display: none;" role="switch" aria-checked="false" aria-label="Toggle watermark">
+                                <label class="stgToggle" id="watermarkToggleLabel" role="switch" aria-checked="false" aria-label="Toggle watermark">
                                     <input type="checkbox" id="watermarkToggle" class="stgToggleInput" tabindex="-1">
                                     <span class="stgToggleKnob" aria-hidden="true"></span>
                                 </label>
-                                <div class="upgrade-wrap" id="watermarkUpgradeBtn" style="display:none;" hidden>
-                                    <button type="button" class="upgrade-btn">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                                        Upgrade
-                                        <div class="shine"></div>
+                            </div>
+                            <div class="wm-plan-popover" id="watermarkPlanPopover" hidden role="dialog" aria-label="Upgrade to remove watermark">
+                                <div class="wm-plan-popover-card stgPlanBanner" data-plan="free">
+                                    <button type="button" class="wm-plan-popover-close" id="watermarkPlanPopoverClose" aria-label="Close">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                                     </button>
+                                    <p class="wm-plan-popover-lead">Remove the Solis mark — pick a plan</p>
+                                    <div class="stgPlanCompare wm-plan-ranks">
+                                        <div class="stgPlanCompareCol stgPlanCompareCol--current">
+                                            <p class="stgPlanCompareEyebrow">Current</p>
+                                            <p class="stgPlanCompareName">Free</p>
+                                            <p class="stgPlanComparePrice">$0</p>
+                                            <ul class="stgPlanCompareList">
+                                                <li>Solis watermark on exports</li>
+                                                <li>1 upload / day</li>
+                                                <li>720p export</li>
+                                            </ul>
+                                        </div>
+                                        <div class="stgPlanCompareRule" aria-hidden="true"></div>
+                                        <div class="stgPlanCompareCol stgPlanCompareCol--upgrade">
+                                            <p class="stgPlanCompareEyebrow">Recommended</p>
+                                            <p class="stgPlanCompareName">Basic</p>
+                                            <p class="stgPlanComparePrice">
+                                                <span class="stgPlanCompareWas">$9.99</span>
+                                                $5.99<span class="stgPlanComparePeriod">/mo</span>
+                                            </p>
+                                            <p class="stgPlanCompareDeal">40% off · first 2 months</p>
+                                            <ul class="stgPlanCompareList">
+                                                <li>No watermark</li>
+                                                <li>5 uploads / day</li>
+                                                <li>Up to 3 clips · 1080p</li>
+                                            </ul>
+                                            <a class="stgUpgrade stgUpgrade--compare" id="watermarkPlanUpgradeBtn" href="/premium.html">
+                                                <svg class="stgUpgrade-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                    <path d="M10.5 3 8 9l4 13 4-13-2.5-6"/>
+                                                    <path d="M17 3a2 2 0 0 1 1.6.8l3 4a2 2 0 0 1 .013 2.382l-7.99 10.986a2 2 0 0 1-3.247 0l-7.99-10.986A2 2 0 0 1 2.4 7.8l2.998-3.997A2 2 0 0 1 7 3z"/>
+                                                    <path d="M2 9h20"/>
+                                                </svg>
+                                                <span>Get 40% off</span>
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

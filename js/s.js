@@ -392,8 +392,8 @@ const PreviewTimeline = (() => {
   let L = 0;
   let P = 0;
   let I = 1;
-  let T = [];
-  let E = -1;
+  let E = [];
+  let T = -1;
   let x = 0;
   let M = 1;
   let B = null;
@@ -497,10 +497,10 @@ const PreviewTimeline = (() => {
   function rebuildSplitsFromLengths(t) {
     if (!t.length) return;
     let i = d;
-    T = [];
+    E = [];
     for (let n = 0; n < t.length - 1; n++) {
       i += Math.max(e, Number(t[n]) || e);
-      if (i < p - .04) T.push(i);
+      if (i < p - .04) E.push(i);
     }
     const n = t.reduce((t, i) => t + Math.max(e, Number(i) || e), 0);
     const r = d + n;
@@ -635,7 +635,7 @@ const PreviewTimeline = (() => {
   }
   const ie = 6;
   function getSegmentBounds() {
-    const e = T.filter(e => e > d + .04 && e < p - .04);
+    const e = E.filter(e => e > d + .04 && e < p - .04);
     return [ d, ...e, p ];
   }
   function makeSegHandle(e, t) {
@@ -693,15 +693,15 @@ const PreviewTimeline = (() => {
     }
     if (t === 0) d = l; else {
       const e = r[t];
-      const i = T.findIndex(t => Math.abs(t - e) < .05);
-      if (i >= 0) T[i] = l; else T.push(l);
+      const i = E.findIndex(t => Math.abs(t - e) < .05);
+      if (i >= 0) E[i] = l; else E.push(l);
     }
     if (t === r.length - 2) p = c; else {
       const e = r[t + 1];
-      const i = T.findIndex(t => Math.abs(t - e) < .05);
-      if (i >= 0) T[i] = c; else T.push(c);
+      const i = E.findIndex(t => Math.abs(t - e) < .05);
+      if (i >= 0) E[i] = c; else E.push(c);
     }
-    T = T.filter(e => e > d + .04 && e < p - .04).sort((e, t) => e - t);
+    E = E.filter(e => e > d + .04 && e < p - .04).sort((e, t) => e - t);
   }
   function paintSegmentMove(e) {
     if (!D || !u || I <= 0) return;
@@ -916,26 +916,26 @@ const PreviewTimeline = (() => {
     }
   }
   function applyBoundTime(e) {
-    if (E === 0) {
+    if (T === 0) {
       d = e;
       return;
     }
     const t = getSegmentBounds();
-    if (E >= t.length - 1) {
+    if (T >= t.length - 1) {
       p = e;
       return;
     }
     if (B != null) {
-      const t = T.findIndex(e => Math.abs(e - B) < .05);
-      if (t >= 0) T[t] = e; else T.push(e);
+      const t = E.findIndex(e => Math.abs(e - B) < .05);
+      if (t >= 0) E[t] = e; else E.push(e);
       B = e;
     } else {
-      T.push(e);
+      E.push(e);
     }
-    T.sort((e, t) => e - t);
+    E.sort((e, t) => e - t);
   }
   function paintBoundFast(e) {
-    if (!u || I <= 0 || E < 0) return;
+    if (!u || I <= 0 || T < 0) return;
     const t = timeFromClientX(e);
     const i = Math.max(x, Math.min(M, t));
     applyBoundTime(i);
@@ -960,7 +960,7 @@ const PreviewTimeline = (() => {
     const n = getSegmentBounds();
     if (t < 0 || t >= n.length) return;
     c = "bound";
-    E = t;
+    T = t;
     x = t === 0 ? 0 : n[t - 1] + e;
     M = t === n.length - 1 ? u : n[t + 1] - e;
     B = t > 0 && t < n.length - 1 ? n[t] : null;
@@ -1317,7 +1317,7 @@ const PreviewTimeline = (() => {
       w = 0;
     }
     c = null;
-    E = -1;
+    T = -1;
     B = null;
     if (e === "start" || e === "end" || e === "bound") {
       m = Math.max(d, Math.min(p, m));
@@ -1464,7 +1464,7 @@ const PreviewTimeline = (() => {
       t.stopPropagation();
       const i = Number.isFinite(a?.currentTime) ? a.currentTime : m;
       const n = splitAt(i);
-      if (!n && T.length >= 4) {
+      if (!n && E.length >= 4) {
         e?.classList.remove("is-flash");
         void e?.offsetWidth;
         e?.classList.add("is-flash");
@@ -1527,7 +1527,7 @@ const PreviewTimeline = (() => {
     D = null;
     F = false;
     f = false;
-    T = [];
+    E = [];
     R = null;
     A = false;
     if (j) {
@@ -1653,7 +1653,7 @@ const PreviewTimeline = (() => {
       i.push(n);
     }
     i.sort((e, t) => e - t);
-    T = i.slice(0, 4);
+    E = i.slice(0, 4);
     R = null;
     cacheTrackMetrics();
     paintChrome({
@@ -1662,7 +1662,7 @@ const PreviewTimeline = (() => {
     return true;
   }
   function clearSplits() {
-    T = [];
+    E = [];
     if (l) {
       cacheTrackMetrics();
       paintChrome({
@@ -1715,16 +1715,16 @@ const PreviewTimeline = (() => {
     cacheTrackMetrics();
     let t = Number.isFinite(e) ? e : m;
     t = Math.max(d + .05, Math.min(p - .05, t));
-    if (T.some(e => Math.abs(e - t) < .08)) {
+    if (E.some(e => Math.abs(e - t) < .08)) {
       paintSegments(t);
       return false;
     }
-    if (T.length >= 4) {
+    if (E.length >= 4) {
       paintSegments(t);
       return false;
     }
-    T.push(t);
-    T.sort((e, t) => e - t);
+    E.push(t);
+    E.sort((e, t) => e - t);
     m = t;
     paintChrome();
     paintSegments(t);
@@ -1732,7 +1732,7 @@ const PreviewTimeline = (() => {
     return true;
   }
   function getSplits() {
-    return T.slice();
+    return E.slice();
   }
   return {
     attach: attach,
@@ -2282,11 +2282,11 @@ function bindFaceReframePanHandlers() {
     const L = Math.max(S / Math.max(1, k), _ / Math.max(1, C));
     const P = (l - i) / L;
     const I = (c - n) / L;
-    let T = r[0] - P;
-    let E = r[1] - I;
-    T = Math.max(0, Math.min(h - k, T));
-    E = Math.max(0, Math.min(w - C, E));
-    m.faceCrop = [ T, E, k, C ];
+    let E = r[0] - P;
+    let T = r[1] - I;
+    E = Math.max(0, Math.min(h - k, E));
+    T = Math.max(0, Math.min(w - C, T));
+    m.faceCrop = [ E, T, k, C ];
     syncLibrarySplitscreenCropPreview();
   };
   const endPan = (t = null) => {
@@ -7075,66 +7075,132 @@ class ClipsStudio {
   }
   applyWatermarkControls(e) {
     const t = document.getElementById("watermarkToggleLabel");
-    const i = document.getElementById("watermarkUpgradeBtn");
-    const n = document.getElementById("watermarkToggle");
-    if (!n) return;
-    const r = !!e?.isPremium;
-    const o = Number(e?.usedLifetime ?? e?.data?.used_lifetime ?? 0);
-    const s = !r && (e?.showUpgrade === true || o >= 1);
-    const a = !r && !s;
+    const i = document.getElementById("watermarkToggle");
+    if (!i) return;
+    const n = !!e?.isPremium;
+    const r = Number(e?.usedLifetime ?? e?.data?.used_lifetime ?? 0);
+    const o = !n && (e?.showUpgrade === true || r >= 1);
+    const s = !n && !o;
     document.getElementById("watermarkNotice")?.remove();
-    safeLog(`Watermark UI — premium=${r} usedLifetime=${o} ` + `firstFree=${a} returningFree=${s}`);
-    if (r) {
+    const a = document.getElementById("watermarkUpgradeBtn");
+    if (a) {
+      a.hidden = true;
+      a.style.display = "none";
+    }
+    this.closeWatermarkPlanPopover?.();
+    safeLog(`Watermark UI — premium=${n} usedLifetime=${r} ` + `firstFree=${s} returningFree=${o}`);
+    if (n) {
       const e = localStorage.getItem("watermarkEnabled");
-      n.checked = e === "true";
-      n.disabled = false;
-    } else if (a) {
-      n.checked = false;
-      n.disabled = true;
+      i.checked = e === "true";
+      i.disabled = false;
+    } else if (s) {
+      i.checked = false;
+      i.disabled = true;
       try {
         localStorage.setItem("watermarkEnabled", "false");
       } catch (e) {}
     } else {
-      n.checked = true;
-      n.disabled = true;
+      i.checked = true;
+      i.disabled = true;
       try {
         localStorage.setItem("watermarkEnabled", "true");
       } catch (e) {}
     }
-    n.style.opacity = "";
-    n.style.cursor = "";
+    i.style.opacity = "";
+    i.style.cursor = "";
     if (t) {
-      t.style.visibility = r ? "visible" : "hidden";
-      t.style.display = r ? "inline-flex" : "none";
-      t.setAttribute("data-premium-only", !r);
-      t.classList.toggle("is-on", Boolean(n.checked));
-      t.setAttribute("aria-checked", n.checked ? "true" : "false");
-    }
-    if (i) {
-      i.hidden = !s;
-      i.style.visibility = s ? "visible" : "hidden";
-      i.style.display = s ? "flex" : "none";
-    }
-    if (s) {
-      try {
-        this.updateWatermarkDisplay?.();
-      } catch (e) {}
+      t.style.visibility = "visible";
+      t.style.display = "inline-flex";
+      t.setAttribute("data-premium-only", !n);
+      t.classList.toggle("is-locked-free", !n);
+      t.classList.toggle("is-on", Boolean(i.checked));
+      t.setAttribute("aria-checked", i.checked ? "true" : "false");
     }
     if (this._watermarkChangeHandler) {
-      n.removeEventListener("change", this._watermarkChangeHandler);
+      i.removeEventListener("change", this._watermarkChangeHandler);
       this._watermarkChangeHandler = null;
     }
-    if (r) {
+    if (this._watermarkFreeClickHandler && t) {
+      t.removeEventListener("click", this._watermarkFreeClickHandler, true);
+      this._watermarkFreeClickHandler = null;
+    }
+    if (n) {
       this._watermarkChangeHandler = () => {
-        const e = n.checked;
+        const e = i.checked;
         localStorage.setItem("watermarkEnabled", e ? "true" : "false");
         t?.classList.toggle("is-on", e);
         t?.setAttribute("aria-checked", e ? "true" : "false");
         this.updateWatermarkDisplay();
       };
-      n.addEventListener("change", this._watermarkChangeHandler);
+      i.addEventListener("change", this._watermarkChangeHandler);
+    } else if (t) {
+      this._watermarkFreeClickHandler = e => {
+        e.preventDefault();
+        e.stopPropagation();
+        const t = document.getElementById("watermarkPlanPopover");
+        if (t && !t.hidden) {
+          this.closeWatermarkPlanPopover();
+          return;
+        }
+        this.openWatermarkPlanPopover();
+      };
+      t.addEventListener("click", this._watermarkFreeClickHandler, true);
     }
+    this.bindWatermarkPlanPopoverOnce();
     this.updateWatermarkDisplay();
+  }
+  bindWatermarkPlanPopoverOnce() {
+    if (this._wmPlanPopoverBound) return;
+    this._wmPlanPopoverBound = true;
+    const e = document.getElementById("watermarkPlanPopover");
+    const t = document.getElementById("watermarkPlanPopoverClose");
+    t?.addEventListener("click", e => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.closeWatermarkPlanPopover();
+    });
+    document.addEventListener("pointerdown", t => {
+      const i = document.getElementById("watermarkContainer");
+      if (!e || e.hidden) return;
+      if (i && i.contains(t.target)) return;
+      this.closeWatermarkPlanPopover();
+    }, true);
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape") this.closeWatermarkPlanPopover();
+    });
+  }
+  openWatermarkPlanPopover() {
+    const e = document.getElementById("watermarkPlanPopover");
+    const t = document.getElementById("watermarkContainer") || document.getElementById("watermarkToggleLabel");
+    if (!e || !t) return;
+    e.hidden = false;
+    const i = t.getBoundingClientRect();
+    const n = 10;
+    const r = Math.min(340, window.innerWidth - n * 2);
+    let o = Math.min(Math.max(n, i.right - r), window.innerWidth - r - n);
+    let s = i.bottom + 8;
+    requestAnimationFrame(() => {
+      const t = e.offsetHeight || 220;
+      if (s + t > window.innerHeight - n) {
+        s = Math.max(n, i.top - t - 8);
+      }
+      e.style.left = `${Math.round(o)}px`;
+      e.style.top = `${Math.round(s)}px`;
+    });
+    e.style.left = `${Math.round(o)}px`;
+    e.style.top = `${Math.round(s)}px`;
+    try {
+      e.querySelector("#watermarkPlanUpgradeBtn")?.focus?.({
+        preventScroll: true
+      });
+    } catch (e) {}
+  }
+  closeWatermarkPlanPopover() {
+    const e = document.getElementById("watermarkPlanPopover");
+    if (!e) return;
+    e.hidden = true;
+    e.style.left = "";
+    e.style.top = "";
   }
   loadVideoPreviewWithTemplate() {
     const e = document.getElementById("templateVideoPreview");

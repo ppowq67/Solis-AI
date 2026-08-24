@@ -13470,6 +13470,13 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     margin-top: 0;
     overflow: hidden;
 }
+.tip-setting-row .stgToggle.is-locked-free {
+    cursor: pointer;
+    overflow: visible;
+}
+.tip-setting-row .stgToggle.is-locked-free .stgToggleInput {
+    pointer-events: none;
+}
 
 .tip-setting-row .stgToggleInput {
     appearance: none !important;
@@ -13492,7 +13499,69 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
 }
 
 .tip-setting-row .upgrade-btn {
-    white-space: nowrap;
+    display: none !important;
+}
+
+#watermarkContainer {
+    position: relative;
+}
+.wm-plan-popover {
+    position: fixed;
+    z-index: 12050;
+    width: min(340px, calc(100vw - 24px));
+    filter: drop-shadow(0 18px 40px rgba(60, 40, 20, 0.16));
+}
+.wm-plan-popover[hidden] {
+    display: none !important;
+}
+.wm-plan-popover-card {
+    margin: 0 !important;
+    padding: 14px 14px 12px !important;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+}
+.wm-plan-popover-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.72);
+    color: rgba(55, 65, 81, 0.8);
+    cursor: pointer;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+.wm-plan-popover-close:hover {
+    background: rgba(255, 255, 255, 0.92);
+    color: #111827;
+}
+.wm-plan-popover-lead {
+    margin: 0 28px 2px 0;
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: rgba(28, 25, 23, 0.88);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    position: relative;
+    z-index: 1;
+}
+.wm-plan-ranks {
+    gap: 12px 14px;
+}
+.wm-plan-popover .stgUpgrade--compare {
+    margin-top: 10px;
+    width: 100%;
+    justify-content: center;
+}
+.wm-plan-popover .stgPlanCompareDeal {
+    margin: -4px 0 8px;
 }
 
 .multi-gen-card {

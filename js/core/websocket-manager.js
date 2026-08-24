@@ -1,6 +1,9 @@
-function getSolisSocketOrigin() {
-  if (typeof window.getSolisSocketOrigin === "function" && window.getSolisSocketOrigin !== getSolisSocketOrigin) {
-    return window.getSolisSocketOrigin();
+function solisResolveSocketOrigin() {
+  const e = window.getSolisSocketOrigin;
+  if (typeof e === "function" && e !== solisResolveSocketOrigin) {
+    try {
+      return e();
+    } catch (e) {}
   }
   try {
     const e = window.location && window.location.hostname || "";
@@ -15,7 +18,7 @@ function getSolisSocketOrigin() {
 }
 
 if (typeof window.getSolisSocketOrigin !== "function") {
-  window.getSolisSocketOrigin = getSolisSocketOrigin;
+  window.getSolisSocketOrigin = solisResolveSocketOrigin;
 }
 
 class WebSocketManager {
@@ -59,7 +62,7 @@ class WebSocketManager {
       console.warn("[WebSocketManager] Cannot initialize Socket.IO in non-HTTP context");
       return;
     }
-    const e = getSolisSocketOrigin();
+    const e = solisResolveSocketOrigin();
     this.socket = io(e, {
       reconnection: true,
       reconnectionDelay: this.reconnectConfig.initialDelay,
@@ -97,7 +100,7 @@ class WebSocketManager {
     });
   }
   initNativeWebSocket() {
-    const e = getSolisSocketOrigin();
+    const e = solisResolveSocketOrigin();
     const t = e.replace(/^http/, "ws");
     try {
       this.socket = new WebSocket(t);

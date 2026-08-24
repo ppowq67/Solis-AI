@@ -1,6 +1,6 @@
 (function() {
   "use strict";
-  var e = "https://solisai.video/assets/og-image.png";
+  var e = "https://solisai.video/assets/og-image.png?v=2";
   function setOgMeta(e) {
     if (!e) return;
     function setMeta(e, t, o) {

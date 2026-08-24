@@ -13516,18 +13516,12 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     max-height: min(92dvh, 880px);
     overflow: auto;
     border-radius: 24px;
-    padding: 26px 24px 18px;
-    background: linear-gradient(
-        145deg,
-        rgba(255, 255, 255, 0.78) 0%,
-        rgba(255, 248, 242, 0.62) 42%,
-        rgba(255, 236, 224, 0.55) 100%
-    );
-    border: 1px solid rgba(255, 255, 255, 0.75);
+    padding: 28px 24px 18px;
+    background: #fff;
+    border: 1px solid rgba(228, 220, 212, 0.9);
     box-shadow:
         0 24px 64px rgba(0, 0, 0, 0.14),
-        0 8px 24px rgba(120, 90, 60, 0.08),
-        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        0 8px 24px rgba(120, 90, 60, 0.08);
     font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
     -webkit-overflow-scrolling: touch;
 }
@@ -13543,32 +13537,29 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.72);
+    background: #f5f3f1;
     color: rgba(80, 70, 60, 0.75);
     cursor: pointer;
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    box-shadow:
-        0 1px 4px rgba(0, 0, 0, 0.06),
-        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(228, 220, 212, 0.8);
 }
 .solis-upgrade-modal-close:hover {
-    background: rgba(255, 255, 255, 0.95);
+    background: #ebe7e3;
     color: #1c1917;
 }
 .solis-upgrade-modal-head {
     text-align: center;
-    max-width: 440px;
-    margin: 0 auto 20px;
+    max-width: 460px;
+    margin: 0 auto 22px;
 }
 .solis-upgrade-modal-title {
     margin: 0 0 8px;
-    font-size: clamp(1.4rem, 2.4vw, 1.7rem);
+    font-size: clamp(1.35rem, 2.3vw, 1.65rem);
     font-weight: 800;
     letter-spacing: -0.035em;
     color: var(--text-dark, #1c1917);
 }
 .solis-upgrade-modal-sub {
-    margin: 0 0 14px;
+    margin: 0 0 16px;
     font-size: 13px;
     line-height: 1.45;
     font-weight: 500;
@@ -13580,11 +13571,8 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     gap: 2px;
     padding: 4px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.45);
-    border: 1px solid rgba(255, 255, 255, 0.7);
-    box-shadow:
-        0 1px 4px rgba(0, 0, 0, 0.06),
-        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    background: #f5f3f1;
+    border: 1px solid rgba(228, 220, 212, 0.95);
 }
 .solis-upgrade-billing-opt {
     appearance: none;
@@ -13603,12 +13591,10 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
 }
 .solis-upgrade-billing-opt.is-active {
-    background: rgba(255, 255, 255, 0.72);
+    background: #fff;
     color: #ff7a50;
-    box-shadow:
-        0 1px 4px rgba(0, 0, 0, 0.08),
-        inset 0 1px 0 rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.9);
 }
 .solis-upgrade-billing-badge {
     font-size: 10px;
@@ -13632,33 +13618,42 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     border-radius: 18px;
     overflow: hidden;
     isolation: isolate;
-    border: 1px solid rgba(255, 255, 255, 0.75);
-    box-shadow:
-        0 8px 24px rgba(120, 90, 60, 0.06),
-        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    background: #fff;
+    border: 1px solid rgba(228, 220, 212, 0.95);
+    box-shadow: 0 2px 10px rgba(120, 90, 60, 0.04);
 }
-.solis-upgrade-card[data-plan="basic"] {
-    background: linear-gradient(
-        145deg,
-        rgba(255, 255, 255, 0.8) 0%,
-        rgba(242, 247, 252, 0.68) 48%,
-        rgba(225, 236, 248, 0.58) 100%
-    );
-}
+.solis-upgrade-card[data-plan="basic"],
 .solis-upgrade-card[data-plan="prime"] {
-    background: linear-gradient(
-        145deg,
-        rgba(255, 255, 255, 0.8) 0%,
-        rgba(240, 253, 250, 0.62) 42%,
-        rgba(204, 251, 241, 0.5) 72%,
-        rgba(254, 249, 235, 0.42) 100%
-    );
+    background: #fff;
 }
 .solis-upgrade-card.is-popular {
-    border-color: rgba(255, 255, 255, 0.85);
+    border-color: rgba(255, 122, 80, 0.35);
     box-shadow:
-        0 8px 24px rgba(120, 90, 60, 0.08),
-        inset 0 1px 0 rgba(255, 255, 255, 0.95);
+        0 4px 16px rgba(232, 90, 42, 0.08),
+        0 0 0 1px rgba(255, 122, 80, 0.12);
+}
+.solis-upgrade-card-features-wrap {
+    position: relative;
+    margin-top: 16px;
+    padding: 14px 12px 12px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #faf9f8;
+    border: 1px solid rgba(236, 231, 226, 0.95);
+}
+.solis-upgrade-card[data-plan="basic"] .solis-upgrade-card-features-wrap {
+    background: linear-gradient(
+        160deg,
+        rgba(255, 255, 255, 0.95) 0%,
+        rgba(242, 247, 252, 0.55) 100%
+    );
+}
+.solis-upgrade-card[data-plan="prime"] .solis-upgrade-card-features-wrap {
+    background: linear-gradient(
+        160deg,
+        rgba(255, 255, 255, 0.95) 0%,
+        rgba(240, 253, 250, 0.5) 100%
+    );
 }
 .solis-upgrade-card-poly {
     position: absolute;
@@ -13667,7 +13662,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     height: calc(100% + 2px);
     pointer-events: none;
     z-index: 0;
-    overflow: hidden;
+    opacity: 0.55;
     shape-rendering: geometricPrecision;
 }
 .solis-upgrade-card-poly polygon {
@@ -13705,14 +13700,14 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     display: flex;
     flex-direction: column;
     flex: 1;
-    padding: 28px 18px 18px;
+    padding: 22px 18px 16px;
 }
 .solis-upgrade-card.is-popular .solis-upgrade-card-body {
     padding-top: 38px;
 }
 .solis-upgrade-card-name {
     margin: 0 0 4px;
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     font-weight: 800;
     letter-spacing: -0.03em;
     color: var(--text-dark, #1c1917);
@@ -13821,13 +13816,12 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
 .solis-upgrade-card-cta:hover::after {
     background: rgba(255, 255, 255, 0.18);
 }
-.solis-upgrade-card-cta--prime {
-}
 .solis-upgrade-card-features {
+    position: relative;
+    z-index: 1;
     list-style: none;
-    margin: 16px 0 0;
-    padding: 14px 0 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.55);
+    margin: 0;
+    padding: 0;
     display: flex;
     flex-direction: column;
     gap: 7px;
@@ -13892,7 +13886,7 @@ body.solis-upgrade-modal-open {
 }
 @media (max-width: 640px) {
     .solis-upgrade-modal-panel {
-        padding: 20px 14px 14px;
+        padding: 22px 14px 14px;
         border-radius: 20px;
         max-height: 94dvh;
     }

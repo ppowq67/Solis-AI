@@ -388,8 +388,8 @@ const PreviewTimeline = (() => {
   let S = null;
   let _ = false;
   let k = 0;
-  let C = 0;
   let L = 0;
+  let C = 0;
   let P = 0;
   let I = 1;
   let E = [];
@@ -1005,15 +1005,15 @@ const PreviewTimeline = (() => {
     S = Math.max(0, Math.min(u || e, e));
     const i = performance.now();
     const n = t ? 0 : Math.max(0, r - (i - k));
-    if (C) {
-      clearTimeout(C);
-      C = 0;
+    if (L) {
+      clearTimeout(L);
+      L = 0;
     }
     if (n === 0) {
       flushSeek();
     } else {
-      C = setTimeout(() => {
-        C = 0;
+      L = setTimeout(() => {
+        L = 0;
         flushSeek();
       }, n);
     }
@@ -1498,13 +1498,13 @@ const PreviewTimeline = (() => {
   function detach() {
     y += 1;
     destroyCaptureVideo();
-    if (C) {
-      clearTimeout(C);
-      C = 0;
-    }
     if (L) {
       clearTimeout(L);
       L = 0;
+    }
+    if (C) {
+      clearTimeout(C);
+      C = 0;
     }
     if (w) {
       cancelAnimationFrame(w);
@@ -1544,22 +1544,22 @@ const PreviewTimeline = (() => {
     hide();
   }
   function scheduleFilmstripBuild(e = 450) {
-    if (L) {
-      clearTimeout(L);
-      L = 0;
+    if (C) {
+      clearTimeout(C);
+      C = 0;
     }
     const run = () => {
-      L = 0;
+      C = 0;
       buildFilmstripFromVideo();
     };
     if (typeof requestIdleCallback === "function") {
-      L = setTimeout(() => {
+      C = setTimeout(() => {
         requestIdleCallback(() => run(), {
           timeout: 1200
         });
       }, e);
     } else {
-      L = setTimeout(run, e);
+      C = setTimeout(run, e);
     }
   }
   function attach(e) {
@@ -2278,15 +2278,15 @@ function bindFaceReframePanHandlers() {
     const S = b.clientWidth || v.clientWidth || 1;
     const _ = b.clientHeight || v.clientHeight || 1;
     const k = r[2];
-    const C = r[3];
-    const L = Math.max(S / Math.max(1, k), _ / Math.max(1, C));
-    const P = (l - i) / L;
-    const I = (c - n) / L;
+    const L = r[3];
+    const C = Math.max(S / Math.max(1, k), _ / Math.max(1, L));
+    const P = (l - i) / C;
+    const I = (c - n) / C;
     let E = r[0] - P;
     let T = r[1] - I;
     E = Math.max(0, Math.min(h - k, E));
-    T = Math.max(0, Math.min(w - C, T));
-    m.faceCrop = [ E, T, k, C ];
+    T = Math.max(0, Math.min(w - L, T));
+    m.faceCrop = [ E, T, k, L ];
     syncLibrarySplitscreenCropPreview();
   };
   const endPan = (t = null) => {
@@ -7089,19 +7089,17 @@ class ClipsStudio {
     }
     this.closeWatermarkPlanPopover?.();
     safeLog(`Watermark UI — premium=${n} usedLifetime=${r} ` + `firstFree=${s} returningFree=${o}`);
+    i.disabled = false;
     if (n) {
       const e = localStorage.getItem("watermarkEnabled");
       i.checked = e === "true";
-      i.disabled = false;
     } else if (s) {
       i.checked = false;
-      i.disabled = true;
       try {
         localStorage.setItem("watermarkEnabled", "false");
       } catch (e) {}
     } else {
       i.checked = true;
-      i.disabled = true;
       try {
         localStorage.setItem("watermarkEnabled", "true");
       } catch (e) {}
@@ -7124,71 +7122,80 @@ class ClipsStudio {
       t.removeEventListener("click", this._watermarkFreeClickHandler, true);
       this._watermarkFreeClickHandler = null;
     }
-    if (n) {
-      this._watermarkChangeHandler = () => {
-        const e = i.checked;
-        localStorage.setItem("watermarkEnabled", e ? "true" : "false");
+    this._watermarkFreeLockedOn = !n && !s;
+    this._watermarkChangeHandler = () => {
+      const e = i.checked;
+      if (!n) {
+        const e = !!this._watermarkFreeLockedOn;
+        i.checked = e;
         t?.classList.toggle("is-on", e);
         t?.setAttribute("aria-checked", e ? "true" : "false");
+        try {
+          localStorage.setItem("watermarkEnabled", e ? "true" : "false");
+        } catch (e) {}
         this.updateWatermarkDisplay();
-      };
-      i.addEventListener("change", this._watermarkChangeHandler);
-    } else if (t) {
-      this._watermarkFreeClickHandler = e => {
-        e.preventDefault();
-        e.stopPropagation();
-        const t = document.getElementById("watermarkPlanPopover");
-        if (t && !t.hidden) {
-          this.closeWatermarkPlanPopover();
-          return;
-        }
         this.openWatermarkPlanPopover();
-      };
-      t.addEventListener("click", this._watermarkFreeClickHandler, true);
-    }
+        return;
+      }
+      localStorage.setItem("watermarkEnabled", e ? "true" : "false");
+      t?.classList.toggle("is-on", e);
+      t?.setAttribute("aria-checked", e ? "true" : "false");
+      this.updateWatermarkDisplay();
+    };
+    i.addEventListener("change", this._watermarkChangeHandler);
     this.bindWatermarkPlanPopoverOnce();
     this.updateWatermarkDisplay();
   }
   bindWatermarkPlanPopoverOnce() {
     if (this._wmPlanPopoverBound) return;
     this._wmPlanPopoverBound = true;
-    const e = document.getElementById("watermarkPlanPopover");
-    const t = document.getElementById("watermarkPlanPopoverClose");
-    t?.addEventListener("click", e => {
+    const e = document.getElementById("watermarkPlanPopoverClose");
+    e?.addEventListener("click", e => {
       e.preventDefault();
       e.stopPropagation();
       this.closeWatermarkPlanPopover();
     });
-    document.addEventListener("pointerdown", t => {
+    document.addEventListener("pointerdown", e => {
+      const t = document.getElementById("watermarkPlanPopover");
       const i = document.getElementById("watermarkContainer");
-      if (!e || e.hidden) return;
-      if (i && i.contains(t.target)) return;
+      if (!t || t.hidden) return;
+      if (t.contains(e.target)) return;
+      if (i && i.contains(e.target)) return;
       this.closeWatermarkPlanPopover();
     }, true);
     document.addEventListener("keydown", e => {
       if (e.key === "Escape") this.closeWatermarkPlanPopover();
     });
+    window.addEventListener("resize", () => {
+      const e = document.getElementById("watermarkPlanPopover");
+      if (e && !e.hidden) this.openWatermarkPlanPopover();
+    });
   }
   openWatermarkPlanPopover() {
     const e = document.getElementById("watermarkPlanPopover");
-    const t = document.getElementById("watermarkContainer") || document.getElementById("watermarkToggleLabel");
+    const t = document.getElementById("watermarkToggleLabel") || document.getElementById("watermarkContainer");
     if (!e || !t) return;
+    if (e.parentElement !== document.body) {
+      document.body.appendChild(e);
+    }
     e.hidden = false;
-    const i = t.getBoundingClientRect();
-    const n = 10;
-    const r = Math.min(340, window.innerWidth - n * 2);
-    let o = Math.min(Math.max(n, i.right - r), window.innerWidth - r - n);
-    let s = i.bottom + 8;
-    requestAnimationFrame(() => {
-      const t = e.offsetHeight || 220;
-      if (s + t > window.innerHeight - n) {
-        s = Math.max(n, i.top - t - 8);
+    e.classList.add("is-open");
+    const place = () => {
+      const i = t.getBoundingClientRect();
+      const n = 10;
+      const r = Math.min(340, window.innerWidth - n * 2);
+      const o = e.offsetHeight || 240;
+      let s = Math.min(Math.max(n, i.right - r), window.innerWidth - r - n);
+      let a = i.bottom + 8;
+      if (a + o > window.innerHeight - n) {
+        a = Math.max(n, i.top - o - 8);
       }
-      e.style.left = `${Math.round(o)}px`;
-      e.style.top = `${Math.round(s)}px`;
-    });
-    e.style.left = `${Math.round(o)}px`;
-    e.style.top = `${Math.round(s)}px`;
+      e.style.width = `${Math.round(r)}px`;
+      e.style.left = `${Math.round(s)}px`;
+      e.style.top = `${Math.round(a)}px`;
+    };
+    place();
+    requestAnimationFrame(place);
     try {
       e.querySelector("#watermarkPlanUpgradeBtn")?.focus?.({
         preventScroll: true
@@ -7199,8 +7206,10 @@ class ClipsStudio {
     const e = document.getElementById("watermarkPlanPopover");
     if (!e) return;
     e.hidden = true;
+    e.classList.remove("is-open");
     e.style.left = "";
     e.style.top = "";
+    e.style.width = "";
   }
   loadVideoPreviewWithTemplate() {
     const e = document.getElementById("templateVideoPreview");

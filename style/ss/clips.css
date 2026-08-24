@@ -13475,7 +13475,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     overflow: visible;
 }
 .tip-setting-row .stgToggle.is-locked-free .stgToggleInput {
-    pointer-events: none;
+    pointer-events: auto;
 }
 
 .tip-setting-row .stgToggleInput {
@@ -13510,6 +13510,10 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     z-index: 12050;
     width: min(340px, calc(100vw - 24px));
     filter: drop-shadow(0 18px 40px rgba(60, 40, 20, 0.16));
+    pointer-events: auto;
+}
+.wm-plan-popover.is-open {
+    display: block !important;
 }
 .wm-plan-popover[hidden] {
     display: none !important;

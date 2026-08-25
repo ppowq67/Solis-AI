@@ -2045,54 +2045,57 @@
       position: relative;
       z-index: 4;
       display: flex;
-      align-items: stretch;
+      align-items: center;
       justify-content: center;
-      gap: 4px;
-      margin: 14px 16px 0;
-      padding: 6px;
+      gap: 2px;
+      width: fit-content;
+      max-width: calc(100% - 24px);
+      margin: 10px auto 0;
+      padding: 3px;
       border-radius: 9999px;
       background: rgba(255,255,255,0.72);
       border: 1px solid rgba(255,255,255,0.85);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      box-shadow: 0 6px 20px rgba(120,80,40,0.06);
+      box-shadow: 0 4px 14px rgba(120,80,40,0.06);
       pointer-events: none;
       flex-shrink: 0;
     }
     .how-rail-item {
-      flex: 1;
-      max-width: 220px;
-      display: flex;
-      flex-direction: column;
+      flex: 0 1 auto;
+      display: inline-flex;
+      flex-direction: row;
       align-items: center;
-      gap: 1px;
-      padding: 10px 12px;
+      gap: 6px;
+      padding: 6px 12px;
       border: none;
       border-radius: 9999px;
       background: transparent;
       color: var(--text-muted);
+      white-space: nowrap;
       transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
     }
     .how-rail-item.is-active {
       background: #fff;
       color: var(--text-primary);
-      box-shadow: 0 4px 14px rgba(120,80,40,0.1);
+      box-shadow: 0 2px 10px rgba(120,80,40,0.1);
     }
     .how-rail-n {
       font-family: var(--font-display), system-ui, sans-serif;
       font-size: 10px;
       font-weight: 750;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      line-height: 1;
       color: var(--solis-deep);
-      opacity: 0.5;
+      opacity: 0.45;
     }
     .how-rail-item.is-active .how-rail-n { opacity: 1; }
     .how-rail-lab {
       font-family: var(--font-display), system-ui, sans-serif;
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 750;
       letter-spacing: -0.02em;
+      line-height: 1.15;
     }
     .sgd-stage {
       position: relative;
@@ -2777,7 +2780,8 @@
       .sgd-url-row { max-width: 100%; padding: 5px 5px 5px 12px; min-height: 48px; gap: 8px; }
       .sgd-lib-wrap { height: 148px; max-width: 520px; }
       .sgd-lib-card { width: 80px; }
-      .how-rail { margin: 12px 12px 0; }
+      .how-rail { margin: 8px auto 0; max-width: calc(100% - 20px); }
+      .how-rail-item { padding: 5px 10px; gap: 5px; }
       .how-rail-lab { font-size: 12px; }
     }
     @media (max-width: 640px) {
@@ -2801,8 +2805,8 @@
       .sgd-lib.is-spread .sgd-lib-card:nth-child(3) { left: 50%; }
       .sgd-lib.is-spread .sgd-lib-card:nth-child(4) { left: 72%; }
       .sgd-lib.is-spread .sgd-lib-card:nth-child(5) { left: 94%; }
-      .how-rail { gap: 4px; }
-      .how-rail-item { padding: 8px 4px; }
+      .how-rail { gap: 1px; padding: 2px; }
+      .how-rail-item { padding: 5px 8px; gap: 4px; }
       .how-rail-lab { font-size: 11px; letter-spacing: 0.01em; }
     }
     @media (prefers-reduced-motion: reduce) {
@@ -3978,7 +3982,7 @@
         </div>
         <div class="hero-trust reveal">
           <div class="trust-inner">
-        <p class="trust-label">Used by creators (B2C) and growth teams &amp; brands (B2B) on</p>
+        <p class="trust-label">Used by creators and growth teams &amp; brands on</p>
         <div class="marquee">
           <div class="track" id="_marquee">
             <div class="track-group">
@@ -5056,18 +5060,30 @@
       parkCursor();
       clearUrl();
 
+      function demoInView() {
+        var r = demo.getBoundingClientRect();
+        var vh = window.innerHeight || 0;
+        if (!vh || r.height <= 0) return false;
+        return r.top < vh * 0.88 && r.bottom > Math.min(72, vh * 0.12);
+      }
+      function onDemoVisibility(on) {
+        if (on) {
+          if (!running) runLoop();
+        } else {
+          clearTimers();
+          running = false;
+          resetUi();
+        }
+      }
       var io = new IntersectionObserver(function(entries) {
         entries.forEach(function(entry) {
-          if (entry.isIntersecting) {
-            if (!running) runLoop();
-          } else {
-            clearTimers();
-            running = false;
-            resetUi();
-          }
+          onDemoVisibility(entry.isIntersecting);
         });
-      }, { threshold: 0.18, rootMargin: '0px 0px -10% 0px' });
+      }, { threshold: 0, rootMargin: '80px 0px -8% 0px' });
       io.observe(demo);
+      requestAnimationFrame(function() {
+        if (demoInView()) onDemoVisibility(true);
+      });
     })();
 
     (function initDiscordTip() {

@@ -24,10 +24,10 @@ window.handleDeleteAllClips = async function() {
   if (!e || !i || !n) return;
   const s = window.clipsStudio && window.clipsStudio.libraryItems ? window.clipsStudio.libraryItems : [];
   const a = s.length;
-  if (t) t.textContent = "Clear library";
-  i.textContent = a > 0 ? `This will permanently remove all ${a} clips from your library.` : "There are no clips in your library to remove.";
-  if (o) o.textContent = "Associated files are deleted and cannot be recovered.";
-  n.textContent = "Clear library";
+  if (t) t.textContent = "Clear library?";
+  i.textContent = a > 0 ? `Remove all ${a} clips from your library.` : "There are no clips in your library to remove.";
+  if (o) o.textContent = "This can’t be undone.";
+  n.textContent = "Clear all";
   n.disabled = a === 0;
   e.classList.add("show");
   const r = n.cloneNode(true);
@@ -77,14 +77,13 @@ window.handleDeleteAllClips = async function() {
       }
       window.clipsStudio.showNotification(o > 0 ? `Cleared ${o}/${i} clips from your library` : "Library cleared", "success");
       e.classList.remove("show");
-      setTimeout(() => window.location.reload(), 600);
     } catch (t) {
       console.error("Error clearing library:", t);
       window.clipsStudio?.showNotification("Error clearing library. Please try again.", "error");
       e.classList.remove("show");
     } finally {
       r.disabled = false;
-      r.textContent = "Clear library";
+      r.textContent = "Clear all";
     }
   };
 };

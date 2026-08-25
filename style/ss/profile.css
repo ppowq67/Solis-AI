@@ -654,7 +654,7 @@
 }
 
 .bell-btn {
-    color: var(--text-dark);
+    color: #3d342c;
     cursor: pointer;
     position: relative;
     display: flex;
@@ -676,11 +676,13 @@
     opacity: 1;
     stroke: currentColor;
     pointer-events: none;
+    width: 24px;
+    height: 24px;
 }
 
 .bell-btn:hover {
-    background: rgba(0, 0, 0, 0.05);
-    color: var(--primary-orange);
+    background: rgba(249, 115, 22, 0.1);
+    color: #c2410c;
 }
 
 .bell-btn:active {
@@ -688,8 +690,9 @@
 }
 
 .notif-wrapper:has(.notif-dropdown.open) .bell-btn {
-    background: rgba(0, 0, 0, 0.05);
-    color: var(--primary-orange);
+    background: rgba(249, 115, 22, 0.14);
+    color: #c2410c;
+    box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.18);
 }
 
 .bell-btn.has-unread:hover {
@@ -756,7 +759,7 @@
 
 .notif-dropdown {
     position: absolute;
-    top: 54px;
+    top: calc(100% + 10px);
     right: 0;
     width: 300px;
     border-radius: 20px;
@@ -913,24 +916,31 @@
 }
 
 .profile-avatar-btn {
-    width: 40px;
-    height: 40px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    border: 1.5px solid rgba(0, 0, 0, 0.08);
     cursor: pointer;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: white;
+    background-color: #fff;
     padding: 0;
-    transition: box-shadow 0.1s ease, transform 0.1s ease;
+    transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
     flex-shrink: 0;
 }
 
 .profile-avatar-btn:hover {
-    box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.15);
-    transform: scale(1.05);
+    border-color: rgba(249, 115, 22, 0.35);
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.14);
+    transform: scale(1.04);
+}
+
+.profile-dropdown-wr:has(.profile-dropdown.open) .profile-avatar-btn,
+.profile-avatar-btn[aria-expanded="true"] {
+    border-color: rgba(249, 115, 22, 0.45);
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.18);
 }
 
 .profile-avatar-btn img {
@@ -940,9 +950,9 @@
 }
 
 .profile-avatar-btn svg {
-    width: 24px;
-    height: 24px;
-    color: var(--text-dark);
+    width: 20px;
+    height: 20px;
+    color: #3d342c;
     flex-shrink: 0;
 }
 
@@ -1211,6 +1221,12 @@
         pointer-events: auto !important;
         visibility: visible !important;
         opacity: 1 !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        padding: 0 !important;
     }
 
     .nav-wrapper .profile-dropdown-wr,
@@ -1222,6 +1238,15 @@
         pointer-events: auto !important;
         width: auto !important;
         height: auto !important;
+    }
+
+    .nav-wrapper .mnav-menu-btn,
+    .mnav-side-actions .mnav-menu-btn {
+        display: inline-flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        cursor: pointer !important;
     }
 
     .nav-wrapper .profile-avatar-btn,

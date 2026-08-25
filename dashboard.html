@@ -39,16 +39,16 @@
     <title>Solis AI</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/style/ss/consolidate.css?v=60">
+    <link rel="stylesheet" href="/style/ss/consolidate.css?v=67">
     <link rel="stylesheet" href="/style/ss/inline-styles.css?v=27">
     <link rel="stylesheet" href="/style/ss/glassmorphism.css?v=27">
     <link rel="stylesheet" href="/style/ss/badges.css?v=62">
     <link rel="stylesheet" href="/style/ss/sidebar.css?v=27">
     <link rel="stylesheet" href="/style/ss/ios-pill-nav.css?v=29">
-    <link rel="stylesheet" href="/style/ss/mobile-nav.css?v=28">
+    <link rel="stylesheet" href="/style/ss/mobile-nav.css?v=32">
     <link rel="stylesheet" href="/style/ss/customize.css?v=27">
-    <link rel="stylesheet" href="/style/ss/clips.css?v=132">
-    <link rel="stylesheet" href="/style/ss/profile.css?v=29">
+    <link rel="stylesheet" href="/style/ss/clips.css?v=147">
+    <link rel="stylesheet" href="/style/ss/profile.css?v=33">
     <link rel="stylesheet" href="/style/ss/tasks-panel-v2-demo.css?v=18">
     <link rel="stylesheet" href="/style/ss/solis-gen-stage.css?v=26">
     <link rel="stylesheet" href="/style/ss/newsfeed-widget.css?v=61">
@@ -57,7 +57,7 @@
     <script src="/js/ui/solis-badges.js?v=11"></script>
     <script src="/js/i_dq/profile-notifications.js?t=20260815151000"></script>
     <script src="/js/s_new/qwsqa.js?v=6"></script>
-    <script src="/js/s_new/qwe.js?v=22"></script>
+    <script src="/js/s_new/qwe.js?v=23"></script>
     <link rel="stylesheet" href="/style/ss/stg-modal.css?v=68">
     <script src="/js/s_new/stg.js?v=62"></script>
     <script src="/js/i_dq/video-generation-hook.js?v=1"></script>
@@ -75,10 +75,10 @@
     <script src="/js/payment/portal-manager.js?v=6"></script>
     <script src="/js/payment/payment-success.js?v=2"></script>
     <script src="/js/payment/platform-connections.js?v=6"></script>
-    <script src="/js/ui/plan-selector.js?v=63"></script>
+    <script src="/js/ui/plan-selector.js?v=66"></script>
     <script src="/js/core/video-preview-system.js?v=2"></script>
-    <script src="/js/s_new/clip-card.js?v=23"></script>
-    <script src="/js/s.js?v=286"></script>
+    <script src="/js/s_new/clip-card.js?v=28"></script>
+    <script src="/js/s.js?v=295"></script>
 
     <script src="/js/s_new/procc.js?v=2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -122,36 +122,45 @@
 
 .profile-dropdown {
     position: absolute;
-    top: 54px; right: 0;
-    width: 300px;
-    border-radius: 20px;
-    padding: 10px;
+    top: calc(100% + 10px); right: 0;
+    width: 304px;
+    border-radius: 22px;
+    padding: 8px;
     transform-origin: top right;
     z-index: 2000;
     overflow: hidden;
 
-    background: rgba(255, 255, 255, 0.72);
-    backdrop-filter: blur(24px) saturate(160%) brightness(1.04);
-    -webkit-backdrop-filter: blur(24px) saturate(160%) brightness(1.04);
-    border: 0.5px solid rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(28px) saturate(170%) brightness(1.03);
+    -webkit-backdrop-filter: blur(28px) saturate(170%) brightness(1.03);
+    border: 1px solid rgba(255, 255, 255, 0.92);
     box-shadow:
-        0 16px 48px rgba(0, 0, 0, 0.1),
-        0 4px 12px rgba(0, 0, 0, 0.06),
-        inset 0 1.5px 0 rgba(255, 255, 255, 0.95),
-        inset 0 -1px 0 rgba(255, 255, 255, 0.25),
-        inset 1px 0 0 rgba(255, 255, 255, 0.5),
-        inset -1px 0 0 rgba(255, 255, 255, 0.3);
+        0 20px 50px rgba(24, 18, 14, 0.14),
+        0 6px 16px rgba(120, 80, 40, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 1);
 
     opacity: 0;
     visibility: hidden;
-    transform: scale(0.95);
-    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
+    transform: translateY(6px) scale(0.97);
+    transition: opacity 0.2s cubic-bezier(0.22, 1, 0.36, 1), transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.2s ease;
+    pointer-events: none;
+}
+
+.profile-dropdown::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background:
+        radial-gradient(ellipse 80% 50% at 100% 0%, rgba(249, 115, 22, 0.08), transparent 55%);
+    pointer-events: none;
+    z-index: 0;
 }
 
 .profile-dropdown::after {
     content: '';
     position: absolute;
-    top: 0; left: 14%; right: 14%;
+    top: 0; left: 16%; right: 16%;
     height: 1px;
     border-radius: 100%;
     background: linear-gradient(90deg,
@@ -162,12 +171,14 @@
         transparent
     );
     pointer-events: none;
+    z-index: 1;
 }
 
 .profile-dropdown.open {
     opacity: 1;
     visibility: visible;
-    transform: scale(1);
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
 }
 
 @media (max-width: 768px) {
@@ -176,9 +187,10 @@
         bottom: calc(100% + 12px);
         right: 0;
         transform-origin: bottom right;
+        transform: translateY(-6px) scale(0.97);
     }
     .nav-wrapper .profile-dropdown.open {
-        transform: scale(1);
+        transform: translateY(0) scale(1);
     }
 }
 
@@ -197,21 +209,25 @@
 }
 
 .profile-dropdown-profile {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 12px 8px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 12px 10px 14px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .profile-dropdown-avatar {
-    width: 40px; height: 40px;
+    width: 44px; height: 44px;
     border-radius: 50%;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    border: 1.5px solid rgba(249, 115, 22, 0.25);
     overflow: hidden;
     display: flex; align-items: center; justify-content: center;
-    background: white;
+    background: #fff;
     flex-shrink: 0;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.08);
 }
 
 .profile-dropdown-avatar img { width: 100%; height: 100%; object-fit: cover; }
@@ -222,8 +238,9 @@
 }
 
 .profile-dropdown-name {
-    font-weight: 700;
-    font-size: 13px;
+    font-weight: 750;
+    font-size: 14px;
+    letter-spacing: -0.02em;
     color: var(--text-dark);
     display: flex !important;
     align-items: center;
@@ -248,17 +265,27 @@
 }
 
 .profile-dropdown-plan {
-    font-size: 10px; color: var(--primary-orange);
-    font-weight: 600; text-transform: uppercase; margin-top: 2px;
+    margin-top: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #c2410c;
+    background: none;
+    border: none;
+    padding: 0;
 }
 
 .profile-dropdown-link {
+    position: relative;
+    z-index: 1;
     padding: 10px 10px;
     display: flex; align-items: center; gap: 12px;
     text-decoration: none;
     color: var(--text-dark);
-    font-size: 13px; font-weight: 500;
-    border-radius: 12px;
+    font-size: 13.5px; font-weight: 550;
+    letter-spacing: -0.01em;
+    border-radius: 14px;
     transition: background 0.14s ease, color 0.14s ease;
     cursor: pointer;
     margin: 1px 0;
@@ -268,22 +295,24 @@
 }
 
 .profile-dropdown-link svg {
-    color: var(--text-light);
-    transition: color 0.14s ease;
+    color: #9e8878;
+    transition: color 0.14s ease, background 0.14s ease;
     flex-shrink: 0;
+    width: 16px;
+    height: 16px;
 }
 
 .profile-dropdown-link:hover {
-    background: rgba(255, 140, 0, 0.08);
-    color: var(--primary-orange);
+    background: rgba(249, 115, 22, 0.08);
+    color: #c2410c;
 }
 
-.profile-dropdown-link:hover svg { color: var(--primary-orange); }
+.profile-dropdown-link:hover svg { color: #ea580c; }
 
 .profile-dropdown-divider {
     height: 1px;
-    background: rgba(0, 0, 0, 0.05);
-    margin: 6px 4px;
+    background: rgba(0, 0, 0, 0.06);
+    margin: 6px 8px;
 }
 
 .profile-dropdown-logout { color: #ef4444; }
@@ -2168,33 +2197,70 @@
 <div class="nav-wrapper" id="navWrapper">
     <span class="mnav-side-spacer" aria-hidden="true"></span>
     <nav class="mobile-clips-bar clips-sub-nav" id="clipsSubNav" aria-label="Clips navigation">
-        <div class="clips-sub-pill">
+        <div class="clips-sub-pill" role="tablist" aria-label="Clips sections">
             <div class="mobile-clips-indicator clips-sub-indicator" id="clipsSubPane" aria-hidden="true"></div>
-            <button type="button" class="mobile-clips-tab clips-sub-item" data-tab="templates" onclick="goMobileClipsTab('templates', this)">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <rect x="2" y="2" width="10" height="10" rx="1"/>
-                    <line x1="2" y1="6" x2="12" y2="6"/>
-                    <line x1="7" y1="6" x2="7" y2="12"/>
+            <button type="button" class="mobile-clips-tab clips-sub-item" data-tab="templates" role="tab" aria-selected="false" onclick="goMobileClipsTab('templates', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+                    <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+                    <rect x="14" y="14" width="7" height="7" rx="1.5"/>
                 </svg>
-                <span>Template</span>
+                <span>Templates</span>
             </button>
-            <button type="button" class="mobile-clips-tab clips-sub-item active" data-tab="create" onclick="goMobileClipsTab('create', this)">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <rect x="1.5" y="3.5" width="9" height="9" rx="1.5"/>
-                    <path d="M10.5 6.5l3.5-2v7l-3.5-2"/>
+            <button type="button" class="mobile-clips-tab clips-sub-item active" data-tab="create" role="tab" aria-selected="true" onclick="goMobileClipsTab('create', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 5v14"/>
+                    <path d="M5 12h14"/>
                 </svg>
-                <span>CLIP</span>
+                <span>Create</span>
             </button>
-            <button type="button" class="mobile-clips-tab clips-sub-item" data-tab="library" onclick="goMobileClipsTab('library', this)">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M2 4a1 1 0 0 1 1-1h3l1.5 2H13a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4z"/>
-                    <path d="M2 6h12" stroke-width="1.2"/>
+            <button type="button" class="mobile-clips-tab clips-sub-item" data-tab="library" role="tab" aria-selected="false" onclick="goMobileClipsTab('library', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M4 20h16"/>
+                    <path d="M4 4h5l2 3h9v13H4z"/>
                 </svg>
                 <span>Library</span>
             </button>
         </div>
     </nav>
-    <div class="mnav-side-actions" id="mnavSideActions" aria-label="Account actions"></div>
+    <div class="mnav-side-actions" id="mnavSideActions" aria-label="Account actions">
+        <button type="button" class="mnav-menu-btn" id="mnavMenuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mnavMenuSheet">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" width="20" height="20" class="mnav-menu-icon" aria-hidden="true">
+                <line x1="5" y1="7" x2="19" y2="7" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <line x1="5" y1="17" x2="19" y2="17" />
+            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" width="20" height="20" class="mnav-menu-close" aria-hidden="true">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+        </button>
+    </div>
+</div>
+<div class="mnav-menu-backdrop" id="mnavMenuBackdrop" hidden aria-hidden="true"></div>
+<div class="mnav-menu-sheet" id="mnavMenuSheet" role="menu" hidden aria-label="App sections">
+    <button type="button" class="mnav-menu-item" role="menuitem" data-mnav-go="Portal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="8" stroke-opacity="0.35"/>
+            <path d="M4.5 12c1-5 6-8 7.5-8s6.5 3 7.5 8M19.5 12c-1 5-6 8-7.5 8S5.5 17 4.5 12"/>
+        </svg>
+        <span>Portal</span>
+    </button>
+    <button type="button" class="mnav-menu-item" role="menuitem" data-mnav-go="clips">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <path d="M10 9l5 3-5 3V9z" fill="currentColor"/>
+        </svg>
+        <span>Clips</span>
+    </button>
+    <button type="button" class="mnav-menu-item is-disabled" role="menuitem" data-mnav-go="dashboard" disabled aria-disabled="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M18 20V10M12 20V4M6 20v-6"/>
+        </svg>
+        <span>Analytics</span>
+        <em>Soon</em>
+    </button>
 </div>
 
    <div id="appContainer">
@@ -4332,7 +4398,7 @@
                             </div>
                             <div class="plan-selector-popover-stat">
                                 <div class="plan-selector-popover-count" id="planPopoverCount">—</div>
-                                <p class="plan-selector-popover-kicker">left today</p>
+                                <p class="plan-selector-popover-kicker" id="planPopoverKicker">uploads left today</p>
                             </div>
                             <div class="plan-selector-progress" aria-hidden="true">
                                 <div class="plan-selector-progress-fill" id="planPopoverProgress"></div>
@@ -4448,26 +4514,26 @@
             </div>
 
             <div class="uc-card" id="upgradeCardCreate">
-
                 <div class="uc-left">
-                <h2 class="uc-title">Reveal your <em>true potential</em></h2>
-                <ul class="uc-features">
-                    <li><span class="uc-check"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>More uploads per day</li>
-                    <li><span class="uc-check"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Unlimited clips in library</li>
-                    <li><span class="uc-check"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>More clips per upload</li>
-                    <li><span class="uc-check"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Faster generation</li>
-                    <li><span class="uc-check"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Export videos in 1080p+</li>
-                    <li><span class="uc-check"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Premium templates</li>
-                    <li><span class="uc-check"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>No watermarks</li>
-                </ul>
-                <a href="/premium.html" class="uc-btn">
-                    <span>Upgrade to unlock</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                </a>
+                    <h2 class="uc-title">Reveal your <em>true potential</em></h2>
+                    <ul class="uc-features">
+                        <li><span class="uc-check" aria-hidden="true"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>More uploads per day</li>
+                        <li><span class="uc-check" aria-hidden="true"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Unlimited clips in library</li>
+                        <li><span class="uc-check" aria-hidden="true"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>More clips per upload</li>
+                        <li><span class="uc-check" aria-hidden="true"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Faster generation</li>
+                        <li><span class="uc-check" aria-hidden="true"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Export in 1080p+</li>
+                        <li><span class="uc-check" aria-hidden="true"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Premium templates</li>
+                        <li><span class="uc-check" aria-hidden="true"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>No watermarks</li>
+                    </ul>
+                    <a href="/premium.html" class="uc-btn">
+                        <span>Upgrade to unlock</span>
+                    </a>
                 </div>
 
-                <div class="uc-right">
-                    <img src="/assets/uc-card.png" alt="Solis AI" class="uc-logo" onerror="this.onerror=null;this.src='/assets/solisailogo.png'">
+                <div class="uc-right" aria-hidden="true">
+                    <div class="uc-visual">
+                        <img src="/assets/uc-card.png" alt="" class="uc-logo" onerror="this.onerror=null;this.src='/assets/solisailogo.png'">
+                    </div>
                 </div>
             </div>
         </div>
@@ -4504,6 +4570,21 @@
                     </button>
                 </div>
             </div>
+        </div>
+        <div class="library-header-end">
+            <div class="library-select-bar" id="librarySelectBar" hidden>
+                <span class="library-select-count" id="librarySelectCount">0 selected</span>
+                <button type="button" class="library-select-action" id="librarySelectDeleteBtn" disabled>Delete</button>
+                <button type="button" class="library-select-action library-select-action--ghost" id="librarySelectCancelBtn">Done</button>
+            </div>
+            <button type="button" class="library-select-toggle" id="librarySelectModeBtn" title="Select clips" aria-label="Select clips to delete" aria-pressed="false">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                    <path d="M10 11v6M14 11v6"/>
+                    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                </svg>
+            </button>
         </div>
     </div>
 
@@ -4561,25 +4642,29 @@
     </div>
 </div>
 
-<div class="delete-confirmation-modal" id="deleteConfirmationModal" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
-    <div class="delete-modal-content">
-        <button type="button" class="delete-modal-close" aria-label="Close" onclick="document.getElementById('deleteConfirmationModal').classList.remove('show')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M18 6L6 18M6 6l12 12"/>
-            </svg>
-        </button>
-            <div class="delete-modal-body">
-                <i class="fas fa-exclamation-triangle delete-modal-icon" aria-hidden="true"></i>
+<div class="delete-confirmation-modal" id="deleteConfirmationModal" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle" aria-describedby="deleteConfirmationText">
+    <div class="delete-modal-content" role="document">
+        <div class="delete-modal-body">
+            <div class="delete-modal-mark" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                    <path d="M10 11v6M14 11v6"/>
+                    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                </svg>
+            </div>
+            <div class="delete-modal-copy">
                 <h2 id="deleteModalTitle">Delete clip</h2>
                 <p id="deleteConfirmationText">This will permanently remove the clip from your library.</p>
-                <p class="delete-modal-warning">Associated files are deleted and cannot be recovered.</p>
+                <p class="delete-modal-warning">This can’t be undone.</p>
             </div>
+        </div>
         <div class="delete-modal-footer">
             <button type="button" class="delete-modal-btn cancel-btn" onclick="document.getElementById('deleteConfirmationModal').classList.remove('show')">
-                Cancel
+                Keep
             </button>
             <button type="button" class="delete-modal-btn delete-btn" id="confirmDeleteBtn">
-                Delete clip
+                Delete
             </button>
         </div>
     </div>
@@ -4659,7 +4744,7 @@
     <script src="/js/core/ws-helper.js?v=1"></script>
     <script src="/js/core/safe-init.js?v=1"></script>
     <script src="/js/core/setup.js?v=2"></script>
-    <script src="/js/core/ws-l.js?v=16"></script>
+    <script src="/js/core/ws-l.js?v=18"></script>
 
 <div class="upgrade-modal-overlay" id="upgradeModalOverlay">
     <div class="upgrade-modal-container">
@@ -4821,7 +4906,7 @@
         </div>
     </div>
     <script src="/js/i_dq/youtube-analytics-secure.js?v=1"></script>
-    <script src="js/i_dq/store.js?v=6"></script>
+    <script src="js/i_dq/store.js?v=8"></script>
        </div>
    </div>
 
@@ -12700,6 +12785,11 @@
 
     function buildAnimDD(opts){
         const allowFetch = !!(opts && opts.fetch);
+        if(opts && Object.prototype.hasOwnProperty.call(opts, 'highlight')){
+            const h=opts.highlight;
+            buildAnimDD._highlight=h ? String(h).toLowerCase() : null;
+        }
+        const highlightId=buildAnimDD._highlight || null;
         if(!window.SolisStylePack?.ready?.()){
             if(allowFetch && !buildAnimDD._warming){
                 buildAnimDD._warming=true;
@@ -12710,7 +12800,14 @@
                     .finally(()=>{
                         buildAnimDD._warming=false;
                         if(window.SolisStylePack?.ready?.()){
-                            try{ buildAnimDD({fetch:false}); }catch(_){}
+                            try{
+                                buildAnimDD({fetch:false, highlight:buildAnimDD._highlight});
+                                if(ddAnim?.classList.contains('open')){
+                                    requestAnimationFrame(()=>{
+                                        try{ placeOpenDd(); refitOpenAnimCards(); }catch(_){}
+                                    });
+                                }
+                            }catch(_){}
                         }
                     });
             }
@@ -12735,7 +12832,7 @@
             card.className='sub-acard';
             card.dataset.aid=an.id;
             if(curAnim===an.id) card.classList.add('on');
-
+            if(highlightId && an.id===highlightId) card.classList.add('sub-mem-pick');
             const prev=document.createElement('div'); prev.className='sub-aprev';
             const nm=document.createElement('div'); nm.className='sub-aname';
             nm.textContent=(pack&&pack.name)||an.name;
@@ -12933,6 +13030,7 @@
             if(e.target.closest('#subMemActions,.sub-mem-actions,.sub-mem-ghost'))return;
             if(active&&active.contains(e.target))return;
             if(animPinnedBlock&&animPinnedBlock.contains(e.target))return;
+            if(pendingSubMem || window.__solisPendingSubMem) return;
             deselect();
         },true);
         window.addEventListener('resize',()=>{
@@ -14693,34 +14791,106 @@
     }
     window.syncPillAnimNudge=function(){};
 
-    window.openSubtitleAnimations=function(){
+    function revealSubtitlePresets(opts){
+        opts=opts||{};
+        const cont=document.getElementById('templateVideoPreview');
+        let block=opts.block
+            || cont?.querySelector('.sub-text-block.sub-mem-pick, .sub-text-block.sub-suggest, .sub-text-block:not(.overlay-text-block)');
+        if(!block && typeof createSubtitleBlockSilent==='function'){
+            block=createSubtitleBlockSilent();
+        }
+        if(!block||!ddAnim) return;
+        const animId=String(
+            opts.animId||curAnim||block.dataset.subAnim||'karaoke'
+        ).toLowerCase();
+        curAnim=animId;
+        block.dataset.subAnim=animId;
+
+        if(opts.soft){
+            active=block;
+            pill.classList.add('active');
+            posMenu({force:true});
+        }else if(active!==block || !block.classList.contains('selected')){
+            try{ select(block); }catch(_){
+                active=block;
+                showMenu();
+            }
+        }else{
+            showMenu();
+        }
+
+        const btn=document.getElementById('subBtnAnims');
+        if(!btn) return;
+        const memPick=!!opts.memPick;
+        const highlight=memPick ? animId : (opts.highlight || null);
+
+        const paint=()=>{
+            if(!ddAnim||!block?.isConnected) return;
+            if(opts.soft){
+                active=block;
+                pill.classList.add('active');
+                posMenu({force:true});
+            }else{
+                if(!active||isOverlayText(active)){
+                    try{ select(block); }catch(_){ active=block; }
+                }
+                showMenu();
+            }
+            closeDD();
+            buildAnimDD({fetch:true, highlight});
+            openDD(ddAnim, btn);
+            btn.classList.add('sub-active');
+            if(memPick) btn.classList.add('sub-mem-pick');
+            else btn.classList.remove('sub-mem-pick');
+            posMenu({force:true});
+            placeOpenDd();
+            if(!opts.soft && !opts.skipPreview){
+                animLivePinned=true;
+                animPinnedBlock=active||block;
+                if(!(opts.keepPreview && animPreviewActiveId===animId && (animFullIv||animFullRunner))){
+                    showAnimFullPreview(animId);
+                }else{
+                    posMenu({force:true});
+                }
+            }
+            try{ window.syncPillAnimNudge?.(); }catch(_){}
+        };
+
+        paint();
+        if(!window.SolisStylePack?.ready?.()){
+            Promise.resolve(window.SolisStylePack?.ensure?.())
+                .catch(()=>{})
+                .finally(()=>{
+                    try{
+                        if(ddAnim?.classList.contains('open')) paint();
+                    }catch(_){}
+                });
+        }
+    }
+    window.revealSubtitlePresets=revealSubtitlePresets;
+
+    window.openSubtitleAnimations=function(opts){
+        opts=opts||{};
         const wasTeach=!!window.solisAnimTeachActive;
-        const handoffId=animPreviewActiveId||curAnim||null;
+        const handoffId=opts.animId||animPreviewActiveId||curAnim||null;
         if(typeof window.solisTeachCycleAnims==='function'){
             window.solisTeachCycleAnims(false, { keepPreview: wasTeach });
         }
         if(typeof addSubtitleBlock==='function')addSubtitleBlock();
         try{ window.syncPillAnimNudge?.(); }catch(_){}
         setTimeout(()=>{
-            if(!active||isOverlayText(active))return;
-            const btn=document.getElementById('subBtnAnims');
-            if(!btn||!ddAnim)return;
-            closeDD();
-            buildAnimDD({fetch:true});
-            openDD(ddAnim,btn);
-            btn.classList.add('sub-active');
-            posMenu({force:true});
-            const id=handoffId||curAnim||active.dataset.subAnim||'karaoke';
-            curAnim=id;
-            active.dataset.subAnim=id;
-            animLivePinned=true;
-            if(!(wasTeach && animPreviewActiveId===id && animFullIv)){
-                showAnimFullPreview(id);
-            }else{
-                animPinnedBlock=active;
-                posMenu({force:true});
-            }
-            try{ window.syncPillAnimNudge?.(); }catch(_){}
+            const cont=document.getElementById('templateVideoPreview');
+            const block=active
+                || cont?.querySelector('.sub-text-block:not(.overlay-text-block)');
+            if(!block||isOverlayText(block)) return;
+            revealSubtitlePresets({
+                block,
+                animId: handoffId||block.dataset.subAnim||'karaoke',
+                memPick: !!opts.memPick,
+                highlight: opts.highlight||null,
+                keepPreview: wasTeach,
+                soft: false,
+            });
         },80);
     };
 
@@ -14855,6 +15025,11 @@
         }
         ddAnim?.querySelector('.sub-mem-ask')?.remove();
         document.querySelectorAll('.sub-mem-pick').forEach(el=>el.classList.remove('sub-mem-pick'));
+        try{ buildAnimDD._highlight=null; }catch(_){}
+        document.getElementById('subBtnAnims')?.classList.remove('sub-mem-pick');
+        if(opts?.closePresets!==false && (opts?.cooldown||opts?.persistReject||opts?.revert)){
+            try{ hideMenu(); closeDD(); }catch(_){}
+        }
         if(opts?.persistReject||opts?.cooldown){
             subMemCooldownUntil=Date.now()+(opts?.persistReject?180000:9000);
             try{
@@ -15054,9 +15229,10 @@
             }
         }catch(_){}
 
+        let live=null;
         if(pendingSubMem?.previewApplied){
             if(subMemGhost){ try{ subMemGhost.remove(); }catch(_){} subMemGhost=null; }
-            const live=document.getElementById('templateVideoPreview')
+            live=document.getElementById('templateVideoPreview')
                 ?.querySelector('.sub-text-block.sub-mem-pick, .sub-text-block:not(.overlay-text-block)');
             placeMemActionsNear(live||document.getElementById('templateVideoPreview'));
             ensureSubMemActions().classList.add('open');
@@ -15065,11 +15241,18 @@
             ensureSubMemActions().classList.add('open');
         }
         try{
-            hideMenu();
-            closeDD();
-            const pill=document.getElementById('previewEditorPill');
-            pill?.querySelectorAll('.tool-btn.active').forEach(b=>b.classList.remove('active'));
+            const toolPill=document.getElementById('previewEditorPill');
+            toolPill?.querySelectorAll('.tool-btn.active').forEach(b=>b.classList.remove('active'));
             if(typeof window.hideGameplayPillMenu==='function') window.hideGameplayPillMenu();
+        }catch(_){}
+        try{
+            const animId=normalizeSubtitleAnim(style.anim||'karaoke');
+            revealSubtitlePresets({
+                soft:true,
+                memPick:true,
+                block: live||undefined,
+                animId,
+            });
         }catch(_){}
     }
 
@@ -15121,18 +15304,23 @@
             if(window.SolisMemory&&typeof window.SolisMemory.recordSuggestionAccepted==='function'){
                 window.SolisMemory.recordSuggestionAccepted(tid, { tip: !!(style&&style.__tip) });
             }
-            if(window.SolisMemory&&typeof window.SolisMemory.continueSuggestAfterCaption==='function'){
-                window.SolisMemory.continueSuggestAfterCaption(tid);
-            }
         }catch(_){}
         closeDD();
+        const acceptedAnim=normalizeSubtitleAnim(style?.anim||curAnim||'karaoke');
         setTimeout(()=>{
             try{
                 if(typeof window.openSubtitleAnimations==='function'){
-                    window.openSubtitleAnimations();
+                    window.openSubtitleAnimations({ memPick:true, animId:acceptedAnim });
                 }
             }catch(_){}
         }, style?.__tip ? 140 : 260);
+        setTimeout(()=>{
+            try{
+                if(window.SolisMemory&&typeof window.SolisMemory.continueSuggestAfterCaption==='function'){
+                    window.SolisMemory.continueSuggestAfterCaption(tid);
+                }
+            }catch(_){}
+        }, style?.__tip ? 720 : 900);
     }
 
     window.applySubtitleStyle=function(style, opts){

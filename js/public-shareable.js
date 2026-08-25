@@ -425,21 +425,41 @@
   function wireVideo(e) {
     var t = document.getElementById("tapPlay");
     if (!e) return;
+    if (e.dataset.solisWired === "1") return;
+    e.dataset.solisWired = "1";
     function syncTap() {
       if (!t) return;
-      t.hidden = !e.paused;
+      var o = !!e.paused;
+      t.hidden = !o;
+      t.setAttribute("aria-hidden", o ? "false" : "true");
     }
-    t && t.addEventListener("click", function(t) {
-      t.stopPropagation();
-      e.play().catch(function() {});
-      syncTap();
-    });
-    e.addEventListener("click", function() {
-      if (e.paused) e.play().catch(function() {}); else e.pause();
+    if (t) {
+      t.addEventListener("click", function(t) {
+        t.preventDefault();
+        t.stopPropagation();
+        var o = e.play();
+        if (o && typeof o.then === "function") {
+          o.then(syncTap).catch(function() {
+            syncTap();
+          });
+        } else {
+          syncTap();
+        }
+      });
+    }
+    e.addEventListener("click", function(t) {
+      if (t.target.closest && t.target.closest(".side-btn, .creator-row, .tap-play")) return;
+      if (e.paused) {
+        var o = e.play();
+        if (o && typeof o.then === "function") o.catch(function() {});
+      } else {
+        e.pause();
+      }
       syncTap();
     });
     e.addEventListener("play", syncTap);
     e.addEventListener("pause", syncTap);
+    e.addEventListener("ended", syncTap);
     syncTap();
   }
   function goToProfile(e) {

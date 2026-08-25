@@ -254,18 +254,18 @@
     const a = document.getElementById("portalContainer");
     const s = document.getElementById("clipsContainer");
     const r = document.getElementById("customEditorContainer");
-    const c = document.querySelector(".input-section");
+    const l = document.querySelector(".input-section");
     [ o, a, s, r ].forEach(e => {
       if (!e) return;
       if (n && e === n) return;
       e.style.display = "none";
       e.classList.remove("active");
     });
-    if (c) {
-      c.classList.remove("active");
-      c.style.cssText = "display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; z-index: -10000 !important;";
+    if (l) {
+      l.classList.remove("active");
+      l.style.cssText = "display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; z-index: -10000 !important;";
     }
-    const l = document.getElementById("clipsSubNav");
+    const c = document.getElementById("clipsSubNav");
     const d = window.innerWidth <= 768;
     const u = e === "Portal";
     document.body.classList.toggle("mnav-on-portal", d && u);
@@ -273,25 +273,25 @@
       o.style.display = "block";
       o.classList.add("active");
       if (window.analyticsManager) window.analyticsManager.updateCharts();
-      if (l && !d) l.style.display = "none";
+      if (c && !d) c.style.display = "none";
     } else if (e === "Portal" && a) {
       a.style.display = "block";
       a.classList.add("active");
-      if (l && !d) l.style.display = "none";
+      if (c && !d) c.style.display = "none";
     } else if (e === "clips" && s) {
       s.style.display = "block";
       s.classList.add("active");
-      if (l) {
-        l.style.display = "";
-        l.style.removeProperty("display");
+      if (c) {
+        c.style.display = "";
+        c.style.removeProperty("display");
       }
       if (window.clipsStudio && !window.clipsStudio.initialized) {
         window.clipsStudio.init();
       }
     }
-    if (d && l) {
-      l.style.display = "";
-      l.style.removeProperty("display");
+    if (d && c) {
+      c.style.display = "";
+      c.style.removeProperty("display");
     }
   }
   function _clearMnavAnimClasses(e) {
@@ -378,9 +378,11 @@
     if (window.navigator.vibrate) window.navigator.vibrate(8);
   }
   function goMobilePortal() {
+    window.closeMobileNavMenu?.();
     transitionPortalTemplates(true);
   }
   function goMobileTemplatesFromPortal() {
+    window.closeMobileNavMenu?.();
     transitionPortalTemplates(false);
   }
   function updateMobileClipsPillIndicator(e) {
@@ -400,6 +402,7 @@
     try {
       localStorage.setItem("currentNavigationTarget", "clips");
     } catch (e) {}
+    window.closeMobileNavMenu?.();
     if (window.innerWidth <= 768 && document.body.classList.contains("mnav-on-portal") && e === "templates") {
       transitionPortalTemplates(false);
       return;
@@ -414,14 +417,14 @@
     if (typeof window.switchClipsTab === "function") {
       window.switchClipsTab(e, r);
     }
-    const c = document.getElementById(`${e}Section`);
-    if (c && s) {
-      c.classList.remove("clips-slide-from-left", "clips-slide-from-right");
-      void c.offsetWidth;
-      c.classList.add(s === "left" ? "clips-slide-from-right" : "clips-slide-from-left");
-      clearTimeout(c._clipsSlideT);
-      c._clipsSlideT = setTimeout(() => {
-        c.classList.remove("clips-slide-from-left", "clips-slide-from-right");
+    const l = document.getElementById(`${e}Section`);
+    if (l && s) {
+      l.classList.remove("clips-slide-from-left", "clips-slide-from-right");
+      void l.offsetWidth;
+      l.classList.add(s === "left" ? "clips-slide-from-right" : "clips-slide-from-left");
+      clearTimeout(l._clipsSlideT);
+      l._clipsSlideT = setTimeout(() => {
+        l.classList.remove("clips-slide-from-left", "clips-slide-from-right");
       }, 400);
     }
     requestAnimationFrame(() => updateMobileClipsPillIndicator(e));
@@ -438,8 +441,8 @@
     let a = 0;
     let s = 0;
     let r = 0;
-    let c = false;
-    let l = null;
+    let l = false;
+    let c = null;
     let d = null;
     let u = 0;
     function activeSectionEl() {
@@ -475,41 +478,41 @@
       if (!e.touches || e.touches.length !== 1) return;
       const t = e.target;
       if (t && t.closest && t.closest('input, textarea, select, [contenteditable="true"],' + ".preview-placeholder, .sub-text-block, .url-input-wrapper," + ".preview-timeline-wrap, .template-preview-modal, .stgModal," + ".mobile-clips-bar, .clips-sub-nav")) {
-        c = false;
+        l = false;
         return;
       }
       a = e.touches[0].clientX;
       s = e.touches[0].clientY;
       r = Date.now();
-      c = true;
-      l = null;
+      l = true;
+      c = null;
       u = 0;
       d = activeSectionEl();
     }, {
       passive: true
     });
     e.addEventListener("touchmove", e => {
-      if (!c || window.innerWidth > 768) return;
+      if (!l || window.innerWidth > 768) return;
       if (!e.touches || e.touches.length !== 1) return;
       const n = e.touches[0];
       const o = n.clientX - a;
       const r = n.clientY - s;
-      if (!l) {
+      if (!c) {
         if (Math.abs(o) < i && Math.abs(r) < i) return;
         if (Math.abs(r) >= Math.abs(o)) {
-          l = "y";
-          c = false;
+          c = "y";
+          l = false;
           clearDragStyles(d, false);
           d = null;
           return;
         }
-        l = "x";
+        c = "x";
         if (d) {
           d.classList.add("clips-drag");
           d.classList.remove("clips-drag-snap", "clips-slide-from-left", "clips-slide-from-right");
         }
       }
-      if (l !== "x") return;
+      if (c !== "x") return;
       if (e.cancelable) e.preventDefault();
       const m = currentTabIndex();
       let p = o;
@@ -525,14 +528,14 @@
       passive: false
     });
     function finishSwipe(e) {
-      if (!c && l !== "x") {
-        l = null;
+      if (!l && c !== "x") {
+        c = null;
         d = null;
         return;
       }
-      const i = l === "x";
-      c = false;
-      l = null;
+      const i = c === "x";
+      l = false;
+      c = null;
       if (!i) {
         clearDragStyles(d, false);
         d = null;
@@ -599,9 +602,64 @@
     e.classList.add("active");
     if (i) switchSection(i);
   };
-  window.closeMobileNavMenu = function() {};
-  window.openMobileNavMenu = function() {};
-  window.toggleMobileNavMenu = function() {};
+  window.closeMobileNavMenu = function() {
+    const e = document.getElementById("mnavMenuBtn");
+    const t = document.getElementById("mnavMenuSheet");
+    const i = document.getElementById("mnavMenuBackdrop");
+    if (t) {
+      t.hidden = true;
+      t.classList.remove("is-open");
+      t.style.display = "none";
+      t.setAttribute("aria-hidden", "true");
+    }
+    if (i) {
+      i.hidden = true;
+      i.classList.remove("is-open");
+      i.style.display = "none";
+      i.setAttribute("aria-hidden", "true");
+    }
+    if (e) {
+      e.setAttribute("aria-expanded", "false");
+      e.setAttribute("aria-label", "Open menu");
+    }
+  };
+  window.openMobileNavMenu = function() {
+    const e = document.getElementById("mnavMenuBtn");
+    const t = document.getElementById("mnavMenuSheet");
+    const i = document.getElementById("mnavMenuBackdrop");
+    if (!t) return;
+    const n = document.body.classList.contains("mnav-on-portal");
+    const o = document.getElementById("clipsContainer")?.classList.contains("active");
+    t.querySelectorAll("[data-mnav-go]").forEach(e => {
+      const t = e.getAttribute("data-mnav-go");
+      const i = t === "Portal" ? n : t === "clips" ? !n && o : false;
+      e.classList.toggle("is-active", !!i);
+    });
+    t.hidden = false;
+    t.classList.add("is-open");
+    t.style.display = "flex";
+    t.setAttribute("aria-hidden", "false");
+    if (i) {
+      i.hidden = false;
+      i.classList.add("is-open");
+      i.style.display = "block";
+      i.setAttribute("aria-hidden", "false");
+    }
+    if (e) {
+      e.setAttribute("aria-expanded", "true");
+      e.setAttribute("aria-label", "Close menu");
+    }
+  };
+  window.toggleMobileNavMenu = function(e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    if (window.innerWidth > 768) return;
+    const t = document.getElementById("mnavMenuSheet");
+    if (!t) return;
+    if (t.hidden) window.openMobileNavMenu(); else window.closeMobileNavMenu();
+  };
   window.toggleNavWrapperCollapse = function() {};
   window.switchSection = switchSection;
   document.addEventListener("DOMContentLoaded", function() {
@@ -638,7 +696,23 @@
             document.getElementById("profileDropdown")?.classList.remove("open");
           }
         }
+        const o = document.getElementById("mnavMenuBtn");
+        if (o && o.parentElement === s && s.firstElementChild !== o) {
+          s.insertBefore(o, s.firstElementChild);
+        } else if (!o && s) {
+          const e = document.createElement("button");
+          e.type = "button";
+          e.className = "mnav-menu-btn";
+          e.id = "mnavMenuBtn";
+          e.setAttribute("aria-label", "Open menu");
+          e.setAttribute("aria-expanded", "false");
+          e.setAttribute("aria-controls", "mnavMenuSheet");
+          e.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" width="20" height="20" class="mnav-menu-icon" aria-hidden="true"><line x1="5" y1="7" x2="19" y2="7"/><line x1="5" y1="12" x2="19" y2="12"/><line x1="5" y1="17" x2="19" y2="17"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" width="20" height="20" class="mnav-menu-close" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+          s.insertBefore(e, s.firstElementChild);
+          e.addEventListener("click", e => window.toggleMobileNavMenu(e));
+        }
       } else {
+        window.closeMobileNavMenu?.();
         if (e && e.parentElement !== o) {
           o.appendChild(e);
           document.getElementById("profileDropdown")?.classList.remove("open");
@@ -653,53 +727,90 @@
             document.getElementById("profileDropdown")?.classList.remove("open");
           }
         }
-        if (s && !s.children.length) s.remove();
+        if (s && !s.querySelector(".profile-action-cluster") && !s.querySelector(".profile-dropdown-wr") && !s.querySelector(".notif-wrapper") && !s.querySelector("#mnavMenuBtn")) {
+          s.remove();
+        }
       }
     }
     syncMobileProfileInNav();
     window.addEventListener("resize", syncMobileProfileInNav);
     window.syncMobileProfileInNav = syncMobileProfileInNav;
-    const e = document.getElementById("portalContainer");
-    if (e && !e.dataset.portalSwipeBound) {
-      e.dataset.portalSwipeBound = "1";
-      let t = 0, i = 0, o = 0, a = false, s = null;
-      e.addEventListener("touchstart", e => {
+    const e = document.getElementById("mnavMenuBtn");
+    const t = document.getElementById("mnavMenuBackdrop");
+    const i = document.getElementById("mnavMenuSheet");
+    if (e) {
+      e.addEventListener("click", e => window.toggleMobileNavMenu(e));
+    }
+    if (t) {
+      t.addEventListener("click", () => window.closeMobileNavMenu());
+    }
+    if (i) {
+      i.querySelectorAll("[data-mnav-go]").forEach(e => {
+        e.addEventListener("click", () => {
+          if (e.disabled || e.classList.contains("is-disabled")) return;
+          const t = e.getAttribute("data-mnav-go");
+          window.closeMobileNavMenu();
+          if (t === "Portal") {
+            goMobilePortal();
+            return;
+          }
+          if (t === "clips") {
+            goMobileClipsTab(localStorage.getItem("clipsActiveTab") || "create");
+            return;
+          }
+          const i = document.querySelector(`.nav-item[data-target="${t}"]`);
+          if (i && typeof window.navigate === "function") {
+            window.navigate(i, Number(i.dataset.index || 0));
+          } else if (t) {
+            switchSection(t);
+          }
+        });
+      });
+    }
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape") window.closeMobileNavMenu();
+    });
+    const o = document.getElementById("portalContainer");
+    if (o && !o.dataset.portalSwipeBound) {
+      o.dataset.portalSwipeBound = "1";
+      let e = 0, t = 0, i = 0, a = false, s = null;
+      o.addEventListener("touchstart", o => {
         if (window.innerWidth > 768 || !document.body.classList.contains("mnav-on-portal")) return;
         if (n) return;
-        if (!e.touches || e.touches.length !== 1) return;
-        const r = e.target;
+        if (!o.touches || o.touches.length !== 1) return;
+        const r = o.target;
         if (r && r.closest && r.closest('input, textarea, select, [contenteditable="true"],' + ".stgModal, .mobile-clips-bar, .clips-sub-nav, .profile-dropdown-wr," + ".mnav-side-actions, .notif-wrapper")) {
           a = false;
           return;
         }
-        t = e.touches[0].clientX;
-        i = e.touches[0].clientY;
-        o = Date.now();
+        e = o.touches[0].clientX;
+        t = o.touches[0].clientY;
+        i = Date.now();
         a = true;
         s = null;
       }, {
         passive: true
       });
-      e.addEventListener("touchmove", e => {
+      o.addEventListener("touchmove", i => {
         if (!a) return;
-        const n = e.touches[0].clientX - t;
-        const o = e.touches[0].clientY - i;
+        const n = i.touches[0].clientX - e;
+        const o = i.touches[0].clientY - t;
         if (!s) {
           if (Math.abs(n) < 12 && Math.abs(o) < 12) return;
           s = Math.abs(n) >= Math.abs(o) ? "x" : "y";
         }
-        if (s === "x" && Math.abs(n) > 16) e.preventDefault();
+        if (s === "x" && Math.abs(n) > 16) i.preventDefault();
       }, {
         passive: false
       });
-      e.addEventListener("touchend", e => {
+      o.addEventListener("touchend", t => {
         if (!a) return;
         a = false;
         if (s !== "x") return;
-        const i = (e.changedTouches?.[0]?.clientX ?? t) - t;
-        const n = Math.max(16, Date.now() - o);
-        const r = Math.abs(i) / n;
-        if (i < -72 || i < -42 && r > .55) {
+        const n = (t.changedTouches?.[0]?.clientX ?? e) - e;
+        const o = Math.max(16, Date.now() - i);
+        const r = Math.abs(n) / o;
+        if (n < -72 || n < -42 && r > .55) {
           goMobileTemplatesFromPortal();
         }
       }, {

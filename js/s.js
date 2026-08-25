@@ -383,13 +383,13 @@ const PreviewTimeline = (() => {
   let g = null;
   let h = null;
   let w = 0;
-  let v = 0;
-  let b = null;
+  let b = 0;
+  let v = null;
   let S = null;
   let _ = false;
   let k = 0;
-  let L = 0;
   let C = 0;
+  let L = 0;
   let P = 0;
   let I = 1;
   let E = [];
@@ -399,8 +399,8 @@ const PreviewTimeline = (() => {
   let B = null;
   let A = false;
   let R = null;
-  let U = 0;
-  let D = null;
+  let D = 0;
+  let U = null;
   let F = false;
   let N = false;
   const O = 180;
@@ -527,20 +527,20 @@ const PreviewTimeline = (() => {
     return true;
   }
   function paintSegmentReorderGhost(e) {
-    if (!D || !isRankingEdit()) return;
+    if (!U || !isRankingEdit()) return;
     const t = segmentIndexAtClientX(e);
-    D.hoverIndex = t;
+    U.hoverIndex = t;
     const i = Array.from(Q?.children || []);
     i.forEach((e, i) => {
-      e.classList.toggle("is-drop-target", i === t && i !== D.index);
-      e.classList.toggle("is-dragging", i === D.index);
+      e.classList.toggle("is-drop-target", i === t && i !== U.index);
+      e.classList.toggle("is-dragging", i === U.index);
     });
-    const n = e - D.startX;
-    const r = i[D.index];
+    const n = e - U.startX;
+    const r = i[U.index];
     if (r) {
       const e = (() => {
         const e = getSegmentBounds();
-        return e[D.index] / u * I;
+        return e[U.index] / u * I;
       })();
       r.style.transform = `translate3d(${e + n}px,0,0)`;
       r.style.zIndex = "5";
@@ -602,9 +602,9 @@ const PreviewTimeline = (() => {
     if (t) paintSegmentsFast(); else if (e) paintSegments();
   }
   function schedulePaintChrome(e) {
-    if (v) return;
-    v = requestAnimationFrame(() => {
-      v = 0;
+    if (b) return;
+    b = requestAnimationFrame(() => {
+      b = 0;
       paintChrome(e);
     });
   }
@@ -649,9 +649,9 @@ const PreviewTimeline = (() => {
     return i;
   }
   function clearSegHold() {
-    if (U) {
-      clearTimeout(U);
-      U = 0;
+    if (D) {
+      clearTimeout(D);
+      D = 0;
     }
     N = false;
   }
@@ -704,12 +704,12 @@ const PreviewTimeline = (() => {
     E = E.filter(e => e > d + .04 && e < p - .04).sort((e, t) => e - t);
   }
   function paintSegmentMove(e) {
-    if (!D || !u || I <= 0) return;
+    if (!U || !u || I <= 0) return;
     if (isRankingEdit()) {
       paintSegmentReorderGhost(e);
       return;
     }
-    const {index: t, startX: i, startA: n, startB: r} = D;
+    const {index: t, startX: i, startA: n, startB: r} = U;
     const o = (e - i) / I * u;
     applySegmentTimes(t, n + o, r + o);
     m = Math.max(d, Math.min(p, n + o));
@@ -724,20 +724,20 @@ const PreviewTimeline = (() => {
     paintSegmentsFast();
   }
   function beginSegmentDrag() {
-    if (!D || c === "segment") return;
-    clearTimeout(U);
-    U = 0;
+    if (!U || c === "segment") return;
+    clearTimeout(D);
+    D = 0;
     if (isRankingEdit() && !N) return;
     c = "segment";
     f = a ? !a.paused : false;
     if (a && !a.paused) a.pause();
     W?.classList.add("is-dragging", "is-trimming");
     if (isRankingEdit()) W?.classList.add("is-reordering");
-    D.target?.classList.add("is-dragging");
-    Q?.children?.[D.index]?.classList.add("is-dragging");
-    if (D.target?.setPointerCapture && D.pointerId != null) {
+    U.target?.classList.add("is-dragging");
+    Q?.children?.[U.index]?.classList.add("is-dragging");
+    if (U.target?.setPointerCapture && U.pointerId != null) {
       try {
-        D.target.setPointerCapture(D.pointerId);
+        U.target.setPointerCapture(U.pointerId);
       } catch (e) {}
     }
   }
@@ -755,7 +755,7 @@ const PreviewTimeline = (() => {
     if (e < 0 || e >= i.length - 1) return;
     F = false;
     N = false;
-    D = {
+    U = {
       index: e,
       pointerId: t.pointerId,
       startX: t.clientX,
@@ -763,15 +763,15 @@ const PreviewTimeline = (() => {
       startB: i[e + 1],
       target: t.currentTarget
     };
-    U = setTimeout(() => {
-      U = 0;
+    D = setTimeout(() => {
+      D = 0;
       N = true;
-      D?.target?.classList.add("is-hold-ready");
+      U?.target?.classList.add("is-hold-ready");
     }, O);
   }
   function onSegmentPointerMove(e) {
-    if (!D) return;
-    const t = Math.abs(e.clientX - D.startX);
+    if (!U) return;
+    const t = Math.abs(e.clientX - U.startX);
     if (c === "segment") {
       e.preventDefault();
       if (t >= $) F = true;
@@ -796,8 +796,8 @@ const PreviewTimeline = (() => {
     }
   }
   function onSegmentPointerUp(e) {
-    if (!D) return;
-    const t = D;
+    if (!U) return;
+    const t = U;
     const i = F;
     const n = t.hoverIndex;
     clearSegHold();
@@ -807,7 +807,7 @@ const PreviewTimeline = (() => {
     W?.classList.remove("is-reordering");
     if (c === "segment" && !i) {
       c = null;
-      D = null;
+      U = null;
       W?.classList.remove("is-dragging", "is-trimming");
       if (f) a?.play().catch(() => {});
       f = false;
@@ -817,7 +817,7 @@ const PreviewTimeline = (() => {
     if (i) {
       const e = isRankingEdit() && n != null && n !== t.index && applySegmentReorder(t.index, n);
       c = null;
-      D = null;
+      U = null;
       markRankingTimelineDirty();
       scheduleSeek(m, true);
       if (f) a?.play().catch(() => {});
@@ -832,7 +832,7 @@ const PreviewTimeline = (() => {
       }
       return;
     }
-    D = null;
+    U = null;
     c = null;
     customizeSegment(t.index);
   }
@@ -1005,15 +1005,15 @@ const PreviewTimeline = (() => {
     S = Math.max(0, Math.min(u || e, e));
     const i = performance.now();
     const n = t ? 0 : Math.max(0, r - (i - k));
-    if (L) {
-      clearTimeout(L);
-      L = 0;
+    if (C) {
+      clearTimeout(C);
+      C = 0;
     }
     if (n === 0) {
       flushSeek();
     } else {
-      L = setTimeout(() => {
-        L = 0;
+      C = setTimeout(() => {
+        C = 0;
         flushSeek();
       }, n);
     }
@@ -1269,7 +1269,7 @@ const PreviewTimeline = (() => {
     }
   }
   function onPointerMove(e) {
-    if (D && c !== "segment") {
+    if (U && c !== "segment") {
       onSegmentPointerMove(e);
       if (c === "segment") return;
     }
@@ -1283,12 +1283,12 @@ const PreviewTimeline = (() => {
       paintSegmentMove(e.clientX);
       return;
     }
-    b = e.clientX;
+    v = e.clientX;
     if (w) return;
     w = requestAnimationFrame(() => {
       w = 0;
-      const e = b;
-      b = null;
+      const e = v;
+      v = null;
       if (e == null) return;
       applyPointer(e, {
         seek: true
@@ -1296,7 +1296,7 @@ const PreviewTimeline = (() => {
     });
   }
   function endDrag() {
-    if (D) {
+    if (U) {
       onSegmentPointerUp();
       return;
     }
@@ -1306,11 +1306,11 @@ const PreviewTimeline = (() => {
     Q?.querySelectorAll(".preview-timeline-handle.is-dragging").forEach(e => e.classList.remove("is-dragging"));
     Z?.classList.remove("is-dragging");
     ee?.classList.remove("is-dragging");
-    if (b != null) {
-      applyPointer(b, {
+    if (v != null) {
+      applyPointer(v, {
         seek: false
       });
-      b = null;
+      v = null;
     }
     if (w) {
       cancelAnimationFrame(w);
@@ -1498,33 +1498,33 @@ const PreviewTimeline = (() => {
   function detach() {
     y += 1;
     destroyCaptureVideo();
-    if (L) {
-      clearTimeout(L);
-      L = 0;
-    }
     if (C) {
       clearTimeout(C);
       C = 0;
+    }
+    if (L) {
+      clearTimeout(L);
+      L = 0;
     }
     if (w) {
       cancelAnimationFrame(w);
       w = 0;
     }
-    if (v) {
-      cancelAnimationFrame(v);
-      v = 0;
+    if (b) {
+      cancelAnimationFrame(b);
+      b = 0;
     }
     while (z.length) {
       try {
         z.pop()();
       } catch (e) {}
     }
-    b = null;
+    v = null;
     S = null;
     _ = false;
     c = null;
     clearSegHold();
-    D = null;
+    U = null;
     F = false;
     f = false;
     E = [];
@@ -1544,22 +1544,22 @@ const PreviewTimeline = (() => {
     hide();
   }
   function scheduleFilmstripBuild(e = 450) {
-    if (C) {
-      clearTimeout(C);
-      C = 0;
+    if (L) {
+      clearTimeout(L);
+      L = 0;
     }
     const run = () => {
-      C = 0;
+      L = 0;
       buildFilmstripFromVideo();
     };
     if (typeof requestIdleCallback === "function") {
-      C = setTimeout(() => {
+      L = setTimeout(() => {
         requestIdleCallback(() => run(), {
           timeout: 1200
         });
       }, e);
     } else {
-      C = setTimeout(run, e);
+      L = setTimeout(run, e);
     }
   }
   function attach(e) {
@@ -2273,20 +2273,20 @@ function bindFaceReframePanHandlers() {
     const h = m.faceSrcW || m.srcW;
     const w = m.faceSrcH || m.srcH;
     if (!h || !w) return;
-    const v = _splitscreenQuery("splitscreenBottom") || t;
-    const b = e.closest(".ss-panel-crop-viewport") || v;
-    const S = b.clientWidth || v.clientWidth || 1;
-    const _ = b.clientHeight || v.clientHeight || 1;
+    const b = _splitscreenQuery("splitscreenBottom") || t;
+    const v = e.closest(".ss-panel-crop-viewport") || b;
+    const S = v.clientWidth || b.clientWidth || 1;
+    const _ = v.clientHeight || b.clientHeight || 1;
     const k = r[2];
-    const L = r[3];
-    const C = Math.max(S / Math.max(1, k), _ / Math.max(1, L));
-    const P = (l - i) / C;
-    const I = (c - n) / C;
+    const C = r[3];
+    const L = Math.max(S / Math.max(1, k), _ / Math.max(1, C));
+    const P = (l - i) / L;
+    const I = (c - n) / L;
     let E = r[0] - P;
     let T = r[1] - I;
     E = Math.max(0, Math.min(h - k, E));
-    T = Math.max(0, Math.min(w - L, T));
-    m.faceCrop = [ E, T, k, L ];
+    T = Math.max(0, Math.min(w - C, T));
+    m.faceCrop = [ E, T, k, C ];
     syncLibrarySplitscreenCropPreview();
   };
   const endPan = (t = null) => {
@@ -6117,6 +6117,8 @@ class ClipsStudio {
     this._libraryNavIndex = 0;
     this._dragClipId = null;
     this.librarySortMode = this._readLibrarySortMode();
+    this.librarySelectMode = false;
+    this._librarySelectedIds = new Set;
     this.initialized = false;
     this.currentProjectId = null;
     this.selectedTemplate = null;
@@ -6419,6 +6421,7 @@ class ClipsStudio {
       this.filterLibrary(e.target.value);
     });
     this._initLibrarySortControls();
+    this._initLibrarySelectMode();
     const goCreate = () => this.goToCreateUrlSubmit();
     document.querySelectorAll(".quick-action-create, #newClipBtn, #headerNewClipBtn").forEach(e => {
       if (e.dataset.createBound === "1") return;
@@ -7133,6 +7136,7 @@ class ClipsStudio {
     }
     if (this._watermarkFreeClickHandler && t) {
       t.removeEventListener("click", this._watermarkFreeClickHandler, true);
+      t.removeEventListener("pointerdown", this._watermarkFreeClickHandler, true);
       this._watermarkFreeClickHandler = null;
     }
     this._watermarkFreeLockedOn = !n && !s;
@@ -7156,6 +7160,22 @@ class ClipsStudio {
       this.updateWatermarkDisplay();
     };
     i.addEventListener("change", this._watermarkChangeHandler);
+    if (!n && this._watermarkFreeLockedOn && t) {
+      this._watermarkFreeClickHandler = e => {
+        e.preventDefault();
+        e.stopPropagation();
+        i.checked = true;
+        t.classList.add("is-on");
+        t.setAttribute("aria-checked", "true");
+        try {
+          localStorage.setItem("watermarkEnabled", "true");
+        } catch (e) {}
+        this.updateWatermarkDisplay();
+        this.openWatermarkPlanPopover();
+      };
+      t.addEventListener("pointerdown", this._watermarkFreeClickHandler, true);
+      t.addEventListener("click", this._watermarkFreeClickHandler, true);
+    }
     this.bindWatermarkPlanPopoverOnce();
     this.updateWatermarkDisplay();
   }
@@ -7213,6 +7233,15 @@ class ClipsStudio {
     if (t.parentElement !== document.body) {
       document.body.appendChild(t);
     }
+    try {
+      document.getElementById("subMemActions")?.classList.remove("open");
+      document.querySelectorAll(".sub-mem-actions.open").forEach(e => {
+        e.classList.remove("open");
+        e.style.opacity = "0";
+        e.style.visibility = "hidden";
+        e.style.pointerEvents = "none";
+      });
+    } catch (e) {}
     const i = e.reason === "quota" ? "quota" : "watermark";
     const applyCopy = e => {
       if (!e) return;
@@ -8284,8 +8313,8 @@ class ClipsStudio {
         await loadAvailableGameplayClips();
       }
       applySplitscreenPreview();
-      const v = e.querySelector("#splitscreenFacePanel");
-      if (v) v.classList.remove("visible");
+      const b = e.querySelector("#splitscreenFacePanel");
+      if (b) b.classList.remove("visible");
       if (l && h) {
         syncLibrarySplitscreenCropPreview();
       }
@@ -11039,9 +11068,10 @@ class ClipsStudio {
     return /^[0-9]+_[a-zA-Z0-9-]+$/.test(e);
   }
   validateItemId(e) {
-    if (!e || typeof e !== "string") return false;
-    if (e.match(/\.\.|\/|\\|:|\||<|>|"|'|\x00/g)) return false;
-    return /^[a-zA-Z0-9_.-]+$/.test(e);
+    if (e == null || e === "") return false;
+    const t = String(e);
+    if (t.match(/\.\.|\/|\\|:|\||<|>|"|'|\x00/g)) return false;
+    return /^[a-zA-Z0-9_.-]+$/.test(t);
   }
   clearUrlIfProcessingDone() {
     try {
@@ -11912,11 +11942,10 @@ class ClipsStudio {
       i.style.opacity = "0.5";
       setTimeout(() => {
         i.innerHTML = "";
-        i.classList.add("solis-clip-card");
+        i.classList.add("library-card", "solis-clip-card");
         i.innerHTML = window.SolisClipCard && SolisClipCard.buildHTML(t) || `<div class="scc-meta"><h2 class="card-title">${sanitizeHTML(t.name)}</h2></div>`;
         if (window.SolisClipCard) SolisClipCard.bind(i, t, this);
         i.removeAttribute("data-processing-id");
-        i.classList.add("library-card", "solis-clip-card");
         i.setAttribute("data-id", t.id);
         i.setAttribute("data-project-id", t.projectId);
         i.style.opacity = "0";
@@ -11994,11 +12023,13 @@ class ClipsStudio {
       });
     }
     if (r) {
-      r.addEventListener("click", e => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (t && this.validateItemId(t) && clipsStudio) {
-          clipsStudio.deleteClip(t);
+      r.addEventListener("click", i => {
+        i.preventDefault();
+        i.stopPropagation();
+        if (t != null && t !== "" && this.validateItemId(t) && clipsStudio) {
+          clipsStudio.deleteClip(String(t), {
+            card: e
+          });
         } else {
           safeLog(`âŒ SECURITY: Invalid itemId for delete: ${t}`);
         }
@@ -12007,7 +12038,12 @@ class ClipsStudio {
     if (!e.dataset.previewBound) {
       e.dataset.previewBound = "1";
       e.addEventListener("click", n => {
-        if (n.target.closest(".library-download-btn, .library-delete-btn, .scc-ico, .scc-viral")) return;
+        if (n.target.closest(".library-download-btn, .library-delete-btn, .scc-ico, .scc-viral, .scc-delete-confirm")) return;
+        if (this.librarySelectMode) {
+          n.preventDefault();
+          n.stopPropagation();
+          return;
+        }
         n.preventDefault();
         n.stopPropagation();
         this.openLibraryPreview(t, i, e);
@@ -12419,8 +12455,12 @@ class ClipsStudio {
         t.className = "library-card solis-clip-card";
         t.setAttribute("data-id", e.id);
         t.setAttribute("data-project-id", e.projectId);
+        if (this.librarySelectMode && this._librarySelectedIds?.has(String(e.id))) {
+          t.classList.add("is-selected");
+        }
         t.innerHTML = window.SolisClipCard && SolisClipCard.buildHTML(e) || `<div class="scc-meta"><h2 class="card-title">${sanitizeHTML(e.name)}</h2></div>`;
         if (window.SolisClipCard) SolisClipCard.bind(t, e, this);
+        this.attachLibraryCardListeners(t, e.id, e.projectId);
         this._bindLibraryDragDrop(t, e);
         if (typeof storeLibraryCard === "function") {
           storeLibraryCard(e.id, {
@@ -12557,6 +12597,16 @@ class ClipsStudio {
       this.setupWebSocketHandlers();
       if (e && !e._hasClickListener) {
         e._hasClickListener = true;
+        e.addEventListener("click", t => {
+          if (!this.librarySelectMode) return;
+          const i = t.target.closest(".library-card.solis-clip-card");
+          if (!i || !e.contains(i)) return;
+          if (t.target.closest(".scc-delete-confirm")) return;
+          t.preventDefault();
+          t.stopPropagation();
+          const n = i.getAttribute("data-id");
+          if (n) this.toggleLibraryClipSelected(n, i);
+        }, true);
         e.addEventListener("click", e => {
           const t = e.target.closest(".library-share-btn");
           if (t) {
@@ -12578,12 +12628,16 @@ class ClipsStudio {
           if (n) {
             e.preventDefault();
             e.stopPropagation();
-            const t = n.getAttribute("data-item-id");
-            if (t && clipsStudio) clipsStudio.deleteClip(t);
+            const t = n.closest(".library-card, .solis-clip-card, [data-id]");
+            const i = n.getAttribute("data-item-id") || t?.getAttribute("data-id") || t?.getAttribute("data-project-id");
+            if (i && clipsStudio) clipsStudio.deleteClip(i, {
+              card: t
+            });
             return;
           }
+          if (this.librarySelectMode) return;
           const r = e.target.closest(".library-card");
-          if (r && !e.target.closest(".library-download-btn, .library-delete-btn, .library-share-btn, .scc-ico, .scc-viral")) {
+          if (r && !e.target.closest(".library-download-btn, .library-delete-btn, .library-share-btn, .scc-ico, .scc-viral, .scc-delete-confirm")) {
             e.preventDefault();
             e.stopPropagation();
             const t = r.getAttribute("data-id");
@@ -12594,35 +12648,119 @@ class ClipsStudio {
       }
     });
   }
-  deleteClip(e) {
+  deleteClip(e, t = {}) {
     safeLog(`ðŸ—‘ï¸ Delete initiated for item: ${e}`);
-    const t = this.libraryItems.find(t => t.id == e) || this.processingItems.find(t => t.id == e);
-    if (!t) {
+    const i = this.libraryItems.find(t => t.id == e) || this.processingItems.find(t => t.id == e);
+    if (!i) {
       safeLog(`âŒ Item not found: ${e}`);
       showNotification("Clip not found", "error");
       return;
     }
-    safeLog(`ðŸ“ Item found:`, t);
-    if (t.status === "processing") {
+    safeLog(`ðŸ“ Item found:`, i);
+    if (i.status === "processing") {
       safeLog(`⚠ï¸ Cannot delete processing item: ${e}`);
       showNotification("Cannot delete items while processing. Wait for completion or cancel first.", "warning");
       return;
     }
+    const n = t.card || document.querySelector(`.library-card[data-id="${CSS.escape(String(e))}"]`) || document.querySelector(`.solis-clip-card[data-id="${CSS.escape(String(e))}"]`);
+    if (n) {
+      this._showCardDeleteConfirm(n, e, i);
+      return;
+    }
+    this._showDeleteConfirmModal(e, i);
+  }
+  _dismissCardDeleteConfirms(e = null) {
+    document.querySelectorAll(".solis-clip-card.is-delete-confirm").forEach(t => {
+      if (e && t === e) return;
+      t.classList.remove("is-delete-confirm");
+      t.querySelectorAll(".scc-delete-confirm").forEach(e => e.remove());
+    });
+  }
+  _showCardDeleteConfirm(e, t, i) {
+    if (!e) {
+      this._showDeleteConfirmModal(t, i);
+      return;
+    }
+    this._dismissCardDeleteConfirms(e);
+    const n = e.querySelector(".scc-delete-confirm");
+    if (n) {
+      n.remove();
+      e.classList.remove("is-delete-confirm");
+    }
+    const r = e.querySelector(".scc-preview") || e;
+    const o = i.name || "this clip";
+    const s = document.createElement("div");
+    s.className = "scc-delete-confirm";
+    s.setAttribute("role", "alertdialog");
+    s.setAttribute("aria-label", "Delete clip");
+    s.innerHTML = `\n            <div class="scc-delete-confirm-panel">\n                <p class="scc-delete-confirm-text">Delete this clip?<span>Can’t be undone</span></p>\n                <div class="scc-delete-confirm-actions">\n                    <button type="button" class="scc-delete-confirm-btn keep">Keep</button>\n                    <button type="button" class="scc-delete-confirm-btn go">Delete</button>\n                </div>\n            </div>`;
+    const a = s.querySelector(".keep");
+    const l = s.querySelector(".go");
+    const dismiss = () => {
+      s.remove();
+      e.classList.remove("is-delete-confirm");
+      document.removeEventListener("pointerdown", onOutside, true);
+      document.removeEventListener("keydown", onKey, true);
+    };
+    const onOutside = t => {
+      if (!e.contains(t.target)) dismiss();
+    };
+    const onKey = e => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        dismiss();
+      }
+    };
+    a.addEventListener("click", e => {
+      e.preventDefault();
+      e.stopPropagation();
+      dismiss();
+    });
+    l.addEventListener("click", async e => {
+      e.preventDefault();
+      e.stopPropagation();
+      a.disabled = true;
+      l.disabled = true;
+      l.textContent = "Deleting…";
+      try {
+        await this._performDeleteClip(t, i);
+        dismiss();
+      } catch (e) {
+        showNotification("Failed to delete clip: " + (e?.message || e), "error");
+        a.disabled = false;
+        l.disabled = false;
+        l.textContent = "Delete";
+      }
+    });
+    s.addEventListener("click", e => {
+      e.preventDefault();
+      e.stopPropagation();
+    });
+    e.classList.add("is-delete-confirm");
+    r.appendChild(s);
+    l.focus();
+    setTimeout(() => {
+      document.addEventListener("pointerdown", onOutside, true);
+      document.addEventListener("keydown", onKey, true);
+    }, 0);
+    safeLog(`Inline delete confirm shown for "${o}"`);
+  }
+  _showDeleteConfirmModal(e, t) {
     const i = document.getElementById("deleteConfirmationModal");
     const n = document.getElementById("deleteModalTitle");
     const r = document.getElementById("deleteConfirmationText");
     const o = i?.querySelector(".delete-modal-warning");
     let s = document.getElementById("confirmDeleteBtn");
     if (!i || !r || !s) {
-      showNotification("Error: Delete modal not available", "error");
+      showNotification("Error: Delete confirm not available", "error");
       return;
     }
-    safeLog("Modal elements found, showing confirmation");
-    if (n) n.textContent = "Delete clip";
-    if (o) o.textContent = "Associated files are deleted and cannot be recovered.";
-    s.textContent = "Delete clip";
+    if (n) n.textContent = "Delete clip?";
+    if (o) o.textContent = "This can’t be undone.";
+    s.textContent = "Delete";
+    s.disabled = false;
     const a = t.name || "this clip";
-    r.textContent = `You're about to permanently remove "${a}" from your library.`;
+    r.textContent = `"${a}" will be removed from your library.`;
     if (s._eventControllers) {
       Object.values(s._eventControllers).forEach(e => {
         try {
@@ -12635,56 +12773,109 @@ class ClipsStudio {
     if (!s._eventControllers) s._eventControllers = {};
     s._eventControllers["click"] = l;
     s.addEventListener("click", async () => {
-      safeLog(`🔄 Confirm button clicked for item: ${e}`);
       l.abort();
+      s.disabled = true;
+      s.textContent = "Deleting…";
       try {
         i.classList.remove("show");
-        showNotification("Deleting clip...", "info");
-        if (t.projectId) {
-          safeLog(`📤 Deleting project from server: ${t.projectId}`);
-          await this.deleteProjectFromServer(t.projectId);
-        }
-        safeLog(`ðŸ—„ï¸ Removing from local arrays`);
-        this.libraryItems = this.libraryItems.filter(t => t.id != e);
-        this.processingItems = this.processingItems.filter(t => t.id != e);
-        if (t.projectId) {
-          this.processingItems = this.processingItems.filter(e => e.projectId != t.projectId);
-        }
-        safeLog(`Updating views and saving`);
-        this.updateLibraryView();
-        this.updateProcessingView();
-        this.updateRecentActivity();
-        this.saveLibraryItems();
-        this.saveProcessingItems();
-        this.invalidateLibraryCache();
-        this._writeLibrarySessionCache();
-        safeLog(`Updating storage badge from backend`);
-        if (typeof updateStorageBadgeDisplay === "function") {
-          await updateStorageBadgeDisplay();
-        }
-        safeLog(`✅ Clip deleted successfully`);
-        showNotification("Clip deleted successfully", "success");
-        setTimeout(() => {
-          window.location.reload();
-        }, 800);
+        await this._performDeleteClip(e, t);
       } catch (e) {
-        showNotification("Failed to delete clip: " + e.message, "error");
+        showNotification("Failed to delete clip: " + (e.message || e), "error");
       } finally {
         i.classList.remove("show");
+        s.disabled = false;
+        s.textContent = "Delete";
       }
     }, {
-      once: true
+      once: true,
+      signal: l.signal
     });
     i.classList.add("show");
-    safeLog("📋 Modal displayed");
     const closeOnBackdropClick = e => {
       if (e.target === i) {
-        safeLog("🚫 Modal closed by backdrop click");
         i.classList.remove("show");
         document.removeEventListener("click", closeOnBackdropClick);
       }
     };
     document.addEventListener("click", closeOnBackdropClick);
+  }
+  async _performDeleteClip(e, t, i = {}) {
+    const n = !!i.quiet;
+    if (!n) showNotification("Deleting clip...", "info");
+    if (t.projectId) {
+      safeLog(`📤 Deleting project from server: ${t.projectId}`);
+      await this.deleteProjectFromServer(t.projectId);
+    }
+    this._removeClipFromLocalState(e, t);
+    await this._removeLibraryCardDom(e);
+    this._syncLibrarySelectUI();
+    if (typeof this.updateProcessingView === "function") this.updateProcessingView();
+    if (typeof this.updateRecentActivity === "function") this.updateRecentActivity();
+    this.saveLibraryItems();
+    this.saveProcessingItems();
+    this.invalidateLibraryCache();
+    this._writeLibrarySessionCache();
+    this._maybeRefreshLibraryEmptyState();
+    if (typeof updateStorageBadgeDisplay === "function") {
+      await updateStorageBadgeDisplay();
+    } else if (typeof this.loadAndDisplayStorageInfo === "function") {
+      this.loadAndDisplayStorageInfo();
+    }
+    if (!n) showNotification("Clip deleted", "success");
+  }
+  _removeClipFromLocalState(e, t = null) {
+    const i = String(e);
+    this.libraryItems = (this.libraryItems || []).filter(e => String(e.id) !== i);
+    this.processingItems = (this.processingItems || []).filter(e => String(e.id) !== i);
+    const n = t?.projectId;
+    if (n) {
+      this.processingItems = this.processingItems.filter(e => String(e.projectId || "") !== String(n));
+    }
+    if (this._librarySelectedIds) this._librarySelectedIds.delete(i);
+    if (t?.collectionId && Array.isArray(this.libraryCollections)) {
+      const e = this._findCollection(t.collectionId);
+      if (e) e.clipCount = this._getCollectionClips(e.id).length;
+      this.libraryCollections = this.libraryCollections.filter(e => (e.clipCount || this._getCollectionClips(e.id).length) > 0);
+    }
+  }
+  async _removeLibraryCardDom(e) {
+    const t = document.getElementById("libraryGrid");
+    if (!t) return;
+    const i = String(e);
+    const n = t.querySelector(`.library-card[data-id="${CSS.escape(i)}"]`);
+    if (!n) return;
+    n.classList.add("is-removing");
+    n.style.pointerEvents = "none";
+    await new Promise(e => {
+      let t = false;
+      const finish = () => {
+        if (t) return;
+        t = true;
+        n.remove();
+        e();
+      };
+      n.addEventListener("transitionend", finish, {
+        once: true
+      });
+      setTimeout(finish, 280);
+    });
+  }
+  _maybeRefreshLibraryEmptyState() {
+    const e = document.getElementById("libraryGrid");
+    if (!e) return;
+    const t = !!e.querySelector(".library-card, .library-collection-folder");
+    const i = (this.libraryItems || []).length > 0 || (this.libraryCollections || []).length > 0;
+    if (!t || !i) {
+      this.updateLibraryView();
+      return;
+    }
+    e.querySelectorAll(".library-collection-folder[data-collection-id]").forEach(e => {
+      const t = e.getAttribute("data-collection-id");
+      const i = this._getCollectionClips(t).length;
+      const n = e.querySelector(".scc-collection-expiry");
+      if (n) n.textContent = `${i} clip${i !== 1 ? "s" : ""}`;
+      if (i <= 0) e.remove();
+    });
   }
   async deleteProjectFromServer(e) {
     try {
@@ -12832,6 +13023,10 @@ class ClipsStudio {
     e.dataset.dragBound = "1";
     e.setAttribute("draggable", "true");
     e.addEventListener("dragstart", i => {
+      if (this.librarySelectMode) {
+        i.preventDefault();
+        return;
+      }
       const n = t.projectId || t.id;
       this._dragClipId = n;
       e.classList.add("library-card-dragging");
@@ -12956,6 +13151,181 @@ class ClipsStudio {
       if (e === "name_asc" || e === "name_desc") return "newest";
     } catch (e) {}
     return "newest";
+  }
+  _initLibrarySelectMode() {
+    const e = document.getElementById("librarySelectModeBtn");
+    const t = document.getElementById("librarySelectDeleteBtn");
+    const i = document.getElementById("librarySelectCancelBtn");
+    if (e && e.dataset.bound !== "1") {
+      e.dataset.bound = "1";
+      e.addEventListener("click", e => {
+        e.preventDefault();
+        this.setLibrarySelectMode(!this.librarySelectMode);
+      });
+    }
+    if (t && t.dataset.bound !== "1") {
+      t.dataset.bound = "1";
+      t.addEventListener("click", e => {
+        e.preventDefault();
+        this.confirmDeleteSelectedClips();
+      });
+    }
+    if (i && i.dataset.bound !== "1") {
+      i.dataset.bound = "1";
+      i.addEventListener("click", e => {
+        e.preventDefault();
+        this.setLibrarySelectMode(false);
+      });
+    }
+    this._syncLibrarySelectUI();
+  }
+  setLibrarySelectMode(e) {
+    this.librarySelectMode = !!e;
+    if (!this.librarySelectMode) {
+      this._librarySelectedIds = new Set;
+      this._dismissCardDeleteConfirms();
+    }
+    const t = document.getElementById("librarySection");
+    t?.classList.toggle("library-select-mode", this.librarySelectMode);
+    document.querySelectorAll("#libraryGrid .library-card.solis-clip-card").forEach(e => {
+      e.classList.toggle("is-selected", this.librarySelectMode && this._librarySelectedIds.has(String(e.getAttribute("data-id") || "")));
+      if (e.getAttribute("draggable") != null) {
+        e.setAttribute("draggable", this.librarySelectMode ? "false" : "true");
+      }
+    });
+    this._syncLibrarySelectUI();
+  }
+  _syncLibrarySelectUI() {
+    const e = document.getElementById("librarySelectModeBtn");
+    const t = document.getElementById("librarySelectBar");
+    const i = document.getElementById("librarySelectCount");
+    const n = document.getElementById("librarySelectDeleteBtn");
+    const r = this._librarySelectedIds ? this._librarySelectedIds.size : 0;
+    if (e) {
+      e.classList.toggle("is-active", !!this.librarySelectMode);
+      e.setAttribute("aria-pressed", this.librarySelectMode ? "true" : "false");
+      e.title = this.librarySelectMode ? "Exit selection" : "Select clips";
+    }
+    if (t) t.hidden = !this.librarySelectMode;
+    if (i) i.textContent = r === 1 ? "1 selected" : `${r} selected`;
+    if (n) {
+      n.disabled = r === 0;
+      n.textContent = r > 0 ? `Delete ${r}` : "Delete";
+    }
+  }
+  toggleLibraryClipSelected(e, t = null) {
+    if (!this.librarySelectMode) return;
+    const i = String(e || "");
+    if (!i) return;
+    if (!this._librarySelectedIds) this._librarySelectedIds = new Set;
+    const n = t || document.querySelector(`#libraryGrid .library-card[data-id="${CSS.escape(i)}"]`);
+    if (this._librarySelectedIds.has(i)) {
+      this._librarySelectedIds.delete(i);
+      n?.classList.remove("is-selected");
+    } else {
+      this._librarySelectedIds.add(i);
+      n?.classList.add("is-selected");
+    }
+    this._syncLibrarySelectUI();
+  }
+  confirmDeleteSelectedClips() {
+    const e = [ ...this._librarySelectedIds || [] ];
+    if (!e.length) return;
+    const t = document.getElementById("deleteConfirmationModal");
+    const i = document.getElementById("deleteModalTitle");
+    const n = document.getElementById("deleteConfirmationText");
+    const r = t?.querySelector(".delete-modal-warning");
+    let o = document.getElementById("confirmDeleteBtn");
+    if (!t || !n || !o) {
+      this.deleteSelectedClips();
+      return;
+    }
+    if (i) i.textContent = e.length === 1 ? "Delete clip?" : `Delete ${e.length} clips?`;
+    n.textContent = e.length === 1 ? "Remove this clip from your library." : `Remove ${e.length} selected clips from your library.`;
+    if (r) r.textContent = "This can’t be undone.";
+    o.textContent = e.length === 1 ? "Delete" : `Delete ${e.length}`;
+    o.disabled = false;
+    if (o._eventControllers) {
+      Object.values(o._eventControllers).forEach(e => {
+        try {
+          e.abort();
+        } catch (e) {}
+      });
+      o._eventControllers = {};
+    }
+    const s = new AbortController;
+    o._eventControllers = {
+      click: s
+    };
+    o.addEventListener("click", async () => {
+      s.abort();
+      o.disabled = true;
+      o.textContent = "Deleting…";
+      t.classList.remove("show");
+      try {
+        await this.deleteSelectedClips();
+      } finally {
+        o.disabled = false;
+        o.textContent = "Delete";
+      }
+    }, {
+      once: true,
+      signal: s.signal
+    });
+    t.classList.add("show");
+    const closeOnBackdropClick = e => {
+      if (e.target === t) {
+        t.classList.remove("show");
+        document.removeEventListener("click", closeOnBackdropClick);
+      }
+    };
+    document.addEventListener("click", closeOnBackdropClick);
+  }
+  async deleteSelectedClips() {
+    const e = [ ...this._librarySelectedIds || [] ];
+    if (!e.length) {
+      this.setLibrarySelectMode(false);
+      return;
+    }
+    showNotification(e.length === 1 ? "Deleting clip..." : `Deleting ${e.length} clips...`, "info");
+    let t = 0;
+    let i = 0;
+    for (const n of e) {
+      const e = (this.libraryItems || []).find(e => String(e.id) === String(n));
+      if (!e) {
+        this._librarySelectedIds.delete(String(n));
+        continue;
+      }
+      try {
+        if (e.projectId) await this.deleteProjectFromServer(e.projectId);
+        this._removeClipFromLocalState(n, e);
+        await this._removeLibraryCardDom(n);
+        t += 1;
+      } catch (e) {
+        i += 1;
+        safeLog(`Failed to delete ${n}:`, e);
+      }
+    }
+    this.saveLibraryItems();
+    this.saveProcessingItems();
+    this.invalidateLibraryCache();
+    this._writeLibrarySessionCache();
+    if (typeof this.updateProcessingView === "function") this.updateProcessingView();
+    if (typeof this.updateRecentActivity === "function") this.updateRecentActivity();
+    this._maybeRefreshLibraryEmptyState();
+    if (typeof updateStorageBadgeDisplay === "function") {
+      await updateStorageBadgeDisplay();
+    } else if (typeof this.loadAndDisplayStorageInfo === "function") {
+      this.loadAndDisplayStorageInfo();
+    }
+    this.setLibrarySelectMode(false);
+    if (i && t) {
+      showNotification(`Deleted ${t}, ${i} failed`, "warning");
+    } else if (i) {
+      showNotification("Failed to delete selected clips", "error");
+    } else {
+      showNotification(t === 1 ? "Clip deleted" : `${t} clips deleted`, "success");
+    }
   }
   _librarySortLabel(e = this.librarySortMode) {
     return {

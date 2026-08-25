@@ -121,8 +121,9 @@
     }
   }
   function wireAuthLinks() {
-    document.querySelectorAll(".nav-login, .nav-mobile-signin").forEach(t => {
-      t.setAttribute("href", "/login.html");
+    document.querySelectorAll(".nav-login, .nav-mobile-signin, .nav-cta[data-open-auth], .nav-mobile-cta[data-open-auth]").forEach(t => {
+      t.setAttribute("href", "/?login=1");
+      if (!t.hasAttribute("data-open-auth")) t.setAttribute("data-open-auth", "");
     });
     document.querySelectorAll(".nav-cta, .nav-mobile-cta").forEach(t => {
       if (!t.dataset.boundDashboard) {
@@ -132,6 +133,11 @@
           if (e) {
             t.preventDefault();
             window.location.href = "/dashboard.html";
+            return;
+          }
+          if (typeof window.openAuthModal === "function") {
+            t.preventDefault();
+            window.openAuthModal();
           }
         });
       }

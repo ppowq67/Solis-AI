@@ -115,9 +115,6 @@ window.handleDeleteAllClips = async function() {
     window.clipsStudio.updateLibraryView();
     updateStorageBadgeDisplay();
     window.clipsStudio?.showNotification(`Deleted ${i}/${e} clips`, "success");
-    setTimeout(() => {
-      window.location.reload();
-    }, 800);
   } catch (e) {
     console.error("Error deleting all clips:", e);
     window.clipsStudio?.showNotification("Error: Failed to delete clips. Please try again.", "error");

@@ -10259,21 +10259,42 @@ class ClipsStudio {
     }
     const c = String(e?.why || this._whyFromVirality(t) || "").trim();
     if (r && o) {
+      o.classList.remove("is-open");
       o.hidden = true;
       r.setAttribute("aria-expanded", "false");
       if (c) {
         r.hidden = false;
+        o.hidden = false;
         o.textContent = c;
         if (!r.dataset.bound) {
           r.dataset.bound = "1";
-          r.addEventListener("click", () => {
-            const e = o.hidden;
-            o.hidden = !e;
-            r.setAttribute("aria-expanded", e ? "true" : "false");
+          const e = r.closest(".tip-score-why-wrap") || r.parentElement;
+          const show = () => {
+            o.classList.add("is-open");
+            r.setAttribute("aria-expanded", "true");
+          };
+          const hide = () => {
+            o.classList.remove("is-open");
+            r.setAttribute("aria-expanded", "false");
+          };
+          if (e) {
+            e.addEventListener("mouseenter", show);
+            e.addEventListener("mouseleave", hide);
+          }
+          r.addEventListener("focus", show);
+          r.addEventListener("blur", () => {
+            setTimeout(() => {
+              if (!e?.contains(document.activeElement)) hide();
+            }, 80);
+          });
+          r.addEventListener("click", e => {
+            e.preventDefault();
+            if (o.classList.contains("is-open")) hide(); else show();
           });
         }
       } else {
         r.hidden = true;
+        o.hidden = true;
         o.textContent = "";
       }
     }
@@ -12522,14 +12543,46 @@ class ClipsStudio {
             const r = await t.json();
             const o = r.full_download_url;
             if (o) {
-              const t = document.createElement("a");
-              t.href = o;
-              t.rel = "noopener";
-              t.download = `clip_${e}.mp4`;
-              t.style.display = "none";
-              document.body.appendChild(t);
-              t.click();
-              document.body.removeChild(t);
+              let t = false;
+              for (let e = 0; e < 3; e++) {
+                try {
+                  const i = await fetch(o, {
+                    method: "GET",
+                    credentials: "include",
+                    redirect: "manual",
+                    headers: {
+                      Range: "bytes=0-0",
+                      Accept: "video/mp4,*/*"
+                    }
+                  });
+                  if (i.status === 200 || i.status === 206 || i.status === 302 || i.status === 303 || i.type === "opaqueredirect") {
+                    t = true;
+                    break;
+                  }
+                  if (i.status === 404) {
+                    const t = await i.json().catch(() => ({}));
+                    if (t.error_code === "CLIP_NOT_READY" && e < 2) {
+                      await new Promise(t => setTimeout(t, 900 * (e + 1)));
+                      continue;
+                    }
+                    throw new Error(t.error || "Clip is still uploading — try again in a moment.");
+                  }
+                } catch (t) {
+                  if (e >= 2) throw t;
+                  await new Promise(t => setTimeout(t, 900 * (e + 1)));
+                }
+              }
+              if (!t) {
+                throw new Error("Clip is still uploading — try again in a moment.");
+              }
+              const r = document.createElement("a");
+              r.href = o;
+              r.rel = "noopener";
+              r.download = `clip_${e}.mp4`;
+              r.style.display = "none";
+              document.body.appendChild(r);
+              r.click();
+              document.body.removeChild(r);
               if (!n) showNotification("Download started!", "success");
               if (!i) this.closeTemplatePreviewModal();
               document.querySelectorAll("[data-project-id]").forEach(t => {
@@ -12543,6 +12596,11 @@ class ClipsStudio {
                 }
               });
               return;
+            }
+          } else if (t.status === 404) {
+            const e = await t.json().catch(() => ({}));
+            if (e.error_code === "CLIP_NOT_READY") {
+              throw new Error(e.error || "Clip is still uploading — try again in a moment.");
             }
           }
         } catch (e) {

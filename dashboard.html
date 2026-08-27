@@ -3987,11 +3987,13 @@
                                         <span class="tip-score-num" id="tipScoreNum">—</span>
                                         <span class="tip-score-max">/10</span>
                                     </div>
-                                    <button type="button" class="tip-score-why-btn" id="tipScoreWhyBtn" hidden aria-expanded="false" aria-controls="tipScoreWhy">Why?</button>
+                                    <div class="tip-score-why-wrap">
+                                        <button type="button" class="tip-score-why-btn" id="tipScoreWhyBtn" hidden aria-expanded="false" aria-controls="tipScoreWhy">Why?</button>
+                                        <div class="tip-score-why" id="tipScoreWhy" hidden role="tooltip"></div>
+                                    </div>
                                 </div>
                                 <span class="tip-score-label" id="tipScoreLabel"></span>
                             </div>
-                            <p class="tip-score-why" id="tipScoreWhy" hidden></p>
                             <label class="tip-field">
                                 <span class="tip-field-label">Title</span>
                                 <div class="tip-editable tip-title" id="tipShareTitle" contenteditable="true" role="textbox" aria-label="Hook title" spellcheck="true" data-placeholder="Hook title for posting"></div>

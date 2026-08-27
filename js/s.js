@@ -13051,7 +13051,7 @@ class ClipsStudio {
     const t = this.libraryItems.length;
     const i = (e.plan || "free").toLowerCase();
     const n = e.library_unlimited === true || typeof window.isUnlimitedLibrary === "function" && window.isUnlimitedLibrary(null, i);
-    const r = n ? null : e.video_limit || e.videos_space_limit || 10;
+    const r = n ? null : e.video_limit || e.videos_space_limit || 5;
     if (typeof window.applyStorageBadgeUI === "function") {
       window.applyStorageBadgeUI({
         used: t,

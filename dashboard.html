@@ -18,7 +18,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#ff6b3d">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.socket.io https://cdn.paddle.com https://sandbox-cdn.paddle.com https://static.cloudflareinsights.com https://api.solisai.video; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.paddle.com; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' https://api.solisai.video wss://api.solisai.video https://api.solisai.video wss://api.solisai.video https://api.solisai.video wss://api.solisai.video https://cdn.socket.io https://cloudflareinsights.com https:; img-src 'self' data: https:; frame-src 'self' https://checkout.paddle.com https://buy.paddle.com https://sandbox-buy.paddle.com https://sandbox-checkout-service.paddle.com https://checkout-service.paddle.com;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.socket.io https://cdn.paddle.com https://sandbox-cdn.paddle.com https://static.cloudflareinsights.com https://api.solisai.video https://client.crisp.chat; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.paddle.com https://client.crisp.chat; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://client.crisp.chat; connect-src 'self' https://api.solisai.video wss://api.solisai.video https://api.solisai.video wss://api.solisai.video https://api.solisai.video wss://api.solisai.video https://cdn.socket.io https://cloudflareinsights.com https: wss://client.relay.crisp.chat wss://stream.relay.crisp.chat wss://client.relay.rescue.crisp.chat https://client.crisp.chat https://storage.crisp.chat; img-src 'self' data: https:; frame-src 'self' https://checkout.paddle.com https://buy.paddle.com https://sandbox-buy.paddle.com https://sandbox-checkout-service.paddle.com https://checkout-service.paddle.com https://game.crisp.chat https://client.crisp.chat https://*.crisp.help; worker-src 'self' blob: https://client.crisp.chat; media-src 'self' blob: https://api.solisai.video https://*.r2.cloudflarestorage.com https://client.crisp.chat;">
     <script src="/js/core/init.js?v=8"></script>
     <script src="/js/core/api-client.js?v=6"></script>
     <script src="/js/core/avatar-url.js?v=6"></script>
@@ -47,22 +47,22 @@
     <link rel="stylesheet" href="/style/ss/ios-pill-nav.css?v=29">
     <link rel="stylesheet" href="/style/ss/mobile-nav.css?v=32">
     <link rel="stylesheet" href="/style/ss/customize.css?v=27">
-    <link rel="stylesheet" href="/style/ss/clips.css?v=147">
-    <link rel="stylesheet" href="/style/ss/profile.css?v=33">
+    <link rel="stylesheet" href="/style/ss/clips.css?v=174">
+    <link rel="stylesheet" href="/style/ss/profile.css?v=34">
     <link rel="stylesheet" href="/style/ss/tasks-panel-v2-demo.css?v=18">
     <link rel="stylesheet" href="/style/ss/solis-gen-stage.css?v=26">
     <link rel="stylesheet" href="/style/ss/newsfeed-widget.css?v=61">
     <script src="/js/ui/navigation.js?v=8"></script>
     <script src="/js/ui/menu.js?v=6"></script>
     <script src="/js/ui/solis-badges.js?v=11"></script>
-    <script src="/js/i_dq/profile-notifications.js?t=20260815151000"></script>
+    <script src="/js/i_dq/profile-notifications.js?t=20260826163000"></script>
     <script src="/js/s_new/qwsqa.js?v=6"></script>
     <script src="/js/s_new/qwe.js?v=23"></script>
     <link rel="stylesheet" href="/style/ss/stg-modal.css?v=68">
     <script src="/js/s_new/stg.js?v=62"></script>
     <script src="/js/i_dq/video-generation-hook.js?v=1"></script>
     <script src="/js/ui/progress-ui.js?v=2"></script>
-    <script src="/js/ui/generation-progress-spinner.js?v=65"></script>
+    <script src="/js/ui/generation-progress-spinner.js?v=66"></script>
     <script src="/js/ui/solis-gen-stage.js?v=24"></script>
     <script src="/js/generation-recovery.js?v=6"></script>
     <script src="/js/i_dq/ranking-customizer.js?v=25"></script>
@@ -78,7 +78,9 @@
     <script src="/js/ui/plan-selector.js?v=66"></script>
     <script src="/js/core/video-preview-system.js?v=2"></script>
     <script src="/js/s_new/clip-card.js?v=28"></script>
-    <script src="/js/s.js?v=295"></script>
+    <script src="/js/s.js?v=302"></script>
+    <script src="/js/s_new/silencer.js?v=5"></script>
+    <script src="/js/s_new/improve-clip.js?v=4"></script>
 
     <script src="/js/s_new/procc.js?v=2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -3586,9 +3588,8 @@
         <div class="clips-header-left">
         </div>
         <div class="clips-header-right">
-            <button class="clips-btn-primary" id="headerNewClipBtn" type="button"
-                    onclick="window.goToCreateUrlSubmit&&window.goToCreateUrlSubmit()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-icon lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+            <button class="clips-btn-primary" id="headerNewClipBtn" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
                 New Clip
             </button>
         </div>
@@ -3730,7 +3731,10 @@
                                 <div class="preview-timeline-selection" id="previewTimelineSelection" aria-hidden="true"></div>
                                 <button type="button" class="preview-timeline-handle left" id="previewTimelineHandleL" aria-label="Trim start"></button>
                                 <button type="button" class="preview-timeline-handle right" id="previewTimelineHandleR" aria-label="Trim end"></button>
-                                <div class="preview-timeline-playhead" id="previewTimelinePlayhead" aria-hidden="true"></div>
+                                <div class="preview-timeline-playhead" id="previewTimelinePlayhead" aria-hidden="true">
+                                    <button type="button" class="preview-timeline-playhead-grip" id="previewTimelinePlayheadGrip"
+                                        aria-label="Drag playhead" tabindex="-1"></button>
+                                </div>
                             </div>
                             <div class="preview-timeline-hook-lane" id="previewTimelineHookLane" hidden>
                                 <button type="button" class="preview-timeline-hook-bar" id="previewTimelineHookBar"
@@ -3749,12 +3753,43 @@
 
                 <div class="preview-ctx-menu" id="previewCtxMenu" hidden role="menu" aria-label="Preview actions">
                     <button type="button" class="preview-ctx-item" data-ctx-action="split" role="menuitem">
-                        <i data-lucide="scissors" aria-hidden="true"></i>
+                        <svg class="ctx-icon ctx-icon-split" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <g class="ctx-split-top">
+                                <circle cx="6" cy="6" r="3"/>
+                                <line class="ctx-split-arm" x1="8.12" y1="8.12" x2="12" y2="12"/>
+                            </g>
+                            <g class="ctx-split-bot">
+                                <circle cx="6" cy="18" r="3"/>
+                                <line class="ctx-split-arm" x1="8.12" y1="15.88" x2="12" y2="12"/>
+                            </g>
+                            <g class="ctx-split-cut">
+                                <line x1="14.47" y1="14.48" x2="20" y2="20"/>
+                                <line x1="20" y1="4" x2="8.12" y2="15.88"/>
+                            </g>
+                        </svg>
                         <span>Split</span>
                     </button>
-                    <button type="button" class="preview-ctx-item" data-ctx-action="text" role="menuitem">
-                        <i data-lucide="type" aria-hidden="true"></i>
-                        <span>Add text</span>
+                    <span class="preview-ctx-sep" aria-hidden="true"></span>
+                    <button type="button" class="preview-ctx-item" data-ctx-action="silence" role="menuitem">
+                        <svg class="ctx-icon ctx-icon-silence silencer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path class="silencer-bar silencer-bar--a" d="M6 6v11"/>
+                            <path class="silencer-bar silencer-bar--b" d="M10 10v11"/>
+                            <path class="silencer-bar silencer-bar--c" d="M10 3v1.35"/>
+                            <path class="silencer-bar silencer-bar--d" d="M14 14v1"/>
+                            <path class="silencer-bar silencer-bar--e" d="M14 8v.35"/>
+                            <path class="silencer-bar silencer-bar--f" d="M18 5v7.35"/>
+                            <path class="silencer-bar silencer-bar--g" d="M2 10v3"/>
+                            <path class="silencer-bar silencer-bar--h" d="M22 10v3"/>
+                            <path class="silencer-slash" d="m2 2 20 20"/>
+                        </svg>
+                        <span>Remove silence</span>
+                    </button>
+                    <span class="preview-ctx-sep" aria-hidden="true"></span>
+                    <button type="button" class="preview-ctx-item" data-ctx-action="improve" role="menuitem">
+                        <svg class="ctx-icon ctx-icon-improve improve-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path class="ctx-improve-star" d="M12.983 21.186a1 1 0 0 1-1.966 0 10 10 0 0 0-8.203-8.203 1 1 0 0 1 0-1.966 10 10 0 0 0 8.203-8.203 1 1 0 0 1 1.966 0 10 10 0 0 0 8.203 8.203 1 1 0 0 1 0 1.966 10 10 0 0 0-8.203 8.203"/>
+                        </svg>
+                        <span>Improve</span>
                     </button>
                 </div>
 
@@ -3763,15 +3798,40 @@
                     <div id="previewEditorPill" class="toolbar-pill preview-editor-toolbar">
                         <div id="previewPillGlassBg" class="pill-glass-bg"></div>
                         <div id="previewPillIndicator" class="active-indicator"></div>
-                        <button type="button" class="tool-btn" data-tool="captions"
-                            onclick="activatePreviewToolbar(this); addSubtitleBlock()"
-                            title="Preview caption fonts & style" aria-label="Captions">
-                            <i data-lucide="captions"></i>
-                        </button>
                         <button type="button" class="tool-btn" data-tool="animations" id="previewAnimToolBtn"
                             onclick="activatePreviewToolbar(this); openSubtitleAnimations()"
                             title="Caption presets" aria-label="Presets">
                             <i data-lucide="sparkles"></i>
+                        </button>
+                        <span class="preview-pill-divider" aria-hidden="true">
+                            <svg viewBox="0 0 10 36" width="10" height="28" fill="none" aria-hidden="true">
+                                <path d="M5 3 C 2 12, 8 24, 5 33" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                        <button type="button" class="tool-btn tool-btn-silencer" data-tool="silencer"
+                            id="previewSilencerBtn"
+                            aria-label="Remove silences" aria-pressed="false"
+                            style="display:none">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="silencer-icon">
+                                <path class="silencer-bar silencer-bar--a" d="M6 6v11"/>
+                                <path class="silencer-bar silencer-bar--b" d="M10 10v11"/>
+                                <path class="silencer-bar silencer-bar--c" d="M10 3v1.35"/>
+                                <path class="silencer-bar silencer-bar--d" d="M14 14v1"/>
+                                <path class="silencer-bar silencer-bar--e" d="M14 8v.35"/>
+                                <path class="silencer-bar silencer-bar--f" d="M18 5v7.35"/>
+                                <path class="silencer-bar silencer-bar--g" d="M2 10v3"/>
+                                <path class="silencer-bar silencer-bar--h" d="M22 10v3"/>
+                                <path class="silencer-slash" d="m2 2 20 20"/>
+                            </svg>
+                            <span class="silencer-btn-label" aria-hidden="true"></span>
+                        </button>
+                        <button type="button" class="tool-btn tool-btn-improve" data-tool="improve"
+                            id="previewImproveBtn"
+                            aria-label="Improve clip"
+                            style="display:none">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="improve-icon lucide lucide-astroid-icon lucide-astroid">
+                                <path d="M12.983 21.186a1 1 0 0 1-1.966 0 10 10 0 0 0-8.203-8.203 1 1 0 0 1 0-1.966 10 10 0 0 0 8.203-8.203 1 1 0 0 1 1.966 0 10 10 0 0 0 8.203 8.203 1 1 0 0 1 0 1.966 10 10 0 0 0-8.203 8.203"/>
+                            </svg>
                         </button>
                         <button type="button" class="tool-btn tool-btn-modifiers" data-tool="modifiers"
                             onclick="activatePreviewToolbar(this); togglePreviewModifiersMenu(event)"
@@ -3780,6 +3840,7 @@
                             <i data-lucide="sliders-horizontal"></i>
                         </button>
                     </div>
+                    <div id="silencerNote" class="silencer-note" hidden role="status" aria-live="polite"></div>
                     <div class="preview-modifiers-menu" id="previewModifiersMenu" hidden role="menu" aria-label="Modifiers">
                         <div class="preview-modifiers-row" role="menuitem" data-modifier-preview="auto-modes">
                             <div class="preview-modifiers-copy">
@@ -3863,6 +3924,7 @@
                 <div class="template-sheet-handle" id="templateSheetHandle"></div>
                 <div class="template-tab-content active" id="configTab">
                     <div class="template-info-panel" id="templateInfoPanel">
+                        <div class="tip-create" id="tipCreateBlock">
                         <div class="tip-head">
                             <h3 id="previewTemplateName">Clip Compilation</h3>
                             <p id="previewTemplateDescription">Paste a youtube link and get a ranking compilation</p>
@@ -3915,6 +3977,29 @@
                                     <span class="multi-gen-thumb" id="multiGenThumb"></span>
                                 </div>
                             </div>
+                        </div>
+                        </div>
+
+                        <div class="tip-publish" id="tipPublishBlock" hidden>
+                            <div class="tip-score-row">
+                                <div class="tip-score-cluster">
+                                    <div class="tip-score" aria-label="Clip rating">
+                                        <span class="tip-score-num" id="tipScoreNum">—</span>
+                                        <span class="tip-score-max">/10</span>
+                                    </div>
+                                    <button type="button" class="tip-score-why-btn" id="tipScoreWhyBtn" hidden aria-expanded="false" aria-controls="tipScoreWhy">Why?</button>
+                                </div>
+                                <span class="tip-score-label" id="tipScoreLabel"></span>
+                            </div>
+                            <p class="tip-score-why" id="tipScoreWhy" hidden></p>
+                            <label class="tip-field">
+                                <span class="tip-field-label">Title</span>
+                                <div class="tip-editable tip-title" id="tipShareTitle" contenteditable="true" role="textbox" aria-label="Hook title" spellcheck="true" data-placeholder="Hook title for posting"></div>
+                            </label>
+                            <label class="tip-field">
+                                <span class="tip-field-label">Hashtags</span>
+                                <div class="tip-editable tip-hashtags" id="tipShareHashtags" contenteditable="true" role="textbox" aria-label="Hashtags" spellcheck="false" data-placeholder="#fyp #viral #shorts"></div>
+                            </label>
                         </div>
                     </div>
 
@@ -4438,11 +4523,6 @@
                     <path fill="currentColor" d="M286.5 66.9l22.2-22.2c9.4-9.4 24.6-9.4 33.9 0L537 239c9.4 9.4 9.4 24.6 0 33.9L342.6 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.2-22.2c-9.5-9.5-9.3-25 .4-34.3L407.4 296H24c-13.3 0-24-10.7-24-24v-32c0-13.3 10.7-24 24-24h383.4L286.9 101.2c-9.8-9.3-10-24.8-.4-34.3z"/>
                     </svg>
                     </span>
-                    <span class="button-icon button-icon--stop" aria-hidden="true">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30">
-                            <rect x="4.5" y="4.5" width="15" height="15" rx="3.25" fill="currentColor"/>
-                        </svg>
-                    </span>
                     <div class="loading-dots">
                         <span class="loading-dot"></span>
                         <span class="loading-dot"></span>
@@ -4518,12 +4598,11 @@
                     <h2 class="uc-title">Reveal your <em>true potential</em></h2>
                     <ul class="uc-features">
                         <li><span class="uc-check" aria-hidden="true"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>More uploads per day</li>
-                        <li><span class="uc-check" aria-hidden="true"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Unlimited clips in library</li>
                         <li><span class="uc-check" aria-hidden="true"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>More clips per upload</li>
-                        <li><span class="uc-check" aria-hidden="true"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Faster generation</li>
+                        <li><span class="uc-check" aria-hidden="true"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Unlimited clips in library</li>
                         <li><span class="uc-check" aria-hidden="true"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Export in 1080p+</li>
-                        <li><span class="uc-check" aria-hidden="true"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Premium templates</li>
-                        <li><span class="uc-check" aria-hidden="true"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>No watermarks</li>
+                        <li><span class="uc-check" aria-hidden="true"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Faster generation</li>
+                        <li><span class="uc-check" aria-hidden="true"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>More uploads per month</li>
                     </ul>
                     <a href="/premium.html" class="uc-btn">
                         <span>Upgrade to unlock</span>
@@ -4787,6 +4866,13 @@
                             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                             <polyline points="22 4 12 14.01 9 11.01"></polyline>
                         </svg>
+                        <span>More clips per upload</span>
+                    </div>
+                    <div class="upgrade-feature-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
                         <span>Unlimited clips in library</span>
                     </div>
                     <div class="upgrade-feature-item">
@@ -4794,28 +4880,21 @@
                             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                             <polyline points="22 4 12 14.01 9 11.01"></polyline>
                         </svg>
-                        <span>3x faster generation</span>
+                        <span>Export in 1080p+</span>
                     </div>
                     <div class="upgrade-feature-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                             <polyline points="22 4 12 14.01 9 11.01"></polyline>
                         </svg>
-                        <span>Premium templates</span>
+                        <span>Faster generation</span>
                     </div>
                     <div class="upgrade-feature-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                             <polyline points="22 4 12 14.01 9 11.01"></polyline>
                         </svg>
-                        <span>No watermarks</span>
-                    </div>
-                    <div class="upgrade-feature-item">
-                        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                        </svg>
-                        <span>Priority support</span>
+                        <span>More uploads per month</span>
                     </div>
                 </div>
             </div>
@@ -5407,8 +5486,18 @@
                   });
               }
 
-          window.syncPreviewModifiersForTemplate = function(_templateId) {
+          window.syncPreviewModifiersForTemplate = function(templateId) {
               initSeriesModeGate();
+              const tid = String(
+                  templateId
+                  || window.clipsStudio?.currentTemplateForPreview?.id
+                  || ''
+              ).toLowerCase();
+              const isRanking = tid === 'ranked_compilation' || tid.includes('rank');
+              if (seriesModeRow) {
+                  seriesModeRow.hidden = isRanking;
+                  seriesModeRow.style.display = isRanking ? 'none' : '';
+              }
           };
 
           window.closePreviewModifiersMenu = function() {
@@ -5482,7 +5571,7 @@
                const delay = Math.max(0, Number(opts?.delay) || 0);
                const run = () => {
                    const active = pill.querySelector('.tool-btn.active')
-                       || pill.querySelector('.tool-btn[data-tool="captions"]')
+                       || pill.querySelector('.tool-btn[data-tool="animations"]')
                        || getVisibleButtons()[0];
                    if (!active) return;
                    void pill.offsetWidth;
@@ -5537,6 +5626,12 @@
        let enterT = null;
        let leaveT = null;
        let loopT = null;
+       let silencerExpandT = null;
+       let improveExpandT = null;
+       const SILENCER_SHELL_MS = 420;
+       const SILENCER_RICH_MS = 720;
+       const IMPROVE_SHELL_MS = 300;
+       const IMPROVE_RICH_MS = 650;
        let activeKind = null;
        let modifiersPeek = false;
        let headerBackup = null;
@@ -5632,6 +5727,30 @@
            });
        }
 
+       function hideSilencerHoverCard() {
+           if (silencerExpandT) {
+               clearTimeout(silencerExpandT);
+               silencerExpandT = null;
+           }
+           const card = document.getElementById('silencerHoverCard');
+           if (card) {
+               card.classList.remove('is-on', 'is-rich');
+               card.hidden = true;
+           }
+       }
+
+       function hideImproveHoverCard() {
+           if (improveExpandT) {
+               clearTimeout(improveExpandT);
+               improveExpandT = null;
+           }
+           const card = document.getElementById('improveHoverCard');
+           if (card) {
+               card.classList.remove('is-on', 'is-rich');
+               card.hidden = true;
+           }
+       }
+
        function clearTeachVisuals() {
            clearLoop();
            activeKind = null;
@@ -5641,6 +5760,8 @@
                layer.hidden = true;
                layer.innerHTML = '';
            }
+           hideSilencerHoverCard();
+           hideImproveHoverCard();
            dimRealOverlays(false);
            restoreRankingHeader();
            removeRankHookDemo();
@@ -6055,15 +6176,197 @@
            }, 90);
        }
 
-       function armTool(btn) {
-           scheduleEnter(() => {
-               stopTeach({ keepMenu: false });
-               const tool = btn.dataset.tool;
-               btn.classList.add('solis-hover-armed');
-               if (tool === 'captions') startCaptionTeach();
-               else if (tool === 'animations') startAnimationsTeach();
-               else if (tool === 'modifiers') startModifiersPeek();
+       function waveBars(heights) {
+           return heights.map((h) => `<i style="height:${h}%"></i>`).join('');
+       }
+
+       function positionSilencerCard(card, btn, wrap) {
+           if (!card || !btn || !wrap) return;
+           const wR = wrap.getBoundingClientRect();
+           const bR = btn.getBoundingClientRect();
+           const x = bR.left + bR.width / 2 - wR.left;
+           card.style.setProperty('--silencer-tip-x', `${Math.round(x)}px`);
+       }
+
+       function positionImproveCard(card, btn, wrap) {
+           if (!card || !btn || !wrap) return;
+           const wR = wrap.getBoundingClientRect();
+           const bR = btn.getBoundingClientRect();
+           const x = bR.left + bR.width / 2 - wR.left;
+           card.style.setProperty('--silencer-tip-x', `${Math.round(x)}px`);
+       }
+
+       function ensureImproveCard(wrap) {
+           let card = document.getElementById('improveHoverCard');
+           if (card?.dataset?.v === '6') return card;
+           if (card) {
+               try { card.remove(); } catch (_) {}
+           }
+           card = document.createElement('div');
+           card.id = 'improveHoverCard';
+           card.className = 'silencer-hover-card';
+           card.dataset.v = '7';
+           card.hidden = true;
+           card.setAttribute('aria-hidden', 'true');
+           card.innerHTML =
+               `<div class="silencer-hover-card-shell">` +
+                 `<span class="silencer-hover-card-hint">Improve clip</span>` +
+                 `<div class="silencer-hover-card-body">` +
+                   `<div class="silencer-hover-card-art improve-hover-card-art">` +
+                     `<div class="silencer-hover-card-art-top">` +
+                       `<span class="silencer-hover-card-cta">` +
+                         `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="improve-icon">` +
+                           `<path d="M12.983 21.186a1 1 0 0 1-1.966 0 10 10 0 0 0-8.203-8.203 1 1 0 0 1 0-1.966 10 10 0 0 0 8.203-8.203 1 1 0 0 1 1.966 0 10 10 0 0 0 8.203 8.203 1 1 0 0 1 0 1.966 10 10 0 0 0-8.203 8.203"/>` +
+                         `</svg>` +
+                         `Improve clip` +
+                       `</span>` +
+                     `</div>` +
+                     `<div class="improve-hover-card-media" aria-hidden="true"></div>` +
+                   `</div>` +
+                   `<p class="silencer-hover-card-copy">Sharpens cut boundaries, trims soft opens/closes, cleans dead air, and retunes subtitles. Uses 1 upload.</p>` +
+                 `</div>` +
+               `</div>` +
+               `<div class="silencer-hover-card-caret" aria-hidden="true"></div>`;
+           wrap.appendChild(card);
+           return card;
+       }
+
+       function startImproveTeach() {
+           activeKind = 'improve';
+           const wrap = document.getElementById('previewEditorToolbarWrap');
+           const btn = document.getElementById('previewImproveBtn');
+           if (!wrap || !btn) return;
+           if (improveExpandT) {
+               clearTimeout(improveExpandT);
+               improveExpandT = null;
+           }
+           const card = ensureImproveCard(wrap);
+           card.classList.remove('is-rich');
+           positionImproveCard(card, btn, wrap);
+           card.hidden = false;
+           requestAnimationFrame(() => {
+               if (activeKind !== 'improve') return;
+               card.classList.add('is-on');
            });
+           improveExpandT = setTimeout(() => {
+               improveExpandT = null;
+               if (activeKind !== 'improve') return;
+               positionImproveCard(card, btn, wrap);
+               card.classList.add('is-rich');
+           }, IMPROVE_RICH_MS);
+       }
+
+       function ensureSilencerCard(wrap) {
+           let card = document.getElementById('silencerHoverCard');
+           if (card?.dataset?.v === '2') return card;
+           if (card) {
+               try { card.remove(); } catch (_) {}
+           }
+           card = document.createElement('div');
+           card.id = 'silencerHoverCard';
+           card.className = 'silencer-hover-card';
+           card.dataset.v = '2';
+           card.hidden = true;
+           card.setAttribute('aria-hidden', 'true');
+           card.innerHTML =
+               `<div class="silencer-hover-card-shell">` +
+                 `<span class="silencer-hover-card-hint">Remove silences</span>` +
+                 `<div class="silencer-hover-card-body">` +
+                   `<div class="silencer-hover-card-art">` +
+                     `<div class="silencer-hover-card-art-top">` +
+                       `<span class="silencer-hover-card-cta">` +
+                         `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="silencer-icon">` +
+                           `<path class="silencer-bar silencer-bar--a" d="M6 6v11"/>` +
+                           `<path class="silencer-bar silencer-bar--b" d="M10 10v11"/>` +
+                           `<path class="silencer-bar silencer-bar--c" d="M10 3v1.35"/>` +
+                           `<path class="silencer-bar silencer-bar--d" d="M14 14v1"/>` +
+                           `<path class="silencer-bar silencer-bar--e" d="M14 8v.35"/>` +
+                           `<path class="silencer-bar silencer-bar--f" d="M18 5v7.35"/>` +
+                           `<path class="silencer-bar silencer-bar--g" d="M2 10v3"/>` +
+                           `<path class="silencer-bar silencer-bar--h" d="M22 10v3"/>` +
+                           `<path class="silencer-slash" d="m2 2 20 20"/>` +
+                         `</svg>` +
+                         `Remove silences` +
+                       `</span>` +
+                     `</div>` +
+                     `<div class="silencer-hover-card-timeline" aria-hidden="true">` +
+                       `<div class="silencer-hover-card-clip">${waveBars([35, 62, 48, 78, 40, 70, 52])}</div>` +
+                       `<div class="silencer-hover-card-gap"></div>` +
+                       `<div class="silencer-hover-card-clip">${waveBars([44, 72, 38, 85, 55, 68])}</div>` +
+                       `<div class="silencer-hover-card-gap"></div>` +
+                       `<div class="silencer-hover-card-clip">${waveBars([50, 40, 75, 45, 80, 58, 36])}</div>` +
+                       `<div class="silencer-hover-card-gap"></div>` +
+                       `<div class="silencer-hover-card-clip">${waveBars([60, 42, 78, 50, 65])}</div>` +
+                     `</div>` +
+                   `</div>` +
+                   `<p class="silencer-hover-card-copy">Remove silence pauses from your video to keep your audience engaged.</p>` +
+                 `</div>` +
+               `</div>` +
+               `<div class="silencer-hover-card-caret" aria-hidden="true"></div>`;
+           wrap.appendChild(card);
+           return card;
+       }
+
+       function startSilencerTeach() {
+           activeKind = 'silencer';
+           const wrap = document.getElementById('previewEditorToolbarWrap');
+           const btn = document.getElementById('previewSilencerBtn');
+           if (!wrap || !btn) return;
+           if (silencerExpandT) {
+               clearTimeout(silencerExpandT);
+               silencerExpandT = null;
+           }
+           const card = ensureSilencerCard(wrap);
+           card.classList.remove('is-rich');
+           positionSilencerCard(card, btn, wrap);
+           card.hidden = false;
+           requestAnimationFrame(() => {
+               if (activeKind !== 'silencer') return;
+               card.classList.add('is-on');
+           });
+           silencerExpandT = setTimeout(() => {
+               silencerExpandT = null;
+               if (activeKind !== 'silencer') return;
+               positionSilencerCard(card, btn, wrap);
+               card.classList.add('is-rich');
+           }, SILENCER_RICH_MS);
+       }
+
+       function armTool(btn) {
+           if (!finePointer()) return;
+           const tool = btn.dataset.tool;
+           const delay = (tool === 'silencer' || tool === 'improve')
+               ? (tool === 'improve' ? IMPROVE_SHELL_MS : SILENCER_SHELL_MS)
+               : HOVER_MS;
+           clearEnter();
+           clearLeave();
+
+           document.querySelectorAll('.tool-btn.solis-hover-armed').forEach((b) => {
+               if (b !== btn) b.classList.remove('solis-hover-armed');
+           });
+           btn.classList.add('solis-hover-armed');
+           if (activeKind && activeKind !== tool) {
+               if (activeKind === 'silencer') hideSilencerHoverCard();
+               if (activeKind === 'improve') hideImproveHoverCard();
+               const layer = document.getElementById('solisHoverTeach');
+               if (layer) {
+                   layer.classList.remove('is-on');
+                   layer.hidden = true;
+                   layer.innerHTML = '';
+               }
+               clearLoop();
+               activeKind = null;
+           }
+
+           enterT = setTimeout(() => {
+               enterT = null;
+               stopTeach({ keepMenu: false });
+               btn.classList.add('solis-hover-armed');
+               if (tool === 'animations') startAnimationsTeach();
+               else if (tool === 'modifiers') startModifiersPeek();
+               else if (tool === 'silencer') startSilencerTeach();
+               else if (tool === 'improve') startImproveTeach();
+           }, delay);
        }
 
        function armModifier(row) {
@@ -9092,6 +9395,7 @@
         }catch(_){}
         return null;
     }
+    window.resolveLiveCaptionTimed=resolveLiveCaptionTimed;
 
     function getCaptionPreviewVideo(){
         const cont=document.getElementById('templateVideoPreview');
@@ -12908,9 +13212,13 @@
                 if(phone && !isOverlayText(phone) && active!==phone){
                     try{ select(phone); }catch(_){}
                 }
+                const memPending=!!(pendingSubMem || window.__solisPendingSubMem);
                 applyCaptionPreset(an.id, active||phone);
                 animLivePinned=true;
-                ddAnim.querySelectorAll('.sub-acard').forEach(c=>c.classList.remove('on'));
+                ddAnim.querySelectorAll('.sub-acard').forEach(c=>{
+                    c.classList.remove('on');
+                    c.classList.remove('sub-mem-pick');
+                });
                 card.classList.add('on');
                 softStopAnimPreview();
                 showAnimFullPreview(an.id, {
@@ -12918,8 +13226,18 @@
                 });
                 try{ if(typeof window.collectSubtitleStyle==='function') window.collectSubtitleStyle(); }catch(_){}
                 document.getElementById('subBtnAnims')?.classList.add('sub-active');
+                document.getElementById('subBtnAnims')?.classList.remove('sub-mem-pick');
                 showMenu();
                 placeOpenDd();
+
+                if(memPending){
+                    try{
+                        acceptSubtitleMemorySuggest({
+                            fromPresetPick: true,
+                            pickedAnim: an.id,
+                        });
+                    }catch(_){}
+                }
             });
             return card;
         }
@@ -15261,9 +15579,19 @@
     }
 
     function acceptSubtitleMemorySuggest(opts){
+        opts=opts||{};
         if(!pendingSubMem) return;
+        if(opts.pickedAnim){
+            try{
+                pendingSubMem.style={
+                    ...(pendingSubMem.style||{}),
+                    anim: normalizeSubtitleAnim(opts.pickedAnim),
+                };
+            }catch(_){}
+        }
         const style=pendingSubMem.style;
         const tid=pendingSubMem.templateId;
+        const fromPresetPick=!!opts.fromPresetPick;
 
         applySubtitleStyle(style,{
             fromMemory:true,
@@ -15284,14 +15612,25 @@
             block?.classList?.remove('sub-mem-pick','sub-suggest');
             if(block) block.dataset.subTouched='1';
         }catch(_){}
-        try{ hideMenu(); deselect(); }catch(_){}
+        if(!fromPresetPick){
+            try{ hideMenu(); deselect(); }catch(_){}
+        }else{
+            try{
+                clearMemPickHighlights();
+                document.getElementById('subBtnAnims')?.classList.remove('sub-mem-pick');
+                block?.classList?.add('selected');
+                if(block) active=block;
+                showMenu();
+                placeOpenDd();
+            }catch(_){}
+        }
         let appliedSnap=null;
         try{
             if(typeof window.collectSubtitleStyle==='function'){
                 appliedSnap=window.collectSubtitleStyle();
             }
         }catch(_){}
-        clearSubtitleMemorySuggest();
+        clearSubtitleMemorySuggest({ closePresets:false });
         try{
             window.__solisCaptionsOptedIn=true;
             window.__solisCaptionsClearedForGenerate=false;
@@ -15305,12 +15644,27 @@
                 window.SolisMemory.recordSuggestionAccepted(tid, { tip: !!(style&&style.__tip) });
             }
         }catch(_){}
+        if(fromPresetPick){
+            try{
+                const chip=document.getElementById('solisMemorySuggest');
+                if(chip){
+                    chip.hidden=true;
+                    chip.setAttribute('hidden','');
+                    chip.classList.remove('open','solis-memory-suggest--recipe');
+                    chip.style.visibility='hidden';
+                    chip.style.opacity='0';
+                    chip.style.pointerEvents='none';
+                }
+                window.SolisMemory?.lockSuggestForOpen?.();
+            }catch(_){}
+            return;
+        }
         closeDD();
         const acceptedAnim=normalizeSubtitleAnim(style?.anim||curAnim||'karaoke');
         setTimeout(()=>{
             try{
                 if(typeof window.openSubtitleAnimations==='function'){
-                    window.openSubtitleAnimations({ memPick:true, animId:acceptedAnim });
+                    window.openSubtitleAnimations({ animId:acceptedAnim });
                 }
             }catch(_){}
         }, style?.__tip ? 140 : 260);
@@ -15959,5 +16313,22 @@
         </footer>
     </div>
 </div>
+<script type="text/javascript">
+window.$crisp = [];
+window.CRISP_WEBSITE_ID = "7ac85826-98e0-4852-943e-3c1cf0646627";
+(function () {
+    var d = document;
+    var s = d.createElement("script");
+    s.src = "https://client.crisp.chat/l.js";
+    s.async = 1;
+    d.getElementsByTagName("head")[0].appendChild(s);
+})();
+</script>
+<style>
+.crisp-client,
+#crisp-chatbox {
+    z-index: 2147483000 !important;
+}
+</style>
 </body>
 </html>

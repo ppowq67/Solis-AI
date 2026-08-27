@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.paddle.com https://sandbox-cdn.paddle.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.paddle.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.solisai.video https://sandbox-api.paddle.com https://api.paddle.com https://sandbox-buy.paddle.com https://buy.paddle.com https://cloudflareinsights.com; frame-src 'self' https://checkout.paddle.com https://buy.paddle.com https://sandbox-buy.paddle.com https://sandbox-checkout-service.paddle.com https://checkout-service.paddle.com;" />
   <script src="/js/core/init.js?v=7"></script>
-  <script defer src="/js/auth-modal.js?v=1"></script>
+  <script defer src="/js/auth-modal.js?v=3"></script>
   <script>if ('scrollRestoration' in history) history.scrollRestoration = 'manual';</script>
   <script src="/js/core/avatar-url.js?v=1"></script>
   <title>Premium · Solis AI</title>
@@ -1206,25 +1206,34 @@
       background-position: 0 0;
     }
     .bottom-band-dots { opacity: 0.58; }
-    .bottom-band-dots-hi {
-      background-image: radial-gradient(rgba(255, 255, 255, 0.98) 1.25px, transparent 1.45px);
-      opacity: 0;
-      transition: opacity 0.2s ease;
-      -webkit-mask-image: radial-gradient(circle 160px at var(--gs-mx) var(--gs-my), #000 0%, #000 28%, transparent 72%);
-      mask-image: radial-gradient(circle 160px at var(--gs-mx) var(--gs-my), #000 0%, #000 28%, transparent 72%);
-    }
-    .bottom-band.is-hot .bottom-band-dots-hi { opacity: 1; }
+    .bottom-band-dots-hi,
     .bottom-band-glow {
+      display: none !important;
+    }
+    .bottom-band-spotlight {
       position: absolute;
-      inset: 0;
+      left: 0;
+      top: 0;
       z-index: 1;
+      width: 280px;
+      height: 280px;
+      margin: -140px 0 0 -140px;
+      border-radius: 50%;
       pointer-events: none;
       opacity: 0;
-      transition: opacity 0.2s ease;
-      background: radial-gradient(circle 180px at var(--gs-mx) var(--gs-my), rgba(255, 255, 255, 0.32), transparent 70%);
-      mix-blend-mode: soft-light;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.95) 1.2px, transparent 1.4px);
+      background-size: 14px 14px;
+      background-position: 0 0;
+      -webkit-mask-image: radial-gradient(circle, #000 0%, #000 38%, transparent 72%);
+      mask-image: radial-gradient(circle, #000 0%, #000 38%, transparent 72%);
+      transform: translate3d(-9999px, -9999px, 0);
+      transition: opacity 0.15s ease;
+      will-change: transform;
+      contain: strict;
     }
-    .bottom-band.is-hot .bottom-band-glow { opacity: 1; }
+    .bottom-band.is-hot .bottom-band-spotlight {
+      opacity: 1;
+    }
     .bottom-band-shade {
       position: absolute;
       inset: 0;
@@ -1325,11 +1334,9 @@
       background-image: radial-gradient(circle, var(--pill-btn-dot) 0.8px, transparent 1.05px);
       background-size: 6px 6px;
       opacity: 0.18;
-      transition: opacity 0.35s ease, transform 0.4s ease;
+      transition: opacity 0.2s ease;
       pointer-events: none;
       z-index: 0;
-      mix-blend-mode: soft-light;
-      transform: scale(1.02);
       border-radius: inherit;
     }
     .pill-btn > span {
@@ -1350,8 +1357,7 @@
         0 10px 24px rgba(234, 88, 12, 0.36);
     }
     .pill-btn:hover::after {
-      opacity: 0.72;
-      transform: scale(1);
+      opacity: 0.42;
     }
     .pill-btn:active {
       transform: scale(0.985);
@@ -2047,8 +2053,7 @@
     <div class="gs-glow" aria-hidden="true"></div>
     <div class="gs-glow-b" aria-hidden="true"></div>
     <div class="bottom-band-dots" aria-hidden="true"></div>
-    <div class="bottom-band-dots-hi" aria-hidden="true"></div>
-    <div class="bottom-band-glow" aria-hidden="true"></div>
+    <div class="bottom-band-spotlight" id="gsSpotlight" aria-hidden="true"></div>
     <div class="bottom-band-shade" aria-hidden="true"></div>
     <section class="get-started" aria-label="Get started">
       <div class="get-started-inner">
@@ -2226,24 +2231,23 @@
 
       var getStartedEl = $('#getStarted');
       if (getStartedEl && !prefersReducedMotion && !isCoarse) {
+        var gsSpotlight = $('#gsSpotlight') || getStartedEl.querySelector('.bottom-band-spotlight');
         var gsRaf = 0;
-        var gsPending = null;
+        var gsX = 0;
+        var gsY = 0;
         function flushGsPointer() {
           gsRaf = 0;
-          if (!gsPending) return;
-          getStartedEl.style.setProperty('--gs-mx', gsPending.x);
-          getStartedEl.style.setProperty('--gs-my', gsPending.y);
-          getStartedEl.classList.add('is-hot');
-          gsPending = null;
+          if (!gsSpotlight) return;
+          gsSpotlight.style.transform = 'translate3d(' + gsX + 'px,' + gsY + 'px,0)';
+          gsSpotlight.style.backgroundPosition = (-gsX) + 'px ' + (-gsY) + 'px';
         }
         getStartedEl.addEventListener('pointermove', function (e) {
           var r = getStartedEl.getBoundingClientRect();
-          gsPending = {
-            x: (((e.clientX - r.left) / r.width) * 100).toFixed(2) + '%',
-            y: (((e.clientY - r.top) / r.height) * 100).toFixed(2) + '%'
-          };
+          gsX = e.clientX - r.left;
+          gsY = e.clientY - r.top;
+          getStartedEl.classList.add('is-hot');
           if (!gsRaf) gsRaf = requestAnimationFrame(flushGsPointer);
-        });
+        }, { passive: true });
         getStartedEl.addEventListener('pointerleave', function () {
           getStartedEl.classList.remove('is-hot');
         });
@@ -2398,7 +2402,7 @@
         { q: 'What is the 40% off launch offer?', a: "For a limited time, Basic and Prime are 40% off for your first 2 months. Basic is $5.99/mo and Prime is $14.39/mo for those first two months, then billing returns to the regular price ($9.99 / $23.99). Elite is $39.99/mo. Cancel anytime."},
         { q: 'What payment methods do you accept?', a: 'We accept all major credit and debit cards through Paddle, our merchant of record. Apple Pay, Google Pay, and PayPal are also supported at checkout.' },
         { q: 'How does the priority queue work on Elite?', a: "Elite subscribers' renders are placed at the front of our global render queue, ahead of Basic and Prime subscribers. During peak hours this typically reduces wait time by 60–80% versus the standard queue." },
-        { q: 'What happens to my clips if I cancel?', a: "All clips you've already rendered and downloaded remain yours forever, they're watermark-free on every tier. If you cancel, your saved videos in the Solis library are retained for 30 days, then permanently deleted unless you re-subscribe." },
+        { q: 'What happens to my clips if I cancel?', a: "All clips you've already rendered and downloaded remain yours forever. If you cancel, your saved videos in the Solis library are retained for 30 days, then permanently deleted unless you re-subscribe." },
         { q: 'Can I use Solis for client work?', a: 'Yes. Every paid tier includes a commercial license for the clips you render - so you can use Solis for your own content and for clients.' }
       ];
       var faqList = $('#faqList');

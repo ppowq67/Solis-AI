@@ -162,26 +162,55 @@
       const s = this.activeTemplateOptions || {};
       const i = window.clipsStudio;
       const o = i?.processingItems?.[0];
-      const r = s.videoTitle || s.title || o?.name || document.getElementById("youtubeUrlInput")?.value?.trim() || "Your video";
-      const a = this.activeTemplateId || "ranked_compilation";
-      const l = i?.templates?.[a]?.name || (a === "splitscreen" ? "Clip" : a === "ranked_compilation" ? "Ranking" : "Clip");
-      if (e) {
-        let t = String(r);
-        if (/^https?:\/\//i.test(t)) {
-          try {
-            const e = new URL(t);
-            t = e.hostname.replace(/^www\./, "") + e.pathname.slice(0, 28);
-          } catch (e) {
-            t = "YouTube video";
-          }
-        }
-        t = t.replace(/^Clip\s*·\s*/i, "").replace(/^Ranking\s*·\s*/i, "");
-        e.textContent = t;
-        e.title = String(r);
+      const a = (typeof i?.resolveSourceVideoCardMeta === "function" ? i.resolveSourceVideoCardMeta() : null) || {};
+      let r = String(s.videoTitle || s.title || a.title || o?.name || "").trim();
+      if (!r || /^https?:\/\//i.test(r) || /^Clip\s*·\s*https?/i.test(r)) {
+        r = a.title || "Your video";
       }
-      if (t) t.textContent = l;
-      if (n && s.thumbnailUrl) {
-        n.innerHTML = `<img src="${String(s.thumbnailUrl).replace(/"/g, "")}" alt="">`;
+      r = r.replace(/^Clip\s*·\s*/i, "").replace(/^Ranking\s*·\s*/i, "");
+      const l = this.activeTemplateId || "ranked_compilation";
+      const c = i?.templates?.[l]?.name || (l === "splitscreen" ? "Clip" : l === "ranked_compilation" ? "Ranking" : "Clip");
+      if (e) {
+        e.textContent = r || "Your video";
+        e.title = r || "Your video";
+      }
+      if (t) t.textContent = c;
+      const d = String(s.thumbnailUrl || a.thumbnailUrl || "").trim();
+      const u = s.videoId || a.videoId || null;
+      const g = d || (u ? `https://i.ytimg.com/vi/${u}/hqdefault.jpg` : "");
+      if (n) {
+        if (g && /^https?:\/\//i.test(g)) {
+          const e = g.replace(/"/g, "");
+          const t = n.querySelector("img");
+          if (!t || t.getAttribute("src") !== e) {
+            n.innerHTML = `<img src="${e}" alt="" loading="lazy">`;
+          }
+        } else if (!n.querySelector("img")) {
+          n.innerHTML = '<span class="solis-gen-thumb-fallback">CLIP</span>';
+        }
+      }
+      const p = !r || r === "Your video" || r === "YouTube video";
+      if (p && u && !this._genStageMetaFetchId) {
+        this._genStageMetaFetchId = u;
+        const e = window.API_BASE_URL || "/api";
+        fetch(`${e}/youtube/get-metadata/${encodeURIComponent(u)}`, {
+          credentials: "include",
+          signal: AbortSignal.timeout(5e3)
+        }).then(e => e.ok ? e.json() : null).then(e => {
+          if (!e?.title) return;
+          if (i) i._lastVideoTitle = e.title;
+          if (e.thumbnail && i) i._lastVideoThumbnail = e.thumbnail;
+          this.activeTemplateOptions = {
+            ...this.activeTemplateOptions || {},
+            videoTitle: e.title,
+            title: e.title,
+            thumbnailUrl: e.thumbnail || this.activeTemplateOptions?.thumbnailUrl || (u ? `https://i.ytimg.com/vi/${u}/hqdefault.jpg` : null),
+            videoId: u
+          };
+          this._fillGenStageVideoMeta();
+        }).catch(() => {}).finally(() => {
+          if (this._genStageMetaFetchId === u) this._genStageMetaFetchId = null;
+        });
       }
     };
     n._renderAffHeroTip = function _renderAffHeroTip(t) {
@@ -211,11 +240,11 @@
       const onEnd = e => {
         if (e.target !== o || e.propertyName !== "filter") return;
         o.removeEventListener("transitionend", onEnd);
-        clearTimeout(r);
+        clearTimeout(a);
         finish();
       };
       o.addEventListener("transitionend", onEnd);
-      const r = setTimeout(() => {
+      const a = setTimeout(() => {
         o.removeEventListener("transitionend", onEnd);
         finish();
       }, 500);
@@ -225,32 +254,32 @@
       const i = document.getElementById("solisGenHeading");
       const o = document.getElementById("solisGenProgressLabel");
       if (!s || typeof this._getActiveTasks !== "function") return;
-      const r = this._getActiveTasks();
-      if (!r.length) return;
-      let a = Number(e);
-      if (!Number.isFinite(a)) {
+      const a = this._getActiveTasks();
+      if (!a.length) return;
+      let r = Number(e);
+      if (!Number.isFinite(r)) {
         const e = this.activeGenerations?.values?.().next?.().value;
-        a = Number(e?.progress);
+        r = Number(e?.progress);
       }
-      if (!Number.isFinite(a)) a = 0;
-      a = Math.max(0, Math.min(100, a));
+      if (!Number.isFinite(r)) r = 0;
+      r = Math.max(0, Math.min(100, r));
       const l = String(t || firstMessage(this) || "");
       let c = 0;
       if (typeof this._resolveTaskIndex === "function") {
-        c = this._resolveTaskIndex(a, l);
+        c = this._resolveTaskIndex(r, l);
       } else {
-        for (let e = 0; e < r.length; e++) {
-          const t = e === 0 ? 0 : Number(r[e - 1]?.maxProgress) || 0;
-          if (a >= t) c = e;
+        for (let e = 0; e < a.length; e++) {
+          const t = e === 0 ? 0 : Number(a[e - 1]?.maxProgress) || 0;
+          if (r >= t) c = e;
         }
       }
       const d = n && n.reveal;
-      const p = `${r.map(e => e.id).join("|")}|${c}|${a >= 100 ? 1 : 0}`;
-      const u = d || this._genStepSignature !== p || s.children.length !== r.length;
-      if (u) {
-        this._genStepSignature = p;
-        s.innerHTML = r.map((e, t) => {
-          const n = t < c || a >= 100;
+      const u = `${a.map(e => e.id).join("|")}|${c}|${r >= 100 ? 1 : 0}`;
+      const g = d || this._genStepSignature !== u || s.children.length !== a.length;
+      if (g) {
+        this._genStepSignature = u;
+        s.innerHTML = a.map((e, t) => {
+          const n = t < c || r >= 100;
           const s = !n && t === c;
           const i = n ? `<span class="solis-gen-step-ico"><svg class="solis-gen-step-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>` : s ? `<span class="solis-gen-step-ico"><span class="solis-gen-step-spin" aria-hidden="true"></span></span>` : `<span class="solis-gen-step-ico"></span>`;
           return `<li class="solis-gen-step${n ? " is-done" : ""}${s ? " is-active" : ""}" data-step-i="${t}">${i}<span class="solis-gen-step-label"></span></li>`;
@@ -265,14 +294,14 @@
         }
       }
       s.querySelectorAll(".solis-gen-step").forEach((e, t) => {
-        const n = r[t];
+        const n = a[t];
         if (!n) return;
-        const s = t < c || a >= 100;
+        const s = t < c || r >= 100;
         const i = !s && t === c;
         const o = e.querySelector(".solis-gen-step-label");
         if (!o) return;
-        if (i && a < 100 && a > 0) {
-          o.innerHTML = `${escapeHtml(n.label)}<span class="solis-gen-step-pct">...${Math.floor(a)}%</span>`;
+        if (i && r < 100 && r > 0) {
+          o.innerHTML = `${escapeHtml(n.label)}<span class="solis-gen-step-pct">...${Math.floor(r)}%</span>`;
         } else if (i) {
           o.textContent = `${n.label}...`;
         } else {
@@ -281,14 +310,14 @@
         e.classList.toggle("is-done", s);
         e.classList.toggle("is-active", i);
       });
-      const g = r[Math.min(c, r.length - 1)];
-      const f = a >= 100 ? "Your clips are ready" : g?.id === "moment" || g?.id === "clip" ? "Analyzing content and finding clips" : g?.label || "Analyzing content and finding clips";
-      if (i && f !== this._lastGenHeadline) {
-        i.textContent = f;
-        this._lastGenHeadline = f;
+      const p = a[Math.min(c, a.length - 1)];
+      const m = r >= 100 ? "Your clips are ready" : p?.id === "moment" || p?.id === "clip" ? "Analyzing content and finding clips" : p?.label || "Analyzing content and finding clips";
+      if (i && m !== this._lastGenHeadline) {
+        i.textContent = m;
+        this._lastGenHeadline = m;
       }
       if (o) {
-        o.textContent = a >= 100 ? "Complete" : a > 0 ? `${Math.floor(a)}%` : "Starting...";
+        o.textContent = r >= 100 ? "Complete" : r > 0 ? `${Math.floor(r)}%` : "Starting...";
       }
     };
     function firstMessage(e) {
@@ -335,9 +364,9 @@
     e.innerHTML = [ [ "Fetch video", "done" ], [ "Create project", "done" ], [ "Finding best moment", "active" ], [ "Preparing secondary panel", "" ], [ "Building split screen", "" ], [ "Exporting", "" ] ].map(([e, n], s) => {
       const i = n === "done";
       const o = n === "active";
-      const r = i ? `<span class="solis-gen-step-ico">${t}</span>` : o ? '<span class="solis-gen-step-ico"><span class="solis-gen-step-spin" aria-hidden="true"></span></span>' : '<span class="solis-gen-step-ico"></span>';
-      const a = o ? `${e}<span class="solis-gen-step-pct">...37%</span>` : e;
-      return `<li class="solis-gen-step is-shown${i ? " is-done" : ""}${o ? " is-active" : ""}" data-step-i="${s}">${r}<span class="solis-gen-step-label">${a}</span></li>`;
+      const a = i ? `<span class="solis-gen-step-ico">${t}</span>` : o ? '<span class="solis-gen-step-ico"><span class="solis-gen-step-spin" aria-hidden="true"></span></span>' : '<span class="solis-gen-step-ico"></span>';
+      const r = o ? `${e}<span class="solis-gen-step-pct">...37%</span>` : e;
+      return `<li class="solis-gen-step is-shown${i ? " is-done" : ""}${o ? " is-active" : ""}" data-step-i="${s}">${a}<span class="solis-gen-step-label">${r}</span></li>`;
     }).join("");
     const n = document.getElementById("solisGenHeading");
     const s = document.getElementById("solisGenProgressLabel");
@@ -345,6 +374,10 @@
     if (n) n.textContent = "Analyzing content and finding clips";
     if (s) s.textContent = "37%";
     if (i) i.textContent = "I Ate Nothing But YouTuber Products for 7 Days";
+    const o = document.getElementById("solisGenThumb");
+    if (o) {
+      o.innerHTML = '<img src="https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg" alt="" loading="lazy">';
+    }
   }
   function forceOpenDemoStage() {
     const e = document.getElementById("solisGenStage");
@@ -356,7 +389,9 @@
         t.activeTemplateId = "splitscreen";
         t.activeTemplateOptions = {
           videoTitle: "I Ate Nothing But YouTuber Products for 7 Days",
-          title: "I Ate Nothing But YouTuber Products for 7 Days"
+          title: "I Ate Nothing But YouTuber Products for 7 Days",
+          thumbnailUrl: "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
+          videoId: "dQw4w9WgXcQ"
         };
         t.openGenStage({
           reveal: true
@@ -403,7 +438,9 @@
         e.activeTemplateId = "splitscreen";
         e.activeTemplateOptions = {
           videoTitle: "I Ate Nothing But YouTuber Products for 7 Days",
-          title: "I Ate Nothing But YouTuber Products for 7 Days"
+          title: "I Ate Nothing But YouTuber Products for 7 Days",
+          thumbnailUrl: "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
+          videoId: "dQw4w9WgXcQ"
         };
         e.optimisticPending = true;
         e.tasksIntroPlayed = false;

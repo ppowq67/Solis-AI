@@ -2289,6 +2289,14 @@
     recallCaptionSnap: recallCaptionSnap,
     suggestHookLine: suggestHookLine,
     recordSuggestionAccepted: recordSuggestionAccepted,
+    lockSuggestForOpen: () => {
+      h = true;
+      w = 0;
+      if (S) {
+        clearTimeout(S);
+        S = null;
+      }
+    },
     getCurrentTemplateId: () => b,
     isRankingTemplate: isRankingTemplate,
     isSplitscreenTemplate: isSplitscreenTemplate,

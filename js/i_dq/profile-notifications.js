@@ -46,14 +46,14 @@ function safeSetImage(e, t, i = "") {
     console.warn("Invalid image URL");
     return;
   }
-  const n = document.createElement("img");
-  n.setAttribute("src", t);
-  n.setAttribute("alt", escapeHtml(i));
-  n.style.cssText = "width: 100%; height: 100%; object-fit: cover; border-radius: 50%;";
+  const o = document.createElement("img");
+  o.setAttribute("src", t);
+  o.setAttribute("alt", escapeHtml(i));
+  o.style.cssText = "width: 100%; height: 100%; object-fit: cover; border-radius: 50%;";
   while (e.firstChild) {
     e.removeChild(e.firstChild);
   }
-  e.appendChild(n);
+  e.appendChild(o);
 }
 
 function validateUserObject(e) {
@@ -116,13 +116,13 @@ function syncProfileButton() {
     console.warn("Invalid user object");
     return;
   }
-  const n = i.user;
-  const o = typeof resolveAvatarUrl === "function" ? resolveAvatarUrl(n) : n.picture || n.avatar || null;
+  const o = i.user;
+  const n = typeof resolveAvatarUrl === "function" ? resolveAvatarUrl(o) : o.picture || o.avatar || null;
   while (e.firstChild) {
     e.removeChild(e.firstChild);
   }
-  if (o && typeof o === "string" && isValidImageUrl(o)) {
-    safeSetImage(e, o, "User Avatar");
+  if (n && typeof n === "string" && isValidImageUrl(n)) {
+    safeSetImage(e, n, "User Avatar");
   }
 }
 
@@ -147,10 +147,15 @@ function attachNotificationEventListeners() {
       openNotificationsFromProfile();
     });
   }
-  document.addEventListener("click", closeAllDropdowns);
-  const n = document.getElementById("markAsRead");
-  if (n) {
-    n.addEventListener("click", e => {
+  document.addEventListener("click", e => {
+    if (e.target?.closest?.("#notificationsDropdown, #profileDropdown, #bellBtn, #profileAvatarBtn, #notifWrapper, #profileDropdownWr")) {
+      return;
+    }
+    closeAllDropdowns();
+  });
+  const o = document.getElementById("markAsRead");
+  if (o) {
+    o.addEventListener("click", e => {
       e.preventDefault();
       clearUnreadStatus();
     });
@@ -200,7 +205,7 @@ function addNotification(e) {
   }
   const sanitizeString = (e, t = 500) => {
     if (typeof e !== "string") return "";
-    return escapeHtml(e.substring(0, t));
+    return String(e).substring(0, t);
   };
   const t = {
     id: Date.now(),
@@ -208,8 +213,7 @@ function addNotification(e) {
     message: sanitizeString(e.message || "New notification", 500),
     icon: e.icon || "info",
     timestamp: e.timestamp || new Date,
-    read: e.read === true,
-    ...e
+    read: e.read === true
   };
   const i = [ "check", "info", "warning", "error", "default" ];
   if (!i.includes(t.icon)) {
@@ -226,21 +230,40 @@ function addNotification(e) {
 }
 
 function showVideoGeneratedNotification(e = {}) {
-  const {videoTitle: t = "Video Generated", videoUrl: i = "#", thumbnailUrl: n = null, duration: o = 0} = e;
-  showVideoGeneratedOverlay(t, i);
-  addNotification({
-    title: "Video Generated",
-    message: `Your video "${t}" has been successfully created and is ready to download.`,
-    icon: "check",
-    action: {
-      label: "View Video",
-      url: i
+  const {videoTitle: t = "Video Generated", videoUrl: i = "#", thumbnailUrl: o = null, message: n = null} = e || {};
+  const a = String(t || "Video Generated").trim() || "Video Generated";
+  const s = String(n || `Your video "${a}" is ready.`).trim();
+  try {
+    if (typeof NotificationSystemV2?.addNotification === "function") {
+      NotificationSystemV2.addNotification({
+        title: "Video ready",
+        message: s,
+        icon: "check",
+        priority: "high"
+      });
+    } else if (typeof addNotification === "function") {
+      addNotification({
+        title: "Video ready",
+        message: s,
+        icon: "check"
+      });
     }
-  });
-}
-
-function showVideoGenerated(e = {}) {
-  return showVideoGeneratedNotification(e);
+  } catch (e) {
+    console.warn("[NotifSys] bell add failed:", e);
+  }
+  try {
+    const e = window.__solisShowNotification || window.showNotification;
+    if (typeof e === "function") {
+      e(s, "success");
+    }
+  } catch (e) {}
+  try {
+    showVideoGeneratedOverlay(a, i || "#");
+  } catch (e) {}
+  try {
+    if (typeof addVideoBadge === "function") addVideoBadge();
+  } catch (e) {}
+  return true;
 }
 
 function showVideoGenerated(e = {}) {
@@ -249,26 +272,32 @@ function showVideoGenerated(e = {}) {
 
 function showVideoGeneratedOverlay(e = "Video Ready!", t = "#") {
   const i = document.getElementById("videoGeneratedBackdrop");
-  const n = document.getElementById("videoGeneratedOverlay");
-  if (!i || !n) {
-    console.warn("Video generated overlay elements not found");
+  const o = document.getElementById("videoGeneratedOverlay");
+  if (!i || !o) {
     return;
   }
-  const o = n.querySelector(".video-generated-title");
-  const a = n.querySelector(".video-generated-message");
-  const s = n.querySelector('[data-action="view"]');
-  if (o) o.textContent = e;
+  const n = o.querySelector(".video-generated-title");
+  const a = o.querySelector(".video-generated-message");
+  const s = o.querySelector('[data-action="view"]');
+  if (n) n.textContent = e;
   if (a) a.textContent = "Your video has been successfully generated and is ready to download or share.";
   if (s) {
     s.onclick = () => {
-      if (t !== "#") {
-        window.open(t, "_blank");
+      if (t && t !== "#") {
+        try {
+          window.open(t, "_blank");
+        } catch (e) {}
+      } else {
+        try {
+          const e = document.querySelector('[data-tab="library"], [data-target="clips"]');
+          e?.click?.();
+        } catch (e) {}
       }
       hideVideoGeneratedOverlay();
     };
   }
   i.classList.add("show");
-  n.classList.add("show");
+  o.classList.add("show");
   setTimeout(hideVideoGeneratedOverlay, 8e3);
 }
 
@@ -299,18 +328,18 @@ function isMobileNotifChrome() {
 function syncNotifBellVisibility(e) {
   const t = document.getElementById("notifWrapper") || document.querySelector(".notif-wrapper");
   const i = document.getElementById("dropdownNotifBadge");
-  const n = notificationSystem.unreadCount || (typeof NotificationSystemV2 !== "undefined" ? NotificationSystemV2.state?.unreadCount || 0 : 0);
-  const o = typeof e === "boolean" ? e : n > 0;
+  const o = notificationSystem.unreadCount || (typeof NotificationSystemV2 !== "undefined" ? NotificationSystemV2.state?.unreadCount || 0 : 0);
+  const n = typeof e === "boolean" ? e : o > 0;
   const a = !!document.getElementById("notificationsDropdown")?.classList.contains("open");
-  const s = isMobileNotifChrome() ? o || a : true;
+  const s = isMobileNotifChrome() ? n || a : true;
   if (t) {
     t.classList.toggle("is-visible", s);
     t.setAttribute("aria-hidden", s ? "false" : "true");
   }
   if (i) {
-    if (o && n > 0) {
+    if (n && o > 0) {
       i.hidden = false;
-      i.textContent = n > 9 ? "9+" : String(n);
+      i.textContent = o > 9 ? "9+" : String(o);
     } else {
       i.hidden = true;
       i.textContent = "";
@@ -359,18 +388,18 @@ function renderNotificationsList() {
     if (!t || typeof t !== "object") return;
     const i = document.createElement("div");
     i.className = "notif-item";
-    const n = document.createElement("div");
-    n.className = "notif-icon";
-    const o = document.createElement("svg");
-    o.setAttribute("width", "18");
-    o.setAttribute("height", "18");
-    o.setAttribute("viewBox", "0 0 24 24");
-    o.setAttribute("fill", "none");
-    o.setAttribute("stroke", "currentColor");
-    o.setAttribute("stroke-linecap", "round");
-    o.setAttribute("stroke-linejoin", "round");
-    o.innerHTML = getNotificationIcon(t.icon);
-    n.appendChild(o);
+    const o = document.createElement("div");
+    o.className = "notif-icon";
+    const n = document.createElement("svg");
+    n.setAttribute("width", "18");
+    n.setAttribute("height", "18");
+    n.setAttribute("viewBox", "0 0 24 24");
+    n.setAttribute("fill", "none");
+    n.setAttribute("stroke", "currentColor");
+    n.setAttribute("stroke-linecap", "round");
+    n.setAttribute("stroke-linejoin", "round");
+    n.innerHTML = getNotificationIcon(t.icon);
+    o.appendChild(n);
     const a = document.createElement("div");
     a.className = "notif-content";
     const s = document.createElement("div");
@@ -385,7 +414,7 @@ function renderNotificationsList() {
     a.appendChild(s);
     a.appendChild(r);
     a.appendChild(c);
-    i.appendChild(n);
+    i.appendChild(o);
     i.appendChild(a);
     e.appendChild(i);
   });
@@ -415,12 +444,12 @@ function formatTime(e) {
   }
   const t = new Date;
   const i = t - e;
-  const n = Math.floor(i / 1e3);
-  const o = Math.floor(n / 60);
-  const a = Math.floor(o / 60);
+  const o = Math.floor(i / 1e3);
+  const n = Math.floor(o / 60);
+  const a = Math.floor(n / 60);
   const s = Math.floor(a / 24);
-  if (n < 60) return "just now";
-  if (o < 60) return `${o}m ago`;
+  if (o < 60) return "just now";
+  if (n < 60) return `${n}m ago`;
   if (a < 24) return `${a}h ago`;
   if (s < 7) return `${s}d ago`;
   return e.toLocaleDateString();
@@ -430,29 +459,29 @@ function updateProfileInfo() {
   const e = document.getElementById("profileNameDisplay");
   const t = document.getElementById("profilePlanDisplay");
   const i = document.getElementById("profileAvatarDisplay");
-  let n = null;
+  let o = null;
   try {
     if (typeof window !== "undefined" && window.currentUser) {
-      n = window.currentUser;
+      o = window.currentUser;
     } else {
       const e = localStorage.getItem("currentUser");
       if (e) {
         const t = e.trim();
         if (t.startsWith("{") && t.endsWith("}")) {
-          n = JSON.parse(e);
+          o = JSON.parse(e);
         }
       }
     }
   } catch (e) {
     console.error("Error reading user data:", e);
-    n = null;
+    o = null;
   }
-  const o = validateUserObject(n);
-  if (!o || !o.valid) {
+  const n = validateUserObject(o);
+  if (!n || !n.valid) {
     console.warn("Invalid user object");
     return;
   }
-  const a = o.user;
+  const a = n.user;
   const s = escapeHtml((a.name || a.displayName || a.email || "User").toString().substring(0, 100));
   const r = escapeHtml((a.tier || a.plan || "Free Plan").toString().toUpperCase().substring(0, 50));
   const c = a.picture || a.avatar || null;
@@ -501,8 +530,8 @@ const StorageManager = {
         Logger.warn("Invalid payload structure");
         return null;
       }
-      const n = Date.now() - i.timestamp;
-      if (n > 30 * 24 * 60 * 60 * 1e3) {
+      const o = Date.now() - i.timestamp;
+      if (o > 30 * 24 * 60 * 60 * 1e3) {
         Logger.warn("Data is stale, clearing");
         localStorage.removeItem(e);
         return null;
@@ -674,14 +703,14 @@ const NotificationSystemV2 = {
       t(i);
       return;
     }
-    const n = new MutationObserver(() => {
+    const o = new MutationObserver(() => {
       const i = document.querySelector(e);
       if (i) {
-        n.disconnect();
+        o.disconnect();
         t(i);
       }
     });
-    n.observe(document.body, {
+    o.observe(document.body, {
       childList: true,
       subtree: true
     });
@@ -702,9 +731,9 @@ const NotificationSystemV2 = {
         headers: t,
         body: "{}"
       });
-      const n = await i.json().catch(() => ({}));
-      if (n.success && n.badges) {
-        const e = n.badges;
+      const o = await i.json().catch(() => ({}));
+      if (o.success && o.badges) {
+        const e = o.badges;
         const t = e.badges || [];
         if (t.length > 0) {
           Logger.success(`Loaded ${t.length} badge(s) from database`);
@@ -766,7 +795,7 @@ const NotificationSystemV2 = {
       return;
     }
     i.innerHTML = "";
-    const n = [ ...e.badges ].sort((e, t) => {
+    const o = [ ...e.badges ].sort((e, t) => {
       const rank = e => {
         const t = String(e || "").toLowerCase();
         if (t === "business" || t === "official") return 0;
@@ -776,12 +805,12 @@ const NotificationSystemV2 = {
       };
       return rank(e?.badge_type) - rank(t?.badge_type);
     }).slice(0, 2);
-    n.forEach(e => {
+    o.forEach(e => {
       const t = document.createElement("span");
       t.className = "user-badge solis-user-badge";
       t.style.cssText = "display:inline-flex;width:22px;height:22px;";
-      const n = NotificationSystemV2.createBadgeSvg(e.badge_type, null);
-      t.appendChild(n);
+      const o = NotificationSystemV2.createBadgeSvg(e.badge_type, null);
+      t.appendChild(o);
       i.appendChild(t);
     });
   },
@@ -789,24 +818,25 @@ const NotificationSystemV2 = {
     const e = document.getElementById("bellBtn") || document.querySelector(".bell-btn");
     const t = document.getElementById("notificationsDropdown");
     const i = document.getElementById("markAsRead");
-    const n = document.getElementById("dropdownNotifications");
-    if (e && t) {
+    const o = document.getElementById("dropdownNotifications");
+    if (e && t && !e.dataset.v2BellBound) {
+      e.dataset.v2BellBound = "1";
       e.addEventListener("click", e => {
+        e.preventDefault();
         e.stopPropagation();
         const i = t.classList.contains("open");
         NotificationSystemV2.closeAllDropdowns();
         if (!i) {
           t.classList.add("open");
-          NotificationSystemV2.clearUnreadStatus();
           if (typeof syncNotifBellVisibility === "function") {
-            syncNotifBellVisibility(false);
+            syncNotifBellVisibility(true);
           }
         }
       });
     }
-    if (n && !n.dataset.v2Bound) {
-      n.dataset.v2Bound = "1";
-      n.addEventListener("click", e => {
+    if (o && !o.dataset.v2Bound) {
+      o.dataset.v2Bound = "1";
+      o.addEventListener("click", e => {
         e.preventDefault();
         e.stopPropagation();
         if (typeof openNotificationsFromProfile === "function") {
@@ -818,10 +848,21 @@ const NotificationSystemV2 = {
         }
       });
     }
-    document.addEventListener("click", () => NotificationSystemV2.closeAllDropdowns());
-    if (i) {
+    if (!document.documentElement.dataset.v2NotifDocBound) {
+      document.documentElement.dataset.v2NotifDocBound = "1";
+      document.addEventListener("click", e => {
+        const t = e.target;
+        if (t?.closest?.("#notificationsDropdown, #profileDropdown, #bellBtn, #profileAvatarBtn, #notifWrapper, #profileDropdownWr")) {
+          return;
+        }
+        NotificationSystemV2.closeAllDropdowns();
+      });
+    }
+    if (i && !i.dataset.v2Bound) {
+      i.dataset.v2Bound = "1";
       i.addEventListener("click", e => {
         e.preventDefault();
+        e.stopPropagation();
         NotificationSystemV2.clearUnreadStatus();
       });
     }
@@ -847,8 +888,8 @@ const NotificationSystemV2 = {
     }
     const t = {
       id: e.id || Date.now(),
-      title: escapeHtml(String(e.title || "Notification").substring(0, 100)),
-      message: escapeHtml(String(e.message || "New notification").substring(0, 500)),
+      title: String(e.title || "Notification").substring(0, 100),
+      message: String(e.message || "New notification").substring(0, 500),
       icon: e.icon || "info",
       timestamp: e.timestamp || (new Date).toISOString(),
       read: e.read === true,
@@ -912,10 +953,10 @@ const NotificationSystemV2 = {
       return;
     }
     NotificationSystemV2.state.notifications.forEach((t, i) => {
-      const n = document.createElement("div");
-      n.className = "notif-item";
       const o = document.createElement("div");
-      o.className = "notif-icon";
+      o.className = "notif-item";
+      const n = document.createElement("div");
+      n.className = "notif-icon";
       const a = document.createElement("svg");
       a.setAttribute("width", "18");
       a.setAttribute("height", "18");
@@ -925,7 +966,7 @@ const NotificationSystemV2 = {
       a.setAttribute("stroke-linecap", "round");
       a.setAttribute("stroke-linejoin", "round");
       a.innerHTML = NotificationSystemV2.getIcon(t.icon);
-      o.appendChild(a);
+      n.appendChild(a);
       const s = document.createElement("div");
       s.className = "notif-content";
       const r = document.createElement("div");
@@ -940,9 +981,9 @@ const NotificationSystemV2 = {
       s.appendChild(r);
       s.appendChild(c);
       s.appendChild(d);
-      n.appendChild(o);
-      n.appendChild(s);
-      e.appendChild(n);
+      o.appendChild(n);
+      o.appendChild(s);
+      e.appendChild(o);
     });
   },
   getIcon: e => {
@@ -958,12 +999,12 @@ const NotificationSystemV2 = {
   formatTime: e => {
     const t = typeof e === "string" ? new Date(e) : e;
     const i = new Date;
-    const n = i - t;
-    const o = Math.floor(n / 1e3);
-    const a = Math.floor(o / 60);
+    const o = i - t;
+    const n = Math.floor(o / 1e3);
+    const a = Math.floor(n / 60);
     const s = Math.floor(a / 60);
     const r = Math.floor(s / 24);
-    if (o < 60) return "just now";
+    if (n < 60) return "just now";
     if (a < 60) return `${a}m ago`;
     if (s < 24) return `${s}h ago`;
     if (r < 7) return `${r}d ago`;
@@ -1036,6 +1077,8 @@ window.notificationSystem = {
     message: "This is a test notification",
     icon: "info"
   }),
+  showVideoGenerated: e => showVideoGeneratedNotification(e),
+  showVideoGeneratedNotification: e => showVideoGeneratedNotification(e),
   fetchUserBadges: async e => {
     if (!window.currentUser || String(window.currentUser.id) !== String(e)) {
       return null;
@@ -1085,6 +1128,10 @@ window.notificationSystem = {
   displayUserBadge: e => NotificationSystemV2.displayUserBadge(e),
   loadUserBadges: async e => NotificationSystemV2.loadUserBadges(!!e)
 };
+
+window.showVideoGenerated = showVideoGenerated;
+
+window.showVideoGeneratedNotification = showVideoGeneratedNotification;
 
 function addVideoBadge() {
   const e = document.querySelector('[data-tab="library"]');

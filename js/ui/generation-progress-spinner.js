@@ -1,8 +1,8 @@
 const GENERATION_TASK_PIPELINES = {
   ranked_compilation: [ {
     id: "wait",
-    label: "Free queue · Processing soon",
-    keywords: [ "queued", "queue", "ahead of you", "open slot", "starting shortly", "free queue", "priority", "processing soon" ],
+    label: "High demand · Almost there",
+    keywords: [ "high demand", "will be ready", "queued", "waiting", "starting shortly", "processing soon" ],
     maxProgress: 8
   }, {
     id: "install",
@@ -32,8 +32,8 @@ const GENERATION_TASK_PIPELINES = {
   } ],
   splitscreen: [ {
     id: "wait",
-    label: "Free queue · Processing soon",
-    keywords: [ "queued", "queue", "ahead of you", "open slot", "starting shortly", "free queue", "priority", "processing soon" ],
+    label: "High demand · Almost there",
+    keywords: [ "high demand", "will be ready", "queued", "waiting", "starting shortly", "processing soon" ],
     maxProgress: 8
   }, {
     id: "install",
@@ -261,11 +261,10 @@ class GenerationProgressSpinner {
   _shouldShowQueueWaitTask(e = "", t = null) {
     if (t?.queue_status === "running") return false;
     if (t?.queue_status === "waiting") return true;
-    const s = Number.isFinite(Number(t?.users_ahead)) ? Number(t.users_ahead) : this._queueAheadFromMessage(e);
-    if (s != null && s > 0) return true;
-    const i = String(e || "").toLowerCase();
-    if (i.includes("ahead of you") || i.includes("open slot")) return true;
-    if (i.includes("queued") && i.includes("waiting")) return true;
+    const s = String(e || "").toLowerCase();
+    if (s.includes("high demand") || s.includes("will be ready")) return true;
+    if (s.includes("ahead of you") || s.includes("open slot")) return true;
+    if (s.includes("queued") && s.includes("waiting")) return true;
     return false;
   }
   _setQueueWaitVisible(e) {
@@ -292,10 +291,14 @@ class GenerationProgressSpinner {
     const s = this._normalizeTemplateId(e);
     const i = this.activeTemplateId;
     const r = JSON.stringify(this.activeTemplateOptions || {});
-    const n = JSON.stringify(t || {});
+    const n = {
+      ...this.activeTemplateOptions || {},
+      ...t || {}
+    };
+    const a = JSON.stringify(n);
     this.activeTemplateId = s;
-    this.activeTemplateOptions = t || {};
-    if (i !== s || r !== n) {
+    this.activeTemplateOptions = n;
+    if (i !== s || r !== a) {
       this.tasksInitialized = false;
       this.tasksIntroPlayed = false;
       this._resetTaskVisibility();
@@ -586,24 +589,15 @@ class GenerationProgressSpinner {
   }
   _isQueueWaitingMessage(e = "") {
     const t = (e || "").toLowerCase();
-    return t.includes("queued") || t.includes("ahead of you") || t.includes("open slot") || t.includes("starting shortly") || t.includes("free queue") || t.includes("priority") || t.includes("processing soon") || t.includes("queue") && !t.includes("starting generation");
+    return t.includes("high demand") || t.includes("will be ready") || t.includes("queued") || t.includes("ahead of you") || t.includes("open slot") || t.includes("starting shortly") || t.includes("processing soon") || t.includes("queue") && !t.includes("starting generation");
   }
   _queueAheadFromMessage(e = "") {
-    const t = String(e || "").match(/(\d+)\s+ahead/i);
-    return t ? Number(t[1]) : null;
+    return null;
   }
   _queueLabelForInfo(e = "", t = null) {
-    const s = String(e || "").toLowerCase();
-    const i = t?.priority_lane === true || t?.lane === "priority" || s.includes("priority");
-    if (i) {
-      return {
-        label: "Priority · Starting soon",
-        hint: ""
-      };
-    }
     return {
-      label: "Free queue · Processing soon",
-      hint: "Upgrade for priority processing"
+      label: "High demand · Almost there",
+      hint: ""
     };
   }
   _updateQueueTaskLabel(e = "", t = null) {
@@ -801,12 +795,21 @@ class GenerationProgressSpinner {
     document.querySelector('[data-tab="library"] .library-notification-badge')?.remove();
   }
   showVideoReadyNotification() {
-    document.querySelector(".video-ready-notification")?.remove();
-    const e = document.createElement("div");
-    e.className = "video-ready-notification";
-    e.innerHTML = 'Your video is ready to go! <span class="video-ready-badge">OFFICIAL</span>';
-    document.body.appendChild(e);
-    setTimeout(() => e.remove(), 5e3);
+    const e = this.activeTemplateOptions || {};
+    const t = String(e.videoTitle || e.title || "Your video").trim() || "Your video";
+    const s = {
+      videoTitle: t,
+      videoUrl: "#",
+      thumbnailUrl: e.thumbnailUrl || null,
+      message: `${t} is ready`
+    };
+    if (typeof window.notificationSystem?.showVideoGenerated === "function") {
+      window.notificationSystem.showVideoGenerated(s);
+      return;
+    }
+    if (typeof window.showNotification === "function") {
+      window.showNotification(`${t} is ready`, "success");
+    }
   }
   _ensureCompleteSound() {
     if (this._completeAudio) return this._completeAudio;
@@ -1188,11 +1191,17 @@ class GenerationProgressSpinner {
         window.notificationSystem.showVideoGenerated({
           videoTitle: i || `Video ${String(t).substring(0, 8)}...`,
           videoUrl: s || "#",
+          thumbnailUrl: r || null,
           message: "Your video has been generated successfully!"
         });
+      } else if (typeof window.showNotification === "function") {
+        window.showNotification("Your video has been generated successfully!", "success");
       }
       this._refreshLibrarySoon();
+      const l = this.showVideoReadyNotification;
+      this.showVideoReadyNotification = () => {};
       this.completeGeneration(o);
+      this.showVideoReadyNotification = l;
     });
     solisWSClient.on("error", e => {
       const t = e?.taskId || e?.project_id;
@@ -1258,6 +1267,17 @@ class GenerationProgressSpinner {
     }
     this._showErrorBanner(t);
     this.openPanel();
+    try {
+      const e = window.__solisShowNotification || window.showNotification;
+      if (typeof e === "function") e(t, "error");
+      if (typeof window.notificationSystem?.add === "function") {
+        window.notificationSystem.add({
+          title: "Could not start",
+          message: t,
+          icon: "error"
+        });
+      }
+    } catch (e) {}
     this._errorDismissTimer = setTimeout(() => {
       this._dismissErrorState();
     }, 16e3);
@@ -1367,23 +1387,15 @@ class GenerationProgressSpinner {
     this._syncDisplayFromActive();
   }
   _isCancelLockedStage(e = 0, t = "") {
-    const s = Number(e) || 0;
-    if (s >= 78) return true;
-    const i = String(t || "").toLowerCase();
-    return i.includes("building split") || i.includes("build split") || i.includes("compil") || i.includes("encoding final") || i.includes("export") || i.includes("finaliz") || i.includes("watermark") || i.includes("adding caption") || i.includes("assembling");
+    return false;
   }
   _syncCancelLockOnSubmitButton(e, t) {
     const s = document.getElementById("processUrlBtn");
     if (!s || !s.classList.contains("is-generating")) return;
-    const i = this._isCancelLockedStage(e, t);
-    s.classList.toggle("is-cancel-locked", i);
-    if (i) {
-      s.setAttribute("aria-label", "Finishing…");
-      s.title = "Almost done — can’t stop now";
-    } else {
-      s.setAttribute("aria-label", "Stop generation");
-      s.title = "Stop generation";
-    }
+    s.classList.remove("is-cancel-locked");
+    s.disabled = true;
+    s.setAttribute("aria-label", "Generating…");
+    s.title = "Generating…";
   }
   _cleanMessage(e) {
     if (!e || typeof e !== "string") return "";
@@ -1393,7 +1405,9 @@ class GenerationProgressSpinner {
     if (i) {
       if (/download|install|fetch|stream/i.test(s)) return "Fetching video...";
       if (/fail|error|crash|exception/i.test(s)) return "Something went wrong — try again";
-      if (/queue|wait|slot|priority/i.test(s)) return "Waiting in queue...";
+      if (/queue|wait|slot|priority|high demand|will be ready/i.test(s)) {
+        return "We’re experiencing very high demand — your generation will be ready soon.";
+      }
       if (/starting|start|processing|worker|boot|load/i.test(s)) return "Fetching video...";
       return "";
     }
@@ -1732,6 +1746,17 @@ class GenerationProgressSpinner {
     }
     this._showErrorBanner(s);
     this.openPanel();
+    try {
+      const e = window.__solisShowNotification || window.showNotification;
+      if (typeof e === "function") e(s, "error");
+      if (typeof window.notificationSystem?.add === "function") {
+        window.notificationSystem.add({
+          title: "Generation failed",
+          message: s,
+          icon: "error"
+        });
+      }
+    } catch (e) {}
     const i = /youtube|proxy|cookie|start|could not/i.test(s) ? 16e3 : 1e4;
     this._errorDismissTimer = setTimeout(() => {
       this._dismissErrorState();

@@ -393,24 +393,24 @@ const PreviewTimeline = (() => {
   let P = 0;
   let I = 1;
   let E = [];
-  let T = -1;
-  let x = 0;
-  let M = 1;
-  let B = null;
-  let A = false;
+  let T = null;
+  let x = [];
+  let M = -1;
+  let B = 0;
+  let A = 1;
   let R = null;
-  let D = 0;
-  let U = null;
-  let F = false;
-  let N = false;
-  const O = 180;
-  const $ = 8;
-  let G = [ 5, 4, 3, 2, 1 ];
-  const z = [];
-  let j;
-  let H;
-  let q;
+  let U = false;
+  let D = null;
+  let F = 0;
+  let N = null;
+  let O = false;
+  let $ = false;
+  const j = 220;
+  const G = 14;
+  let z = [ 5, 4, 3, 2, 1 ];
+  const H = [];
   let V;
+  let q;
   let W;
   let Y;
   let Q;
@@ -420,49 +420,51 @@ const PreviewTimeline = (() => {
   let Z;
   let ee;
   let te;
+  let ie;
+  let ne;
   function refreshEls() {
-    j = document.getElementById("previewTimelineShell");
-    H = document.getElementById("previewTimelineWrap");
-    q = document.getElementById("previewTimelineCurrent");
-    V = document.getElementById("previewTimelineDuration");
-    W = H;
-    Y = document.getElementById("previewTimelineFilmstrip");
-    Q = document.getElementById("previewTimelineSegments");
-    J = document.getElementById("previewTimelineDimLeft");
-    X = document.getElementById("previewTimelineDimRight");
-    K = document.getElementById("previewTimelineSelection");
-    Z = document.getElementById("previewTimelineHandleL");
-    ee = document.getElementById("previewTimelineHandleR");
-    te = document.getElementById("previewTimelinePlayhead");
+    V = document.getElementById("previewTimelineShell");
+    q = document.getElementById("previewTimelineWrap");
+    W = document.getElementById("previewTimelineCurrent");
+    Y = document.getElementById("previewTimelineDuration");
+    Q = q;
+    J = document.getElementById("previewTimelineFilmstrip");
+    X = document.getElementById("previewTimelineSegments");
+    K = document.getElementById("previewTimelineDimLeft");
+    Z = document.getElementById("previewTimelineDimRight");
+    ee = document.getElementById("previewTimelineSelection");
+    te = document.getElementById("previewTimelineHandleL");
+    ie = document.getElementById("previewTimelineHandleR");
+    ne = document.getElementById("previewTimelinePlayhead");
   }
   function setHandlesUnlocked(e) {
-    A = !!e;
-    if (j) j.classList.toggle("handles-on", A);
+    U = !!e;
+    if (V) V.classList.toggle("handles-on", U);
   }
   function setRankingEditMode(e) {
     refreshEls();
-    if (j) j.classList.toggle("is-ranking-edit", !!e);
+    if (V) V.classList.toggle("is-ranking-edit", !!e);
     if (e) setHandlesUnlocked(true);
-    if (!e) G = [ 5, 4, 3, 2, 1 ];
+    if (!e) z = [ 5, 4, 3, 2, 1 ];
   }
   function isRankingEdit() {
-    return !!j?.classList.contains("is-ranking-edit");
+    return !!V?.classList.contains("is-ranking-edit");
   }
   function getClipOrder() {
     const e = Math.max(1, getSegmentBounds().length - 1);
-    while (G.length < e) {
-      const e = Math.max(1, 5 - G.length);
-      if (!G.includes(e)) G.push(e); else G.push(G.length + 1);
+    while (z.length < e) {
+      const e = Math.max(1, 5 - z.length);
+      if (!z.includes(e)) z.push(e); else z.push(z.length + 1);
     }
-    return G.slice(0, e);
+    return z.slice(0, e);
   }
   function setClipOrder(e) {
     if (!Array.isArray(e) || !e.length) {
-      G = [ 5, 4, 3, 2, 1 ];
+      z = [ 5, 4, 3, 2, 1 ];
       return;
     }
     const t = e.map(e => Math.max(1, Math.min(5, Number(e) || 0))).filter(Boolean);
-    G = t.length ? t : [ 5, 4, 3, 2, 1 ];
+    z = t.length ? t : [ 5, 4, 3, 2, 1 ];
   }
   function markRankingTimelineDirty() {
     try {
@@ -515,32 +517,32 @@ const PreviewTimeline = (() => {
     const o = getClipOrder();
     const [s] = o.splice(t, 1);
     o.splice(i, 0, s);
-    G = o;
+    z = o;
     const a = [];
     for (let t = 0; t < r; t++) a.push(Math.max(e, n[t + 1] - n[t]));
     const [l] = a.splice(t, 1);
     a.splice(i, 0, l);
     rebuildSplitsFromLengths(a);
     try {
-      window.clipsStudio?.onRankingClipReorder?.(G.slice());
+      window.clipsStudio?.onRankingClipReorder?.(z.slice());
     } catch (e) {}
     return true;
   }
   function paintSegmentReorderGhost(e) {
-    if (!U || !isRankingEdit()) return;
+    if (!N || !isRankingEdit()) return;
     const t = segmentIndexAtClientX(e);
-    U.hoverIndex = t;
-    const i = Array.from(Q?.children || []);
+    N.hoverIndex = t;
+    const i = Array.from(X?.children || []);
     i.forEach((e, i) => {
-      e.classList.toggle("is-drop-target", i === t && i !== U.index);
-      e.classList.toggle("is-dragging", i === U.index);
+      e.classList.toggle("is-drop-target", i === t && i !== N.index);
+      e.classList.toggle("is-dragging", i === N.index);
     });
-    const n = e - U.startX;
-    const r = i[U.index];
+    const n = e - N.startX;
+    const r = i[N.index];
     if (r) {
       const e = (() => {
         const e = getSegmentBounds();
-        return e[U.index] / u * I;
+        return e[N.index] / u * I;
       })();
       r.style.transform = `translate3d(${e + n}px,0,0)`;
       r.style.zIndex = "5";
@@ -564,8 +566,8 @@ const PreviewTimeline = (() => {
     }
   }
   function cacheTrackMetrics() {
-    if (!W) return;
-    const e = W.getBoundingClientRect();
+    if (!Q) return;
+    const e = Q.getBoundingClientRect();
     P = e.left;
     I = Math.max(1, e.width);
   }
@@ -577,29 +579,55 @@ const PreviewTimeline = (() => {
   function paintChrome({rebuildSegments: e = false} = {}) {
     const t = c === "start" || c === "end" || c === "bound" || c === "segment";
     if (!t) {
-      if (q) q.textContent = fmt(m);
-      if (V) V.textContent = fmt(u || 0);
+      if (W) W.textContent = fmt(m);
+      if (Y) Y.textContent = fmt(u || 0);
     }
     if (!u || I <= 0) return;
     const i = d / u * I;
     const n = p / u * I;
     const r = Math.max(2, n - i);
-    if (K) {
-      K.style.width = `${r}px`;
-      K.style.transform = `translate3d(${i}px,0,0)`;
+    if (ee) {
+      ee.style.width = `${r}px`;
+      ee.style.transform = `translate3d(${i}px,0,0)`;
     }
-    if (J) J.style.width = `${i}px`;
-    if (X) X.style.width = `${Math.max(0, I - n)}px`;
-    if (te && !t) {
+    if (K) K.style.width = `${i}px`;
+    if (Z) Z.style.width = `${Math.max(0, I - n)}px`;
+    if (ne && !t) {
       const e = Math.max(d, Math.min(p, m));
       const t = e / u * I;
-      te.style.transform = `translate3d(${t}px,0,0) translateX(-50%)`;
+      ne.style.transform = `translate3d(${t}px,0,0) translateX(-50%)`;
     }
-    if (!t && W) {
-      W.setAttribute("aria-valuenow", String(Math.round(m / u * 100)));
-      W.setAttribute("aria-valuetext", fmt(m));
+    if (!t && Q) {
+      Q.setAttribute("aria-valuenow", String(Math.round(m / u * 100)));
+      Q.setAttribute("aria-valuetext", fmt(m));
     }
     if (t) paintSegmentsFast(); else if (e) paintSegments();
+    paintSilenceCuts();
+  }
+  function paintSilenceCuts() {
+    if (!q || !u || I <= 0) return;
+    let e = q.querySelector(".preview-timeline-silence-cuts");
+    if (!x.length) {
+      if (e) e.remove();
+      return;
+    }
+    if (!e) {
+      e = document.createElement("div");
+      e.className = "preview-timeline-silence-cuts";
+      e.setAttribute("aria-hidden", "true");
+      q.appendChild(e);
+    }
+    e.innerHTML = "";
+    const t = document.createDocumentFragment();
+    for (const e of x) {
+      const i = e.start / u * I;
+      const n = Math.max(2, (e.end - e.start) / u * I);
+      const r = document.createElement("i");
+      r.style.transform = `translate3d(${i}px,0,0)`;
+      r.style.width = `${n}px`;
+      t.appendChild(r);
+    }
+    e.appendChild(t);
   }
   function schedulePaintChrome(e) {
     if (b) return;
@@ -609,8 +637,8 @@ const PreviewTimeline = (() => {
     });
   }
   function cloneFilmInto(e) {
-    if (!Y) return;
-    const i = Y.querySelectorAll(".preview-timeline-frame");
+    if (!J) return;
+    const i = J.querySelectorAll(".preview-timeline-frame");
     if (!i.length) {
       for (let i = 0; i < t; i++) {
         const t = document.createElement("div");
@@ -633,7 +661,7 @@ const PreviewTimeline = (() => {
       e.appendChild(i);
     });
   }
-  const ie = 6;
+  const re = 6;
   function getSegmentBounds() {
     const e = E.filter(e => e > d + .04 && e < p - .04);
     return [ d, ...e, p ];
@@ -649,35 +677,89 @@ const PreviewTimeline = (() => {
     return i;
   }
   function clearSegHold() {
-    if (D) {
-      clearTimeout(D);
-      D = 0;
+    if (F) {
+      clearTimeout(F);
+      F = 0;
     }
-    N = false;
+    $ = false;
+  }
+  function syncSegFocusClass() {
+    if (!V) return;
+    const e = T != null && getSegmentBounds().length > 2;
+    V.classList.toggle("has-seg-focus", e);
+  }
+  function getActiveEditRange() {
+    const e = getSegmentBounds();
+    if (T != null && T >= 0 && T < e.length - 1) {
+      return {
+        start: e[T],
+        end: e[T + 1],
+        segIndex: T
+      };
+    }
+    return {
+      start: d,
+      end: p > d ? p : u,
+      segIndex: null
+    };
+  }
+  function selectSegmentAtTime(e) {
+    const t = getSegmentBounds();
+    if (t.length < 2) return null;
+    const i = Number(e);
+    for (let e = 0; e < t.length - 1; e++) {
+      const n = t[e];
+      const r = t[e + 1];
+      if (i >= n - .02 && (e === t.length - 2 ? i <= r + .02 : i < r - .01)) {
+        customizeSegment(e);
+        return e;
+      }
+    }
+    return null;
   }
   function customizeSegment(e) {
-    const t = Math.max(1, 5 - e);
-    const i = document.querySelector("#templateVideoPreview .ranking-preview-container, .ranking-preview-container");
-    const n = i?.querySelector(`[data-template-element-id="rank_${t}_number"]`);
-    const r = i?.querySelector(`[data-template-element-id="rank_${t}_title"]`);
-    const o = n || r;
-    if (!o) return;
-    const s = getSegmentBounds();
-    if (s[e] != null) {
-      m = s[e];
-      scheduleSeek(m, true);
-      paintChrome();
-    }
+    const t = getSegmentBounds();
+    if (e < 0 || e >= t.length - 1) return;
+    T = e;
+    const i = t[e];
+    const n = t[e + 1];
+    const r = i + Math.min(.35, Math.max(.12, (n - i) * .12));
+    m = Math.max(i, Math.min(n - .05, r));
+    scheduleSeek(m, true);
+    paintChrome();
+    X?.querySelectorAll(".preview-timeline-segment.is-selected").forEach(e => e.classList.remove("is-selected"));
+    X?.children?.[e]?.classList.add("is-selected");
+    if (!U) setHandlesUnlocked(true);
+    syncSegFocusClass();
+    try {
+      const i = document.getElementById("silencerNote");
+      if (i && t.length > 2) {
+        i.hidden = false;
+        i.textContent = `Editing block ${e + 1} of ${t.length - 1}`;
+        i.classList.add("is-visible");
+        if (i._segHintTimer) clearTimeout(i._segHintTimer);
+        i._segHintTimer = setTimeout(() => {
+          i.classList.remove("is-visible");
+          setTimeout(() => {
+            if (i.textContent.startsWith("Editing block")) i.hidden = true;
+          }, 180);
+        }, 1600);
+      }
+    } catch (e) {}
+    const o = Math.max(1, 5 - e);
+    const s = document.querySelector("#templateVideoPreview .ranking-preview-container, .ranking-preview-container");
+    const a = s?.querySelector(`[data-template-element-id="rank_${o}_number"]`);
+    const l = s?.querySelector(`[data-template-element-id="rank_${o}_title"]`);
+    const c = a || l;
+    if (!c) return;
     try {
       const e = window.rankingTemplateEditor;
       if (e?.handleTextClick) {
-        e.handleTextClick(o, false, null);
+        e.handleTextClick(c, false, null);
       } else if (window.RankingTextPill?.selectElements) {
-        window.RankingTextPill.selectElements([ o ], "single", o);
+        window.RankingTextPill.selectElements([ c ], "single", c);
       }
     } catch (e) {}
-    Q?.querySelectorAll(".preview-timeline-segment.is-selected").forEach(e => e.classList.remove("is-selected"));
-    Q?.children?.[e]?.classList.add("is-selected");
   }
   function applySegmentTimes(t, i, n) {
     const r = getSegmentBounds();
@@ -704,40 +786,40 @@ const PreviewTimeline = (() => {
     E = E.filter(e => e > d + .04 && e < p - .04).sort((e, t) => e - t);
   }
   function paintSegmentMove(e) {
-    if (!U || !u || I <= 0) return;
+    if (!N || !u || I <= 0) return;
     if (isRankingEdit()) {
       paintSegmentReorderGhost(e);
       return;
     }
-    const {index: t, startX: i, startA: n, startB: r} = U;
+    const {index: t, startX: i, startA: n, startB: r} = N;
     const o = (e - i) / I * u;
     applySegmentTimes(t, n + o, r + o);
     m = Math.max(d, Math.min(p, n + o));
     const s = d / u * I;
     const a = p / u * I;
-    if (K) {
-      K.style.width = `${Math.max(2, a - s)}px`;
-      K.style.transform = `translate3d(${s}px,0,0)`;
+    if (ee) {
+      ee.style.width = `${Math.max(2, a - s)}px`;
+      ee.style.transform = `translate3d(${s}px,0,0)`;
     }
-    if (J) J.style.width = `${s}px`;
-    if (X) X.style.width = `${Math.max(0, I - a)}px`;
+    if (K) K.style.width = `${s}px`;
+    if (Z) Z.style.width = `${Math.max(0, I - a)}px`;
     paintSegmentsFast();
   }
   function beginSegmentDrag() {
-    if (!U || c === "segment") return;
-    clearTimeout(D);
-    D = 0;
-    if (isRankingEdit() && !N) return;
+    if (!N || c === "segment") return;
+    clearTimeout(F);
+    F = 0;
+    if (isRankingEdit() && !$) return;
     c = "segment";
     f = a ? !a.paused : false;
     if (a && !a.paused) a.pause();
-    W?.classList.add("is-dragging", "is-trimming");
-    if (isRankingEdit()) W?.classList.add("is-reordering");
-    U.target?.classList.add("is-dragging");
-    Q?.children?.[U.index]?.classList.add("is-dragging");
-    if (U.target?.setPointerCapture && U.pointerId != null) {
+    Q?.classList.add("is-dragging", "is-trimming");
+    if (isRankingEdit()) Q?.classList.add("is-reordering");
+    N.target?.classList.add("is-dragging");
+    X?.children?.[N.index]?.classList.add("is-dragging");
+    if (N.target?.setPointerCapture && N.pointerId != null) {
       try {
-        U.target.setPointerCapture(U.pointerId);
+        N.target.setPointerCapture(N.pointerId);
       } catch (e) {}
     }
   }
@@ -746,16 +828,16 @@ const PreviewTimeline = (() => {
     if (t.pointerType === "mouse" && t.button !== 0) return;
     t.preventDefault();
     t.stopPropagation();
-    if (!A && !j?.classList.contains("is-ranking-edit")) {
+    if (!U && !V?.classList.contains("is-ranking-edit")) {
       setHandlesUnlocked(true);
     }
     cacheTrackMetrics();
     clearSegHold();
     const i = getSegmentBounds();
     if (e < 0 || e >= i.length - 1) return;
-    F = false;
-    N = false;
-    U = {
+    O = false;
+    $ = false;
+    N = {
       index: e,
       pointerId: t.pointerId,
       startX: t.clientX,
@@ -763,52 +845,52 @@ const PreviewTimeline = (() => {
       startB: i[e + 1],
       target: t.currentTarget
     };
-    D = setTimeout(() => {
-      D = 0;
-      N = true;
-      U?.target?.classList.add("is-hold-ready");
-    }, O);
+    F = setTimeout(() => {
+      F = 0;
+      $ = true;
+      N?.target?.classList.add("is-hold-ready");
+    }, j);
   }
   function onSegmentPointerMove(e) {
-    if (!U) return;
-    const t = Math.abs(e.clientX - U.startX);
+    if (!N) return;
+    const t = Math.abs(e.clientX - N.startX);
     if (c === "segment") {
       e.preventDefault();
-      if (t >= $) F = true;
-      if (!F) return;
+      if (t >= G) O = true;
+      if (!O) return;
       paintSegmentMove(e.clientX);
       return;
     }
     if (isRankingEdit()) {
-      if (N && t >= $) {
+      if ($ && t >= G) {
         beginSegmentDrag();
         if (c === "segment") {
-          F = true;
+          O = true;
           paintSegmentMove(e.clientX);
         }
       }
       return;
     }
-    if (t >= $) {
+    if (t >= G) {
       beginSegmentDrag();
-      F = true;
+      O = true;
       paintSegmentMove(e.clientX);
     }
   }
   function onSegmentPointerUp(e) {
-    if (!U) return;
-    const t = U;
-    const i = F;
+    if (!N) return;
+    const t = N;
+    const i = O;
     const n = t.hoverIndex;
     clearSegHold();
     t.target?.classList.remove("is-dragging", "is-hold-ready");
-    Q?.children?.[t.index]?.classList.remove("is-dragging");
-    Q?.querySelectorAll(".is-drop-target").forEach(e => e.classList.remove("is-drop-target"));
-    W?.classList.remove("is-reordering");
+    X?.children?.[t.index]?.classList.remove("is-dragging");
+    X?.querySelectorAll(".is-drop-target").forEach(e => e.classList.remove("is-drop-target"));
+    Q?.classList.remove("is-reordering");
     if (c === "segment" && !i) {
       c = null;
-      U = null;
-      W?.classList.remove("is-dragging", "is-trimming");
+      N = null;
+      Q?.classList.remove("is-dragging", "is-trimming");
       if (f) a?.play().catch(() => {});
       f = false;
       customizeSegment(t.index);
@@ -817,7 +899,7 @@ const PreviewTimeline = (() => {
     if (i) {
       const e = isRankingEdit() && n != null && n !== t.index && applySegmentReorder(t.index, n);
       c = null;
-      U = null;
+      N = null;
       markRankingTimelineDirty();
       scheduleSeek(m, true);
       if (f) a?.play().catch(() => {});
@@ -832,21 +914,21 @@ const PreviewTimeline = (() => {
       }
       return;
     }
-    U = null;
+    N = null;
     c = null;
     customizeSegment(t.index);
   }
   function paintSegments(e) {
-    if (!Q || !u || I <= 0) return;
+    if (!X || !u || I <= 0) return;
     const t = getSegmentBounds();
-    Q.innerHTML = "";
+    X.innerHTML = "";
     for (let i = 0; i < t.length - 1; i++) {
       const n = t[i];
       const r = t[i + 1];
       let o = n / u * I;
       let s = r / u * I;
-      if (i > 0) o += ie / 2;
-      if (i < t.length - 2) s -= ie / 2;
+      if (i > 0) o += re / 2;
+      if (i < t.length - 2) s -= re / 2;
       const a = Math.max(8, s - o);
       const l = document.createElement("div");
       l.className = "preview-timeline-segment";
@@ -859,7 +941,7 @@ const PreviewTimeline = (() => {
       const c = document.createElement("div");
       c.className = "preview-timeline-segment-clip";
       const d = getClipOrder()[i] || 5 - i;
-      c.title = isRankingEdit() ? `Hold & drag to reorder · #${d}` : "Click to customize · Drag to move";
+      c.title = isRankingEdit() ? `Tap to edit · hold & drag to reorder` : "Tap · drag edges to trim";
       c.setAttribute("role", "button");
       c.tabIndex = 0;
       c.dataset.physicalRank = String(d);
@@ -882,12 +964,16 @@ const PreviewTimeline = (() => {
       l.appendChild(c);
       if (i === 0) l.appendChild(makeSegHandle("left", i));
       l.appendChild(makeSegHandle("right", i + 1));
-      Q.appendChild(l);
+      X.appendChild(l);
     }
+    if (T != null && X?.children?.[T]) {
+      X.children[T].classList.add("is-selected");
+    }
+    syncSegFocusClass();
   }
   function paintSegmentsFast() {
-    if (!Q || !u || I <= 0) return;
-    const e = Array.from(Q.children);
+    if (!X || !u || I <= 0) return;
+    const e = Array.from(X.children);
     const t = getSegmentBounds();
     if (e.length !== t.length - 1) {
       paintSegments();
@@ -898,8 +984,8 @@ const PreviewTimeline = (() => {
       const r = t[i + 1];
       let o = n / u * I;
       let s = r / u * I;
-      if (i > 0) o += ie / 2;
-      if (i < t.length - 2) s -= ie / 2;
+      if (i > 0) o += re / 2;
+      if (i < t.length - 2) s -= re / 2;
       const a = Math.max(6, s - o);
       const l = e[i];
       l.style.width = `${a}px`;
@@ -916,43 +1002,43 @@ const PreviewTimeline = (() => {
     }
   }
   function applyBoundTime(e) {
-    if (T === 0) {
+    if (M === 0) {
       d = e;
       return;
     }
     const t = getSegmentBounds();
-    if (T >= t.length - 1) {
+    if (M >= t.length - 1) {
       p = e;
       return;
     }
-    if (B != null) {
-      const t = E.findIndex(e => Math.abs(e - B) < .05);
+    if (R != null) {
+      const t = E.findIndex(e => Math.abs(e - R) < .05);
       if (t >= 0) E[t] = e; else E.push(e);
-      B = e;
+      R = e;
     } else {
       E.push(e);
     }
     E.sort((e, t) => e - t);
   }
   function paintBoundFast(e) {
-    if (!u || I <= 0 || T < 0) return;
+    if (!u || I <= 0 || M < 0) return;
     const t = timeFromClientX(e);
-    const i = Math.max(x, Math.min(M, t));
+    const i = Math.max(B, Math.min(A, t));
     applyBoundTime(i);
     m = i;
     const n = d / u * I;
     const r = p / u * I;
-    if (K) {
-      K.style.width = `${Math.max(2, r - n)}px`;
-      K.style.transform = `translate3d(${n}px,0,0)`;
+    if (ee) {
+      ee.style.width = `${Math.max(2, r - n)}px`;
+      ee.style.transform = `translate3d(${n}px,0,0)`;
     }
-    if (J) J.style.width = `${n}px`;
-    if (X) X.style.width = `${Math.max(0, I - r)}px`;
+    if (K) K.style.width = `${n}px`;
+    if (Z) Z.style.width = `${Math.max(0, I - r)}px`;
     paintSegmentsFast();
   }
   function startBoundDrag(t, i) {
-    if (!A && !j?.classList.contains("is-ranking-edit")) return;
-    if (!A) setHandlesUnlocked(true);
+    if (!U && !V?.classList.contains("is-ranking-edit")) return;
+    if (!U) setHandlesUnlocked(true);
     if (i.pointerType === "mouse" && i.button !== 0) return;
     i.preventDefault();
     i.stopPropagation();
@@ -960,13 +1046,13 @@ const PreviewTimeline = (() => {
     const n = getSegmentBounds();
     if (t < 0 || t >= n.length) return;
     c = "bound";
-    T = t;
-    x = t === 0 ? 0 : n[t - 1] + e;
-    M = t === n.length - 1 ? u : n[t + 1] - e;
-    B = t > 0 && t < n.length - 1 ? n[t] : null;
+    M = t;
+    B = t === 0 ? 0 : n[t - 1] + e;
+    A = t === n.length - 1 ? u : n[t + 1] - e;
+    R = t > 0 && t < n.length - 1 ? n[t] : null;
     f = a ? !a.paused : false;
     if (a && !a.paused) a.pause();
-    W?.classList.add("is-dragging", "is-trimming");
+    Q?.classList.add("is-dragging", "is-trimming");
     i.currentTarget?.classList.add("is-dragging");
     if (i.currentTarget?.setPointerCapture && i.pointerId != null) {
       try {
@@ -992,12 +1078,12 @@ const PreviewTimeline = (() => {
     const n = d / u * I;
     const r = p / u * I;
     const o = Math.max(2, r - n);
-    if (K) {
-      K.style.width = `${o}px`;
-      K.style.transform = `translate3d(${n}px,0,0)`;
+    if (ee) {
+      ee.style.width = `${o}px`;
+      ee.style.transform = `translate3d(${n}px,0,0)`;
     }
-    if (J) J.style.width = `${n}px`;
-    if (X) X.style.width = `${Math.max(0, I - r)}px`;
+    if (K) K.style.width = `${n}px`;
+    if (Z) Z.style.width = `${Math.max(0, I - r)}px`;
     paintSegmentsFast();
   }
   function scheduleSeek(e, t = false) {
@@ -1103,9 +1189,12 @@ const PreviewTimeline = (() => {
   }
   async function resolveCaptureSrc(e) {
     if (!e) return "";
-    const t = e.startsWith("blob:") || /\/clips\/preview\//i.test(e) || /\/clips\/projects\/[^/]+\/preview/i.test(e) || /library[-_/]?preview/i.test(e);
+    const t = e.startsWith("blob:") || /\/clips\/preview\//i.test(e) || /\/clips\/projects\/[^/]+\/preview/i.test(e) || /\/clips\/projects\/[^/]+\/splitscreen-layer\//i.test(e) || /library[-_/]?preview/i.test(e);
     if (!t) return e;
-    if (!e.startsWith("blob:")) return e;
+    try {
+      const t = window.LibraryPreviewMediaCache?.getBySrc?.(e);
+      if (t?.objectUrl) return t.objectUrl;
+    } catch (e) {}
     try {
       const t = await fetch(e, {
         credentials: "include",
@@ -1114,22 +1203,26 @@ const PreviewTimeline = (() => {
       if (!t.ok) return e;
       const i = await t.blob();
       if (!i.size) return e;
+      const n = i.type ? i : new Blob([ i ], {
+        type: "video/mp4"
+      });
       if (h) {
         try {
           URL.revokeObjectURL(h);
         } catch (e) {}
       }
-      h = URL.createObjectURL(i.type ? i : new Blob([ i ], {
-        type: "video/mp4"
-      }));
+      h = URL.createObjectURL(n);
+      try {
+        window.LibraryPreviewMediaCache?.rememberSrc?.(e, n, h);
+      } catch (e) {}
       return h;
     } catch (t) {
       return e;
     }
   }
   function mountFilmstripCanvases(e) {
-    if (!Y) return;
-    Y.innerHTML = "";
+    if (!J) return;
+    J.innerHTML = "";
     const i = document.createDocumentFragment();
     for (let n = 0; n < t; n++) {
       const t = document.createElement("div");
@@ -1145,14 +1238,14 @@ const PreviewTimeline = (() => {
       }
       i.appendChild(t);
     }
-    Y.appendChild(i);
+    J.appendChild(i);
     paintSegments();
   }
   function buildPlaceholderFilmstrip() {
     mountFilmstripCanvases(null);
   }
   async function buildFilmstripFromVideo() {
-    if (!Y || !a) return;
+    if (!J || !a) return;
     const e = a.currentSrc || a.src;
     if (!e || !u || u <= 0) {
       buildPlaceholderFilmstrip();
@@ -1221,10 +1314,20 @@ const PreviewTimeline = (() => {
       }
     } catch (e) {} finally {
       if (g === c) destroyCaptureVideo();
-      if (l === y && !Y?.querySelector("canvas")) {
+      if (l === y && !J?.querySelector("canvas")) {
         paintSegments();
       }
     }
+  }
+  function resolveSkipTime(e) {
+    if (!x.length || !Number.isFinite(e)) return null;
+    for (let t = 0; t < x.length; t++) {
+      const i = x[t];
+      if (e >= i.start - .02 && e < i.end - .04) {
+        return i.end;
+      }
+    }
+    return null;
   }
   function clampPlayback() {
     if (!a || !u || c || _) return;
@@ -1238,6 +1341,19 @@ const PreviewTimeline = (() => {
       }
       m = d;
       if (e) a.play().catch(() => {});
+      return;
+    }
+    const t = resolveSkipTime(e);
+    if (t != null && t > e + .03 && t <= p + .01) {
+      const e = !a.paused;
+      try {
+        a.currentTime = t;
+      } catch (e) {
+        scheduleSeek(t, true);
+      }
+      m = t;
+      if (e) a.play().catch(() => {});
+      paintChrome();
       return;
     }
     if (e > p - .05) {
@@ -1262,14 +1378,16 @@ const PreviewTimeline = (() => {
       return;
     }
     if (c === "scrub") {
-      const i = timeFromClientX(e);
+      let i = timeFromClientX(e);
+      const n = resolveSkipTime(i);
+      if (n != null) i = n;
       m = Math.max(d, Math.min(p, i));
       paintChrome();
       if (t) scheduleSeek(m);
     }
   }
   function onPointerMove(e) {
-    if (U && c !== "segment") {
+    if (N && c !== "segment") {
       onSegmentPointerMove(e);
       if (c === "segment") return;
     }
@@ -1296,16 +1414,16 @@ const PreviewTimeline = (() => {
     });
   }
   function endDrag() {
-    if (U) {
+    if (N) {
       onSegmentPointerUp();
       return;
     }
     if (!c) return;
     const e = c;
-    W?.classList.remove("is-scrubbing", "is-trimming", "is-dragging");
-    Q?.querySelectorAll(".preview-timeline-handle.is-dragging").forEach(e => e.classList.remove("is-dragging"));
-    Z?.classList.remove("is-dragging");
-    ee?.classList.remove("is-dragging");
+    Q?.classList.remove("is-scrubbing", "is-trimming", "is-dragging");
+    X?.querySelectorAll(".preview-timeline-handle.is-dragging").forEach(e => e.classList.remove("is-dragging"));
+    te?.classList.remove("is-dragging");
+    ie?.classList.remove("is-dragging");
     if (v != null) {
       applyPointer(v, {
         seek: false
@@ -1317,8 +1435,8 @@ const PreviewTimeline = (() => {
       w = 0;
     }
     c = null;
-    T = -1;
-    B = null;
+    M = -1;
+    R = null;
     if (e === "start" || e === "end" || e === "bound") {
       m = Math.max(d, Math.min(p, m));
       if (d > .05 || p < u - .05) {
@@ -1341,25 +1459,25 @@ const PreviewTimeline = (() => {
     });
   }
   function startDrag(e, t) {
-    if ((e === "start" || e === "end" || e === "bound") && !A && !j?.classList.contains("is-ranking-edit")) return;
-    if ((e === "start" || e === "end" || e === "bound") && !A) {
+    if ((e === "start" || e === "end" || e === "bound") && !U && !V?.classList.contains("is-ranking-edit")) return;
+    if ((e === "start" || e === "end" || e === "bound") && !U) {
       setHandlesUnlocked(true);
     }
     if (t.pointerType === "mouse" && t.button !== 0) return;
     t.preventDefault();
     t.stopPropagation();
     cacheTrackMetrics();
-    if (X) {
-      X.style.left = "auto";
-      X.style.right = "0";
+    if (Z) {
+      Z.style.left = "auto";
+      Z.style.right = "0";
     }
     c = e;
     f = a ? !a.paused : false;
     if (a && !a.paused) a.pause();
-    W?.classList.add("is-dragging");
-    if (e === "scrub") W?.classList.add("is-scrubbing"); else W?.classList.add("is-trimming");
-    if (e === "start") Z?.classList.add("is-dragging");
-    if (e === "end") ee?.classList.add("is-dragging");
+    Q?.classList.add("is-dragging");
+    if (e === "scrub") Q?.classList.add("is-scrubbing"); else Q?.classList.add("is-trimming");
+    if (e === "start") te?.classList.add("is-dragging");
+    if (e === "end") ie?.classList.add("is-dragging");
     if (t.currentTarget?.setPointerCapture && t.pointerId != null) {
       try {
         t.currentTarget.setPointerCapture(t.pointerId);
@@ -1370,7 +1488,7 @@ const PreviewTimeline = (() => {
     });
   }
   function bindEvents() {
-    if (!j || !H || !a) return;
+    if (!V || !q || !a) return;
     const onTime = () => {
       if (c) return;
       clampPlayback();
@@ -1403,7 +1521,7 @@ const PreviewTimeline = (() => {
     window.addEventListener("resize", onResize, {
       passive: true
     });
-    z.push(() => {
+    H.push(() => {
       a.removeEventListener("timeupdate", onTime);
       a.removeEventListener("loadedmetadata", onMeta);
       a.removeEventListener("durationchange", onMeta);
@@ -1412,22 +1530,31 @@ const PreviewTimeline = (() => {
     const onTrackDown = e => {
       if (e.target?.closest?.(".preview-timeline-handle")) return;
       if (e.target?.closest?.(".preview-timeline-segment-clip")) return;
+      if (e.target?.closest?.(".preview-timeline-playhead-grip")) return;
       startDrag("scrub", e);
     };
     const onStartDown = e => startDrag("start", e);
     const onEndDown = e => startDrag("end", e);
-    W?.addEventListener("pointerdown", onTrackDown);
-    Z?.addEventListener("pointerdown", onStartDown);
-    ee?.addEventListener("pointerdown", onEndDown);
+    Q?.addEventListener("pointerdown", onTrackDown);
+    te?.addEventListener("pointerdown", onStartDown);
+    ie?.addEventListener("pointerdown", onEndDown);
+    const e = document.getElementById("previewTimelinePlayheadGrip");
+    const onPlayheadDown = e => {
+      e.preventDefault();
+      e.stopPropagation();
+      startDrag("scrub", e);
+    };
+    e?.addEventListener("pointerdown", onPlayheadDown);
     window.addEventListener("pointermove", onPointerMove, {
       passive: false
     });
     window.addEventListener("pointerup", endDrag);
     window.addEventListener("pointercancel", endDrag);
-    z.push(() => {
-      W?.removeEventListener("pointerdown", onTrackDown);
-      Z?.removeEventListener("pointerdown", onStartDown);
-      ee?.removeEventListener("pointerdown", onEndDown);
+    H.push(() => {
+      Q?.removeEventListener("pointerdown", onTrackDown);
+      te?.removeEventListener("pointerdown", onStartDown);
+      ie?.removeEventListener("pointerdown", onEndDown);
+      e?.removeEventListener("pointerdown", onPlayheadDown);
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerup", endDrag);
       window.removeEventListener("pointercancel", endDrag);
@@ -1436,15 +1563,15 @@ const PreviewTimeline = (() => {
       e.preventDefault();
       e.stopPropagation();
       setHandlesUnlocked(true);
-      H?.focus?.({
+      q?.focus?.({
         preventScroll: true
       });
     };
-    q?.addEventListener("pointerdown", onTimeChipDown);
-    V?.addEventListener("pointerdown", onTimeChipDown);
-    z.push(() => {
-      q?.removeEventListener("pointerdown", onTimeChipDown);
-      V?.removeEventListener("pointerdown", onTimeChipDown);
+    W?.addEventListener("pointerdown", onTimeChipDown);
+    Y?.addEventListener("pointerdown", onTimeChipDown);
+    H.push(() => {
+      W?.removeEventListener("pointerdown", onTimeChipDown);
+      Y?.removeEventListener("pointerdown", onTimeChipDown);
     });
     const onKey = e => {
       if (!a || !u) return;
@@ -1456,27 +1583,27 @@ const PreviewTimeline = (() => {
         scheduleSeek(m, true);
       }
     };
-    W?.addEventListener("keydown", onKey);
-    z.push(() => W?.removeEventListener("keydown", onKey));
-    const e = document.getElementById("previewTimelineSplitBtn");
-    const onSplitClick = t => {
-      t.preventDefault();
-      t.stopPropagation();
+    Q?.addEventListener("keydown", onKey);
+    H.push(() => Q?.removeEventListener("keydown", onKey));
+    const t = document.getElementById("previewTimelineSplitBtn");
+    const onSplitClick = e => {
+      e.preventDefault();
+      e.stopPropagation();
       const i = Number.isFinite(a?.currentTime) ? a.currentTime : m;
       const n = splitAt(i);
       if (!n && E.length >= 4) {
-        e?.classList.remove("is-flash");
-        void e?.offsetWidth;
-        e?.classList.add("is-flash");
+        t?.classList.remove("is-flash");
+        void t?.offsetWidth;
+        t?.classList.add("is-flash");
       }
     };
-    e?.addEventListener("click", onSplitClick);
-    z.push(() => e?.removeEventListener("click", onSplitClick));
+    t?.addEventListener("click", onSplitClick);
+    H.push(() => t?.removeEventListener("click", onSplitClick));
   }
   function show() {
     const e = document.getElementById("previewTimelineRow");
     if (e) e.hidden = false;
-    if (j) j.hidden = false;
+    if (V) V.hidden = false;
     const t = document.getElementById("previewAudioToggle");
     if (t) t.hidden = false;
     try {
@@ -1488,7 +1615,7 @@ const PreviewTimeline = (() => {
   function hide() {
     const e = document.getElementById("previewTimelineRow");
     if (e) e.hidden = true;
-    if (j) j.hidden = true;
+    if (V) V.hidden = true;
     const t = document.getElementById("previewAudioToggle");
     if (t) t.hidden = true;
     const i = document.getElementById("previewTimelineHookLane");
@@ -1514,9 +1641,9 @@ const PreviewTimeline = (() => {
       cancelAnimationFrame(b);
       b = 0;
     }
-    while (z.length) {
+    while (H.length) {
       try {
-        z.pop()();
+        H.pop()();
       } catch (e) {}
     }
     v = null;
@@ -1524,17 +1651,21 @@ const PreviewTimeline = (() => {
     _ = false;
     c = null;
     clearSegHold();
-    U = null;
-    F = false;
+    N = null;
+    O = false;
     f = false;
     E = [];
-    R = null;
-    A = false;
-    if (j) {
-      j.classList.remove("handles-on");
-      j.classList.remove("is-ranking-edit");
+    T = null;
+    D = null;
+    x = [];
+    U = false;
+    if (V) {
+      V.classList.remove("handles-on");
+      V.classList.remove("is-ranking-edit");
+      V.classList.remove("has-silence-cuts");
+      V.classList.remove("has-seg-focus");
     }
-    if (Q) Q.innerHTML = "";
+    if (X) X.innerHTML = "";
     a = null;
     l = false;
     u = 0;
@@ -1575,15 +1706,16 @@ const PreviewTimeline = (() => {
     d = 0;
     p = u || 1;
     m = Number.isFinite(a.currentTime) ? a.currentTime : 0;
-    setHandlesUnlocked(false);
-    if (K) {
-      K.style.left = "0";
-      K.style.right = "auto";
+    const t = !!document.querySelector(".template-preview-content.is-library-preview");
+    setHandlesUnlocked(t);
+    if (ee) {
+      ee.style.left = "0";
+      ee.style.right = "auto";
     }
-    if (te) te.style.left = "0";
-    if (X) {
-      X.style.left = "auto";
-      X.style.right = "0";
+    if (ne) ne.style.left = "0";
+    if (Z) {
+      Z.style.left = "auto";
+      Z.style.right = "0";
     }
     buildPlaceholderFilmstrip();
     bindEvents();
@@ -1605,9 +1737,9 @@ const PreviewTimeline = (() => {
       paintChrome({
         rebuildSegments: true
       });
-      if (R && R.length) {
-        const e = R.slice();
-        R = null;
+      if (D && D.length) {
+        const e = D.slice();
+        D = null;
         setSplits(e);
       }
       scheduleFilmstripBuild();
@@ -1641,7 +1773,7 @@ const PreviewTimeline = (() => {
   function setSplits(e) {
     const t = Array.isArray(e) ? e : [];
     if (!u || u <= 0) {
-      R = t.slice();
+      D = t.slice();
       return false;
     }
     const i = [];
@@ -1654,7 +1786,7 @@ const PreviewTimeline = (() => {
     }
     i.sort((e, t) => e - t);
     E = i.slice(0, 4);
-    R = null;
+    D = null;
     cacheTrackMetrics();
     paintChrome({
       rebuildSegments: true
@@ -1663,6 +1795,8 @@ const PreviewTimeline = (() => {
   }
   function clearSplits() {
     E = [];
+    T = null;
+    syncSegFocusClass();
     if (l) {
       cacheTrackMetrics();
       paintChrome({
@@ -1695,7 +1829,7 @@ const PreviewTimeline = (() => {
       rebuildSegments: true
     });
     scheduleSeek(m, true);
-    [ Z, ee ].forEach(e => {
+    [ te, ie ].forEach(e => {
       if (!e) return;
       e.classList.remove("is-pulse");
       void e.offsetWidth;
@@ -1706,33 +1840,100 @@ const PreviewTimeline = (() => {
       };
       e.addEventListener("animationend", done);
     });
-    H?.focus?.({
+    q?.focus?.({
       preventScroll: true
     });
   }
-  function splitAt(e) {
+  function splitAt(t) {
     if (!u || u <= 0) return false;
     cacheTrackMetrics();
-    let t = Number.isFinite(e) ? e : m;
-    t = Math.max(d + .05, Math.min(p - .05, t));
-    if (E.some(e => Math.abs(e - t) < .08)) {
-      paintSegments(t);
-      return false;
+    let i = Number.isFinite(t) ? t : m;
+    i = Math.max(d + .05, Math.min(p - .05, i));
+    const n = E.findIndex(e => Math.abs(e - i) < .08);
+    if (n >= 0) {
+      m = E[n];
+      paintChrome();
+      paintSegments(m);
+      scheduleSeek(m, true);
+      selectSegmentAtTime(m + .04) ?? selectSegmentAtTime(m - .04);
+      return true;
     }
     if (E.length >= 4) {
-      paintSegments(t);
-      return false;
+      let t = 0;
+      let n = Infinity;
+      for (let e = 0; e < E.length; e++) {
+        const r = Math.abs(E[e] - i);
+        if (r < n) {
+          n = r;
+          t = e;
+        }
+      }
+      const r = t > 0 ? E[t - 1] + e : d + e;
+      const o = t < E.length - 1 ? E[t + 1] - e : p - e;
+      if (o - r < e) {
+        paintSegments(i);
+        return false;
+      }
+      E[t] = Math.max(r, Math.min(o, i));
+      const s = E[t];
+      E.sort((e, t) => e - t);
+      m = s;
+      setHandlesUnlocked(true);
+      paintChrome({
+        rebuildSegments: true
+      });
+      paintSegments(m);
+      scheduleSeek(m, true);
+      selectSegmentAtTime(s + .04) ?? selectSegmentAtTime(s - .04);
+      return true;
     }
-    E.push(t);
+    E.push(i);
     E.sort((e, t) => e - t);
-    m = t;
-    paintChrome();
-    paintSegments(t);
-    scheduleSeek(t, true);
+    m = i;
+    setHandlesUnlocked(true);
+    paintChrome({
+      rebuildSegments: true
+    });
+    paintSegments(i);
+    scheduleSeek(i, true);
+    selectSegmentAtTime(i + .04) ?? selectSegmentAtTime(i - .04);
     return true;
   }
   function getSplits() {
     return E.slice();
+  }
+  function setSkipRegions(e) {
+    const t = Array.isArray(e) ? e : [];
+    const i = [];
+    for (const e of t) {
+      const t = Number(e?.start);
+      const n = Number(e?.end);
+      if (!Number.isFinite(t) || !Number.isFinite(n) || n - t < .12) continue;
+      i.push({
+        start: Math.max(0, t),
+        end: u > 0 ? Math.min(u, n) : n
+      });
+    }
+    i.sort((e, t) => e.start - t.start);
+    x = i;
+    if (V) V.classList.toggle("has-silence-cuts", x.length > 0);
+    paintChrome({
+      rebuildSegments: true
+    });
+    return x.slice();
+  }
+  function getSkipRegions() {
+    return x.map(e => ({
+      start: e.start,
+      end: e.end
+    }));
+  }
+  function clearSkipRegions() {
+    x = [];
+    if (V) V.classList.remove("has-silence-cuts");
+    if (l) paintChrome({
+      rebuildSegments: true
+    });
   }
   return {
     attach: attach,
@@ -1745,7 +1946,14 @@ const PreviewTimeline = (() => {
     getSplits: getSplits,
     setSplits: setSplits,
     clearSplits: clearSplits,
+    setSkipRegions: setSkipRegions,
+    getSkipRegions: getSkipRegions,
+    clearSkipRegions: clearSkipRegions,
+    resolveSkipTime: resolveSkipTime,
     getSegmentBounds: getSegmentBoundsPublic,
+    getActiveEditRange: getActiveEditRange,
+    selectSegmentAtTime: selectSegmentAtTime,
+    getSelectedSegIndex: () => T,
     getClipOrder: getClipOrder,
     setClipOrder: setClipOrder,
     scheduleFilmstripBuild: scheduleFilmstripBuild,
@@ -1797,14 +2005,9 @@ const PreviewCtxMenu = (() => {
     n.style.left = `${Math.round(Math.max(r, a))}px`;
     n.style.top = `${Math.round(l)}px`;
     i = performance.now();
-    if (typeof lucide !== "undefined") {
-      lucide.createIcons({
-        attrs: {
-          "stroke-width": 2.2
-        },
-        nameAttr: "data-lucide"
-      });
-    }
+    n.classList.remove("is-icon-anim");
+    void n.offsetWidth;
+    n.classList.add("is-icon-anim");
   }
   function timeAtEvent(e, t) {
     const i = typeof PreviewTimeline !== "undefined" ? PreviewTimeline.getTrim?.() : null;
@@ -1825,26 +2028,49 @@ const PreviewCtxMenu = (() => {
     e.stopPropagation();
     const o = document.getElementById("previewTimelineWrap");
     t = n ? timeAtEvent(e, o) : document.querySelector("#templateVideoPreview video")?.currentTime || 0;
+    if (n && typeof PreviewTimeline !== "undefined") {
+      try {
+        PreviewTimeline.selectSegmentAtTime?.(t);
+      } catch (e) {}
+    }
     placeAt(e.clientX, e.clientY);
     return true;
   }
   function onSplit() {
     close();
-    if (typeof PreviewTimeline !== "undefined" && PreviewTimeline.splitAt) {
-      PreviewTimeline.splitAt(t);
+    if (typeof PreviewTimeline === "undefined" || !PreviewTimeline.splitAt) return;
+    const e = document.querySelector("#templateVideoPreview video");
+    const i = Number.isFinite(e?.currentTime) ? e.currentTime : null;
+    const n = Number.isFinite(t) ? t : i;
+    const r = PreviewTimeline.splitAt(n);
+    if (!r) {
+      try {
+        const e = document.getElementById("silencerNote");
+        if (e) {
+          e.hidden = false;
+          e.textContent = "Move the playhead, then Split again";
+          e.classList.add("is-visible");
+          setTimeout(() => {
+            e.classList.remove("is-visible");
+            setTimeout(() => {
+              e.hidden = true;
+            }, 200);
+          }, 2200);
+        }
+      } catch (e) {}
     }
   }
-  function onAddText() {
+  function onSilence() {
     close();
-    const e = document.getElementById("previewEditorPill");
-    const t = e?.querySelector('[data-tool="text"]');
-    if (t) t.style.display = "";
-    if (t && typeof window.activatePreviewToolbar === "function") {
-      window.activatePreviewToolbar(t);
-    }
-    if (typeof window.addSimpleTextBlock === "function") {
-      window.addSimpleTextBlock();
-    }
+    try {
+      if (window.SolisSilencer?.apply) window.SolisSilencer.apply(); else if (window.SolisSilencer?.toggle) window.SolisSilencer.toggle();
+    } catch (e) {}
+  }
+  function onImprove() {
+    close();
+    try {
+      if (window.SolisImproveClip?.apply) window.SolisImproveClip.apply(); else if (window.SolisImproveClip?.toggle) window.SolisImproveClip.toggle();
+    } catch (e) {}
   }
   function onMenuPointerDown(e) {
     const t = e.target?.closest?.("[data-ctx-action]");
@@ -1852,7 +2078,7 @@ const PreviewCtxMenu = (() => {
     e.preventDefault();
     e.stopPropagation();
     const i = t.getAttribute("data-ctx-action");
-    if (i === "split" || i === "trim") onSplit(); else if (i === "text") onAddText();
+    if (i === "split" || i === "trim") onSplit(); else if (i === "silence") onSilence(); else if (i === "improve") onImprove();
   }
   function onDocPointerDown(e) {
     const t = ensure();
@@ -6106,6 +6332,154 @@ class ClipSlotSystem {
   }
 }
 
+const LibraryPreviewMediaCache = (() => {
+  const e = new Map;
+  const t = new Map;
+  const i = 6;
+  const n = 180 * 1024 * 1024;
+  function normalizeSrc(e) {
+    try {
+      const t = new URL(e, window.location.origin);
+      t.searchParams.delete("_");
+      return t.pathname + (t.searchParams.toString() ? `?${t.searchParams}` : "");
+    } catch (t) {
+      return String(e || "").replace(/([?&])_=\d+/g, "").replace(/[?&]$/, "");
+    }
+  }
+  function projectKey(e, t) {
+    return `${e}|${t ? "1" : "0"}`;
+  }
+  function touch(e) {
+    e.ts = Date.now();
+  }
+  function totalBytes() {
+    let t = 0;
+    e.forEach(e => {
+      t += e.size || 0;
+    });
+    return t;
+  }
+  function evictIfNeeded(r = 0) {
+    while ((e.size >= i || totalBytes() + r > n) && e.size > 0) {
+      let i = null;
+      let n = Infinity;
+      e.forEach((e, t) => {
+        if (e.ts < n) {
+          n = e.ts;
+          i = t;
+        }
+      });
+      if (!i) break;
+      const r = e.get(i);
+      e.delete(i);
+      if (r?.srcKey) t.delete(r.srcKey);
+      const o = r?.objectUrl;
+      if (o) {
+        setTimeout(() => {
+          try {
+            const e = Array.from(document.querySelectorAll("video")).some(e => (e.src || e.currentSrc) === o);
+            if (!e) URL.revokeObjectURL(o);
+          } catch (e) {
+            try {
+              URL.revokeObjectURL(o);
+            } catch (e) {}
+          }
+        }, 8e3);
+      }
+    }
+  }
+  function put(i, n, r, o, s) {
+    if (!r || !o) return null;
+    const a = projectKey(i, n);
+    const l = normalizeSrc(s || o);
+    evictIfNeeded(r.size || 0);
+    const c = e.get(a);
+    if (c?.objectUrl && c.objectUrl !== o) {
+      try {
+        URL.revokeObjectURL(c.objectUrl);
+      } catch (e) {}
+      if (c.srcKey) t.delete(c.srcKey);
+    }
+    const d = {
+      blob: r,
+      objectUrl: o,
+      srcKey: l,
+      ts: Date.now(),
+      size: r.size || 0,
+      projectId: String(i),
+      clean: !!n
+    };
+    e.set(a, d);
+    t.set(l, d);
+    return d;
+  }
+  function get(t, i = false) {
+    const n = e.get(projectKey(t, i));
+    if (!n) return null;
+    touch(n);
+    return n;
+  }
+  function getBySrc(e) {
+    const i = t.get(normalizeSrc(e));
+    if (!i) return null;
+    touch(i);
+    return i;
+  }
+  function rememberSrc(e, i, n) {
+    if (!i || !n) return null;
+    const r = normalizeSrc(e);
+    const o = t.get(r);
+    if (o) {
+      touch(o);
+      return o;
+    }
+    evictIfNeeded(i.size || 0);
+    const s = {
+      blob: i,
+      objectUrl: n,
+      srcKey: r,
+      ts: Date.now(),
+      size: i.size || 0,
+      projectId: null,
+      clean: false
+    };
+    t.set(r, s);
+    return s;
+  }
+  function rememberProject(e, t, i, n, r) {
+    return put(e, t, i, n, r);
+  }
+  function invalidateProject(i) {
+    if (!i) return;
+    for (const n of [ false, true ]) {
+      const r = projectKey(i, n);
+      const o = e.get(r);
+      if (!o) continue;
+      e.delete(r);
+      if (o.srcKey) t.delete(o.srcKey);
+      const s = o.objectUrl;
+      if (s) {
+        setTimeout(() => {
+          try {
+            URL.revokeObjectURL(s);
+          } catch (e) {}
+        }, 2e3);
+      }
+    }
+  }
+  return {
+    get: get,
+    getBySrc: getBySrc,
+    rememberSrc: rememberSrc,
+    rememberProject: rememberProject,
+    invalidateProject: invalidateProject,
+    normalizeSrc: normalizeSrc,
+    has: (t, i = false) => e.has(projectKey(t, i))
+  };
+})();
+
+window.LibraryPreviewMediaCache = LibraryPreviewMediaCache;
+
 class ClipsStudio {
   constructor() {
     this.currentTab = "templates";
@@ -6348,14 +6722,11 @@ class ClipsStudio {
       e.preventDefault();
       e.stopPropagation();
       const t = e.currentTarget || document.getElementById("processUrlBtn");
-      if (t?.classList.contains("is-cancelling")) return;
-      if (t?.classList.contains("is-cancel-locked")) return;
       if (t?.classList.contains("is-upgrade-cta")) {
         this.openUrlSubmitUpgrade();
         return;
       }
-      if (t?.classList.contains("is-generating")) {
-        this.cancelActiveGeneration();
+      if (t?.classList.contains("is-generating") || t?.disabled) {
         return;
       }
       this.processYouTubeUrl();
@@ -6423,7 +6794,7 @@ class ClipsStudio {
     this._initLibrarySortControls();
     this._initLibrarySelectMode();
     const goCreate = () => this.goToCreateUrlSubmit();
-    document.querySelectorAll(".quick-action-create, #newClipBtn, #headerNewClipBtn").forEach(e => {
+    document.querySelectorAll(".quick-action-create, #newClipBtn").forEach(e => {
       if (e.dataset.createBound === "1") return;
       e.dataset.createBound = "1";
       e.addEventListener("click", e => {
@@ -6437,6 +6808,14 @@ class ClipsStudio {
         }
       });
     });
+    const t = document.getElementById("headerNewClipBtn");
+    if (t && t.dataset.createBound !== "1") {
+      t.dataset.createBound = "1";
+      t.addEventListener("click", e => {
+        e.preventDefault();
+        goCreate();
+      });
+    }
     this.safeAddEventListenerById("createFirstClipBtn", "click", () => {
       this.goToCreateUrlSubmit();
     });
@@ -7046,7 +7425,7 @@ class ClipsStudio {
       this.applyWatermarkControls({
         showUpgrade: !e,
         isPremium: !!e,
-        usedLifetime: e ? 0 : 1
+        usedLifetime: 0
       });
     });
   }
@@ -7073,7 +7452,7 @@ class ClipsStudio {
       }
       const t = this._watermarkCheckCache || {};
       const i = Number(t.used_lifetime || 0);
-      const n = t.show_upgrade != null ? !!t.show_upgrade : i >= 1;
+      const n = t.show_upgrade != null ? !!t.show_upgrade : true;
       return {
         showUpgrade: n,
         isPremium: false,
@@ -7085,7 +7464,7 @@ class ClipsStudio {
       return {
         showUpgrade: true,
         isPremium: false,
-        usedLifetime: 1
+        usedLifetime: 0
       };
     }
   }
@@ -7095,25 +7474,18 @@ class ClipsStudio {
     if (!i) return;
     const n = !!e?.isPremium;
     const r = Number(e?.usedLifetime ?? e?.data?.used_lifetime ?? 0);
-    const o = !n && (e?.showUpgrade === true || r >= 1);
-    const s = !n && !o;
     document.getElementById("watermarkNotice")?.remove();
-    const a = document.getElementById("watermarkUpgradeBtn");
-    if (a) {
-      a.hidden = true;
-      a.style.display = "none";
+    const o = document.getElementById("watermarkUpgradeBtn");
+    if (o) {
+      o.hidden = true;
+      o.style.display = "none";
     }
     this.closeWatermarkPlanPopover?.();
-    safeLog(`Watermark UI — premium=${n} usedLifetime=${r} ` + `firstFree=${s} returningFree=${o}`);
+    safeLog(`Watermark UI — premium=${n} usedLifetime=${r}`);
     i.disabled = false;
     if (n) {
       const e = localStorage.getItem("watermarkEnabled");
       i.checked = e === "true";
-    } else if (s) {
-      i.checked = false;
-      try {
-        localStorage.setItem("watermarkEnabled", "false");
-      } catch (e) {}
     } else {
       i.checked = true;
       try {
@@ -7139,7 +7511,7 @@ class ClipsStudio {
       t.removeEventListener("pointerdown", this._watermarkFreeClickHandler, true);
       this._watermarkFreeClickHandler = null;
     }
-    this._watermarkFreeLockedOn = !n && !s;
+    this._watermarkFreeLockedOn = !n;
     this._watermarkChangeHandler = () => {
       const e = i.checked;
       if (!n) {
@@ -7376,16 +7748,13 @@ class ClipsStudio {
     if (o) {
       o.style.display = "";
       const e = o.querySelector('[data-tool="text"]');
-      const t = o.querySelector('[data-tool="captions"]');
-      const i = o.querySelector('[data-tool="animations"]');
+      const t = o.querySelector('[data-tool="animations"]');
       if (e) e.style.display = "none";
       if (t) t.style.display = "";
-      if (i) i.style.display = "";
       if (typeof window.activatePreviewToolbar === "function") {
-        const e = i || t;
-        if (e) {
-          const t = Array.from(o.querySelectorAll(".tool-btn")).filter(e => e.style.display !== "none");
-          window.activatePreviewToolbar(e, Math.max(0, t.indexOf(e)));
+        if (t) {
+          const e = Array.from(o.querySelectorAll(".tool-btn")).filter(e => e.style.display !== "none");
+          window.activatePreviewToolbar(t, Math.max(0, e.indexOf(t)));
         }
       }
       if (typeof window.syncPreviewEditorPillLayout === "function") {
@@ -7752,7 +8121,12 @@ class ClipsStudio {
       t.innerHTML = "";
     }
     if (this._libraryPreviewObjectUrl) {
-      URL.revokeObjectURL(this._libraryPreviewObjectUrl);
+      const e = window.LibraryPreviewMediaCache?.getBySrc?.(this._libraryPreviewObjectUrl) || this._libraryPreviewProjectId && window.LibraryPreviewMediaCache?.get?.(this._libraryPreviewProjectId, false);
+      if (!e || e.objectUrl !== this._libraryPreviewObjectUrl) {
+        try {
+          URL.revokeObjectURL(this._libraryPreviewObjectUrl);
+        } catch (e) {}
+      }
       this._libraryPreviewObjectUrl = null;
     }
     if (this._libraryPreviewFetchController) {
@@ -7800,6 +8174,15 @@ class ClipsStudio {
     if (a) a.style.display = "";
     this.toggleLibraryPreviewLayout(false);
     this.libraryPreviewModalOpen = false;
+    try {
+      window.SolisSilencer?.reset?.();
+    } catch (e) {}
+    try {
+      window.SolisImproveClip?.reset?.();
+    } catch (e) {}
+    try {
+      window.SolisSilencer?.syncVisibility?.();
+    } catch (e) {}
     this._libraryRankingOverlayPending = null;
     this._libraryRankingUseCleanVideo = false;
     if (this._customizeExpiryTimer) {
@@ -8031,6 +8414,15 @@ class ClipsStudio {
     if (typeof window.syncPreviewModifiersForTemplate === "function") {
       window.syncPreviewModifiersForTemplate("");
     }
+    try {
+      window.SolisSilencer?.reset?.();
+    } catch (e) {}
+    try {
+      window.SolisImproveClip?.reset?.();
+    } catch (e) {}
+    try {
+      window.SolisSilencer?.syncVisibility?.();
+    } catch (e) {}
     this._watermarkCheckCache = null;
     this.setupWatermarkToggle();
     this.loadLibraryVideoPreview().then(() => this._configureLibraryEditingUI());
@@ -8424,17 +8816,20 @@ class ClipsStudio {
       this.mountLibraryPreviewVideo(e, t);
     }
   }
-  async runLibraryApplyWithSpinner(e, {needsRecompose: t, needsOverlayRender: i, needsRankingRecompose: n = false, overlays: r = null}) {
-    const o = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
-    const s = t || i || n ? async () => {
+  async runLibraryApplyWithSpinner(e, {needsRecompose: t, needsOverlayRender: i, needsRankingRecompose: n = false, needsSilenceOnly: r = false, overlays: o = null}) {
+    const s = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
+    const a = t || i || n || r ? async () => {
       if (n) {
         await this.saveLibraryRankingCustomizations(e);
       }
       if (t) {
         await this.saveLibrarySplitscreenLayout(e);
       }
+      if (r) {
+        await this.saveLibrarySilenceCuts(e);
+      }
       if (i) {
-        await this.saveLibraryOverlayTexts(e, r);
+        await this.saveLibraryOverlayTexts(e, o);
       }
     } : null;
     const downloadFn = async () => {
@@ -8443,16 +8838,52 @@ class ClipsStudio {
         quiet: true
       });
     };
-    if (o?.runLibraryApplyFlow) {
-      await o.runLibraryApplyFlow(e, {
-        applyFn: s,
+    if (s?.runLibraryApplyFlow) {
+      await s.runLibraryApplyFlow(e, {
+        applyFn: a,
         downloadFn: downloadFn
       });
       return;
     }
-    if (s) await s();
+    if (a) await a();
     await downloadFn();
     showNotification("Download started!", "success");
+  }
+  async saveLibrarySilenceCuts(e) {
+    const t = typeof window.SolisSilencer?.getCuts === "function" ? window.SolisSilencer.getCuts() : this._librarySilenceCuts || [];
+    if (!Array.isArray(t) || !t.length) {
+      this._librarySilenceDirty = false;
+      return;
+    }
+    const i = await fetch(`${API_BASE_URL}/clips/projects/${encodeURIComponent(e)}/silence-strip`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        ...getAuthHeaders()
+      },
+      body: JSON.stringify({
+        silence_cuts: t.map(e => ({
+          start: Number(Number(e.start).toFixed(3)),
+          end: Number(Number(e.end).toFixed(3))
+        }))
+      })
+    });
+    if (!i.ok) {
+      const e = await i.json().catch(() => ({}));
+      throw this._libraryApplyError(e, i.status, "Silence cleanup failed");
+    }
+    this._librarySilenceDirty = false;
+    this._librarySilenceCuts = [];
+    try {
+      window.SolisSilencer?.reset?.();
+    } catch (e) {}
+    try {
+      window.SolisImproveClip?.reset?.();
+    } catch (e) {}
+    try {
+      window.LibraryPreviewMediaCache?.invalidateProject?.(e);
+    } catch (e) {}
   }
   async saveLibraryOverlayTexts(e, t = null) {
     const i = Array.isArray(t) && t.length ? t : typeof window.collectLibraryOverlayTexts === "function" ? window.collectLibraryOverlayTexts() : [];
@@ -8508,6 +8939,15 @@ class ClipsStudio {
       }
     } catch (e) {}
     try {
+      const e = typeof window.SolisSilencer?.getCuts === "function" ? window.SolisSilencer.getCuts() : this._librarySilenceCuts || [];
+      if (Array.isArray(e) && e.length) {
+        n.silence_cuts = e.map(e => ({
+          start: Number(Number(e.start).toFixed(3)),
+          end: Number(Number(e.end).toFixed(3))
+        }));
+      }
+    } catch (e) {}
+    try {
       const e = document.getElementById("templateVideoPreview")?.querySelector(".sub-text-block:not(.overlay-text-block)");
       if (e && typeof window.collectSubtitleStyle === "function") {
         const e = window.collectSubtitleStyle();
@@ -8554,6 +8994,17 @@ class ClipsStudio {
     }
     const o = await r.json().catch(() => ({}));
     this._librarySplitscreenDirty = false;
+    this._librarySilenceDirty = false;
+    this._librarySilenceCuts = [];
+    try {
+      window.SolisSilencer?.reset?.();
+    } catch (e) {}
+    try {
+      window.SolisImproveClip?.reset?.();
+    } catch (e) {}
+    try {
+      window.LibraryPreviewMediaCache?.invalidateProject?.(e);
+    } catch (e) {}
     try {
       await this.refreshQuotaAfterApply(o);
     } catch (e) {}
@@ -8669,17 +9120,143 @@ class ClipsStudio {
       this._libraryPreviewFetchController = null;
     }
     if (this._libraryPreviewObjectUrl) {
-      URL.revokeObjectURL(this._libraryPreviewObjectUrl);
+      const e = window.LibraryPreviewMediaCache?.get?.(t, !!i.clean) || window.LibraryPreviewMediaCache?.getBySrc?.(this._libraryPreviewObjectUrl);
+      if (!e || e.objectUrl !== this._libraryPreviewObjectUrl) {
+        try {
+          URL.revokeObjectURL(this._libraryPreviewObjectUrl);
+        } catch (e) {}
+      }
       this._libraryPreviewObjectUrl = null;
     }
     const n = ++this._libraryPreviewLoadGen;
     this._libraryPreviewProjectId = t;
     this._libraryPreviewFailedId = null;
+    const r = window.LibraryPreviewMediaCache?.get?.(t, !!i.clean);
+    if (r?.objectUrl) {
+      this._libraryPreviewObjectUrl = r.objectUrl;
+      this._mountLibraryPreviewFromUrl(e, t, r.objectUrl, {
+        loadGen: n,
+        clean: !!i.clean,
+        fromCache: true
+      });
+      return;
+    }
     this.fetchSecureLibraryPreviewBlob(e, t, null, {
       loadGen: n,
       attempt: 0,
       clean: !!i.clean
     });
+  }
+  _mountLibraryPreviewFromUrl(e, t, i, n = {}) {
+    const r = n.loadGen != null ? n.loadGen : this._libraryPreviewLoadGen;
+    const isStale = () => r !== this._libraryPreviewLoadGen || !this.libraryPreviewModalOpen || this._libraryPreviewProjectId && String(this._libraryPreviewProjectId) !== String(t);
+    if (isStale() || !e || !i) return;
+    e.classList.remove("library-ranking-edit", "library-splitscreen-preview");
+    this._libraryRankingDirty = false;
+    if (!this._libraryRankingOverlayPending) {
+      this._libraryRankingEditable = false;
+      this._libraryRankingNeedsBurn = false;
+    }
+    const o = document.createElement("video");
+    o.className = "library-preview-video";
+    o.controls = false;
+    o.removeAttribute("controls");
+    o.playsInline = true;
+    o.muted = true;
+    o.autoplay = true;
+    o.preload = "auto";
+    o.setAttribute("playsinline", "");
+    o.setAttribute("controlslist", "nodownload nofullscreen noremoteplayback noplaybackrate");
+    o.disablePictureInPicture = true;
+    o.style.cssText = "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:transparent;z-index:2;display:block;visibility:visible;opacity:0;";
+    o.removeAttribute("crossorigin");
+    e.querySelectorAll("video").forEach(e => e.remove());
+    if (!e.querySelector(".preview-skel")) {
+      const t = document.createElement("div");
+      t.className = "preview-skel";
+      t.setAttribute("aria-hidden", "true");
+      e.appendChild(t);
+    }
+    e.appendChild(o);
+    e.classList.remove("has-video");
+    try {
+      if (typeof PreviewTimeline !== "undefined") {
+        PreviewTimeline.attach(o);
+        PreviewTimeline.show?.();
+      }
+    } catch (e) {}
+    let s = false;
+    const reveal = (i = false) => {
+      if (s || isStale()) return;
+      const n = o.videoWidth > 0 && o.videoHeight > 0;
+      const r = Number.isFinite(o.duration) && o.duration > 0;
+      if (!i && !n && !r && o.readyState < 1) return;
+      if (!i && !n && o.readyState < 1) return;
+      s = true;
+      e.classList.add("has-video");
+      o.style.setProperty("display", "block", "important");
+      o.style.setProperty("visibility", "visible", "important");
+      o.style.setProperty("opacity", "1", "important");
+      o.style.setProperty("background", "#000", "important");
+      e.querySelector(".preview-skel")?.remove();
+      this._hideLibraryPreviewLoading();
+      ensurePreviewAudioToggle(e);
+      try {
+        if (typeof PreviewTimeline !== "undefined") {
+          PreviewTimeline.attach(o);
+          PreviewTimeline.show?.();
+          if (typeof PreviewTimeline.scheduleFilmstripBuild === "function") {
+            PreviewTimeline.scheduleFilmstripBuild(80);
+            PreviewTimeline.scheduleFilmstripBuild(600);
+          }
+        }
+      } catch (e) {}
+      o.play().catch(() => {});
+      this.maybeMountLibraryRankingOverlay(e, t).catch(() => {});
+      if (this._isCurrentLibraryRanking?.() && this._libraryRankingTimelineState) {
+        try {
+          this.seedLibraryRankingTimelineSplits(this._libraryRankingTimelineState);
+        } catch (e) {}
+      }
+      try {
+        window.SolisSilencer?.syncVisibility?.();
+      } catch (e) {}
+      try {
+        window.SolisImproveClip?.syncVisibility?.();
+      } catch (e) {}
+    };
+    o.addEventListener("loadedmetadata", () => reveal());
+    o.addEventListener("loadeddata", () => reveal());
+    o.addEventListener("canplay", () => reveal());
+    o.addEventListener("durationchange", () => reveal());
+    o.addEventListener("playing", () => reveal());
+    let a = 0;
+    const l = setInterval(() => {
+      if (s || isStale()) {
+        clearInterval(l);
+        return;
+      }
+      a += 1;
+      if ((o.videoWidth > 0 || Number.isFinite(o.duration) && o.duration > 0) && o.readyState >= 1) {
+        clearInterval(l);
+        reveal();
+        return;
+      }
+      if (a >= 40) clearInterval(l);
+    }, 200);
+    o.src = i;
+    o.load();
+    o.play().catch(() => {});
+    setTimeout(() => {
+      if (!s && !isStale() && (o.videoWidth > 0 || o.readyState >= 1)) {
+        reveal();
+      }
+    }, 500);
+    setTimeout(() => {
+      if (!s && !isStale() && o.readyState >= 1) {
+        reveal(true);
+      }
+    }, 2500);
   }
   async maybeMountLibraryRankingOverlay(e, t) {
     if (!e || !t) return;
@@ -8777,7 +9354,7 @@ class ClipsStudio {
     const l = document.getElementById("previewEditorPill")?.querySelector('[data-tool="text"]');
     if (l) l.style.display = "none";
     if (typeof window.activatePreviewToolbar === "function") {
-      const e = document.getElementById("previewEditorPill")?.querySelector('[data-tool="captions"]');
+      const e = document.getElementById("previewEditorPill")?.querySelector('[data-tool="animations"]');
       if (e) window.activatePreviewToolbar(e);
     }
     const c = t.ranking_customizations || {};
@@ -8849,7 +9426,7 @@ class ClipsStudio {
         }
       }
     } catch (e) {}
-    const p = document.querySelector('#previewEditorPill [data-tool="captions"]');
+    const p = document.querySelector('#previewEditorPill [data-tool="animations"]');
     if (p) p.style.display = "";
     try {
       if (this._libraryRankingSubtitlesOn && this._libraryRankingNeedsBurn) {
@@ -9401,7 +9978,18 @@ class ClipsStudio {
         clip_windows: i,
         clip_order: n || undefined,
         caption_style: r || undefined,
-        subtitles_enabled: o
+        subtitles_enabled: o,
+        silence_cuts: (() => {
+          try {
+            const e = typeof window.SolisSilencer?.getCuts === "function" ? window.SolisSilencer.getCuts() : this._librarySilenceCuts || [];
+            return Array.isArray(e) && e.length ? e.map(e => ({
+              start: Number(Number(e.start).toFixed(3)),
+              end: Number(Number(e.end).toFixed(3))
+            })) : undefined;
+          } catch (e) {
+            return undefined;
+          }
+        })()
       })
     });
     if (!s.ok) {
@@ -9411,6 +9999,17 @@ class ClipsStudio {
     const a = await s.json().catch(() => ({}));
     this._libraryRankingDirty = false;
     this._libraryRankingNeedsBurn = false;
+    this._librarySilenceDirty = false;
+    this._librarySilenceCuts = [];
+    try {
+      window.SolisSilencer?.reset?.();
+    } catch (e) {}
+    try {
+      window.SolisImproveClip?.reset?.();
+    } catch (e) {}
+    try {
+      window.LibraryPreviewMediaCache?.invalidateProject?.(e);
+    } catch (e) {}
     try {
       await this.refreshQuotaAfterApply(a);
     } catch (e) {}
@@ -9500,104 +10099,37 @@ class ClipsStudio {
     };
     try {
       const i = this.getLibraryPreviewVideoUrl(t, {
-        bust: o === 0,
+        bust: o > 0,
         clean: a
       });
       if (isStale()) return;
-      e.classList.remove("library-ranking-edit", "library-splitscreen-preview");
-      this._libraryRankingDirty = false;
-      if (!this._libraryRankingOverlayPending) {
-        this._libraryRankingEditable = false;
-        this._libraryRankingNeedsBurn = false;
+      this._mountLibraryPreviewFromUrl(e, t, i, {
+        loadGen: r,
+        clean: a
+      });
+      this._warmLibraryPreviewCache(t, i, a).catch(() => {});
+      const n = e.querySelector("video.library-preview-video");
+      if (!n) {
+        retrySoon("video missing");
+        return;
       }
-      const n = document.createElement("video");
-      n.className = "library-preview-video";
-      n.controls = false;
-      n.removeAttribute("controls");
-      n.playsInline = true;
-      n.muted = true;
-      n.autoplay = true;
-      n.preload = "auto";
-      n.setAttribute("playsinline", "");
-      n.setAttribute("controlslist", "nodownload nofullscreen noremoteplayback noplaybackrate");
-      n.disablePictureInPicture = true;
-      n.style.cssText = "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:transparent;z-index:2;display:block;visibility:visible;opacity:0;";
-      n.removeAttribute("crossorigin");
-      e.querySelectorAll("video").forEach(e => e.remove());
-      if (!e.querySelector(".preview-skel")) {
-        const t = document.createElement("div");
-        t.className = "preview-skel";
-        t.setAttribute("aria-hidden", "true");
-        e.appendChild(t);
-      }
-      e.appendChild(n);
-      e.classList.remove("has-video");
-      let r = false;
       let s = false;
-      const scheduleRetry = e => {
-        if (s || r || isStale()) return;
+      const scheduleRetry = t => {
+        if (s || isStale()) return;
+        if (e.classList.contains("has-video") && n.videoWidth > 0) return;
         s = true;
-        retrySoon(e);
+        retrySoon(t);
       };
-      const reveal = () => {
-        if (r || isStale()) return;
-        const i = n.videoWidth > 0 && n.videoHeight > 0;
-        if (!i && n.readyState < 2) return;
-        if (!i) return;
-        r = true;
-        e.classList.add("has-video");
-        n.style.setProperty("display", "block", "important");
-        n.style.setProperty("visibility", "visible", "important");
-        n.style.setProperty("opacity", "1", "important");
-        n.style.setProperty("background", "#000", "important");
-        e.querySelector(".preview-skel")?.remove();
-        this._hideLibraryPreviewLoading();
-        ensurePreviewAudioToggle(e);
-        if (typeof PreviewTimeline !== "undefined") {
-          PreviewTimeline.attach(n);
-        }
-        n.play().catch(() => {});
-        this.maybeMountLibraryRankingOverlay(e, t).catch(() => {});
-        if (this._isCurrentLibraryRanking?.() && this._libraryRankingTimelineState) {
-          try {
-            this.seedLibraryRankingTimelineSplits(this._libraryRankingTimelineState);
-          } catch (e) {}
-        }
-      };
-      n.addEventListener("loadedmetadata", reveal);
-      n.addEventListener("loadeddata", reveal);
-      n.addEventListener("canplay", reveal);
-      n.addEventListener("playing", reveal);
       n.addEventListener("error", () => {
         scheduleRetry("video decode error");
       }, {
         once: true
       });
-      let l = 0;
-      const c = setInterval(() => {
-        if (r || isStale() || s) {
-          clearInterval(c);
-          return;
-        }
-        l += 1;
-        if (n.videoWidth > 0 && n.readyState >= 1) {
-          clearInterval(c);
-          reveal();
-          return;
-        }
-        if (l >= 24) clearInterval(c);
-      }, 250);
       setTimeout(() => {
-        if (!r && !isStale() && n.videoWidth > 0) {
-          reveal();
+        if (!e.classList.contains("has-video")) {
+          scheduleRetry("video stall");
         }
-      }, 800);
-      setTimeout(() => {
-        scheduleRetry("video stall");
       }, 9e3);
-      n.src = i;
-      n.load();
-      n.play().catch(() => {});
     } catch (e) {
       if (e?.name === "AbortError") return;
       if (isStale()) return;
@@ -9609,6 +10141,31 @@ class ClipsStudio {
       }
     }
   }
+  async _warmLibraryPreviewCache(e, t, i = false) {
+    if (!e || !t || !window.LibraryPreviewMediaCache) return;
+    if (window.LibraryPreviewMediaCache.has(e, i)) return;
+    const n = window.LibraryPreviewMediaCache.getBySrc(t);
+    if (n?.blob && n?.objectUrl) {
+      window.LibraryPreviewMediaCache.rememberProject(e, i, n.blob, n.objectUrl, t);
+      this._libraryPreviewObjectUrl = n.objectUrl;
+      return;
+    }
+    try {
+      const n = await fetch(t, {
+        credentials: "include",
+        cache: "force-cache"
+      });
+      if (!n.ok) return;
+      const r = await n.blob();
+      if (!r.size || r.size > 90 * 1024 * 1024) return;
+      const o = r.type ? r : new Blob([ r ], {
+        type: "video/mp4"
+      });
+      const s = URL.createObjectURL(o);
+      window.LibraryPreviewMediaCache.rememberProject(e, i, o, s, t);
+      this._libraryPreviewObjectUrl = s;
+    } catch (e) {}
+  }
   async fetchSecureLibraryPreview(e, t) {
     this.mountLibraryPreviewVideo(e, t);
   }
@@ -9617,6 +10174,164 @@ class ClipsStudio {
     if (!e) return;
     e.hidden = true;
     e.innerHTML = "";
+  }
+  _setTipPublishMode(e) {
+    const t = document.getElementById("tipCreateBlock");
+    const i = document.getElementById("tipPublishBlock");
+    const n = document.getElementById("templateInfoPanel");
+    if (t) t.hidden = !!e;
+    if (i) i.hidden = !e;
+    if (n) n.classList.toggle("is-publish", !!e);
+    if (!e) {
+      this._hidePreviewViralityRail();
+      const e = document.getElementById("tipScoreWhyBtn");
+      const t = document.getElementById("tipScoreWhy");
+      if (t) t.hidden = true;
+      if (e) e.setAttribute("aria-expanded", "false");
+    }
+  }
+  _score10FromVirality(e) {
+    if (!e || typeof e !== "object") return null;
+    const t = e.score_10 != null ? e.score_10 : e.n != null ? e.n : null;
+    if (t != null && Number.isFinite(Number(t))) {
+      let e = Number(t);
+      if (e > 10) e = e / 10;
+      return Math.round(Math.max(0, Math.min(10, e)) * 10) / 10;
+    }
+    const i = e.score_100 != null ? e.score_100 : e.n100 != null ? e.n100 : null;
+    if (i != null && Number.isFinite(Number(i))) {
+      return Math.round(Math.max(0, Math.min(10, Number(i) / 10)) * 10) / 10;
+    }
+    if (Number(e.score_max) === 100 && e.score != null && Number.isFinite(Number(e.score))) {
+      return Math.round(Math.max(0, Math.min(10, Number(e.score) / 10)) * 10) / 10;
+    }
+    if (e.score != null && Number.isFinite(Number(e.score))) {
+      let t = Number(e.score);
+      if (t > 10) t = t / 10;
+      return Math.round(Math.max(0, Math.min(10, t)) * 10) / 10;
+    }
+    return null;
+  }
+  _scoreFromVirality(e) {
+    const t = this._score10FromVirality(e);
+    return t == null ? null : Math.round(t * 10);
+  }
+  _bandLabel(e) {
+    if (e == null || !Number.isFinite(Number(e))) return "";
+    const t = Number(e);
+    if (t >= 8) return "High potential";
+    if (t >= 6) return "Worth posting";
+    if (t >= 4) return "Average";
+    return "Needs work";
+  }
+  _formatScore10(e) {
+    if (!Number.isFinite(e)) return "—";
+    const t = Math.round(e * 10) / 10;
+    return Number.isInteger(t) ? String(t) : t.toFixed(1);
+  }
+  _whyFromVirality(e) {
+    if (!e || typeof e !== "object") return "";
+    const t = String(e.why || "").trim();
+    if (t) return t;
+    const i = [];
+    for (const t of [ "hook", "clip", "subtitles", "video" ]) {
+      const n = String(e[t]?.note || "").trim();
+      if (n) i.push(n);
+      if (i.length >= 2) break;
+    }
+    return i.join(" ").trim();
+  }
+  _paintSharePack(e, t) {
+    const i = document.getElementById("tipScoreNum");
+    const n = document.getElementById("tipScoreLabel");
+    const r = document.getElementById("tipScoreWhyBtn");
+    const o = document.getElementById("tipScoreWhy");
+    const s = document.getElementById("tipShareTitle");
+    const a = document.getElementById("tipShareHashtags");
+    if (!s || !a) return;
+    let l = e && e.score_10 != null ? Number(e.score_10) : this._score10FromVirality(t);
+    if (!Number.isFinite(l) && e && e.score_100 != null) {
+      l = Math.round(Number(e.score_100) / 10 * 10) / 10;
+    }
+    if (i) i.textContent = this._formatScore10(l);
+    if (n) {
+      n.textContent = e && e.band_label || this._bandLabel(Number.isFinite(l) ? l : null);
+    }
+    const c = String(e?.why || this._whyFromVirality(t) || "").trim();
+    if (r && o) {
+      o.hidden = true;
+      r.setAttribute("aria-expanded", "false");
+      if (c) {
+        r.hidden = false;
+        o.textContent = c;
+        if (!r.dataset.bound) {
+          r.dataset.bound = "1";
+          r.addEventListener("click", () => {
+            const e = o.hidden;
+            o.hidden = !e;
+            r.setAttribute("aria-expanded", e ? "true" : "false");
+          });
+        }
+      } else {
+        r.hidden = true;
+        o.textContent = "";
+      }
+    }
+    const d = String(e?.title || "").trim();
+    const p = Array.isArray(e?.hashtags) ? e.hashtags.join(" ") : String(e?.hashtags_text || "").trim();
+    if (document.activeElement !== s) s.textContent = d;
+    if (document.activeElement !== a) a.textContent = p;
+    this._bindSharePackEditors();
+  }
+  _bindSharePackEditors() {
+    if (this._sharePackBound) return;
+    this._sharePackBound = true;
+    const e = document.getElementById("tipShareTitle");
+    const t = document.getElementById("tipShareHashtags");
+    const save = () => this._saveSharePackFromEditors();
+    [ e, t ].forEach(e => {
+      if (!e) return;
+      e.addEventListener("keydown", t => {
+        if (t.key === "Enter" && !t.shiftKey) {
+          t.preventDefault();
+          e.blur();
+        }
+      });
+      e.addEventListener("blur", save);
+    });
+  }
+  async _saveSharePackFromEditors() {
+    const e = this.currentTemplateForPreview?.projectId;
+    if (!e) return;
+    const t = document.getElementById("tipShareTitle");
+    const i = document.getElementById("tipShareHashtags");
+    const n = (t?.innerText || "").trim();
+    const r = (i?.innerText || "").trim();
+    try {
+      const t = typeof getAuthHeaders === "function" ? getAuthHeaders() : {};
+      const i = await fetch(`${API_BASE_URL}/clips/projects/${encodeURIComponent(e)}/share-pack`, {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          ...t
+        },
+        body: JSON.stringify({
+          title: n,
+          hashtags_text: r
+        })
+      });
+      if (!i.ok) return;
+      const o = await i.json().catch(() => ({}));
+      const s = o?.share_pack;
+      if (s) {
+        const t = this.libraryItems.find(t => String(t.projectId || t.id) === String(e));
+        if (t) t.share_pack = s;
+        if (this.currentTemplateForPreview) {
+          this.currentTemplateForPreview.share_pack = s;
+        }
+      }
+    } catch (e) {}
   }
   async _fetchPreviewReportCard(e) {
     if (!e) return null;
@@ -9627,39 +10342,57 @@ class ClipsStudio {
         headers: t
       });
       if (!i.ok) return null;
-      const n = await i.json();
-      return n && n.virality ? n.virality : null;
+      return await i.json();
     } catch (e) {
       return null;
     }
   }
   async _renderPreviewViralityRail(e) {
-    const t = document.getElementById("previewViralityRail");
-    if (!t) return;
-    let i = e;
-    let n = window.SolisClipCard && typeof SolisClipCard.railHTML === "function" ? SolisClipCard.railHTML(i) : "";
-    if (!n && i) {
-      const e = i.projectId || i.id;
-      const t = await this._fetchPreviewReportCard(e);
-      if (t) {
-        i = {
-          ...i,
-          virality: t
-        };
-        const r = this.libraryItems.find(t => String(t.projectId || t.id) === String(e));
-        if (r) r.virality = t;
-        n = SolisClipCard.railHTML(i);
+    this._hidePreviewViralityRail();
+    await this._renderPublishPack(e);
+  }
+  async _renderPublishPack(e) {
+    this._setTipPublishMode(true);
+    let t = e || {};
+    let i = t.share_pack || null;
+    let n = t.virality || null;
+    const r = t.projectId || t.id;
+    const o = !i || i.score_10 == null && i.score_100 == null;
+    if ((o || !(i && i.why)) && r) {
+      const e = await this._fetchPreviewReportCard(r);
+      if (e) {
+        if (e.virality) n = e.virality;
+        if (e.share_pack) i = e.share_pack;
+        const t = this.libraryItems.find(e => String(e.projectId || e.id) === String(r));
+        if (t) {
+          if (n) t.virality = n;
+          if (i) t.share_pack = i;
+        }
       }
     }
-    if (!n) {
-      this._hidePreviewViralityRail();
-      return;
+    const s = this._score10FromVirality(n);
+    const a = this._whyFromVirality(n);
+    if (!i) {
+      i = {
+        title: t.name || t.video_title || "You need to see this",
+        hashtags: [ "#fyp", "#viral", "#shorts" ],
+        hashtags_text: "#fyp #viral #shorts",
+        score_10: s,
+        score_100: s == null ? null : Math.round(s * 10),
+        band_label: this._bandLabel(s),
+        why: a
+      };
+    } else {
+      const e = i.score_10 != null ? Number(i.score_10) : i.score_100 != null ? Math.round(Number(i.score_100) / 10 * 10) / 10 : s;
+      i = {
+        ...i,
+        score_10: e,
+        score_100: e == null ? i.score_100 : Math.round(e * 10),
+        band_label: i.band_label || this._bandLabel(e),
+        why: i.why || a
+      };
     }
-    t.innerHTML = n;
-    t.hidden = false;
-    if (typeof SolisClipCard.bindRail === "function") {
-      SolisClipCard.bindRail(t);
-    }
+    this._paintSharePack(i, n);
   }
   toggleLibraryPreviewLayout(e) {
     const t = document.getElementById("templateInfoPanel");
@@ -9670,7 +10403,7 @@ class ClipsStudio {
     const s = o?.querySelector('[data-tool="text"]');
     const a = this._isCurrentLibraryRanking();
     const visibleToolbarBtns = () => o ? Array.from(o.querySelectorAll(".tool-btn")).filter(e => e.style.display !== "none" && getComputedStyle(e).display !== "none") : [];
-    if (!e) this._hidePreviewViralityRail();
+    this._setTipPublishMode(!!e);
     if (n) {
       n.hidden = !e;
       n.style.display = e ? "" : "none";
@@ -9691,10 +10424,14 @@ class ClipsStudio {
       if (i) i.style.display = "block";
       if (o) o.style.display = "";
       if (s) s.style.display = a ? "none" : "";
-      const e = o?.querySelector('[data-tool="captions"]');
-      const n = o?.querySelector('[data-tool="animations"]');
+      const e = o?.querySelector('[data-tool="animations"]');
       if (e) e.style.display = "";
-      if (n) n.style.display = "";
+      try {
+        window.SolisSilencer?.syncVisibility?.();
+      } catch (e) {}
+      try {
+        window.SolisImproveClip?.syncVisibility?.();
+      } catch (e) {}
       if (typeof lucide !== "undefined") {
         lucide.createIcons({
           attrs: {
@@ -9703,7 +10440,7 @@ class ClipsStudio {
           nameAttr: "data-lucide"
         });
       }
-      const r = visibleToolbarBtns();
+      const n = visibleToolbarBtns();
       if (o) {
         o.querySelectorAll(".tool-btn").forEach(e => e.classList.remove("active"));
       }
@@ -9722,12 +10459,21 @@ class ClipsStudio {
       if (typeof PreviewTimeline !== "undefined") {
         PreviewTimeline.detach();
       }
+      try {
+        window.SolisSilencer?.syncVisibility?.();
+      } catch (e) {}
+      try {
+        window.SolisImproveClip?.syncVisibility?.();
+      } catch (e) {}
     }
     if (typeof window.syncSolisModStripes === "function") {
       try {
         window.syncSolisModStripes();
       } catch (e) {}
     }
+    try {
+      window.SolisSilencer?.syncVisibility?.();
+    } catch (e) {}
   }
   async _isPrimeOrElitePlan() {
     try {
@@ -9763,12 +10509,10 @@ class ClipsStudio {
     }
     e.style.display = "";
     const i = e.querySelector('[data-tool="text"]');
-    const n = e.querySelector('[data-tool="captions"]');
-    const r = e.querySelector('[data-tool="animations"]');
-    const o = this._isCurrentLibraryRanking();
-    if (i) i.style.display = o ? "none" : "";
+    const n = e.querySelector('[data-tool="animations"]');
+    const r = this._isCurrentLibraryRanking();
+    if (i) i.style.display = r ? "none" : "";
     if (n) n.style.display = "";
-    if (r) r.style.display = "";
     if (typeof lucide !== "undefined") {
       lucide.createIcons({
         attrs: {
@@ -9777,10 +10521,10 @@ class ClipsStudio {
         nameAttr: "data-lucide"
       });
     }
-    const s = Array.from(e.querySelectorAll(".tool-btn")).filter(e => e.style.display !== "none");
+    const o = Array.from(e.querySelectorAll(".tool-btn")).filter(e => e.style.display !== "none");
     e.querySelectorAll(".tool-btn").forEach(e => e.classList.remove("active"));
-    void s;
-    t.textContent = this._librarySplitscreenDirty || this._libraryOverlayDirty || this._libraryRankingDirty ? "Apply & Download" : "Download";
+    void o;
+    t.textContent = this._librarySplitscreenDirty || this._libraryOverlayDirty || this._libraryRankingDirty || this._librarySilenceDirty ? "Apply & Download" : "Download";
     t.classList.toggle("library-download-mode", true);
   }
   async downloadRenderedLibraryClip(e) {
@@ -9892,35 +10636,38 @@ class ClipsStudio {
       safeLog(`📥 Library mode: Downloading clip ${n}`);
       const t = Boolean(this._libraryHookCleared);
       const i = Boolean(this._libraryCaptionsCleared);
-      const r = Boolean(this._librarySplitscreenCustomize && (this._librarySplitscreenDirty || t || i));
-      const o = typeof window.collectLibraryOverlayTexts === "function" ? window.collectLibraryOverlayTexts() : [];
-      const s = Boolean(this._libraryOverlayDirty);
-      const a = Boolean(this._libraryRankingEditable && (this._libraryRankingDirty || this._libraryRankingNeedsBurn));
+      const r = Boolean(this._librarySilenceDirty || typeof window.SolisSilencer?.isApplied === "function" && window.SolisSilencer.isApplied());
+      const o = Boolean(this._librarySplitscreenCustomize && (this._librarySplitscreenDirty || t || i || r));
+      const s = typeof window.collectLibraryOverlayTexts === "function" ? window.collectLibraryOverlayTexts() : [];
+      const a = Boolean(this._libraryOverlayDirty && !r);
+      const l = Boolean(this._libraryRankingEditable && (this._libraryRankingDirty || this._libraryRankingNeedsBurn || r));
+      const c = Boolean(r && !o && !l);
       if (e) {
         e.dataset.applying = "1";
         e.disabled = true;
         e.dataset.prevLabel = e.textContent || "";
-        e.textContent = r || s || a ? "Applying…" : "Downloading…";
+        e.textContent = o || a || l || c ? "Applying…" : "Downloading…";
       }
       try {
-        if (r || s || a) {
-          if (s && !o.length && !a && !r) {
+        if (o || a || l || c) {
+          if (a && !s.length && !l && !o && !c) {
             throw new Error("Type some text on the preview first (not just “Text”)");
           }
           const e = this._libraryCustomizeMeta || {};
           if (e.customize_expired) {
             throw new Error("Customization window expired for this project. Download the last render, or generate a new clip.");
           }
-          if (e.apply_consumes_quota !== false) {
+          if (e.apply_consumes_quota !== false && !c) {
             try {
               showNotification("Applying changes uses 1 daily upload.", "info");
             } catch (e) {}
           }
           await this.runLibraryApplyWithSpinner(n, {
-            needsRecompose: r,
-            needsOverlayRender: s,
-            needsRankingRecompose: a,
-            overlays: o
+            needsRecompose: o,
+            needsOverlayRender: a,
+            needsRankingRecompose: l,
+            needsSilenceOnly: c,
+            overlays: s
           });
           this.closeTemplatePreviewModal();
         } else {
@@ -10162,11 +10909,11 @@ class ClipsStudio {
   _lockGenerationButtons() {
     const e = document.getElementById("processUrlBtn");
     if (e) {
-      e.disabled = false;
+      e.disabled = true;
       e.classList.add("is-generating");
-      e.classList.remove("is-cancelling");
-      e.setAttribute("aria-label", "Stop generation");
-      e.title = "Stop generation";
+      e.classList.remove("is-cancelling", "is-cancel-locked");
+      e.setAttribute("aria-label", "Generating…");
+      e.title = "Generating…";
     }
     const t = document.getElementById("confirmUseTemplateBtn");
     if (t) t.disabled = true;
@@ -10188,87 +10935,7 @@ class ClipsStudio {
     this.syncTemplateConfirmButton();
   }
   async cancelActiveGeneration() {
-    if (this._cancelGenerationInFlight) return;
-    this._cancelGenerationInFlight = true;
-    const e = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
-    const t = document.getElementById("processUrlBtn");
-    t?.classList.add("is-cancelling");
-    try {
-      let i = null;
-      if (e?.activeGenerations?.size) {
-        i = [ ...e.activeGenerations.keys() ][0];
-      }
-      if (!i && this.processingItems?.length) {
-        const e = this.processingItems.find(e => {
-          const t = String(e.status || "").toLowerCase();
-          return e.projectId && [ "queued", "downloading", "processing" ].includes(t);
-        });
-        i = e?.projectId || null;
-      }
-      if (!i && e?._lastKnownProjectId) {
-        i = e._lastKnownProjectId;
-      }
-      if (!i) {
-        try {
-          const e = JSON.parse(localStorage.getItem("solisAI_activeGenerations") || "[]");
-          if (Array.isArray(e) && e.length) i = e[0];
-        } catch (e) {}
-      }
-      if (e?.optimisticPending && !i) {
-        e.cancelOptimisticGeneration?.();
-        this._unlockGenerationButtons();
-        return;
-      }
-      if (e?.optimisticPending && i) {
-        e.optimisticPending = false;
-      }
-      if (!i) {
-        e?.cancelOptimisticGeneration?.();
-        this._unlockGenerationButtons();
-        return;
-      }
-      e?._markUserCancelled?.(i);
-      const n = window.API_BASE_URL || window.API_BASE || "/api";
-      const r = typeof getAuthHeaders === "function" ? getAuthHeaders() : {
-        "Content-Type": "application/json"
-      };
-      const o = await fetch(`${n}/clips/${encodeURIComponent(i)}/cancel`, {
-        method: "POST",
-        headers: r,
-        credentials: "include"
-      });
-      const s = await o.json().catch(() => ({}));
-      if (s?.cancel_locked || o.status === 409) {
-        t?.classList.add("is-cancel-locked");
-        t?.classList.remove("is-cancelling");
-        t?.setAttribute("aria-label", "Finishing…");
-        t && (t.title = s.message || "Almost done — can’t stop now");
-        return;
-      }
-      if (e?.stopGeneration) {
-        e.stopGeneration(i, "Stopped");
-      } else if (e?.failGeneration) {
-        e.failGeneration(i, "Stopped");
-      } else {
-        this._unlockGenerationButtons();
-      }
-      const a = this.processingItems?.find(e => e.projectId === i);
-      if (a) {
-        a.status = "cancelled";
-        a.message = "Stopped";
-        this.saveProcessingItems?.();
-        this.updateProcessingView?.();
-      }
-      if (!o.ok) {
-        console.warn("[Cancel] Server returned", o.status);
-      }
-    } catch (e) {
-      console.warn("[Cancel] Request failed:", e);
-      this._unlockGenerationButtons();
-    } finally {
-      this._cancelGenerationInFlight = false;
-      t?.classList.remove("is-cancelling");
-    }
+    return;
   }
   syncTemplateConfirmButton() {
     const e = document.getElementById("confirmUseTemplateBtn");
@@ -10414,14 +11081,18 @@ class ClipsStudio {
       const o = typeof initGenerationProgressSpinner === "function" ? initGenerationProgressSpinner() : typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
       if (o) {
         const e = document.getElementById("youtubeUrlInput")?.value?.trim() || "";
-        const i = {
+        const i = (typeof this.resolveSourceVideoCardMeta === "function" ? this.resolveSourceVideoCardMeta(e) : {}) || {};
+        const n = i.title || (e ? "YouTube video" : "Your video");
+        const r = {
           ...t === "splitscreen" && typeof window.getSplitscreenConfig === "function" ? {
             secondaryType: window.getSplitscreenConfig().splitscreen_secondary_type
           } : {},
-          videoTitle: `${r}` + (e ? ` · ${e}` : ""),
-          title: r
+          videoTitle: n,
+          title: n,
+          thumbnailUrl: i.thumbnailUrl || null,
+          videoId: i.videoId || null
         };
-        o.beginOptimisticGeneration("Starting...", t, i);
+        o.beginOptimisticGeneration("Starting...", t, r);
       }
       const s = {
         id: i,
@@ -10789,16 +11460,27 @@ class ClipsStudio {
         this.addProcessingItem(e);
       }
       if (o) {
-        const e = t === "splitscreen" && typeof window.getSplitscreenConfig === "function" ? {
-          secondaryType: window.getSplitscreenConfig().splitscreen_secondary_type
-        } : {};
-        const i = y?.queue?.queue_status;
-        const n = Number(y?.queue?.users_ahead);
-        const r = i === "waiting" || Number.isFinite(n) && n > 0;
-        const s = y?.message || (r ? "Queued — waiting for an open slot..." : "Starting upload...");
-        o.startGeneration(y.project_id, s, t, e);
+        const e = document.getElementById("youtubeUrlInput")?.value?.trim() || "";
+        const i = (typeof this.resolveSourceVideoCardMeta === "function" ? this.resolveSourceVideoCardMeta(e) : {}) || {};
+        const n = o.activeTemplateOptions || {};
+        const r = i.title || n.videoTitle || n.title || "Your video";
+        const s = {
+          ...n,
+          ...t === "splitscreen" && typeof window.getSplitscreenConfig === "function" ? {
+            secondaryType: window.getSplitscreenConfig().splitscreen_secondary_type
+          } : {},
+          videoTitle: r,
+          title: r,
+          thumbnailUrl: i.thumbnailUrl || n.thumbnailUrl || null,
+          videoId: i.videoId || n.videoId || null
+        };
+        const a = y?.queue?.queue_status;
+        const l = Number(y?.queue?.users_ahead);
+        const c = a === "waiting" || Number.isFinite(l) && l > 0;
+        const d = y?.message || (c ? "We’re experiencing very high demand — your generation will be ready soon." : "Starting upload...");
+        o.startGeneration(y.project_id, d, t, s);
         if (y?.queue) {
-          o.updateProgress(y.project_id, r ? 1 : 3, s, true, y.queue);
+          o.updateProgress(y.project_id, c ? 1 : 3, d, true, y.queue);
         }
       } else {
         console.warn("[GENERATION] Spinner not initialized! Trying fallback wrapper...");
@@ -11596,6 +12278,43 @@ class ClipsStudio {
       this._lastVideoDurationMinutes = i;
       this._lastVideoDurationSeconds = i * 60;
     }
+    const n = String(e.title || "").trim();
+    if (n && !/^https?:\/\//i.test(n)) {
+      this._lastVideoTitle = n;
+    }
+    const r = String(e.channel || "").trim();
+    if (r) this._lastVideoChannel = r;
+    const o = String(e.thumbnail || e.thumbnailUrl || "").trim();
+    if (o && /^https?:\/\//i.test(o)) {
+      this._lastVideoThumbnail = o;
+    }
+    const s = String(e.video_id || e.videoId || "").trim();
+    if (s && /^[a-zA-Z0-9_-]{11}$/.test(s)) {
+      this._lastVideoId = s;
+      if (!this._lastVideoThumbnail) {
+        this._lastVideoThumbnail = `https://i.ytimg.com/vi/${s}/hqdefault.jpg`;
+      }
+    }
+  }
+  resolveSourceVideoCardMeta(e) {
+    const t = String(e || document.getElementById("youtubeUrlInput")?.value?.trim() || "").trim();
+    const i = this.extractYouTubeVideoId(t) || this._lastVideoId || window.videoPreviewSystem?.currentVideoId || null;
+    const n = window.videoPreviewSystem?.videoData || {};
+    let r = String(this._lastVideoTitle || n.title || "").trim();
+    if (!r || /^https?:\/\//i.test(r)) {
+      r = "";
+    }
+    let o = String(this._lastVideoThumbnail || n.thumbnail || n.thumbnail_url || "").trim();
+    if (!o && i) {
+      o = `https://i.ytimg.com/vi/${i}/hqdefault.jpg`;
+    }
+    return {
+      title: r,
+      thumbnailUrl: o,
+      videoId: i,
+      url: t,
+      channel: this._lastVideoChannel || n.channel || n.uploader || ""
+    };
   }
   _getCachedDurationCheck(e) {
     if (!this._durationCheckCache) this._durationCheckCache = {};
@@ -11680,7 +12399,11 @@ class ClipsStudio {
         duration_seconds: n.duration_seconds ?? (Number.isFinite(n.duration_minutes) ? n.duration_minutes * 60 : null),
         maxAllowed: o,
         aiBudgetMinutes: o,
-        aiBudgetCapped: s
+        aiBudgetCapped: s,
+        title: n.title || null,
+        channel: n.channel || null,
+        thumbnail: n.thumbnail || null,
+        video_id: n.video_id || null
       };
     } catch (e) {
       safeLog("Error checking video duration:", e);
@@ -11934,6 +12657,7 @@ class ClipsStudio {
       slotNumber: e.slotNumber,
       isSlotSystem: e.isSlotSystem,
       virality: e.virality || null,
+      share_pack: e.share_pack || null,
       _optimistic: true
     };
     const i = document.querySelector(`[data-processing-id="${e.id}"]`);
@@ -12112,6 +12836,7 @@ class ClipsStudio {
           isSlotSystem: e.slots ? true : false,
           slots: e.slots,
           virality: e.virality || null,
+          share_pack: e.share_pack || null,
           duration: e.duration_formatted || e.duration_seconds || null
         }));
         this.libraryCollections = (e.collections || []).map(e => ({
@@ -13633,6 +14358,7 @@ class ClipsStudio {
           timestamp: (new Date).toISOString(),
           status: "completed",
           virality: i?.virality || r.virality || null,
+          share_pack: i?.share_pack || r.share_pack || null,
           _optimistic: true
         };
         this.libraryItems = this.libraryItems.filter(e => String(e.projectId || e.id) !== String(n.projectId));
@@ -14310,8 +15036,14 @@ async function startClipCompilation(e) {
     const s = o.project_id;
     const a = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
     if (a) {
+      const t = (typeof clipsStudio?.resolveSourceVideoCardMeta === "function" ? clipsStudio.resolveSourceVideoCardMeta(e) : {}) || {};
+      const i = t.title || "Your video";
       a.startGeneration(s, "Starting upload...", "splitscreen", {
-        secondaryType: splitscreenSecondaryType
+        secondaryType: splitscreenSecondaryType,
+        videoTitle: i,
+        title: i,
+        thumbnailUrl: t.thumbnailUrl || null,
+        videoId: t.videoId || null
       });
     }
     let l = false;

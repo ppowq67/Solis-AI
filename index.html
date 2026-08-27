@@ -869,11 +869,9 @@
       background-image: radial-gradient(circle, var(--pill-btn-dot) 0.8px, transparent 1.05px);
       background-size: 6px 6px;
       opacity: 0.18;
-      transition: opacity 0.35s ease, transform 0.4s ease;
+      transition: opacity 0.2s ease;
       pointer-events: none;
       z-index: 0;
-      mix-blend-mode: soft-light;
-      transform: scale(1.02);
       border-radius: inherit;
     }
     .pill-btn > span {
@@ -894,8 +892,7 @@
         0 10px 24px rgba(234, 88, 12, 0.36);
     }
     .pill-btn:hover::after {
-      opacity: 0.72;
-      transform: scale(1);
+      opacity: 0.42;
     }
     .pill-btn:active {
       background: linear-gradient(160deg, #ea580c 0%, #c2410c 100%);
@@ -1418,25 +1415,34 @@
       background-position: 0 0;
     }
     .bottom-band-dots { opacity: 0.58; }
-    .bottom-band-dots-hi {
-      background-image: radial-gradient(rgba(255, 255, 255, 0.98) 1.25px, transparent 1.45px);
-      opacity: 0;
-      transition: opacity 0.2s ease;
-      -webkit-mask-image: radial-gradient(circle 160px at var(--gs-mx) var(--gs-my), #000 0%, #000 28%, transparent 72%);
-      mask-image: radial-gradient(circle 160px at var(--gs-mx) var(--gs-my), #000 0%, #000 28%, transparent 72%);
-    }
-    .bottom-band.is-hot .bottom-band-dots-hi { opacity: 1; }
+    .bottom-band-dots-hi,
     .bottom-band-glow {
+      display: none !important;
+    }
+    .bottom-band-spotlight {
       position: absolute;
-      inset: 0;
+      left: 0;
+      top: 0;
       z-index: 1;
+      width: 280px;
+      height: 280px;
+      margin: -140px 0 0 -140px;
+      border-radius: 50%;
       pointer-events: none;
       opacity: 0;
-      transition: opacity 0.2s ease;
-      background: radial-gradient(circle 180px at var(--gs-mx) var(--gs-my), rgba(255, 255, 255, 0.32), transparent 70%);
-      mix-blend-mode: soft-light;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.95) 1.2px, transparent 1.4px);
+      background-size: 14px 14px;
+      background-position: 0 0;
+      -webkit-mask-image: radial-gradient(circle, #000 0%, #000 38%, transparent 72%);
+      mask-image: radial-gradient(circle, #000 0%, #000 38%, transparent 72%);
+      transform: translate3d(-9999px, -9999px, 0);
+      transition: opacity 0.15s ease;
+      will-change: transform;
+      contain: strict;
     }
-    .bottom-band.is-hot .bottom-band-glow { opacity: 1; }
+    .bottom-band.is-hot .bottom-band-spotlight {
+      opacity: 1;
+    }
     .bottom-band-shade {
       position: absolute;
       inset: 0;
@@ -3884,7 +3890,7 @@
       .auth-btn { height: 48px; font-size: 14px; }
     }
   </style>
-  <script defer src="/js/auth-modal.js?v=1"></script>
+  <script defer src="/js/auth-modal.js?v=3"></script>
 </head>
 <body>
 
@@ -4413,12 +4419,11 @@
     </div>
   </div>
 
-  <div class="bottom-band" id="getStarted">
+    <div class="bottom-band" id="getStarted">
     <div class="gs-glow" aria-hidden="true"></div>
     <div class="gs-glow-b" aria-hidden="true"></div>
     <div class="bottom-band-dots" aria-hidden="true"></div>
-    <div class="bottom-band-dots-hi" aria-hidden="true"></div>
-    <div class="bottom-band-glow" aria-hidden="true"></div>
+    <div class="bottom-band-spotlight" id="gsSpotlight" aria-hidden="true"></div>
     <div class="bottom-band-shade" aria-hidden="true"></div>
     <section class="get-started" aria-label="Get started">
     <div class="get-started-inner">
@@ -4625,25 +4630,27 @@
     var heroPill = document.getElementById('_pill');
     var getStartedEl = document.getElementById('getStarted');
     if (getStartedEl) {
+      var gsSpotlight = document.getElementById('gsSpotlight')
+        || getStartedEl.querySelector('.bottom-band-spotlight');
       var gsRaf = 0;
-      var gsPending = null;
+      var gsX = 0;
+      var gsY = 0;
       function flushGsPointer() {
         gsRaf = 0;
-        if (!gsPending) return;
-        getStartedEl.style.setProperty('--gs-mx', gsPending.x);
-        getStartedEl.style.setProperty('--gs-my', gsPending.y);
-        getStartedEl.classList.add('is-hot');
-        gsPending = null;
+        if (!gsSpotlight) return;
+        gsSpotlight.style.transform = 'translate3d(' + gsX + 'px,' + gsY + 'px,0)';
+        gsSpotlight.style.backgroundPosition = (-gsX) + 'px ' + (-gsY) + 'px';
       }
-      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && !window.matchMedia('(pointer: coarse)').matches) {
+      if (gsSpotlight
+          && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          && !window.matchMedia('(pointer: coarse)').matches) {
         getStartedEl.addEventListener('pointermove', function(e) {
           var r = getStartedEl.getBoundingClientRect();
-          gsPending = {
-            x: (((e.clientX - r.left) / r.width) * 100).toFixed(2) + '%',
-            y: (((e.clientY - r.top) / r.height) * 100).toFixed(2) + '%'
-          };
+          gsX = e.clientX - r.left;
+          gsY = e.clientY - r.top;
+          getStartedEl.classList.add('is-hot');
           if (!gsRaf) gsRaf = requestAnimationFrame(flushGsPointer);
-        });
+        }, { passive: true });
         getStartedEl.addEventListener('pointerleave', function() {
           getStartedEl.classList.remove('is-hot');
         });

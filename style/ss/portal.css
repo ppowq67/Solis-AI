@@ -2267,11 +2267,6 @@
             animation: bounce-dots 1.4s ease-in-out infinite;
         }
 
-        .url-submit-btn .loading-dot {
-            background: #ffffff;
-            animation: urlSubmitDotPulse 1.15s infinite ease-in-out;
-        }
-
         .loading-dot:nth-child(2) {
             animation-delay: 0.2s;
         }

@@ -1019,24 +1019,22 @@
       width: 52px;
       height: 52px;
       border-radius: 14px;
-      background:
-        linear-gradient(155deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0.55) 45%, rgba(255, 237, 213, 0.4) 100%);
+      background: rgba(255, 255, 255, 0.88);
       display: grid;
       place-items: center;
       flex-shrink: 0;
-      border: 1px solid rgba(255, 255, 255, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.95);
       box-shadow:
-        0 4px 14px rgba(0, 0, 0, 0.18),
-        inset 0 1px 0 rgba(255, 255, 255, 0.9),
-        inset 0 -1px 0 rgba(234, 88, 12, 0.08);
-      -webkit-backdrop-filter: blur(12px) saturate(1.4);
-      backdrop-filter: blur(12px) saturate(1.4);
+        0 4px 16px rgba(0, 0, 0, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 1),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.35);
+      -webkit-backdrop-filter: blur(14px) saturate(1.2);
+      backdrop-filter: blur(14px) saturate(1.2);
     }
     .ph-icon svg {
       width: 32px;
       height: 32px;
       display: block;
-      filter: drop-shadow(0 1px 1px rgba(194, 65, 12, 0.2));
     }
     .ph-button-text {
       display: flex;
@@ -1048,23 +1046,26 @@
       width: 295px;
       position: relative;
       flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       z-index: 2;
     }
+    .ph-browser-frame {
+      width: 672px;
+      height: auto;
+      max-width: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
     .ph-preview-badge {
+      position: absolute;
+      top: 58px;
+      left: 22px;
+      z-index: 3;
       line-height: 0;
-      padding: 10px;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.55);
-      border: 1px solid rgba(255, 255, 255, 0.7);
-      -webkit-backdrop-filter: blur(10px);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 6px 18px rgba(24, 18, 14, 0.08);
     }
     .ph-preview-badge img {
-      width: 230px;
+      width: 210px;
       height: auto;
       display: block;
       max-width: none;
@@ -1072,7 +1073,13 @@
     @media (max-width: 760px) {
       .ph-launch { padding: 0 16px; margin-bottom: 28px; }
       .ph-banner { height: auto; min-height: 164px; flex-direction: column; }
-      .ph-preview { width: 100%; padding: 0 24px 24px; justify-content: flex-start; }
+      .ph-preview {
+        width: 100%;
+        min-height: 90px;
+        padding: 0 24px 24px;
+      }
+      .ph-browser-frame { display: none; }
+      .ph-preview-badge { position: relative; top: auto; left: auto; }
       .ph-content { padding: 28px 24px 12px; }
       .ph-title { font-size: 20px; }
       .ph-button { font-size: 17px; }
@@ -4203,6 +4210,7 @@
           </a>
         </div>
         <div class="ph-preview">
+          <img src="https://arc.net/images/Dia-Browserframe.png" alt="" class="ph-browser-frame">
           <a
             href="https://www.producthunt.com/products/solis-ai?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-solis-ai"
             target="_blank"

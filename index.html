@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.paddle.com https://sandbox-cdn.paddle.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.solisai.video wss://api.solisai.video https://api.solisai.video wss://api.solisai.video https://api.solisai.video wss://api.solisai.video https://sandbox-api.paddle.com https://api.paddle.com https://sandbox-buy.paddle.com https://buy.paddle.com https://cloudflareinsights.com; frame-src 'self' https://checkout.paddle.com https://buy.paddle.com https://sandbox-buy.paddle.com https://sandbox-checkout-service.paddle.com https://checkout-service.paddle.com;">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.paddle.com https://sandbox-cdn.paddle.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://arc.net; img-src 'self' data: https:; connect-src 'self' https://api.solisai.video wss://api.solisai.video https://api.solisai.video wss://api.solisai.video https://api.solisai.video wss://api.solisai.video https://sandbox-api.paddle.com https://api.paddle.com https://sandbox-buy.paddle.com https://buy.paddle.com https://cloudflareinsights.com; frame-src 'self' https://checkout.paddle.com https://buy.paddle.com https://sandbox-buy.paddle.com https://sandbox-checkout-service.paddle.com https://checkout-service.paddle.com;">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="X-XSS-Protection" content="1; mode=block">
@@ -919,125 +919,115 @@
       text-align: center;
       box-sizing: border-box;
     }
+    @font-face {
+      font-family: "Exposure VAR";
+      src: url("https://arc.net/fonts/205TF-Exposure-[-30].woff2") format("woff2");
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "ABC Oracle";
+      src: url("https://arc.net/fonts/ABCOracle-Regular.woff2") format("woff2");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "InterVariable";
+      src: url("https://arc.net/fonts/inter-var-latin.woff2") format("woff2-variations");
+      font-weight: 100 900;
+      font-display: optional;
+    }
     .ph-launch {
       width: 100%;
-      max-width: 760px;
+      display: flex;
+      justify-content: center;
       margin: 0 auto 36px;
       padding: 0 20px;
       box-sizing: border-box;
     }
     .ph-banner {
       display: flex;
-      align-items: stretch;
-      gap: 12px;
-      width: 100%;
-      min-height: 148px;
-      padding: 28px 28px 28px 32px;
-      border-radius: 18px;
+      width: 717px;
+      max-width: 100%;
+      height: 184px;
+      background-image: url("https://arc.net/images/dia-background-image.png");
+      background-size: cover;
+      border-radius: 16px;
       overflow: hidden;
+      font-family: "InterVariable", "Inter", -apple-system, sans-serif;
+      color: #fffcea;
       position: relative;
       user-select: none;
-      background:
-        radial-gradient(ellipse 80% 120% at 100% 0%, rgba(255, 140, 66, 0.28), transparent 55%),
-        radial-gradient(ellipse 60% 100% at 0% 100%, rgba(249, 115, 22, 0.12), transparent 50%),
-        linear-gradient(135deg, #fff8f1 0%, #ffe8d4 48%, #ffd4b0 100%);
-      border: 1px solid rgba(234, 88, 12, 0.16);
-      box-shadow: 0 10px 32px rgba(120, 80, 40, 0.08), 0 1px 3px rgba(120, 80, 40, 0.05);
       text-align: left;
     }
     .ph-content {
       flex: 1;
-      min-width: 0;
+      padding: 32px 0 32px 32px;
       z-index: 2;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
     }
     .ph-title {
       margin: 0;
-      font-family: var(--font-display), system-ui, sans-serif;
-      font-size: clamp(18px, 2.4vw, 22px);
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      line-height: 1.25;
-      color: rgba(24, 18, 14, 0.9);
-      max-width: 420px;
+      color: rgba(0, 0, 0, 0.85);
+      font-family: "Exposure VAR", Helvetica, sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1.2;
+      max-width: 390px;
     }
-    .ph-title .ph-sub {
-      font-weight: 550;
-      color: rgba(24, 18, 14, 0.55);
+    .ph-subtitle {
+      color: rgba(0, 0, 0, 0.6);
     }
     .ph-button {
       display: inline-flex;
       align-items: center;
-      gap: 12px;
-      align-self: flex-start;
-      margin-top: 18px;
-      padding: 8px 16px 8px 8px;
-      background: rgba(24, 18, 14, 0.9);
-      color: #fff;
+      gap: 14px;
+      margin-top: 24px;
+      padding: 8px 18px 8px 8px;
+      background-color: rgba(0, 0, 0, 0.85);
+      color: #ffffff;
       text-decoration: none;
-      border-radius: 14px;
-      font-family: var(--font-display), system-ui, sans-serif;
-      font-size: 15px;
-      font-weight: 650;
-      letter-spacing: -0.02em;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.22);
-      transition: background 0.2s ease, transform 0.15s ease;
+      border-radius: 16px;
+      font-family: "ABC Oracle", Helvetica, sans-serif;
+      font-size: 20px;
+      box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.25);
+      transition: background 0.2s ease-in-out;
     }
     .ph-button:hover {
-      background: rgba(24, 18, 14, 0.97);
-      transform: translateY(-1px);
+      background-color: rgba(0, 0, 0, 0.95);
     }
-    .ph-button:active { transform: scale(0.98); }
-    .ph-button-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: #da552f;
-      display: grid;
-      place-items: center;
-      flex-shrink: 0;
+    .ph-icon {
+      width: 42px;
+      height: 42px;
     }
-    .ph-button-icon svg { width: 18px; height: 18px; }
     .ph-button-text {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding-bottom: 1px;
-    }
-    .ph-button-text svg { opacity: 0.55; flex-shrink: 0; }
-    .ph-badge {
-      flex: 0 0 auto;
       display: flex;
       align-items: center;
-      justify-content: center;
-      padding-right: 4px;
-      z-index: 2;
+      gap: 12px;
+      padding-bottom: 2px;
     }
-    .ph-badge a {
-      display: block;
-      line-height: 0;
-      transition: transform 0.2s ease;
+    .ph-preview {
+      width: 295px;
+      position: relative;
+      flex-shrink: 0;
     }
-    .ph-badge a:hover { transform: translateY(-2px); }
-    .ph-badge img {
-      width: 210px;
+    .ph-browser-frame {
+      width: 672px;
       height: auto;
-      max-width: 100%;
-      display: block;
+      max-width: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none;
     }
-    @media (max-width: 640px) {
-      .ph-launch { margin-bottom: 28px; padding: 0 16px; }
-      .ph-banner {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 22px 20px 20px;
-        min-height: 0;
-        gap: 16px;
-      }
-      .ph-badge { width: 100%; justify-content: flex-start; }
-      .ph-badge img { width: 200px; }
+    @media (max-width: 760px) {
+      .ph-launch { padding: 0 16px; margin-bottom: 28px; }
+      .ph-banner { height: auto; min-height: 164px; }
+      .ph-preview { display: none; }
+      .ph-content { padding: 28px 24px; }
+      .ph-title { font-size: 20px; }
+      .ph-button { font-size: 17px; }
     }
     .trust-inner { max-width: 1100px; margin: 0 auto; text-align: center; padding: 0; }
     .trust-label {
@@ -4137,46 +4127,33 @@
         </div>
     </section>
 
-    <section class="ph-launch reveal" aria-label="Product Hunt">
+    <section class="ph-launch" aria-label="Product Hunt">
       <div class="ph-banner">
         <div class="ph-content">
           <p class="ph-title">
-            We’re live on Product Hunt.
-            <span class="ph-sub">Your upvote helps Solis get discovered today.</span>
+            We’re live on Product Hunt. <span class="ph-subtitle">Support Solis with an upvote</span>
           </p>
           <a
+            href="https://www.producthunt.com/products/solis-ai?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-solis-ai"
             class="ph-button"
-            href="https://www.producthunt.com/products/solis-ai?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-solis-ai"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <span class="ph-button-icon" aria-hidden="true">
-              <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M22.67 20H17V27.5H22.67C24.75 27.5 26.42 25.83 26.42 23.75C26.42 21.67 24.75 20 22.67 20Z" fill="#fff"/>
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M20 40C31.046 40 40 31.046 40 20C40 8.954 31.046 0 20 0C8.954 0 0 8.954 0 20C0 31.046 8.954 40 20 40ZM17 12.5H22.67C26.86 12.5 30.25 15.89 30.25 20.08C30.25 24.27 26.86 27.5 22.67 27.5H20.75V32.5H17V12.5Z" fill="#fff"/>
-              </svg>
-            </span>
-            <span class="ph-button-text">
-              Support us on Product Hunt
-              <svg width="16" height="14" viewBox="0 0 18 15" fill="none" aria-hidden="true">
-                <path opacity="0.9" d="M9.984 14.063c-.258 0-.477-.086-.656-.258-.172-.172-.258-.391-.258-.657 0-.125.02-.246.059-.363.047-.117.113-.215.2-.293l1.617-1.676 4.195-3.785-4.195-3.785L9.329 1.57c-.087-.078-.153-.176-.2-.293A1.07 1.07 0 0 1 9.07.914c0-.266.086-.485.258-.657.18-.172.398-.258.656-.258.258 0 .489.098.692.293l6.047 6.035c.219.203.328.438.328.703s-.11.5-.328.704l-6.047 6.035c-.203.195-.434.293-.692.293zM.938 7.98c-.282 0-.508-.09-.68-.27C.086 7.531 0 7.305 0 7.031c0-.273.086-.5.258-.68.172-.18.398-.27.68-.27H12l3.117.223c.219.023.395.097.528.222.133.125.199.293.199.504 0 .211-.07.379-.211.504-.133.125-.305.2-.516.223L12 7.98H.938z" fill="white"/>
-              </svg>
-            </span>
-          </a>
-        </div>
-        <div class="ph-badge">
-          <a
-            href="https://www.producthunt.com/products/solis-ai?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-solis-ai"
             target="_blank"
             rel="noopener noreferrer"
           >
             <img
-              alt="Solis AI - Your AI agent for content creation | Product Hunt"
-              width="250"
-              height="54"
-              src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1229960&amp;theme=light&amp;t=1787852465335"
+              src="https://arc.net/images/dia_app_icon.png"
+              alt=""
+              class="ph-icon"
             />
+            <span class="ph-button-text">
+              Upvote Solis AI
+              <svg width="18" height="15" viewBox="0 0 18 15" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path opacity="0.5" d="M9.98438 14.0625C9.72656 14.0625 9.50781 13.9766 9.32812 13.8047C9.15625 13.6328 9.07031 13.4141 9.07031 13.1484C9.07031 13.0234 9.08984 12.9023 9.12891 12.7852C9.17578 12.668 9.24219 12.5703 9.32812 12.4922L10.9453 10.8164L15.1406 7.03125L10.9453 3.24609L9.32812 1.57031C9.24219 1.49219 9.17578 1.39453 9.12891 1.27734C9.08984 1.16016 9.07031 1.03906 9.07031 0.914062C9.07031 0.648438 9.15625 0.429688 9.32812 0.257812C9.50781 0.0859375 9.72656 0 9.98438 0C10.2422 0 10.4727 0.0976562 10.6758 0.292969L16.7227 6.32812C16.9414 6.53125 17.0508 6.76562 17.0508 7.03125C17.0508 7.29688 16.9414 7.53125 16.7227 7.73438L10.6758 13.7695C10.4727 13.9648 10.2422 14.0625 9.98438 14.0625ZM0.9375 7.98047C0.65625 7.98047 0.429688 7.89062 0.257812 7.71094C0.0859375 7.53125 0 7.30469 0 7.03125C0 6.75781 0.0859375 6.53125 0.257812 6.35156C0.429688 6.17188 0.65625 6.08203 0.9375 6.08203H12L15.1172 6.30469C15.3359 6.32812 15.5117 6.40234 15.6445 6.52734C15.7773 6.65234 15.8438 6.82031 15.8438 7.03125C15.8438 7.24219 15.7734 7.41016 15.6328 7.53516C15.5 7.66016 15.3281 7.73438 15.1172 7.75781L12 7.98047H0.9375Z" fill="white"></path>
+              </svg>
+            </span>
           </a>
+        </div>
+        <div class="ph-preview">
+          <img src="https://arc.net/images/Dia-Browserframe.png" alt="" class="ph-browser-frame">
         </div>
       </div>
     </section>

@@ -10046,7 +10046,7 @@ class ClipsStudio {
   async fetchSecureLibraryPreviewBlob(e, t, i = null, n = {}) {
     const r = n.loadGen != null ? n.loadGen : ++this._libraryPreviewLoadGen;
     const o = Math.max(0, Number(n.attempt) || 0);
-    const s = n.clean ? 2 : 3;
+    const s = n.clean ? 3 : 5;
     const a = !!n.clean;
     if (this._libraryPreviewFetchController) {
       this._libraryPreviewFetchController.abort();

@@ -942,10 +942,20 @@
     .ph-launch {
       width: 100%;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
       margin: 0 auto 36px;
       padding: 0 20px;
       box-sizing: border-box;
+    }
+    .ph-featured-badge {
+      line-height: 0;
+    }
+    .ph-featured-badge img {
+      width: 250px;
+      height: 54px;
+      display: block;
     }
     .ph-banner {
       display: flex;
@@ -4156,6 +4166,19 @@
           <img src="https://arc.net/images/Dia-Browserframe.png" alt="" class="ph-browser-frame">
         </div>
       </div>
+      <a
+        class="ph-featured-badge"
+        href="https://www.producthunt.com/products/solis-ai?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-solis-ai"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img
+          alt="Solis AI - Your AI agent for content creation | Product Hunt"
+          width="250"
+          height="54"
+          src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1229960&amp;theme=light&amp;t=1787852465335"
+        />
+      </a>
     </section>
 
     <section class="how-section" id="_how">

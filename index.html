@@ -4932,21 +4932,18 @@
     var dockInput = document.getElementById('_dock-url');
     var PENDING_URL_KEY = 'solis_pending_youtube_url';
     var pillInputs = [urlInput, ctaInput, dockInput].filter(Boolean);
-
-    function openLogin() {
-      if (typeof window.openAuthModal === 'function') {
-        window.openAuthModal({ replaceUrl: true });
-        return;
-      }
-      window.location.href = '/?login=1';
-    }
+    var pillsAuthed = false;
 
     function triggerAuthFlow() {
       if (typeof window.goToAppOrLogin === 'function') {
         window.goToAppOrLogin();
         return;
       }
-      openLogin();
+      if (typeof window.openAuthModal === 'function') {
+        window.openAuthModal();
+        return;
+      }
+      window.location.href = '/?login=1';
     }
 
     function pillForInput(input) {
@@ -4992,6 +4989,10 @@
     }
 
     function continueWithUrl(raw, opts) {
+      if (!pillsAuthed) {
+        triggerAuthFlow();
+        return;
+      }
       opts = opts || {};
       var url = normalizeUrl(raw);
       if (!url) {
@@ -4999,7 +5000,7 @@
           if (urlInput) urlInput.focus();
           return;
         }
-        triggerAuthFlow();
+        window.location.href = '/dashboard';
         return;
       }
       if (!isLikelyYoutubeUrl(url)) {
@@ -5010,34 +5011,42 @@
         }
         return;
       }
-      try { sessionStorage.setItem(PENDING_URL_KEY, url); } catch (_) {}
-      var host = location.hostname;
-      var local = host === 'localhost' || host === '127.0.0.1';
-      var api = local
-        ? (location.protocol + '//' + host + ':5500/api')
-        : 'https://api.solisai.video/api';
-      var open = function () { openLogin(); };
-      try {
-        fetch(api + '/auth/check', { method: 'GET', credentials: 'include' })
-          .then(function (r) { return r.ok ? r.json() : null; })
-          .then(function (d) {
-            if (d && d.authenticated && d.user) goDashboardWithUrl(url);
-            else open();
-          })
-          .catch(open);
-      } catch (_) {
-        open();
-      }
+      goDashboardWithUrl(url);
     }
 
+    function lockPillsGuest() {
+      pillsAuthed = false;
+      pillInputs.forEach(function (input) {
+        input.setAttribute('readonly', 'readonly');
+        input.value = '';
+      });
+    }
+
+    function unlockPillsAuthed() {
+      pillsAuthed = true;
+      pillInputs.forEach(function (input) {
+        input.removeAttribute('readonly');
+      });
+    }
+
+    lockPillsGuest();
+
     pillInputs.forEach(function (input) {
-      input.removeAttribute('readonly');
       input.addEventListener('click', function (e) {
         e.stopPropagation();
+        if (!pillsAuthed) {
+          triggerAuthFlow();
+          return;
+        }
         var pill = pillForInput(input);
         if (pill) pill.classList.add('focused');
       });
       input.addEventListener('focus', function () {
+        if (!pillsAuthed) {
+          input.blur();
+          triggerAuthFlow();
+          return;
+        }
         var pill = pillForInput(input);
         if (pill) pill.classList.add('focused');
       });
@@ -5046,15 +5055,26 @@
         if (pill) pill.classList.remove('focused');
       });
       input.addEventListener('input', function () {
+        if (!pillsAuthed) return;
         syncPillInputs(input, input.value);
       });
       input.addEventListener('keydown', function (e) {
+        if (!pillsAuthed) {
+          e.preventDefault();
+          triggerAuthFlow();
+          return;
+        }
         if (e.key === 'Enter') {
           e.preventDefault();
           continueWithUrl(input.value, { requireUrl: true });
         }
       });
-      input.addEventListener('paste', function () {
+      input.addEventListener('paste', function (e) {
+        if (!pillsAuthed) {
+          e.preventDefault();
+          triggerAuthFlow();
+          return;
+        }
         setTimeout(function () {
           syncPillInputs(input, input.value);
           var v = input.value.trim();
@@ -5069,13 +5089,13 @@
       if (!pill) return;
       pill.addEventListener('click', function (e) {
         if (e.target.closest('button')) return;
-        if (e.target.closest('input')) return;
-        var input = pill.querySelector('input');
-        if (input) {
-          input.focus();
+        if (!pillsAuthed) {
+          triggerAuthFlow();
           return;
         }
-        triggerAuthFlow();
+        if (e.target.closest('input')) return;
+        var input = pill.querySelector('input');
+        if (input) input.focus();
       });
     });
 
@@ -5083,6 +5103,10 @@
       btn.addEventListener('click', function (e) {
         e.preventDefault();
         e.stopPropagation();
+        if (!pillsAuthed) {
+          triggerAuthFlow();
+          return;
+        }
         var pill = btn.closest('.pill, .glass-pill');
         var input = pill && pill.querySelector('input');
         continueWithUrl(input ? input.value : '', { requireUrl: false });
@@ -5094,6 +5118,26 @@
         triggerAuthFlow();
       });
     });
+
+    (function checkPillAuth() {
+      try {
+        var host = location.hostname;
+        var local = host === 'localhost' || host === '127.0.0.1';
+        var api = local
+          ? (location.protocol + '//' + host + ':5500/api')
+          : 'https://api.solisai.video/api';
+        fetch(api + '/auth/check', { method: 'GET', credentials: 'include' })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (d) {
+            if (d && d.authenticated && d.user) unlockPillsAuthed();
+            else lockPillsGuest();
+          })
+          .catch(function () { lockPillsGuest(); });
+      } catch (_) {
+        lockPillsGuest();
+      }
+    })();
+
     var faqItems = document.querySelectorAll('.faq');
     faqItems.forEach(function(item) {
       var btn = item.querySelector('.faq-btn');

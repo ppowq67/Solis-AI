@@ -11496,7 +11496,7 @@ class ClipsStudio {
         const e = window.clipsStudio?.libraryItems?.length ?? Number(document.getElementById("storageUsedBadge")?.textContent || 0);
         const t = (document.getElementById("storagePlanBadge")?.textContent || "free").toLowerCase();
         const i = typeof window.isUnlimitedLibrary === "function" && window.isUnlimitedLibrary(null, t);
-        const n = i ? null : Number(document.getElementById("storageTotalBadge")?.textContent || 0) || 10;
+        const n = i ? null : Number(document.getElementById("storageTotalBadge")?.textContent || 0) || 5;
         if (typeof window.applyStorageBadgeUI === "function") {
           window.applyStorageBadgeUI({
             used: e,

@@ -258,7 +258,7 @@ window.syncStorageLimitsFromStatus = function(e) {
   const t = e.storage.videos.used ?? 0;
   const i = (e.plan?.name || e.plan || "free").toString().toLowerCase();
   const n = e.storage.videos.unlimited === true || [ "basic", "prime", "elite" ].includes(i);
-  const o = n ? null : e.storage.videos.limit ?? 10;
+  const o = n ? null : e.storage.videos.limit ?? 5;
   const s = e.storage?.space_mb || {};
   window.applyStorageBadgeUI({
     used: t,
@@ -310,7 +310,7 @@ window.updateStorageBadgeDisplay = function() {
       const d = o.library_unlimited === true || window.isUnlimitedLibrary?.(null, c);
       window.applyStorageBadgeUI({
         used: r,
-        limit: d ? null : window.validateNumber(o.video_limit || o.videos_space_limit, 1, VALIDATION.MAX_VIDEOS_LIMIT, 10),
+        limit: d ? null : window.validateNumber(o.video_limit || o.videos_space_limit, 1, VALIDATION.MAX_VIDEOS_LIMIT, 5),
         plan: c,
         unlimited: d,
         spaceUsedMb: s,
@@ -463,7 +463,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const i = typeof t === "string" && VALIDATION.ALLOWED_PLANS.includes(t.toLowerCase()) ? t.toLowerCase() : "free";
     const n = e.library_unlimited === true || window.isUnlimitedLibrary?.(null, i);
     const o = window.clipsStudio?.libraryItems?.length != null ? window.clipsStudio.libraryItems.length : window.validateNumber(e.active_videos, 0, VALIDATION.MAX_VIDEOS_LIMIT, 0);
-    const s = n ? null : window.validateNumber(e.video_limit || e.videos_space_limit, 1, VALIDATION.MAX_VIDEOS_LIMIT, 10);
+    const s = n ? null : window.validateNumber(e.video_limit || e.videos_space_limit, 1, VALIDATION.MAX_VIDEOS_LIMIT, 5);
     const a = i.charAt(0).toUpperCase() + i.slice(1);
     if (typeof window.applyStorageBadgeUI === "function") {
       window.applyStorageBadgeUI({

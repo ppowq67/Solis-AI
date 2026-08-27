@@ -194,7 +194,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const i = String(t).toLowerCase().replace(/\s+plan\s*$/, "").trim();
     const o = e.library_unlimited === true || typeof window.isUnlimitedLibrary === "function" && window.isUnlimitedLibrary(null, i);
     const n = window.clipsStudio?.libraryItems?.length != null ? window.clipsStudio.libraryItems.length : Math.max(0, Number(e.active_videos) || 0);
-    const s = o ? null : Math.max(1, Number(e.video_limit || e.videos_space_limit) || 10);
+    const s = o ? null : Math.max(1, Number(e.video_limit || e.videos_space_limit) || 5);
     if (typeof window.applyStorageBadgeUI === "function") {
       window.applyStorageBadgeUI({
         used: n,

@@ -656,7 +656,7 @@
         const t = i.unlimited === true || typeof window.isUnlimitedLibrary === "function" && window.isUnlimitedLibrary(null, e);
         window.applyStorageBadgeUI({
           used: i.used ?? 0,
-          limit: t ? null : i.limit ?? i.max_videos ?? 10,
+          limit: t ? null : i.limit ?? i.max_videos ?? 5,
           plan: e,
           unlimited: t
         });

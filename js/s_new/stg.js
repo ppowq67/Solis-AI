@@ -846,7 +846,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const y = f.max_effort || {};
       const h = g.unlimited === true || [ "basic", "prime", "elite" ].includes(String(l || "").toLowerCase());
       const E = Math.max(0, Number(g.used ?? 0) || 0);
-      const v = h ? null : Math.max(1, Number(g.limit ?? 10) || 10);
+      const v = h ? null : Math.max(1, Number(g.limit ?? 5) || 5);
       if (h) {
         setText("stgVideosUsed", E + " clips (unlimited)");
         setQuotaFill(document.getElementById("stgVideosFill"), 0, 1);

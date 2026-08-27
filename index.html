@@ -919,6 +919,126 @@
       text-align: center;
       box-sizing: border-box;
     }
+    .ph-launch {
+      width: 100%;
+      max-width: 760px;
+      margin: 0 auto 36px;
+      padding: 0 20px;
+      box-sizing: border-box;
+    }
+    .ph-banner {
+      display: flex;
+      align-items: stretch;
+      gap: 12px;
+      width: 100%;
+      min-height: 148px;
+      padding: 28px 28px 28px 32px;
+      border-radius: 18px;
+      overflow: hidden;
+      position: relative;
+      user-select: none;
+      background:
+        radial-gradient(ellipse 80% 120% at 100% 0%, rgba(255, 140, 66, 0.28), transparent 55%),
+        radial-gradient(ellipse 60% 100% at 0% 100%, rgba(249, 115, 22, 0.12), transparent 50%),
+        linear-gradient(135deg, #fff8f1 0%, #ffe8d4 48%, #ffd4b0 100%);
+      border: 1px solid rgba(234, 88, 12, 0.16);
+      box-shadow: 0 10px 32px rgba(120, 80, 40, 0.08), 0 1px 3px rgba(120, 80, 40, 0.05);
+      text-align: left;
+    }
+    .ph-content {
+      flex: 1;
+      min-width: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .ph-title {
+      margin: 0;
+      font-family: var(--font-display), system-ui, sans-serif;
+      font-size: clamp(18px, 2.4vw, 22px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.25;
+      color: rgba(24, 18, 14, 0.9);
+      max-width: 420px;
+    }
+    .ph-title .ph-sub {
+      font-weight: 550;
+      color: rgba(24, 18, 14, 0.55);
+    }
+    .ph-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      align-self: flex-start;
+      margin-top: 18px;
+      padding: 8px 16px 8px 8px;
+      background: rgba(24, 18, 14, 0.9);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 14px;
+      font-family: var(--font-display), system-ui, sans-serif;
+      font-size: 15px;
+      font-weight: 650;
+      letter-spacing: -0.02em;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.22);
+      transition: background 0.2s ease, transform 0.15s ease;
+    }
+    .ph-button:hover {
+      background: rgba(24, 18, 14, 0.97);
+      transform: translateY(-1px);
+    }
+    .ph-button:active { transform: scale(0.98); }
+    .ph-button-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: #da552f;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+    .ph-button-icon svg { width: 18px; height: 18px; }
+    .ph-button-text {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 1px;
+    }
+    .ph-button-text svg { opacity: 0.55; flex-shrink: 0; }
+    .ph-badge {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-right: 4px;
+      z-index: 2;
+    }
+    .ph-badge a {
+      display: block;
+      line-height: 0;
+      transition: transform 0.2s ease;
+    }
+    .ph-badge a:hover { transform: translateY(-2px); }
+    .ph-badge img {
+      width: 210px;
+      height: auto;
+      max-width: 100%;
+      display: block;
+    }
+    @media (max-width: 640px) {
+      .ph-launch { margin-bottom: 28px; padding: 0 16px; }
+      .ph-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 22px 20px 20px;
+        min-height: 0;
+        gap: 16px;
+      }
+      .ph-badge { width: 100%; justify-content: flex-start; }
+      .ph-badge img { width: 200px; }
+    }
     .trust-inner { max-width: 1100px; margin: 0 auto; text-align: center; padding: 0; }
     .trust-label {
       font-size: 13px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
@@ -4015,6 +4135,50 @@
         </div>
       </div>
         </div>
+    </section>
+
+    <section class="ph-launch reveal" aria-label="Product Hunt">
+      <div class="ph-banner">
+        <div class="ph-content">
+          <p class="ph-title">
+            We’re live on Product Hunt.
+            <span class="ph-sub">Your upvote helps Solis get discovered today.</span>
+          </p>
+          <a
+            class="ph-button"
+            href="https://www.producthunt.com/products/solis-ai?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-solis-ai"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span class="ph-button-icon" aria-hidden="true">
+              <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22.67 20H17V27.5H22.67C24.75 27.5 26.42 25.83 26.42 23.75C26.42 21.67 24.75 20 22.67 20Z" fill="#fff"/>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M20 40C31.046 40 40 31.046 40 20C40 8.954 31.046 0 20 0C8.954 0 0 8.954 0 20C0 31.046 8.954 40 20 40ZM17 12.5H22.67C26.86 12.5 30.25 15.89 30.25 20.08C30.25 24.27 26.86 27.5 22.67 27.5H20.75V32.5H17V12.5Z" fill="#fff"/>
+              </svg>
+            </span>
+            <span class="ph-button-text">
+              Support us on Product Hunt
+              <svg width="16" height="14" viewBox="0 0 18 15" fill="none" aria-hidden="true">
+                <path opacity="0.9" d="M9.984 14.063c-.258 0-.477-.086-.656-.258-.172-.172-.258-.391-.258-.657 0-.125.02-.246.059-.363.047-.117.113-.215.2-.293l1.617-1.676 4.195-3.785-4.195-3.785L9.329 1.57c-.087-.078-.153-.176-.2-.293A1.07 1.07 0 0 1 9.07.914c0-.266.086-.485.258-.657.18-.172.398-.258.656-.258.258 0 .489.098.692.293l6.047 6.035c.219.203.328.438.328.703s-.11.5-.328.704l-6.047 6.035c-.203.195-.434.293-.692.293zM.938 7.98c-.282 0-.508-.09-.68-.27C.086 7.531 0 7.305 0 7.031c0-.273.086-.5.258-.68.172-.18.398-.27.68-.27H12l3.117.223c.219.023.395.097.528.222.133.125.199.293.199.504 0 .211-.07.379-.211.504-.133.125-.305.2-.516.223L12 7.98H.938z" fill="white"/>
+              </svg>
+            </span>
+          </a>
+        </div>
+        <div class="ph-badge">
+          <a
+            href="https://www.producthunt.com/products/solis-ai?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-solis-ai"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              alt="Solis AI - Your AI agent for content creation | Product Hunt"
+              width="250"
+              height="54"
+              src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1229960&amp;theme=light&amp;t=1787852465335"
+            />
+          </a>
+        </div>
+      </div>
     </section>
 
     <section class="how-section" id="_how">

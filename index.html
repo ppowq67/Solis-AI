@@ -952,8 +952,10 @@
       width: 717px;
       max-width: 100%;
       height: 184px;
+      background-color: #fff;
       background-image: url("https://arc.net/images/dia-background-image.png");
-      background-size: cover;
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
       background-position: center;
       border-radius: 16px;
       overflow: hidden;
@@ -962,6 +964,16 @@
       position: relative;
       user-select: none;
       text-align: left;
+    }
+    .ph-fade {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      pointer-events: none;
+      z-index: 0;
+      max-width: none;
     }
     .ph-content {
       flex: 1;
@@ -4151,6 +4163,12 @@
 
     <section class="ph-launch" aria-label="Product Hunt">
       <div class="ph-banner">
+        <img
+          class="ph-fade"
+          src="https://arc.net/images/dia-background-image.png"
+          alt=""
+          aria-hidden="true"
+        />
         <div class="ph-content">
           <p class="ph-title">
             We’re live on Product Hunt. <span class="ph-subtitle">Support Solis with an upvote</span>

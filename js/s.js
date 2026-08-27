@@ -6536,6 +6536,7 @@ class ClipsStudio {
       this.initialized = true;
       this.enforceUrlButtonRateLimitOnLoad();
       this.clearUrlIfProcessingDone();
+      this.consumeLandingPendingUrl();
       this.initializeWebSocket();
       if (this.processingItems.length > 0) {
         this.startLibraryPolling();
@@ -11788,6 +11789,58 @@ class ClipsStudio {
       }
     } catch (e) {
       safeLog("Error managing URL on page load:", e);
+    }
+  }
+  consumeLandingPendingUrl() {
+    try {
+      const e = "solis_pending_youtube_url";
+      let t = "";
+      try {
+        t = (sessionStorage.getItem(e) || "").trim();
+        if (t) sessionStorage.removeItem(e);
+      } catch (e) {}
+      if (!t) {
+        try {
+          const e = new URLSearchParams(window.location.search || "");
+          t = (e.get("url") || e.get("youtube") || "").trim();
+          if (t) {
+            e.delete("url");
+            e.delete("youtube");
+            const t = e.toString();
+            history.replaceState({}, "", window.location.pathname + (t ? "?" + t : "") + (window.location.hash || ""));
+          }
+        } catch (e) {}
+      }
+      if (!t) return;
+      if (!t.startsWith("http")) t = "https://" + t;
+      if (!this.isValidMediaUrl(t)) {
+        safeLog("Landing pending URL rejected (invalid):", t);
+        return;
+      }
+      const apply = () => {
+        try {
+          this.goToCreateUrlSubmit();
+        } catch (e) {
+          try {
+            this.switchTab("create");
+          } catch (e) {}
+        }
+        const e = document.getElementById("youtubeUrlInput");
+        if (!e) return;
+        e.value = t;
+        try {
+          e.dispatchEvent(new Event("input", {
+            bubbles: true
+          }));
+        } catch (e) {}
+        this.syncTemplateConfirmButton?.();
+        this._scheduleAutoSubmitFromPaste({
+          quiet: true
+        });
+      };
+      requestAnimationFrame(() => setTimeout(apply, 120));
+    } catch (e) {
+      safeLog("consumeLandingPendingUrl failed:", e);
     }
   }
   toggleUrlButtonLoading(e) {

@@ -4930,38 +4930,169 @@
     var ctaInput = document.getElementById('_cta-url');
     var dockPill = document.getElementById('_dock-pill');
     var dockInput = document.getElementById('_dock-url');
+    var PENDING_URL_KEY = 'solis_pending_youtube_url';
+    var pillInputs = [urlInput, ctaInput, dockInput].filter(Boolean);
+
+    function openLogin() {
+      if (typeof window.openAuthModal === 'function') {
+        window.openAuthModal({ replaceUrl: true });
+        return;
+      }
+      window.location.href = '/?login=1';
+    }
+
     function triggerAuthFlow() {
       if (typeof window.goToAppOrLogin === 'function') {
         window.goToAppOrLogin();
         return;
       }
-      if (typeof window.openAuthModal === 'function') {
-        window.openAuthModal();
-        return;
-      }
-      window.location.href = '/?login=1';
+      openLogin();
     }
+
     function pillForInput(input) {
       if (input.id === '_url') return urlPill;
       if (input.id === '_dock-url') return dockPill;
       return ctaPill;
     }
-    [urlInput, ctaInput, dockInput].forEach(function(input) {
-      if (!input) return;
-      input.setAttribute('readonly', 'readonly');
-      input.addEventListener('click', function() {
+
+    function isLikelyYoutubeUrl(raw) {
+      var s = String(raw || '').trim();
+      if (!s) return false;
+      try {
+        var u = new URL(s.indexOf('http') === 0 ? s : 'https://' + s);
+        var host = (u.hostname || '').toLowerCase().replace(/^www\./, '');
+        if (host !== 'youtube.com' && host !== 'm.youtube.com' && host !== 'youtu.be') return false;
+        if (host === 'youtu.be') return /^\/[a-zA-Z0-9_-]{11}/.test(u.pathname || '');
+        if (/\/shorts\/[a-zA-Z0-9_-]{11}/i.test(u.pathname || '')) return true;
+        if (/[?&]v=([a-zA-Z0-9_-]{11})/.test(u.search || '')) return true;
+        if (/\/embed\/[a-zA-Z0-9_-]{11}/i.test(u.pathname || '')) return true;
+        if (/\/live\/[a-zA-Z0-9_-]{11}/i.test(u.pathname || '')) return true;
+        return false;
+      } catch (_) {
+        return false;
+      }
+    }
+
+    function normalizeUrl(raw) {
+      var s = String(raw || '').trim();
+      if (!s) return '';
+      if (s.indexOf('http') !== 0) s = 'https://' + s;
+      return s;
+    }
+
+    function syncPillInputs(source, value) {
+      pillInputs.forEach(function (el) {
+        if (el !== source) el.value = value;
+      });
+    }
+
+    function goDashboardWithUrl(url) {
+      try { sessionStorage.setItem(PENDING_URL_KEY, url); } catch (_) {}
+      window.location.href = '/dashboard';
+    }
+
+    function continueWithUrl(raw, opts) {
+      opts = opts || {};
+      var url = normalizeUrl(raw);
+      if (!url) {
+        if (opts.requireUrl) {
+          if (urlInput) urlInput.focus();
+          return;
+        }
+        triggerAuthFlow();
+        return;
+      }
+      if (!isLikelyYoutubeUrl(url)) {
+        if (typeof window.showNotification === 'function') {
+          window.showNotification('Paste a valid YouTube link', 'warning');
+        } else {
+          alert('Paste a valid YouTube link');
+        }
+        return;
+      }
+      try { sessionStorage.setItem(PENDING_URL_KEY, url); } catch (_) {}
+      var host = location.hostname;
+      var local = host === 'localhost' || host === '127.0.0.1';
+      var api = local
+        ? (location.protocol + '//' + host + ':5500/api')
+        : 'https://api.solisai.video/api';
+      var open = function () { openLogin(); };
+      try {
+        fetch(api + '/auth/check', { method: 'GET', credentials: 'include' })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (d) {
+            if (d && d.authenticated && d.user) goDashboardWithUrl(url);
+            else open();
+          })
+          .catch(open);
+      } catch (_) {
+        open();
+      }
+    }
+
+    pillInputs.forEach(function (input) {
+      input.removeAttribute('readonly');
+      input.addEventListener('click', function (e) {
+        e.stopPropagation();
         var pill = pillForInput(input);
         if (pill) pill.classList.add('focused');
+      });
+      input.addEventListener('focus', function () {
+        var pill = pillForInput(input);
+        if (pill) pill.classList.add('focused');
+      });
+      input.addEventListener('blur', function () {
+        var pill = pillForInput(input);
+        if (pill) pill.classList.remove('focused');
+      });
+      input.addEventListener('input', function () {
+        syncPillInputs(input, input.value);
+      });
+      input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          continueWithUrl(input.value, { requireUrl: true });
+        }
+      });
+      input.addEventListener('paste', function () {
+        setTimeout(function () {
+          syncPillInputs(input, input.value);
+          var v = input.value.trim();
+          if (v && isLikelyYoutubeUrl(normalizeUrl(v))) {
+            continueWithUrl(v);
+          }
+        }, 40);
+      });
+    });
+
+    [urlPill, ctaPill, dockPill].forEach(function (pill) {
+      if (!pill) return;
+      pill.addEventListener('click', function (e) {
+        if (e.target.closest('button')) return;
+        if (e.target.closest('input')) return;
+        var input = pill.querySelector('input');
+        if (input) {
+          input.focus();
+          return;
+        }
         triggerAuthFlow();
       });
-      input.addEventListener('focus', function() { input.blur(); });
     });
-    [urlPill, ctaPill, dockPill].forEach(function(pill) {
-      if (!pill) return;
-      pill.addEventListener('click', triggerAuthFlow);
+
+    document.querySelectorAll('.pill-btn, .glass-pill-btn').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var pill = btn.closest('.pill, .glass-pill');
+        var input = pill && pill.querySelector('input');
+        continueWithUrl(input ? input.value : '', { requireUrl: false });
+      });
     });
-    document.querySelectorAll('.pill-btn, .cta-btn, .glass-pill-btn').forEach(function(btn) {
-      btn.addEventListener('click', function(e) { e.stopPropagation(); triggerAuthFlow(); });
+    document.querySelectorAll('.cta-btn').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        triggerAuthFlow();
+      });
     });
     var faqItems = document.querySelectorAll('.faq');
     faqItems.forEach(function(item) {

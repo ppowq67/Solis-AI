@@ -1,130 +1,403 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cut preview demo — Solis timeline</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-  @font-face {
-    font-family: "Exposure VAR";
-    src: url("https://arc.net/fonts/205TF-Exposure-[-30].woff2") format("woff2");
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
-  }
-  @font-face {
-    font-family: "ABC Oracle";
-    src: url("https://arc.net/fonts/ABCOracle-Regular.woff2") format("woff2");
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-  }
-  @font-face {
-    font-family: "InterVariable";
-    src: url("https://arc.net/fonts/inter-var-latin.woff2") format("woff2-variations");
-    font-weight: 100 900;
-    font-display: optional;
-  }
-
-  .dia-banner {
-    display: flex;
-    width: 717px;
-    height: 184px;
-    background-image: url("https://arc.net/images/dia-background-image.png");
-    background-size: cover;
-    border-radius: 16px;
-    overflow: hidden;
-    font-family: "InterVariable", "Inter", -apple-system, sans-serif;
-    color: #fffcea;
-    position: relative;
-    user-select: none;
-  }
-
-  .dia-content {
-    flex: 1;
-    padding: 32px 0 32px 32px;
-    z-index: 2;
-  }
-
-  .dia-title {
+  * { box-sizing: border-box; }
+  body {
     margin: 0;
-    color: rgba(0, 0, 0, 0.85);
-    font-family: "Exposure VAR", Helvetica, sans-serif;
-    font-size: 22px;
-    font-weight: 700;
-    line-height: 1.2;
-    max-width: 390px;
-  }
-
-  .dia-subtitle {
-    color: rgba(0, 0, 0, 0.6);
-  }
-
-  .dia-button {
-    display: inline-flex;
-    align-items: center;
-    gap: 14px;
-    margin-top: 24px;
-    padding: 8px 18px 8px 8px;
-    background-color: rgba(0, 0, 0, 0.85);
-    color: #ffffff;
-    text-decoration: none;
-    border-radius: 16px;
-    font-family: "ABC Oracle", Helvetica, sans-serif;
-    font-size: 20px;
-    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.25);
-    transition: background 0.2s ease-in-out;
-  }
-
-  .dia-button:hover {
-    background-color: rgba(0, 0, 0, 0.95);
-  }
-
-  .dia-icon {
-    width: 42px;
-    height: 42px;
-  }
-
-  .dia-button-text {
+    min-height: 100vh;
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding-bottom: 2px;
+    justify-content: center;
+    padding: 32px 16px;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    background: #f1f5f9;
+    color: #0f172a;
   }
 
-  .dia-preview {
-    width: 295px;
+  .demo-shell {
+    width: min(640px, 100%);
+    background: #fff;
+    border-radius: 20px;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    padding: 20px 20px 24px;
+  }
+
+  .demo-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #64748b;
+    margin: 0 0 6px;
+  }
+
+  .demo-title {
+    margin: 0 0 4px;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .demo-copy {
+    margin: 0 0 18px;
+    font-size: 13px;
+    color: #64748b;
+    line-height: 1.45;
+  }
+
+  .demo-stage {
+    background: linear-gradient(180deg, #fafafa 0%, #f4f4f5 100%);
+    border-radius: 16px;
+    padding: 16px 14px 14px;
+    border: 1px solid rgba(15, 23, 42, 0.06);
+  }
+
+  .silencer-note {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 10px;
+    min-height: 18px;
+  }
+
+  .preview-timeline-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .preview-timeline-time {
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+    min-width: 28px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .preview-timeline-time-end { color: #94a3b8; }
+
+  .preview-timeline-wrap {
     position: relative;
+    flex: 1;
+    height: 44px;
+    border-radius: 12px;
+    overflow: visible;
+    isolation: isolate;
+    background: rgba(255, 255, 255, 0.62);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.7) inset,
+      0 2px 10px rgba(15, 23, 42, 0.06);
+    transition: box-shadow 0.2s ease;
   }
 
-  .dia-browser-frame {
-    width: 672px;
-    height: auto;
+  .preview-timeline-wrap.has-cut-preview {
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.7) inset,
+      0 2px 10px rgba(15, 23, 42, 0.06),
+      0 0 0 2px rgba(239, 68, 68, 0.28);
+  }
+
+  .preview-timeline-cut-actions {
+    position: absolute;
+    top: 50%;
+    right: 6px;
+    transform: translateY(-50%);
+    z-index: 10;
+    display: inline-flex;
+    gap: 2px;
+    align-items: center;
+    padding: 3px 4px;
+    border-radius: 999px;
+    pointer-events: auto;
+    background: linear-gradient(145deg, rgba(255,255,255,.96), rgba(255,252,248,.88));
+    border: 1px solid rgba(255,255,255,.95);
+    box-shadow:
+      0 6px 18px rgba(120,90,60,.12),
+      0 1px 4px rgba(120,90,60,.06),
+      inset 0 1px 0 rgba(255,255,255,1);
+  }
+
+  .preview-timeline-cut-actions.hidden { display: none; }
+
+  .preview-timeline-filmstrip {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background:
+      linear-gradient(90deg,
+        #cbd5e1 0%, #e2e8f0 8%, #94a3b8 16%, #cbd5e1 24%,
+        #e2e8f0 32%, #94a3b8 40%, #cbd5e1 48%, #e2e8f0 56%,
+        #94a3b8 64%, #cbd5e1 72%, #e2e8f0 80%, #94a3b8 88%, #cbd5e1 100%);
+    opacity: 0.85;
+  }
+
+  .preview-timeline-playhead {
+    position: absolute;
+    top: -2px;
+    bottom: -2px;
+    left: 38%;
+    width: 2px;
+    background: #fff;
+    box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.25);
+    z-index: 6;
+    border-radius: 1px;
+  }
+
+  .preview-timeline-playhead::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.2);
+  }
+
+  .preview-timeline-cut-preview {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 4;
+    border-radius: inherit;
+  }
+
+  .preview-timeline-cut-preview > i {
     position: absolute;
     top: 0;
-    left: 0;
-    pointer-events: none;
+    bottom: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      rgba(239, 68, 68, 0.62),
+      rgba(239, 68, 68, 0.62) 3px,
+      rgba(239, 68, 68, 0.28) 3px,
+      rgba(239, 68, 68, 0.28) 6px
+    );
+    border-radius: 3px;
+    box-shadow: inset 0 0 0 1px rgba(220, 38, 38, 0.55);
   }
+
+  .preview-timeline-silence-cuts {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 3;
+    border-radius: inherit;
+  }
+
+  .preview-timeline-silence-cuts > i {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      rgba(15, 23, 42, 0.28),
+      rgba(15, 23, 42, 0.28) 3px,
+      rgba(15, 23, 42, 0.08) 3px,
+      rgba(15, 23, 42, 0.08) 6px
+    );
+    border-radius: 2px;
+  }
+
+  .sub-mem-btn {
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .sub-mem-decline {
+    background: linear-gradient(145deg, rgba(255,255,255,.75), rgba(255,255,255,.4));
+    border: 1px solid rgba(200,185,170,.35);
+    color: rgba(50,38,28,.72);
+  }
+
+  .sub-mem-accept {
+    background: linear-gradient(145deg, #34d399 0%, #16a34a 100%);
+    border: 1px solid rgba(21,128,61,.35);
+    color: #fff;
+  }
+
+  .demo-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .demo-btn {
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: #fff;
+    cursor: pointer;
+  }
+
+  .demo-btn.primary {
+    background: #0f172a;
+    color: #fff;
+    border-color: #0f172a;
+  }
+
+  .demo-legend {
+    display: flex;
+    gap: 16px;
+    margin-top: 14px;
+    font-size: 11px;
+    color: #64748b;
+  }
+
+  .demo-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+  }
+
+  .swatch.red {
+    background: repeating-linear-gradient(-45deg, rgba(239,68,68,.62), rgba(239,68,68,.62) 2px, rgba(239,68,68,.28) 2px, rgba(239,68,68,.28) 4px);
+    border: 1px solid rgba(220,38,38,.45);
+  }
+
+  .swatch.dark {
+    background: repeating-linear-gradient(-45deg, rgba(15,23,42,.28), rgba(15,23,42,.28) 2px, rgba(15,23,42,.08) 2px, rgba(15,23,42,.08) 4px);
+  }
+
+  .hidden { display: none !important; }
 </style>
 </head>
 <body>
 
-<div class="dia-banner">
-  <div class="dia-content">
-    <p class="dia-title">
-      Meet Solis Agent. <span class="dia-subtitle">Same as Solis AI, but better</span>
-    </p>
-    <a href="https://diabrowser.com/?utm_campaign=arc-cta" class="dia-button">
-      <img src="https://arc.net/images/dia_app_icon.png" alt="Dia Icon" class="dia-icon">
-      <span class="dia-button-text">
-        Try Solis Agent
-        <svg width="18" height="15" viewBox="0 0 18 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path opacity="0.5" d="M9.98438 14.0625C9.72656 14.0625 9.50781 13.9766 9.32812 13.8047C9.15625 13.6328 9.07031 13.4141 9.07031 13.1484C9.07031 13.0234 9.08984 12.9023 9.12891 12.7852C9.17578 12.668 9.24219 12.5703 9.32812 12.4922L10.9453 10.8164L15.1406 7.03125L10.9453 3.24609L9.32812 1.57031C9.24219 1.49219 9.17578 1.39453 9.12891 1.27734C9.08984 1.16016 9.07031 1.03906 9.07031 0.914062C9.07031 0.648438 9.15625 0.429688 9.32812 0.257812C9.50781 0.0859375 9.72656 0 9.98438 0C10.2422 0 10.4727 0.0976562 10.6758 0.292969L16.7227 6.32812C16.9414 6.53125 17.0508 6.76562 17.0508 7.03125C17.0508 7.29688 16.9414 7.53125 16.7227 7.73438L10.6758 13.7695C10.4727 13.9648 10.2422 14.0625 9.98438 14.0625ZM0.9375 7.98047C0.65625 7.98047 0.429688 7.89062 0.257812 7.71094C0.0859375 7.53125 0 7.30469 0 7.03125C0 6.75781 0.0859375 6.53125 0.257812 6.35156C0.429688 6.17188 0.65625 6.08203 0.9375 6.08203H12L15.1172 6.30469C15.3359 6.32812 15.5117 6.40234 15.6445 6.52734C15.7773 6.65234 15.8438 6.82031 15.8438 7.03125C15.8438 7.24219 15.7734 7.41016 15.6328 7.53516C15.5 7.66016 15.3281 7.73438 15.1172 7.75781L12 7.98047H0.9375Z" fill="white"></path>
-        </svg>
-      </span>
-    </a>
+<div class="demo-shell">
+  <p class="demo-label">Live preview mock</p>
+  <h1 class="demo-title">Remove silence · Accept / Reject</h1>
+  <p class="demo-copy">This is how the library timeline looks after you tap Remove silence or Improve clip — red = pending removal. Nothing changes until you accept.</p>
+
+  <div class="demo-stage">
+    <div class="silencer-note" id="hint">Red = 4.2s silence · Accept?</div>
+
+    <div class="preview-timeline-row">
+      <span class="preview-timeline-time">0:00</span>
+      <div class="preview-timeline-wrap has-cut-preview" id="timeline">
+        <div class="preview-timeline-filmstrip"></div>
+        <div class="preview-timeline-cut-preview" id="cutPreview">
+          <i style="left:18%; width:8%"></i>
+          <i style="left:52%; width:11%"></i>
+          <i style="left:78%; width:6%"></i>
+        </div>
+        <div class="preview-timeline-silence-cuts hidden" id="cutApplied"></div>
+        <div class="preview-timeline-playhead"></div>
+        <div class="preview-timeline-cut-actions" id="actions">
+          <button type="button" class="sub-mem-btn sub-mem-decline" id="btnReject" title="Dismiss" aria-label="Dismiss">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2.35" stroke-linecap="round"/></svg>
+          </button>
+          <button type="button" class="sub-mem-btn sub-mem-accept" id="btnAccept" title="Apply" aria-label="Apply">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4.5 10.2l3.4 3.4 7.6-7.8" stroke="currentColor" stroke-width="2.35" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+      <span class="preview-timeline-time preview-timeline-time-end">0:42</span>
+    </div>
   </div>
-  <div class="dia-preview">
-    <img src="https://arc.net/images/Dia-Browserframe.png" alt="Dia Preview" class="dia-browser-frame">
+
+  <div class="demo-controls">
+    <button type="button" class="demo-btn primary" id="btnReset">Reset demo</button>
+    <button type="button" class="demo-btn" id="btnSilence">Remove silence</button>
+    <button type="button" class="demo-btn" id="btnImprove">Improve clip</button>
+  </div>
+
+  <div class="demo-legend">
+    <span><i class="swatch red"></i> Pending (preview)</span>
+    <span><i class="swatch dark"></i> Applied after Accept</span>
   </div>
 </div>
 
+<script>
+  const CUTS = [
+    { start: 0.18, end: 0.26 },
+    { start: 0.52, end: 0.63 },
+    { start: 0.78, end: 0.84 },
+  ];
+
+  const hint = document.getElementById('hint');
+  const timeline = document.getElementById('timeline');
+  const cutPreview = document.getElementById('cutPreview');
+  const cutApplied = document.getElementById('cutApplied');
+  const actions = document.getElementById('actions');
+
+  function renderCuts(el, cuts) {
+    el.innerHTML = cuts.map(c => {
+      const left = (c.start * 100).toFixed(1);
+      const w = ((c.end - c.start) * 100).toFixed(1);
+      return `<i style="left:${left}%; width:${w}%"></i>`;
+    }).join('');
+  }
+
+  function showPreview(label) {
+    timeline.classList.add('has-cut-preview');
+    cutPreview.classList.remove('hidden');
+    cutApplied.classList.add('hidden');
+    cutApplied.innerHTML = '';
+    actions.classList.remove('hidden');
+    hint.textContent = label;
+  }
+
+  function accept() {
+    timeline.classList.remove('has-cut-preview');
+    cutPreview.classList.add('hidden');
+    cutApplied.classList.remove('hidden');
+    renderCuts(cutApplied, CUTS);
+    actions.classList.add('hidden');
+    hint.textContent = 'Removed 4.2s of silence';
+  }
+
+  function reject() {
+    timeline.classList.remove('has-cut-preview');
+    cutPreview.classList.add('hidden');
+    cutApplied.classList.add('hidden');
+    actions.classList.add('hidden');
+    hint.textContent = 'Silence cleanup dismissed';
+  }
+
+  function reset() {
+    timeline.classList.add('has-cut-preview');
+    cutPreview.classList.remove('hidden');
+    renderCuts(cutPreview, CUTS);
+    cutApplied.classList.add('hidden');
+    actions.classList.remove('hidden');
+    hint.textContent = 'Red = 4.2s silence · Accept?';
+  }
+
+  document.getElementById('btnAccept').onclick = accept;
+  document.getElementById('btnReject').onclick = reject;
+  document.getElementById('btnReset').onclick = reset;
+  document.getElementById('btnSilence').onclick = () =>
+    showPreview('Red = 4.2s silence · Accept?');
+  document.getElementById('btnImprove').onclick = () =>
+    showPreview('Red = ~4.2s to trim · Improve uses 1 upload');
+
+  renderCuts(cutPreview, CUTS);
+</script>
 </body>
 </html>

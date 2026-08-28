@@ -11713,7 +11713,9 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
 }
 
 #templateVideoPreview.has-video,
-#templateVideoPreview:has(video) {
+#templateVideoPreview:has(video),
+.preview-placeholder.has-video,
+.preview-placeholder:has(video) {
     display: block !important;
     position: relative !important;
     flex: 0 0 auto;
@@ -11727,6 +11729,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     padding: 0;
     overflow: hidden;
     background: #000;
+    contain: none !important;
 }
 
 #templateVideoPreview.has-video .library-preview-video,
@@ -12744,6 +12747,68 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     );
     border-radius: 2px;
     will-change: transform;
+}
+
+.preview-timeline-cut-preview {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 4;
+}
+.preview-timeline-cut-preview > i {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    background: repeating-linear-gradient(
+        -45deg,
+        rgba(239, 68, 68, 0.62),
+        rgba(239, 68, 68, 0.62) 3px,
+        rgba(239, 68, 68, 0.28) 3px,
+        rgba(239, 68, 68, 0.28) 6px
+    );
+    border-radius: 3px;
+    box-shadow: inset 0 0 0 1px rgba(220, 38, 38, 0.55);
+    will-change: transform;
+}
+.preview-timeline-wrap.has-cut-preview {
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.7) inset,
+        0 2px 10px rgba(15, 23, 42, 0.06),
+        0 0 0 2px rgba(239, 68, 68, 0.28);
+}
+
+.preview-timeline-cut-actions {
+    position: absolute;
+    top: 50%;
+    right: 6px;
+    transform: translateY(-50%);
+    z-index: 10;
+    display: inline-flex;
+    gap: 2px;
+    align-items: center;
+    padding: 3px 4px;
+    border-radius: 999px;
+    pointer-events: auto;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    isolation: isolate;
+    background: linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.96) 0%,
+        rgba(255, 255, 255, 0.9) 45%,
+        rgba(255, 252, 248, 0.88) 100%
+    );
+    border: 1px solid rgba(255, 255, 255, 0.95);
+    box-shadow:
+        0 6px 18px rgba(120, 90, 60, 0.12),
+        0 1px 4px rgba(120, 90, 60, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+.preview-timeline-cut-actions.hidden {
+    display: none;
+}
+.preview-timeline-cut-actions.open {
+    display: inline-flex;
 }
 
 .preview-editor-toolbar-wrap {

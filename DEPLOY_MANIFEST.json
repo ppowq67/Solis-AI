@@ -1,5 +1,5 @@
 {
-  "created_at": "2026-08-27T20:12:35.393272+00:00",
+  "created_at": "2026-08-28T16:47:57.266420+00:00",
   "source": "D:\\SolisAI\\frontend",
   "staging": "D:\\SolisAI\\deploy\\solis-frontend",
   "remote": "https://github.com/ppowq67/solisai.git",
@@ -11,17 +11,17 @@
     "review_maps": "_review/source-maps/"
   },
   "stats": {
-    "files": 191,
+    "files": 192,
     "rewritten": 3,
     "rewrite_hits": 9,
-    "scrubbed": 120,
+    "scrubbed": 121,
     "dom_classes": 0,
     "dom_ids": 0,
     "dom_files": 0,
-    "js_obfuscated": 67,
+    "js_obfuscated": 68,
     "js_failed": 0,
     "skipped": 0,
-    "bytes_out": 13129418
+    "bytes_out": 13159146
   },
   "notes": [
     "deploy/ is gitignored in the monorepo \u2014 no secrets path into main repo history.",

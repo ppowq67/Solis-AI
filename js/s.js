@@ -395,21 +395,21 @@ const PreviewTimeline = (() => {
   let E = [];
   let T = null;
   let x = [];
-  let M = -1;
-  let B = 0;
-  let A = 1;
-  let R = null;
-  let U = false;
-  let D = null;
-  let F = 0;
-  let N = null;
-  let O = false;
+  let M = [];
+  let B = -1;
+  let A = 0;
+  let R = 1;
+  let U = null;
+  let D = false;
+  let F = null;
+  let N = 0;
+  let O = null;
   let $ = false;
-  const j = 220;
-  const G = 14;
-  let z = [ 5, 4, 3, 2, 1 ];
-  const H = [];
-  let V;
+  let j = false;
+  const G = 220;
+  const z = 14;
+  let H = [ 5, 4, 3, 2, 1 ];
+  const V = [];
   let q;
   let W;
   let Y;
@@ -422,49 +422,50 @@ const PreviewTimeline = (() => {
   let te;
   let ie;
   let ne;
+  let re;
   function refreshEls() {
-    V = document.getElementById("previewTimelineShell");
-    q = document.getElementById("previewTimelineWrap");
-    W = document.getElementById("previewTimelineCurrent");
-    Y = document.getElementById("previewTimelineDuration");
-    Q = q;
-    J = document.getElementById("previewTimelineFilmstrip");
-    X = document.getElementById("previewTimelineSegments");
-    K = document.getElementById("previewTimelineDimLeft");
-    Z = document.getElementById("previewTimelineDimRight");
-    ee = document.getElementById("previewTimelineSelection");
-    te = document.getElementById("previewTimelineHandleL");
-    ie = document.getElementById("previewTimelineHandleR");
-    ne = document.getElementById("previewTimelinePlayhead");
+    q = document.getElementById("previewTimelineShell");
+    W = document.getElementById("previewTimelineWrap");
+    Y = document.getElementById("previewTimelineCurrent");
+    Q = document.getElementById("previewTimelineDuration");
+    J = W;
+    X = document.getElementById("previewTimelineFilmstrip");
+    K = document.getElementById("previewTimelineSegments");
+    Z = document.getElementById("previewTimelineDimLeft");
+    ee = document.getElementById("previewTimelineDimRight");
+    te = document.getElementById("previewTimelineSelection");
+    ie = document.getElementById("previewTimelineHandleL");
+    ne = document.getElementById("previewTimelineHandleR");
+    re = document.getElementById("previewTimelinePlayhead");
   }
   function setHandlesUnlocked(e) {
-    U = !!e;
-    if (V) V.classList.toggle("handles-on", U);
+    D = !!e;
+    if (q) q.classList.toggle("handles-on", D);
   }
   function setRankingEditMode(e) {
     refreshEls();
-    if (V) V.classList.toggle("is-ranking-edit", !!e);
+    if (q) q.classList.toggle("is-ranking-edit", !!e);
     if (e) setHandlesUnlocked(true);
-    if (!e) z = [ 5, 4, 3, 2, 1 ];
+    if (!e) H = [ 5, 4, 3, 2, 1 ];
   }
   function isRankingEdit() {
-    return !!V?.classList.contains("is-ranking-edit");
+    return !!q?.classList.contains("is-ranking-edit");
   }
   function getClipOrder() {
     const e = Math.max(1, getSegmentBounds().length - 1);
-    while (z.length < e) {
-      const e = Math.max(1, 5 - z.length);
-      if (!z.includes(e)) z.push(e); else z.push(z.length + 1);
+    while (H.length < e) {
+      const e = Math.max(1, 5 - H.length);
+      if (!H.includes(e)) H.push(e); else H.push(H.length + 1);
     }
-    return z.slice(0, e);
+    return H.slice(0, e);
   }
   function setClipOrder(e) {
     if (!Array.isArray(e) || !e.length) {
-      z = [ 5, 4, 3, 2, 1 ];
+      H = [ 5, 4, 3, 2, 1 ];
       return;
     }
     const t = e.map(e => Math.max(1, Math.min(5, Number(e) || 0))).filter(Boolean);
-    z = t.length ? t : [ 5, 4, 3, 2, 1 ];
+    H = t.length ? t : [ 5, 4, 3, 2, 1 ];
   }
   function markRankingTimelineDirty() {
     try {
@@ -517,32 +518,32 @@ const PreviewTimeline = (() => {
     const o = getClipOrder();
     const [s] = o.splice(t, 1);
     o.splice(i, 0, s);
-    z = o;
+    H = o;
     const a = [];
     for (let t = 0; t < r; t++) a.push(Math.max(e, n[t + 1] - n[t]));
     const [l] = a.splice(t, 1);
     a.splice(i, 0, l);
     rebuildSplitsFromLengths(a);
     try {
-      window.clipsStudio?.onRankingClipReorder?.(z.slice());
+      window.clipsStudio?.onRankingClipReorder?.(H.slice());
     } catch (e) {}
     return true;
   }
   function paintSegmentReorderGhost(e) {
-    if (!N || !isRankingEdit()) return;
+    if (!O || !isRankingEdit()) return;
     const t = segmentIndexAtClientX(e);
-    N.hoverIndex = t;
-    const i = Array.from(X?.children || []);
+    O.hoverIndex = t;
+    const i = Array.from(K?.children || []);
     i.forEach((e, i) => {
-      e.classList.toggle("is-drop-target", i === t && i !== N.index);
-      e.classList.toggle("is-dragging", i === N.index);
+      e.classList.toggle("is-drop-target", i === t && i !== O.index);
+      e.classList.toggle("is-dragging", i === O.index);
     });
-    const n = e - N.startX;
-    const r = i[N.index];
+    const n = e - O.startX;
+    const r = i[O.index];
     if (r) {
       const e = (() => {
         const e = getSegmentBounds();
-        return e[N.index] / u * I;
+        return e[O.index] / u * I;
       })();
       r.style.transform = `translate3d(${e + n}px,0,0)`;
       r.style.zIndex = "5";
@@ -566,8 +567,8 @@ const PreviewTimeline = (() => {
     }
   }
   function cacheTrackMetrics() {
-    if (!Q) return;
-    const e = Q.getBoundingClientRect();
+    if (!J) return;
+    const e = J.getBoundingClientRect();
     P = e.left;
     I = Math.max(1, e.width);
   }
@@ -579,34 +580,64 @@ const PreviewTimeline = (() => {
   function paintChrome({rebuildSegments: e = false} = {}) {
     const t = c === "start" || c === "end" || c === "bound" || c === "segment";
     if (!t) {
-      if (W) W.textContent = fmt(m);
-      if (Y) Y.textContent = fmt(u || 0);
+      if (Y) Y.textContent = fmt(m);
+      if (Q) Q.textContent = fmt(u || 0);
     }
     if (!u || I <= 0) return;
     const i = d / u * I;
     const n = p / u * I;
     const r = Math.max(2, n - i);
-    if (ee) {
-      ee.style.width = `${r}px`;
-      ee.style.transform = `translate3d(${i}px,0,0)`;
+    if (te) {
+      te.style.width = `${r}px`;
+      te.style.transform = `translate3d(${i}px,0,0)`;
     }
-    if (K) K.style.width = `${i}px`;
-    if (Z) Z.style.width = `${Math.max(0, I - n)}px`;
-    if (ne && !t) {
+    if (Z) Z.style.width = `${i}px`;
+    if (ee) ee.style.width = `${Math.max(0, I - n)}px`;
+    if (re && !t) {
       const e = Math.max(d, Math.min(p, m));
       const t = e / u * I;
-      ne.style.transform = `translate3d(${t}px,0,0) translateX(-50%)`;
+      re.style.transform = `translate3d(${t}px,0,0) translateX(-50%)`;
     }
-    if (!t && Q) {
-      Q.setAttribute("aria-valuenow", String(Math.round(m / u * 100)));
-      Q.setAttribute("aria-valuetext", fmt(m));
+    if (!t && J) {
+      J.setAttribute("aria-valuenow", String(Math.round(m / u * 100)));
+      J.setAttribute("aria-valuetext", fmt(m));
     }
     if (t) paintSegmentsFast(); else if (e) paintSegments();
     paintSilenceCuts();
+    paintCutPreview();
+  }
+  function paintCutPreview() {
+    if (!W || !u || I <= 0) return;
+    let e = W.querySelector(".preview-timeline-cut-preview");
+    if (!M.length) {
+      if (e) e.remove();
+      if (W) W.classList.remove("has-cut-preview");
+      return;
+    }
+    if (!W.classList.contains("has-cut-preview")) {
+      W.classList.add("has-cut-preview");
+    }
+    if (!e) {
+      e = document.createElement("div");
+      e.className = "preview-timeline-cut-preview";
+      e.setAttribute("aria-hidden", "true");
+      W.appendChild(e);
+    }
+    e.innerHTML = "";
+    const t = document.createDocumentFragment();
+    for (const e of M) {
+      const i = e.start / u * I;
+      const n = Math.max(2, (e.end - e.start) / u * I);
+      const r = document.createElement("i");
+      r.style.transform = `translate3d(${i}px,0,0)`;
+      r.style.width = `${n}px`;
+      t.appendChild(r);
+    }
+    e.appendChild(t);
   }
   function paintSilenceCuts() {
-    if (!q || !u || I <= 0) return;
-    let e = q.querySelector(".preview-timeline-silence-cuts");
+    if (!W || !u || I <= 0) return;
+    let e = W.querySelector(".preview-timeline-silence-cuts");
     if (!x.length) {
       if (e) e.remove();
       return;
@@ -615,7 +646,7 @@ const PreviewTimeline = (() => {
       e = document.createElement("div");
       e.className = "preview-timeline-silence-cuts";
       e.setAttribute("aria-hidden", "true");
-      q.appendChild(e);
+      W.appendChild(e);
     }
     e.innerHTML = "";
     const t = document.createDocumentFragment();
@@ -637,8 +668,8 @@ const PreviewTimeline = (() => {
     });
   }
   function cloneFilmInto(e) {
-    if (!J) return;
-    const i = J.querySelectorAll(".preview-timeline-frame");
+    if (!X) return;
+    const i = X.querySelectorAll(".preview-timeline-frame");
     if (!i.length) {
       for (let i = 0; i < t; i++) {
         const t = document.createElement("div");
@@ -661,7 +692,7 @@ const PreviewTimeline = (() => {
       e.appendChild(i);
     });
   }
-  const re = 6;
+  const oe = 6;
   function getSegmentBounds() {
     const e = E.filter(e => e > d + .04 && e < p - .04);
     return [ d, ...e, p ];
@@ -677,16 +708,16 @@ const PreviewTimeline = (() => {
     return i;
   }
   function clearSegHold() {
-    if (F) {
-      clearTimeout(F);
-      F = 0;
+    if (N) {
+      clearTimeout(N);
+      N = 0;
     }
-    $ = false;
+    j = false;
   }
   function syncSegFocusClass() {
-    if (!V) return;
+    if (!q) return;
     const e = T != null && getSegmentBounds().length > 2;
-    V.classList.toggle("has-seg-focus", e);
+    q.classList.toggle("has-seg-focus", e);
   }
   function getActiveEditRange() {
     const e = getSegmentBounds();
@@ -727,9 +758,9 @@ const PreviewTimeline = (() => {
     m = Math.max(i, Math.min(n - .05, r));
     scheduleSeek(m, true);
     paintChrome();
-    X?.querySelectorAll(".preview-timeline-segment.is-selected").forEach(e => e.classList.remove("is-selected"));
-    X?.children?.[e]?.classList.add("is-selected");
-    if (!U) setHandlesUnlocked(true);
+    K?.querySelectorAll(".preview-timeline-segment.is-selected").forEach(e => e.classList.remove("is-selected"));
+    K?.children?.[e]?.classList.add("is-selected");
+    if (!D) setHandlesUnlocked(true);
     syncSegFocusClass();
     try {
       const i = document.getElementById("silencerNote");
@@ -786,40 +817,40 @@ const PreviewTimeline = (() => {
     E = E.filter(e => e > d + .04 && e < p - .04).sort((e, t) => e - t);
   }
   function paintSegmentMove(e) {
-    if (!N || !u || I <= 0) return;
+    if (!O || !u || I <= 0) return;
     if (isRankingEdit()) {
       paintSegmentReorderGhost(e);
       return;
     }
-    const {index: t, startX: i, startA: n, startB: r} = N;
+    const {index: t, startX: i, startA: n, startB: r} = O;
     const o = (e - i) / I * u;
     applySegmentTimes(t, n + o, r + o);
     m = Math.max(d, Math.min(p, n + o));
     const s = d / u * I;
     const a = p / u * I;
-    if (ee) {
-      ee.style.width = `${Math.max(2, a - s)}px`;
-      ee.style.transform = `translate3d(${s}px,0,0)`;
+    if (te) {
+      te.style.width = `${Math.max(2, a - s)}px`;
+      te.style.transform = `translate3d(${s}px,0,0)`;
     }
-    if (K) K.style.width = `${s}px`;
-    if (Z) Z.style.width = `${Math.max(0, I - a)}px`;
+    if (Z) Z.style.width = `${s}px`;
+    if (ee) ee.style.width = `${Math.max(0, I - a)}px`;
     paintSegmentsFast();
   }
   function beginSegmentDrag() {
-    if (!N || c === "segment") return;
-    clearTimeout(F);
-    F = 0;
-    if (isRankingEdit() && !$) return;
+    if (!O || c === "segment") return;
+    clearTimeout(N);
+    N = 0;
+    if (isRankingEdit() && !j) return;
     c = "segment";
     f = a ? !a.paused : false;
     if (a && !a.paused) a.pause();
-    Q?.classList.add("is-dragging", "is-trimming");
-    if (isRankingEdit()) Q?.classList.add("is-reordering");
-    N.target?.classList.add("is-dragging");
-    X?.children?.[N.index]?.classList.add("is-dragging");
-    if (N.target?.setPointerCapture && N.pointerId != null) {
+    J?.classList.add("is-dragging", "is-trimming");
+    if (isRankingEdit()) J?.classList.add("is-reordering");
+    O.target?.classList.add("is-dragging");
+    K?.children?.[O.index]?.classList.add("is-dragging");
+    if (O.target?.setPointerCapture && O.pointerId != null) {
       try {
-        N.target.setPointerCapture(N.pointerId);
+        O.target.setPointerCapture(O.pointerId);
       } catch (e) {}
     }
   }
@@ -828,16 +859,16 @@ const PreviewTimeline = (() => {
     if (t.pointerType === "mouse" && t.button !== 0) return;
     t.preventDefault();
     t.stopPropagation();
-    if (!U && !V?.classList.contains("is-ranking-edit")) {
+    if (!D && !q?.classList.contains("is-ranking-edit")) {
       setHandlesUnlocked(true);
     }
     cacheTrackMetrics();
     clearSegHold();
     const i = getSegmentBounds();
     if (e < 0 || e >= i.length - 1) return;
-    O = false;
     $ = false;
-    N = {
+    j = false;
+    O = {
       index: e,
       pointerId: t.pointerId,
       startX: t.clientX,
@@ -845,52 +876,52 @@ const PreviewTimeline = (() => {
       startB: i[e + 1],
       target: t.currentTarget
     };
-    F = setTimeout(() => {
-      F = 0;
-      $ = true;
-      N?.target?.classList.add("is-hold-ready");
-    }, j);
+    N = setTimeout(() => {
+      N = 0;
+      j = true;
+      O?.target?.classList.add("is-hold-ready");
+    }, G);
   }
   function onSegmentPointerMove(e) {
-    if (!N) return;
-    const t = Math.abs(e.clientX - N.startX);
+    if (!O) return;
+    const t = Math.abs(e.clientX - O.startX);
     if (c === "segment") {
       e.preventDefault();
-      if (t >= G) O = true;
-      if (!O) return;
+      if (t >= z) $ = true;
+      if (!$) return;
       paintSegmentMove(e.clientX);
       return;
     }
     if (isRankingEdit()) {
-      if ($ && t >= G) {
+      if (j && t >= z) {
         beginSegmentDrag();
         if (c === "segment") {
-          O = true;
+          $ = true;
           paintSegmentMove(e.clientX);
         }
       }
       return;
     }
-    if (t >= G) {
+    if (t >= z) {
       beginSegmentDrag();
-      O = true;
+      $ = true;
       paintSegmentMove(e.clientX);
     }
   }
   function onSegmentPointerUp(e) {
-    if (!N) return;
-    const t = N;
-    const i = O;
+    if (!O) return;
+    const t = O;
+    const i = $;
     const n = t.hoverIndex;
     clearSegHold();
     t.target?.classList.remove("is-dragging", "is-hold-ready");
-    X?.children?.[t.index]?.classList.remove("is-dragging");
-    X?.querySelectorAll(".is-drop-target").forEach(e => e.classList.remove("is-drop-target"));
-    Q?.classList.remove("is-reordering");
+    K?.children?.[t.index]?.classList.remove("is-dragging");
+    K?.querySelectorAll(".is-drop-target").forEach(e => e.classList.remove("is-drop-target"));
+    J?.classList.remove("is-reordering");
     if (c === "segment" && !i) {
       c = null;
-      N = null;
-      Q?.classList.remove("is-dragging", "is-trimming");
+      O = null;
+      J?.classList.remove("is-dragging", "is-trimming");
       if (f) a?.play().catch(() => {});
       f = false;
       customizeSegment(t.index);
@@ -899,7 +930,7 @@ const PreviewTimeline = (() => {
     if (i) {
       const e = isRankingEdit() && n != null && n !== t.index && applySegmentReorder(t.index, n);
       c = null;
-      N = null;
+      O = null;
       markRankingTimelineDirty();
       scheduleSeek(m, true);
       if (f) a?.play().catch(() => {});
@@ -914,21 +945,21 @@ const PreviewTimeline = (() => {
       }
       return;
     }
-    N = null;
+    O = null;
     c = null;
     customizeSegment(t.index);
   }
   function paintSegments(e) {
-    if (!X || !u || I <= 0) return;
+    if (!K || !u || I <= 0) return;
     const t = getSegmentBounds();
-    X.innerHTML = "";
+    K.innerHTML = "";
     for (let i = 0; i < t.length - 1; i++) {
       const n = t[i];
       const r = t[i + 1];
       let o = n / u * I;
       let s = r / u * I;
-      if (i > 0) o += re / 2;
-      if (i < t.length - 2) s -= re / 2;
+      if (i > 0) o += oe / 2;
+      if (i < t.length - 2) s -= oe / 2;
       const a = Math.max(8, s - o);
       const l = document.createElement("div");
       l.className = "preview-timeline-segment";
@@ -964,16 +995,16 @@ const PreviewTimeline = (() => {
       l.appendChild(c);
       if (i === 0) l.appendChild(makeSegHandle("left", i));
       l.appendChild(makeSegHandle("right", i + 1));
-      X.appendChild(l);
+      K.appendChild(l);
     }
-    if (T != null && X?.children?.[T]) {
-      X.children[T].classList.add("is-selected");
+    if (T != null && K?.children?.[T]) {
+      K.children[T].classList.add("is-selected");
     }
     syncSegFocusClass();
   }
   function paintSegmentsFast() {
-    if (!X || !u || I <= 0) return;
-    const e = Array.from(X.children);
+    if (!K || !u || I <= 0) return;
+    const e = Array.from(K.children);
     const t = getSegmentBounds();
     if (e.length !== t.length - 1) {
       paintSegments();
@@ -984,8 +1015,8 @@ const PreviewTimeline = (() => {
       const r = t[i + 1];
       let o = n / u * I;
       let s = r / u * I;
-      if (i > 0) o += re / 2;
-      if (i < t.length - 2) s -= re / 2;
+      if (i > 0) o += oe / 2;
+      if (i < t.length - 2) s -= oe / 2;
       const a = Math.max(6, s - o);
       const l = e[i];
       l.style.width = `${a}px`;
@@ -1002,43 +1033,43 @@ const PreviewTimeline = (() => {
     }
   }
   function applyBoundTime(e) {
-    if (M === 0) {
+    if (B === 0) {
       d = e;
       return;
     }
     const t = getSegmentBounds();
-    if (M >= t.length - 1) {
+    if (B >= t.length - 1) {
       p = e;
       return;
     }
-    if (R != null) {
-      const t = E.findIndex(e => Math.abs(e - R) < .05);
+    if (U != null) {
+      const t = E.findIndex(e => Math.abs(e - U) < .05);
       if (t >= 0) E[t] = e; else E.push(e);
-      R = e;
+      U = e;
     } else {
       E.push(e);
     }
     E.sort((e, t) => e - t);
   }
   function paintBoundFast(e) {
-    if (!u || I <= 0 || M < 0) return;
+    if (!u || I <= 0 || B < 0) return;
     const t = timeFromClientX(e);
-    const i = Math.max(B, Math.min(A, t));
+    const i = Math.max(A, Math.min(R, t));
     applyBoundTime(i);
     m = i;
     const n = d / u * I;
     const r = p / u * I;
-    if (ee) {
-      ee.style.width = `${Math.max(2, r - n)}px`;
-      ee.style.transform = `translate3d(${n}px,0,0)`;
+    if (te) {
+      te.style.width = `${Math.max(2, r - n)}px`;
+      te.style.transform = `translate3d(${n}px,0,0)`;
     }
-    if (K) K.style.width = `${n}px`;
-    if (Z) Z.style.width = `${Math.max(0, I - r)}px`;
+    if (Z) Z.style.width = `${n}px`;
+    if (ee) ee.style.width = `${Math.max(0, I - r)}px`;
     paintSegmentsFast();
   }
   function startBoundDrag(t, i) {
-    if (!U && !V?.classList.contains("is-ranking-edit")) return;
-    if (!U) setHandlesUnlocked(true);
+    if (!D && !q?.classList.contains("is-ranking-edit")) return;
+    if (!D) setHandlesUnlocked(true);
     if (i.pointerType === "mouse" && i.button !== 0) return;
     i.preventDefault();
     i.stopPropagation();
@@ -1046,13 +1077,13 @@ const PreviewTimeline = (() => {
     const n = getSegmentBounds();
     if (t < 0 || t >= n.length) return;
     c = "bound";
-    M = t;
-    B = t === 0 ? 0 : n[t - 1] + e;
-    A = t === n.length - 1 ? u : n[t + 1] - e;
-    R = t > 0 && t < n.length - 1 ? n[t] : null;
+    B = t;
+    A = t === 0 ? 0 : n[t - 1] + e;
+    R = t === n.length - 1 ? u : n[t + 1] - e;
+    U = t > 0 && t < n.length - 1 ? n[t] : null;
     f = a ? !a.paused : false;
     if (a && !a.paused) a.pause();
-    Q?.classList.add("is-dragging", "is-trimming");
+    J?.classList.add("is-dragging", "is-trimming");
     i.currentTarget?.classList.add("is-dragging");
     if (i.currentTarget?.setPointerCapture && i.pointerId != null) {
       try {
@@ -1078,12 +1109,12 @@ const PreviewTimeline = (() => {
     const n = d / u * I;
     const r = p / u * I;
     const o = Math.max(2, r - n);
-    if (ee) {
-      ee.style.width = `${o}px`;
-      ee.style.transform = `translate3d(${n}px,0,0)`;
+    if (te) {
+      te.style.width = `${o}px`;
+      te.style.transform = `translate3d(${n}px,0,0)`;
     }
-    if (K) K.style.width = `${n}px`;
-    if (Z) Z.style.width = `${Math.max(0, I - r)}px`;
+    if (Z) Z.style.width = `${n}px`;
+    if (ee) ee.style.width = `${Math.max(0, I - r)}px`;
     paintSegmentsFast();
   }
   function scheduleSeek(e, t = false) {
@@ -1221,8 +1252,8 @@ const PreviewTimeline = (() => {
     }
   }
   function mountFilmstripCanvases(e) {
-    if (!J) return;
-    J.innerHTML = "";
+    if (!X) return;
+    X.innerHTML = "";
     const i = document.createDocumentFragment();
     for (let n = 0; n < t; n++) {
       const t = document.createElement("div");
@@ -1238,14 +1269,14 @@ const PreviewTimeline = (() => {
       }
       i.appendChild(t);
     }
-    J.appendChild(i);
+    X.appendChild(i);
     paintSegments();
   }
   function buildPlaceholderFilmstrip() {
     mountFilmstripCanvases(null);
   }
   async function buildFilmstripFromVideo() {
-    if (!J || !a) return;
+    if (!X || !a) return;
     const e = a.currentSrc || a.src;
     if (!e || !u || u <= 0) {
       buildPlaceholderFilmstrip();
@@ -1314,7 +1345,7 @@ const PreviewTimeline = (() => {
       }
     } catch (e) {} finally {
       if (g === c) destroyCaptureVideo();
-      if (l === y && !J?.querySelector("canvas")) {
+      if (l === y && !X?.querySelector("canvas")) {
         paintSegments();
       }
     }
@@ -1387,7 +1418,7 @@ const PreviewTimeline = (() => {
     }
   }
   function onPointerMove(e) {
-    if (N && c !== "segment") {
+    if (O && c !== "segment") {
       onSegmentPointerMove(e);
       if (c === "segment") return;
     }
@@ -1414,16 +1445,16 @@ const PreviewTimeline = (() => {
     });
   }
   function endDrag() {
-    if (N) {
+    if (O) {
       onSegmentPointerUp();
       return;
     }
     if (!c) return;
     const e = c;
-    Q?.classList.remove("is-scrubbing", "is-trimming", "is-dragging");
-    X?.querySelectorAll(".preview-timeline-handle.is-dragging").forEach(e => e.classList.remove("is-dragging"));
-    te?.classList.remove("is-dragging");
+    J?.classList.remove("is-scrubbing", "is-trimming", "is-dragging");
+    K?.querySelectorAll(".preview-timeline-handle.is-dragging").forEach(e => e.classList.remove("is-dragging"));
     ie?.classList.remove("is-dragging");
+    ne?.classList.remove("is-dragging");
     if (v != null) {
       applyPointer(v, {
         seek: false
@@ -1435,8 +1466,8 @@ const PreviewTimeline = (() => {
       w = 0;
     }
     c = null;
-    M = -1;
-    R = null;
+    B = -1;
+    U = null;
     if (e === "start" || e === "end" || e === "bound") {
       m = Math.max(d, Math.min(p, m));
       if (d > .05 || p < u - .05) {
@@ -1459,25 +1490,25 @@ const PreviewTimeline = (() => {
     });
   }
   function startDrag(e, t) {
-    if ((e === "start" || e === "end" || e === "bound") && !U && !V?.classList.contains("is-ranking-edit")) return;
-    if ((e === "start" || e === "end" || e === "bound") && !U) {
+    if ((e === "start" || e === "end" || e === "bound") && !D && !q?.classList.contains("is-ranking-edit")) return;
+    if ((e === "start" || e === "end" || e === "bound") && !D) {
       setHandlesUnlocked(true);
     }
     if (t.pointerType === "mouse" && t.button !== 0) return;
     t.preventDefault();
     t.stopPropagation();
     cacheTrackMetrics();
-    if (Z) {
-      Z.style.left = "auto";
-      Z.style.right = "0";
+    if (ee) {
+      ee.style.left = "auto";
+      ee.style.right = "0";
     }
     c = e;
     f = a ? !a.paused : false;
     if (a && !a.paused) a.pause();
-    Q?.classList.add("is-dragging");
-    if (e === "scrub") Q?.classList.add("is-scrubbing"); else Q?.classList.add("is-trimming");
-    if (e === "start") te?.classList.add("is-dragging");
-    if (e === "end") ie?.classList.add("is-dragging");
+    J?.classList.add("is-dragging");
+    if (e === "scrub") J?.classList.add("is-scrubbing"); else J?.classList.add("is-trimming");
+    if (e === "start") ie?.classList.add("is-dragging");
+    if (e === "end") ne?.classList.add("is-dragging");
     if (t.currentTarget?.setPointerCapture && t.pointerId != null) {
       try {
         t.currentTarget.setPointerCapture(t.pointerId);
@@ -1488,7 +1519,7 @@ const PreviewTimeline = (() => {
     });
   }
   function bindEvents() {
-    if (!V || !q || !a) return;
+    if (!q || !W || !a) return;
     const onTime = () => {
       if (c) return;
       clampPlayback();
@@ -1521,7 +1552,7 @@ const PreviewTimeline = (() => {
     window.addEventListener("resize", onResize, {
       passive: true
     });
-    H.push(() => {
+    V.push(() => {
       a.removeEventListener("timeupdate", onTime);
       a.removeEventListener("loadedmetadata", onMeta);
       a.removeEventListener("durationchange", onMeta);
@@ -1535,9 +1566,9 @@ const PreviewTimeline = (() => {
     };
     const onStartDown = e => startDrag("start", e);
     const onEndDown = e => startDrag("end", e);
-    Q?.addEventListener("pointerdown", onTrackDown);
-    te?.addEventListener("pointerdown", onStartDown);
-    ie?.addEventListener("pointerdown", onEndDown);
+    J?.addEventListener("pointerdown", onTrackDown);
+    ie?.addEventListener("pointerdown", onStartDown);
+    ne?.addEventListener("pointerdown", onEndDown);
     const e = document.getElementById("previewTimelinePlayheadGrip");
     const onPlayheadDown = e => {
       e.preventDefault();
@@ -1550,10 +1581,10 @@ const PreviewTimeline = (() => {
     });
     window.addEventListener("pointerup", endDrag);
     window.addEventListener("pointercancel", endDrag);
-    H.push(() => {
-      Q?.removeEventListener("pointerdown", onTrackDown);
-      te?.removeEventListener("pointerdown", onStartDown);
-      ie?.removeEventListener("pointerdown", onEndDown);
+    V.push(() => {
+      J?.removeEventListener("pointerdown", onTrackDown);
+      ie?.removeEventListener("pointerdown", onStartDown);
+      ne?.removeEventListener("pointerdown", onEndDown);
       e?.removeEventListener("pointerdown", onPlayheadDown);
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerup", endDrag);
@@ -1563,15 +1594,15 @@ const PreviewTimeline = (() => {
       e.preventDefault();
       e.stopPropagation();
       setHandlesUnlocked(true);
-      q?.focus?.({
+      W?.focus?.({
         preventScroll: true
       });
     };
-    W?.addEventListener("pointerdown", onTimeChipDown);
     Y?.addEventListener("pointerdown", onTimeChipDown);
-    H.push(() => {
-      W?.removeEventListener("pointerdown", onTimeChipDown);
+    Q?.addEventListener("pointerdown", onTimeChipDown);
+    V.push(() => {
       Y?.removeEventListener("pointerdown", onTimeChipDown);
+      Q?.removeEventListener("pointerdown", onTimeChipDown);
     });
     const onKey = e => {
       if (!a || !u) return;
@@ -1583,8 +1614,8 @@ const PreviewTimeline = (() => {
         scheduleSeek(m, true);
       }
     };
-    Q?.addEventListener("keydown", onKey);
-    H.push(() => Q?.removeEventListener("keydown", onKey));
+    J?.addEventListener("keydown", onKey);
+    V.push(() => J?.removeEventListener("keydown", onKey));
     const t = document.getElementById("previewTimelineSplitBtn");
     const onSplitClick = e => {
       e.preventDefault();
@@ -1598,12 +1629,12 @@ const PreviewTimeline = (() => {
       }
     };
     t?.addEventListener("click", onSplitClick);
-    H.push(() => t?.removeEventListener("click", onSplitClick));
+    V.push(() => t?.removeEventListener("click", onSplitClick));
   }
   function show() {
     const e = document.getElementById("previewTimelineRow");
     if (e) e.hidden = false;
-    if (V) V.hidden = false;
+    if (q) q.hidden = false;
     const t = document.getElementById("previewAudioToggle");
     if (t) t.hidden = false;
     try {
@@ -1615,7 +1646,7 @@ const PreviewTimeline = (() => {
   function hide() {
     const e = document.getElementById("previewTimelineRow");
     if (e) e.hidden = true;
-    if (V) V.hidden = true;
+    if (q) q.hidden = true;
     const t = document.getElementById("previewAudioToggle");
     if (t) t.hidden = true;
     const i = document.getElementById("previewTimelineHookLane");
@@ -1641,9 +1672,9 @@ const PreviewTimeline = (() => {
       cancelAnimationFrame(b);
       b = 0;
     }
-    while (H.length) {
+    while (V.length) {
       try {
-        H.pop()();
+        V.pop()();
       } catch (e) {}
     }
     v = null;
@@ -1651,21 +1682,23 @@ const PreviewTimeline = (() => {
     _ = false;
     c = null;
     clearSegHold();
-    N = null;
-    O = false;
+    O = null;
+    $ = false;
     f = false;
     E = [];
     T = null;
-    D = null;
+    F = null;
     x = [];
-    U = false;
-    if (V) {
-      V.classList.remove("handles-on");
-      V.classList.remove("is-ranking-edit");
-      V.classList.remove("has-silence-cuts");
-      V.classList.remove("has-seg-focus");
+    M = [];
+    D = false;
+    if (q) {
+      q.classList.remove("handles-on");
+      q.classList.remove("is-ranking-edit");
+      q.classList.remove("has-silence-cuts");
+      q.classList.remove("has-seg-focus");
     }
-    if (X) X.innerHTML = "";
+    if (W) W.classList.remove("has-cut-preview");
+    if (K) K.innerHTML = "";
     a = null;
     l = false;
     u = 0;
@@ -1708,14 +1741,14 @@ const PreviewTimeline = (() => {
     m = Number.isFinite(a.currentTime) ? a.currentTime : 0;
     const t = !!document.querySelector(".template-preview-content.is-library-preview");
     setHandlesUnlocked(t);
-    if (ee) {
-      ee.style.left = "0";
-      ee.style.right = "auto";
+    if (te) {
+      te.style.left = "0";
+      te.style.right = "auto";
     }
-    if (ne) ne.style.left = "0";
-    if (Z) {
-      Z.style.left = "auto";
-      Z.style.right = "0";
+    if (re) re.style.left = "0";
+    if (ee) {
+      ee.style.left = "auto";
+      ee.style.right = "0";
     }
     buildPlaceholderFilmstrip();
     bindEvents();
@@ -1737,9 +1770,9 @@ const PreviewTimeline = (() => {
       paintChrome({
         rebuildSegments: true
       });
-      if (D && D.length) {
-        const e = D.slice();
-        D = null;
+      if (F && F.length) {
+        const e = F.slice();
+        F = null;
         setSplits(e);
       }
       scheduleFilmstripBuild();
@@ -1773,7 +1806,7 @@ const PreviewTimeline = (() => {
   function setSplits(e) {
     const t = Array.isArray(e) ? e : [];
     if (!u || u <= 0) {
-      D = t.slice();
+      F = t.slice();
       return false;
     }
     const i = [];
@@ -1786,7 +1819,7 @@ const PreviewTimeline = (() => {
     }
     i.sort((e, t) => e - t);
     E = i.slice(0, 4);
-    D = null;
+    F = null;
     cacheTrackMetrics();
     paintChrome({
       rebuildSegments: true
@@ -1829,7 +1862,7 @@ const PreviewTimeline = (() => {
       rebuildSegments: true
     });
     scheduleSeek(m, true);
-    [ te, ie ].forEach(e => {
+    [ ie, ne ].forEach(e => {
       if (!e) return;
       e.classList.remove("is-pulse");
       void e.offsetWidth;
@@ -1840,7 +1873,7 @@ const PreviewTimeline = (() => {
       };
       e.addEventListener("animationend", done);
     });
-    q?.focus?.({
+    W?.focus?.({
       preventScroll: true
     });
   }
@@ -1916,7 +1949,7 @@ const PreviewTimeline = (() => {
     }
     i.sort((e, t) => e.start - t.start);
     x = i;
-    if (V) V.classList.toggle("has-silence-cuts", x.length > 0);
+    if (q) q.classList.toggle("has-silence-cuts", x.length > 0);
     paintChrome({
       rebuildSegments: true
     });
@@ -1930,10 +1963,39 @@ const PreviewTimeline = (() => {
   }
   function clearSkipRegions() {
     x = [];
-    if (V) V.classList.remove("has-silence-cuts");
+    if (q) q.classList.remove("has-silence-cuts");
     if (l) paintChrome({
       rebuildSegments: true
     });
+  }
+  function setSkipRegionsPreview(e) {
+    const t = Array.isArray(e) ? e : [];
+    const i = [];
+    for (const e of t) {
+      const t = Number(e?.start);
+      const n = Number(e?.end);
+      if (!Number.isFinite(t) || !Number.isFinite(n) || n - t < .12) continue;
+      i.push({
+        start: Math.max(0, t),
+        end: u > 0 ? Math.min(u, n) : n
+      });
+    }
+    i.sort((e, t) => e.start - t.start);
+    M = i;
+    if (l) paintChrome(); else paintCutPreview();
+    return M.slice();
+  }
+  function getSkipRegionsPreview() {
+    return M.map(e => ({
+      start: e.start,
+      end: e.end
+    }));
+  }
+  function clearSkipRegionsPreview() {
+    M = [];
+    if (W) W.classList.remove("has-cut-preview");
+    const e = W?.querySelector(".preview-timeline-cut-preview");
+    if (e) e.remove();
   }
   return {
     attach: attach,
@@ -1949,6 +2011,9 @@ const PreviewTimeline = (() => {
     setSkipRegions: setSkipRegions,
     getSkipRegions: getSkipRegions,
     clearSkipRegions: clearSkipRegions,
+    setSkipRegionsPreview: setSkipRegionsPreview,
+    getSkipRegionsPreview: getSkipRegionsPreview,
+    clearSkipRegionsPreview: clearSkipRegionsPreview,
     resolveSkipTime: resolveSkipTime,
     getSegmentBounds: getSegmentBoundsPublic,
     getActiveEditRange: getActiveEditRange,
@@ -11015,6 +11080,24 @@ class ClipsStudio {
     const a = t?.monthly_count ?? n.used;
     const l = t?.monthly_limit ?? n.limit;
     const c = n.remaining ?? (l != null && a != null ? Math.max(0, l - a) : null);
+    const formatWhen = e => {
+      if (!e) return "";
+      try {
+        const t = String(e).trim();
+        const i = /[zZ]|[+-]\d{2}:?\d{2}$/.test(t);
+        const n = i ? t.replace(" ", "T") : `${t.replace(" ", "T")}Z`;
+        const r = new Date(n);
+        if (!Number.isNaN(r.getTime())) {
+          return r.toLocaleString([], {
+            month: "short",
+            day: "numeric",
+            hour: "numeric",
+            minute: "2-digit"
+          });
+        }
+      } catch (e) {}
+      return "";
+    };
     const d = e?.storage?.videos?.used ?? t?.current_count ?? (typeof window.clipsStudio?.libraryItems?.length === "number" ? window.clipsStudio.libraryItems.length : null);
     const p = e?.storage?.videos?.limit ?? t?.limit ?? null;
     const showStorageFullModal = (e, t) => {
@@ -11024,30 +11107,17 @@ class ClipsStudio {
         showNotification(t, "warning");
       }
     };
-    if (e?.daily_limit_reached || t?.error_code === "DAILY_LIMIT_REACHED" || s === 0) {
-      const e = i.resets_at || t?.daily?.resets_at;
-      let n = "";
-      if (e) {
-        try {
-          const t = String(e).trim();
-          const i = /[zZ]|[+-]\d{2}:?\d{2}$/.test(t);
-          const r = i ? t.replace(" ", "T") : `${t.replace(" ", "T")}Z`;
-          const o = new Date(r);
-          if (!Number.isNaN(o.getTime())) {
-            n = o.toLocaleString([], {
-              month: "short",
-              day: "numeric",
-              hour: "numeric",
-              minute: "2-digit"
-            });
-          }
-        } catch (e) {}
-      }
-      showNotification(n ? `Daily quota reached (${r ?? "?"}/${o ?? "?"}). Resets around ${n}.` : `Daily quota reached (${r ?? "?"}/${o ?? "?"}). Resets 24h after you started generating.`, "warning");
+    if (e?.monthly_limit_reached || t?.error_code === "MONTHLY_LIMIT_REACHED" || l > 0 && c === 0) {
+      showNotification("You've used this month's uploads. Resets with your plan renewal.", "warning");
       return;
     }
-    if (e?.monthly_limit_reached || t?.error_code === "MONTHLY_LIMIT_REACHED" || l > 0 && c === 0) {
-      showNotification(`Monthly quota reached (${a ?? "?"}/${l ?? "?"}). Resets with your plan renewal.`, "warning");
+    if (e?.daily_limit_reached || t?.error_code === "DAILY_LIMIT_REACHED" || s === 0) {
+      const e = formatWhen(i.resets_at || t?.daily?.resets_at);
+      if (c > 0) {
+        showNotification(e ? `Next upload unlocks ${e}.` : "Next upload unlocks tomorrow.", "info");
+        return;
+      }
+      showNotification(e ? `Daily limit reached. Resets around ${e}.` : "Daily limit reached.", "warning");
       return;
     }
     const u = e?.generation?.cooldown_remaining_seconds || t?.cooldown_remaining_seconds || 0;
@@ -12597,7 +12667,7 @@ class ClipsStudio {
             const o = r.full_download_url;
             if (o) {
               let t = false;
-              for (let e = 0; e < 3; e++) {
+              for (let e = 0; e < 8; e++) {
                 try {
                   const i = await fetch(o, {
                     method: "GET",
@@ -12614,15 +12684,15 @@ class ClipsStudio {
                   }
                   if (i.status === 404) {
                     const t = await i.json().catch(() => ({}));
-                    if (t.error_code === "CLIP_NOT_READY" && e < 2) {
-                      await new Promise(t => setTimeout(t, 900 * (e + 1)));
+                    if (t.error_code === "CLIP_NOT_READY" && e < 7) {
+                      await new Promise(t => setTimeout(t, 1200 * (e + 1)));
                       continue;
                     }
                     throw new Error(t.error || "Clip is still uploading — try again in a moment.");
                   }
                 } catch (t) {
-                  if (e >= 2) throw t;
-                  await new Promise(t => setTimeout(t, 900 * (e + 1)));
+                  if (e >= 7) throw t;
+                  await new Promise(t => setTimeout(t, 1200 * (e + 1)));
                 }
               }
               if (!t) {
@@ -12926,13 +12996,18 @@ class ClipsStudio {
     }
     try {
       const e = getAuthHeaders();
-      const t = await fetch(`${API_BASE_URL}/clips/projects`, {
+      const t = `${API_BASE_URL}/clips/projects`;
+      const i = window.apiRequestCache?.dedupFetch ? window.apiRequestCache.dedupFetch(t, {
+        headers: e,
+        credentials: "include"
+      }) : fetch(t, {
         headers: e,
         credentials: "include"
       });
-      if (t.ok) {
-        const e = await t.json();
-        const i = e.projects.filter(e => e && e.id).map(e => ({
+      const n = await i;
+      if (n.ok) {
+        const e = await n.json();
+        const t = e.projects.filter(e => e && e.id).map(e => ({
           id: e.id,
           projectId: e.id,
           name: e.video_title || e.template_name || "Clip",
@@ -12958,17 +13033,17 @@ class ClipsStudio {
           createdAt: e.created_at,
           updatedAt: e.updated_at
         }));
-        const n = new Set(i.map(e => String(e.id)));
+        const i = new Set(t.map(e => String(e.id)));
         const r = (this.libraryItems || []).filter(e => {
           const t = String(e.projectId || e.id || "");
-          if (!t || n.has(t)) return false;
+          if (!t || i.has(t)) return false;
           if (e._optimistic || e._justCompleted) return true;
           return false;
         });
-        this.libraryItems = [ ...r, ...i ];
+        this.libraryItems = [ ...r, ...t ];
         for (const e of this.libraryItems) {
           const t = String(e.projectId || e.id || "");
-          if (n.has(t)) {
+          if (i.has(t)) {
             e._optimistic = false;
             e._justCompleted = false;
           }

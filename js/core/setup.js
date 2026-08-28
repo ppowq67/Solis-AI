@@ -1,14 +1,26 @@
 window.apiRequestCache = {
   cache: new Map,
-  CACHE_TTL_MS: 5e3,
-  async dedupFetch(e, n = {}) {
-    const t = n.method || "GET";
-    const o = `${t}:${e}`;
-    const a = Date.now();
-    const i = this.cache.get(o);
-    if (i && a - i.timestamp < this.CACHE_TTL_MS) {
-      if (i.data) {
-        return new Response(JSON.stringify(i.data), {
+  DEFAULT_TTL_MS: 5e3,
+  ttlFor(e, t = "GET") {
+    const n = String(e || "");
+    if (t !== "GET") return 0;
+    if (n.includes("/clips/projects")) return 15e3;
+    if (n.includes("/clips/status")) return 4e3;
+    if (n.includes("/portal/activity")) return 3e4;
+    if (n.includes("/user/profile")) return 2e4;
+    if (n.includes("/auth/subscription")) return 2e4;
+    if (n.includes("/clips/preview") || n.includes("/clips/poster")) return 6e4;
+    return this.DEFAULT_TTL_MS;
+  },
+  async dedupFetch(e, t = {}) {
+    const n = t.method || "GET";
+    const o = `${n}:${e}`;
+    const i = Date.now();
+    const a = this.ttlFor(e, n);
+    const s = this.cache.get(o);
+    if (s && a > 0 && i - s.timestamp < a) {
+      if (s.data) {
+        return new Response(JSON.stringify(s.data), {
           status: 200,
           statusText: "OK (from cache)",
           headers: {
@@ -16,34 +28,34 @@ window.apiRequestCache = {
           }
         });
       }
-      if (i.response) {
-        return i.response.clone();
+      if (s.response) {
+        return s.response.clone();
       }
     }
-    const s = fetch(e, n);
+    const r = fetch(e, t);
     this.cache.set(o, {
-      promise: s,
-      timestamp: a,
+      promise: r,
+      timestamp: i,
       response: null,
       data: null
     });
     try {
-      const e = await s;
-      const a = this.cache.get(o);
-      if (a) a.response = e.clone();
-      if (e.ok && !n.method && t === "GET") {
+      const e = await r;
+      const i = this.cache.get(o);
+      if (i) i.response = e.clone();
+      if (e.ok && !t.method && n === "GET") {
         try {
-          const n = await e.clone().json();
-          const t = this.cache.get(o);
-          if (t) t.data = n;
+          const t = await e.clone().json();
+          const n = this.cache.get(o);
+          if (n) n.data = t;
         } catch (e) {}
       }
       return e;
     } finally {
       const e = [];
-      for (const [n, t] of this.cache.entries()) {
-        if (a - t.timestamp > this.CACHE_TTL_MS * 2) {
-          e.push(n);
+      for (const [t, n] of this.cache.entries()) {
+        if (i - n.timestamp > this.ttlFor(t.split(":").slice(1).join(":")) * 2) {
+          e.push(t);
         }
       }
       e.forEach(e => this.cache.delete(e));
@@ -57,7 +69,7 @@ window.getApiBase = function() {
 
 function escapeHtml(e) {
   if (typeof e !== "string") return "";
-  const n = {
+  const t = {
     "&": "&amp;",
     "<": "&lt;",
     ">": "&gt;",
@@ -65,7 +77,7 @@ function escapeHtml(e) {
     "'": "&#x27;",
     "/": "&#x2F;"
   };
-  return e.replace(/[&<>"'\/]/g, e => n[e] || e);
+  return e.replace(/[&<>"'\/]/g, e => t[e] || e);
 }
 
 function getCsrfToken() {
@@ -86,8 +98,8 @@ function validateUserId(e) {
 function validateAuthUrl(e) {
   if (typeof e !== "string") return false;
   try {
-    const n = new URL(e);
-    return /^https?:$/.test(n.protocol);
+    const t = new URL(e);
+    return /^https?:$/.test(t.protocol);
   } catch {
     return false;
   }
@@ -116,26 +128,26 @@ function validateAuthResponse(e) {
   };
 }
 
-async function _signRequest(e, n = "POST", t = "") {
+async function _signRequest(e, t = "POST", n = "") {
   try {
-    const t = Math.floor(Date.now() / 1e3).toString();
+    const n = Math.floor(Date.now() / 1e3).toString();
     const o = Array.from(crypto.getRandomValues(new Uint8Array(16))).map(e => e.toString(16).padStart(2, "0")).join("");
-    const a = getCsrfToken();
-    if (!a) return {
-      timestamp: t,
+    const i = getCsrfToken();
+    if (!i) return {
+      timestamp: n,
       nonce: o
     };
-    const i = new TextEncoder;
-    const s = i.encode(a);
+    const a = new TextEncoder;
+    const s = a.encode(i);
     const r = await crypto.subtle.importKey("raw", s, {
       name: "HMAC",
       hash: "SHA-256"
     }, false, [ "sign" ]);
-    const l = i.encode(`${e}|${n}|${t}|${o}`);
+    const l = a.encode(`${e}|${t}|${n}|${o}`);
     const c = await crypto.subtle.sign("HMAC", r, l);
     const d = Array.from(new Uint8Array(c)).map(e => e.toString(16).padStart(2, "0")).join("");
     return {
-      timestamp: t,
+      timestamp: n,
       nonce: o,
       signature: d
     };
@@ -161,10 +173,10 @@ class SetupModal {
         method: "GET",
         credentials: "include"
       });
-      const n = await e.json();
-      this.connections = n;
-      localStorage.setItem("platform_connections", JSON.stringify(n));
-      window.platformConnections = n;
+      const t = await e.json();
+      this.connections = t;
+      localStorage.setItem("platform_connections", JSON.stringify(t));
+      window.platformConnections = t;
     } catch (e) {
       console.error("Error loading connection status:", e);
     }
@@ -190,38 +202,38 @@ class SetupModal {
       e.disabled = true;
     }
     try {
-      const n = this.generateUserId();
-      if (!validateUserId(n)) {
+      const t = this.generateUserId();
+      if (!validateUserId(t)) {
         throw new Error("Invalid user ID format");
       }
-      localStorage.setItem("youtube_user_id", n);
-      const t = getCsrfToken();
+      localStorage.setItem("youtube_user_id", t);
+      const n = getCsrfToken();
       const o = await _signRequest("/analytics/youtube/auth", "POST", JSON.stringify({
-        user_id: n
+        user_id: t
       }));
-      const a = await fetch(`${this.apiBase}/analytics/youtube/auth`, {
+      const i = await fetch(`${this.apiBase}/analytics/youtube/auth`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-CSRF-Token": t,
+          "X-CSRF-Token": n,
           "X-Request-Timestamp": o.timestamp || "",
           "X-Request-Nonce": o.nonce || "",
           "X-Request-Signature": o.signature || ""
         },
         body: JSON.stringify({
-          user_id: n
+          user_id: t
         }),
         credentials: "include",
         signal: AbortSignal.timeout(3e4)
       });
-      if (!a.ok) {
-        throw new Error(`HTTP error! status: ${a.status}`);
+      if (!i.ok) {
+        throw new Error(`HTTP error! status: ${i.status}`);
       }
-      const i = a.headers.get("content-length");
-      if (i && parseInt(i) > 5e4) {
+      const a = i.headers.get("content-length");
+      if (a && parseInt(a) > 5e4) {
         throw new Error("Response too large");
       }
-      const s = await a.text();
+      const s = await i.text();
       if (!s || s.length === 0) {
         throw new Error("Empty response from server");
       }
@@ -250,9 +262,9 @@ class SetupModal {
           e.disabled = false;
         }
       }
-    } catch (n) {
-      console.error("Auth error:", n);
-      this.showError("Connection failed: " + n.message);
+    } catch (t) {
+      console.error("Auth error:", t);
+      this.showError("Connection failed: " + t.message);
       this.isConnecting = false;
       window.__ytOAuthInFlight = false;
       if (e) {
@@ -262,9 +274,9 @@ class SetupModal {
     }
   }
   waitForAuth(e) {
-    const n = setInterval(() => {
+    const t = setInterval(() => {
       if (e.closed) {
-        clearInterval(n);
+        clearInterval(t);
         window.__ytOAuthInFlight = false;
         setTimeout(() => {
           if (localStorage.getItem("youtube_connected") === "true") {
@@ -311,17 +323,17 @@ class SetupModal {
           throw new Error("Invalid user ID format");
         }
         const e = getCsrfToken();
-        const n = await _signRequest("/analytics/disconnect", "POST", JSON.stringify({
+        const t = await _signRequest("/analytics/disconnect", "POST", JSON.stringify({
           user_id: this.userId
         }));
-        const t = await fetch(`${this.apiBase}/analytics/disconnect`, {
+        const n = await fetch(`${this.apiBase}/analytics/disconnect`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             "X-CSRF-Token": e,
-            "X-Request-Timestamp": n.timestamp || "",
-            "X-Request-Nonce": n.nonce || "",
-            "X-Request-Signature": n.signature || ""
+            "X-Request-Timestamp": t.timestamp || "",
+            "X-Request-Nonce": t.nonce || "",
+            "X-Request-Signature": t.signature || ""
           },
           body: JSON.stringify({
             user_id: this.userId
@@ -329,8 +341,8 @@ class SetupModal {
           credentials: "include",
           signal: AbortSignal.timeout(3e4)
         });
-        if (!t.ok && t.status !== 200 && t.status !== 204) {
-          throw new Error(`Disconnect failed: ${t.status}`);
+        if (!n.ok && n.status !== 200 && n.status !== 204) {
+          throw new Error(`Disconnect failed: ${n.status}`);
         }
         localStorage.removeItem("youtube_connected");
         localStorage.removeItem("youtube_token_time");
@@ -365,28 +377,28 @@ class SetupModal {
   openModal() {
     const e = document.getElementById("setupModal");
     if (e) e.remove();
-    const n = document.createElement("div");
-    n.id = "setupModal";
-    n.style.cssText = `\n            position: fixed;\n            top: 0;\n            left: 0;\n            right: 0;\n            bottom: 0;\n            background: rgba(0,0,0,0.6);\n            backdrop-filter: blur(5px);\n            display: flex;\n            justify-content: center;\n            align-items: center;\n            z-index: 10000;\n            padding: 20px;\n        `;
-    const t = this.connections.youtube?.connected;
-    n.innerHTML = `\n  <style>\n    :root {\n      --modal-bg: #ffffff;\n      --modal-card-bg: #fff8f3;\n      --modal-text-primary: #1a1a1a;\n      --modal-text-secondary: #5a5a5a;\n      --modal-text-tertiary: #8a8a8a;\n      --modal-border: #f5e6d3;\n      --modal-accent: #ff7a56;\n      --modal-accent-hover: #ff6542;\n      --modal-shadow: 0 20px 60px rgba(255, 122, 86, 0.12);\n    }\n\n    :root.dark {\n      --modal-bg: #1a1a1a;\n      --modal-card-bg: #2d2520;\n      --modal-text-primary: #f5f5f5;\n      --modal-text-secondary: #c9c9c9;\n      --modal-text-tertiary: #8a8a8a;\n      --modal-border: #3d3530;\n      --modal-accent: #ff8c66;\n      --modal-accent-hover: #ff7a56;\n      --modal-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);\n    }\n\n    @keyframes modalFadeIn {\n      from {\n        opacity: 0;\n        transform: scale(0.95) translateY(-10px);\n      }\n      to {\n        opacity: 1;\n        transform: scale(1) translateY(0);\n      }\n    }\n\n    @keyframes modalFadeOut {\n      from {\n        opacity: 1;\n        transform: scale(1) translateY(0);\n      }\n      to {\n        opacity: 0;\n        transform: scale(0.95) translateY(-10px);\n      }\n    }\n\n    @keyframes slideInUp {\n      from {\n        opacity: 0;\n        transform: translateY(10px);\n      }\n      to {\n        opacity: 1;\n        transform: translateY(0);\n      }\n    }\n\n    @keyframes checkmarkPop {\n      0% {\n        opacity: 0;\n        transform: scale(0.8);\n      }\n      50% {\n        transform: scale(1.1);\n      }\n      100% {\n        opacity: 1;\n        transform: scale(1);\n      }\n    }\n\n    .onboarding-container {\n      background: var(--modal-bg);\n      box-shadow: var(--modal-shadow);\n      border: 2px solid var(--modal-border);\n      overflow: hidden;\n      width: 100%;\n      max-width: 850px;\n      padding: 70px 80px;\n      position: relative;\n      max-height: 85vh;\n      overflow-y: auto;\n      animation: modalFadeIn 0.3s ease-out;\n    }\n\n    .onboarding-container.closing {\n      animation: modalFadeOut 0.3s ease-out forwards;\n    }\n\n    .modal-close-btn {\n      position: absolute;\n      top: 28px;\n      right: 28px;\n      background: none;\n      border: none;\n      font-size: 32px;\n      cursor: pointer;\n      color: var(--modal-text-tertiary);\n      width: 44px;\n      height: 44px;\n      display: flex;\n      align-items: center;\n      justify-content: center;\n      transition: all 0.2s ease;\n    }\n\n    .modal-close-btn:hover {\n      background: var(--modal-card-bg);\n      color: var(--modal-text-primary);\n    }\n\n    .modal-header {\n      text-align: center;\n      margin-bottom: 50px;\n      animation: slideInUp 0.4s ease-out 0.1s both;\n    }\n\n    .modal-title {\n      font-size: 36px;\n      margin: 0 0 14px;\n      color: var(--modal-text-primary);\n      font-weight: 700;\n      letter-spacing: -0.02em;\n    }\n\n    .modal-subtitle {\n      color: var(--modal-text-secondary);\n      font-size: 16px;\n      margin: 0;\n      line-height: 1.6;\n    }\n\n    .modal-section {\n      background: var(--modal-card-bg);\n      padding: 32px;\n      margin-bottom: 28px;\n      border: 2px solid var(--modal-border);\n      animation: slideInUp 0.4s ease-out 0.2s both;\n      transition: all 0.2s ease;\n    }\n\n    .modal-section:hover {\n      border-color: var(--modal-accent);\n    }\n\n    .section-title {\n      margin: 0 0 20px;\n      color: var(--modal-text-primary);\n      font-size: 18px;\n      font-weight: 600;\n      letter-spacing: -0.01em;\n    }\n\n    .features-list {\n      list-style: none;\n      padding: 0;\n      margin: 0;\n    }\n\n    .feature-item {\n      margin-bottom: 16px;\n      color: var(--modal-text-secondary);\n      display: flex;\n      align-items: center;\n      font-size: 15px;\n      line-height: 1.7;\n      animation: slideInUp 0.4s ease-out both;\n    }\n\n    .feature-item:nth-child(1) { animation-delay: 0.3s; }\n    .feature-item:nth-child(2) { animation-delay: 0.35s; }\n    .feature-item:nth-child(3) { animation-delay: 0.4s; }\n    .feature-item:nth-child(4) { animation-delay: 0.45s; }\n\n    .feature-item:last-child {\n      margin-bottom: 0;\n    }\n\n    .checkmark {\n      display: inline-flex;\n      align-items: center;\n      justify-content: center;\n      min-width: 24px;\n      height: 24px;\n      background: var(--modal-accent);\n      margin-right: 14px;\n      color: white;\n      font-size: 12px;\n      font-weight: 700;\n      animation: checkmarkPop 0.4s ease-out both;\n    }\n\n    .feature-item:nth-child(1) .checkmark { animation-delay: 0.3s; }\n    .feature-item:nth-child(2) .checkmark { animation-delay: 0.35s; }\n    .feature-item:nth-child(3) .checkmark { animation-delay: 0.4s; }\n    .feature-item:nth-child(4) .checkmark { animation-delay: 0.45s; }\n\n    .connect-btn {\n      width: 100%;\n      padding: 18px 24px;\n      background: var(--modal-accent);\n      color: white;\n      border: none;\n      font-size: 16px;\n      font-weight: 600;\n      cursor: pointer;\n      transition: all 0.2s ease;\n      margin-bottom: 16px;\n      animation: slideInUp 0.4s ease-out 0.5s both;\n      position: relative;\n      overflow: hidden;\n      letter-spacing: 0.01em;\n    }\n\n    .connect-btn::before {\n      content: '';\n      position: absolute;\n      top: 0;\n      left: -100%;\n      width: 100%;\n      height: 100%;\n      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);\n      transition: left 0.5s ease;\n    }\n\n    .connect-btn:hover::before {\n      left: 100%;\n    }\n\n    .connect-btn:hover {\n      background: var(--modal-accent-hover);\n      transform: translateY(-2px);\n      box-shadow: 0 6px 20px rgba(255, 122, 86, 0.3);\n    }\n\n    .connect-btn:active {\n      transform: translateY(0);\n    }\n\n    .security-note {\n      text-align: center;\n      color: var(--modal-text-tertiary);\n      font-size: 13px;\n      margin: 0;\n      animation: slideInUp 0.4s ease-out 0.55s both;\n      line-height: 1.5;\n    }\n\n    .setup-notification {\n      display: none;\n      margin-top: 24px;\n      padding: 18px;\n      font-size: 15px;\n      text-align: center;\n      animation: slideInUp 0.3s ease-out;\n    }\n  </style>\n\n  <div class="onboarding-container">\n    <button id="closeSetupModal" class="modal-close-btn">×</button>\n\n    <div class="modal-header">\n      <h2 class="modal-title">\n        ${t ? "Analytics Dashboard" : "Connect Your Channel"}\n      </h2>\n      <p class="modal-subtitle">\n        ${t ? "Manage and monitor all your platform connections" : "Link your YouTube account to access real-time analytics and performance insights"}\n      </p>\n    </div>\n\n    <div class="modal-section">\n      <h3 class="section-title">Connected Platforms</h3>\n      <div id="platformsList"></div>\n    </div>\n\n    ${!t ? `\n    <div class="modal-section">\n      <h3 class="section-title">Features You'll Unlock</h3>\n      <ul class="features-list">\n        <li class="feature-item">\n          <span class="checkmark">✓</span>\n          Live analytics streaming directly from your YouTube channel\n        </li>\n        <li class="feature-item">\n          <span class="checkmark">✓</span>\n          Comprehensive view tracking across daily, weekly, and monthly periods\n        </li>\n        <li class="feature-item">\n          <span class="checkmark">✓</span>\n          Detailed subscriber growth and revenue analytics\n        </li>\n        <li class="feature-item">\n          <span class="checkmark">✓</span>\n          Cross-platform performance comparison and insights\n        </li>\n      </ul>\n    </div>\n\n    <button id="connectYouTubeBtn" class="connect-btn">\n      Connect YouTube Channel\n    </button>\n\n    <p class="security-note">\n      Your data is protected with industry-standard OAuth 2.0 authentication. We never store your password.\n    </p>\n    ` : ""}\n\n    <div id="setupNotification" class="setup-notification"></div>\n  </div>\n`;
-    document.body.appendChild(n);
+    const t = document.createElement("div");
+    t.id = "setupModal";
+    t.style.cssText = `\n            position: fixed;\n            top: 0;\n            left: 0;\n            right: 0;\n            bottom: 0;\n            background: rgba(0,0,0,0.6);\n            backdrop-filter: blur(5px);\n            display: flex;\n            justify-content: center;\n            align-items: center;\n            z-index: 10000;\n            padding: 20px;\n        `;
+    const n = this.connections.youtube?.connected;
+    t.innerHTML = `\n  <style>\n    :root {\n      --modal-bg: #ffffff;\n      --modal-card-bg: #fff8f3;\n      --modal-text-primary: #1a1a1a;\n      --modal-text-secondary: #5a5a5a;\n      --modal-text-tertiary: #8a8a8a;\n      --modal-border: #f5e6d3;\n      --modal-accent: #ff7a56;\n      --modal-accent-hover: #ff6542;\n      --modal-shadow: 0 20px 60px rgba(255, 122, 86, 0.12);\n    }\n\n    :root.dark {\n      --modal-bg: #1a1a1a;\n      --modal-card-bg: #2d2520;\n      --modal-text-primary: #f5f5f5;\n      --modal-text-secondary: #c9c9c9;\n      --modal-text-tertiary: #8a8a8a;\n      --modal-border: #3d3530;\n      --modal-accent: #ff8c66;\n      --modal-accent-hover: #ff7a56;\n      --modal-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);\n    }\n\n    @keyframes modalFadeIn {\n      from {\n        opacity: 0;\n        transform: scale(0.95) translateY(-10px);\n      }\n      to {\n        opacity: 1;\n        transform: scale(1) translateY(0);\n      }\n    }\n\n    @keyframes modalFadeOut {\n      from {\n        opacity: 1;\n        transform: scale(1) translateY(0);\n      }\n      to {\n        opacity: 0;\n        transform: scale(0.95) translateY(-10px);\n      }\n    }\n\n    @keyframes slideInUp {\n      from {\n        opacity: 0;\n        transform: translateY(10px);\n      }\n      to {\n        opacity: 1;\n        transform: translateY(0);\n      }\n    }\n\n    @keyframes checkmarkPop {\n      0% {\n        opacity: 0;\n        transform: scale(0.8);\n      }\n      50% {\n        transform: scale(1.1);\n      }\n      100% {\n        opacity: 1;\n        transform: scale(1);\n      }\n    }\n\n    .onboarding-container {\n      background: var(--modal-bg);\n      box-shadow: var(--modal-shadow);\n      border: 2px solid var(--modal-border);\n      overflow: hidden;\n      width: 100%;\n      max-width: 850px;\n      padding: 70px 80px;\n      position: relative;\n      max-height: 85vh;\n      overflow-y: auto;\n      animation: modalFadeIn 0.3s ease-out;\n    }\n\n    .onboarding-container.closing {\n      animation: modalFadeOut 0.3s ease-out forwards;\n    }\n\n    .modal-close-btn {\n      position: absolute;\n      top: 28px;\n      right: 28px;\n      background: none;\n      border: none;\n      font-size: 32px;\n      cursor: pointer;\n      color: var(--modal-text-tertiary);\n      width: 44px;\n      height: 44px;\n      display: flex;\n      align-items: center;\n      justify-content: center;\n      transition: all 0.2s ease;\n    }\n\n    .modal-close-btn:hover {\n      background: var(--modal-card-bg);\n      color: var(--modal-text-primary);\n    }\n\n    .modal-header {\n      text-align: center;\n      margin-bottom: 50px;\n      animation: slideInUp 0.4s ease-out 0.1s both;\n    }\n\n    .modal-title {\n      font-size: 36px;\n      margin: 0 0 14px;\n      color: var(--modal-text-primary);\n      font-weight: 700;\n      letter-spacing: -0.02em;\n    }\n\n    .modal-subtitle {\n      color: var(--modal-text-secondary);\n      font-size: 16px;\n      margin: 0;\n      line-height: 1.6;\n    }\n\n    .modal-section {\n      background: var(--modal-card-bg);\n      padding: 32px;\n      margin-bottom: 28px;\n      border: 2px solid var(--modal-border);\n      animation: slideInUp 0.4s ease-out 0.2s both;\n      transition: all 0.2s ease;\n    }\n\n    .modal-section:hover {\n      border-color: var(--modal-accent);\n    }\n\n    .section-title {\n      margin: 0 0 20px;\n      color: var(--modal-text-primary);\n      font-size: 18px;\n      font-weight: 600;\n      letter-spacing: -0.01em;\n    }\n\n    .features-list {\n      list-style: none;\n      padding: 0;\n      margin: 0;\n    }\n\n    .feature-item {\n      margin-bottom: 16px;\n      color: var(--modal-text-secondary);\n      display: flex;\n      align-items: center;\n      font-size: 15px;\n      line-height: 1.7;\n      animation: slideInUp 0.4s ease-out both;\n    }\n\n    .feature-item:nth-child(1) { animation-delay: 0.3s; }\n    .feature-item:nth-child(2) { animation-delay: 0.35s; }\n    .feature-item:nth-child(3) { animation-delay: 0.4s; }\n    .feature-item:nth-child(4) { animation-delay: 0.45s; }\n\n    .feature-item:last-child {\n      margin-bottom: 0;\n    }\n\n    .checkmark {\n      display: inline-flex;\n      align-items: center;\n      justify-content: center;\n      min-width: 24px;\n      height: 24px;\n      background: var(--modal-accent);\n      margin-right: 14px;\n      color: white;\n      font-size: 12px;\n      font-weight: 700;\n      animation: checkmarkPop 0.4s ease-out both;\n    }\n\n    .feature-item:nth-child(1) .checkmark { animation-delay: 0.3s; }\n    .feature-item:nth-child(2) .checkmark { animation-delay: 0.35s; }\n    .feature-item:nth-child(3) .checkmark { animation-delay: 0.4s; }\n    .feature-item:nth-child(4) .checkmark { animation-delay: 0.45s; }\n\n    .connect-btn {\n      width: 100%;\n      padding: 18px 24px;\n      background: var(--modal-accent);\n      color: white;\n      border: none;\n      font-size: 16px;\n      font-weight: 600;\n      cursor: pointer;\n      transition: all 0.2s ease;\n      margin-bottom: 16px;\n      animation: slideInUp 0.4s ease-out 0.5s both;\n      position: relative;\n      overflow: hidden;\n      letter-spacing: 0.01em;\n    }\n\n    .connect-btn::before {\n      content: '';\n      position: absolute;\n      top: 0;\n      left: -100%;\n      width: 100%;\n      height: 100%;\n      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);\n      transition: left 0.5s ease;\n    }\n\n    .connect-btn:hover::before {\n      left: 100%;\n    }\n\n    .connect-btn:hover {\n      background: var(--modal-accent-hover);\n      transform: translateY(-2px);\n      box-shadow: 0 6px 20px rgba(255, 122, 86, 0.3);\n    }\n\n    .connect-btn:active {\n      transform: translateY(0);\n    }\n\n    .security-note {\n      text-align: center;\n      color: var(--modal-text-tertiary);\n      font-size: 13px;\n      margin: 0;\n      animation: slideInUp 0.4s ease-out 0.55s both;\n      line-height: 1.5;\n    }\n\n    .setup-notification {\n      display: none;\n      margin-top: 24px;\n      padding: 18px;\n      font-size: 15px;\n      text-align: center;\n      animation: slideInUp 0.3s ease-out;\n    }\n  </style>\n\n  <div class="onboarding-container">\n    <button id="closeSetupModal" class="modal-close-btn">×</button>\n\n    <div class="modal-header">\n      <h2 class="modal-title">\n        ${n ? "Analytics Dashboard" : "Connect Your Channel"}\n      </h2>\n      <p class="modal-subtitle">\n        ${n ? "Manage and monitor all your platform connections" : "Link your YouTube account to access real-time analytics and performance insights"}\n      </p>\n    </div>\n\n    <div class="modal-section">\n      <h3 class="section-title">Connected Platforms</h3>\n      <div id="platformsList"></div>\n    </div>\n\n    ${!n ? `\n    <div class="modal-section">\n      <h3 class="section-title">Features You'll Unlock</h3>\n      <ul class="features-list">\n        <li class="feature-item">\n          <span class="checkmark">✓</span>\n          Live analytics streaming directly from your YouTube channel\n        </li>\n        <li class="feature-item">\n          <span class="checkmark">✓</span>\n          Comprehensive view tracking across daily, weekly, and monthly periods\n        </li>\n        <li class="feature-item">\n          <span class="checkmark">✓</span>\n          Detailed subscriber growth and revenue analytics\n        </li>\n        <li class="feature-item">\n          <span class="checkmark">✓</span>\n          Cross-platform performance comparison and insights\n        </li>\n      </ul>\n    </div>\n\n    <button id="connectYouTubeBtn" class="connect-btn">\n      Connect YouTube Channel\n    </button>\n\n    <p class="security-note">\n      Your data is protected with industry-standard OAuth 2.0 authentication. We never store your password.\n    </p>\n    ` : ""}\n\n    <div id="setupNotification" class="setup-notification"></div>\n  </div>\n`;
+    document.body.appendChild(t);
     this.populatePlatformsList();
     document.getElementById("closeSetupModal").addEventListener("click", () => {
-      const e = n.querySelector(".onboarding-container");
+      const e = t.querySelector(".onboarding-container");
       if (e) e.classList.add("closing");
-      setTimeout(() => n.remove(), 300);
+      setTimeout(() => t.remove(), 300);
     });
-    if (!t) {
+    if (!n) {
       document.getElementById("connectYouTubeBtn").addEventListener("click", () => {
         this.initiateYouTubeAuth();
       });
     }
-    n.addEventListener("click", e => {
-      if (e.target === n) {
-        const e = n.querySelector(".onboarding-container");
+    t.addEventListener("click", e => {
+      if (e.target === t) {
+        const e = t.querySelector(".onboarding-container");
         if (e) e.classList.add("closing");
-        setTimeout(() => n.remove(), 300);
+        setTimeout(() => t.remove(), 300);
       }
     });
   }
@@ -411,21 +423,21 @@ class SetupModal {
     return e;
   }
   showSuccess(e) {
-    const n = document.getElementById("setupNotification");
-    if (n) {
-      n.textContent = e;
-      n.style.display = "block";
-      n.style.background = "#d4edda";
-      n.style.color = "#155724";
+    const t = document.getElementById("setupNotification");
+    if (t) {
+      t.textContent = e;
+      t.style.display = "block";
+      t.style.background = "#d4edda";
+      t.style.color = "#155724";
     }
   }
   showError(e) {
-    const n = document.getElementById("setupNotification");
-    if (n) {
-      n.textContent = e;
-      n.style.display = "block";
-      n.style.background = "#f8d7da";
-      n.style.color = "#721c24";
+    const t = document.getElementById("setupNotification");
+    if (t) {
+      t.textContent = e;
+      t.style.display = "block";
+      t.style.background = "#f8d7da";
+      t.style.color = "#721c24";
     }
   }
 }
@@ -477,8 +489,8 @@ function handleUpgradeCardVisibility() {
   let e = window.tier || localStorage.getItem("userTier") || localStorage.getItem("tier");
   if (!e) {
     try {
-      const n = JSON.parse(localStorage.getItem("currentUser") || "{}");
-      e = n.plan;
+      const t = JSON.parse(localStorage.getItem("currentUser") || "{}");
+      e = t.plan;
     } catch (e) {}
   }
   async function fetchAndManageUpgradeCards() {
@@ -487,20 +499,20 @@ function handleUpgradeCardVisibility() {
       if (!e || typeof e !== "object" || !e.plan) {
         throw new Error("Invalid response structure");
       }
-      const n = [ "free", "prime", "elite", "basic" ];
-      const t = typeof e.plan === "string" && n.includes(e.plan.toLowerCase()) ? e.plan.toLowerCase() : "free";
+      const t = [ "free", "prime", "elite", "basic" ];
+      const n = typeof e.plan === "string" && t.includes(e.plan.toLowerCase()) ? e.plan.toLowerCase() : "free";
       const o = document.querySelector(".premium-card");
-      const a = document.querySelectorAll(".upgrade-unlock-card");
-      const i = document.querySelector(".upgrade-container");
-      if (t === "elite" || t === "prime") {
-        if (i) {
-          i.style.display = "none !important";
-          i.style.visibility = "hidden";
-          i.style.height = "0";
-          i.style.overflow = "hidden";
-          i.style.padding = "0";
-          i.style.margin = "0";
-          i.classList.add("hidden-permanently");
+      const i = document.querySelectorAll(".upgrade-unlock-card");
+      const a = document.querySelector(".upgrade-container");
+      if (n === "elite" || n === "prime") {
+        if (a) {
+          a.style.display = "none !important";
+          a.style.visibility = "hidden";
+          a.style.height = "0";
+          a.style.overflow = "hidden";
+          a.style.padding = "0";
+          a.style.margin = "0";
+          a.classList.add("hidden-permanently");
         }
         if (o) {
           o.style.display = "none";
@@ -511,36 +523,36 @@ function handleUpgradeCardVisibility() {
           o.style.overflow = "hidden";
           o.style.pointerEvents = "none";
         }
-        a.forEach((e, n) => {
+        i.forEach((e, t) => {
           e.style.display = "none";
           e.style.visibility = "hidden";
           e.style.height = "0";
           e.style.overflow = "hidden";
         });
-      } else if (t === "free" || t === "basic") {
-        if (i) {
-          i.classList.remove("hidden-permanently");
-          i.style.visibility = "visible";
-          i.style.height = "auto";
-          i.style.overflow = "visible";
-          i.style.padding = "20px";
-          i.style.margin = "40px 0 0 0";
+      } else if (n === "free" || n === "basic") {
+        if (a) {
+          a.classList.remove("hidden-permanently");
+          a.style.visibility = "visible";
+          a.style.height = "auto";
+          a.style.overflow = "visible";
+          a.style.padding = "20px";
+          a.style.margin = "40px 0 0 0";
         }
-        if (t === "basic" && o) {
+        if (n === "basic" && o) {
           o.style.display = "flex";
           o.style.visibility = "visible";
           const e = o.querySelector(".card-content");
           if (e && e.querySelector("h2")) {
             e.querySelector("h2").textContent = "Unlock Even More Power?";
-            const n = e.querySelector(".card-subtitle") || document.createElement("p");
+            const t = e.querySelector(".card-subtitle") || document.createElement("p");
             if (!e.querySelector(".card-subtitle")) {
-              n.className = "card-subtitle";
-              n.style.cssText = "font-size: 14px; color: #666; margin-top: 8px; margin-bottom: 16px;";
-              e.insertBefore(n, e.querySelector(".features-list"));
+              t.className = "card-subtitle";
+              t.style.cssText = "font-size: 14px; color: #666; margin-top: 8px; margin-bottom: 16px;";
+              e.insertBefore(t, e.querySelector(".features-list"));
             }
-            n.textContent = "Upgrade to Prime or Elite for unlimited access, advanced automation, and exclusive features.";
+            t.textContent = "Upgrade to Prime or Elite for unlimited access, advanced automation, and exclusive features.";
           }
-        } else if (t === "free" && o) {
+        } else if (n === "free" && o) {
           o.style.display = "flex";
           o.style.visibility = "visible";
           const e = o.querySelector(".card-content");
@@ -548,7 +560,7 @@ function handleUpgradeCardVisibility() {
             e.querySelector("h2").textContent = "Reveal Your Earning Potential";
           }
         }
-        a.forEach((e, n) => {
+        i.forEach((e, t) => {
           e.style.display = "flex";
           e.style.visibility = "visible";
           e.style.height = "auto";
@@ -557,8 +569,8 @@ function handleUpgradeCardVisibility() {
       }
     } catch (e) {
       console.error("Error fetching user plan for card management:", e);
-      const n = document.querySelectorAll(".upgrade-unlock-card");
-      n.forEach(e => {
+      const t = document.querySelectorAll(".upgrade-unlock-card");
+      t.forEach(e => {
         e.style.display = "flex";
         e.style.visibility = "visible";
       });

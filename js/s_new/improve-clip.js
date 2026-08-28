@@ -143,9 +143,94 @@
       return true;
     }
   }
+  async function runImproveApi(i) {
+    const r = getProjectId();
+    if (!r) {
+      showNote("Open a library clip first");
+      return;
+    }
+    t = true;
+    const o = $("previewImproveBtn");
+    if (o) o.classList.add("is-working");
+    try {
+      showNote("Improving…");
+      if (!Array.isArray(i)) i = [];
+      let t = null;
+      try {
+        const e = window.PreviewTimeline?.getActiveEditRange?.();
+        if (e && e.segIndex != null && Number.isFinite(e.start) && Number.isFinite(e.end)) {
+          t = {
+            start: Number(e.start.toFixed(3)),
+            end: Number(e.end.toFixed(3))
+          };
+        }
+      } catch (e) {}
+      const o = await fetch(`${apiBase()}/clips/projects/${encodeURIComponent(r)}/improve`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          ...authHeaders()
+        },
+        body: JSON.stringify({
+          silence_cuts: i.map(e => ({
+            start: Number(Number(e.start).toFixed(3)),
+            end: Number(Number(e.end).toFixed(3))
+          })),
+          ...t ? {
+            edit_range: t
+          } : {}
+        })
+      });
+      const n = await o.json().catch(() => ({}));
+      if (!o.ok) {
+        const e = n?.error_code || "";
+        if (e === "NOTHING_TO_IMPROVE") {
+          showNote(n?.error || "Already tight — nothing to improve");
+          return;
+        }
+        if (e === "DAILY_LIMIT_REACHED" || e === "MONTHLY_LIMIT_REACHED" || o.status === 429) {
+          showOutOfUploadsUpgrade();
+          return;
+        }
+        showNote(n?.error || "Couldn’t improve yet");
+        return;
+      }
+      e = true;
+      setButtonState();
+      await reloadImprovedPreview(r);
+      try {
+        if (window.clipsStudio?.refreshQuotaAfterApply) {
+          await window.clipsStudio.refreshQuotaAfterApply(n);
+        }
+      } catch (e) {}
+      const s = Number(n?.removed_sec);
+      const a = Boolean(n?.boundaries_fixed || n?.edge_trimmed);
+      const l = Boolean(n?.captions_fixed);
+      if (l && a && Number.isFinite(s) && s > 0) {
+        showNote(`Cuts + captions retuned · −${s.toFixed(1)}s (1 upload)`);
+      } else if (a && Number.isFinite(s) && s > 0) {
+        showNote(`Cuts sharpened · removed ${s.toFixed(1)}s (1 upload)`);
+      } else if (Number.isFinite(s) && s > 0) {
+        showNote(`Improved — removed ${s.toFixed(1)}s (1 upload)`);
+      } else if (l) {
+        showNote("Captions retuned (1 upload)");
+      } else if (a) {
+        showNote("Cut boundaries sharpened (1 upload)");
+      } else {
+        showNote("Clip improved (1 upload)");
+      }
+    } catch (e) {
+      showNote("Couldn’t improve yet");
+    } finally {
+      t = false;
+      if (o) o.classList.remove("is-working");
+    }
+  }
   async function applyImprove() {
     if (t || e) return;
     if (!isLibraryPreview()) return;
+    if (window.SolisSilenceCutSuggest?.isOpen?.()) return;
     const i = getProjectId();
     if (!i) {
       showNote("Open a library clip first");
@@ -160,82 +245,27 @@
     const o = $("previewImproveBtn");
     if (o) o.classList.add("is-working");
     try {
-      showNote("Improving…");
-      const t = window.SolisSilencer;
-      let r = [];
-      if (typeof t?.detectCuts === "function") {
-        r = await t.detectCuts();
-      } else if (typeof t?.isApplied === "function" && t.isApplied()) {
-        r = t.getCuts?.() || [];
+      const e = window.SolisSilencer;
+      let t = [];
+      if (typeof e?.detectCuts === "function") {
+        t = await e.detectCuts();
+      } else if (typeof e?.isApplied === "function" && e.isApplied()) {
+        t = e.getCuts?.() || [];
       }
-      if (!Array.isArray(r)) r = [];
-      let o = null;
-      try {
-        const e = window.PreviewTimeline?.getActiveEditRange?.();
-        if (e && e.segIndex != null && Number.isFinite(e.start) && Number.isFinite(e.end)) {
-          o = {
-            start: Number(e.start.toFixed(3)),
-            end: Number(e.end.toFixed(3))
-          };
-        }
-      } catch (e) {}
-      const n = await fetch(`${apiBase()}/clips/projects/${encodeURIComponent(i)}/improve`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-          ...authHeaders()
+      if (!Array.isArray(t)) t = [];
+      const i = t.reduce((e, t) => e + Math.max(0, Number(t.end) - Number(t.start)), 0);
+      const r = i > 0 ? `Red = ~${i.toFixed(1)}s to trim · Improve uses 1 upload` : "Improve clip boundaries · uses 1 upload";
+      window.SolisSilenceCutSuggest?.show({
+        source: "improve",
+        regions: t,
+        label: r,
+        onAccept: e => {
+          runImproveApi(e);
         },
-        body: JSON.stringify({
-          silence_cuts: r.map(e => ({
-            start: Number(Number(e.start).toFixed(3)),
-            end: Number(Number(e.end).toFixed(3))
-          })),
-          ...o ? {
-            edit_range: o
-          } : {}
-        })
+        onReject: () => {
+          showNote("Improve dismissed");
+        }
       });
-      const s = await n.json().catch(() => ({}));
-      if (!n.ok) {
-        const e = s?.error_code || "";
-        if (e === "NOTHING_TO_IMPROVE") {
-          showNote(s?.error || "Already tight — nothing to improve");
-          return;
-        }
-        if (e === "DAILY_LIMIT_REACHED" || e === "MONTHLY_LIMIT_REACHED" || n.status === 429) {
-          showOutOfUploadsUpgrade();
-          return;
-        }
-        showNote(s?.error || "Couldn’t improve yet");
-        return;
-      }
-      e = true;
-      setButtonState();
-      await reloadImprovedPreview(i);
-      try {
-        if (window.clipsStudio?.refreshQuotaAfterApply) {
-          await window.clipsStudio.refreshQuotaAfterApply(s);
-        }
-      } catch (e) {}
-      const a = Number(s?.removed_sec);
-      const l = Boolean(s?.boundaries_fixed || s?.edge_trimmed);
-      const c = Boolean(s?.captions_fixed);
-      if (c && l && Number.isFinite(a) && a > 0) {
-        showNote(`Cuts + captions retuned · −${a.toFixed(1)}s (1 upload)`);
-      } else if (l && Number.isFinite(a) && a > 0) {
-        showNote(`Cuts sharpened · removed ${a.toFixed(1)}s (1 upload)`);
-      } else if (Number.isFinite(a) && a > 0) {
-        showNote(`Improved — removed ${a.toFixed(1)}s (1 upload)`);
-      } else if (c) {
-        showNote("Captions retuned (1 upload)");
-      } else if (l) {
-        showNote("Cut boundaries sharpened (1 upload)");
-      } else {
-        showNote("Clip improved (1 upload)");
-      }
-    } catch (e) {
-      showNote("Couldn’t improve yet");
     } finally {
       t = false;
       if (o) o.classList.remove("is-working");
@@ -253,6 +283,9 @@
   function resetImprove() {
     e = false;
     t = false;
+    try {
+      window.SolisSilenceCutSuggest?.clear?.();
+    } catch (e) {}
     const i = $("previewImproveBtn");
     if (i) i.classList.remove("is-working", "is-improved", "active");
     setButtonState();

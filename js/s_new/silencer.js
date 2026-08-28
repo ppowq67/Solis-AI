@@ -252,6 +252,36 @@
     } catch (e) {}
     return i;
   }
+  async function commitSilencer(e) {
+    if (!e.length) return;
+    const t = getTimedWords();
+    s = totalRemoved(e);
+    c = t ? t.map(e => ({
+      ...e
+    })) : null;
+    window.PreviewTimeline.setSkipRegions(e);
+    if (t && typeof window.setLiveCaptionTimedWords === "function") {
+      const i = remapCaptionsForCuts(t, e);
+      window.setLiveCaptionTimedWords(i);
+    }
+    o = true;
+    setButtonState();
+    markDirty();
+    const i = window.PreviewTimeline?.getActiveEditRange?.();
+    const n = i && i.segIndex != null;
+    showNote(n ? `Removed ${formatRemoved(s)}s silence in block ${i.segIndex + 1}` : `Removed ${formatRemoved(s)}s of silence`);
+    const r = getPreviewVideo();
+    if (r) {
+      try {
+        const e = r.currentTime || 0;
+        const t = window.PreviewTimeline.resolveSkipTime?.(e);
+        if (t != null && Math.abs(t - e) > .05) {
+          r.currentTime = t;
+        }
+        r.play().catch(() => {});
+      } catch (e) {}
+    }
+  }
   async function applySilencer() {
     if (l || o) return;
     if (!isLibraryPreview()) return;
@@ -259,6 +289,7 @@
       showNote("Preview not ready yet");
       return;
     }
+    if (window.SolisSilenceCutSuggest?.isOpen?.()) return;
     l = true;
     const e = $("previewSilencerBtn");
     if (e) e.classList.add("is-working");
@@ -268,33 +299,20 @@
         showNote("No long pauses found");
         return;
       }
-      const t = getTimedWords();
-      s = totalRemoved(e);
-      c = t ? t.map(e => ({
-        ...e
-      })) : null;
-      window.PreviewTimeline.setSkipRegions(e);
-      if (t && typeof window.setLiveCaptionTimedWords === "function") {
-        const i = remapCaptionsForCuts(t, e);
-        window.setLiveCaptionTimedWords(i);
-      }
-      o = true;
-      setButtonState();
-      markDirty();
-      const i = window.PreviewTimeline?.getActiveEditRange?.();
-      const n = i && i.segIndex != null;
-      showNote(n ? `Removed ${formatRemoved(s)}s silence in block ${i.segIndex + 1}` : `Removed ${formatRemoved(s)}s of silence`);
-      const r = getPreviewVideo();
-      if (r) {
-        try {
-          const e = r.currentTime || 0;
-          const t = window.PreviewTimeline.resolveSkipTime?.(e);
-          if (t != null && Math.abs(t - e) > .05) {
-            r.currentTime = t;
-          }
-          r.play().catch(() => {});
-        } catch (e) {}
-      }
+      const t = window.PreviewTimeline?.getActiveEditRange?.();
+      const i = t && t.segIndex != null;
+      const n = formatRemoved(totalRemoved(e));
+      window.SolisSilenceCutSuggest?.show({
+        source: "silencer",
+        regions: e,
+        label: i ? `Red = ${n}s silence in block ${t.segIndex + 1} · Accept?` : `Red = ${n}s silence · Accept?`,
+        onAccept: e => {
+          commitSilencer(e);
+        },
+        onReject: () => {
+          showNote("Silence cleanup dismissed");
+        }
+      });
     } finally {
       l = false;
       if (e) e.classList.remove("is-working");
@@ -302,6 +320,9 @@
   }
   function undoSilencer() {
     if (!o) return;
+    try {
+      window.SolisSilenceCutSuggest?.clear?.();
+    } catch (e) {}
     if (window.PreviewTimeline?.clearSkipRegions) {
       window.PreviewTimeline.clearSkipRegions();
     }
@@ -317,6 +338,9 @@
     showNote("Silence restored");
   }
   function resetSilencer() {
+    try {
+      window.SolisSilenceCutSuggest?.clear?.();
+    } catch (e) {}
     if (window.PreviewTimeline?.clearSkipRegions) {
       window.PreviewTimeline.clearSkipRegions();
     }

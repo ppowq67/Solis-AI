@@ -27,7 +27,7 @@ const GENERATION_TASK_PIPELINES = {
   }, {
     id: "export",
     label: "Exporting",
-    keywords: [ "encoding final", "finaliz", "final touch", "watermark", "adding caption", "exporting" ],
+    keywords: [ "encoding final", "finaliz", "final touch", "watermark", "adding caption", "exporting", "uploading to storage" ],
     maxProgress: 100
   } ],
   splitscreen: [ {
@@ -58,7 +58,7 @@ const GENERATION_TASK_PIPELINES = {
   }, {
     id: "export",
     label: "Exporting",
-    keywords: [ "encoding final", "finaliz", "final touch", "watermark", "adding caption", "exporting" ],
+    keywords: [ "encoding final", "finaliz", "final touch", "watermark", "adding caption", "exporting", "uploading to storage" ],
     maxProgress: 100
   } ],
   library_apply: [ {
@@ -124,8 +124,13 @@ class GenerationProgressSpinner {
     this._libraryRefreshQueued = false;
     this.showQueueWaitTask = false;
     this.genStageOpen = false;
+    this._completeSoundUnlocked = false;
+    this._completeSoundPlayedFor = new Set;
+    this._completeAudio = null;
+    this._audioCtx = null;
     this._ensureDomRefs();
     this._bindPanelEvents();
+    this._bindSoundUnlock();
     this._restoreFromLocalStorageImmediate();
     this.startPolling();
     if (typeof solisWSClient !== "undefined" && solisWSClient !== null) {
@@ -290,15 +295,15 @@ class GenerationProgressSpinner {
   _setActivePipeline(e, t = {}) {
     const s = this._normalizeTemplateId(e);
     const i = this.activeTemplateId;
-    const r = JSON.stringify(this.activeTemplateOptions || {});
-    const n = {
+    const n = JSON.stringify(this.activeTemplateOptions || {});
+    const r = {
       ...this.activeTemplateOptions || {},
       ...t || {}
     };
-    const a = JSON.stringify(n);
+    const o = JSON.stringify(r);
     this.activeTemplateId = s;
-    this.activeTemplateOptions = n;
-    if (i !== s || r !== a) {
+    this.activeTemplateOptions = r;
+    if (i !== s || n !== o) {
       this.tasksInitialized = false;
       this.tasksIntroPlayed = false;
       this._resetTaskVisibility();
@@ -341,8 +346,8 @@ class GenerationProgressSpinner {
     if (!e) return;
     const s = t ? this._getTemplateMeta(t) : null;
     const i = e.templateId || s?.templateId || this.activeTemplateId;
-    const r = e.templateOptions && Object.keys(e.templateOptions).length ? e.templateOptions : s?.options || this.activeTemplateOptions || {};
-    this._setActivePipeline(i, r);
+    const n = e.templateOptions && Object.keys(e.templateOptions).length ? e.templateOptions : s?.options || this.activeTemplateOptions || {};
+    this._setActivePipeline(i, n);
   }
   _isFailureStatus(e) {
     const t = (e || "").toLowerCase();
@@ -455,14 +460,14 @@ class GenerationProgressSpinner {
     if (!t) return;
     const s = Date.now();
     const i = t._lastProgressAt || t.startTime || s;
-    const r = t._lastProgressValue ?? t.progress ?? 0;
-    const n = s - i >= this.STUCK_PROGRESS_MS;
-    const a = t._pollMisses || 0;
-    if (n && t.progress < 100 && t.progress === r) {
+    const n = t._lastProgressValue ?? t.progress ?? 0;
+    const r = s - i >= this.STUCK_PROGRESS_MS;
+    const o = t._pollMisses || 0;
+    if (r && t.progress < 100 && t.progress === n) {
       this._showStuckBanner();
       return;
     }
-    if (a >= 2) {
+    if (o >= 2) {
       this._showStuckBanner();
     }
   }
@@ -471,8 +476,8 @@ class GenerationProgressSpinner {
     const t = Date.now();
     const s = e._lastProgressAt || e.startTime || t;
     const i = t - s;
-    const r = e.progress ?? 0;
-    if (r < 15 && t - (e.startTime || t) < this.GPU_WARMUP_FAIL_MS) {
+    const n = e.progress ?? 0;
+    if (n < 15 && t - (e.startTime || t) < this.GPU_WARMUP_FAIL_MS) {
       return false;
     }
     return i >= this.STUCK_FAIL_MS || (e._pollMisses || 0) >= 16;
@@ -604,114 +609,114 @@ class GenerationProgressSpinner {
     const s = this._getActiveTasks();
     const i = s.findIndex(e => e.id === "wait");
     if (i < 0) return;
-    const r = document.getElementById(`generation-task-${i}`);
-    const n = r?.querySelector(".generation-task-label");
-    const a = r?.querySelector(".generation-task-hint");
-    if (!n) return;
+    const n = document.getElementById(`generation-task-${i}`);
+    const r = n?.querySelector(".generation-task-label");
+    const o = n?.querySelector(".generation-task-hint");
+    if (!r) return;
     if (this._isQueueWaitingMessage(e) || t?.queue_status === "waiting") {
       const {label: s, hint: i} = this._queueLabelForInfo(e, t);
-      n.textContent = s;
-      if (a) {
+      r.textContent = s;
+      if (o) {
         if (i) {
-          a.hidden = false;
-          a.textContent = i;
+          o.hidden = false;
+          o.textContent = i;
         } else {
-          a.hidden = true;
-          a.textContent = "";
+          o.hidden = true;
+          o.textContent = "";
         }
       }
-      r.classList.add("is-waiting");
-      r.classList.toggle("is-priority-lane", !i);
-      r.classList.toggle("is-free-lane", Boolean(i));
+      n.classList.add("is-waiting");
+      n.classList.toggle("is-priority-lane", !i);
+      n.classList.toggle("is-free-lane", Boolean(i));
     } else {
-      n.textContent = s[i].label;
-      if (a) {
-        a.hidden = true;
-        a.textContent = "";
+      r.textContent = s[i].label;
+      if (o) {
+        o.hidden = true;
+        o.textContent = "";
       }
-      r.classList.remove("is-waiting", "is-priority-lane", "is-free-lane");
+      n.classList.remove("is-waiting", "is-priority-lane", "is-free-lane");
     }
   }
   _resolveTaskIndex(e, t = "") {
     const s = this._getActiveTasks();
     if (!s.length) return 0;
     const i = (t || "").toLowerCase();
-    const r = Math.max(0, Math.min(100, Number(e) || 0));
-    if (r >= 100 || i.includes("processing complete") || i.includes("video ready")) {
+    const n = Math.max(0, Math.min(100, Number(e) || 0));
+    if (n >= 100 || i.includes("processing complete") || i.includes("video ready")) {
       return s.length - 1;
     }
     if (this.showQueueWaitTask && this._isQueueWaitingMessage(i)) {
       const e = s.findIndex(e => e.id === "wait");
       return e >= 0 ? e : 0;
     }
-    let n = -1;
+    let r = -1;
     for (let e = s.length - 1; e >= 0; e--) {
       const t = s[e];
       if (t.id === "wait") continue;
       if (!(t.keywords || []).some(e => i.includes(e))) continue;
-      const a = e > 0 ? Number(s[e - 1].maxProgress) : 0;
-      const o = e <= 1 || r >= Math.max(0, a - 8);
-      if (!o) continue;
-      n = e;
+      const o = e > 0 ? Number(s[e - 1].maxProgress) : 0;
+      const a = e <= 1 || n >= Math.max(0, o - 8);
+      if (!a) continue;
+      r = e;
       break;
     }
-    let a = 0;
+    let o = 0;
     for (let e = 0; e < s.length; e++) {
       const t = s[e];
       if (t.id === "wait" && !this.showQueueWaitTask) continue;
       const i = Number(t.maxProgress);
-      a = e;
-      if (Number.isFinite(i) && r <= i) break;
+      o = e;
+      if (Number.isFinite(i) && n <= i) break;
     }
-    if (n < 0) return a;
-    if (n > a + 1) return a;
-    return Math.max(n, a);
+    if (r < 0) return o;
+    if (r > o + 1) return o;
+    return Math.max(r, o);
   }
   _updateTaskStates(e, t = "", s = null) {
     this._ensureTaskList();
     const i = this._getActiveTasks();
-    const r = this.showQueueWaitTask;
-    let n = this._resolveTaskIndex(e, t);
-    if (r) {
+    const n = this.showQueueWaitTask;
+    let r = this._resolveTaskIndex(e, t);
+    if (n) {
       const e = i.findIndex(e => e.id === "wait");
-      n = e >= 0 ? e : 0;
-      this.currentTaskIndex = n;
+      r = e >= 0 ? e : 0;
+      this.currentTaskIndex = r;
     } else if (this.currentTaskIndex >= 0 && e < 100) {
       const t = Math.max(0, Number(e) || 0);
-      if (this.currentTaskIndex > n) {
+      if (this.currentTaskIndex > r) {
         const e = this.currentTaskIndex > 0 ? Number(i[this.currentTaskIndex - 1]?.maxProgress) || 0 : 0;
         if (t + 5 < e) {
-          this.currentTaskIndex = n;
+          this.currentTaskIndex = r;
         } else {
-          n = this.currentTaskIndex;
+          r = this.currentTaskIndex;
         }
       } else {
-        this.currentTaskIndex = n;
+        this.currentTaskIndex = r;
       }
     } else {
-      this.currentTaskIndex = n;
+      this.currentTaskIndex = r;
     }
     i.forEach((t, s) => {
       const i = document.getElementById(`generation-task-${s}`);
       if (!i) return;
-      const a = i.classList.contains("is-active");
-      const o = i.classList.contains("is-done");
+      const o = i.classList.contains("is-active");
+      const a = i.classList.contains("is-done");
       i.classList.remove("is-active", "is-done", "is-failed", "is-waiting", "is-step-pulse");
       if (e >= 100) {
         i.classList.add("is-done");
-      } else if (s < n) {
+      } else if (s < r) {
         i.classList.add("is-done");
-      } else if (s === n) {
+      } else if (s === r) {
         i.classList.add("is-active");
-        if (r) i.classList.add("is-waiting");
-        if (!a && !o) i.classList.add("is-step-pulse");
+        if (n) i.classList.add("is-waiting");
+        if (!o && !a) i.classList.add("is-step-pulse");
       }
-      if (i.classList.contains("is-done") && !o) {
+      if (i.classList.contains("is-done") && !a) {
         i.classList.add("is-check-pop");
       }
     });
     this._updateQueueTaskLabel(t, s);
-    this.completedTaskCount = e >= 100 ? i.length : n;
+    this.completedTaskCount = e >= 100 ? i.length : r;
     this._updateTaskCounter();
   }
   _updateTaskCounter() {
@@ -811,22 +816,63 @@ class GenerationProgressSpinner {
       window.showNotification(`${t} is ready`, "success");
     }
   }
+  _notificationSoundCandidates() {
+    const e = typeof window !== "undefined" && window.location?.origin ? window.location.origin : "";
+    return [ "/assets/notification.mp3", "/frontend/assets/notification.mp3" ].map(t => `${e}${t}`);
+  }
   _ensureCompleteSound() {
     if (this._completeAudio) return this._completeAudio;
     try {
-      const e = new Audio("/assets/notification.mp3");
+      const e = new Audio(this._notificationSoundCandidates()[0]);
       e.preload = "auto";
       e.volume = .75;
+      e.addEventListener("error", () => {
+        const t = this._notificationSoundCandidates();
+        const s = t.indexOf(e.src);
+        const i = t[s + 1];
+        if (i) {
+          e.src = i;
+          e.load();
+        }
+      }, {
+        once: true
+      });
       this._completeAudio = e;
     } catch (e) {
       this._completeAudio = null;
     }
     return this._completeAudio;
   }
+  _bindSoundUnlock() {
+    if (this._soundUnlockBound) return;
+    this._soundUnlockBound = true;
+    const unlock = () => {
+      this._unlockCompleteSound();
+      if (this._completeSoundUnlocked) {
+        document.removeEventListener("pointerdown", unlock, true);
+        document.removeEventListener("keydown", unlock, true);
+      }
+    };
+    document.addEventListener("pointerdown", unlock, true);
+    document.addEventListener("keydown", unlock, true);
+  }
   _unlockCompleteSound() {
     if (this._completeSoundUnlocked) return;
     const e = this._ensureCompleteSound();
-    if (!e) return;
+    const resumeCtx = () => {
+      try {
+        const e = window.AudioContext || window.webkitAudioContext;
+        if (e && !this._audioCtx) this._audioCtx = new e;
+        if (this._audioCtx?.state === "suspended") {
+          this._audioCtx.resume().catch(() => {});
+        }
+      } catch (e) {}
+    };
+    resumeCtx();
+    if (!e) {
+      this._completeSoundUnlocked = true;
+      return;
+    }
     try {
       const t = e.volume;
       e.volume = 0;
@@ -844,42 +890,80 @@ class GenerationProgressSpinner {
           try {
             e.volume = t || .75;
           } catch (e) {}
+          this._completeSoundUnlocked = true;
         });
       } else {
         settle();
       }
-    } catch (e) {}
+    } catch (e) {
+      this._completeSoundUnlocked = true;
+    }
+  }
+  _playSynthCompleteSound() {
+    try {
+      const e = window.AudioContext || window.webkitAudioContext;
+      if (!e) return false;
+      if (!this._audioCtx) this._audioCtx = new e;
+      const t = this._audioCtx;
+      if (t.state === "suspended") {
+        t.resume().catch(() => {});
+      }
+      const s = t.currentTime;
+      const tone = (e, s, i, n = .12) => {
+        const r = t.createOscillator();
+        const o = t.createGain();
+        r.type = "sine";
+        r.frequency.value = e;
+        o.gain.setValueAtTime(0, s);
+        o.gain.linearRampToValueAtTime(n, s + .015);
+        o.gain.exponentialRampToValueAtTime(1e-4, s + i);
+        r.connect(o);
+        o.connect(t.destination);
+        r.start(s);
+        r.stop(s + i + .04);
+      };
+      tone(880, s, .11, .1);
+      tone(1174.66, s + .12, .2, .09);
+      tone(1567.98, s + .28, .22, .07);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+  _playGenerationCompleteSoundOnce(e) {
+    const t = String(e || this._lastKnownProjectId || "_global");
+    if (this._completeSoundPlayedFor.has(t)) return;
+    this._completeSoundPlayedFor.add(t);
+    this._playGenerationCompleteSound();
   }
   _playGenerationCompleteSound() {
-    try {
+    const tryMp3 = () => {
       const e = this._ensureCompleteSound();
-      if (!e) return;
+      if (!e) return Promise.reject(new Error("no audio"));
       e.pause();
       e.currentTime = 0;
       e.volume = .75;
-      const t = e.play();
-      if (t && typeof t.catch === "function") {
-        t.catch(() => {});
-      }
-    } catch (e) {}
+      return e.play();
+    };
+    tryMp3().catch(() => this._playSynthCompleteSound()).catch?.(() => {});
   }
-  restoreGeneration(e, t = 0, s = "Resuming...", i = "processing", r = null, n = null) {
+  restoreGeneration(e, t = 0, s = "Resuming...", i = "processing", n = null, r = null) {
     if (!this._isValidProjectId(e)) return;
     if (this._wasUserCancelled(e)) return;
-    const a = (i || "processing").toLowerCase();
-    if (a === "completed") {
+    const o = (i || "processing").toLowerCase();
+    if (o === "completed") {
       this.completeGeneration(e);
       return;
     }
-    if (a === "error" || a === "failed" || a === "timeout") {
+    if (o === "error" || o === "failed" || o === "timeout") {
       this.removeFromLocalStorage(e);
       this.failGeneration(e, "There was an error — try again");
       return;
     }
-    if (!ACTIVE_GENERATION_STATUSES.has(a)) return;
-    const o = this._getTemplateMeta(e);
-    const l = r || o?.templateId || DEFAULT_PIPELINE_TEMPLATE;
-    const c = n || o?.options || {};
+    if (!ACTIVE_GENERATION_STATUSES.has(o)) return;
+    const a = this._getTemplateMeta(e);
+    const l = n || a?.templateId || DEFAULT_PIPELINE_TEMPLATE;
+    const c = r || a?.options || {};
     if (this.activeGenerations.has(e)) {
       const i = this.activeGenerations.get(e);
       i.progress = Math.max(i.progress, Math.max(0, Math.min(100, t || 0)));
@@ -990,10 +1074,10 @@ class GenerationProgressSpinner {
         }
         if (!ACTIVE_GENERATION_STATUSES.has(i)) continue;
         s.add(t);
-        const r = e.splitscreen_secondary_type ? {
+        const n = e.splitscreen_secondary_type ? {
           secondaryType: e.splitscreen_secondary_type
         } : {};
-        this.restoreGeneration(t, e.progress || 0, e.message || "Processing...", i, e.template_id || e.template || null, r);
+        this.restoreGeneration(t, e.progress || 0, e.message || "Processing...", i, e.template_id || e.template || null, n);
       }
       for (const e of [ ...this.activeGenerations.keys() ]) {
         if (!s.has(e)) {
@@ -1120,45 +1204,45 @@ class GenerationProgressSpinner {
       const {project_id: t, moment_count: s, progress: i} = e;
       if (!this._isValidProjectId(t)) return;
       if (this._wasUserCancelled(t)) return;
-      const r = this._resolveActiveProjectId(t);
-      if (!r) return;
-      this._markWsFresh(r);
-      const n = Math.max(1, 6 - s);
-      const a = `Moment #${n} detected`;
-      this.updateProgress(r, i, a);
+      const n = this._resolveActiveProjectId(t);
+      if (!n) return;
+      this._markWsFresh(n);
+      const r = Math.max(1, 6 - s);
+      const o = `Moment #${r} detected`;
+      this.updateProgress(n, i, o);
     });
     solisWSClient.on("compilation_progress", e => {
       const {project_id: t, progress: s, step: i} = e;
       if (!this._isValidProjectId(t)) return;
       if (this._wasUserCancelled(t)) return;
-      const r = this._resolveActiveProjectId(t);
-      if (!r) return;
-      this._markWsFresh(r);
-      this.updateProgress(r, s, i || "Processing...", true);
+      const n = this._resolveActiveProjectId(t);
+      if (!n) return;
+      this._markWsFresh(n);
+      this.updateProgress(n, s, i || "Processing...", true);
     });
     solisWSClient.on("clips_status_update", e => {
-      const {project_id: t, status: s, progress: i, message: r, queue: n} = e;
+      const {project_id: t, status: s, progress: i, message: n, queue: r} = e;
       if (!this._isValidProjectId(t)) return;
       if (this._wasUserCancelled(t)) {
         const e = (s || "").toLowerCase();
         if (this._isCancelledStatus(e)) {
-          this.stopGeneration(t, r || "Stopped");
+          this.stopGeneration(t, n || "Stopped");
         }
         return;
       }
-      const a = this._resolveActiveProjectId(t) || t;
-      const o = (s || "").toLowerCase();
-      if (o === "completed") {
-        this._ensureCompletedLibraryItem(a, e || {});
-        this.completeGeneration(a);
-      } else if (this._isCancelledStatus(o)) {
-        this.stopGeneration(a, r || "Stopped");
-      } else if (this._isFailureStatus(o)) {
-        this.failGeneration(a, r || "There was an error — try again");
-      } else if (ACTIVE_GENERATION_STATUSES.has(o)) {
+      const o = this._resolveActiveProjectId(t) || t;
+      const a = (s || "").toLowerCase();
+      if (a === "completed") {
+        this._ensureCompletedLibraryItem(o, e || {});
+        this.completeGeneration(o);
+      } else if (this._isCancelledStatus(a)) {
+        this.stopGeneration(o, n || "Stopped");
+      } else if (this._isFailureStatus(a)) {
+        this.failGeneration(o, n || "There was an error — try again");
+      } else if (ACTIVE_GENERATION_STATUSES.has(a)) {
         if (!this._resolveActiveProjectId(t) && !this.activeGenerations.has(t)) return;
-        this._markWsFresh(a);
-        this.updateProgress(a, i ?? 0, r || "Processing...", true, n || null);
+        this._markWsFresh(o);
+        this.updateProgress(o, i ?? 0, n || "Processing...", true, r || null);
       }
     });
     solisWSClient.on("generation_error", e => {
@@ -1176,22 +1260,22 @@ class GenerationProgressSpinner {
       this.failGeneration(s, e?.message || e?.error || "There was an error — try again");
     });
     solisWSClient.on("video_ready", e => {
-      const {project_id: t, output_path: s, video_title: i, thumbnail_url: r, template_name: n, template: a} = e || {};
+      const {project_id: t, output_path: s, video_title: i, thumbnail_url: n, template_name: r, template: o} = e || {};
       if (!this._isValidProjectId(t)) return;
       if (this._wasUserCancelled(t)) return;
-      const o = this._resolveActiveProjectId(t) || t;
+      const a = this._resolveActiveProjectId(t) || t;
       this._ensureCompletedLibraryItem(t, {
         video_title: i,
-        thumbnail_url: r,
-        template_name: n,
-        template: a,
+        thumbnail_url: n,
+        template_name: r,
+        template: o,
         virality: e?.virality
       });
       if (typeof window.notificationSystem?.showVideoGenerated === "function") {
         window.notificationSystem.showVideoGenerated({
           videoTitle: i || `Video ${String(t).substring(0, 8)}...`,
           videoUrl: s || "#",
-          thumbnailUrl: r || null,
+          thumbnailUrl: n || null,
           message: "Your video has been generated successfully!"
         });
       } else if (typeof window.showNotification === "function") {
@@ -1200,7 +1284,7 @@ class GenerationProgressSpinner {
       this._refreshLibrarySoon();
       const l = this.showVideoReadyNotification;
       this.showVideoReadyNotification = () => {};
-      this.completeGeneration(o);
+      this.completeGeneration(a);
       this.showVideoReadyNotification = l;
     });
     solisWSClient.on("error", e => {
@@ -1288,15 +1372,16 @@ class GenerationProgressSpinner {
       return;
     }
     this._lastKnownProjectId = e;
-    const r = this._getTemplateMeta(e);
-    const n = s || r?.templateId || this.activeTemplateId || DEFAULT_PIPELINE_TEMPLATE;
-    const a = i && Object.keys(i).length ? i : r?.options || this.activeTemplateOptions || {};
-    this._setActivePipeline(n, a);
-    this._saveTemplateMeta(e, n, a);
+    const n = this._getTemplateMeta(e);
+    const r = s || n?.templateId || this.activeTemplateId || DEFAULT_PIPELINE_TEMPLATE;
+    const o = i && Object.keys(i).length ? i : n?.options || this.activeTemplateOptions || {};
+    this._setActivePipeline(r, o);
+    this._saveTemplateMeta(e, r, o);
     this.currentTaskIndex = -1;
     this.completedTaskCount = 0;
     this._completionHandled = false;
     this._ensureDomRefs();
+    this._unlockCompleteSound();
     if (this.wrapper) this.wrapper.style.display = "flex";
     this._ensureTaskList();
     if (!this.panelOpen) this.openPanel();
@@ -1305,8 +1390,8 @@ class GenerationProgressSpinner {
       startTime: Date.now(),
       progress: 0,
       message: t,
-      templateId: n,
-      templateOptions: a
+      templateId: r,
+      templateOptions: o
     });
     this.saveToLocalStorage(e);
     this._syncGeneratingBadge();
@@ -1345,41 +1430,41 @@ class GenerationProgressSpinner {
       t(false);
     });
   }
-  updateProgress(e, t, s = "", i = false, r = null) {
+  updateProgress(e, t, s = "", i = false, n = null) {
     if (!this._isValidProjectId(e)) return;
     t = Math.max(0, Math.min(100, Math.floor(t)));
-    const n = this._resolveActiveProjectId(e) || e;
-    if (n !== e) this._linkProjectAliases(e, n);
-    if (!this.activeGenerations.has(n)) {
+    const r = this._resolveActiveProjectId(e) || e;
+    if (r !== e) this._linkProjectAliases(e, r);
+    if (!this.activeGenerations.has(r)) {
       if (this._completionHandled || this.activeGenerations.size === 0) {
         return;
       }
       return;
     }
-    const a = this._shouldShowQueueWaitTask(s, r);
-    if (a) {
+    const o = this._shouldShowQueueWaitTask(s, n);
+    if (o) {
       t = Math.min(t, 2);
     }
-    this._setQueueWaitVisible(a);
-    const o = this.activeGenerations.get(n);
-    const l = t > o.progress;
-    const c = s && s !== o.message;
-    const h = r && JSON.stringify(r) !== JSON.stringify(o.queueInfo || null);
+    this._setQueueWaitVisible(o);
+    const a = this.activeGenerations.get(r);
+    const l = t > a.progress;
+    const c = s && s !== a.message;
+    const h = n && JSON.stringify(n) !== JSON.stringify(a.queueInfo || null);
     if (!i && !l && !c && !h) {
-      this._maybeMarkStuck(n, o);
+      this._maybeMarkStuck(r, a);
       return;
     }
-    if (a) {
-      o.progress = Math.min(t, 2);
+    if (o) {
+      a.progress = Math.min(t, 2);
     } else {
-      o.progress = Math.max(o.progress, t);
+      a.progress = Math.max(a.progress, t);
     }
-    if (s) o.message = s;
-    if (r) o.queueInfo = r; else if (!this._isQueueWaitingMessage(o.message)) o.queueInfo = null;
+    if (s) a.message = s;
+    if (n) a.queueInfo = n; else if (!this._isQueueWaitingMessage(a.message)) a.queueInfo = null;
     if (l || c) {
-      o._lastProgressAt = Date.now();
-      o._lastProgressValue = o.progress;
-      o._pollMisses = 0;
+      a._lastProgressAt = Date.now();
+      a._lastProgressValue = a.progress;
+      a._pollMisses = 0;
       this._clearStuckBanner();
     }
     this._syncCancelLockOnSubmitButton(t, s);
@@ -1431,14 +1516,14 @@ class GenerationProgressSpinner {
     if (this.showQueueWaitTask || this._shouldShowQueueWaitTask(i, s)) {
       return this._queueLabelForInfo(i, s).label;
     }
-    const r = this._getActiveTasks();
-    const n = this._resolveTaskIndex(e, i);
-    const a = r[n]?.label;
+    const n = this._getActiveTasks();
+    const r = this._resolveTaskIndex(e, i);
+    const o = n[r]?.label;
     if (e >= 100) {
       if (!i || /complete|done|ready|success/i.test(i)) return "Complete!";
       return i;
     }
-    if (a) return a;
+    if (o) return o;
     return i || `${e}% complete`;
   }
   displayProgress(e, t = "", s = null) {
@@ -1446,30 +1531,30 @@ class GenerationProgressSpinner {
     if (!this.wrapper || !this.progressCircle) return;
     const i = this._cleanMessage(t);
     this._setQueueWaitVisible(this._shouldShowQueueWaitTask(i, s));
-    const r = this.showQueueWaitTask;
-    const n = r ? Math.min(e, 2) : e;
-    const a = this._friendlyProgressLabel(n, i, s);
+    const n = this.showQueueWaitTask;
+    const r = n ? Math.min(e, 2) : e;
+    const o = this._friendlyProgressLabel(r, i, s);
     this.wrapper.style.display = "flex";
-    const o = n >= 100;
-    const l = o ? 0 : this.CIRCLE_CIRCUMFERENCE - Math.max(0, Math.min(100, n)) / 100 * this.CIRCLE_CIRCUMFERENCE;
+    const a = r >= 100;
+    const l = a ? 0 : this.CIRCLE_CIRCUMFERENCE - Math.max(0, Math.min(100, r)) / 100 * this.CIRCLE_CIRCUMFERENCE;
     this.progressCircle.style.strokeDashoffset = String(l);
-    this.progressCircle.style.stroke = r ? "#f59e0b" : "#10b981";
+    this.progressCircle.style.stroke = n ? "#f59e0b" : "#10b981";
     if (this.launcher) {
-      this.launcher.classList.toggle("is-complete", o);
-      this.launcher.classList.toggle("is-queued", r && !o);
+      this.launcher.classList.toggle("is-complete", a);
+      this.launcher.classList.toggle("is-queued", n && !a);
       this.launcher.classList.remove("is-error", "is-active");
     }
     if (this.progressText) {
-      this.progressText.textContent = o ? "" : r ? "…" : `${Math.floor(n)}%`;
+      this.progressText.textContent = a ? "" : n ? "…" : `${Math.floor(r)}%`;
     }
     if (this.progressTooltip) {
-      this.progressTooltip.textContent = o ? a || "Complete!" : a || `${n}% complete`;
+      this.progressTooltip.textContent = a ? o || "Complete!" : o || `${r}% complete`;
     }
-    this._updateTaskStates(n, i, s);
+    this._updateTaskStates(r, i, s);
     if (this.genStageOpen) {
       try {
         if (typeof this._syncGenStageSteps === "function") {
-          this._syncGenStageSteps(n, i);
+          this._syncGenStageSteps(r, i);
         }
         if (typeof this._fillGenStageVideoMeta === "function") {
           this._fillGenStageVideoMeta();
@@ -1523,8 +1608,8 @@ class GenerationProgressSpinner {
       const t = [ ...this.activeGenerations.keys() ][0];
       const s = String(t).startsWith("prj_");
       const i = String(e).startsWith("prj_");
-      const r = /^[0-9]+_/.test(String(e));
-      if (s && r || !s && i) {
+      const n = /^[0-9]+_/.test(String(e));
+      if (s && n || !s && i) {
         this.activeGenerations.delete(t);
         this.removeFromLocalStorage(t);
       }
@@ -1535,8 +1620,8 @@ class GenerationProgressSpinner {
     if (!i) {
       throw new Error("Invalid project");
     }
-    const r = "library_apply";
-    this._setActivePipeline(r, {});
+    const n = "library_apply";
+    this._setActivePipeline(n, {});
     this._completionHandled = false;
     this.optimisticPending = false;
     this.currentTaskIndex = -1;
@@ -1551,7 +1636,7 @@ class GenerationProgressSpinner {
       startTime: Date.now(),
       progress: 0,
       message: "Preparing download...",
-      templateId: r,
+      templateId: n,
       templateOptions: {}
     });
     this._syncGeneratingBadge();
@@ -1587,9 +1672,9 @@ class GenerationProgressSpinner {
       const t = String(e?.projectId || e?.id || "");
       return t === i || this._idsLikelySameJob(t, i);
     };
-    let r = s.libraryItems.find(same);
-    if (!r) {
-      r = {
+    let n = s.libraryItems.find(same);
+    if (!n) {
+      n = {
         id: i,
         projectId: i,
         name: t.video_title || t.name || t.template_name || "Clip",
@@ -1602,19 +1687,19 @@ class GenerationProgressSpinner {
         _optimistic: true,
         _justCompleted: true
       };
-      s.libraryItems.unshift(r);
+      s.libraryItems.unshift(n);
     } else {
-      r.status = "completed";
-      r._justCompleted = true;
-      if (t.video_title) r.name = t.video_title;
+      n.status = "completed";
+      n._justCompleted = true;
+      if (t.video_title) n.name = t.video_title;
       if (t.thumbnail_url || t.thumbnailUrl) {
-        r.thumbnailUrl = t.thumbnail_url || t.thumbnailUrl;
+        n.thumbnailUrl = t.thumbnail_url || t.thumbnailUrl;
       }
-      if (t.template) r.template = t.template;
+      if (t.template) n.template = t.template;
       if (t.template_name || t.templateName) {
-        r.templateName = t.template_name || t.templateName;
+        n.templateName = t.template_name || t.templateName;
       }
-      if (t.virality) r.virality = t.virality;
+      if (t.virality) n.virality = t.virality;
     }
     s._libraryLastLoaded = 0;
     try {
@@ -1629,17 +1714,17 @@ class GenerationProgressSpinner {
   _refreshLibrarySoon() {
     if (this._libraryRefreshQueued) return;
     this._libraryRefreshQueued = true;
-    const e = [ 400, 2e3, 6e3, 12e3 ];
+    const e = [ 800, 5e3 ];
     const run = (t = 0) => {
       this._libraryRefreshQueued = t < e.length - 1;
       if (typeof updateStorageBadgeDisplay === "function") {
         updateStorageBadgeDisplay();
       }
       if (window.clipsStudio?.loadLibraryItems) {
-        window.clipsStudio._libraryLastLoaded = 0;
+        if (t === 0) window.clipsStudio._libraryLastLoaded = 0;
         window.clipsStudio.loadLibraryItems({
           soft: true,
-          force: true
+          force: t === 0
         }).catch(() => {}).finally(() => {
           if (t < e.length - 1) {
             setTimeout(() => run(t + 1), e[t + 1]);
@@ -1656,6 +1741,7 @@ class GenerationProgressSpinner {
   completeGeneration(e) {
     this._ensureCompletedLibraryItem(e);
     this._refreshLibrarySoon();
+    this._playGenerationCompleteSoundOnce(e);
     if (this._completionHandled && this.activeGenerations.size === 0 && !this.optimisticPending) {
       return;
     }
@@ -1668,7 +1754,6 @@ class GenerationProgressSpinner {
     this.optimisticPending = false;
     this._completionHandled = true;
     this._syncGeneratingBadge();
-    this._playGenerationCompleteSound();
     this.showVideoReadyNotification();
     this.displayProgress(100, "Processing complete! Video ready!");
     this._unlockUrlSubmitButton();
@@ -1847,14 +1932,14 @@ class GenerationProgressSpinner {
           continue;
         }
         s._pollMisses = 0;
-        const r = (i.status || "").toLowerCase();
-        if (ACTIVE_GENERATION_STATUSES.has(r)) {
+        const n = (i.status || "").toLowerCase();
+        if (ACTIVE_GENERATION_STATUSES.has(n)) {
           const e = i.progress ?? 0;
           const s = i.message || "Processing...";
           this.updateProgress(t, e, s, true, i.queue || null);
-        } else if (this._isSuccessStatus(r)) {
+        } else if (this._isSuccessStatus(n)) {
           this.completeGeneration(t);
-        } else if (this._isCancelledStatus(r)) {
+        } else if (this._isCancelledStatus(n)) {
           this.stopGeneration(t, i.message || "Stopped");
         } else {
           this.failGeneration(t, i.message || "There was an error — try again");

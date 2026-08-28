@@ -1,11 +1,11 @@
 (function() {
-  const e = {
+  const t = {
     free: "Free Plan",
     basic: "Basic Plan",
     prime: "Prime Plan",
     elite: "Elite Plan"
   };
-  const t = {
+  const e = {
     auto: "Auto",
     low: "Low",
     normal: "Normal",
@@ -24,42 +24,42 @@
   let u = "auto";
   let m = "free";
   let p = false;
-  let g = "slider";
-  let y = null;
-  let E = false;
+  let y = "slider";
+  let g = null;
+  let h = false;
   function isAutoMode() {
     return u !== "advanced";
   }
   function readEffortSelection() {
     try {
-      const e = localStorage.getItem(n);
-      if (e === "advanced" || e === "auto") return e;
-    } catch (e) {}
+      const t = localStorage.getItem(n);
+      if (t === "advanced" || t === "auto") return t;
+    } catch (t) {}
     return "auto";
   }
-  function persistEffortSelection(e) {
+  function persistEffortSelection(t) {
     try {
-      localStorage.setItem(n, e === "advanced" ? "advanced" : "auto");
-    } catch (e) {}
+      localStorage.setItem(n, t === "advanced" ? "advanced" : "auto");
+    } catch (t) {}
   }
-  let h = 0;
+  let E = 0;
   const w = 380;
-  function setEffortSelection(e, {persist: t = true, animate: o = true} = {}) {
-    u = e === "advanced" ? "advanced" : "auto";
-    if (t) persistEffortSelection(u);
+  function setEffortSelection(t, {persist: e = true, animate: o = true} = {}) {
+    u = t === "advanced" ? "advanced" : "auto";
+    if (e) persistEffortSelection(u);
     syncAdvancedModeUI({
       animate: o
     });
     syncEffortUI();
-    if (l) syncQuotaRail(l, y);
+    if (l) syncQuotaRail(l, g);
   }
-  function setAdvancedBodyVisible(e, {animate: t = true} = {}) {
+  function setAdvancedBodyVisible(t, {animate: e = true} = {}) {
     const o = document.getElementById("planEffortAdvancedBody");
     if (!o) return;
-    window.clearTimeout(h);
+    window.clearTimeout(E);
     const n = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const i = t && !n;
-    if (e) {
+    const i = e && !n;
+    if (t) {
       o.hidden = false;
       o.setAttribute("aria-hidden", "false");
       if (i) {
@@ -75,7 +75,7 @@
       o.setAttribute("aria-hidden", "true");
       o.classList.remove("is-expanded");
       if (i && !o.hidden) {
-        h = window.setTimeout(() => {
+        E = window.setTimeout(() => {
           o.hidden = true;
         }, w);
       } else {
@@ -83,8 +83,8 @@
       }
     }
   }
-  function syncAdvancedModeUI(e = {}) {
-    const t = e.animate !== false;
+  function syncAdvancedModeUI(t = {}) {
+    const e = t.animate !== false;
     const o = isAutoMode();
     const n = document.getElementById("planEffortAdvancedToggle");
     const i = document.getElementById("planEffortModeTitle");
@@ -96,21 +96,21 @@
       n.setAttribute("aria-label", "Auto Mode");
     }
     setAdvancedBodyVisible(!o, {
-      animate: t
+      animate: e
     });
     if (i) i.textContent = "Auto";
     if (r) {
       if (o) {
-        r.textContent = m === "free" ? "Free plan always uses Low effort" : "Balanced quality and speed, recommended for most tasks";
+        r.textContent = m === "free" ? "Solis picks the best effort for your video" : "Balanced quality and speed, recommended for most tasks";
         requestAnimationFrame(() => r.classList.remove("is-collapsed"));
       } else {
         r.classList.add("is-collapsed");
       }
     }
     if (a) a.dataset.mode = o ? "auto" : "manual";
-    applyEffortUiMode(g, {
+    applyEffortUiMode(y, {
       persist: false,
-      animate: t
+      animate: e
     });
     if (o) closeEffortFlyout();
   }
@@ -122,70 +122,70 @@
     c = 0;
     f = null;
   }
-  function formatResetLabel(e) {
-    if (!e) return "";
-    const t = e.reset_hours ?? 24;
-    if (t <= 24) return "";
-    const o = Math.round(t / 24);
+  function formatResetLabel(t) {
+    if (!t) return "";
+    const e = t.reset_hours ?? 24;
+    if (e <= 24) return "";
+    const o = Math.round(e / 24);
     return o === 1 ? "Resets every day" : `Resets every ${o} days`;
   }
-  function allowedEffortsForTier(e) {
-    const t = String(e || "free").toLowerCase();
-    if (t === "free") return [ "low" ];
-    if (t === "basic") return [ "low", "normal" ];
-    if (t === "prime" || t === "elite") return [ "low", "normal", "max" ];
+  function allowedEffortsForTier(t) {
+    const e = String(t || "free").toLowerCase();
+    if (e === "free") return [ "low" ];
+    if (e === "basic") return [ "low", "normal" ];
+    if (e === "prime" || e === "elite") return [ "low", "normal", "max" ];
     return [ "low" ];
   }
-  function defaultEffortForTier(e) {
-    const t = allowedEffortsForTier(e);
-    return t.includes("normal") ? "normal" : t[0];
+  function defaultEffortForTier(t) {
+    const e = allowedEffortsForTier(t);
+    return e.includes("normal") ? "normal" : e[0];
   }
   function readStoredEffort() {
     try {
-      const e = localStorage.getItem(o);
-      if (e && t[e]) return e;
-    } catch (e) {}
+      const t = localStorage.getItem(o);
+      if (t && e[t]) return t;
+    } catch (t) {}
     return null;
   }
-  function persistEffort(e) {
+  function persistEffort(t) {
     try {
-      localStorage.setItem(o, e);
-    } catch (e) {}
+      localStorage.setItem(o, t);
+    } catch (t) {}
   }
   function readEffortUiMode() {
     try {
-      const e = localStorage.getItem(i);
-      if (e === "slider" || e === "flyout") return e;
-    } catch (e) {}
+      const t = localStorage.getItem(i);
+      if (t === "slider" || t === "flyout") return t;
+    } catch (t) {}
     return "slider";
   }
-  function persistEffortUiMode(e) {
+  function persistEffortUiMode(t) {
     try {
-      localStorage.setItem(i, e === "slider" ? "slider" : "flyout");
-    } catch (e) {}
+      localStorage.setItem(i, t === "slider" ? "slider" : "flyout");
+    } catch (t) {}
   }
-  function effortIndex(e) {
-    const t = s.indexOf(e);
-    return t >= 0 ? t : 0;
+  function effortIndex(t) {
+    const e = s.indexOf(t);
+    return e >= 0 ? e : 0;
   }
-  function effortFromIndex(e) {
-    return s[Math.max(0, Math.min(s.length - 1, e))] || "low";
+  function effortFromIndex(t) {
+    return s[Math.max(0, Math.min(s.length - 1, t))] || "low";
   }
-  function isEffortSelectable(e) {
-    const t = allowedEffortsForTier(m);
-    if (!t.includes(e)) return false;
-    if (e === "max") {
-      const e = l?.generations || {};
-      const t = e.max_effort_per_day ?? 0;
-      const o = e.max_effort_remaining;
-      if (t > 0 && typeof o === "number" && o <= 0) return false;
+  function isEffortSelectable(t) {
+    const e = allowedEffortsForTier(m);
+    if (!e.includes(t)) return false;
+    if (t === "max") {
+      const t = l?.generations || {};
+      const e = t.max_effort_per_day ?? 0;
+      const o = t.max_effort_remaining;
+      if (e > 0 && typeof o === "number" && o <= 0) return false;
     }
     return true;
   }
-  function pulseEffortProBadge(e) {
-    const t = effortIndex(e);
-    const o = document.querySelector(`.plan-effort-slider-pro[data-step="${t}"]`);
-    const n = document.querySelector(`.plan-effort-option[data-effort="${e}"] .plan-effort-pro-badge`);
+  function pulseEffortProBadge(t) {
+    const e = effortIndex(t);
+    const o = document.querySelector(`.plan-effort-slider-pro[data-step="${e}"]`);
+    const n = document.querySelector(`.plan-effort-option[data-effort="${t}"] .plan-effort-pro-badge`);
     const i = o && !o.hasAttribute("hidden") ? o : n && !n.hasAttribute("hidden") ? n : null;
     if (!i) return;
     i.classList.remove("is-pulse");
@@ -193,32 +193,32 @@
     i.classList.add("is-pulse");
     window.setTimeout(() => i.classList.remove("is-pulse"), 560);
   }
-  function notifyEffortLocked(e) {
-    if (e === "max") {
-      const t = l?.generations || {};
-      const o = t.max_effort_per_day ?? 0;
-      const n = t.max_effort_remaining;
+  function notifyEffortLocked(t) {
+    if (t === "max") {
+      const e = l?.generations || {};
+      const o = e.max_effort_per_day ?? 0;
+      const n = e.max_effort_remaining;
       if (o > 0 && typeof n === "number" && n <= 0) {
         if (typeof showNotification === "function") {
           showNotification(`Max daily limit reached (${o}/day). Use Normal effort.`, "info");
         }
         return;
       }
-      pulseEffortProBadge(e);
+      pulseEffortProBadge(t);
       return;
     }
-    if (e === "normal") {
-      pulseEffortProBadge(e);
+    if (t === "normal") {
+      pulseEffortProBadge(t);
     }
   }
-  function applyEffortUiMode(e, {persist: t = true, animate: o = true} = {}) {
-    const n = e === "slider" ? "slider" : "flyout";
-    const i = g !== n || document.documentElement.dataset.effortUi !== n;
+  function applyEffortUiMode(t, {persist: e = true, animate: o = true} = {}) {
+    const n = t === "slider" ? "slider" : "flyout";
+    const i = y !== n || document.documentElement.dataset.effortUi !== n;
     const r = !isAutoMode();
     if (i && n === "slider") closeEffortFlyout();
-    g = n;
+    y = n;
     document.documentElement.dataset.effortUi = n;
-    if (t) persistEffortUiMode(n);
+    if (e) persistEffortUiMode(n);
     const a = getEffortTrigger();
     const s = getSliderPanel();
     if (a) {
@@ -246,80 +246,80 @@
     }
     syncEffortUI();
   }
-  function resolveEffortForTier(e) {
-    const t = allowedEffortsForTier(e);
+  function resolveEffortForTier(t) {
+    const e = allowedEffortsForTier(t);
     const o = readStoredEffort();
-    if (o && t.includes(o)) return o;
-    return defaultEffortForTier(e);
+    if (o && e.includes(o)) return o;
+    return defaultEffortForTier(t);
   }
-  function setEffort(e, {persist: t = true, closeFlyout: o = true, animate: n = false} = {}) {
-    if (!isEffortSelectable(e)) return false;
-    d = e;
-    if (t) persistEffort(e);
+  function setEffort(t, {persist: e = true, closeFlyout: o = true, animate: n = false} = {}) {
+    if (!isEffortSelectable(t)) return false;
+    d = t;
+    if (e) persistEffort(t);
     syncEffortUI({
       animate: n
     });
-    if (o && g === "flyout") closeEffortFlyout();
+    if (o && y === "flyout") closeEffortFlyout();
     return true;
   }
-  function setSliderT(e, {animate: t = false, magnet: o = false} = {}) {
+  function setSliderT(t, {animate: e = false, magnet: o = false} = {}) {
     const n = document.getElementById("planEffortSlider");
     if (!n) return;
-    const i = Math.max(0, Math.min(1, e));
+    const i = Math.max(0, Math.min(1, t));
     n.style.setProperty("--effort-t", String(i));
     n.classList.toggle("is-max", i >= .98);
     window.clearTimeout(setSliderT._snapTimer);
-    n.classList.toggle("is-snapping", t);
-    n.classList.toggle("is-magnet", o && !t);
-    if (t || o) {
+    n.classList.toggle("is-snapping", e);
+    n.classList.toggle("is-magnet", o && !e);
+    if (e || o) {
       setSliderT._snapTimer = window.setTimeout(() => {
         n.classList.remove("is-snapping", "is-magnet");
-      }, t ? 280 : 200);
+      }, e ? 280 : 200);
     } else {
       n.classList.remove("is-snapping", "is-magnet");
     }
   }
   function clearMaxBits() {
-    const e = document.getElementById("planEffortSlider");
-    if (!e) return;
-    e.classList.remove("is-bits-live");
+    const t = document.getElementById("planEffortSlider");
+    if (!t) return;
+    t.classList.remove("is-bits-live");
   }
   function playMaxBitsBurst() {
-    const e = document.getElementById("planEffortSlider");
-    if (!e) return;
-    e.classList.remove("is-bits-live");
-    void e.offsetWidth;
+    const t = document.getElementById("planEffortSlider");
+    if (!t) return;
+    t.classList.remove("is-bits-live");
+    void t.offsetWidth;
     requestAnimationFrame(() => {
-      if (d === "max" && !E) {
-        e.classList.add("is-bits-live", "is-max");
+      if (d === "max" && !h) {
+        t.classList.add("is-bits-live", "is-max");
       }
     });
   }
   function syncMaxBits() {
-    if (E) {
+    if (h) {
       clearMaxBits();
       return;
     }
     if (d === "max") playMaxBitsBurst(); else clearMaxBits();
   }
-  function clientXToSliderT(e) {
-    const t = document.getElementById("planEffortSliderTrack");
-    if (!t) return 0;
-    const o = t.getBoundingClientRect();
+  function clientXToSliderT(t) {
+    const e = document.getElementById("planEffortSliderTrack");
+    if (!e) return 0;
+    const o = e.getBoundingClientRect();
     const n = 18;
     const i = Math.max(1, o.width - n);
-    return Math.max(0, Math.min(1, (e - o.left - n / 2) / i));
+    return Math.max(0, Math.min(1, (t - o.left - n / 2) / i));
   }
-  function magnetizeT(e) {
-    const t = s.length - 1;
+  function magnetizeT(t) {
+    const e = s.length - 1;
     const o = .16;
-    let n = e;
+    let n = t;
     let i = o;
     let r = false;
-    for (let o = 0; o <= t; o += 1) {
+    for (let o = 0; o <= e; o += 1) {
       if (!isEffortSelectable(effortFromIndex(o))) continue;
-      const a = o / t;
-      const s = Math.abs(e - a);
+      const a = o / e;
+      const s = Math.abs(t - a);
       if (s <= i) {
         i = s;
         n = a;
@@ -329,33 +329,33 @@
     return {
       t: n,
       snapped: r,
-      index: Math.round(n * t)
+      index: Math.round(n * e)
     };
   }
-  function nearestAllowedIndex(e) {
-    const t = s.length - 1;
+  function nearestAllowedIndex(t) {
+    const e = s.length - 1;
     let o = null;
     let n = Infinity;
-    for (let i = 0; i <= t; i += 1) {
+    for (let i = 0; i <= e; i += 1) {
       if (!isEffortSelectable(effortFromIndex(i))) continue;
-      const t = Math.abs(i - e);
-      if (t < n) {
-        n = t;
+      const e = Math.abs(i - t);
+      if (e < n) {
+        n = e;
         o = i;
       }
     }
     return o == null ? 0 : o;
   }
-  function syncEffortSliderUI({animate: e = false} = {}) {
+  function syncEffortSliderUI({animate: t = false} = {}) {
     const o = effortIndex(d);
-    const n = t[d] || "Low";
+    const n = e[d] || "Low";
     const i = o / (s.length - 1);
     const r = allowedEffortsForTier(m);
     const a = document.getElementById("planEffortSlider");
     const l = document.getElementById("planEffortSliderValue");
     const c = document.getElementById("planEffortSliderPanel");
-    if (!E) setSliderT(i, {
-      animate: e
+    if (!h) setSliderT(i, {
+      animate: t
     });
     if (l) l.textContent = n;
     if (a) {
@@ -364,7 +364,7 @@
       a.classList.toggle("is-single", r.length <= 1);
       a.classList.toggle("is-max", d === "max");
     }
-    if (!E) {
+    if (!h) {
       if (d === "max") {
         if (!a?.classList.contains("is-bits-live")) playMaxBitsBurst();
       } else {
@@ -374,36 +374,36 @@
       clearMaxBits();
     }
     if (c) {
-      c.querySelectorAll(".plan-effort-slider-dot").forEach(e => {
-        const t = Number(e.dataset.step || 0);
-        const n = effortFromIndex(t);
-        const l = E ? Math.round((Number(a?.style.getPropertyValue("--effort-t")) || i) * (s.length - 1)) : o;
-        e.classList.toggle("is-passed", t <= l);
-        e.classList.toggle("is-locked", !r.includes(n));
+      c.querySelectorAll(".plan-effort-slider-dot").forEach(t => {
+        const e = Number(t.dataset.step || 0);
+        const n = effortFromIndex(e);
+        const l = h ? Math.round((Number(a?.style.getPropertyValue("--effort-t")) || i) * (s.length - 1)) : o;
+        t.classList.toggle("is-passed", e <= l);
+        t.classList.toggle("is-locked", !r.includes(n));
       });
-      c.querySelectorAll(".plan-effort-slider-pro").forEach(e => {
-        const t = Number(e.dataset.step || 0);
-        const o = effortFromIndex(t);
-        if (!r.includes(o)) e.removeAttribute("hidden"); else e.setAttribute("hidden", "");
+      c.querySelectorAll(".plan-effort-slider-pro").forEach(t => {
+        const e = Number(t.dataset.step || 0);
+        const o = effortFromIndex(e);
+        if (!r.includes(o)) t.removeAttribute("hidden"); else t.setAttribute("hidden", "");
       });
     }
   }
   function isCompactPlanUi() {
     try {
       return window.matchMedia("(max-width: 768px)").matches;
-    } catch (e) {
+    } catch (t) {
       return window.innerWidth <= 768;
     }
   }
-  function syncEffortUI(e) {
+  function syncEffortUI(t) {
     const o = isAutoMode() ? "auto" : d;
-    const n = t[o] || "Auto";
+    const n = e[o] || "Auto";
     const i = document.getElementById("planSelectorLabel");
     if (i) {
       i.removeAttribute("hidden");
       if (!i.textContent.trim()) {
-        const e = (m || "free").charAt(0).toUpperCase() + (m || "free").slice(1);
-        i.textContent = `${e} Plan`;
+        const t = (m || "free").charAt(0).toUpperCase() + (m || "free").slice(1);
+        i.textContent = `${t} Plan`;
       }
     }
     const r = document.getElementById("planSelectorWrap");
@@ -423,48 +423,48 @@
     }
     const c = document.getElementById("planSelectorBtn");
     if (c) {
-      const e = i?.textContent?.trim() || "Plan";
-      const t = isCompactPlanUi();
-      c.setAttribute("aria-label", t ? `${n}. ${e} usage` : `${e}, ${n}`);
+      const t = i?.textContent?.trim() || "Plan";
+      const e = isCompactPlanUi();
+      c.setAttribute("aria-label", e ? `${n}. ${t} usage` : `${t}, ${n}`);
     }
     const f = document.getElementById("planEffortTriggerValue");
-    if (f) f.textContent = t[d] || "Low";
+    if (f) f.textContent = e[d] || "Low";
     if (!isAutoMode()) {
-      syncEffortSliderUI(e);
+      syncEffortSliderUI(t);
     }
     const u = document.getElementById("planEffortFlyout");
     if (!u) return;
     const p = allowedEffortsForTier(m);
-    u.querySelectorAll(".plan-effort-option").forEach(e => {
-      const t = e.dataset.effort;
-      const o = p.includes(t);
-      const n = t === d;
-      const i = e.querySelector(".plan-effort-pro-badge");
-      const r = e.querySelector(".plan-effort-option-hint");
-      e.classList.toggle("is-locked", !o);
-      e.classList.toggle("is-active", n);
-      e.setAttribute("aria-checked", n ? "true" : "false");
+    u.querySelectorAll(".plan-effort-option").forEach(t => {
+      const e = t.dataset.effort;
+      const o = p.includes(e);
+      const n = e === d;
+      const i = t.querySelector(".plan-effort-pro-badge");
+      const r = t.querySelector(".plan-effort-option-hint");
+      t.classList.toggle("is-locked", !o);
+      t.classList.toggle("is-active", n);
+      t.setAttribute("aria-checked", n ? "true" : "false");
       if (i) {
         if (!o) i.removeAttribute("hidden"); else i.setAttribute("hidden", "");
       }
       if (r) {
         r.hidden = !o;
       }
-      if (o && t === "max") {
-        const t = l?.generations || {};
-        const o = t.max_effort_per_day ?? 0;
-        const n = t.max_effort_remaining;
+      if (o && e === "max") {
+        const e = l?.generations || {};
+        const o = e.max_effort_per_day ?? 0;
+        const n = e.max_effort_remaining;
         if (o > 0 && typeof n === "number") {
-          e.title = `Max — ${n}/${o} left today`;
+          t.title = `Max — ${n}/${o} left today`;
           if (n <= 0) {
-            e.classList.add("is-locked");
-            e.title = `Max daily limit reached (${o}/day)`;
+            t.classList.add("is-locked");
+            t.title = `Max daily limit reached (${o}/day)`;
           }
         } else {
-          e.title = "Max — best interesting moments + cleaner cuts";
+          t.title = "Max — best interesting moments + cleaner cuts";
         }
       } else {
-        e.title = o ? t === "normal" ? "Normal — balanced speed and quality" : "Low — fast, smart picks, low compute" : t === "max" ? "Max effort requires Prime or Elite" : t === "normal" ? "Normal effort requires Basic or higher" : "Locked on your plan";
+        t.title = o ? e === "normal" ? "Normal — balanced speed and quality" : "Low — fast, smart picks, low compute" : e === "max" ? "Max effort requires Prime or Elite" : e === "normal" ? "Normal effort requires Basic or higher" : "Locked on your plan";
       }
     });
   }
@@ -478,64 +478,64 @@
     return document.getElementById("planEffortTrigger");
   }
   function positionEffortFlyoutSide() {
-    const e = getPopover();
-    if (!e) return;
-    const t = e.getBoundingClientRect();
+    const t = getPopover();
+    if (!t) return;
+    const e = t.getBoundingClientRect();
     const o = 176;
-    const n = window.innerWidth - t.right;
-    const i = n < o + 16 && t.left > o + 16;
-    e.classList.toggle("effort-open-left", i);
+    const n = window.innerWidth - e.right;
+    const i = n < o + 16 && e.left > o + 16;
+    t.classList.toggle("effort-open-left", i);
   }
   function openEffortFlyout() {
-    if (g === "slider") return;
-    const e = getPopover();
-    const t = getFlyout();
+    if (y === "slider") return;
+    const t = getPopover();
+    const e = getFlyout();
     const o = getEffortTrigger();
-    if (!e || !t || !o) return;
+    if (!t || !e || !o) return;
     p = true;
-    t.hidden = false;
+    e.hidden = false;
     positionEffortFlyoutSide();
     requestAnimationFrame(() => {
-      e.classList.add("effort-open");
-      t.classList.add("is-open");
+      t.classList.add("effort-open");
+      e.classList.add("is-open");
     });
     o.setAttribute("aria-expanded", "true");
     syncEffortUI();
   }
   function closeEffortFlyout() {
-    const e = getPopover();
-    const t = getFlyout();
+    const t = getPopover();
+    const e = getFlyout();
     const o = getEffortTrigger();
-    if (!e || !t) return;
+    if (!t || !e) return;
     p = false;
-    e.classList.remove("effort-open", "effort-open-left");
-    t.classList.remove("is-open");
+    t.classList.remove("effort-open", "effort-open-left");
+    e.classList.remove("is-open");
     if (o) o.setAttribute("aria-expanded", "false");
     const finish = () => {
-      if (!p) t.hidden = true;
-      t.removeEventListener("transitionend", finish);
+      if (!p) e.hidden = true;
+      e.removeEventListener("transitionend", finish);
     };
-    t.addEventListener("transitionend", finish);
+    e.addEventListener("transitionend", finish);
     setTimeout(finish, 280);
   }
   function toggleEffortControl() {
-    if (g === "slider") return;
+    if (y === "slider") return;
     if (p) closeEffortFlyout(); else openEffortFlyout();
   }
-  function trySelectEffortFromSlider(e, {animate: t = true} = {}) {
-    const o = effortFromIndex(e);
-    const n = nearestAllowedIndex(e);
+  function trySelectEffortFromSlider(t, {animate: e = true} = {}) {
+    const o = effortFromIndex(t);
+    const n = nearestAllowedIndex(t);
     const i = effortFromIndex(n);
     if (o !== i) notifyEffortLocked(o);
     return setEffort(i, {
       closeFlyout: false,
-      animate: t
+      animate: e
     });
   }
   function bindEffortSliderInteractions() {
-    const e = document.getElementById("planEffortSlider");
-    if (!e || e.dataset.bound === "true") return;
-    e.dataset.bound = "true";
+    const t = document.getElementById("planEffortSlider");
+    if (!t || t.dataset.bound === "true") return;
+    t.dataset.bound = "true";
     const o = document.getElementById("planEffortSliderValue");
     let n = null;
     let i = null;
@@ -560,90 +560,90 @@
         });
       }
       if (a) i = c;
-      const f = t[effortFromIndex(c)] || "Low";
+      const f = e[effortFromIndex(c)] || "Low";
       if (o) o.textContent = f;
-      e.classList.toggle("is-max", c === s.length - 1 && isEffortSelectable("max"));
+      t.classList.toggle("is-max", c === s.length - 1 && isEffortSelectable("max"));
       const d = document.getElementById("planEffortSliderPanel");
-      d?.querySelectorAll(".plan-effort-slider-dot").forEach(e => {
-        const t = Number(e.dataset.step || 0);
-        e.classList.toggle("is-passed", t <= c);
-        e.classList.toggle("is-magnet-hot", a && t === c);
+      d?.querySelectorAll(".plan-effort-slider-dot").forEach(t => {
+        const e = Number(t.dataset.step || 0);
+        t.classList.toggle("is-passed", e <= c);
+        t.classList.toggle("is-magnet-hot", a && e === c);
       });
     };
-    const finishDrag = t => {
-      const o = magnetizeT(clientXToSliderT(t));
-      E = false;
+    const finishDrag = e => {
+      const o = magnetizeT(clientXToSliderT(e));
+      h = false;
       i = null;
-      e.classList.remove("is-dragging");
-      e.querySelectorAll(".plan-effort-slider-dot").forEach(e => {
-        e.classList.remove("is-magnet-hot");
+      t.classList.remove("is-dragging");
+      t.querySelectorAll(".plan-effort-slider-dot").forEach(t => {
+        t.classList.remove("is-magnet-hot");
       });
       trySelectEffortFromSlider(o.index, {
         animate: true
       });
       syncMaxBits();
-      if (l) syncQuotaRail(l, y);
+      if (l) syncQuotaRail(l, g);
     };
-    e.addEventListener("pointerdown", t => {
-      if (t.button != null && t.button !== 0) return;
-      t.preventDefault();
-      t.stopPropagation();
-      n = t.pointerId;
-      E = true;
+    t.addEventListener("pointerdown", e => {
+      if (e.button != null && e.button !== 0) return;
+      e.preventDefault();
+      e.stopPropagation();
+      n = e.pointerId;
+      h = true;
       i = null;
       clearMaxBits();
-      e.classList.add("is-dragging");
-      e.classList.remove("is-snapping", "is-magnet");
+      t.classList.add("is-dragging");
+      t.classList.remove("is-snapping", "is-magnet");
       try {
-        e.setPointerCapture(t.pointerId);
-      } catch (e) {}
-      previewFromT(clientXToSliderT(t.clientX));
-      e.focus({
+        t.setPointerCapture(e.pointerId);
+      } catch (t) {}
+      previewFromT(clientXToSliderT(e.clientX));
+      t.focus({
         preventScroll: true
       });
     });
-    e.addEventListener("pointermove", e => {
-      if (!E || e.pointerId !== n) return;
-      e.preventDefault();
-      previewFromT(clientXToSliderT(e.clientX));
-    });
-    const endPointer = t => {
-      if (!E || n != null && t.pointerId !== n) return;
+    t.addEventListener("pointermove", t => {
+      if (!h || t.pointerId !== n) return;
       t.preventDefault();
-      t.stopPropagation();
-      const o = t.clientX;
+      previewFromT(clientXToSliderT(t.clientX));
+    });
+    const endPointer = e => {
+      if (!h || n != null && e.pointerId !== n) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const o = e.clientX;
       n = null;
       try {
-        e.releasePointerCapture(t.pointerId);
-      } catch (e) {}
+        t.releasePointerCapture(e.pointerId);
+      } catch (t) {}
       finishDrag(o);
     };
-    e.addEventListener("pointerup", endPointer);
-    e.addEventListener("pointercancel", endPointer);
-    e.addEventListener("keydown", e => {
-      const t = effortIndex(d);
-      let o = t;
-      if (e.key === "ArrowRight" || e.key === "ArrowUp") o = t + 1; else if (e.key === "ArrowLeft" || e.key === "ArrowDown") o = t - 1; else if (e.key === "Home") o = 0; else if (e.key === "End") o = s.length - 1; else return;
-      e.preventDefault();
+    t.addEventListener("pointerup", endPointer);
+    t.addEventListener("pointercancel", endPointer);
+    t.addEventListener("keydown", t => {
+      const e = effortIndex(d);
+      let o = e;
+      if (t.key === "ArrowRight" || t.key === "ArrowUp") o = e + 1; else if (t.key === "ArrowLeft" || t.key === "ArrowDown") o = e - 1; else if (t.key === "Home") o = 0; else if (t.key === "End") o = s.length - 1; else return;
+      t.preventDefault();
       trySelectEffortFromSlider(o, {
         animate: true
       });
       syncMaxBits();
-      if (l) syncQuotaRail(l, y);
+      if (l) syncQuotaRail(l, g);
     });
   }
-  async function fetchTierInfo(e = false) {
-    if (!e && isCacheFresh()) return l;
-    if (!e && f) return f;
+  async function fetchTierInfo(t = false) {
+    if (!t && isCacheFresh()) return l;
+    if (!t && f) return f;
     f = (async () => {
-      const e = typeof window.apiUrl === "function" ? window.apiUrl("/api/tier/info") : `${window.API_BASE_URL || "https://api.solisai.video/api"}/tier/info`;
-      const t = typeof getAuthHeaders === "function" ? getAuthHeaders() : {
+      const t = typeof window.apiUrl === "function" ? window.apiUrl("/api/tier/info") : `${window.API_BASE_URL || "https://api.solisai.video/api"}/tier/info`;
+      const e = typeof getAuthHeaders === "function" ? getAuthHeaders() : {
         "Content-Type": "application/json"
       };
-      const o = await fetch(e, {
+      const o = await fetch(t, {
         method: "GET",
         credentials: "include",
-        headers: t
+        headers: e
       });
       if (!o.ok) throw new Error(`tier/info ${o.status}`);
       const n = await o.json();
@@ -652,13 +652,13 @@
       c = Date.now();
       const i = l.library || l.saved_videos;
       if (i && typeof window.applyStorageBadgeUI === "function") {
-        const e = (l.tier || "free").toLowerCase();
-        const t = i.unlimited === true || typeof window.isUnlimitedLibrary === "function" && window.isUnlimitedLibrary(null, e);
+        const t = (l.tier || "free").toLowerCase();
+        const e = i.unlimited === true || typeof window.isUnlimitedLibrary === "function" && window.isUnlimitedLibrary(null, t);
         window.applyStorageBadgeUI({
           used: i.used ?? 0,
-          limit: t ? null : i.limit ?? i.max_videos ?? 5,
-          plan: e,
-          unlimited: t
+          limit: e ? null : i.limit ?? i.max_videos ?? 5,
+          plan: t,
+          unlimited: e
         });
       }
       return l;
@@ -670,168 +670,242 @@
   function readDismissedKind() {
     try {
       return sessionStorage.getItem(r) || "";
-    } catch (e) {
+    } catch (t) {
       return "";
     }
   }
-  function dismissQuotaKind(e) {
+  function dismissQuotaKind(t) {
     try {
-      sessionStorage.setItem(r, e || "");
-    } catch (e) {}
+      sessionStorage.setItem(r, t || "");
+    } catch (t) {}
   }
   function clearQuotaDismiss() {
     try {
       sessionStorage.removeItem(r);
-    } catch (e) {}
+    } catch (t) {}
   }
-  function parseQuotaResetWhen(e) {
-    if (e == null || e === "") return null;
-    if (e instanceof Date) {
-      return Number.isNaN(e.getTime()) ? null : e;
+  function parseQuotaResetWhen(t) {
+    if (t == null || t === "") return null;
+    if (t instanceof Date) {
+      return Number.isNaN(t.getTime()) ? null : t;
     }
-    const t = String(e).trim();
-    if (!t) return null;
-    const o = /[zZ]|[+-]\d{2}:?\d{2}$/.test(t);
-    const n = o ? t : `${t.replace(" ", "T")}Z`;
+    const e = String(t).trim();
+    if (!e) return null;
+    const o = /[zZ]|[+-]\d{2}:?\d{2}$/.test(e);
+    const n = o ? e : `${e.replace(" ", "T")}Z`;
     const i = new Date(n);
     return Number.isNaN(i.getTime()) ? null : i;
   }
-  function formatQuotaUnlockWhen(e) {
-    const t = parseQuotaResetWhen(e);
-    if (!t) return "";
+  function formatQuotaUnlockWhen(t) {
+    const e = parseQuotaResetWhen(t);
+    if (!e) return "";
     const o = new Date;
-    const n = t.toLocaleTimeString([], {
+    const n = e.toLocaleTimeString([], {
       hour: "numeric",
       minute: "2-digit"
     });
-    const i = t.toLocaleDateString([], {
+    const i = e.toLocaleDateString([], {
       weekday: "long",
       month: "short",
       day: "numeric"
     });
     const r = new Date(o.getFullYear(), o.getMonth(), o.getDate());
-    const a = new Date(t.getFullYear(), t.getMonth(), t.getDate());
+    const a = new Date(e.getFullYear(), e.getMonth(), e.getDate());
     const s = Math.round((a - r) / 864e5);
     if (s === 0) return `today at ${n}`;
     if (s === 1) return `tomorrow at ${n}`;
     return `${i} at ${n}`;
   }
   function nextLocalMidnightLabel() {
-    const e = new Date;
-    const t = new Date(e.getFullYear(), e.getMonth(), e.getDate() + 1, 0, 0, 0, 0);
-    return formatQuotaUnlockWhen(t);
+    const t = new Date;
+    const e = new Date(t.getFullYear(), t.getMonth(), t.getDate() + 1, 0, 0, 0, 0);
+    return formatQuotaUnlockWhen(e);
   }
-  function syncQuotaRail(e, t) {
+  function parseQuotaState(t, e) {
+    const o = Math.max(0, Number(t?.daily?.remaining ?? e?.remaining ?? 0));
+    const n = Math.max(0, Number(t?.daily?.limit ?? e?.max_per_period ?? e?.max_per_day ?? 0));
+    const i = Math.max(0, Number(t?.monthly?.remaining ?? e?.remaining_month ?? 0));
+    const r = Math.max(0, Number(t?.monthly?.limit ?? e?.max_per_month ?? 0));
+    const a = r > 0 && i <= 0;
+    const s = n > 0 && o <= 0 || t?.daily_limit_reached === true || t?.block_reason === "daily_limit";
+    let l = o;
+    if (a) {
+      l = 0;
+    } else if (s) {
+      l = i;
+    } else if (r > 0) {
+      l = Math.min(o, i);
+    }
+    const c = r > 0 && i <= o ? "monthly" : "daily";
+    return {
+      dailyRem: o,
+      dailyMax: n,
+      monthlyRem: i,
+      monthlyMax: r,
+      monthlyEmpty: a,
+      dailyEmpty: s,
+      headlineRem: l,
+      binding: c,
+      canRunNow: !a && !s
+    };
+  }
+  function formatQuotaChipDisplay(t, e, o, n) {
+    const i = String(n || "free").toLowerCase();
+    const r = t.monthlyMax > 0 ? t.monthlyMax : Math.max(1, Number(o?.max_per_month ?? o?.max_per_day ?? 1));
+    const a = t.monthlyRem;
+    const s = i === "free";
+    if (t.monthlyEmpty) {
+      return {
+        countHtml: '<span class="plan-count-remaining">0</span>' + `<span class="plan-count-sep"> / ${r}</span>`,
+        kicker: "uploads left",
+        progressPct: 100,
+        resetLine: "Resets with your plan renewal"
+      };
+    }
+    let l = "";
+    if (t.dailyEmpty && a > 0) {
+      const t = e?.daily?.resets_at || o?.daily_resets_at || o?.resets_at;
+      const n = formatQuotaUnlockWhen(t) || nextLocalMidnightLabel();
+      l = n ? `Next upload unlocks ${n}` : "Next upload unlocks tomorrow";
+    }
+    if (s && !t.dailyEmpty) {
+      const e = Math.min(t.dailyRem, a);
+      return {
+        countHtml: `<span class="plan-count-remaining">${e}</span>` + `<span class="plan-count-sep"> / ${r}</span>`,
+        kicker: e === 1 ? "upload left today" : "uploads left today",
+        progressPct: r > 0 ? Math.min(100, (r - a) / r * 100) : 0,
+        resetLine: l
+      };
+    }
+    return {
+      countHtml: `<span class="plan-count-remaining">${a}</span>` + `<span class="plan-count-sep"> / ${r}</span>`,
+      kicker: "uploads left",
+      progressPct: r > 0 ? Math.min(100, (r - a) / r * 100) : 0,
+      resetLine: l
+    };
+  }
+  window.solisQuotaDisplay = {
+    parseState: parseQuotaState,
+    formatChip: formatQuotaChipDisplay,
+    formatUnlockWhen: formatQuotaUnlockWhen
+  };
+  function syncQuotaRail(t, e) {
     const o = document.getElementById("urlQuotaRail");
     const n = document.getElementById("urlQuotaBanner");
     const i = document.getElementById("urlQuotaTitle");
     const r = document.getElementById("urlQuotaSub");
     const a = document.getElementById("urlInputStack");
     if (!o || !n || !i || !r) return;
-    const s = e?.generations || {};
-    const l = Math.max(0, Number(t?.daily?.remaining ?? s.remaining ?? 0));
-    const c = Math.max(0, Number(t?.daily?.limit ?? s.max_per_period ?? s.max_per_day ?? 0));
-    const f = Math.max(0, Number(t?.monthly?.remaining ?? s.remaining_month ?? 0));
-    const u = Math.max(0, Number(t?.monthly?.limit ?? s.max_per_month ?? 0));
-    const p = Math.max(0, Number(t?.max_effort?.limit ?? s.max_effort_per_day ?? 0));
-    const g = t?.max_effort?.remaining ?? s.max_effort_remaining;
-    const y = Math.max(0, Number(g ?? 0));
-    const E = t?.max_effort?.can_use ?? s.can_use_max_effort;
-    const h = p > 0 && (y <= 0 || E === false);
-    const w = c > 0 && l <= 0 || t?.daily_limit_reached === true || t?.block_reason === "daily_limit";
-    const v = u > 0 && f <= 0;
-    const S = c >= 3 && l > 0 && (l <= 1 || l / c <= .2);
-    const x = p >= 3 && !h && y === 1;
-    let I = "";
-    let L = "";
-    let M = "";
-    if (w) {
-      I = "daily";
-      L = m === "free" ? "Free upload used" : "Daily limit reached";
-      const e = t?.daily?.resets_at || s.daily_resets_at || s.resets_at;
-      const o = formatQuotaUnlockWhen(e) || nextLocalMidnightLabel();
-      M = m === "free" ? o ? `You’ve used your free upload for today. Your next clip unlocks ${o}. Upgrade anytime for more daily clips.` : "You’ve used your free upload for today. Upgrade anytime for more daily clips." : o ? `You’re out of daily uploads. Your next clips unlock ${o}. Upgrade anytime for a higher daily limit.` : "You’re out of daily uploads. Upgrade anytime for a higher daily limit.";
-    } else if (v) {
-      I = "monthly";
-      L = "Monthly limit reached";
-      const e = formatQuotaUnlockWhen(t?.monthly?.resets_at || s.monthly_resets_at);
-      M = e ? `You’ve used this month’s quota. New clips unlock ${e}.` : "You’ve used this month’s quota. New clips unlock when your plan renews.";
+    const s = t?.generations || {};
+    const l = parseQuotaState(e, s);
+    const {dailyRem: c, dailyMax: f, monthlyRem: u, monthlyMax: p, monthlyEmpty: y, dailyEmpty: g, binding: h} = l;
+    const E = Math.max(0, Number(e?.max_effort?.limit ?? s.max_effort_per_day ?? 0));
+    const w = e?.max_effort?.remaining ?? s.max_effort_remaining;
+    const v = Math.max(0, Number(w ?? 0));
+    const x = e?.max_effort?.can_use ?? s.can_use_max_effort;
+    const S = E > 0 && (v <= 0 || x === false);
+    const L = !g && !y && f >= 3 && c > 0 && h === "daily" && (c <= 1 || c / f <= .2);
+    const I = !y && !g && p > 0 && h === "monthly" && (u <= 2 || u / p <= .15);
+    const M = E >= 3 && !S && v === 1;
+    let B = "";
+    let b = "";
+    let P = "";
+    if (y) {
+      B = "monthly";
+      b = "Monthly limit reached";
+      const t = formatQuotaUnlockWhen(e?.monthly?.resets_at || s.monthly_resets_at);
+      P = t ? `New uploads unlock ${t}.` : "New uploads unlock when your plan renews.";
+    } else if (g) {
+      B = "daily";
+      const t = e?.daily?.resets_at || s.daily_resets_at || s.resets_at;
+      const o = formatQuotaUnlockWhen(t) || nextLocalMidnightLabel();
+      if (u > 0) {
+        b = m === "free" ? "Used your free upload" : "Used today's uploads";
+        P = o ? `Next upload unlocks ${o}.` : "Next upload unlocks tomorrow.";
+      } else {
+        b = m === "free" ? "Free upload used" : "Daily limit reached";
+        P = o ? `Next upload unlocks ${o}.` : "Upgrade for more daily uploads.";
+      }
+    } else if (I) {
+      B = "monthly-low";
+      b = u === 1 ? "One upload left" : `${u} uploads left`;
+      P = "Upgrade if you need more room this month.";
+    } else if (L) {
+      B = "daily-low";
+      b = c === 1 ? "One upload left today" : `${c} uploads left today`;
+      P = "Upgrade if you need more room today.";
     } else if (S) {
-      I = "daily-low";
-      L = l === 1 ? "One clip left today" : `${l} clips left today`;
-      M = l === 1 ? "This is your last upload for today. Upgrade anytime if you need more room." : `Only ${l} uploads remain today. Upgrade anytime if you need more room.`;
-    } else if (h) {
-      I = "max-empty";
-      L = "Max effort used up for today";
-      const e = t?.max_effort?.resets_at || s.max_effort_resets_at;
-      const o = formatQuotaUnlockWhen(e);
-      M = o ? `Max effort unlocks again ${o}. You can still generate with Normal or Low.` : "You can still generate with Normal or Low.";
+      B = "max-empty";
+      b = "Max effort used up for today";
+      const t = e?.max_effort?.resets_at || s.max_effort_resets_at;
+      const o = formatQuotaUnlockWhen(t);
+      P = o ? `Max effort unlocks again ${o}. You can still generate with Normal or Low.` : "You can still generate with Normal or Low.";
       if (readDismissedKind() === "max" || readDismissedKind() === "max-low") {
         clearQuotaDismiss();
       }
       if (d === "max") {
-        const e = allowedEffortsForTier(m).includes("normal") ? "normal" : "low";
-        setEffort(e, {
+        const t = allowedEffortsForTier(m).includes("normal") ? "normal" : "low";
+        setEffort(t, {
           persist: true,
           closeFlyout: false
         });
       }
-    } else if (x) {
-      I = "max-low";
-      L = "One Max effort left today";
-      M = "After this, Solis falls back to Normal so you can keep creating.";
+    } else if (M) {
+      B = "max-low";
+      b = "One Max effort left today";
+      P = "After this, Solis falls back to Normal so you can keep creating.";
     } else {
       o.hidden = true;
       if (a) a.classList.remove("has-quota");
       return;
     }
-    if (readDismissedKind() === I) {
+    if (readDismissedKind() === B) {
       o.hidden = true;
       if (a) a.classList.remove("has-quota");
       return;
     }
-    n.dataset.kind = I;
-    i.textContent = L;
-    r.textContent = M;
+    n.dataset.kind = B;
+    i.textContent = b;
+    r.textContent = P;
     o.hidden = false;
     if (a) a.classList.add("has-quota");
   }
   async function enrichQuotaFromStatus() {
     try {
-      const e = typeof window.apiUrl === "function" ? window.apiUrl("/api/clips/status") : `${window.API_BASE_URL || "/api"}/clips/status`;
-      const t = typeof getAuthHeaders === "function" ? getAuthHeaders() : {
+      const t = typeof window.apiUrl === "function" ? window.apiUrl("/api/clips/status") : `${window.API_BASE_URL || "/api"}/clips/status`;
+      const e = typeof getAuthHeaders === "function" ? getAuthHeaders() : {
         "Content-Type": "application/json"
       };
-      const o = await fetch(e, {
+      const o = await fetch(t, {
         method: "GET",
         credentials: "include",
-        headers: t
+        headers: e
       });
       if (!o.ok) return null;
-      y = await o.json();
-      return y;
-    } catch (e) {
+      g = await o.json();
+      return g;
+    } catch (t) {
       return null;
     }
   }
-  function applyTierToUI(e) {
-    const t = document.getElementById("planSelectorWrap");
+  function applyTierToUI(t) {
+    const e = document.getElementById("planSelectorWrap");
     const o = document.getElementById("planSelectorLabel");
     const n = document.getElementById("planPopoverTier");
     const i = document.getElementById("planPopoverCount");
     const r = document.getElementById("planPopoverProgress");
     const a = document.getElementById("planPopoverReset");
     const s = document.getElementById("planPopoverUpgrade");
-    if (!t || !o) return;
-    const l = (e?.tier || "free").toLowerCase();
-    const c = e?.tier_name || l.charAt(0).toUpperCase() + l.slice(1);
+    if (!e || !o) return;
+    const l = (t?.tier || "free").toLowerCase();
+    const c = t?.tier_name || l.charAt(0).toUpperCase() + l.slice(1);
     const f = `${c} Plan`;
     m = l;
     d = resolveEffortForTier(l);
     if (!u) u = readEffortSelection();
-    t.dataset.tier = l;
-    t.dataset.effort = isAutoMode() ? "auto" : d;
-    t.dataset.effortSelection = u;
+    e.dataset.tier = l;
+    e.dataset.effort = isAutoMode() ? "auto" : d;
+    e.dataset.effortSelection = u;
     const p = getPopover();
     if (p) {
       p.dataset.tier = l;
@@ -844,43 +918,45 @@
       animate: false
     });
     syncEffortUI();
-    syncQuotaRail(e, y);
-    const g = e?.generations;
-    const E = document.getElementById("planPopoverKicker");
-    if (g && i) {
-      const e = Math.max(0, g.remaining ?? 0);
-      const t = Math.max(1, g.max_per_period ?? g.max_per_day ?? 1);
-      i.innerHTML = `<span class="plan-count-remaining">${e}</span>` + `<span class="plan-count-sep"> / ${t}</span>`;
-      if (E) E.textContent = "uploads left today";
+    syncQuotaRail(t, g);
+    const y = t?.generations;
+    const h = document.getElementById("planPopoverKicker");
+    if (y && i) {
+      const t = formatQuotaChipDisplay(parseQuotaState(g, y), g, y, l);
+      i.innerHTML = t.countHtml;
+      if (h) h.textContent = t.kicker || "uploads left";
       if (r) {
-        const o = Math.max(0, g.used_today ?? t - e);
-        r.style.width = `${Math.min(100, o / t * 100)}%`;
+        r.style.width = `${Math.min(100, t.progressPct || 0)}%`;
+      }
+      if (a) {
+        const e = t.resetLine || formatResetLabel(y);
+        a.textContent = e;
+        a.hidden = !e;
       }
     } else if (i) {
       i.textContent = "—";
-      if (E) E.textContent = "uploads left today";
+      if (h) h.textContent = "uploads left";
       if (r) r.style.width = "0%";
-    }
-    if (a) {
-      const e = formatResetLabel(g);
-      a.textContent = e;
-      a.hidden = !e;
+      if (a) {
+        a.textContent = "";
+        a.hidden = true;
+      }
     }
     if (s) {
-      const e = Math.max(0, Number(g?.used_lifetime ?? g?.used_today ?? 0));
-      const t = [ "basic", "prime", "elite" ].includes(l);
-      const o = l === "free" && e < 1;
-      s.classList.toggle("hidden", t || o);
+      const t = Math.max(0, Number(y?.used_lifetime ?? y?.used_today ?? 0));
+      const e = [ "basic", "prime", "elite" ].includes(l);
+      const o = l === "free" && t < 1;
+      s.classList.toggle("hidden", e || o);
     }
     clearLoadingState();
   }
-  function setLoadingState(e = true) {
-    const t = document.getElementById("planSelectorWrap");
+  function setLoadingState(t = true) {
+    const e = document.getElementById("planSelectorWrap");
     const o = document.getElementById("planSelectorBtn");
     const n = getPopover();
-    if (t) t.classList.toggle("is-loading", !!e);
-    if (n) n.classList.toggle("is-loading", !!e);
-    if (o) o.setAttribute("aria-busy", e ? "true" : "false");
+    if (e) e.classList.toggle("is-loading", !!t);
+    if (n) n.classList.toggle("is-loading", !!t);
+    if (o) o.setAttribute("aria-busy", t ? "true" : "false");
   }
   function clearLoadingState() {
     setLoadingState(false);
@@ -889,28 +965,28 @@
     return document.querySelector(".url-input-container");
   }
   let v = null;
-  let S = null;
+  let x = null;
   function getPopover() {
     return document.getElementById("planSelectorPopover");
   }
   function mountPopover() {
-    const e = document.getElementById("planSelectorWrap");
-    const t = getPopover();
-    if (!e || !t || t.parentElement === document.body) return;
-    S = e;
-    document.body.appendChild(t);
+    const t = document.getElementById("planSelectorWrap");
+    const e = getPopover();
+    if (!t || !e || e.parentElement === document.body) return;
+    x = t;
+    document.body.appendChild(e);
   }
   function unmountPopover() {
-    const e = getPopover();
-    if (!e || !S || e.parentElement !== document.body) return;
-    S.appendChild(e);
-    S = null;
+    const t = getPopover();
+    if (!t || !x || t.parentElement !== document.body) return;
+    x.appendChild(t);
+    x = null;
   }
   function positionPopover() {
-    const e = document.getElementById("planSelectorBtn");
-    const t = getPopover();
-    if (!e || !t || t.hidden) return;
-    const o = e.getBoundingClientRect();
+    const t = document.getElementById("planSelectorBtn");
+    const e = getPopover();
+    if (!t || !e || e.hidden) return;
+    const o = t.getBoundingClientRect();
     const n = isCompactPlanUi();
     const i = n ? 10 : 12;
     const r = n ? Math.min(360, window.innerWidth - i * 2) : Math.min(268, window.innerWidth - 48);
@@ -923,24 +999,24 @@
       s = Math.min(s, window.innerWidth - a - i);
     }
     let l = o.bottom + (n ? 12 : 10);
-    const c = t.offsetHeight || (n ? 320 : 260);
+    const c = e.offsetHeight || (n ? 320 : 260);
     if (l + c > window.innerHeight - i) {
       l = Math.max(i, o.top - c - 10);
     }
-    t.style.top = `${l}px`;
-    t.style.left = `${s}px`;
-    t.style.width = `${a}px`;
-    t.style.right = "auto";
+    e.style.top = `${l}px`;
+    e.style.left = `${s}px`;
+    e.style.width = `${a}px`;
+    e.style.right = "auto";
     if (p && !n) positionEffortFlyoutSide();
   }
   function bindReposition() {
     if (v) return;
-    let e = isCompactPlanUi();
+    let t = isCompactPlanUi();
     v = () => {
       positionPopover();
-      const t = isCompactPlanUi();
-      if (t !== e) {
-        e = t;
+      const e = isCompactPlanUi();
+      if (e !== t) {
+        t = e;
         syncEffortUI({
           animate: false
         });
@@ -956,17 +1032,17 @@
     v = null;
   }
   function openPopover() {
-    const e = document.getElementById("planSelectorWrap");
-    const t = document.getElementById("planSelectorBtn");
+    const t = document.getElementById("planSelectorWrap");
+    const e = document.getElementById("planSelectorBtn");
     const o = getPopover();
     const n = getInputContainer();
-    if (!e || !t || !o) return;
+    if (!t || !e || !o) return;
     mountPopover();
     o.hidden = false;
-    t.setAttribute("aria-expanded", "true");
+    e.setAttribute("aria-expanded", "true");
     positionPopover();
     requestAnimationFrame(() => {
-      e.classList.add("is-open");
+      t.classList.add("is-open");
       o.classList.add("is-open");
       if (n) n.classList.add("is-open");
       positionPopover();
@@ -984,15 +1060,15 @@
     if (!isCacheFresh()) {
       fetchTierInfo(false).then(applyTierToUI).catch(() => {
         if (l) return;
-        const e = document.getElementById("planPopoverReset");
-        const t = document.getElementById("planPopoverCount");
-        if (t) t.textContent = "—";
-        if (e) e.textContent = "Could not load usage";
+        const t = document.getElementById("planPopoverReset");
+        const e = document.getElementById("planPopoverCount");
+        if (e) e.textContent = "—";
+        if (t) t.textContent = "Could not load usage";
       });
     }
   }
-  function closePopover(e = {}) {
-    const t = Boolean(e.immediate);
+  function closePopover(t = {}) {
+    const e = Boolean(t.immediate);
     const o = document.getElementById("planSelectorWrap");
     const n = document.getElementById("planSelectorBtn");
     const i = getPopover();
@@ -1017,7 +1093,7 @@
       }
       i.removeEventListener("transitionend", finish);
     };
-    if (t) {
+    if (e) {
       finish();
       return;
     }
@@ -1025,34 +1101,34 @@
     setTimeout(finish, 280);
   }
   function togglePopover() {
-    const e = document.getElementById("planSelectorWrap");
-    if (!e) return;
-    if (e.classList.contains("is-open")) closePopover(); else openPopover();
+    const t = document.getElementById("planSelectorWrap");
+    if (!t) return;
+    if (t.classList.contains("is-open")) closePopover(); else openPopover();
   }
-  function onPopoverClick(e) {
-    const t = e.target.closest("#planEffortAdvancedToggle");
-    if (t) {
-      e.preventDefault();
-      e.stopPropagation();
+  function onPopoverClick(t) {
+    const e = t.target.closest("#planEffortAdvancedToggle");
+    if (e) {
+      t.preventDefault();
+      t.stopPropagation();
       setEffortSelection(isAutoMode() ? "advanced" : "auto");
       return;
     }
-    if (e.target.closest("#planEffortSlider") || e.target.closest("#planEffortSliderPanel")) {
-      e.stopPropagation();
+    if (t.target.closest("#planEffortSlider") || t.target.closest("#planEffortSliderPanel")) {
+      t.stopPropagation();
       return;
     }
-    const o = e.target.closest("#planEffortTrigger");
+    const o = t.target.closest("#planEffortTrigger");
     if (o) {
-      e.preventDefault();
-      e.stopPropagation();
+      t.preventDefault();
+      t.stopPropagation();
       if (isAutoMode()) setEffortSelection("advanced");
       toggleEffortControl();
       return;
     }
-    const n = e.target.closest(".plan-effort-option");
+    const n = t.target.closest(".plan-effort-option");
     if (!n) return;
-    e.preventDefault();
-    e.stopPropagation();
+    t.preventDefault();
+    t.stopPropagation();
     const i = n.dataset.effort;
     if (!isEffortSelectable(i)) {
       notifyEffortLocked(i);
@@ -1061,12 +1137,12 @@
     setEffort(i, {
       animate: false
     });
-    if (l) syncQuotaRail(l, y);
+    if (l) syncQuotaRail(l, g);
   }
   function initPlanSelector() {
-    const e = document.getElementById("planSelectorWrap");
-    const t = document.getElementById("planSelectorBtn");
-    if (!e || !t) return;
+    const t = document.getElementById("planSelectorWrap");
+    const e = document.getElementById("planSelectorBtn");
+    if (!t || !e) return;
     u = readEffortSelection();
     d = resolveEffortForTier(m);
     applyEffortUiMode(readEffortUiMode(), {
@@ -1077,23 +1153,23 @@
       animate: false
     });
     syncEffortUI();
-    syncQuotaRail(l, y);
+    syncQuotaRail(l, g);
     bindEffortSliderInteractions();
     try {
-      const e = window.matchMedia("(max-width: 768px)");
+      const t = window.matchMedia("(max-width: 768px)");
       const onMq = () => syncEffortUI({
         animate: false
       });
-      if (e.addEventListener) e.addEventListener("change", onMq); else if (e.addListener) e.addListener(onMq);
-    } catch (e) {}
+      if (t.addEventListener) t.addEventListener("change", onMq); else if (t.addListener) t.addListener(onMq);
+    } catch (t) {}
     const o = document.getElementById("urlQuotaClose");
     if (o && !o.dataset.bound) {
       o.dataset.bound = "true";
-      o.addEventListener("click", e => {
-        e.preventDefault();
-        e.stopPropagation();
-        const t = document.getElementById("urlQuotaBanner");
-        const o = t?.dataset?.kind || "";
+      o.addEventListener("click", t => {
+        t.preventDefault();
+        t.stopPropagation();
+        const e = document.getElementById("urlQuotaBanner");
+        const o = e?.dataset?.kind || "";
         dismissQuotaKind(o);
         const n = document.getElementById("urlQuotaRail");
         const i = document.getElementById("urlInputStack");
@@ -1101,37 +1177,37 @@
         if (i) i.classList.remove("has-quota");
       });
     }
-    t.addEventListener("click", e => {
-      e.preventDefault();
-      e.stopPropagation();
+    e.addEventListener("click", t => {
+      t.preventDefault();
+      t.stopPropagation();
       togglePopover();
     });
     const n = getPopover();
     if (n) {
       n.addEventListener("click", onPopoverClick);
     }
-    document.addEventListener("click", t => {
+    document.addEventListener("click", e => {
       const o = getPopover();
-      if (e.contains(t.target) || o?.contains(t.target)) return;
+      if (t.contains(e.target) || o?.contains(e.target)) return;
       closePopover();
     });
-    document.addEventListener("keydown", e => {
-      if (e.key !== "Escape") return;
+    document.addEventListener("keydown", t => {
+      if (t.key !== "Escape") return;
       if (p) {
         closeEffortFlyout();
         return;
       }
       closePopover();
     });
-    fetchTierInfo().then(async e => {
+    fetchTierInfo().then(async t => {
       await enrichQuotaFromStatus();
-      applyTierToUI(e);
+      applyTierToUI(t);
     }).catch(() => {
-      e.dataset.tier = "free";
+      t.dataset.tier = "free";
       m = "free";
       d = "low";
-      const t = document.getElementById("planSelectorLabel");
-      if (t) t.textContent = "Free Plan";
+      const e = document.getElementById("planSelectorLabel");
+      if (e) e.textContent = "Free Plan";
       syncEffortUI();
       clearLoadingState();
     });
@@ -1139,20 +1215,20 @@
   window.refreshPlanSelector = function refreshPlanSelector() {
     invalidateTierCache();
     setLoadingState(true);
-    return Promise.all([ fetchTierInfo(true), enrichQuotaFromStatus() ]).then(([e]) => {
-      applyTierToUI(e);
-      return e;
+    return Promise.all([ fetchTierInfo(true), enrichQuotaFromStatus() ]).then(([t]) => {
+      applyTierToUI(t);
+      return t;
     }).catch(() => {
       clearLoadingState();
     });
   };
-  window.updateUrlQuotaRail = function updateUrlQuotaRail(e) {
-    if (e) y = e;
-    if (l) syncQuotaRail(l, y);
+  window.updateUrlQuotaRail = function updateUrlQuotaRail(t) {
+    if (t) g = t;
+    if (l) syncQuotaRail(l, g);
   };
-  window.closePlanSelectorPopover = function closePlanSelectorPopover(e = true) {
+  window.closePlanSelectorPopover = function closePlanSelectorPopover(t = true) {
     closePopover({
-      immediate: Boolean(e)
+      immediate: Boolean(t)
     });
   };
   window.getSelectedEffortMode = function getSelectedEffortMode() {
@@ -1161,38 +1237,38 @@
   window.isEffortAutoMode = function isEffortAutoMode() {
     return isAutoMode();
   };
-  window.setEffortAutoMode = function setEffortAutoMode(e) {
-    setEffortSelection(e ? "auto" : "advanced");
+  window.setEffortAutoMode = function setEffortAutoMode(t) {
+    setEffortSelection(t ? "auto" : "advanced");
     return isAutoMode();
   };
-  window.setSelectedEffortMode = function setSelectedEffortMode(e) {
-    if (e === "auto") {
+  window.setSelectedEffortMode = function setSelectedEffortMode(t) {
+    if (t === "auto") {
       setEffortSelection("auto");
       return true;
     }
     if (isAutoMode()) setEffortSelection("advanced");
-    const t = setEffort(e);
-    if (l) syncQuotaRail(l, y);
-    return t;
+    const e = setEffort(t);
+    if (l) syncQuotaRail(l, g);
+    return e;
   };
   window.getEffortUiMode = function getEffortUiMode() {
-    return g;
+    return y;
   };
-  window.setEffortUiMode = function setEffortUiMode(e) {
-    applyEffortUiMode(e);
-    return g;
+  window.setEffortUiMode = function setEffortUiMode(t) {
+    applyEffortUiMode(t);
+    return y;
   };
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => {
       initPlanSelector();
       enrichQuotaFromStatus().then(() => {
-        if (l) syncQuotaRail(l, y);
+        if (l) syncQuotaRail(l, g);
       });
     });
   } else {
     initPlanSelector();
     enrichQuotaFromStatus().then(() => {
-      if (l) syncQuotaRail(l, y);
+      if (l) syncQuotaRail(l, g);
     });
   }
 })();

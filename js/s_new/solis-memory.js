@@ -23,17 +23,53 @@
     return t === "splitscreen" || t.includes("split");
   }
   function templateMemoryProfile(e) {
+    if (isRankingTemplate(e)) {
+      return {
+        styles: true,
+        layout: false,
+        captions: false,
+        rankingOverlay: true
+      };
+    }
     return {
       styles: isRankingTemplate(e),
       layout: isSplitscreenTemplate(e),
-      captions: !isRankingTemplate(e)
+      captions: !isRankingTemplate(e),
+      rankingOverlay: false
     };
+  }
+  function sanitizeRankingOverlay(e) {
+    if (!e || typeof e !== "object") return null;
+    const t = Number(e.y_pct);
+    if (!Number.isFinite(t)) return null;
+    return {
+      y_pct: Math.max(.02, Math.min(.98, t)),
+      enabled: e.enabled !== false
+    };
+  }
+  function rankingOverlayForSuggest(e) {
+    if (!e || typeof e !== "object") return null;
+    const t = e.lastGeneratedOverlay || e.overlayPosition;
+    return sanitizeRankingOverlay(t);
+  }
+  function rankingOverlayDiffers(e, t) {
+    const n = rankingOverlayForSuggest(e);
+    if (!n) return false;
+    const s = sanitizeRankingOverlay(collectLiveCaptions(t));
+    if (!s) return true;
+    return Math.abs(Number(n.y_pct) - Number(s.y_pct)) > .015;
   }
   function sanitizeForTemplate(e, {styles: t = null, captions: n = null, layout: s = null} = {}) {
     const i = templateMemoryProfile(e);
+    let o = null;
+    if (i.rankingOverlay) {
+      o = sanitizeRankingOverlay(n);
+    } else if (i.captions && n && typeof n === "object" && Object.keys(n).length) {
+      o = n;
+    }
     return {
       styles: i.styles && t && typeof t === "object" && Object.keys(t).length ? t : null,
-      captions: i.captions && n && typeof n === "object" && Object.keys(n).length ? n : null,
+      captions: o,
       layout: i.layout && layoutUseful(s) ? normalizeLayout(s) : null
     };
   }
@@ -417,8 +453,8 @@
   let w = 0;
   let h = false;
   let b = null;
-  let _ = null;
-  let k = false;
+  let k = null;
+  let _ = false;
   let M = null;
   let v = null;
   let C = false;
@@ -450,7 +486,7 @@
     const n = _resolveUserId(e);
     const i = !!(v && n && v !== n);
     v = n;
-    k = false;
+    _ = false;
     if (n) {
       try {
         localStorage.setItem(s, n);
@@ -566,11 +602,15 @@
     } catch (e) {}
     if (n) scheduleServerSync();
   }
-  function fingerprint(e, t, n) {
+  function fingerprint(e, t, n, s) {
     try {
+      const i = sanitizeRankingOverlay(s);
       return JSON.stringify({
         s: e || null,
         c: t || null,
+        o: i ? {
+          y_pct: Number(i.y_pct).toFixed(3)
+        } : null,
         l: n ? {
           secondary_type: n.splitscreen_secondary_type || null,
           inverted: !!n.splitscreen_inverted,
@@ -933,49 +973,57 @@
     let a = i.captions ? n || collectLiveCaptions(e, {
       allowSnap: true
     }) : null;
-    let u = i.layout ? mergeLayouts(r.layout, s || collectLiveLayout(e)) : null;
+    let u = i.rankingOverlay ? sanitizeRankingOverlay(n || collectLiveCaptions(e, {
+      allowSnap: true
+    })) : null;
+    let f = i.layout ? mergeLayouts(r.layout, s || collectLiveLayout(e)) : null;
     if (i.captions && (!a || !Object.keys(a).length)) {
       a = recallCaptionSnap(e);
     }
-    const f = sanitizeForTemplate(e, {
+    const p = sanitizeForTemplate(e, {
       styles: l,
       captions: a,
-      layout: u
+      layout: f
     });
-    l = f.styles;
-    a = f.captions;
-    u = f.layout;
-    if (i.layout && !u && layoutUseful(r.layout)) {
-      u = normalizeLayout(r.layout);
+    l = p.styles;
+    a = p.captions;
+    f = p.layout;
+    if (i.rankingOverlay && u) {
+      a = null;
     }
-    if (!(l && Object.keys(l).length) && !(a && Object.keys(a).length) && !layoutUseful(u)) {
+    if (i.layout && !f && layoutUseful(r.layout)) {
+      f = normalizeLayout(r.layout);
+    }
+    if (!(l && Object.keys(l).length) && !(a && Object.keys(a).length) && !u && !layoutUseful(f)) {
       return;
     }
-    const p = fingerprint(l, a, u);
-    const g = r.fingerprint === p;
-    const d = trustFields(r, p);
+    const g = fingerprint(l, a, f, u);
+    const d = r.fingerprint === g;
+    const m = trustFields(r, g);
     o.templates[e] = {
       updatedAt: (new Date).toISOString(),
       styles: l ? JSON.parse(JSON.stringify(l)) : null,
       captions: a ? JSON.parse(JSON.stringify(a)) : null,
       lastGeneratedCaptions: a ? JSON.parse(JSON.stringify(a)) : r.lastGeneratedCaptions || null,
       lastGeneratedStyles: l ? JSON.parse(JSON.stringify(l)) : r.lastGeneratedStyles || null,
-      layout: u ? JSON.parse(JSON.stringify(u)) : null,
-      fingerprint: p,
-      rejectCount: g ? r.rejectCount || 0 : 0,
-      lastRejectedFingerprint: g ? r.lastRejectedFingerprint || null : null,
-      lastRejectedAt: g ? r.lastRejectedAt || null : null,
-      lastSuggestedAt: g ? r.lastSuggestedAt : null,
-      acceptStreak: d.acceptStreak,
-      acceptFingerprint: d.acceptFingerprint,
-      autoApply: g ? d.autoApply : true,
-      lastAcceptedAt: d.lastAcceptedAt,
+      lastGeneratedOverlay: u ? JSON.parse(JSON.stringify(u)) : r.lastGeneratedOverlay || null,
+      overlayPosition: u ? JSON.parse(JSON.stringify(u)) : r.overlayPosition || null,
+      layout: f ? JSON.parse(JSON.stringify(f)) : null,
+      fingerprint: g,
+      rejectCount: d ? r.rejectCount || 0 : 0,
+      lastRejectedFingerprint: d ? r.lastRejectedFingerprint || null : null,
+      lastRejectedAt: d ? r.lastRejectedAt || null : null,
+      lastSuggestedAt: d ? r.lastSuggestedAt : null,
+      acceptStreak: m.acceptStreak,
+      acceptFingerprint: m.acceptFingerprint,
+      autoApply: d ? m.autoApply : true,
+      lastAcceptedAt: m.lastAcceptedAt,
       source: "generate"
     };
     o.usageLog.unshift({
       templateId: e,
       at: (new Date).toISOString(),
-      fingerprint: p
+      fingerprint: g
     });
     o.usageLog = o.usageLog.slice(0, c);
     if (a) rememberCaptionSnap(e, a);
@@ -983,7 +1031,7 @@
       writeSessionDraft(e, {
         captions: a || undefined,
         styles: l || undefined,
-        layout: layoutUseful(u) ? u : undefined
+        layout: layoutUseful(f) ? f : undefined
       });
     } catch (e) {}
     writeState(o, {
@@ -1058,8 +1106,9 @@
     const s = !!(n && Object.keys(n).length);
     const i = captionsForSuggest(t, e);
     const o = !!(i && Object.keys(i).length);
-    const r = layoutUseful(t.layout);
-    if (!s && !o && !r) return false;
+    const r = isRankingTemplate(e) && rankingOverlayDiffers(t, e);
+    const l = layoutUseful(t.layout);
+    if (!s && !o && !l && !r) return false;
     if (t.lastRejectedFingerprint && t.lastRejectedFingerprint === t.fingerprint) {
       const n = Date.parse(t.lastRejectedAt || 0);
       if (Number.isFinite(n) && Date.now() - n < f) return false;
@@ -1074,33 +1123,34 @@
         } catch (e) {}
       }
     }
-    if (isLibraryPreviewOpen() && !r) return false;
-    const l = collectLiveStyles(e);
-    const a = collectLiveCaptions(e);
-    const c = collectLiveLayout(e);
-    const u = !!(a && Object.keys(a).length);
-    const d = !!(l && Object.keys(l).length);
-    const m = templateMemoryProfile(e);
-    const S = o && m.captions && !isLibraryPreviewOpen();
-    const w = s && m.styles;
-    const b = r && m.layout;
-    if (!S && !w && !b) return false;
-    const _ = Date.parse(t.lastSuggestedAt || 0);
-    if (Number.isFinite(_)) {
+    if (isLibraryPreviewOpen() && !l) return false;
+    const a = collectLiveStyles(e);
+    const c = collectLiveCaptions(e);
+    const u = collectLiveLayout(e);
+    const d = !!(c && Object.keys(c).length);
+    const m = !!(a && Object.keys(a).length);
+    const S = templateMemoryProfile(e);
+    const w = o && S.captions && !isLibraryPreviewOpen();
+    const b = s && S.styles;
+    const k = r && S.rankingOverlay;
+    const _ = l && S.layout;
+    if (!w && !b && !_ && !k) return false;
+    const M = Date.parse(t.lastSuggestedAt || 0);
+    if (Number.isFinite(M)) {
       const n = isRankingTemplate(e) ? g : p;
-      if (Date.now() - _ < n) {
-        const e = b && layoutDiffers(t.layout, c);
+      if (Date.now() - M < n) {
+        const e = _ && layoutDiffers(t.layout, u);
         if (!e) return false;
       }
     }
-    if (b && layoutDiffers(t.layout, c)) return true;
-    if (w && isRankingTemplate(e)) return true;
-    if (S && !u) return true;
-    if (w && !d && !u) return true;
-    const k = smarterCaptions(i, e);
-    const M = fingerprint(l, a, c) === t.fingerprint;
-    const v = !k || fingerprint(null, a) === fingerprint(null, k);
-    if (M && v) return false;
+    if (_ && layoutDiffers(t.layout, u)) return true;
+    if (b && isRankingTemplate(e)) return true;
+    if (w && !d) return true;
+    if (b && !m && !d) return true;
+    const v = smarterCaptions(i, e);
+    const C = fingerprint(a, c, u) === t.fingerprint;
+    const L = !v || fingerprint(null, c) === fingerprint(null, v);
+    if (C && L) return false;
     return true;
   }
   function flushDeferredRankingCustoms() {
@@ -1281,12 +1331,13 @@
     const t = e || "ranked_compilation";
     const n = getTemplateMemory(t);
     const s = stylesForSuggest(n, t);
-    if (!s || !Object.keys(s).length) return false;
-    return Object.keys(s).some(e => {
+    const i = !!(s && Object.keys(s).some(e => {
       if (e === "__ranking_layout") return false;
       const t = s[e];
       return t && typeof t === "object" && (t.font || t.font_size || t.color);
-    });
+    }));
+    const o = !!rankingOverlayForSuggest(n);
+    return i || o;
   }
   function isLibraryPreviewOpen() {
     try {
@@ -1349,7 +1400,7 @@
         shadow: t?.shadow || "outline",
         font_size: t?.font_size || 70,
         font_size_ratio: t?.font_size_ratio || .036,
-        y_pct: t?.y_pct != null ? t.y_pct : isRankingTemplate(e) ? .82 : .55,
+        y_pct: t?.y_pct != null ? t.y_pct : .55,
         enabled: true,
         __tip: "captions"
       }, e);
@@ -1406,7 +1457,9 @@
     } else if (isRankingTemplate(e)) {
       if (t) {
         const s = stylesForSuggest(t, e);
-        if (s && Object.keys(s).length) {
+        const i = !!(s && Object.keys(s).length);
+        const o = !!rankingOverlayForSuggest(t);
+        if (i || o) {
           n = !!offerRankingStylesSuggest(e, t);
         }
       }
@@ -1577,15 +1630,16 @@
     if (!isRankingTemplate(e)) return false;
     t = t || getTemplateMemory(e);
     const n = stylesForSuggest(t, e);
-    if (!n || !Object.keys(n).length) return false;
-    const s = Object.keys(n).filter(e => e !== "__ranking_layout");
-    const i = s.some(e => {
+    const s = rankingOverlayForSuggest(t);
+    const i = n ? Object.keys(n).filter(e => e !== "__ranking_layout") : [];
+    const o = i.some(e => {
       const t = n[e];
       return t && typeof t === "object" && (t.font || t.font_size || t.color);
     });
-    if (!i) return false;
-    const o = document.getElementById("solisMemorySuggest");
-    if (o && !o.hidden && o.classList.contains("open") && o.dataset.mode === "styles-only" && o.dataset.templateId === String(e)) {
+    if (!o && !s) return false;
+    if (!rankingOverlayDiffers(t, e) && !o) return false;
+    const r = document.getElementById("solisMemorySuggest");
+    if (r && !r.hidden && r.classList.contains("open") && r.dataset.mode === "styles-only" && r.dataset.templateId === String(e)) {
       return true;
     }
     try {
@@ -1596,34 +1650,40 @@
       document.getElementById("subPillMenu")?.classList.remove("active");
     } catch (e) {}
     window.__solisRankingDeferCustoms = true;
-    const r = ensureSuggestEl();
-    const l = r.querySelector("#solisMemorySuggestTitle");
-    if (l) {
-      l.hidden = false;
-      l.removeAttribute("hidden");
-      l.textContent = suggestHookLine({
+    const l = ensureSuggestEl();
+    const a = l.querySelector("#solisMemorySuggestTitle");
+    if (a) {
+      a.hidden = false;
+      a.removeAttribute("hidden");
+      const t = o ? suggestHookLine({
         styles: n,
         mode: "ranking",
         seed: e
-      });
-      l.style.display = "";
+      }) : "Use your last text placement?";
+      a.textContent = s && o ? `${t} · same text spot` : t;
+      a.style.display = "";
     }
-    const a = r.querySelector("#solisMemorySuggestSub");
-    if (a) a.textContent = "";
-    r.dataset.templateId = e;
-    r.dataset.mode = "styles-only";
-    r.classList.add("solis-memory-suggest--ranking");
+    const c = l.querySelector("#solisMemorySuggestSub");
+    if (c) c.textContent = "";
+    l.dataset.templateId = e;
+    l.dataset.mode = "styles-only";
+    l.classList.add("solis-memory-suggest--ranking");
     try {
-      r._solisMemStyles = JSON.parse(JSON.stringify(n));
+      l._solisMemStyles = n && Object.keys(n).length ? JSON.parse(JSON.stringify(n)) : null;
     } catch (e) {
-      r._solisMemStyles = n;
+      l._solisMemStyles = n;
     }
-    r._solisMemStylesPreviewed = false;
     try {
-      delete r._solisMemStylesBackup;
+      l._solisMemOverlay = s ? JSON.parse(JSON.stringify(s)) : null;
+    } catch (e) {
+      l._solisMemOverlay = s;
+    }
+    l._solisMemStylesPreviewed = false;
+    try {
+      delete l._solisMemStylesBackup;
     } catch (e) {}
     placeSuggestNearPreview();
-    revealSuggestEl(r);
+    revealSuggestEl(l);
     return true;
   }
   function continueSuggestAfterCaption(e) {
@@ -1744,6 +1804,14 @@
         window.__solisRankingDeferCustoms = false;
         applyStyles(t, n);
       }
+      const i = e._solisMemOverlay || rankingOverlayForSuggest(s);
+      if (i && isRankingTemplate(t)) {
+        applyCaptions({
+          ...i,
+          anim: "none",
+          enabled: true
+        }, t);
+      }
     } else {
       if (s.captions) applyCaptions(s.captions, t);
       if (s.layout && typeof window.applySplitscreenMemoryLayout === "function") {
@@ -1763,6 +1831,7 @@
       delete e._solisMemStyles;
       delete e._solisMemStylesBackup;
       delete e._solisMemStylesPreviewed;
+      delete e._solisMemOverlay;
       e.classList.remove("solis-memory-suggest--ranking");
     } catch (e) {}
     const i = readState();
@@ -1900,9 +1969,9 @@
     }
   }
   function scheduleServerSync() {
-    if (_) clearTimeout(_);
-    _ = setTimeout(() => {
-      _ = null;
+    if (k) clearTimeout(k);
+    k = setTimeout(() => {
+      k = null;
       pushServerMemory();
     }, u);
   }
@@ -2041,7 +2110,7 @@
         writeState(i, {
           sync: false
         });
-        k = true;
+        _ = true;
         syncSettingsUI();
         if (typeof window.solisLog === "function") {
           const e = Object.keys(i.templates || {}).length;
@@ -2090,7 +2159,7 @@
         } catch (e) {}
       }, 60);
     } catch (e) {}
-    if (!k) {
+    if (!_) {
       pullServerMemory().then(() => {
         if (!h) scheduleSuggest(e);
         if (!h) {
@@ -2271,6 +2340,8 @@
     getTemplateMemory: getTemplateMemory,
     stylesForSuggest: stylesForSuggest,
     rankingStylesReady: rankingStylesReady,
+    rankingOverlayForSuggest: rankingOverlayForSuggest,
+    rankingOverlayDiffers: rankingOverlayDiffers,
     applyCaptions: applyCaptions,
     smarterCaptions: smarterCaptions,
     continueSuggestAfterCaption: continueSuggestAfterCaption,

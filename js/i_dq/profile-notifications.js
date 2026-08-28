@@ -230,21 +230,21 @@ function addNotification(e) {
 }
 
 function showVideoGeneratedNotification(e = {}) {
-  const {videoTitle: t = "Video Generated", videoUrl: i = "#", thumbnailUrl: o = null, message: n = null} = e || {};
-  const a = String(t || "Video Generated").trim() || "Video Generated";
-  const s = String(n || `Your video "${a}" is ready.`).trim();
+  const {videoTitle: t = "Video Generated", videoUrl: i = "#", thumbnailUrl: o = null, projectId: n = null, message: a = null} = e || {};
+  const s = String(t || "Video Generated").trim() || "Video Generated";
+  const r = String(a || `Your video "${s}" is ready.`).trim();
   try {
     if (typeof NotificationSystemV2?.addNotification === "function") {
       NotificationSystemV2.addNotification({
         title: "Video ready",
-        message: s,
+        message: r,
         icon: "check",
         priority: "high"
       });
     } else if (typeof addNotification === "function") {
       addNotification({
         title: "Video ready",
-        message: s,
+        message: r,
         icon: "check"
       });
     }
@@ -254,11 +254,11 @@ function showVideoGeneratedNotification(e = {}) {
   try {
     const e = window.__solisShowNotification || window.showNotification;
     if (typeof e === "function") {
-      e(s, "success");
+      e(r, "success");
     }
   } catch (e) {}
   try {
-    showVideoGeneratedOverlay(a, i || "#");
+    showVideoGeneratedOverlay(s, i || "#", n);
   } catch (e) {}
   try {
     if (typeof addVideoBadge === "function") addVideoBadge();
@@ -270,20 +270,25 @@ function showVideoGenerated(e = {}) {
   return showVideoGeneratedNotification(e);
 }
 
-function showVideoGeneratedOverlay(e = "Video Ready!", t = "#") {
-  const i = document.getElementById("videoGeneratedBackdrop");
-  const o = document.getElementById("videoGeneratedOverlay");
-  if (!i || !o) {
+function showVideoGeneratedOverlay(e = "Video Ready!", t = "#", i = null) {
+  const o = document.getElementById("videoGeneratedBackdrop");
+  const n = document.getElementById("videoGeneratedOverlay");
+  if (!o || !n) {
     return;
   }
-  const n = o.querySelector(".video-generated-title");
-  const a = o.querySelector(".video-generated-message");
-  const s = o.querySelector('[data-action="view"]');
-  if (n) n.textContent = e;
-  if (a) a.textContent = "Your video has been successfully generated and is ready to download or share.";
-  if (s) {
-    s.onclick = () => {
-      if (t && t !== "#") {
+  const a = n.querySelector(".video-generated-title");
+  const s = n.querySelector(".video-generated-message");
+  const r = n.querySelector('[data-action="view"]');
+  if (a) a.textContent = e;
+  if (s) s.textContent = "Your video has been successfully generated and is ready to download or share.";
+  if (r) {
+    r.onclick = () => {
+      const e = i != null ? String(i).trim() : "";
+      if (e && window.clipsStudio?.openLibraryPreviewWhenReady) {
+        try {
+          window.clipsStudio.openLibraryPreviewWhenReady(e, e);
+        } catch (e) {}
+      } else if (t && t !== "#") {
         try {
           window.open(t, "_blank");
         } catch (e) {}
@@ -296,8 +301,8 @@ function showVideoGeneratedOverlay(e = "Video Ready!", t = "#") {
       hideVideoGeneratedOverlay();
     };
   }
-  i.classList.add("show");
   o.classList.add("show");
+  n.classList.add("show");
   setTimeout(hideVideoGeneratedOverlay, 8e3);
 }
 

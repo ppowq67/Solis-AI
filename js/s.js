@@ -396,21 +396,21 @@ const PreviewTimeline = (() => {
   let T = null;
   let x = [];
   let M = [];
-  let B = -1;
-  let A = 0;
-  let R = 1;
-  let U = null;
-  let D = false;
-  let F = null;
-  let N = 0;
-  let O = null;
-  let $ = false;
+  let B = null;
+  let A = -1;
+  let R = 0;
+  let U = 1;
+  let D = null;
+  let F = false;
+  let N = null;
+  let O = 0;
+  let $ = null;
   let j = false;
-  const G = 220;
-  const z = 14;
-  let H = [ 5, 4, 3, 2, 1 ];
-  const V = [];
-  let q;
+  let G = false;
+  const z = 220;
+  const H = 14;
+  let V = [ 5, 4, 3, 2, 1 ];
+  const q = [];
   let W;
   let Y;
   let Q;
@@ -423,49 +423,50 @@ const PreviewTimeline = (() => {
   let ie;
   let ne;
   let re;
+  let oe;
   function refreshEls() {
-    q = document.getElementById("previewTimelineShell");
-    W = document.getElementById("previewTimelineWrap");
-    Y = document.getElementById("previewTimelineCurrent");
-    Q = document.getElementById("previewTimelineDuration");
-    J = W;
-    X = document.getElementById("previewTimelineFilmstrip");
-    K = document.getElementById("previewTimelineSegments");
-    Z = document.getElementById("previewTimelineDimLeft");
-    ee = document.getElementById("previewTimelineDimRight");
-    te = document.getElementById("previewTimelineSelection");
-    ie = document.getElementById("previewTimelineHandleL");
-    ne = document.getElementById("previewTimelineHandleR");
-    re = document.getElementById("previewTimelinePlayhead");
+    W = document.getElementById("previewTimelineShell");
+    Y = document.getElementById("previewTimelineWrap");
+    Q = document.getElementById("previewTimelineCurrent");
+    J = document.getElementById("previewTimelineDuration");
+    X = Y;
+    K = document.getElementById("previewTimelineFilmstrip");
+    Z = document.getElementById("previewTimelineSegments");
+    ee = document.getElementById("previewTimelineDimLeft");
+    te = document.getElementById("previewTimelineDimRight");
+    ie = document.getElementById("previewTimelineSelection");
+    ne = document.getElementById("previewTimelineHandleL");
+    re = document.getElementById("previewTimelineHandleR");
+    oe = document.getElementById("previewTimelinePlayhead");
   }
   function setHandlesUnlocked(e) {
-    D = !!e;
-    if (q) q.classList.toggle("handles-on", D);
+    F = !!e;
+    if (W) W.classList.toggle("handles-on", F);
   }
   function setRankingEditMode(e) {
     refreshEls();
-    if (q) q.classList.toggle("is-ranking-edit", !!e);
+    if (W) W.classList.toggle("is-ranking-edit", !!e);
     if (e) setHandlesUnlocked(true);
-    if (!e) H = [ 5, 4, 3, 2, 1 ];
+    if (!e) V = [ 5, 4, 3, 2, 1 ];
   }
   function isRankingEdit() {
-    return !!q?.classList.contains("is-ranking-edit");
+    return !!W?.classList.contains("is-ranking-edit");
   }
   function getClipOrder() {
     const e = Math.max(1, getSegmentBounds().length - 1);
-    while (H.length < e) {
-      const e = Math.max(1, 5 - H.length);
-      if (!H.includes(e)) H.push(e); else H.push(H.length + 1);
+    while (V.length < e) {
+      const e = Math.max(1, 5 - V.length);
+      if (!V.includes(e)) V.push(e); else V.push(V.length + 1);
     }
-    return H.slice(0, e);
+    return V.slice(0, e);
   }
   function setClipOrder(e) {
     if (!Array.isArray(e) || !e.length) {
-      H = [ 5, 4, 3, 2, 1 ];
+      V = [ 5, 4, 3, 2, 1 ];
       return;
     }
     const t = e.map(e => Math.max(1, Math.min(5, Number(e) || 0))).filter(Boolean);
-    H = t.length ? t : [ 5, 4, 3, 2, 1 ];
+    V = t.length ? t : [ 5, 4, 3, 2, 1 ];
   }
   function markRankingTimelineDirty() {
     try {
@@ -518,32 +519,32 @@ const PreviewTimeline = (() => {
     const o = getClipOrder();
     const [s] = o.splice(t, 1);
     o.splice(i, 0, s);
-    H = o;
+    V = o;
     const a = [];
     for (let t = 0; t < r; t++) a.push(Math.max(e, n[t + 1] - n[t]));
     const [l] = a.splice(t, 1);
     a.splice(i, 0, l);
     rebuildSplitsFromLengths(a);
     try {
-      window.clipsStudio?.onRankingClipReorder?.(H.slice());
+      window.clipsStudio?.onRankingClipReorder?.(V.slice());
     } catch (e) {}
     return true;
   }
   function paintSegmentReorderGhost(e) {
-    if (!O || !isRankingEdit()) return;
+    if (!$ || !isRankingEdit()) return;
     const t = segmentIndexAtClientX(e);
-    O.hoverIndex = t;
-    const i = Array.from(K?.children || []);
+    $.hoverIndex = t;
+    const i = Array.from(Z?.children || []);
     i.forEach((e, i) => {
-      e.classList.toggle("is-drop-target", i === t && i !== O.index);
-      e.classList.toggle("is-dragging", i === O.index);
+      e.classList.toggle("is-drop-target", i === t && i !== $.index);
+      e.classList.toggle("is-dragging", i === $.index);
     });
-    const n = e - O.startX;
-    const r = i[O.index];
+    const n = e - $.startX;
+    const r = i[$.index];
     if (r) {
       const e = (() => {
         const e = getSegmentBounds();
-        return e[O.index] / u * I;
+        return e[$.index] / u * I;
       })();
       r.style.transform = `translate3d(${e + n}px,0,0)`;
       r.style.zIndex = "5";
@@ -567,8 +568,8 @@ const PreviewTimeline = (() => {
     }
   }
   function cacheTrackMetrics() {
-    if (!J) return;
-    const e = J.getBoundingClientRect();
+    if (!X) return;
+    const e = X.getBoundingClientRect();
     P = e.left;
     I = Math.max(1, e.width);
   }
@@ -580,48 +581,48 @@ const PreviewTimeline = (() => {
   function paintChrome({rebuildSegments: e = false} = {}) {
     const t = c === "start" || c === "end" || c === "bound" || c === "segment";
     if (!t) {
-      if (Y) Y.textContent = fmt(m);
-      if (Q) Q.textContent = fmt(u || 0);
+      if (Q) Q.textContent = fmt(m);
+      if (J) J.textContent = fmt(u || 0);
     }
     if (!u || I <= 0) return;
     const i = d / u * I;
     const n = p / u * I;
     const r = Math.max(2, n - i);
-    if (te) {
-      te.style.width = `${r}px`;
-      te.style.transform = `translate3d(${i}px,0,0)`;
+    if (ie) {
+      ie.style.width = `${r}px`;
+      ie.style.transform = `translate3d(${i}px,0,0)`;
     }
-    if (Z) Z.style.width = `${i}px`;
-    if (ee) ee.style.width = `${Math.max(0, I - n)}px`;
-    if (re && !t) {
+    if (ee) ee.style.width = `${i}px`;
+    if (te) te.style.width = `${Math.max(0, I - n)}px`;
+    if (oe && !t) {
       const e = Math.max(d, Math.min(p, m));
       const t = e / u * I;
-      re.style.transform = `translate3d(${t}px,0,0) translateX(-50%)`;
+      oe.style.transform = `translate3d(${t}px,0,0) translateX(-50%)`;
     }
-    if (!t && J) {
-      J.setAttribute("aria-valuenow", String(Math.round(m / u * 100)));
-      J.setAttribute("aria-valuetext", fmt(m));
+    if (!t && X) {
+      X.setAttribute("aria-valuenow", String(Math.round(m / u * 100)));
+      X.setAttribute("aria-valuetext", fmt(m));
     }
     if (t) paintSegmentsFast(); else if (e) paintSegments();
     paintSilenceCuts();
     paintCutPreview();
   }
   function paintCutPreview() {
-    if (!W || !u || I <= 0) return;
-    let e = W.querySelector(".preview-timeline-cut-preview");
+    if (!Y || !u || I <= 0) return;
+    let e = Y.querySelector(".preview-timeline-cut-preview");
     if (!M.length) {
       if (e) e.remove();
-      if (W) W.classList.remove("has-cut-preview");
+      if (Y) Y.classList.remove("has-cut-preview");
       return;
     }
-    if (!W.classList.contains("has-cut-preview")) {
-      W.classList.add("has-cut-preview");
+    if (!Y.classList.contains("has-cut-preview")) {
+      Y.classList.add("has-cut-preview");
     }
     if (!e) {
       e = document.createElement("div");
       e.className = "preview-timeline-cut-preview";
       e.setAttribute("aria-hidden", "true");
-      W.appendChild(e);
+      Y.appendChild(e);
     }
     e.innerHTML = "";
     const t = document.createDocumentFragment();
@@ -635,9 +636,16 @@ const PreviewTimeline = (() => {
     }
     e.appendChild(t);
   }
+  function flushPendingPreviewRegions() {
+    if (!B) return;
+    if (!l || !u || I <= 0) return;
+    M = B;
+    B = null;
+    paintCutPreview();
+  }
   function paintSilenceCuts() {
-    if (!W || !u || I <= 0) return;
-    let e = W.querySelector(".preview-timeline-silence-cuts");
+    if (!Y || !u || I <= 0) return;
+    let e = Y.querySelector(".preview-timeline-silence-cuts");
     if (!x.length) {
       if (e) e.remove();
       return;
@@ -646,7 +654,7 @@ const PreviewTimeline = (() => {
       e = document.createElement("div");
       e.className = "preview-timeline-silence-cuts";
       e.setAttribute("aria-hidden", "true");
-      W.appendChild(e);
+      Y.appendChild(e);
     }
     e.innerHTML = "";
     const t = document.createDocumentFragment();
@@ -668,8 +676,8 @@ const PreviewTimeline = (() => {
     });
   }
   function cloneFilmInto(e) {
-    if (!X) return;
-    const i = X.querySelectorAll(".preview-timeline-frame");
+    if (!K) return;
+    const i = K.querySelectorAll(".preview-timeline-frame");
     if (!i.length) {
       for (let i = 0; i < t; i++) {
         const t = document.createElement("div");
@@ -692,7 +700,7 @@ const PreviewTimeline = (() => {
       e.appendChild(i);
     });
   }
-  const oe = 6;
+  const se = 6;
   function getSegmentBounds() {
     const e = E.filter(e => e > d + .04 && e < p - .04);
     return [ d, ...e, p ];
@@ -708,16 +716,16 @@ const PreviewTimeline = (() => {
     return i;
   }
   function clearSegHold() {
-    if (N) {
-      clearTimeout(N);
-      N = 0;
+    if (O) {
+      clearTimeout(O);
+      O = 0;
     }
-    j = false;
+    G = false;
   }
   function syncSegFocusClass() {
-    if (!q) return;
+    if (!W) return;
     const e = T != null && getSegmentBounds().length > 2;
-    q.classList.toggle("has-seg-focus", e);
+    W.classList.toggle("has-seg-focus", e);
   }
   function getActiveEditRange() {
     const e = getSegmentBounds();
@@ -758,9 +766,9 @@ const PreviewTimeline = (() => {
     m = Math.max(i, Math.min(n - .05, r));
     scheduleSeek(m, true);
     paintChrome();
-    K?.querySelectorAll(".preview-timeline-segment.is-selected").forEach(e => e.classList.remove("is-selected"));
-    K?.children?.[e]?.classList.add("is-selected");
-    if (!D) setHandlesUnlocked(true);
+    Z?.querySelectorAll(".preview-timeline-segment.is-selected").forEach(e => e.classList.remove("is-selected"));
+    Z?.children?.[e]?.classList.add("is-selected");
+    if (!F) setHandlesUnlocked(true);
     syncSegFocusClass();
     try {
       const i = document.getElementById("silencerNote");
@@ -817,40 +825,40 @@ const PreviewTimeline = (() => {
     E = E.filter(e => e > d + .04 && e < p - .04).sort((e, t) => e - t);
   }
   function paintSegmentMove(e) {
-    if (!O || !u || I <= 0) return;
+    if (!$ || !u || I <= 0) return;
     if (isRankingEdit()) {
       paintSegmentReorderGhost(e);
       return;
     }
-    const {index: t, startX: i, startA: n, startB: r} = O;
+    const {index: t, startX: i, startA: n, startB: r} = $;
     const o = (e - i) / I * u;
     applySegmentTimes(t, n + o, r + o);
     m = Math.max(d, Math.min(p, n + o));
     const s = d / u * I;
     const a = p / u * I;
-    if (te) {
-      te.style.width = `${Math.max(2, a - s)}px`;
-      te.style.transform = `translate3d(${s}px,0,0)`;
+    if (ie) {
+      ie.style.width = `${Math.max(2, a - s)}px`;
+      ie.style.transform = `translate3d(${s}px,0,0)`;
     }
-    if (Z) Z.style.width = `${s}px`;
-    if (ee) ee.style.width = `${Math.max(0, I - a)}px`;
+    if (ee) ee.style.width = `${s}px`;
+    if (te) te.style.width = `${Math.max(0, I - a)}px`;
     paintSegmentsFast();
   }
   function beginSegmentDrag() {
-    if (!O || c === "segment") return;
-    clearTimeout(N);
-    N = 0;
-    if (isRankingEdit() && !j) return;
+    if (!$ || c === "segment") return;
+    clearTimeout(O);
+    O = 0;
+    if (isRankingEdit() && !G) return;
     c = "segment";
     f = a ? !a.paused : false;
     if (a && !a.paused) a.pause();
-    J?.classList.add("is-dragging", "is-trimming");
-    if (isRankingEdit()) J?.classList.add("is-reordering");
-    O.target?.classList.add("is-dragging");
-    K?.children?.[O.index]?.classList.add("is-dragging");
-    if (O.target?.setPointerCapture && O.pointerId != null) {
+    X?.classList.add("is-dragging", "is-trimming");
+    if (isRankingEdit()) X?.classList.add("is-reordering");
+    $.target?.classList.add("is-dragging");
+    Z?.children?.[$.index]?.classList.add("is-dragging");
+    if ($.target?.setPointerCapture && $.pointerId != null) {
       try {
-        O.target.setPointerCapture(O.pointerId);
+        $.target.setPointerCapture($.pointerId);
       } catch (e) {}
     }
   }
@@ -859,16 +867,16 @@ const PreviewTimeline = (() => {
     if (t.pointerType === "mouse" && t.button !== 0) return;
     t.preventDefault();
     t.stopPropagation();
-    if (!D && !q?.classList.contains("is-ranking-edit")) {
+    if (!F && !W?.classList.contains("is-ranking-edit")) {
       setHandlesUnlocked(true);
     }
     cacheTrackMetrics();
     clearSegHold();
     const i = getSegmentBounds();
     if (e < 0 || e >= i.length - 1) return;
-    $ = false;
     j = false;
-    O = {
+    G = false;
+    $ = {
       index: e,
       pointerId: t.pointerId,
       startX: t.clientX,
@@ -876,52 +884,52 @@ const PreviewTimeline = (() => {
       startB: i[e + 1],
       target: t.currentTarget
     };
-    N = setTimeout(() => {
-      N = 0;
-      j = true;
-      O?.target?.classList.add("is-hold-ready");
-    }, G);
+    O = setTimeout(() => {
+      O = 0;
+      G = true;
+      $?.target?.classList.add("is-hold-ready");
+    }, z);
   }
   function onSegmentPointerMove(e) {
-    if (!O) return;
-    const t = Math.abs(e.clientX - O.startX);
+    if (!$) return;
+    const t = Math.abs(e.clientX - $.startX);
     if (c === "segment") {
       e.preventDefault();
-      if (t >= z) $ = true;
-      if (!$) return;
+      if (t >= H) j = true;
+      if (!j) return;
       paintSegmentMove(e.clientX);
       return;
     }
     if (isRankingEdit()) {
-      if (j && t >= z) {
+      if (G && t >= H) {
         beginSegmentDrag();
         if (c === "segment") {
-          $ = true;
+          j = true;
           paintSegmentMove(e.clientX);
         }
       }
       return;
     }
-    if (t >= z) {
+    if (t >= H) {
       beginSegmentDrag();
-      $ = true;
+      j = true;
       paintSegmentMove(e.clientX);
     }
   }
   function onSegmentPointerUp(e) {
-    if (!O) return;
-    const t = O;
-    const i = $;
+    if (!$) return;
+    const t = $;
+    const i = j;
     const n = t.hoverIndex;
     clearSegHold();
     t.target?.classList.remove("is-dragging", "is-hold-ready");
-    K?.children?.[t.index]?.classList.remove("is-dragging");
-    K?.querySelectorAll(".is-drop-target").forEach(e => e.classList.remove("is-drop-target"));
-    J?.classList.remove("is-reordering");
+    Z?.children?.[t.index]?.classList.remove("is-dragging");
+    Z?.querySelectorAll(".is-drop-target").forEach(e => e.classList.remove("is-drop-target"));
+    X?.classList.remove("is-reordering");
     if (c === "segment" && !i) {
       c = null;
-      O = null;
-      J?.classList.remove("is-dragging", "is-trimming");
+      $ = null;
+      X?.classList.remove("is-dragging", "is-trimming");
       if (f) a?.play().catch(() => {});
       f = false;
       customizeSegment(t.index);
@@ -930,7 +938,7 @@ const PreviewTimeline = (() => {
     if (i) {
       const e = isRankingEdit() && n != null && n !== t.index && applySegmentReorder(t.index, n);
       c = null;
-      O = null;
+      $ = null;
       markRankingTimelineDirty();
       scheduleSeek(m, true);
       if (f) a?.play().catch(() => {});
@@ -945,21 +953,21 @@ const PreviewTimeline = (() => {
       }
       return;
     }
-    O = null;
+    $ = null;
     c = null;
     customizeSegment(t.index);
   }
   function paintSegments(e) {
-    if (!K || !u || I <= 0) return;
+    if (!Z || !u || I <= 0) return;
     const t = getSegmentBounds();
-    K.innerHTML = "";
+    Z.innerHTML = "";
     for (let i = 0; i < t.length - 1; i++) {
       const n = t[i];
       const r = t[i + 1];
       let o = n / u * I;
       let s = r / u * I;
-      if (i > 0) o += oe / 2;
-      if (i < t.length - 2) s -= oe / 2;
+      if (i > 0) o += se / 2;
+      if (i < t.length - 2) s -= se / 2;
       const a = Math.max(8, s - o);
       const l = document.createElement("div");
       l.className = "preview-timeline-segment";
@@ -995,16 +1003,16 @@ const PreviewTimeline = (() => {
       l.appendChild(c);
       if (i === 0) l.appendChild(makeSegHandle("left", i));
       l.appendChild(makeSegHandle("right", i + 1));
-      K.appendChild(l);
+      Z.appendChild(l);
     }
-    if (T != null && K?.children?.[T]) {
-      K.children[T].classList.add("is-selected");
+    if (T != null && Z?.children?.[T]) {
+      Z.children[T].classList.add("is-selected");
     }
     syncSegFocusClass();
   }
   function paintSegmentsFast() {
-    if (!K || !u || I <= 0) return;
-    const e = Array.from(K.children);
+    if (!Z || !u || I <= 0) return;
+    const e = Array.from(Z.children);
     const t = getSegmentBounds();
     if (e.length !== t.length - 1) {
       paintSegments();
@@ -1015,8 +1023,8 @@ const PreviewTimeline = (() => {
       const r = t[i + 1];
       let o = n / u * I;
       let s = r / u * I;
-      if (i > 0) o += oe / 2;
-      if (i < t.length - 2) s -= oe / 2;
+      if (i > 0) o += se / 2;
+      if (i < t.length - 2) s -= se / 2;
       const a = Math.max(6, s - o);
       const l = e[i];
       l.style.width = `${a}px`;
@@ -1033,43 +1041,43 @@ const PreviewTimeline = (() => {
     }
   }
   function applyBoundTime(e) {
-    if (B === 0) {
+    if (A === 0) {
       d = e;
       return;
     }
     const t = getSegmentBounds();
-    if (B >= t.length - 1) {
+    if (A >= t.length - 1) {
       p = e;
       return;
     }
-    if (U != null) {
-      const t = E.findIndex(e => Math.abs(e - U) < .05);
+    if (D != null) {
+      const t = E.findIndex(e => Math.abs(e - D) < .05);
       if (t >= 0) E[t] = e; else E.push(e);
-      U = e;
+      D = e;
     } else {
       E.push(e);
     }
     E.sort((e, t) => e - t);
   }
   function paintBoundFast(e) {
-    if (!u || I <= 0 || B < 0) return;
+    if (!u || I <= 0 || A < 0) return;
     const t = timeFromClientX(e);
-    const i = Math.max(A, Math.min(R, t));
+    const i = Math.max(R, Math.min(U, t));
     applyBoundTime(i);
     m = i;
     const n = d / u * I;
     const r = p / u * I;
-    if (te) {
-      te.style.width = `${Math.max(2, r - n)}px`;
-      te.style.transform = `translate3d(${n}px,0,0)`;
+    if (ie) {
+      ie.style.width = `${Math.max(2, r - n)}px`;
+      ie.style.transform = `translate3d(${n}px,0,0)`;
     }
-    if (Z) Z.style.width = `${n}px`;
-    if (ee) ee.style.width = `${Math.max(0, I - r)}px`;
+    if (ee) ee.style.width = `${n}px`;
+    if (te) te.style.width = `${Math.max(0, I - r)}px`;
     paintSegmentsFast();
   }
   function startBoundDrag(t, i) {
-    if (!D && !q?.classList.contains("is-ranking-edit")) return;
-    if (!D) setHandlesUnlocked(true);
+    if (!F && !W?.classList.contains("is-ranking-edit")) return;
+    if (!F) setHandlesUnlocked(true);
     if (i.pointerType === "mouse" && i.button !== 0) return;
     i.preventDefault();
     i.stopPropagation();
@@ -1077,13 +1085,13 @@ const PreviewTimeline = (() => {
     const n = getSegmentBounds();
     if (t < 0 || t >= n.length) return;
     c = "bound";
-    B = t;
-    A = t === 0 ? 0 : n[t - 1] + e;
-    R = t === n.length - 1 ? u : n[t + 1] - e;
-    U = t > 0 && t < n.length - 1 ? n[t] : null;
+    A = t;
+    R = t === 0 ? 0 : n[t - 1] + e;
+    U = t === n.length - 1 ? u : n[t + 1] - e;
+    D = t > 0 && t < n.length - 1 ? n[t] : null;
     f = a ? !a.paused : false;
     if (a && !a.paused) a.pause();
-    J?.classList.add("is-dragging", "is-trimming");
+    X?.classList.add("is-dragging", "is-trimming");
     i.currentTarget?.classList.add("is-dragging");
     if (i.currentTarget?.setPointerCapture && i.pointerId != null) {
       try {
@@ -1109,12 +1117,12 @@ const PreviewTimeline = (() => {
     const n = d / u * I;
     const r = p / u * I;
     const o = Math.max(2, r - n);
-    if (te) {
-      te.style.width = `${o}px`;
-      te.style.transform = `translate3d(${n}px,0,0)`;
+    if (ie) {
+      ie.style.width = `${o}px`;
+      ie.style.transform = `translate3d(${n}px,0,0)`;
     }
-    if (Z) Z.style.width = `${n}px`;
-    if (ee) ee.style.width = `${Math.max(0, I - r)}px`;
+    if (ee) ee.style.width = `${n}px`;
+    if (te) te.style.width = `${Math.max(0, I - r)}px`;
     paintSegmentsFast();
   }
   function scheduleSeek(e, t = false) {
@@ -1252,8 +1260,8 @@ const PreviewTimeline = (() => {
     }
   }
   function mountFilmstripCanvases(e) {
-    if (!X) return;
-    X.innerHTML = "";
+    if (!K) return;
+    K.innerHTML = "";
     const i = document.createDocumentFragment();
     for (let n = 0; n < t; n++) {
       const t = document.createElement("div");
@@ -1269,14 +1277,14 @@ const PreviewTimeline = (() => {
       }
       i.appendChild(t);
     }
-    X.appendChild(i);
+    K.appendChild(i);
     paintSegments();
   }
   function buildPlaceholderFilmstrip() {
     mountFilmstripCanvases(null);
   }
   async function buildFilmstripFromVideo() {
-    if (!X || !a) return;
+    if (!K || !a) return;
     const e = a.currentSrc || a.src;
     if (!e || !u || u <= 0) {
       buildPlaceholderFilmstrip();
@@ -1345,7 +1353,7 @@ const PreviewTimeline = (() => {
       }
     } catch (e) {} finally {
       if (g === c) destroyCaptureVideo();
-      if (l === y && !X?.querySelector("canvas")) {
+      if (l === y && !K?.querySelector("canvas")) {
         paintSegments();
       }
     }
@@ -1418,7 +1426,7 @@ const PreviewTimeline = (() => {
     }
   }
   function onPointerMove(e) {
-    if (O && c !== "segment") {
+    if ($ && c !== "segment") {
       onSegmentPointerMove(e);
       if (c === "segment") return;
     }
@@ -1445,16 +1453,16 @@ const PreviewTimeline = (() => {
     });
   }
   function endDrag() {
-    if (O) {
+    if ($) {
       onSegmentPointerUp();
       return;
     }
     if (!c) return;
     const e = c;
-    J?.classList.remove("is-scrubbing", "is-trimming", "is-dragging");
-    K?.querySelectorAll(".preview-timeline-handle.is-dragging").forEach(e => e.classList.remove("is-dragging"));
-    ie?.classList.remove("is-dragging");
+    X?.classList.remove("is-scrubbing", "is-trimming", "is-dragging");
+    Z?.querySelectorAll(".preview-timeline-handle.is-dragging").forEach(e => e.classList.remove("is-dragging"));
     ne?.classList.remove("is-dragging");
+    re?.classList.remove("is-dragging");
     if (v != null) {
       applyPointer(v, {
         seek: false
@@ -1466,8 +1474,8 @@ const PreviewTimeline = (() => {
       w = 0;
     }
     c = null;
-    B = -1;
-    U = null;
+    A = -1;
+    D = null;
     if (e === "start" || e === "end" || e === "bound") {
       m = Math.max(d, Math.min(p, m));
       if (d > .05 || p < u - .05) {
@@ -1490,25 +1498,25 @@ const PreviewTimeline = (() => {
     });
   }
   function startDrag(e, t) {
-    if ((e === "start" || e === "end" || e === "bound") && !D && !q?.classList.contains("is-ranking-edit")) return;
-    if ((e === "start" || e === "end" || e === "bound") && !D) {
+    if ((e === "start" || e === "end" || e === "bound") && !F && !W?.classList.contains("is-ranking-edit")) return;
+    if ((e === "start" || e === "end" || e === "bound") && !F) {
       setHandlesUnlocked(true);
     }
     if (t.pointerType === "mouse" && t.button !== 0) return;
     t.preventDefault();
     t.stopPropagation();
     cacheTrackMetrics();
-    if (ee) {
-      ee.style.left = "auto";
-      ee.style.right = "0";
+    if (te) {
+      te.style.left = "auto";
+      te.style.right = "0";
     }
     c = e;
     f = a ? !a.paused : false;
     if (a && !a.paused) a.pause();
-    J?.classList.add("is-dragging");
-    if (e === "scrub") J?.classList.add("is-scrubbing"); else J?.classList.add("is-trimming");
-    if (e === "start") ie?.classList.add("is-dragging");
-    if (e === "end") ne?.classList.add("is-dragging");
+    X?.classList.add("is-dragging");
+    if (e === "scrub") X?.classList.add("is-scrubbing"); else X?.classList.add("is-trimming");
+    if (e === "start") ne?.classList.add("is-dragging");
+    if (e === "end") re?.classList.add("is-dragging");
     if (t.currentTarget?.setPointerCapture && t.pointerId != null) {
       try {
         t.currentTarget.setPointerCapture(t.pointerId);
@@ -1519,7 +1527,7 @@ const PreviewTimeline = (() => {
     });
   }
   function bindEvents() {
-    if (!q || !W || !a) return;
+    if (!W || !Y || !a) return;
     const onTime = () => {
       if (c) return;
       clampPlayback();
@@ -1552,7 +1560,7 @@ const PreviewTimeline = (() => {
     window.addEventListener("resize", onResize, {
       passive: true
     });
-    V.push(() => {
+    q.push(() => {
       a.removeEventListener("timeupdate", onTime);
       a.removeEventListener("loadedmetadata", onMeta);
       a.removeEventListener("durationchange", onMeta);
@@ -1566,9 +1574,9 @@ const PreviewTimeline = (() => {
     };
     const onStartDown = e => startDrag("start", e);
     const onEndDown = e => startDrag("end", e);
-    J?.addEventListener("pointerdown", onTrackDown);
-    ie?.addEventListener("pointerdown", onStartDown);
-    ne?.addEventListener("pointerdown", onEndDown);
+    X?.addEventListener("pointerdown", onTrackDown);
+    ne?.addEventListener("pointerdown", onStartDown);
+    re?.addEventListener("pointerdown", onEndDown);
     const e = document.getElementById("previewTimelinePlayheadGrip");
     const onPlayheadDown = e => {
       e.preventDefault();
@@ -1581,10 +1589,10 @@ const PreviewTimeline = (() => {
     });
     window.addEventListener("pointerup", endDrag);
     window.addEventListener("pointercancel", endDrag);
-    V.push(() => {
-      J?.removeEventListener("pointerdown", onTrackDown);
-      ie?.removeEventListener("pointerdown", onStartDown);
-      ne?.removeEventListener("pointerdown", onEndDown);
+    q.push(() => {
+      X?.removeEventListener("pointerdown", onTrackDown);
+      ne?.removeEventListener("pointerdown", onStartDown);
+      re?.removeEventListener("pointerdown", onEndDown);
       e?.removeEventListener("pointerdown", onPlayheadDown);
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerup", endDrag);
@@ -1594,15 +1602,15 @@ const PreviewTimeline = (() => {
       e.preventDefault();
       e.stopPropagation();
       setHandlesUnlocked(true);
-      W?.focus?.({
+      Y?.focus?.({
         preventScroll: true
       });
     };
-    Y?.addEventListener("pointerdown", onTimeChipDown);
     Q?.addEventListener("pointerdown", onTimeChipDown);
-    V.push(() => {
-      Y?.removeEventListener("pointerdown", onTimeChipDown);
+    J?.addEventListener("pointerdown", onTimeChipDown);
+    q.push(() => {
       Q?.removeEventListener("pointerdown", onTimeChipDown);
+      J?.removeEventListener("pointerdown", onTimeChipDown);
     });
     const onKey = e => {
       if (!a || !u) return;
@@ -1614,8 +1622,8 @@ const PreviewTimeline = (() => {
         scheduleSeek(m, true);
       }
     };
-    J?.addEventListener("keydown", onKey);
-    V.push(() => J?.removeEventListener("keydown", onKey));
+    X?.addEventListener("keydown", onKey);
+    q.push(() => X?.removeEventListener("keydown", onKey));
     const t = document.getElementById("previewTimelineSplitBtn");
     const onSplitClick = e => {
       e.preventDefault();
@@ -1629,12 +1637,12 @@ const PreviewTimeline = (() => {
       }
     };
     t?.addEventListener("click", onSplitClick);
-    V.push(() => t?.removeEventListener("click", onSplitClick));
+    q.push(() => t?.removeEventListener("click", onSplitClick));
   }
   function show() {
     const e = document.getElementById("previewTimelineRow");
     if (e) e.hidden = false;
-    if (q) q.hidden = false;
+    if (W) W.hidden = false;
     const t = document.getElementById("previewAudioToggle");
     if (t) t.hidden = false;
     try {
@@ -1646,7 +1654,7 @@ const PreviewTimeline = (() => {
   function hide() {
     const e = document.getElementById("previewTimelineRow");
     if (e) e.hidden = true;
-    if (q) q.hidden = true;
+    if (W) W.hidden = true;
     const t = document.getElementById("previewAudioToggle");
     if (t) t.hidden = true;
     const i = document.getElementById("previewTimelineHookLane");
@@ -1672,9 +1680,9 @@ const PreviewTimeline = (() => {
       cancelAnimationFrame(b);
       b = 0;
     }
-    while (V.length) {
+    while (q.length) {
       try {
-        V.pop()();
+        q.pop()();
       } catch (e) {}
     }
     v = null;
@@ -1682,23 +1690,23 @@ const PreviewTimeline = (() => {
     _ = false;
     c = null;
     clearSegHold();
-    O = null;
-    $ = false;
+    $ = null;
+    j = false;
     f = false;
     E = [];
     T = null;
-    F = null;
+    N = null;
     x = [];
     M = [];
-    D = false;
-    if (q) {
-      q.classList.remove("handles-on");
-      q.classList.remove("is-ranking-edit");
-      q.classList.remove("has-silence-cuts");
-      q.classList.remove("has-seg-focus");
+    F = false;
+    if (W) {
+      W.classList.remove("handles-on");
+      W.classList.remove("is-ranking-edit");
+      W.classList.remove("has-silence-cuts");
+      W.classList.remove("has-seg-focus");
     }
-    if (W) W.classList.remove("has-cut-preview");
-    if (K) K.innerHTML = "";
+    if (Y) Y.classList.remove("has-cut-preview");
+    if (Z) Z.innerHTML = "";
     a = null;
     l = false;
     u = 0;
@@ -1741,14 +1749,14 @@ const PreviewTimeline = (() => {
     m = Number.isFinite(a.currentTime) ? a.currentTime : 0;
     const t = !!document.querySelector(".template-preview-content.is-library-preview");
     setHandlesUnlocked(t);
-    if (te) {
-      te.style.left = "0";
-      te.style.right = "auto";
+    if (ie) {
+      ie.style.left = "0";
+      ie.style.right = "auto";
     }
-    if (re) re.style.left = "0";
-    if (ee) {
-      ee.style.left = "auto";
-      ee.style.right = "0";
+    if (oe) oe.style.left = "0";
+    if (te) {
+      te.style.left = "auto";
+      te.style.right = "0";
     }
     buildPlaceholderFilmstrip();
     bindEvents();
@@ -1758,6 +1766,7 @@ const PreviewTimeline = (() => {
     paintChrome({
       rebuildSegments: true
     });
+    flushPendingPreviewRegions();
     const kickFilmstrip = () => {
       if (!a || a !== e) return;
       u = Number.isFinite(a.duration) && a.duration > 0 ? a.duration : u;
@@ -1770,9 +1779,10 @@ const PreviewTimeline = (() => {
       paintChrome({
         rebuildSegments: true
       });
-      if (F && F.length) {
-        const e = F.slice();
-        F = null;
+      flushPendingPreviewRegions();
+      if (N && N.length) {
+        const e = N.slice();
+        N = null;
         setSplits(e);
       }
       scheduleFilmstripBuild();
@@ -1806,7 +1816,7 @@ const PreviewTimeline = (() => {
   function setSplits(e) {
     const t = Array.isArray(e) ? e : [];
     if (!u || u <= 0) {
-      F = t.slice();
+      N = t.slice();
       return false;
     }
     const i = [];
@@ -1819,7 +1829,7 @@ const PreviewTimeline = (() => {
     }
     i.sort((e, t) => e - t);
     E = i.slice(0, 4);
-    F = null;
+    N = null;
     cacheTrackMetrics();
     paintChrome({
       rebuildSegments: true
@@ -1862,7 +1872,7 @@ const PreviewTimeline = (() => {
       rebuildSegments: true
     });
     scheduleSeek(m, true);
-    [ ie, ne ].forEach(e => {
+    [ ne, re ].forEach(e => {
       if (!e) return;
       e.classList.remove("is-pulse");
       void e.offsetWidth;
@@ -1873,7 +1883,7 @@ const PreviewTimeline = (() => {
       };
       e.addEventListener("animationend", done);
     });
-    W?.focus?.({
+    Y?.focus?.({
       preventScroll: true
     });
   }
@@ -1949,7 +1959,7 @@ const PreviewTimeline = (() => {
     }
     i.sort((e, t) => e.start - t.start);
     x = i;
-    if (q) q.classList.toggle("has-silence-cuts", x.length > 0);
+    if (W) W.classList.toggle("has-silence-cuts", x.length > 0);
     paintChrome({
       rebuildSegments: true
     });
@@ -1963,7 +1973,7 @@ const PreviewTimeline = (() => {
   }
   function clearSkipRegions() {
     x = [];
-    if (q) q.classList.remove("has-silence-cuts");
+    if (W) W.classList.remove("has-silence-cuts");
     if (l) paintChrome({
       rebuildSegments: true
     });
@@ -1982,6 +1992,21 @@ const PreviewTimeline = (() => {
     }
     i.sort((e, t) => e.start - t.start);
     M = i;
+    if (!l || !u || I <= 0) {
+      B = i;
+      if (a && Number.isFinite(a.duration) && a.duration > 0) {
+        u = a.duration;
+        p = Math.max(p, u);
+      }
+      if (l) {
+        cacheTrackMetrics();
+        flushPendingPreviewRegions();
+      } else {
+        paintCutPreview();
+      }
+      return M.slice();
+    }
+    B = null;
     if (l) paintChrome(); else paintCutPreview();
     return M.slice();
   }
@@ -1993,8 +2018,9 @@ const PreviewTimeline = (() => {
   }
   function clearSkipRegionsPreview() {
     M = [];
-    if (W) W.classList.remove("has-cut-preview");
-    const e = W?.querySelector(".preview-timeline-cut-preview");
+    B = null;
+    if (Y) Y.classList.remove("has-cut-preview");
+    const e = Y?.querySelector(".preview-timeline-cut-preview");
     if (e) e.remove();
   }
   return {
@@ -2785,7 +2811,10 @@ function applySplitscreenConfigFromServer(e = {}) {
   splitscreenContentRatio = Number.isFinite(t) ? Math.max(0, Math.min(1, t)) : .5;
   splitscreenSavedRatio = splitscreenContentRatio;
   splitscreenInverted = e.splitscreen_inverted != null ? Boolean(e.splitscreen_inverted) : true;
-  splitscreenSecondaryCollapsed = Boolean(e.splitscreen_secondary_collapsed);
+  splitscreenSecondaryCollapsed = Boolean(e.splitscreen_secondary_collapsed || e.layers?.collapsed || e.state?.secondary_collapsed);
+  if (splitscreenSecondaryCollapsed) {
+    splitscreenContentRatio = 1;
+  }
   let i = e.splitscreen_secondary_type || "face_track";
   if (i === "gameplay") {
     i = "face_track";
@@ -7886,7 +7915,8 @@ class ClipsStudio {
           const t = document.getElementById("templateVideoPreview");
           if (!t || t.querySelector(".preview-skel")) return false;
           const i = !!t.querySelector(".sub-text-block:not(.overlay-text-block)");
-          if (!i && typeof window.applySubtitleStyle === "function") {
+          const n = e === "ranked_compilation" && window.SolisMemory?.rankingStylesReady?.("ranked_compilation");
+          if (!i && !n && typeof window.applySubtitleStyle === "function") {
             window.applySubtitleStyle({
               anim: "karaoke",
               font: "Montserrat",
@@ -7894,7 +7924,7 @@ class ClipsStudio {
               highlight: "#FFFFFF",
               shadow: "outline",
               enabled: true,
-              y_pct: e === "ranked_compilation" ? .82 : .55
+              y_pct: e === "ranked_compilation" ? .55 : .55
             }, {
               selectAfter: false,
               playAnim: false,
@@ -8579,17 +8609,19 @@ class ClipsStudio {
         splitscreenSecondaryCollapsed = true;
         splitscreenContentRatio = 1;
       }
-      const u = l && c && d;
-      const m = !l && d || u;
+      const u = Boolean(splitscreenSecondaryCollapsed || n.layers?.collapsed || a.secondary_collapsed || splitscreenContentRatio >= .97);
+      const m = Boolean(a.face_crop && Number(a.face_crop.w) > 0 && Number(a.face_crop.h) > 0);
+      const f = l && c && d && !u && m;
+      const y = !l && d || f;
       setLibrarySplitscreenCropState({
         cropX: a.crop_x ?? null,
         faceCrop: a.face_crop || null,
         srcW: 0,
         srcH: 0,
-        useLayers: m,
-        liveFaceEdit: l && (u || p),
-        faceDisplayMode: l ? u ? "baked" : p ? "live" : "baked" : null,
-        secondaryFromLayer: u
+        useLayers: y,
+        liveFaceEdit: l && (f || p),
+        faceDisplayMode: l ? f ? "baked" : p ? "live" : "baked" : null,
+        secondaryFromLayer: f
       });
       this._librarySplitscreenCustomize = true;
       this._librarySplitscreenDirty = false;
@@ -8597,11 +8629,11 @@ class ClipsStudio {
       setSplitscreenScope(e);
       e.classList.remove("has-video");
       e.innerHTML = buildSplitscreenPreviewShell();
-      const f = `${API_BASE_URL}/clips/projects/${encodeURIComponent(t)}/splitscreen-layer`;
-      const y = `${API_BASE_URL}/clips/projects/${encodeURIComponent(t)}/splitscreen-segment`;
-      const g = e.querySelector("#splitscreenContentVideo");
-      const h = e.querySelector("#splitscreenReframeVideo");
-      const w = e.querySelector("#splitscreenGameplayVideo");
+      const g = `${API_BASE_URL}/clips/projects/${encodeURIComponent(t)}/splitscreen-layer`;
+      const h = `${API_BASE_URL}/clips/projects/${encodeURIComponent(t)}/splitscreen-segment`;
+      const w = e.querySelector("#splitscreenContentVideo");
+      const b = e.querySelector("#splitscreenReframeVideo");
+      const v = e.querySelector("#splitscreenGameplayVideo");
       e.classList.add("library-splitscreen-preview");
       const wireVideo = async (e, t, {secure: i = true} = {}) => {
         if (!e || !t) return false;
@@ -8629,7 +8661,7 @@ class ClipsStudio {
             if (n && e.videoWidth && _librarySplitscreenCropState) {
               _librarySplitscreenCropState.srcW = e.videoWidth;
               _librarySplitscreenCropState.srcH = e.videoHeight;
-              if (e === h) {
+              if (e === b) {
                 _librarySplitscreenCropState.faceSrcW = e.videoWidth;
                 _librarySplitscreenCropState.faceSrcH = e.videoHeight;
               }
@@ -8667,18 +8699,18 @@ class ClipsStudio {
           setTimeout(() => finish(e.videoWidth > 0 && e.readyState >= 1), 1e4);
         });
       };
-      if (l && u) {
-        if (w) {
-          w.style.setProperty("display", "none", "important");
-          w.removeAttribute("src");
+      if (l && f) {
+        if (v) {
+          v.style.setProperty("display", "none", "important");
+          v.removeAttribute("src");
         }
-        const e = await wireVideo(g, `${f}/content`);
+        const e = await wireVideo(w, `${g}/content`);
         if (!e) throw new Error("Failed to load content layer");
-        if (h) {
-          h.style.setProperty("display", "block", "important");
-          h.style.touchAction = "none";
-          h.style.cursor = "grab";
-          const e = await wireVideo(h, `${f}/secondary`);
+        if (b) {
+          b.style.setProperty("display", "block", "important");
+          b.style.touchAction = "none";
+          b.style.cursor = "grab";
+          const e = await wireVideo(b, `${g}/secondary`);
           if (!e) {
             if (!p) throw new Error("Failed to load reframe layer");
             safeLog("Reframe layer failed — falling back to live segment crop");
@@ -8687,96 +8719,96 @@ class ClipsStudio {
               _librarySplitscreenCropState.liveFaceEdit = true;
               _librarySplitscreenCropState.secondaryFromLayer = false;
             }
-            const e = await fetchSecureVideoObjectUrlPair(y);
-            const t = await wireVideo(h, e[1], {
+            const e = await fetchSecureVideoObjectUrlPair(h);
+            const t = await wireVideo(b, e[1], {
               secure: false
             });
             if (!t) throw new Error("Failed to load reframe layer");
           }
-          forceLibraryPanelVideoFill(h);
-          h.style.setProperty("pointer-events", "auto", "important");
+          forceLibraryPanelVideoFill(b);
+          b.style.setProperty("pointer-events", "auto", "important");
         }
-        bindLibrarySplitscreenPlaybackSync(g, h);
+        bindLibrarySplitscreenPlaybackSync(w, b);
         syncLibrarySplitscreenCropPreview();
-      } else if (l && p) {
-        if (w) {
-          w.style.setProperty("display", "none", "important");
-          w.removeAttribute("src");
+      } else if (l && p && !u) {
+        if (v) {
+          v.style.setProperty("display", "none", "important");
+          v.removeAttribute("src");
         }
-        let e = y;
-        let t = y;
+        let e = h;
+        let t = h;
         try {
-          [e, t] = await fetchSecureVideoObjectUrlPair(y);
+          [e, t] = await fetchSecureVideoObjectUrlPair(h);
         } catch (e) {
           safeLog("Shared segment blob pair failed, streaming URLs:", e);
         }
-        const i = await wireVideo(g, e, {
+        const i = await wireVideo(w, e, {
           secure: false
         });
         if (!i) throw new Error("Failed to load splitscreen segment");
-        if (h) {
-          h.style.setProperty("display", "block", "important");
-          h.style.touchAction = "none";
-          h.style.cursor = "grab";
-          const e = await wireVideo(h, t, {
+        if (b) {
+          b.style.setProperty("display", "block", "important");
+          b.style.touchAction = "none";
+          b.style.cursor = "grab";
+          const e = await wireVideo(b, t, {
             secure: false
           });
           if (!e) throw new Error("Failed to load reframe panel");
-          forceLibraryPanelVideoFill(h);
-          h.style.setProperty("pointer-events", "auto", "important");
+          forceLibraryPanelVideoFill(b);
+          b.style.setProperty("pointer-events", "auto", "important");
         }
-        bindLibrarySplitscreenPlaybackSync(g, h);
+        bindLibrarySplitscreenPlaybackSync(w, b);
         syncLibrarySplitscreenCropPreview();
       } else if (l && !c && !p) {
         safeLog("Face track without secondary/segment yet — flat preview");
         throw new Error("Reframe layers not ready");
       } else {
-        const e = m ? `${f}/content` : y;
-        const t = await wireVideo(g, e);
-        if (!t && m && p) {
+        const e = y ? `${g}/content` : h;
+        const t = await wireVideo(w, e);
+        if (!t && y && p) {
           if (_librarySplitscreenCropState) _librarySplitscreenCropState.useLayers = false;
-          await wireVideo(g, y);
+          await wireVideo(w, h);
         }
         if (l) {
-          if (w) {
-            w.style.setProperty("display", "none", "important");
-            w.removeAttribute("src");
+          if (v) {
+            v.style.setProperty("display", "none", "important");
+            v.removeAttribute("src");
           }
-          if (h && c) {
+          if (b && c && !u && m) {
             if (_librarySplitscreenCropState) {
               _librarySplitscreenCropState.faceDisplayMode = "baked";
               _librarySplitscreenCropState.liveFaceEdit = false;
             }
-            h.style.setProperty("display", "block", "important");
-            await wireVideo(h, `${f}/secondary`);
-            forceLibraryPanelVideoFill(h);
-            if (g) bindLibrarySplitscreenPlaybackSync(g, h);
+            b.style.setProperty("display", "block", "important");
+            await wireVideo(b, `${g}/secondary`);
+            forceLibraryPanelVideoFill(b);
+            if (w) bindLibrarySplitscreenPlaybackSync(w, b);
           }
         } else if (c) {
-          if (h) {
-            h.style.setProperty("display", "none", "important");
-            h.removeAttribute("src");
+          if (b) {
+            b.style.setProperty("display", "none", "important");
+            b.removeAttribute("src");
           }
-          if (w) {
-            w.style.setProperty("display", "block", "important");
-            await wireVideo(w, `${f}/secondary`);
-            if (g) bindLibrarySplitscreenPlaybackSync(g, w);
+          if (v) {
+            v.style.setProperty("display", "block", "important");
+            await wireVideo(v, `${g}/secondary`);
+            if (w) bindLibrarySplitscreenPlaybackSync(w, v);
           }
-        } else if (w) {
-          if (h) h.style.setProperty("display", "none", "important");
-          w.style.setProperty("display", "block", "important");
+        } else if (v) {
+          if (b) b.style.setProperty("display", "none", "important");
+          v.style.setProperty("display", "block", "important");
         }
       }
       if (availableGameplayClips.length === 0) {
         await loadAvailableGameplayClips();
       }
       applySplitscreenPreview();
-      const b = e.querySelector("#splitscreenFacePanel");
-      if (b) b.classList.remove("visible");
-      if (l && h) {
+      const S = e.querySelector("#splitscreenFacePanel");
+      if (S) S.classList.remove("visible");
+      if (l && b) {
         syncLibrarySplitscreenCropPreview();
       }
-      if (g && !l) forceLibraryPanelVideoFill(g);
+      if (w && !l) forceLibraryPanelVideoFill(w);
       initializeSplitscreenDivider();
       requestAnimationFrame(() => {
         applySplitscreenRatio();
@@ -8800,8 +8832,8 @@ class ClipsStudio {
       this._hideLibraryPreviewLoading();
       playBothLibraryPanels(e);
       ensurePreviewAudioToggle(e);
-      if (typeof PreviewTimeline !== "undefined" && g) {
-        PreviewTimeline.attach(g);
+      if (typeof PreviewTimeline !== "undefined" && w) {
+        PreviewTimeline.attach(w);
       }
       try {
         this._libraryHookCleared = false;
@@ -10112,18 +10144,22 @@ class ClipsStudio {
   async fetchSecureLibraryPreviewBlob(e, t, i = null, n = {}) {
     const r = n.loadGen != null ? n.loadGen : ++this._libraryPreviewLoadGen;
     const o = Math.max(0, Number(n.attempt) || 0);
-    const s = n.clean ? 3 : 5;
-    const a = !!n.clean;
+    const s = Boolean((this.libraryItems || []).some(e => {
+      const i = String(e.projectId || e.id || "");
+      return i === String(t) && (e._justCompleted || e._optimistic);
+    }));
+    const a = n.clean ? 3 : s ? 18 : 5;
+    const l = !!n.clean;
     if (this._libraryPreviewFetchController) {
       this._libraryPreviewFetchController.abort();
       this._libraryPreviewFetchController = null;
     }
-    const l = new AbortController;
-    this._libraryPreviewFetchController = l;
+    const c = new AbortController;
+    this._libraryPreviewFetchController = c;
     const isStale = () => r !== this._libraryPreviewLoadGen || !this.libraryPreviewModalOpen || this._libraryPreviewProjectId && String(this._libraryPreviewProjectId) !== String(t);
     const giveUp = i => {
       if (isStale()) return;
-      if (!a && !n.cleanFallbackTried) {
+      if (!l && !n.cleanFallbackTried) {
         safeLog("Preview burned path failed — trying clean master");
         this.fetchSecureLibraryPreviewBlob(e, t, null, {
           loadGen: r,
@@ -10140,12 +10176,12 @@ class ClipsStudio {
     const retrySoon = i => {
       if (isStale()) return;
       if (String(this._libraryPreviewFailedId) === String(t)) return;
-      if (o + 1 >= s) {
+      if (o + 1 >= a) {
         giveUp(i);
         return;
       }
-      const l = Math.min(4e3, 900 + o * 900);
-      safeLog(`Preview not ready (${i}) — retry ${o + 1}/${s} in ${l}ms`);
+      const c = s ? Math.min(8e3, 1500 + o * 1500) : Math.min(4e3, 900 + o * 900);
+      safeLog(`Preview not ready (${i}) — retry ${o + 1}/${a} in ${c}ms`);
       if (o === 0 && !e.querySelector("video")) {
         this._setLibraryPreviewPlaceholder(e);
       }
@@ -10158,22 +10194,22 @@ class ClipsStudio {
         this.fetchSecureLibraryPreviewBlob(e, t, null, {
           loadGen: r,
           attempt: o + 1,
-          clean: a,
+          clean: l,
           cleanFallbackTried: !!n.cleanFallbackTried
         });
-      }, l);
+      }, c);
     };
     try {
       const i = this.getLibraryPreviewVideoUrl(t, {
         bust: o > 0,
-        clean: a
+        clean: l
       });
       if (isStale()) return;
       this._mountLibraryPreviewFromUrl(e, t, i, {
         loadGen: r,
-        clean: a
+        clean: l
       });
-      this._warmLibraryPreviewCache(t, i, a).catch(() => {});
+      this._warmLibraryPreviewCache(t, i, l).catch(() => {});
       const n = e.querySelector("video.library-preview-video");
       if (!n) {
         retrySoon("video missing");
@@ -10202,7 +10238,7 @@ class ClipsStudio {
       safeLog("Error loading secure preview:", e);
       retrySoon(e?.message || "fetch error");
     } finally {
-      if (this._libraryPreviewFetchController === l) {
+      if (this._libraryPreviewFetchController === c) {
         this._libraryPreviewFetchController = null;
       }
     }

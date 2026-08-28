@@ -266,6 +266,34 @@ body.solis-gen-stage-active .profile-notif-wrapper > .generation-progress-wrappe
     text-decoration:underline;text-underline-offset:2px;
 }
 
+.solis-gen-live-log{
+    margin:14px 0 0;
+    width:100%;max-width:340px;
+    padding:10px 12px;border-radius:10px;
+    background:#f8fafc;border:1px solid #e2e8f0;
+    font-size:13px;font-weight:600;line-height:1.45;color:#334155;
+    min-height:2.6em;
+}
+.solis-gen-live-log.is-complete{
+    background:#ecfdf5;border-color:#a7f3d0;color:#065f46;
+}
+.solis-gen-live-log.is-error{
+    background:#fef2f2;border-color:#fecaca;color:#991b1b;
+}
+.solis-gen-outcome{
+    margin-top:10px;width:100%;max-width:340px;
+    padding:12px 14px;border-radius:12px;
+    font-size:14px;font-weight:700;line-height:1.4;
+}
+.solis-gen-outcome.is-complete{
+    background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0;
+}
+.solis-gen-outcome.is-error{
+    background:#fef2f2;color:#991b1b;border:1px solid #fecaca;
+}
+.solis-gen-stage.is-complete .solis-gen-mark svg circle{fill:#059669 !important;}
+.solis-gen-stage.is-error .solis-gen-mark svg circle{fill:#dc2626 !important;}
+
 .solis-gen-steps{
     list-style:none;margin:0;padding:0;width:100%;max-width:340px;
     min-height:0;

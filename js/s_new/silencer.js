@@ -7,7 +7,7 @@
   let o = false;
   let s = 0;
   let c = null;
-  let l = false;
+  let a = false;
   function $(e) {
     return document.getElementById(e);
   }
@@ -61,11 +61,11 @@
     if (o < e) return null;
     const s = Math.min(t, Math.max(.08, o * .22));
     const c = n + s;
-    const l = r;
-    if (l - c < i) return null;
+    const a = r;
+    if (a - c < i) return null;
     return {
       start: Math.round(c * 1e3) / 1e3,
-      end: Math.round(l * 1e3) / 1e3
+      end: Math.round(a * 1e3) / 1e3
     };
   }
   function detectFromWords(t, i) {
@@ -95,10 +95,15 @@
   }
   async function detectFromAudio(e, t) {
     if (!e || t < 1) return [];
-    const i = e.currentSrc || e.src;
+    let i = e.currentSrc || e.src;
     if (!i) return [];
     let o;
     try {
+      if (typeof fetchSecureVideoObjectUrl === "function" && i.startsWith("http")) {
+        try {
+          i = await fetchSecureVideoObjectUrl(i);
+        } catch (e) {}
+      }
       const e = await fetch(i, {
         credentials: "include",
         cache: "force-cache"
@@ -112,19 +117,19 @@
     const s = window.OfflineAudioContext || window.webkitOfflineAudioContext;
     const c = window.AudioContext || window.webkitAudioContext;
     if (!c) return [];
-    let l;
+    let a;
     try {
-      l = new c;
-      const e = await l.decodeAudioData(o.slice(0));
-      await l.close().catch(() => {});
-      l = null;
+      a = new c;
+      const e = await a.decodeAudioData(o.slice(0));
+      await a.close().catch(() => {});
+      a = null;
       const i = e.getChannelData(0);
       const s = e.sampleRate || 44100;
-      const a = Math.max(1, Math.floor(s * n));
+      const l = Math.max(1, Math.floor(s * n));
       const d = [];
-      for (let e = 0; e < i.length; e += a) {
+      for (let e = 0; e < i.length; e += l) {
         let t = 0;
-        const n = Math.min(i.length, e + a);
+        const n = Math.min(i.length, e + l);
         for (let r = e; r < n; r++) t += i[r] * i[r];
         d.push(Math.sqrt(t / Math.max(1, n - e)));
       }
@@ -148,7 +153,7 @@
       return mergeRegions(m);
     } catch (e) {
       try {
-        await (l?.close?.());
+        await (a?.close?.());
       } catch (e) {}
       return [];
     } finally {
@@ -232,12 +237,42 @@
       };
     }).filter(Boolean);
   }
+  async function detectCutsFromServer() {
+    try {
+      const e = window.clipsStudio?.currentTemplateForPreview?.projectId;
+      if (!e) return [];
+      const t = typeof API_BASE_URL !== "undefined" && API_BASE_URL ? API_BASE_URL : "";
+      const i = typeof getAuthHeaders === "function" ? getAuthHeaders() : {};
+      const n = await fetch(`${t}/clips/projects/${encodeURIComponent(e)}/silence-preview`, {
+        credentials: "include",
+        headers: i
+      });
+      if (!n.ok) return [];
+      const r = await n.json().catch(() => ({}));
+      const o = r.caption_preview_words;
+      if (Array.isArray(o) && o.length && typeof window.setLiveCaptionTimedWords === "function") {
+        try {
+          window.setLiveCaptionTimedWords(o);
+        } catch (e) {}
+      }
+      const s = Array.isArray(r.cuts) ? r.cuts : [];
+      return mergeRegions(s.map(e => ({
+        start: Number(e.start),
+        end: Number(e.end)
+      })));
+    } catch (e) {
+      return [];
+    }
+  }
   async function detectCuts() {
     const e = getDuration();
     const t = getTimedWords();
     let i = detectFromWords(t, e);
     if (!i.length) {
       i = await detectFromAudio(getPreviewVideo(), e);
+    }
+    if (!i.length) {
+      i = await detectCutsFromServer();
     }
     i = mergeRegions(i);
     try {
@@ -283,17 +318,18 @@
     }
   }
   async function applySilencer() {
-    if (l || o) return;
+    if (a || o) return;
     if (!isLibraryPreview()) return;
     if (!window.PreviewTimeline?.setSkipRegions) {
       showNote("Preview not ready yet");
       return;
     }
     if (window.SolisSilenceCutSuggest?.isOpen?.()) return;
-    l = true;
+    a = true;
     const e = $("previewSilencerBtn");
     if (e) e.classList.add("is-working");
     try {
+      showNote("Scanning for pauses…");
       const e = await detectCuts();
       if (!e.length) {
         showNote("No long pauses found");
@@ -314,7 +350,7 @@
         }
       });
     } finally {
-      l = false;
+      a = false;
       if (e) e.classList.remove("is-working");
     }
   }
@@ -347,7 +383,7 @@
     c = null;
     s = 0;
     o = false;
-    l = false;
+    a = false;
     setButtonState();
     hideNote();
     try {

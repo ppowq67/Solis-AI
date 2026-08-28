@@ -126,6 +126,7 @@ class GenerationProgressSpinner {
     this.genStageOpen = false;
     this._completeSoundUnlocked = false;
     this._completeSoundPlayedFor = new Set;
+    this._previewOpenedFor = new Set;
     this._completeAudio = null;
     this._audioCtx = null;
     this._ensureDomRefs();
@@ -799,21 +800,54 @@ class GenerationProgressSpinner {
   hideLibraryBadge() {
     document.querySelector('[data-tab="library"] .library-notification-badge')?.remove();
   }
-  showVideoReadyNotification() {
-    const e = this.activeTemplateOptions || {};
-    const t = String(e.videoTitle || e.title || "Your video").trim() || "Your video";
-    const s = {
-      videoTitle: t,
+  _resolveCompletedProjectId(e) {
+    const t = String(e || "").trim();
+    if (t && this._isValidProjectId(t)) return t;
+    if (this.activeGenerations.size === 1) {
+      const e = [ ...this.activeGenerations.keys() ][0];
+      if (this._isValidProjectId(e)) return e;
+    }
+    return t || null;
+  }
+  _openCompletedClipPreview(e) {
+    const t = this._resolveCompletedProjectId(e);
+    if (!t || !this._isValidProjectId(t)) return;
+    if (this._previewOpenedFor.has(t)) return;
+    this._previewOpenedFor.add(t);
+    const s = window.clipsStudio;
+    if (!s) return;
+    const i = this.genStageOpen ? 700 : 320;
+    setTimeout(() => {
+      try {
+        if (typeof s.openLibraryPreviewWhenReady === "function") {
+          s.openLibraryPreviewWhenReady(t, t);
+        } else if (typeof s.openLibraryPreview === "function") {
+          s.openLibraryPreview(t, t, null, {
+            fast: true
+          });
+        }
+      } catch (e) {
+        safeLog?.("Auto-open clip preview failed:", e);
+      }
+    }, i);
+  }
+  showVideoReadyNotification(e) {
+    const t = this.activeTemplateOptions || {};
+    const s = this._resolveCompletedProjectId(e);
+    const i = String(t.videoTitle || t.title || "Your video").trim() || "Your video";
+    const n = {
+      videoTitle: i,
       videoUrl: "#",
-      thumbnailUrl: e.thumbnailUrl || null,
-      message: `${t} is ready`
+      thumbnailUrl: t.thumbnailUrl || null,
+      message: `${i} is ready`,
+      projectId: s || undefined
     };
     if (typeof window.notificationSystem?.showVideoGenerated === "function") {
-      window.notificationSystem.showVideoGenerated(s);
+      window.notificationSystem.showVideoGenerated(n);
       return;
     }
     if (typeof window.showNotification === "function") {
-      window.showNotification(`${t} is ready`, "success");
+      window.showNotification(`${i} is ready`, "success");
     }
   }
   _notificationSoundCandidates() {
@@ -937,6 +971,7 @@ class GenerationProgressSpinner {
     this._playGenerationCompleteSound();
   }
   _playGenerationCompleteSound() {
+    const e = this._playSynthCompleteSound();
     const tryMp3 = () => {
       const e = this._ensureCompleteSound();
       if (!e) return Promise.reject(new Error("no audio"));
@@ -945,7 +980,11 @@ class GenerationProgressSpinner {
       e.volume = .75;
       return e.play();
     };
-    tryMp3().catch(() => this._playSynthCompleteSound()).catch?.(() => {});
+    if (!e) {
+      tryMp3().catch(() => {});
+    } else {
+      tryMp3().catch(() => {});
+    }
   }
   restoreGeneration(e, t = 0, s = "Resuming...", i = "processing", n = null, r = null) {
     if (!this._isValidProjectId(e)) return;
@@ -1022,7 +1061,13 @@ class GenerationProgressSpinner {
   }
   _syncDisplayFromActive() {
     this._ensureDomRefs();
-    if (!this.wrapper || !this.progressCircle || this.activeGenerations.size === 0) return;
+    if (!this.wrapper || !this.progressCircle) return;
+    if (this.activeGenerations.size === 0) {
+      if (this.optimisticPending) {
+        this.displayProgress(this._optimisticProgress || 0, this._optimisticMessage || "Starting…");
+      }
+      return;
+    }
     const e = [ ...this.activeGenerations.entries() ].sort((e, t) => t[1].progress - e[1].progress)[0];
     if (e) {
       const [t, s] = e;
@@ -1276,7 +1321,8 @@ class GenerationProgressSpinner {
           videoTitle: i || `Video ${String(t).substring(0, 8)}...`,
           videoUrl: s || "#",
           thumbnailUrl: n || null,
-          message: "Your video has been generated successfully!"
+          message: "Your video has been generated successfully!",
+          projectId: t
         });
       } else if (typeof window.showNotification === "function") {
         window.showNotification("Your video has been generated successfully!", "success");
@@ -1285,7 +1331,7 @@ class GenerationProgressSpinner {
       const l = this.showVideoReadyNotification;
       this.showVideoReadyNotification = () => {};
       this.completeGeneration(a);
-      this.showVideoReadyNotification = l;
+      this.showVideoReadyNotification = l.bind(this);
     });
     solisWSClient.on("error", e => {
       const t = e?.taskId || e?.project_id;
@@ -1295,8 +1341,11 @@ class GenerationProgressSpinner {
     });
   }
   beginOptimisticGeneration(e = "Fetching video...", t = DEFAULT_PIPELINE_TEMPLATE, s = {}) {
+    this._unlockCompleteSound();
     this._setActivePipeline(t, s);
     this.optimisticPending = true;
+    this._optimisticProgress = 0;
+    this._optimisticMessage = this._cleanMessage(e) || "Fetching video…";
     this.currentTaskIndex = -1;
     this.completedTaskCount = 0;
     this.showQueueWaitTask = false;
@@ -1324,9 +1373,18 @@ class GenerationProgressSpinner {
     const t = this._cleanMessage(e) || "Could not start generation — try again";
     this._clearErrorDismissTimer();
     this.optimisticPending = false;
+    this._optimisticProgress = 0;
+    this._optimisticMessage = "";
     this._completionHandled = false;
     this.stopPolling();
     this._unlockUrlSubmitButton();
+    if (typeof this.openGenStage === "function" && !this.genStageOpen) {
+      try {
+        this.openGenStage({
+          reveal: false
+        });
+      } catch (e) {}
+    }
     this._ensureDomRefs();
     if (this.wrapper) this.wrapper.style.display = "flex";
     this._ensureTaskList();
@@ -1345,6 +1403,9 @@ class GenerationProgressSpinner {
     }
     if (this.progressTooltip) {
       this.progressTooltip.textContent = t;
+    }
+    if (this.genStageOpen && typeof this._syncGenStageOutcome === "function") {
+      this._syncGenStageOutcome("error", t);
     }
     if (this.taskCounter) {
       this.taskCounter.textContent = "Failed";
@@ -1386,6 +1447,8 @@ class GenerationProgressSpinner {
     this._ensureTaskList();
     if (!this.panelOpen) this.openPanel();
     this.optimisticPending = false;
+    this._optimisticProgress = 0;
+    this._optimisticMessage = "";
     this.activeGenerations.set(e, {
       startTime: Date.now(),
       progress: 0,
@@ -1436,6 +1499,12 @@ class GenerationProgressSpinner {
     const r = this._resolveActiveProjectId(e) || e;
     if (r !== e) this._linkProjectAliases(e, r);
     if (!this.activeGenerations.has(r)) {
+      if (this.optimisticPending) {
+        this._optimisticProgress = Math.max(this._optimisticProgress || 0, t);
+        if (s) this._optimisticMessage = s;
+        this.displayProgress(this._optimisticProgress, this._optimisticMessage || s || "Starting…", n);
+        return;
+      }
       if (this._completionHandled || this.activeGenerations.size === 0) {
         return;
       }
@@ -1741,25 +1810,34 @@ class GenerationProgressSpinner {
   completeGeneration(e) {
     this._ensureCompletedLibraryItem(e);
     this._refreshLibrarySoon();
+    const t = this._completionHandled && this.activeGenerations.size === 0 && !this.optimisticPending;
+    if (!t) {
+      if (e && this._isValidProjectId(e)) {
+        this._deleteGeneration(e);
+      } else if (this.activeGenerations.size === 1) {
+        const e = [ ...this.activeGenerations.keys() ][0];
+        this._deleteGeneration(e);
+      }
+      this.optimisticPending = false;
+      this._completionHandled = true;
+      this._syncGeneratingBadge();
+    }
     this._playGenerationCompleteSoundOnce(e);
-    if (this._completionHandled && this.activeGenerations.size === 0 && !this.optimisticPending) {
+    if (!t) {
+      this.showVideoReadyNotification(e);
+    }
+    this.displayProgress(100, "Processing complete! Video ready!");
+    if (this.genStageOpen && typeof this._syncGenStageOutcome === "function") {
+      this._syncGenStageOutcome("complete", "Your clip is ready — opening preview…");
+    }
+    this._openCompletedClipPreview(e);
+    this._unlockUrlSubmitButton();
+    if (t) {
       return;
     }
-    if (e && this._isValidProjectId(e)) {
-      this._deleteGeneration(e);
-    } else if (this.activeGenerations.size === 1) {
-      const e = [ ...this.activeGenerations.keys() ][0];
-      this._deleteGeneration(e);
-    }
-    this.optimisticPending = false;
-    this._completionHandled = true;
-    this._syncGeneratingBadge();
-    this.showVideoReadyNotification();
-    this.displayProgress(100, "Processing complete! Video ready!");
-    this._unlockUrlSubmitButton();
     if (this.activeGenerations.size === 0) {
       this.stopPolling();
-      const e = this.genStageOpen ? 2400 : 900;
+      const e = this.genStageOpen ? 4200 : 900;
       setTimeout(() => {
         this._completionHandled = false;
         if (typeof this.closeGenStage === "function") this.closeGenStage();
@@ -1825,6 +1903,9 @@ class GenerationProgressSpinner {
     }
     if (this.progressTooltip) {
       this.progressTooltip.textContent = s;
+    }
+    if (this.genStageOpen && typeof this._syncGenStageOutcome === "function") {
+      this._syncGenStageOutcome("error", s);
     }
     if (this.taskCounter) {
       this.taskCounter.textContent = "Failed";

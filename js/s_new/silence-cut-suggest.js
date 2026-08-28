@@ -92,7 +92,7 @@
       }, 180);
     }, 2800);
   }
-  function show(t) {
+  async function show(t) {
     const n = Array.isArray(t?.regions) ? t.regions : [];
     if (!n.length && t?.source === "silencer") return false;
     dismiss({
@@ -107,14 +107,20 @@
       onAccept: t?.onAccept,
       onReject: t?.onReject
     };
+    const i = Date.now() + 4500;
+    while (Date.now() < i) {
+      const e = window.PreviewTimeline?.getTrim?.();
+      if (window.PreviewTimeline?.isBound?.() && e?.duration > 0) break;
+      await new Promise(e => setTimeout(e, 60));
+    }
     try {
       window.PreviewTimeline?.setSkipRegionsPreview?.(e.regions);
     } catch (e) {}
     ensureActions();
     showActions();
-    const i = totalRemoved(e.regions);
-    const s = t?.label || (i > 0 ? `Red = ${formatRemoved(i)}s to remove · Accept?` : t?.source === "improve" ? "Improve clip · Accept?" : "Review cuts · Accept?");
-    showNote(s);
+    const s = totalRemoved(e.regions);
+    const o = t?.label || (s > 0 ? `Red = ${formatRemoved(s)}s to remove · Accept?` : t?.source === "improve" ? "Improve clip · Accept?" : "Review cuts · Accept?");
+    showNote(o);
     return true;
   }
   function isOpen() {

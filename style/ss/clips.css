@@ -14226,6 +14226,9 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     letter-spacing: -0.04em;
     color: #1c1917;
 }
+.tip-score-num.is-high { color: #15803d; }
+.tip-score-num.is-low { color: #b45309; }
+.tip-score-num.is-empty { color: #a8a29e; font-size: 2rem; }
 .tip-score-max {
     font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 0.95rem;

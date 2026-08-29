@@ -380,8 +380,8 @@ const PreviewTimeline = (() => {
   let m = 0;
   let f = false;
   let y = 0;
-  let g = null;
   let h = null;
+  let g = null;
   let w = 0;
   let b = 0;
   let v = null;
@@ -1211,19 +1211,19 @@ const PreviewTimeline = (() => {
     });
   }
   function destroyCaptureVideo() {
-    if (g) {
-      try {
-        g.pause();
-        g.removeAttribute("src");
-        g.load();
-      } catch (e) {}
-      g = null;
-    }
     if (h) {
       try {
-        URL.revokeObjectURL(h);
+        h.pause();
+        h.removeAttribute("src");
+        h.load();
       } catch (e) {}
       h = null;
+    }
+    if (g) {
+      try {
+        URL.revokeObjectURL(g);
+      } catch (e) {}
+      g = null;
     }
   }
   async function resolveCaptureSrc(e) {
@@ -1245,16 +1245,16 @@ const PreviewTimeline = (() => {
       const n = i.type ? i : new Blob([ i ], {
         type: "video/mp4"
       });
-      if (h) {
+      if (g) {
         try {
-          URL.revokeObjectURL(h);
+          URL.revokeObjectURL(g);
         } catch (e) {}
       }
-      h = URL.createObjectURL(n);
+      g = URL.createObjectURL(n);
       try {
-        window.LibraryPreviewMediaCache?.rememberSrc?.(e, n, h);
+        window.LibraryPreviewMediaCache?.rememberSrc?.(e, n, g);
       } catch (e) {}
-      return h;
+      return g;
     } catch (t) {
       return e;
     }
@@ -1309,7 +1309,7 @@ const PreviewTimeline = (() => {
       destroyCaptureVideo();
       return;
     }
-    g = c;
+    h = c;
     try {
       await Promise.race([ waitEvent(c, "loadeddata", 8e3), waitEvent(c, "loadedmetadata", 8e3) ]);
       for (let e = 0; e < 20 && !(c.videoWidth > 2); e++) {
@@ -1352,7 +1352,7 @@ const PreviewTimeline = (() => {
         mountFilmstripCanvases(o);
       }
     } catch (e) {} finally {
-      if (g === c) destroyCaptureVideo();
+      if (h === c) destroyCaptureVideo();
       if (l === y && !K?.querySelector("canvas")) {
         paintSegments();
       }
@@ -2551,9 +2551,9 @@ function bindFaceReframePanHandlers() {
     const m = _librarySplitscreenCropState;
     const f = l - i;
     const y = c - n;
-    const g = Math.hypot(f, y);
+    const h = Math.hypot(f, y);
     if (!s) {
-      if (g < u) return;
+      if (h < u) return;
       const t = !!(m?.liveFaceEdit && r && (m.faceSrcW || m.srcW));
       s = !t || Math.abs(y) >= Math.abs(f) * .85 ? "resize" : "pan";
       a = true;
@@ -2587,9 +2587,9 @@ function bindFaceReframePanHandlers() {
       return;
     }
     if (!m?.liveFaceEdit || !r) return;
-    const h = m.faceSrcW || m.srcW;
+    const g = m.faceSrcW || m.srcW;
     const w = m.faceSrcH || m.srcH;
-    if (!h || !w) return;
+    if (!g || !w) return;
     const b = _splitscreenQuery("splitscreenBottom") || t;
     const v = e.closest(".ss-panel-crop-viewport") || b;
     const S = v.clientWidth || b.clientWidth || 1;
@@ -2601,7 +2601,7 @@ function bindFaceReframePanHandlers() {
     const I = (c - n) / L;
     let E = r[0] - P;
     let T = r[1] - I;
-    E = Math.max(0, Math.min(h - k, E));
+    E = Math.max(0, Math.min(g - k, E));
     T = Math.max(0, Math.min(w - C, T));
     m.faceCrop = [ E, T, k, C ];
     syncLibrarySplitscreenCropPreview();
@@ -7357,9 +7357,9 @@ class ClipsStudio {
     if (y) {
       y.classList.add("disabled");
     }
-    const g = document.querySelector(".template-preview-sheet");
-    if (g) {
-      g.classList.remove("expanded");
+    const h = document.querySelector(".template-preview-sheet");
+    if (h) {
+      h.classList.remove("expanded");
     }
     requestAnimationFrame(() => {
       const hideLoadingSpinner = () => {
@@ -8463,6 +8463,9 @@ class ClipsStudio {
       }
     }
     this.libraryPreviewModalOpen = true;
+    this._libraryCleanRemountTried = false;
+    this._pendingLibraryTextConfig = null;
+    this._libraryTextSeedInFlight = null;
     this._showLibraryPreviewLoading();
     const o = document.getElementById("templateVideoPreview");
     if (o) {
@@ -8515,13 +8518,13 @@ class ClipsStudio {
       f.classList.remove("expanded");
     }
     const y = document.getElementById("watermarkToggle");
-    const g = y ? y.checked : false;
-    const h = s.template || s.templateName || "";
+    const h = y ? y.checked : false;
+    const g = s.template || s.templateName || "";
     this.currentTemplateForPreview = {
       id: e,
       projectId: t,
-      type: h,
-      templateId: h,
+      type: g,
+      templateId: g,
       isLibraryPreview: true,
       card: i,
       data: {
@@ -8529,7 +8532,7 @@ class ClipsStudio {
         template: s.template,
         templateName: s.templateName
       },
-      addWatermark: g,
+      addWatermark: h,
       videoQuality: "auto"
     };
     this.toggleLibraryPreviewLayout(true);
@@ -8565,6 +8568,117 @@ class ClipsStudio {
       return this.mountLibrarySplitscreenPreview(e, t);
     }
     return this.mountLibrarySplitscreenPreview(e, t);
+  }
+  seedLibraryCaptionAndHookOverlays(e = {}) {
+    try {
+      if (this._isCurrentLibraryRanking?.()) return false;
+      if (e.customize_expired) return false;
+      this._libraryHookCleared = false;
+      this._libraryCaptionsCleared = false;
+      try {
+        if (typeof clearSubtitleMemorySuggest === "function") clearSubtitleMemorySuggest();
+        document.querySelectorAll(".sub-mem-ghost,.sub-mem-actions").forEach(e => e.remove());
+      } catch (e) {}
+      const t = Boolean(e.captions_burned || e.subtitles_enabled || e.caption_style && (e.caption_style.anim || e.caption_style.enabled) || Array.isArray(e.caption_preview_words) && e.caption_preview_words.length || String(e.caption_preview_text || "").trim());
+      this._libraryCaptionsOn = t;
+      if (t) {
+        const t = e.caption_style || {
+          anim: "karaoke",
+          font: "Montserrat",
+          color: "#ffffff",
+          shadow: "none",
+          font_size: 70,
+          font_size_ratio: 70 / 1920,
+          y_pct: .8,
+          enabled: true
+        };
+        if (typeof window.setLiveCaptionTimedWords === "function") {
+          window.setLiveCaptionTimedWords(e.caption_preview_words || []);
+        }
+        let i = String(e.caption_preview_text || (typeof e.caption_style?.preview_text === "string" ? e.caption_style.preview_text : "") || "").trim();
+        if (!i && Array.isArray(e.caption_preview_words) && e.caption_preview_words.length) {
+          i = e.caption_preview_words.map(e => e && e.text != null ? String(e.text) : String(e || "")).filter(Boolean).join(" ").trim();
+        }
+        if (typeof window.applySubtitleStyle === "function") {
+          window.applySubtitleStyle(t, {
+            selectAfter: false,
+            applyFill: true,
+            playAnim: false,
+            markSuggest: true,
+            softClamp: true,
+            previewText: i || null
+          });
+        }
+      }
+      const i = e.state || {};
+      const n = String(i.subtitle_text || e.ai_hook_text || "").trim();
+      if (n && typeof window.ensureLibraryAiHookOverlay === "function") {
+        const t = {
+          ...e.ai_hook_style || {},
+          secondary_type: e.splitscreen_secondary_type || (typeof splitscreenSecondaryType !== "undefined" ? splitscreenSecondaryType : "gameplay"),
+          inverted: e.splitscreen_inverted != null ? Boolean(e.splitscreen_inverted) : typeof splitscreenInverted !== "undefined" ? splitscreenInverted : false,
+          content_ratio: e.splitscreen_content_ratio ?? (typeof splitscreenContentRatio !== "undefined" ? splitscreenContentRatio : .5),
+          secondary_collapsed: e.splitscreen_secondary_collapsed != null ? Boolean(e.splitscreen_secondary_collapsed) : typeof splitscreenSecondaryCollapsed !== "undefined" ? splitscreenSecondaryCollapsed : false
+        };
+        window.ensureLibraryAiHookOverlay(n, t);
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            try {
+              window.ensureLibraryAiHookOverlay(n, t);
+            } catch (e) {}
+          });
+        });
+      }
+      requestAnimationFrame(() => {
+        try {
+          const e = document.getElementById("templateVideoPreview");
+          if (!e || typeof window.markSubtitleSuggest !== "function") return;
+          const t = e.querySelector(".sub-text-block:not(.overlay-text-block)");
+          const i = e.querySelector('.overlay-text-block[data-ai-hook="1"]');
+          if (t) window.markSubtitleSuggest(t);
+          if (i) window.markSubtitleSuggest(i);
+        } catch (e) {}
+      });
+      return Boolean(t || n);
+    } catch (e) {
+      safeLog("Library caption/hook seed skipped:", e);
+      return false;
+    }
+  }
+  async fetchAndSeedLibraryTextOverlays(e) {
+    if (!e || this._isCurrentLibraryRanking?.()) return false;
+    if (this._libraryTextSeedInFlight === e) return false;
+    this._libraryTextSeedInFlight = e;
+    try {
+      const t = await fetch(`${API_BASE_URL}/clips/projects/${encodeURIComponent(e)}/splitscreen-state`, {
+        credentials: "include",
+        headers: getAuthHeaders()
+      });
+      if (!t.ok) return false;
+      const i = await t.json();
+      if (i.customize_expired) return false;
+      const n = Boolean((i.captions_burned || i.subtitles_enabled) && !this._librarySplitscreenCustomize && !document.querySelector("#templateVideoPreview.library-splitscreen-preview"));
+      if (n && !this._libraryCleanRemountTried) {
+        const t = document.getElementById("templateVideoPreview");
+        const n = String(t?.querySelector?.("video.library-preview-video")?.currentSrc || "").includes("clean=1");
+        if (t && !n) {
+          this._libraryCleanRemountTried = true;
+          this._pendingLibraryTextConfig = i;
+          this.mountLibraryPreviewVideo(t, e, {
+            clean: true
+          });
+          return true;
+        }
+      }
+      return this.seedLibraryCaptionAndHookOverlays(i);
+    } catch (e) {
+      safeLog("fetchAndSeedLibraryTextOverlays failed:", e);
+      return false;
+    } finally {
+      if (this._libraryTextSeedInFlight === e) {
+        this._libraryTextSeedInFlight = null;
+      }
+    }
   }
   async mountLibrarySplitscreenPreview(e, t) {
     this._librarySplitscreenCustomize = false;
@@ -8608,21 +8722,31 @@ class ClipsStudio {
       const r = n.layers || {};
       const o = Boolean(n.has_segment || r.segment || r.content || r.secondary);
       if (!o) {
-        this.mountLibraryPreviewVideo(e, t);
+        this.mountLibraryPreviewVideo(e, t, {
+          clean: true
+        });
+        this.fetchAndSeedLibraryTextOverlays(t);
         return;
       }
       if (!n.can_customize && !n.has_segment) {
-        this.mountLibraryPreviewVideo(e, t);
+        this.mountLibraryPreviewVideo(e, t, {
+          clean: true
+        });
+        this.fetchAndSeedLibraryTextOverlays(t);
         return;
       }
-      const s = Boolean(n.captions_burned || n.subtitles_enabled || n.caption_style && (n.caption_style.anim || n.caption_style.enabled));
+      const s = Boolean(n.captions_burned || n.subtitles_enabled || n.caption_style && (n.caption_style.anim || n.caption_style.enabled) || Array.isArray(n.caption_preview_words) && n.caption_preview_words.length || String(n.caption_preview_text || "").trim());
       this._libraryCaptionsOn = s;
       if (s && !(n.can_customize || n.has_segment)) {
-        safeLog("ðŸ“ Captioned master → flat library preview (no editable layers)");
+        safeLog("Captioned master → flat library preview with editable overlays");
         this._librarySplitscreenCustomize = false;
         this._libraryPreviewProjectId = t;
         applySplitscreenConfigFromServer(n);
-        this.mountLibraryPreviewVideo(e, t);
+        this._pendingLibraryTextConfig = n;
+        this.mountLibraryPreviewVideo(e, t, {
+          clean: true
+        });
+        this.seedLibraryCaptionAndHookOverlays(n);
         await this._configureLibraryEditingUI();
         return;
       }
@@ -8656,8 +8780,8 @@ class ClipsStudio {
       setSplitscreenScope(e);
       e.classList.remove("has-video");
       e.innerHTML = buildSplitscreenPreviewShell();
-      const g = `${API_BASE_URL}/clips/projects/${encodeURIComponent(t)}/splitscreen-layer`;
-      const h = `${API_BASE_URL}/clips/projects/${encodeURIComponent(t)}/splitscreen-segment`;
+      const h = `${API_BASE_URL}/clips/projects/${encodeURIComponent(t)}/splitscreen-layer`;
+      const g = `${API_BASE_URL}/clips/projects/${encodeURIComponent(t)}/splitscreen-segment`;
       const w = e.querySelector("#splitscreenContentVideo");
       const b = e.querySelector("#splitscreenReframeVideo");
       const v = e.querySelector("#splitscreenGameplayVideo");
@@ -8731,13 +8855,13 @@ class ClipsStudio {
           v.style.setProperty("display", "none", "important");
           v.removeAttribute("src");
         }
-        const e = await wireVideo(w, `${g}/content`);
+        const e = await wireVideo(w, `${h}/content`);
         if (!e) throw new Error("Failed to load content layer");
         if (b) {
           b.style.setProperty("display", "block", "important");
           b.style.touchAction = "none";
           b.style.cursor = "grab";
-          const e = await wireVideo(b, `${g}/secondary`);
+          const e = await wireVideo(b, `${h}/secondary`);
           if (!e) {
             if (!p) throw new Error("Failed to load reframe layer");
             safeLog("Reframe layer failed — falling back to live segment crop");
@@ -8746,7 +8870,7 @@ class ClipsStudio {
               _librarySplitscreenCropState.liveFaceEdit = true;
               _librarySplitscreenCropState.secondaryFromLayer = false;
             }
-            const e = await fetchSecureVideoObjectUrlPair(h);
+            const e = await fetchSecureVideoObjectUrlPair(g);
             const t = await wireVideo(b, e[1], {
               secure: false
             });
@@ -8762,10 +8886,10 @@ class ClipsStudio {
           v.style.setProperty("display", "none", "important");
           v.removeAttribute("src");
         }
-        let e = h;
-        let t = h;
+        let e = g;
+        let t = g;
         try {
-          [e, t] = await fetchSecureVideoObjectUrlPair(h);
+          [e, t] = await fetchSecureVideoObjectUrlPair(g);
         } catch (e) {
           safeLog("Shared segment blob pair failed, streaming URLs:", e);
         }
@@ -8790,11 +8914,11 @@ class ClipsStudio {
         safeLog("Face track without secondary/segment yet — flat preview");
         throw new Error("Reframe layers not ready");
       } else {
-        const e = y ? `${g}/content` : h;
+        const e = y ? `${h}/content` : g;
         const t = await wireVideo(w, e);
         if (!t && y && p) {
           if (_librarySplitscreenCropState) _librarySplitscreenCropState.useLayers = false;
-          await wireVideo(w, h);
+          await wireVideo(w, g);
         }
         if (l) {
           if (v) {
@@ -8807,7 +8931,7 @@ class ClipsStudio {
               _librarySplitscreenCropState.liveFaceEdit = false;
             }
             b.style.setProperty("display", "block", "important");
-            await wireVideo(b, `${g}/secondary`);
+            await wireVideo(b, `${h}/secondary`);
             forceLibraryPanelVideoFill(b);
             if (w) bindLibrarySplitscreenPlaybackSync(w, b);
           }
@@ -8818,7 +8942,7 @@ class ClipsStudio {
           }
           if (v) {
             v.style.setProperty("display", "block", "important");
-            await wireVideo(v, `${g}/secondary`);
+            await wireVideo(v, `${h}/secondary`);
             if (w) bindLibrarySplitscreenPlaybackSync(w, v);
           }
         } else if (v) {
@@ -8862,83 +8986,24 @@ class ClipsStudio {
       if (typeof PreviewTimeline !== "undefined" && w) {
         PreviewTimeline.attach(w);
       }
-      try {
-        this._libraryHookCleared = false;
-        this._libraryCaptionsCleared = false;
-        try {
-          if (typeof clearSubtitleMemorySuggest === "function") clearSubtitleMemorySuggest();
-          document.querySelectorAll(".sub-mem-ghost,.sub-mem-actions").forEach(e => e.remove());
-        } catch (e) {}
-        if (s) {
-          const e = n.caption_style || {
-            anim: "static",
-            font: "Montserrat",
-            color: "#ffffff",
-            shadow: "none",
-            font_size: 70,
-            font_size_ratio: 70 / 1920,
-            y_pct: .8,
-            enabled: true
-          };
-          if (typeof window.setLiveCaptionTimedWords === "function") {
-            window.setLiveCaptionTimedWords(n.caption_preview_words || []);
-          }
-          let t = String(n.caption_preview_text || (typeof n.caption_style?.preview_text === "string" ? n.caption_style.preview_text : "") || "").trim();
-          if (!t && Array.isArray(n.caption_preview_words) && n.caption_preview_words.length) {
-            t = n.caption_preview_words.map(e => e && e.text != null ? String(e.text) : String(e || "")).filter(Boolean).join(" ").trim();
-          }
-          if (typeof window.applySubtitleStyle === "function") {
-            window.applySubtitleStyle(e, {
-              selectAfter: false,
-              applyFill: true,
-              playAnim: false,
-              markSuggest: true,
-              softClamp: true,
-              previewText: t || null
-            });
-          }
-        }
-        const t = String(a && a.subtitle_text || n.ai_hook_text || "").trim();
-        if (t && typeof window.ensureLibraryAiHookOverlay === "function") {
-          const e = {
-            ...n.ai_hook_style || {},
-            secondary_type: n.splitscreen_secondary_type || (typeof splitscreenSecondaryType !== "undefined" ? splitscreenSecondaryType : "gameplay"),
-            inverted: n.splitscreen_inverted != null ? Boolean(n.splitscreen_inverted) : typeof splitscreenInverted !== "undefined" ? splitscreenInverted : false,
-            content_ratio: n.splitscreen_content_ratio ?? (typeof splitscreenContentRatio !== "undefined" ? splitscreenContentRatio : .5),
-            secondary_collapsed: n.splitscreen_secondary_collapsed != null ? Boolean(n.splitscreen_secondary_collapsed) : typeof splitscreenSecondaryCollapsed !== "undefined" ? splitscreenSecondaryCollapsed : false
-          };
-          window.ensureLibraryAiHookOverlay(t, e);
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              try {
-                window.ensureLibraryAiHookOverlay(t, e);
-              } catch (e) {}
-            });
-          });
-        }
-        if (typeof syncSplitscreenSubtitles === "function") {
-          syncSplitscreenSubtitles(e);
-        }
-      } catch (e) {
-        safeLog("Library caption/hook seed skipped:", e);
+      this.seedLibraryCaptionAndHookOverlays({
+        ...n,
+        state: a
+      });
+      if (typeof syncSplitscreenSubtitles === "function") {
+        syncSplitscreenSubtitles(e);
       }
       await this._configureLibraryEditingUI();
-      try {
-        requestAnimationFrame(() => {
-          const e = document.getElementById("templateVideoPreview");
-          if (!e || typeof window.markSubtitleSuggest !== "function") return;
-          const t = e.querySelector(".sub-text-block:not(.overlay-text-block)");
-          const i = e.querySelector('.overlay-text-block[data-ai-hook="1"]');
-          if (t) window.markSubtitleSuggest(t);
-          if (i) window.markSubtitleSuggest(i);
-        });
-      } catch (e) {}
     } catch (i) {
       safeLog("Library splitscreen preview failed, using flat video:", i);
       this._librarySplitscreenCustomize = false;
       teardownLibrarySplitscreenCropObserver();
       setSplitscreenScope(null);
-      this.mountLibraryPreviewVideo(e, t);
+      this._pendingLibraryTextConfig = null;
+      this.mountLibraryPreviewVideo(e, t, {
+        clean: true
+      });
+      this.fetchAndSeedLibraryTextOverlays(t);
     }
   }
   async runLibraryApplyWithSpinner(e, {needsRecompose: t, needsOverlayRender: i, needsRankingRecompose: n = false, needsSilenceOnly: r = false, overlays: o = null}) {
@@ -9343,6 +9408,15 @@ class ClipsStudio {
           this.seedLibraryRankingTimelineSplits(this._libraryRankingTimelineState);
         } catch (e) {}
       }
+      try {
+        if (this._pendingLibraryTextConfig) {
+          const e = this._pendingLibraryTextConfig;
+          this._pendingLibraryTextConfig = null;
+          this.seedLibraryCaptionAndHookOverlays(e);
+        } else if (!e.classList.contains("library-splitscreen-preview") && !this._isCurrentLibraryRanking?.()) {
+          this.fetchAndSeedLibraryTextOverlays(t);
+        }
+      } catch (e) {}
       try {
         window.SolisSilencer?.syncVisibility?.();
       } catch (e) {}
@@ -10376,25 +10450,39 @@ class ClipsStudio {
     const r = document.getElementById("tipScoreWhyBtn");
     const o = document.getElementById("tipScoreWhy");
     const s = document.getElementById("tipShareTitle");
-    const a = document.getElementById("tipShareHashtags");
-    if (!s || !a) return;
-    let l = e && e.score_10 != null ? Number(e.score_10) : this._score10FromVirality(t);
-    if (!Number.isFinite(l) && e && e.score_100 != null) {
-      l = Math.round(Number(e.score_100) / 10 * 10) / 10;
+    if (!s) return;
+    let a = e && e.score_10 != null ? Number(e.score_10) : this._score10FromVirality(t);
+    if (!Number.isFinite(a) && e && e.score_100 != null) {
+      a = Math.round(Number(e.score_100) / 10 * 10) / 10;
     }
-    if (i) i.textContent = this._formatScore10(l);
+    if ((!Number.isFinite(a) || a <= 0) && t && typeof t === "object") {
+      const e = [ "hook", "clip", "subtitles", "video" ].map(e => Number(t[e]?.n)).filter(e => Number.isFinite(e) && e > 0);
+      if (e.length) {
+        a = Math.round(e.reduce((e, t) => e + t, 0) / e.length * 10) / 10;
+      }
+    }
+    if (i) {
+      i.textContent = this._formatScore10(a);
+      i.classList.toggle("is-low", Number.isFinite(a) && a > 0 && a < 6);
+      i.classList.toggle("is-high", Number.isFinite(a) && a >= 8);
+      i.classList.toggle("is-empty", !Number.isFinite(a) || a <= 0);
+    }
     if (n) {
-      n.textContent = e && e.band_label || this._bandLabel(Number.isFinite(l) ? l : null);
+      if (!Number.isFinite(a) || a <= 0) {
+        n.textContent = "Scoring…";
+      } else {
+        n.textContent = e && e.band_label || this._bandLabel(a);
+      }
     }
-    const c = String(e?.why || this._whyFromVirality(t) || "").trim();
+    const l = String(e?.why || this._whyFromVirality(t) || "").trim();
     if (r && o) {
       o.classList.remove("is-open");
       o.hidden = true;
       r.setAttribute("aria-expanded", "false");
-      if (c) {
+      if (l) {
         r.hidden = false;
         o.hidden = false;
-        o.textContent = c;
+        o.textContent = l;
         if (!r.dataset.bound) {
           r.dataset.bound = "1";
           const e = r.closest(".tip-score-why-wrap") || r.parentElement;
@@ -10427,39 +10515,32 @@ class ClipsStudio {
         o.textContent = "";
       }
     }
-    const d = String(e?.title || "").trim();
-    const p = Array.isArray(e?.hashtags) ? e.hashtags.join(" ") : String(e?.hashtags_text || "").trim();
-    if (document.activeElement !== s) s.textContent = d;
-    if (document.activeElement !== a) a.textContent = p;
+    const c = String(e?.title || "").trim();
+    if (document.activeElement !== s) s.textContent = c;
     this._bindSharePackEditors();
   }
   _bindSharePackEditors() {
     if (this._sharePackBound) return;
     this._sharePackBound = true;
     const e = document.getElementById("tipShareTitle");
-    const t = document.getElementById("tipShareHashtags");
     const save = () => this._saveSharePackFromEditors();
-    [ e, t ].forEach(e => {
-      if (!e) return;
-      e.addEventListener("keydown", t => {
-        if (t.key === "Enter" && !t.shiftKey) {
-          t.preventDefault();
-          e.blur();
-        }
-      });
-      e.addEventListener("blur", save);
+    if (!e) return;
+    e.addEventListener("keydown", t => {
+      if (t.key === "Enter" && !t.shiftKey) {
+        t.preventDefault();
+        e.blur();
+      }
     });
+    e.addEventListener("blur", save);
   }
   async _saveSharePackFromEditors() {
     const e = this.currentTemplateForPreview?.projectId;
     if (!e) return;
     const t = document.getElementById("tipShareTitle");
-    const i = document.getElementById("tipShareHashtags");
-    const n = (t?.innerText || "").trim();
-    const r = (i?.innerText || "").trim();
+    const i = (t?.innerText || "").trim();
     try {
       const t = typeof getAuthHeaders === "function" ? getAuthHeaders() : {};
-      const i = await fetch(`${API_BASE_URL}/clips/projects/${encodeURIComponent(e)}/share-pack`, {
+      const n = await fetch(`${API_BASE_URL}/clips/projects/${encodeURIComponent(e)}/share-pack`, {
         method: "PUT",
         credentials: "include",
         headers: {
@@ -10467,18 +10548,18 @@ class ClipsStudio {
           ...t
         },
         body: JSON.stringify({
-          title: n,
-          hashtags_text: r
+          title: i,
+          hashtags_text: ""
         })
       });
-      if (!i.ok) return;
-      const o = await i.json().catch(() => ({}));
-      const s = o?.share_pack;
-      if (s) {
+      if (!n.ok) return;
+      const r = await n.json().catch(() => ({}));
+      const o = r?.share_pack;
+      if (o) {
         const t = this.libraryItems.find(t => String(t.projectId || t.id) === String(e));
-        if (t) t.share_pack = s;
+        if (t) t.share_pack = o;
         if (this.currentTemplateForPreview) {
-          this.currentTemplateForPreview.share_pack = s;
+          this.currentTemplateForPreview.share_pack = o;
         }
       }
     } catch (e) {}
@@ -11588,13 +11669,13 @@ class ClipsStudio {
         const e = await this.resolveWatermarkPolicy(true);
         this.applyWatermarkControls(e);
       } catch (e) {}
-      const g = this.processingItems.find(e => e.id === i);
-      if (g) {
-        g.projectId = this.currentProjectId;
-        g.optimistic = false;
-        g.templateName = y.template.name;
-        g.name = `${y.template.name} from YouTube`;
-        g.message = "Starting download...";
+      const h = this.processingItems.find(e => e.id === i);
+      if (h) {
+        h.projectId = this.currentProjectId;
+        h.optimistic = false;
+        h.templateName = y.template.name;
+        h.name = `${y.template.name} from YouTube`;
+        h.message = "Starting download...";
         this.saveProcessingItems();
       } else {
         const e = {

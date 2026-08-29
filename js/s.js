@@ -2820,6 +2820,9 @@ function applySplitscreenConfigFromServer(e = {}) {
     i = "face_track";
     splitscreenSecondaryCollapsed = true;
   }
+  if (i === "dual_speaker" || i === "dual") {
+    i = "face_track";
+  }
   if (i === "face_track") {
     splitscreenSecondaryType = "face_track";
   } else if (i === "blank" || i === "blank_blur" || i === "blur") {
@@ -3905,6 +3908,7 @@ function getSuggestedClipMode() {
   if (!e || typeof e !== "object") return null;
   if (e.collapsed) return "focus";
   const t = String(e.secondary || e.splitscreen_secondary_type || "");
+  if (t === "dual_speaker" || t === "dual") return "face_track";
   if (t === "blank_blur" || t === "blur" || t === "blank") return "blur";
   if (t === "face_track") return "face_track";
   return null;
@@ -3913,6 +3917,7 @@ function getSuggestedClipMode() {
 function setSuggestedClipMode(e, t) {
   let i = e || "face_track";
   if (i === "blank") i = "blank_blur";
+  if (i === "dual" || i === "dual_speaker") i = "face_track";
   window._solisClipModeSuggestion = {
     secondary: i,
     collapsed: !!t,
@@ -4015,6 +4020,7 @@ function selectClipMode(e, t) {
     } catch (e) {}
   }
   if (e === "blank") e = "blur";
+  if (e === "dual" || e === "dual_speaker") e = "face_track";
   const i = currentClipModeId();
   if (i === "face_track" || i === "blur") {
     const e = Number(splitscreenContentRatio);

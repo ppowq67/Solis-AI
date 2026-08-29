@@ -593,7 +593,7 @@
 
 .template-image-placeholder {
     position: relative;
-    height: 78%;
+    height: 68%;
     background: linear-gradient(135deg, rgba(245, 248, 253, 0.7) 0%, rgba(235, 241, 249, 0.6) 100%);
     display: flex;
     align-items: center;
@@ -633,12 +633,12 @@
 }
 
 .template-content {
-    padding: 8px 14px 10px;
+    padding: 12px 14px;
     display: flex;
     flex-direction: column;
     flex: 1;
-    justify-content: flex-end;
-    gap: 2px;
+    gap: 3px;
+    min-height: 0;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.52) 100%);
     backdrop-filter: blur(10px) saturate(170%);
     -webkit-backdrop-filter: blur(10px) saturate(170%);
@@ -18059,11 +18059,11 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     }
 
     .template-image-placeholder {
-        height: 220px;
+        height: 200px;
     }
 
     .template-content {
-        padding: 8px 12px 10px;
+        padding: 12px;
     }
 
     .template-title {
@@ -18775,7 +18775,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     }
 
     .template-image-placeholder {
-        height: 160px;
+        height: 140px;
     }
 
     .processing-item {

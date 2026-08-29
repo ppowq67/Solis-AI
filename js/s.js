@@ -6806,6 +6806,27 @@ class ClipsStudio {
       if (!t || t.disabled) return;
       t.click();
     });
+    if (!this._useTemplateEnterBound) {
+      this._useTemplateEnterBound = true;
+      document.addEventListener("keydown", e => {
+        if (e.key !== "Enter" || e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return;
+        if (e.isComposing || e.repeat) return;
+        const t = document.getElementById("templatePreviewModal");
+        if (!t?.classList.contains("active")) return;
+        const i = e.target;
+        if (i) {
+          const e = (i.tagName || "").toUpperCase();
+          if (e === "INPUT" || e === "TEXTAREA" || e === "SELECT") return;
+          if (i.isContentEditable || i.closest?.('[contenteditable="true"]')) return;
+        }
+        const n = document.getElementById("confirmUseTemplateBtn");
+        if (!n || n.disabled || n.dataset.applying === "1") return;
+        if (n.getAttribute("data-pro-locked") === "1") return;
+        e.preventDefault();
+        e.stopPropagation();
+        this.confirmTemplateUse();
+      }, true);
+    }
     bindClipIntentControls(this);
     const sharePreview = e => {
       e.preventDefault();

@@ -5069,11 +5069,16 @@
            const keys = (parts[1] || '').trim();
            if (!label || !keys) return;
            const tip = ensureTip();
+           tip.classList.remove('is-on');
            tip.querySelector('.solis-keyhint-label').textContent = label;
            tip.querySelector('.solis-keyhint-keys').textContent = keys;
            activeTarget = target;
-           tip.classList.add('is-on');
            placeTip(target);
+           void tip.offsetWidth;
+           requestAnimationFrame(() => {
+               if (activeTarget !== target) return;
+               tip.classList.add('is-on');
+           });
        }
 
        function bindOne(el) {
@@ -7432,28 +7437,30 @@
     display:inline-flex;align-items:center;gap:8px;
     padding:6px 8px 6px 12px;
     border-radius:999px;
-    background:#2a2a2a;
-    color:#fff;
-    font-family:'Plus Jakarta Sans','Nunito',sans-serif;
-    font-size:12.5px;font-weight:650;letter-spacing:.01em;
+    background:#2b2b2b;
+    border:1px solid rgba(255,255,255,.06);
+    color:#ffffff;
+    font-family:'Plus Jakarta Sans','Nunito',system-ui,sans-serif;
+    font-size:12.5px;font-weight:600;letter-spacing:.01em;
     line-height:1;white-space:nowrap;
     pointer-events:none;
     opacity:0;visibility:hidden;
-    transform:translateY(4px);
-    transition:opacity .14s ease, transform .14s ease, visibility 0s linear .14s;
-    box-shadow:0 4px 16px rgba(0,0,0,.28);
+    transform:translateY(6px);
+    transition:opacity .22s ease, transform .22s ease, visibility 0s linear .22s;
+    box-shadow:0 6px 20px rgba(0,0,0,.35);
+    will-change:opacity,transform;
 }
 .solis-keyhint.is-on{
     opacity:1;visibility:visible;
     transform:translateY(0);
-    transition:opacity .14s ease, transform .14s ease, visibility 0s;
+    transition:opacity .22s ease, transform .22s ease, visibility 0s;
 }
-.solis-keyhint-label{color:rgba(255,255,255,.96);}
+.solis-keyhint-label{color:#ffffff;}
 .solis-keyhint-keys{
     display:inline-flex;align-items:center;
     padding:4px 8px;border-radius:999px;
-    background:#3d3d3d;
-    color:rgba(255,255,255,.72);
+    background:#404040;
+    color:#ffffff;
     font-size:11px;font-weight:600;letter-spacing:.02em;
 }
 @media (hover:none),(pointer:coarse){

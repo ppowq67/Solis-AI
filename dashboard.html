@@ -47,7 +47,7 @@
     <link rel="stylesheet" href="/style/ss/ios-pill-nav.css?v=29">
     <link rel="stylesheet" href="/style/ss/mobile-nav.css?v=32">
     <link rel="stylesheet" href="/style/ss/customize.css?v=27">
-    <link rel="stylesheet" href="/style/ss/clips.css?v=176">
+    <link rel="stylesheet" href="/style/ss/clips.css?v=180">
     <link rel="stylesheet" href="/style/ss/profile.css?v=34">
     <link rel="stylesheet" href="/style/ss/tasks-panel-v2-demo.css?v=18">
     <link rel="stylesheet" href="/style/ss/solis-gen-stage.css?v=28">
@@ -78,7 +78,7 @@
     <script src="/js/ui/plan-selector.js?v=66"></script>
     <script src="/js/core/video-preview-system.js?v=2"></script>
     <script src="/js/s_new/clip-card.js?v=28"></script>
-    <script src="/js/s.js?v=302"></script>
+    <script src="/js/s.js?v=303"></script>
     <script src="/js/s_new/silence-cut-suggest.js?v=2"></script>
     <script src="/js/s_new/silencer.js?v=6"></script>
     <script src="/js/s_new/improve-clip.js?v=5"></script>
@@ -4559,6 +4559,43 @@
                 </div>
             </div>
             </div>
+            </div>
+
+            <div class="create-quick-pills" id="createQuickPills" role="list" aria-label="Quick starts">
+                <button type="button" class="create-pill create-pill--hot" data-quick="hot-pick" role="listitem">
+                    <span class="create-pill-fx" aria-hidden="true">
+                        <span class="cp-side-fire cp-side-fire--l">
+                            <i></i><i></i><i></i>
+                        </span>
+                        <span class="cp-side-fire cp-side-fire--r">
+                            <i></i><i></i><i></i>
+                        </span>
+                        <span class="cp-fire-rim"></span>
+                    </span>
+                    <span class="create-pill-face">Hot pick</span>
+                    <span class="create-pill-hover-label">Open Clip</span>
+                </button>
+                <button type="button" class="create-pill create-pill--rank" data-quick="ranking" role="listitem">
+                    <span class="create-pill-fx" aria-hidden="true">
+                        <span class="cp-sparks">
+                            <i></i><i></i><i></i><i></i><i></i><i></i>
+                        </span>
+                        <span class="cp-rank-sheen"></span>
+                    </span>
+                    <span class="create-pill-face">Ranking</span>
+                    <span class="create-pill-hover-label">Top 5 list</span>
+                </button>
+                <button type="button" class="create-pill create-pill--lib" data-quick="library" role="listitem">
+                    <span class="create-pill-fx" aria-hidden="true">
+                        <span class="cp-smoke">
+                            <i></i><i></i><i></i>
+                        </span>
+                        <span class="cp-lib-mist"></span>
+                    </span>
+                    <span class="create-pill-face">Library</span>
+                    <span class="create-pill-hover-label">My clips</span>
+                </button>
+            </div>
 
             <p class="copyright-disclaimer">
                 By using Solis AI, you agree to our <a href="frontend/terms.html">Terms of Service</a> and <a href="frontend/privacy.html">Privacy Policy</a>
@@ -4619,6 +4656,61 @@
         </div>
     </div>
 </div>
+
+<script>
+(function bindCreateQuickPills() {
+    const root = document.getElementById('createQuickPills');
+    if (!root || root.dataset.bound === '1') return;
+    root.dataset.bound = '1';
+
+    function goTemplatesThen(templateId) {
+        try {
+            if (typeof window.switchSection === 'function') window.switchSection('clips');
+        } catch (_) {}
+        const mobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+        try {
+            if (mobile && typeof window.goMobileClipsTab === 'function') {
+                window.goMobileClipsTab('templates');
+            } else if (window.clipsStudio?.switchTab) {
+                window.clipsStudio.switchTab('templates');
+            }
+        } catch (_) {}
+        const open = () => {
+            const card = document.querySelector(`.template-card[data-template="${templateId}"]`);
+            if (!card) return;
+            if (window.clipsStudio?.openTemplatePreviewModal) {
+                window.clipsStudio.openTemplatePreviewModal(templateId, card);
+            } else {
+                card.click();
+            }
+        };
+        setTimeout(open, mobile ? 80 : 30);
+    }
+
+    function goLibrary() {
+        try {
+            if (typeof window.switchSection === 'function') window.switchSection('clips');
+        } catch (_) {}
+        const mobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+        try {
+            if (mobile && typeof window.goMobileClipsTab === 'function') {
+                window.goMobileClipsTab('library');
+            } else if (window.clipsStudio?.switchTab) {
+                window.clipsStudio.switchTab('library');
+            }
+        } catch (_) {}
+    }
+
+    root.addEventListener('click', (e) => {
+        const btn = e.target?.closest?.('[data-quick]');
+        if (!btn || !root.contains(btn)) return;
+        const action = btn.getAttribute('data-quick');
+        if (action === 'hot-pick') goTemplatesThen('splitscreen');
+        else if (action === 'ranking') goTemplatesThen('ranked_compilation');
+        else if (action === 'library') goLibrary();
+    });
+})();
+</script>
 
 <div class="clips-section" id="librarySection">
     <div class="section-header" id="libraryRootHeader">

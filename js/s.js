@@ -9225,11 +9225,11 @@ class ClipsStudio {
         apply_consumes_quota: i.apply_consumes_quota !== false
       };
       const n = Boolean(i.overlay_burned) && !Boolean(i.burn_deferred);
-      const r = typeof i.has_clean_master === "boolean" ? i.has_clean_master : Boolean(i.timeline_mode) || !n;
+      const r = typeof i.has_clean_master === "boolean" ? i.has_clean_master : false;
       const o = Boolean(i.can_edit) && !i.customize_expired;
       this._libraryRankingTimelineState = i;
       if (o && (r || !n)) {
-        this._libraryRankingUseCleanVideo = r || !n;
+        this._libraryRankingUseCleanVideo = r;
         this._libraryRankingOverlayPending = i;
       } else {
         this._libraryRankingEditable = Boolean(i.can_edit) && !i.customize_expired;
@@ -9488,7 +9488,7 @@ class ClipsStudio {
         apply_consumes_quota: n.apply_consumes_quota !== false
       };
       const r = Boolean(n.overlay_burned) && !Boolean(n.burn_deferred);
-      const o = typeof n.has_clean_master === "boolean" ? n.has_clean_master : Boolean(n.timeline_mode) || !r;
+      const o = typeof n.has_clean_master === "boolean" ? n.has_clean_master : false;
       const s = Boolean(n.can_edit) && !n.customize_expired;
       if (!s || r && !o) {
         this._libraryRankingEditable = Boolean(n.can_edit) && !n.customize_expired;
@@ -9496,7 +9496,7 @@ class ClipsStudio {
         this._updateLibraryCustomizeExpiryPill();
         return;
       }
-      this._libraryRankingUseCleanVideo = o || !r;
+      this._libraryRankingUseCleanVideo = o;
       this._libraryRankingTimelineState = n;
       this.mountLibraryRankingOverlay(e, n);
       this._updateLibraryCustomizeExpiryPill();
@@ -10266,6 +10266,17 @@ class ClipsStudio {
           loadGen: r,
           attempt: 0,
           clean: true,
+          cleanFallbackTried: true
+        });
+        return;
+      }
+      if (l && !n.burnedFallbackTried) {
+        safeLog("Preview clean path failed — trying final master");
+        this.fetchSecureLibraryPreviewBlob(e, t, null, {
+          loadGen: r,
+          attempt: 0,
+          clean: false,
+          burnedFallbackTried: true,
           cleanFallbackTried: true
         });
         return;

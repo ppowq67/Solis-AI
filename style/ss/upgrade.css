@@ -848,10 +848,6 @@
     transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .uc-card:hover .uc-logo {
-    transform: scale(1.03);
-  }
-
   @media (min-width: 621px) and (max-width: 1300px) {
     .uc-card {
       max-width: 100%;

@@ -47,7 +47,7 @@
     <link rel="stylesheet" href="/style/ss/ios-pill-nav.css?v=29">
     <link rel="stylesheet" href="/style/ss/mobile-nav.css?v=32">
     <link rel="stylesheet" href="/style/ss/customize.css?v=27">
-    <link rel="stylesheet" href="/style/ss/clips.css?v=180">
+    <link rel="stylesheet" href="/style/ss/clips.css?v=207">
     <link rel="stylesheet" href="/style/ss/profile.css?v=34">
     <link rel="stylesheet" href="/style/ss/tasks-panel-v2-demo.css?v=18">
     <link rel="stylesheet" href="/style/ss/solis-gen-stage.css?v=28">
@@ -67,7 +67,7 @@
     <script src="/js/generation-recovery.js?v=6"></script>
     <script src="/js/i_dq/ranking-customizer.js?v=25"></script>
     <script src="/js/s_new/solis-style-pack.js?v=3"></script>
-    <script src="/js/s_new/solis-memory.js?v=67"></script>
+    <script src="/js/s_new/solis-memory.js?v=68"></script>
     <script src="/js/s_new/instant-recipe.js?v=6"></script>
     <script src="/js/settings/settings-manager.js?v=2"></script>
     <script src="/js/payment/payment-flow.js?v=1"></script>
@@ -75,10 +75,10 @@
     <script src="/js/payment/portal-manager.js?v=6"></script>
     <script src="/js/payment/payment-success.js?v=2"></script>
     <script src="/js/payment/platform-connections.js?v=6"></script>
-    <script src="/js/ui/plan-selector.js?v=66"></script>
+    <script src="/js/ui/plan-selector.js?v=71"></script>
     <script src="/js/core/video-preview-system.js?v=2"></script>
     <script src="/js/s_new/clip-card.js?v=28"></script>
-    <script src="/js/s.js?v=303"></script>
+    <script src="/js/s.js?v=306"></script>
     <script src="/js/s_new/silence-cut-suggest.js?v=2"></script>
     <script src="/js/s_new/silencer.js?v=6"></script>
     <script src="/js/s_new/improve-clip.js?v=5"></script>
@@ -3956,13 +3956,13 @@
                             </div>
                         </div>
 
-                        <div class="multi-gen-card" id="multiGenCard" data-count="3">
+                        <div class="multi-gen-card" id="multiGenCard" data-count="1">
                             <div class="multi-gen-head">
                                 <span class="multi-gen-title">
                                     Clips
                                     <span class="multi-gen-pro-tag" id="multiGenProTag" hidden>PRO</span>
                                 </span>
-                                <span class="multi-gen-value" id="multiGenValue" aria-live="polite">3×</span>
+                                <span class="multi-gen-value" id="multiGenValue" aria-live="polite">1×</span>
                             </div>
                             <div
                                 class="multi-gen-slider"
@@ -3971,8 +3971,8 @@
                                 aria-label="Number of clips per upload"
                                 aria-valuemin="1"
                                 aria-valuemax="5"
-                                aria-valuenow="3"
-                                aria-valuetext="3 clips"
+                                aria-valuenow="1"
+                                aria-valuetext="1 clip"
                                 tabindex="0"
                             >
                                 <div class="multi-gen-rail" id="multiGenRail">
@@ -3980,6 +3980,7 @@
                                     <span class="multi-gen-thumb" id="multiGenThumb"></span>
                                 </div>
                             </div>
+                            <p class="multi-gen-hint" id="multiGenHint" hidden></p>
                         </div>
                         </div>
 
@@ -4559,22 +4560,13 @@
                 </div>
             </div>
             </div>
+
+            <p class="copyright-disclaimer">
+                By using Solis AI, you agree to our <a href="frontend/terms.html">Terms of Service</a> and <a href="frontend/privacy.html">Privacy Policy</a>
+            </p>
             </div>
 
             <div class="create-quick-pills" id="createQuickPills" role="list" aria-label="Quick starts">
-                <button type="button" class="create-pill create-pill--hot" data-quick="hot-pick" role="listitem">
-                    <span class="create-pill-fx" aria-hidden="true">
-                        <span class="cp-side-fire cp-side-fire--l">
-                            <i></i><i></i><i></i>
-                        </span>
-                        <span class="cp-side-fire cp-side-fire--r">
-                            <i></i><i></i><i></i>
-                        </span>
-                        <span class="cp-fire-rim"></span>
-                    </span>
-                    <span class="create-pill-face">Hot pick</span>
-                    <span class="create-pill-hover-label">Open Clip</span>
-                </button>
                 <button type="button" class="create-pill create-pill--rank" data-quick="ranking" role="listitem">
                     <span class="create-pill-fx" aria-hidden="true">
                         <span class="cp-sparks">
@@ -4583,23 +4575,28 @@
                         <span class="cp-rank-sheen"></span>
                     </span>
                     <span class="create-pill-face">Ranking</span>
-                    <span class="create-pill-hover-label">Top 5 list</span>
+                    <span class="create-pill-hover-label">TOP 5</span>
                 </button>
-                <button type="button" class="create-pill create-pill--lib" data-quick="library" role="listitem">
+                <button type="button" class="create-pill create-pill--nudge" id="createFirstUrlNudge" data-quick="paste-url" role="listitem" hidden>
+                    <span class="create-pill-face">Paste URL</span>
+                    <span class="create-pill-hover-label">Start here</span>
+                </button>
+                <button type="button" class="create-pill create-pill--hot" data-quick="hot-pick" role="listitem">
+                    <span class="create-pill-badge" aria-hidden="true">Daily top</span>
                     <span class="create-pill-fx" aria-hidden="true">
-                        <span class="cp-smoke">
-                            <i></i><i></i><i></i>
+                        <span class="cp-side-fire cp-side-fire--l">
+                            <i></i><i></i><i></i><i></i>
                         </span>
-                        <span class="cp-lib-mist"></span>
+                        <span class="cp-side-fire cp-side-fire--r">
+                            <i></i><i></i><i></i><i></i>
+                        </span>
+                        <span class="cp-ember cp-ember--l"></span>
+                        <span class="cp-ember cp-ember--r"></span>
                     </span>
-                    <span class="create-pill-face">Library</span>
-                    <span class="create-pill-hover-label">My clips</span>
+                    <span class="create-pill-face">Clip</span>
+                    <span class="create-pill-hover-label">Open Clip</span>
                 </button>
             </div>
-
-            <p class="copyright-disclaimer">
-                By using Solis AI, you agree to our <a href="frontend/terms.html">Terms of Service</a> and <a href="frontend/privacy.html">Privacy Policy</a>
-            </p>
 
             <style>
                 .copyright-disclaimer {
@@ -4607,11 +4604,23 @@
                     color: #888;
                     text-align: center;
                     line-height: 1.2;
-                    margin-top: 8px;
-                    margin-bottom: 0;
+                    margin: 12px auto 0;
                     font-family: 'Plus Jakarta Sans', sans-serif;
-                    padding: 4px 0;
+                    padding: 0;
                     display: block;
+                    max-width: 800px;
+                }
+
+                #createSection .url-input-container {
+                    padding-bottom: 4px;
+                }
+
+                #createSection .copyright-disclaimer {
+                    margin-top: 6px;
+                }
+
+                #createSection .create-content {
+                    gap: 14px;
                 }
 
                 .copyright-disclaimer a {
@@ -4655,7 +4664,6 @@
             </div>
         </div>
     </div>
-</div>
 
 <script>
 (function bindCreateQuickPills() {
@@ -4687,18 +4695,43 @@
         setTimeout(open, mobile ? 80 : 30);
     }
 
-    function goLibrary() {
+    window.syncCreateFirstUrlNudge = function syncCreateFirstUrlNudge(data) {
+        const nudge = document.getElementById('createFirstUrlNudge');
+        const pills = document.getElementById('createQuickPills');
+        if (!nudge || !pills) return;
+        const gen = data?.generations || data || {};
+        const lifetime = Math.max(
+            0,
+            Number(gen.used_lifetime ?? gen.used_today ?? window.currentUser?.generations?.used_lifetime ?? 0),
+        );
+        const isNew = lifetime < 1;
+        nudge.hidden = !isNew;
+        pills.classList.toggle('has-nudge', isNew);
+    };
+
+    function focusUrlBar() {
+        const input = document.getElementById('youtubeUrlInput');
+        const shell = document.querySelector('#createSection .url-input-shell')
+            || document.querySelector('.url-input-shell');
+        const wrap = document.getElementById('youtubeTab');
         try {
-            if (typeof window.switchSection === 'function') window.switchSection('clips');
-        } catch (_) {}
-        const mobile = typeof window !== 'undefined' && window.innerWidth <= 768;
-        try {
-            if (mobile && typeof window.goMobileClipsTab === 'function') {
-                window.goMobileClipsTab('library');
-            } else if (window.clipsStudio?.switchTab) {
-                window.clipsStudio.switchTab('library');
-            }
-        } catch (_) {}
+            input?.focus({ preventScroll: true });
+        } catch (_) {
+            try { input?.focus(); } catch (__) {}
+        }
+        shell?.classList.add('is-nudge-focus');
+        wrap?.classList.add('is-nudge-focus');
+        window.clearTimeout(focusUrlBar._t);
+        focusUrlBar._t = window.setTimeout(() => {
+            shell?.classList.remove('is-nudge-focus');
+            wrap?.classList.remove('is-nudge-focus');
+        }, 1600);
+    }
+
+    const nudgeBtn = document.getElementById('createFirstUrlNudge');
+    if (nudgeBtn) {
+        nudgeBtn.addEventListener('mouseenter', focusUrlBar);
+        nudgeBtn.addEventListener('focus', focusUrlBar);
     }
 
     root.addEventListener('click', (e) => {
@@ -4707,8 +4740,15 @@
         const action = btn.getAttribute('data-quick');
         if (action === 'hot-pick') goTemplatesThen('splitscreen');
         else if (action === 'ranking') goTemplatesThen('ranked_compilation');
-        else if (action === 'library') goLibrary();
+        else if (action === 'paste-url') {
+            e.preventDefault();
+            focusUrlBar();
+        }
     });
+
+    try {
+        window.syncCreateFirstUrlNudge(window.currentUser);
+    } catch (_) {}
 })();
 </script>
 
@@ -5209,6 +5249,7 @@
        const rail = document.getElementById('multiGenRail');
        const valueEl = document.getElementById('multiGenValue');
        const proTagEl = document.getElementById('multiGenProTag');
+       const hintEl = document.getElementById('multiGenHint');
        if (!card || !slider || !rail) return;
 
        const VISUAL_MAX = 5;
@@ -5217,6 +5258,7 @@
        let live = 1;
        let dragging = false;
        let activePointerId = null;
+       let hintRevealed = false;
 
        function limits() {
            return window.__solisClipLimits || { max_per_generation: 1, default_per_generation: 1 };
@@ -5239,6 +5281,23 @@
            setTimeout(() => proTagEl.classList.remove('is-pulse'), 560);
        }
 
+       function revealHint() {
+           if (allowed > 1) return;
+           hintRevealed = true;
+           syncHint();
+       }
+
+       function syncHint() {
+           if (!hintEl) return;
+           if (allowed <= 1 && hintRevealed) {
+               hintEl.hidden = false;
+               hintEl.textContent = '1 on Free · up to 5 on paid';
+           } else {
+               hintEl.hidden = true;
+               hintEl.textContent = '';
+           }
+       }
+
        function layoutSteps() {
            rail.querySelectorAll('.multi-gen-step').forEach((el) => el.remove());
            const hasPro = allowed < VISUAL_MAX;
@@ -5254,6 +5313,7 @@
                step.addEventListener('click', (e) => {
                    e.stopPropagation();
                    if (n > allowed) {
+                       revealHint();
                        pulsePro();
                        paint(allowed, { pop: true });
                        return;
@@ -5262,6 +5322,7 @@
                });
                rail.appendChild(step);
            }
+           syncHint();
        }
 
        function updateSteps(clamped) {
@@ -5276,6 +5337,7 @@
            const pop = !!(opts && opts.pop);
            let next = Math.max(MIN, Math.min(VISUAL_MAX, Math.round(n)));
            if (next > allowed) {
+               revealHint();
                pulsePro();
                next = allowed;
            }
@@ -5289,7 +5351,7 @@
            }
            slider.style.setProperty('--mg-t', String(tFor(live)));
            slider.setAttribute('aria-valuemin', String(MIN));
-           slider.setAttribute('aria-valuemax', String(allowed));
+           slider.setAttribute('aria-valuemax', String(VISUAL_MAX));
            slider.setAttribute('aria-valuenow', String(live));
            slider.setAttribute('aria-valuetext', live === 1 ? '1 clip' : `${live} clips`);
            card.dataset.count = String(live);
@@ -5303,26 +5365,10 @@
            updateSteps(live);
            window.__solisMultiGenCount = live;
            if (live > 1 && allowed > 1) {
-               try {
-                   localStorage.setItem('solisSeriesMode', '1');
-               } catch (_) {}
+               try { localStorage.setItem('solisSeriesMode', '1'); } catch (_) {}
                window.solisSeriesModeEnabled = true;
-               const seriesToggle = document.getElementById('seriesModeToggle');
-               const seriesLabel = document.getElementById('seriesModeToggleLabel');
-               if (seriesToggle) {
-                   seriesToggle.checked = true;
-                   seriesToggle.disabled = false;
-               }
-               if (seriesLabel) {
-                   seriesLabel.classList.add('is-on');
-                   seriesLabel.setAttribute('aria-checked', 'true');
-               }
-               card.classList.remove('is-series-off');
            }
-           window.getMultiGenCount = () => {
-               if (window.solisSeriesModeEnabled !== true) return 1;
-               return live;
-           };
+           window.getMultiGenCount = () => Math.max(1, Math.min(allowed, live));
            try { localStorage.setItem('solisMultiGenCount', String(live)); } catch (_) {}
        }
 
@@ -5340,8 +5386,11 @@
                paint(n, { pop: true });
                return;
            }
-           const preview = Math.min(n, allowed);
-           if (n > allowed) pulsePro();
+           const preview = Math.max(MIN, Math.min(VISUAL_MAX, n));
+           if (preview > allowed) {
+               revealHint();
+               pulsePro();
+           }
            slider.style.setProperty('--mg-t', String(tFor(preview)));
            if (valueEl) valueEl.textContent = `${preview}×`;
            updateSteps(preview);
@@ -5361,9 +5410,17 @@
                const raw = localStorage.getItem('solisMultiGenCount');
                if (raw != null && raw !== '') stored = parseInt(raw, 10);
            } catch (_) {}
-           const start = Number.isFinite(stored) && stored >= 1
-               ? stored
-               : (apiDefault || preferred);
+           let start;
+           if (allowed <= 1) {
+               start = 1;
+           } else if (Number.isFinite(stored) && stored >= 1) {
+               start = stored;
+           } else {
+               start = apiDefault || preferred;
+           }
+           card.classList.remove('is-locked');
+           card.style.pointerEvents = '';
+           card.style.opacity = '';
            layoutSteps();
            paint(Math.max(MIN, Math.min(allowed, start)));
        }
@@ -5405,7 +5462,10 @@
        slider.addEventListener('keydown', (e) => {
            if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
                e.preventDefault();
-               if (live >= allowed) pulsePro();
+               if (live >= allowed) {
+                   revealHint();
+                   pulsePro();
+               }
                paint(live + 1, { pop: true });
            }
            if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
@@ -5549,16 +5609,11 @@
 
           function syncMultiGenForSeriesMode() {
               const card = document.getElementById('multiGenCard');
-              const paid = typeof isPaidPlan === 'function' ? isPaidPlan() : false;
-              const on = window.solisSeriesModeEnabled === true && paid;
-              if (card) {
-                  card.style.opacity = '';
-                  card.style.pointerEvents = paid ? '' : 'none';
-                  card.classList.toggle('is-series-off', !on);
-                  card.classList.toggle('is-locked', !paid);
-              }
-              if (!on && typeof window.getMultiGenCount === 'function') {
-              }
+              if (!card) return;
+              card.style.opacity = '';
+              card.style.pointerEvents = '';
+              card.classList.remove('is-locked');
+              card.classList.remove('is-series-off');
           }
 
           window.solisAiTitleGenerationEnabled = readAiTitleEnabled();
@@ -5810,10 +5865,10 @@
        let loopT = null;
        let silencerExpandT = null;
        let improveExpandT = null;
-       const SILENCER_SHELL_MS = 420;
-       const SILENCER_RICH_MS = 720;
-       const IMPROVE_SHELL_MS = 300;
-       const IMPROVE_RICH_MS = 650;
+       const SILENCER_SHELL_MS = 50;
+       const SILENCER_RICH_MS = 140;
+       const IMPROVE_SHELL_MS = 50;
+       const IMPROVE_RICH_MS = 140;
        let activeKind = null;
        let modifiersPeek = false;
        let headerBackup = null;

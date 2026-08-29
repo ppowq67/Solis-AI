@@ -7951,7 +7951,7 @@ class ClipsStudio {
               highlight: "#FFFFFF",
               shadow: "outline",
               enabled: true,
-              y_pct: e === "ranked_compilation" ? .55 : .55
+              y_pct: e === "ranked_compilation" ? .82 : .78
             }, {
               selectAfter: false,
               playAnim: false,
@@ -11577,9 +11577,9 @@ class ClipsStudio {
         Object.assign(u, window.getSplitscreenConfig());
       }
       if ((t === "splitscreen" || t === "ranked_compilation") && typeof window.getMultiGenCount === "function") {
-        const e = window.solisSeriesModeEnabled === true;
-        u.series_mode = e;
-        u.clip_count = e ? window.getMultiGenCount() : 1;
+        const e = Math.max(1, Number(window.getMultiGenCount()) || 1);
+        u.clip_count = e;
+        u.series_mode = e > 1;
       }
       if (typeof window.isClipIntentEnabled === "function" && window.isClipIntentEnabled()) {
         const e = typeof window.getClipIntentText === "function" ? window.getClipIntentText() : "";
@@ -11675,6 +11675,14 @@ class ClipsStudio {
       }
       const y = await f.json();
       this.currentProjectId = y.project_id;
+      try {
+        window.solisQuotaDisplay?.markEverGenerated?.();
+        if (typeof window.refreshPlanSelector === "function") {
+          window.refreshPlanSelector();
+        } else {
+          window.solisQuotaDisplay?.syncUpgradeCard?.(window.currentUser);
+        }
+      } catch (e) {}
       try {
         this._watermarkCheckCache = null;
         const e = await this.resolveWatermarkPolicy(true);

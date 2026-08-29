@@ -745,9 +745,13 @@
     }
     if (!n.font_size || n.font_size < 28) n.font_size = n.font_size || 70;
     if (n.y_pct == null || !Number.isFinite(Number(n.y_pct))) {
-      n.y_pct = .55;
+      n.y_pct = isRankingTemplate(t) ? .82 : .78;
     } else {
-      n.y_pct = Math.max(.02, Math.min(.98, Number(n.y_pct)));
+      let e = Math.max(.02, Math.min(.98, Number(n.y_pct)));
+      if (isRankingTemplate(t) && e > .42 && e < .62) {
+        e = .82;
+      }
+      n.y_pct = e;
     }
     if (!n.shadow) n.shadow = "outline";
     return n;

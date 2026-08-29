@@ -232,21 +232,26 @@ function addNotification(e) {
 function showVideoGeneratedNotification(e = {}) {
   const {videoTitle: t = "Video Generated", videoUrl: i = "#", thumbnailUrl: o = null, projectId: n = null, message: a = null} = e || {};
   const s = String(t || "Video Generated").trim() || "Video Generated";
-  const r = String(a || `Your video "${s}" is ready.`).trim();
+  const r = String(a || `${s} is ready.`).trim();
+  const c = n != null ? String(n).trim() : "";
   try {
+    const e = {
+      title: "Solis AI",
+      message: r,
+      icon: "solis",
+      priority: "high",
+      sender: "Solis AI",
+      official: true,
+      kind: "video_ready",
+      videoTitle: s,
+      thumbnailUrl: o || null,
+      videoUrl: i && i !== "#" ? i : null,
+      projectId: c || null
+    };
     if (typeof NotificationSystemV2?.addNotification === "function") {
-      NotificationSystemV2.addNotification({
-        title: "Video ready",
-        message: r,
-        icon: "check",
-        priority: "high"
-      });
+      NotificationSystemV2.addNotification(e);
     } else if (typeof addNotification === "function") {
-      addNotification({
-        title: "Video ready",
-        message: r,
-        icon: "check"
-      });
+      addNotification(e);
     }
   } catch (e) {
     console.warn("[NotifSys] bell add failed:", e);
@@ -257,12 +262,6 @@ function showVideoGeneratedNotification(e = {}) {
       e(r, "success");
     }
   } catch (e) {}
-  try {
-    showVideoGeneratedOverlay(s, i || "#", n);
-  } catch (e) {}
-  try {
-    if (typeof addVideoBadge === "function") addVideoBadge();
-  } catch (e) {}
   return true;
 }
 
@@ -270,40 +269,8 @@ function showVideoGenerated(e = {}) {
   return showVideoGeneratedNotification(e);
 }
 
-function showVideoGeneratedOverlay(e = "Video Ready!", t = "#", i = null) {
-  const o = document.getElementById("videoGeneratedBackdrop");
-  const n = document.getElementById("videoGeneratedOverlay");
-  if (!o || !n) {
-    return;
-  }
-  const a = n.querySelector(".video-generated-title");
-  const s = n.querySelector(".video-generated-message");
-  const r = n.querySelector('[data-action="view"]');
-  if (a) a.textContent = e;
-  if (s) s.textContent = "Your video has been successfully generated and is ready to download or share.";
-  if (r) {
-    r.onclick = () => {
-      const e = i != null ? String(i).trim() : "";
-      if (e && window.clipsStudio?.openLibraryPreviewWhenReady) {
-        try {
-          window.clipsStudio.openLibraryPreviewWhenReady(e, e);
-        } catch (e) {}
-      } else if (t && t !== "#") {
-        try {
-          window.open(t, "_blank");
-        } catch (e) {}
-      } else {
-        try {
-          const e = document.querySelector('[data-tab="library"], [data-target="clips"]');
-          e?.click?.();
-        } catch (e) {}
-      }
-      hideVideoGeneratedOverlay();
-    };
-  }
-  o.classList.add("show");
-  n.classList.add("show");
-  setTimeout(hideVideoGeneratedOverlay, 8e3);
+function showVideoGeneratedOverlay() {
+  return;
 }
 
 function hideVideoGeneratedOverlay() {
@@ -696,6 +663,12 @@ const NotificationSystemV2 = {
     NotificationSystemV2.updateDisplay();
     NotificationSystemV2.state.initialized = true;
     NotificationSystemV2.scheduleCleanup();
+    try {
+      removeBadges?.();
+    } catch (e) {}
+    try {
+      hideVideoGeneratedOverlay?.();
+    } catch (e) {}
     NotificationSystemV2.waitForElement(".profile-dropdown-name", () => {
       Logger.log("profile-dropdown-name found, loading badges...");
       NotificationSystemV2.loadUserBadges();
@@ -891,17 +864,30 @@ const NotificationSystemV2 = {
       Logger.error("Invalid notification object");
       return null;
     }
+    const sanitizeUrl = e => {
+      const t = String(e || "").trim();
+      if (!t || t === "#") return null;
+      if (/^(https?:|blob:|\/)/i.test(t)) return t.substring(0, 800);
+      return null;
+    };
     const t = {
       id: e.id || Date.now(),
-      title: String(e.title || "Notification").substring(0, 100),
+      title: String(e.title || e.sender || "Solis AI").substring(0, 100),
       message: String(e.message || "New notification").substring(0, 500),
-      icon: e.icon || "info",
+      icon: e.icon || "solis",
       timestamp: e.timestamp || (new Date).toISOString(),
       read: e.read === true,
-      priority: e.priority || "normal"
+      priority: e.priority || "normal",
+      sender: String(e.sender || "Solis AI").substring(0, 60),
+      official: e.official === true || e.icon === "solis" || e.kind === "video_ready",
+      kind: String(e.kind || "").substring(0, 40),
+      videoTitle: e.videoTitle ? String(e.videoTitle).substring(0, 120) : null,
+      thumbnailUrl: sanitizeUrl(e.thumbnailUrl),
+      videoUrl: sanitizeUrl(e.videoUrl),
+      projectId: e.projectId ? String(e.projectId).substring(0, 120) : null
     };
-    const i = [ "check", "info", "warning", "error", "default" ];
-    if (!i.includes(t.icon)) t.icon = "default";
+    const i = [ "check", "info", "warning", "error", "default", "solis" ];
+    if (!i.includes(t.icon)) t.icon = "solis";
     NotificationSystemV2.state.notifications.unshift(t);
     NotificationSystemV2.state.unreadCount++;
     if (NotificationSystemV2.state.notifications.length > 50) {
@@ -949,45 +935,164 @@ const NotificationSystemV2 = {
       console.warn("notificationsList container not found in DOM!");
       return;
     }
+    try {
+      e.querySelectorAll("video").forEach(e => {
+        try {
+          e.pause();
+        } catch (e) {}
+      });
+    } catch (e) {}
     while (e.firstChild) e.removeChild(e.firstChild);
     if (NotificationSystemV2.state.notifications.length === 0) {
       const t = document.createElement("div");
-      t.style.cssText = "padding: 20px; text-align: center; color: #718096;";
+      t.style.cssText = "padding: 28px 20px; text-align: center; color: #718096;";
       safeSetText(t, "No notifications");
       e.appendChild(t);
       return;
     }
-    NotificationSystemV2.state.notifications.forEach((t, i) => {
+    const t = (window.API_BASE_URL || "").toString().replace(/\/$/, "") || (window.location?.hostname === "localhost" || window.location?.hostname === "127.0.0.1" ? `http://${window.location.hostname}:5500/api` : "https://api.solisai.video/api");
+    NotificationSystemV2.state.notifications.forEach(i => {
       const o = document.createElement("div");
-      o.className = "notif-item";
+      o.className = "notif-item" + (i.kind === "video_ready" || i.projectId || i.thumbnailUrl || i.videoUrl ? " notif-item--media" : "");
+      if (i.projectId) o.dataset.projectId = String(i.projectId);
       const n = document.createElement("div");
-      n.className = "notif-icon";
-      const a = document.createElement("svg");
-      a.setAttribute("width", "18");
-      a.setAttribute("height", "18");
-      a.setAttribute("viewBox", "0 0 24 24");
-      a.setAttribute("fill", "none");
-      a.setAttribute("stroke", "currentColor");
-      a.setAttribute("stroke-linecap", "round");
-      a.setAttribute("stroke-linejoin", "round");
-      a.innerHTML = NotificationSystemV2.getIcon(t.icon);
-      n.appendChild(a);
+      n.className = "notif-icon" + (i.icon === "solis" || i.official ? " notif-icon--solis" : "");
+      if (i.icon === "solis" || i.official) {
+        const e = document.createElement("img");
+        e.className = "notif-solis-logo";
+        e.src = "/assets/favicon.png";
+        e.alt = "Solis AI";
+        e.draggable = false;
+        e.onerror = () => {
+          e.onerror = null;
+          e.src = "/assets/solisailogo.png";
+        };
+        n.appendChild(e);
+      } else {
+        const e = document.createElement("svg");
+        e.setAttribute("width", "18");
+        e.setAttribute("height", "18");
+        e.setAttribute("viewBox", "0 0 24 24");
+        e.setAttribute("fill", "none");
+        e.setAttribute("stroke", "currentColor");
+        e.setAttribute("stroke-linecap", "round");
+        e.setAttribute("stroke-linejoin", "round");
+        e.innerHTML = NotificationSystemV2.getIcon(i.icon);
+        n.appendChild(e);
+      }
+      const a = document.createElement("div");
+      a.className = "notif-content";
       const s = document.createElement("div");
-      s.className = "notif-content";
+      s.className = "notif-head";
       const r = document.createElement("div");
       r.className = "notif-sender";
-      safeSetText(r, t.title);
+      safeSetText(r, i.sender || i.title || "Solis AI");
+      s.appendChild(r);
+      if (i.official) {
+        const e = document.createElement("span");
+        e.className = "notif-official-badge";
+        e.setAttribute("aria-label", "Official");
+        e.title = "Official";
+        try {
+          if (window.SolisBadges?.createSvg) {
+            e.appendChild(window.SolisBadges.createSvg("official", null, 14));
+          } else {
+            e.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14"><circle cx="12" cy="12" r="10" fill="#f59e0b"/><path d="M9 12l2 2 4-4" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+          }
+        } catch (t) {
+          e.textContent = "✓";
+        }
+        s.appendChild(e);
+      }
       const c = document.createElement("div");
       c.className = "notif-message";
-      safeSetText(c, t.message);
+      safeSetText(c, i.message);
       const d = document.createElement("div");
       d.className = "notif-time";
-      safeSetText(d, NotificationSystemV2.formatTime(t.timestamp));
-      s.appendChild(r);
-      s.appendChild(c);
-      s.appendChild(d);
+      safeSetText(d, NotificationSystemV2.formatTime(i.timestamp));
+      a.appendChild(s);
+      a.appendChild(c);
+      a.appendChild(d);
+      const l = i.projectId ? String(i.projectId).trim() : "";
+      const f = i.thumbnailUrl || (l ? `${t}/clips/poster/${encodeURIComponent(l)}` : null);
+      let u = null;
+      try {
+        const e = l && window.LibraryPreviewMediaCache?.get?.(l, false);
+        if (e?.objectUrl) u = e.objectUrl;
+      } catch (e) {}
+      if (!u && l && window.clipsStudio?.getLibraryPreviewVideoUrl) {
+        try {
+          u = window.clipsStudio.getLibraryPreviewVideoUrl(l, {
+            bust: false
+          });
+        } catch (e) {}
+      }
+      if (!u && l) {
+        u = `${t}/clips/preview/${encodeURIComponent(l)}/1`;
+      }
+      if (!u && i.videoUrl) u = i.videoUrl;
+      if (f || u) {
+        const e = document.createElement("div");
+        e.className = "notif-media";
+        if (u) {
+          const t = document.createElement("video");
+          t.className = "notif-media-video";
+          t.muted = true;
+          t.playsInline = true;
+          t.setAttribute("playsinline", "");
+          t.setAttribute("webkit-playsinline", "");
+          t.preload = "metadata";
+          t.loop = true;
+          t.controls = false;
+          if (f) t.poster = f;
+          t.src = u;
+          t.addEventListener("loadeddata", () => {
+            e.classList.add("is-ready");
+            t.play?.().catch(() => {});
+          });
+          t.addEventListener("error", () => {
+            t.remove();
+            if (f) {
+              const t = document.createElement("img");
+              t.className = "notif-media-thumb";
+              t.src = f;
+              t.alt = "";
+              t.loading = "lazy";
+              e.appendChild(t);
+              e.classList.add("is-ready");
+            }
+          });
+          e.appendChild(t);
+        } else if (f) {
+          const t = document.createElement("img");
+          t.className = "notif-media-thumb";
+          t.src = f;
+          t.alt = "";
+          t.loading = "lazy";
+          t.onload = () => e.classList.add("is-ready");
+          e.appendChild(t);
+        }
+        a.appendChild(e);
+      }
       o.appendChild(n);
-      o.appendChild(s);
+      o.appendChild(a);
+      o.addEventListener("click", e => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (l && window.clipsStudio?.openLibraryPreviewWhenReady) {
+          try {
+            window.clipsStudio.openLibraryPreviewWhenReady(l, l);
+          } catch (e) {}
+          NotificationSystemV2.closeAllDropdowns?.();
+        } else if (l && window.clipsStudio?.openLibraryPreview) {
+          try {
+            window.clipsStudio.openLibraryPreview(l, l, null, {
+              fast: true
+            });
+          } catch (e) {}
+          NotificationSystemV2.closeAllDropdowns?.();
+        }
+      });
       e.appendChild(o);
     });
   },
@@ -997,7 +1102,8 @@ const NotificationSystemV2 = {
       info: '<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line>',
       warning: '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3.05h16.94a2 2 0 0 0 1.71-3.05L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line>',
       error: '<circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line>',
-      default: '<circle cx="12" cy="12" r="10"></circle>'
+      default: '<circle cx="12" cy="12" r="10"></circle>',
+      solis: ""
     };
     return t[e] || t["default"];
   },
@@ -1024,6 +1130,13 @@ const NotificationSystemV2 = {
   },
   closeAllDropdowns: () => {
     const e = document.getElementById("notificationsDropdown");
+    try {
+      e?.querySelectorAll?.("video")?.forEach(e => {
+        try {
+          e.pause();
+        } catch (e) {}
+      });
+    } catch (e) {}
     if (e) e.classList.remove("open");
     const t = document.getElementById("profileDropdown");
     if (t) t.classList.remove("open");
@@ -1139,22 +1252,7 @@ window.showVideoGenerated = showVideoGenerated;
 window.showVideoGeneratedNotification = showVideoGeneratedNotification;
 
 function addVideoBadge() {
-  const e = document.querySelector('[data-tab="library"]');
-  if (e && !e.querySelector(".video-new-badge")) {
-    const t = document.createElement("span");
-    t.className = "video-new-badge";
-    t.style.cssText = `\n            position: absolute;\n            top: -4px;\n            right: -4px;\n            width: 10px;\n            height: 10px;\n            background: #ef4444;\n            border-radius: 50%;\n            border: 2px solid white;\n        `;
-    e.style.position = "relative";
-    e.appendChild(t);
-  }
-  const t = document.querySelector('[data-target="clips"]');
-  if (t && !t.querySelector(".video-new-badge")) {
-    const e = document.createElement("span");
-    e.className = "video-new-badge";
-    e.style.cssText = `\n            position: absolute;\n            top: -8px;\n            right: -8px;\n            width: 12px;\n            height: 12px;\n            background: #ef4444;\n            border-radius: 50%;\n            border: 2px solid white;\n        `;
-    t.style.position = "relative";
-    t.appendChild(e);
-  }
+  return;
 }
 
 function removeBadges() {

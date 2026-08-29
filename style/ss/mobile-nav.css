@@ -515,8 +515,8 @@
         bottom: calc(100% + 12px) !important;
         right: 0 !important;
         left: auto !important;
-        width: min(300px, calc(100vw - 24px)) !important;
-        max-width: min(300px, calc(100vw - 24px)) !important;
+        width: min(380px, calc(100vw - 24px)) !important;
+        max-width: min(380px, calc(100vw - 24px)) !important;
         transform-origin: bottom right !important;
         z-index: 100060 !important;
         pointer-events: auto !important;

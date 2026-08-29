@@ -10143,7 +10143,7 @@ class ClipsStudio {
       return new Error(e.error || "Customization window expired for this project.");
     }
     if (n === "DAILY_LIMIT_REACHED" || n === "MONTHLY_LIMIT_REACHED" || t === 429) {
-      return new Error(e.error || "Applying changes uses 1 daily upload — quota reached. Try again after reset, or upgrade.");
+      return new Error(e.error || "Applying changes uses 1 daily upload — daily limit reached. Try again after reset, or upgrade.");
     }
     return new Error(e?.error || `${i} (${t})`);
   }

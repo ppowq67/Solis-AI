@@ -864,7 +864,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const e = document.getElementById("stgDailyHint");
         if (e) {
           if (m.resets_at) {
-            e.textContent = formatQuotaResetHint(m.resets_at, S >= C ? "Daily quota reached. Resets {when}." : "Resets {when}.");
+            e.textContent = formatQuotaResetHint(m.resets_at, S >= C ? "Daily limit reached. Resets {when}." : "Resets {when}.");
           }
         }
       } else {
@@ -878,7 +878,7 @@ document.addEventListener("DOMContentLoaded", () => {
         setQuotaFill(document.getElementById("stgMonthlyFill"), I, B);
         const e = document.getElementById("stgMonthlyHint");
         if (e) {
-          e.textContent = formatQuotaResetHint(w.resets_at, I >= B ? "Monthly quota reached. Resets {when}." : "Resets {when}.");
+          e.textContent = formatQuotaResetHint(w.resets_at, I >= B ? "Monthly limit reached. Resets {when}." : "Resets {when}.");
         }
       } else {
         setText("stgMonthlyGens", "—");

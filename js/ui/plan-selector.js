@@ -752,8 +752,10 @@
   function formatQuotaChipDisplay(t, e, o, n) {
     const i = String(n || "free").toLowerCase();
     const r = t.monthlyMax > 0 ? t.monthlyMax : Math.max(1, Number(o?.max_per_month ?? o?.max_per_day ?? 1));
-    const a = t.monthlyRem;
+    const a = Math.max(0, Number(t.monthlyRem));
     const s = i === "free";
+    const l = `<span class="plan-count-remaining">${a}</span>` + `<span class="plan-count-sep"> / ${r}</span>`;
+    const c = r > 0 ? Math.min(100, (r - a) / r * 100) : 0;
     if (t.monthlyEmpty) {
       return {
         countHtml: '<span class="plan-count-remaining">0</span>' + `<span class="plan-count-sep"> / ${r}</span>`,
@@ -762,32 +764,46 @@
         resetLine: "Resets with your plan renewal"
       };
     }
-    let l = "";
+    let f = "";
     if (t.dailyEmpty && a > 0) {
       const t = e?.daily?.resets_at || o?.daily_resets_at || o?.resets_at;
       const n = formatQuotaUnlockWhen(t) || nextLocalMidnightLabel();
-      l = n ? `Next upload unlocks ${n}` : "Next upload unlocks tomorrow";
+      f = n ? `Next upload unlocks ${n}` : "Next upload unlocks tomorrow";
     }
     if (s && !t.dailyEmpty) {
       const e = Math.min(t.dailyRem, a);
       return {
-        countHtml: `<span class="plan-count-remaining">${e}</span>` + `<span class="plan-count-sep"> / ${r}</span>`,
-        kicker: e === 1 ? "upload left today" : "uploads left today",
-        progressPct: r > 0 ? Math.min(100, (r - a) / r * 100) : 0,
-        resetLine: l
+        countHtml: l,
+        kicker: e === 1 ? "1 available today" : `${e} available today`,
+        progressPct: c,
+        resetLine: f
       };
     }
     return {
-      countHtml: `<span class="plan-count-remaining">${a}</span>` + `<span class="plan-count-sep"> / ${r}</span>`,
+      countHtml: l,
       kicker: "uploads left",
-      progressPct: r > 0 ? Math.min(100, (r - a) / r * 100) : 0,
-      resetLine: l
+      progressPct: c,
+      resetLine: f
     };
+  }
+  function syncUpgradeCardVisibility(t) {
+    const e = document.getElementById("upgradeCardCreate");
+    if (!e) return;
+    const o = String(t?.tier || t?.plan || window.currentUser?.plan || "free").toLowerCase();
+    const n = t?.generations || {};
+    const i = Math.max(0, Number(n.used_lifetime ?? n.used_today ?? 0));
+    const r = [ "basic", "prime", "elite" ].includes(o);
+    const a = i < 1;
+    const s = !r && !a;
+    e.hidden = !s;
+    e.setAttribute("aria-hidden", s ? "false" : "true");
+    e.style.display = s ? "" : "none";
   }
   window.solisQuotaDisplay = {
     parseState: parseQuotaState,
     formatChip: formatQuotaChipDisplay,
-    formatUnlockWhen: formatQuotaUnlockWhen
+    formatUnlockWhen: formatQuotaUnlockWhen,
+    syncUpgradeCard: syncUpgradeCardVisibility
   };
   function syncQuotaRail(t, e) {
     const o = document.getElementById("urlQuotaRail");
@@ -807,36 +823,36 @@
     const L = !g && !y && f >= 3 && c > 0 && h === "daily" && (c <= 1 || c / f <= .2);
     const I = !y && !g && p > 0 && h === "monthly" && (u <= 2 || u / p <= .15);
     const M = E >= 3 && !S && v === 1;
-    let B = "";
     let b = "";
+    let B = "";
     let P = "";
     if (y) {
-      B = "monthly";
-      b = "Monthly limit reached";
+      b = "monthly";
+      B = "Monthly limit reached";
       const t = formatQuotaUnlockWhen(e?.monthly?.resets_at || s.monthly_resets_at);
       P = t ? `New uploads unlock ${t}.` : "New uploads unlock when your plan renews.";
     } else if (g) {
-      B = "daily";
+      b = "daily";
       const t = e?.daily?.resets_at || s.daily_resets_at || s.resets_at;
       const o = formatQuotaUnlockWhen(t) || nextLocalMidnightLabel();
       if (u > 0) {
-        b = m === "free" ? "Used your free upload" : "Used today's uploads";
+        B = m === "free" ? "Used your free upload" : "Used today's uploads";
         P = o ? `Next upload unlocks ${o}.` : "Next upload unlocks tomorrow.";
       } else {
-        b = m === "free" ? "Free upload used" : "Daily limit reached";
+        B = m === "free" ? "Free upload used" : "Daily limit reached";
         P = o ? `Next upload unlocks ${o}.` : "Upgrade for more daily uploads.";
       }
     } else if (I) {
-      B = "monthly-low";
-      b = u === 1 ? "One upload left" : `${u} uploads left`;
+      b = "monthly-low";
+      B = u === 1 ? "One upload left" : `${u} uploads left`;
       P = "Upgrade if you need more room this month.";
     } else if (L) {
-      B = "daily-low";
-      b = c === 1 ? "One upload left today" : `${c} uploads left today`;
+      b = "daily-low";
+      B = c === 1 ? "One upload left today" : `${c} uploads left today`;
       P = "Upgrade if you need more room today.";
     } else if (S) {
-      B = "max-empty";
-      b = "Max effort used up for today";
+      b = "max-empty";
+      B = "Max effort used up for today";
       const t = e?.max_effort?.resets_at || s.max_effort_resets_at;
       const o = formatQuotaUnlockWhen(t);
       P = o ? `Max effort unlocks again ${o}. You can still generate with Normal or Low.` : "You can still generate with Normal or Low.";
@@ -851,21 +867,21 @@
         });
       }
     } else if (M) {
-      B = "max-low";
-      b = "One Max effort left today";
+      b = "max-low";
+      B = "One Max effort left today";
       P = "After this, Solis falls back to Normal so you can keep creating.";
     } else {
       o.hidden = true;
       if (a) a.classList.remove("has-quota");
       return;
     }
-    if (readDismissedKind() === B) {
+    if (readDismissedKind() === b) {
       o.hidden = true;
       if (a) a.classList.remove("has-quota");
       return;
     }
-    n.dataset.kind = B;
-    i.textContent = b;
+    n.dataset.kind = b;
+    i.textContent = B;
     r.textContent = P;
     o.hidden = false;
     if (a) a.classList.add("has-quota");
@@ -948,6 +964,7 @@
       const o = l === "free" && t < 1;
       s.classList.toggle("hidden", e || o);
     }
+    syncUpgradeCardVisibility(t);
     clearLoadingState();
   }
   function setLoadingState(t = true) {

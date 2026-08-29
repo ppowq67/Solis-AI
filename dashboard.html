@@ -3895,7 +3895,7 @@
                         </svg>
                     </button>
                     <div class="template-use-confirm-shell template-use-confirm-shell--fab">
-                        <button type="button" class="template-use-fab" id="confirmUseTemplateFab" aria-label="Use Template" title="Use Template">
+                        <button type="button" class="template-use-fab" id="confirmUseTemplateFab" aria-label="Use Template" data-solis-keyhint="Use template|Enter" aria-keyshortcuts="Enter">
                             <span class="template-use-fab-icon" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M5 12h14"/>
@@ -4306,7 +4306,7 @@
                     <div class="template-use-cta-main" id="templateUseCtaMain">
                         <div class="template-use-cta-btn-row">
                             <div class="template-use-confirm-shell">
-                                <button type="button" class="template-use-confirm-btn" id="confirmUseTemplateBtn">
+                                <button type="button" class="template-use-confirm-btn" id="confirmUseTemplateBtn" data-solis-keyhint="Use template|Enter" aria-keyshortcuts="Enter">
                                     <span class="template-use-confirm-label">Use Template</span>
                                 </button>
                                 <div class="solis-mod-stripes" id="solisModStripes" role="group" aria-label="Modifier previews">
@@ -5025,6 +5025,90 @@
            closeUserProfile();
        }
    });
+
+   (function initSolisKeyHints() {
+       const DELAY_MS = 300;
+       let tipEl = null;
+       let showTimer = 0;
+       let activeTarget = null;
+
+       function ensureTip() {
+           if (tipEl) return tipEl;
+           tipEl = document.createElement('div');
+           tipEl.className = 'solis-keyhint';
+           tipEl.setAttribute('role', 'tooltip');
+           tipEl.innerHTML = '<span class="solis-keyhint-label"></span><span class="solis-keyhint-keys"></span>';
+           document.body.appendChild(tipEl);
+           return tipEl;
+       }
+
+       function hideTip() {
+           clearTimeout(showTimer);
+           showTimer = 0;
+           activeTarget = null;
+           if (tipEl) tipEl.classList.remove('is-on');
+       }
+
+       function placeTip(target) {
+           const tip = ensureTip();
+           const r = target.getBoundingClientRect();
+           const tw = tip.offsetWidth || 120;
+           const th = tip.offsetHeight || 32;
+           let left = r.left + (r.width - tw) / 2;
+           let top = r.top - th - 10;
+           left = Math.max(8, Math.min(left, window.innerWidth - tw - 8));
+           if (top < 8) top = r.bottom + 10;
+           tip.style.left = `${Math.round(left)}px`;
+           tip.style.top = `${Math.round(top)}px`;
+       }
+
+       function showTip(target) {
+           const raw = String(target.getAttribute('data-solis-keyhint') || '');
+           const parts = raw.split('|');
+           const label = (parts[0] || '').trim();
+           const keys = (parts[1] || '').trim();
+           if (!label || !keys) return;
+           const tip = ensureTip();
+           tip.querySelector('.solis-keyhint-label').textContent = label;
+           tip.querySelector('.solis-keyhint-keys').textContent = keys;
+           activeTarget = target;
+           tip.classList.add('is-on');
+           placeTip(target);
+       }
+
+       function bindOne(el) {
+           if (!el || el._solisKeyHintBound) return;
+           el._solisKeyHintBound = true;
+           if (el.hasAttribute('title')) el.removeAttribute('title');
+           el.addEventListener('pointerenter', (e) => {
+               if (e.pointerType && e.pointerType !== 'mouse') return;
+               clearTimeout(showTimer);
+               showTimer = setTimeout(() => showTip(el), DELAY_MS);
+           });
+           el.addEventListener('pointerleave', hideTip);
+           el.addEventListener('pointerdown', hideTip);
+           el.addEventListener('blur', hideTip);
+       }
+
+       function bindSolisKeyHints(root) {
+           const scope = root || document;
+           scope.querySelectorAll?.('[data-solis-keyhint]')?.forEach(bindOne);
+           if (scope.matches?.('[data-solis-keyhint]')) bindOne(scope);
+       }
+
+       window.bindSolisKeyHints = bindSolisKeyHints;
+       window.addEventListener('scroll', () => {
+           if (activeTarget && tipEl?.classList.contains('is-on')) placeTip(activeTarget);
+       }, true);
+       window.addEventListener('resize', hideTip);
+
+       const boot = () => bindSolisKeyHints(document);
+       if (document.readyState === 'loading') {
+           document.addEventListener('DOMContentLoaded', boot);
+       } else {
+           boot();
+       }
+   })();
 
    (function initMultiGenSlider() {
        const card = document.getElementById('multiGenCard');
@@ -7342,6 +7426,40 @@
     transform:none !important;
 }
 .sub-mem-actions.open{opacity:1;visibility:visible;pointer-events:auto;}
+
+.solis-keyhint{
+    position:fixed;z-index:99980;
+    display:inline-flex;align-items:center;gap:8px;
+    padding:6px 8px 6px 12px;
+    border-radius:999px;
+    background:#2a2a2a;
+    color:#fff;
+    font-family:'Plus Jakarta Sans','Nunito',sans-serif;
+    font-size:12.5px;font-weight:650;letter-spacing:.01em;
+    line-height:1;white-space:nowrap;
+    pointer-events:none;
+    opacity:0;visibility:hidden;
+    transform:translateY(4px);
+    transition:opacity .14s ease, transform .14s ease, visibility 0s linear .14s;
+    box-shadow:0 4px 16px rgba(0,0,0,.28);
+}
+.solis-keyhint.is-on{
+    opacity:1;visibility:visible;
+    transform:translateY(0);
+    transition:opacity .14s ease, transform .14s ease, visibility 0s;
+}
+.solis-keyhint-label{color:rgba(255,255,255,.96);}
+.solis-keyhint-keys{
+    display:inline-flex;align-items:center;
+    padding:4px 8px;border-radius:999px;
+    background:#3d3d3d;
+    color:rgba(255,255,255,.72);
+    font-size:11px;font-weight:600;letter-spacing:.02em;
+}
+@media (hover:none),(pointer:coarse){
+    .solis-keyhint{display:none !important;}
+}
+
 .sub-mem-btn{
     appearance:none;-webkit-appearance:none;
     width:28px;height:28px;min-width:28px;border:none;border-radius:999px;
@@ -15228,7 +15346,7 @@
                     <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2.35" stroke-linecap="round"/>
                 </svg>
             </button>
-            <button type="button" class="sub-mem-btn sub-mem-accept" id="subMemAccept" title="Apply · Tab" aria-label="Apply">
+            <button type="button" class="sub-mem-btn sub-mem-accept" id="subMemAccept" aria-label="Accept" data-solis-keyhint="Accept|Tab">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
                     <path d="M4.5 10.2l3.4 3.4 7.6-7.8" stroke="currentColor" stroke-width="2.35" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -15253,6 +15371,7 @@
             clearSubtitleMemorySuggest({cooldown:true, revert:true, persistReject:true, templateId:tid});
             closeDD();
         });
+        try{ window.bindSolisKeyHints?.(subMemActions); }catch(_){}
         return subMemActions;
     }
     window.ensureSubMemActions=ensureSubMemActions;

@@ -721,6 +721,20 @@
     const t = new Date(e.getFullYear(), e.getMonth(), e.getDate() + 1, 0, 0, 0, 0);
     return formatQuotaUnlockWhen(t);
   }
+  function resolveDailyUnlockLabel(e) {
+    const t = parseQuotaResetWhen(e);
+    if (!t) return nextLocalMidnightLabel();
+    const n = t.getHours();
+    const o = t.getMinutes();
+    if (o === 0 && n > 0 && n <= 6) {
+      const e = t.getUTCHours();
+      const n = t.getUTCMinutes();
+      if (e === 0 && n === 0) {
+        return nextLocalMidnightLabel();
+      }
+    }
+    return formatQuotaUnlockWhen(e) || nextLocalMidnightLabel();
+  }
   function parseQuotaState(e, t) {
     const n = Math.max(0, Number(e?.daily?.remaining ?? t?.remaining ?? 0));
     const o = Math.max(0, Number(e?.daily?.limit ?? t?.max_per_period ?? t?.max_per_day ?? 0));
@@ -765,7 +779,7 @@
     let l = "";
     if (e.dailyEmpty && i > 0) {
       const e = t?.daily?.resets_at || n?.daily_resets_at || n?.resets_at;
-      const o = formatQuotaUnlockWhen(e) || nextLocalMidnightLabel();
+      const o = resolveDailyUnlockLabel(e);
       l = o ? `Next upload unlocks ${o}` : "Next upload unlocks tomorrow";
     }
     return {
@@ -831,6 +845,8 @@
     parseState: parseQuotaState,
     formatChip: formatQuotaChipDisplay,
     formatUnlockWhen: formatQuotaUnlockWhen,
+    resolveDailyUnlockLabel: resolveDailyUnlockLabel,
+    nextLocalMidnightLabel: nextLocalMidnightLabel,
     syncUpgradeCard: syncUpgradeCardVisibility,
     markEverGenerated: markSolisEverGenerated
   };
@@ -849,8 +865,8 @@
     const v = Math.max(0, Number(w ?? 0));
     const S = t?.max_effort?.can_use ?? s.can_use_max_effort;
     const x = E > 0 && (v <= 0 || S === false);
-    const I = !g && !y && f >= 3 && c > 0 && h === "daily" && (c <= 1 || c / f <= .2);
-    const L = !y && !g && p > 0 && h === "monthly" && (u <= 2 || u / p <= .15);
+    const L = !g && !y && f >= 3 && c > 0 && h === "daily" && (c <= 1 || c / f <= .2);
+    const I = !y && !g && p > 0 && h === "monthly" && (u <= 2 || u / p <= .15);
     const M = E >= 3 && !x && v === 1;
     let b = "";
     let B = "";
@@ -863,7 +879,7 @@
     } else if (g) {
       b = "daily";
       const e = t?.daily?.resets_at || s.daily_resets_at || s.resets_at;
-      const n = formatQuotaUnlockWhen(e) || nextLocalMidnightLabel();
+      const n = resolveDailyUnlockLabel(e);
       if (u > 0) {
         B = m === "free" ? "Used your free upload" : "Used today's uploads";
         P = n ? `Next upload unlocks ${n}.` : "Next upload unlocks tomorrow.";
@@ -871,11 +887,11 @@
         B = m === "free" ? "Free upload used" : "Daily limit reached";
         P = n ? `Next upload unlocks ${n}.` : "Upgrade for more daily uploads.";
       }
-    } else if (L) {
+    } else if (I) {
       b = "monthly-low";
       B = u === 1 ? "One upload left" : `${u} uploads left`;
       P = "Upgrade if you need more room this month.";
-    } else if (I) {
+    } else if (L) {
       b = "daily-low";
       B = c === 1 ? "One upload left today" : `${c} uploads left today`;
       P = "Upgrade if you need more room today.";
@@ -1009,8 +1025,8 @@
   function getInputContainer() {
     return document.querySelector(".url-input-container");
   }
-  let I = null;
   let L = null;
+  let I = null;
   function getPopover() {
     return document.getElementById("planSelectorPopover");
   }
@@ -1018,14 +1034,14 @@
     const e = document.getElementById("planSelectorWrap");
     const t = getPopover();
     if (!e || !t || t.parentElement === document.body) return;
-    L = e;
+    I = e;
     document.body.appendChild(t);
   }
   function unmountPopover() {
     const e = getPopover();
-    if (!e || !L || e.parentElement !== document.body) return;
-    L.appendChild(e);
-    L = null;
+    if (!e || !I || e.parentElement !== document.body) return;
+    I.appendChild(e);
+    I = null;
   }
   function positionPopover() {
     const e = document.getElementById("planSelectorBtn");
@@ -1055,9 +1071,9 @@
     if (p && !o) positionEffortFlyoutSide();
   }
   function bindReposition() {
-    if (I) return;
+    if (L) return;
     let e = isCompactPlanUi();
-    I = () => {
+    L = () => {
       positionPopover();
       const t = isCompactPlanUi();
       if (t !== e) {
@@ -1067,14 +1083,14 @@
         });
       }
     };
-    window.addEventListener("resize", I);
-    window.addEventListener("scroll", I, true);
+    window.addEventListener("resize", L);
+    window.addEventListener("scroll", L, true);
   }
   function unbindReposition() {
-    if (!I) return;
-    window.removeEventListener("resize", I);
-    window.removeEventListener("scroll", I, true);
-    I = null;
+    if (!L) return;
+    window.removeEventListener("resize", L);
+    window.removeEventListener("scroll", L, true);
+    L = null;
   }
   function openPopover() {
     const e = document.getElementById("planSelectorWrap");

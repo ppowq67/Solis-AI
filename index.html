@@ -724,8 +724,11 @@
       max-width: 100%;
       text-align: center;
       position: relative;
-      white-space: nowrap;
+      white-space: normal;
+      text-wrap: balance;
+      overflow-wrap: anywhere;
       padding: 0 4px;
+      box-sizing: border-box;
     }
     .mega-title .solis-text { font-weight: 800; }
     .mega-title::before {
@@ -2092,9 +2095,11 @@
     @media (max-width: 640px) {
       .hero { padding: 28px 16px 8px; min-height: auto; }
       .mega-title {
-        font-size: clamp(20px, 7.2vw, 34px);
-        white-space: nowrap;
-        letter-spacing: -0.05em;
+        font-size: clamp(22px, 7.2vw, 34px);
+        white-space: normal;
+        letter-spacing: -0.04em;
+        line-height: 1.12;
+        padding: 0 2px;
       }
       .hero .subtitle {
         font-size: 14.5px;
@@ -2986,7 +2991,7 @@
         #f9f6f3;
       color: #18120e;
     }
-    .agent-pin-track { position: relative; height: 340vh; }
+    .agent-pin-track { position: relative; height: 420vh; }
     .agent-pin-sticky {
       position: sticky;
       top: 0;
@@ -2994,15 +2999,17 @@
       min-height: 620px;
       display: flex;
       align-items: center;
-      overflow: hidden;
+      overflow: visible;
       border-radius: 0;
     }
     .agent-pin-inner {
       position: relative;
       z-index: 1;
-      width: min(1180px, calc(100% - 40px));
+      width: min(1180px, calc(100% - 32px));
       margin: 0 auto;
       padding: 24px 0;
+      box-sizing: border-box;
+      max-width: 100%;
     }
     .agent-pin-eyebrow {
       font-family: var(--font-display), system-ui, sans-serif;
@@ -3016,13 +3023,16 @@
     }
     .agent-pin-title {
       font-family: var(--font-display), system-ui, sans-serif;
-      font-size: clamp(28px, 4.2vw, 44px);
+      font-size: clamp(26px, 4.2vw, 44px);
       font-weight: 800;
       letter-spacing: -0.035em;
-      line-height: 1.08;
+      line-height: 1.12;
       text-align: center;
       margin: 0 0 10px;
       color: var(--text-primary);
+      text-wrap: balance;
+      padding: 0 4px;
+      box-sizing: border-box;
     }
     .agent-pin-lead {
       text-align: center;
@@ -3031,6 +3041,8 @@
       font-size: 15.5px;
       line-height: 1.55;
       color: var(--text-secondary);
+      padding: 0 8px;
+      box-sizing: border-box;
     }
     .agent-pin-grid {
       display: grid;
@@ -3073,11 +3085,13 @@
     }
     .agent-step-name {
       font-family: var(--font-display), system-ui, sans-serif;
-      font-size: clamp(22px, 2.6vw, 30px);
+      font-size: clamp(20px, 2.6vw, 30px);
       font-weight: 800;
       letter-spacing: -0.03em;
       margin: 0 0 8px;
       color: var(--text-primary);
+      line-height: 1.15;
+      overflow-wrap: anywhere;
     }
     .agent-step-hook {
       font-family: var(--font-display), system-ui, sans-serif;
@@ -3087,13 +3101,15 @@
       color: #3a2e26;
       margin: 0 0 10px;
       line-height: 1.35;
+      overflow-wrap: anywhere;
     }
     .agent-step-desc {
       font-size: 14.5px;
       line-height: 1.6;
       color: var(--text-secondary);
       margin: 0;
-      max-width: 38ch;
+      max-width: 42ch;
+      overflow-wrap: anywhere;
     }
     .agent-pin-visual {
       position: relative;
@@ -3189,7 +3205,7 @@
     .sug-caption-text {
       display: block;
       font-family: var(--font-display), system-ui, sans-serif;
-      font-size: clamp(18px, 3.6vw, 24px);
+      font-size: clamp(16px, 3.6vw, 24px);
       font-weight: 800;
       letter-spacing: -0.02em;
       line-height: 1.15;
@@ -3198,7 +3214,8 @@
       text-shadow:
         -1px -1px 0 rgba(0,0,0,.55), 1px -1px 0 rgba(0,0,0,.55),
         -1px  1px 0 rgba(0,0,0,.55), 1px  1px 0 rgba(0,0,0,.55);
-      white-space: nowrap;
+      white-space: normal;
+      overflow-wrap: anywhere;
     }
     .sug-actions {
       position: absolute;
@@ -3731,9 +3748,201 @@
       text-align: center;
       margin: 0;
     }
+
+    .postgen-stage {
+      width: min(360px, 94%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+    .postgen-canvas {
+      width: 100%;
+      border-radius: 20px;
+      padding: 16px 16px 18px;
+      background: #fff;
+      border: 1px solid rgba(200,185,170,0.4);
+      box-shadow: 0 14px 36px rgba(120,80,40,0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+    .postgen-phone {
+      width: min(168px, 48%);
+      aspect-ratio: 9 / 16;
+      border-radius: 16px;
+      background: linear-gradient(165deg, #2a1c16 0%, #18120e 55%, #241810 100%);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 12px 28px rgba(24,18,14,0.22);
+      position: relative;
+      overflow: hidden;
+    }
+    .postgen-phone::after {
+      content: "CLIP READY";
+      position: absolute;
+      left: 10%;
+      right: 10%;
+      bottom: 16%;
+      text-align: center;
+      font-family: var(--font-display), system-ui, sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.45);
+    }
+    .postgen-phone::before {
+      content: "";
+      position: absolute;
+      inset: 18% 14% auto;
+      height: 38%;
+      border-radius: 10px;
+      background: linear-gradient(160deg, #ffd4b8, #f97316);
+      opacity: 0.9;
+    }
+    .postgen-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 6px;
+      border-radius: 999px;
+      background: linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.96) 0%,
+        rgba(255, 255, 255, 0.9) 45%,
+        rgba(255, 252, 248, 0.88) 100%
+      );
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      border-bottom-color: rgba(200, 185, 170, 0.28);
+      border-right-color: rgba(200, 185, 170, 0.2);
+      box-shadow:
+        0 6px 18px rgba(120, 90, 60, 0.12),
+        0 1px 4px rgba(120, 90, 60, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 1);
+      backdrop-filter: blur(16px) saturate(140%);
+      -webkit-backdrop-filter: blur(16px) saturate(140%);
+    }
+    .postgen-btn {
+      --use-tpl-dot: rgba(255, 255, 255, 0.38);
+      position: relative;
+      width: 40px;
+      height: 40px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      color: #475569;
+      cursor: default;
+      overflow: hidden;
+      transition:
+        color 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+        background 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+        border-color 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+        filter 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .postgen-btn svg {
+      position: relative;
+      z-index: 1;
+      width: 20px;
+      height: 20px;
+      display: block;
+      color: inherit;
+    }
+    .postgen-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.22) 0%,
+        rgba(255, 255, 255, 0) 48%
+      );
+      opacity: 0;
+      pointer-events: none;
+      z-index: 0;
+      transition: opacity 0.28s ease;
+    }
+    .postgen-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background-image: radial-gradient(
+        circle,
+        var(--use-tpl-dot) 0.7px,
+        transparent 1px
+      );
+      background-size: 5px 5px;
+      opacity: 0;
+      pointer-events: none;
+      mix-blend-mode: soft-light;
+      z-index: 0;
+      transition: opacity 0.28s ease;
+    }
+    .postgen-btn-improve {
+      color: #ff6b35;
+      filter: saturate(1.05);
+    }
+    .postgen-btn.is-hot,
+    .postgen-btn:hover {
+      color: #ffffff;
+      filter: none;
+      background: linear-gradient(165deg, #ff8a5c 0%, #ff6b35 50%, #f05428 100%);
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.22) inset,
+        0 4px 12px rgba(240, 84, 40, 0.22);
+    }
+    .postgen-btn.is-hot::before,
+    .postgen-btn:hover::before { opacity: 1; }
+    .postgen-btn.is-hot::after,
+    .postgen-btn:hover::after { opacity: 0.7; }
+    .postgen-btn.is-hot svg,
+    .postgen-btn:hover svg { color: #ffffff; }
+    .postgen-btn-silence.is-hot .silencer-bar--a { animation: postgenPieceSoft 1.3s ease 1 both; }
+    .postgen-btn-silence.is-hot .silencer-bar--b { animation: postgenPieceSoft 1.3s ease 0.05s 1 both; }
+    .postgen-btn-silence.is-hot .silencer-bar--c { animation: postgenPieceSoft 1.3s ease 0.09s 1 both; }
+    .postgen-btn-silence.is-hot .silencer-bar--d { animation: postgenPieceSoft 1.3s ease 0.07s 1 both; }
+    .postgen-btn-silence.is-hot .silencer-bar--e { animation: postgenPieceSoft 1.3s ease 0.11s 1 both; }
+    .postgen-btn-silence.is-hot .silencer-bar--f { animation: postgenPieceSoft 1.3s ease 0.04s 1 both; }
+    .postgen-btn-silence.is-hot .silencer-bar--g { animation: postgenPieceSoft 1.3s ease 0.13s 1 both; }
+    .postgen-btn-silence.is-hot .silencer-bar--h { animation: postgenPieceSoft 1.3s ease 0.08s 1 both; }
+    @keyframes postgenPieceSoft {
+      0% { opacity: 1; }
+      30% { opacity: 0.55; }
+      60% { opacity: 1; }
+      100% { opacity: 1; }
+    }
+    .postgen-tip {
+      min-height: 1.35em;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: #9a3412;
+      text-align: center;
+      margin: 0;
+      transition: opacity 0.25s ease;
+    }
+    .postgen-tip[data-tip="silence"] { color: #9a3412; }
+    .postgen-tip[data-tip="improve"] { color: #c2410c; }
+    .postgen-note {
+      font-size: 13.5px;
+      font-weight: 650;
+      color: var(--text-secondary);
+      text-align: center;
+      margin: 0;
+      max-width: 28ch;
+      overflow-wrap: anywhere;
+    }
     @media (prefers-reduced-motion: reduce) {
       .tpl-ss-top::after { animation: none; }
       .tpl-card, .mem-phone, .mem-node, .mem-tag { transition: none; }
+      .postgen-btn-silence.is-hot .silencer-bar { animation: none !important; }
     }
 
     .agent-pin-dots {
@@ -3762,9 +3971,10 @@
         height: auto;
         min-height: 0;
         padding: 48px 0 56px;
+        overflow: visible;
       }
       .agent-pin-grid { grid-template-columns: 1fr; gap: 18px; }
-      .agent-pin-copy { min-height: 0; }
+      .agent-pin-copy { min-height: 0; padding: 0 2px; }
       .agent-step {
         position: relative;
         opacity: 1;
@@ -3773,8 +3983,11 @@
         margin-bottom: 8px;
       }
       .agent-step:not(.is-active) { display: none; }
-      .agent-pin-visual { min-height: 320px; }
+      .agent-pin-visual { min-height: 300px; }
+      .agent-card { overflow: visible; }
       .tpl-pair { flex-direction: column; }
+      .agent-pin-title { font-size: clamp(24px, 7vw, 34px); }
+      .agent-step-desc { max-width: none; }
     }
     @media (prefers-reduced-motion: reduce) {
       .agent-step,
@@ -4384,6 +4597,12 @@
                 </article>
                 <article class="agent-step" data-step="3">
                   <div class="agent-step-num"><span class="agent-step-line" aria-hidden="true"></span><span class="agent-step-idx">04</span></div>
+                  <h3 class="agent-step-name">After generation</h3>
+                  <p class="agent-step-hook">Improve Clip · Remove Silence</p>
+                  <p class="agent-step-desc">Polish finished clips in one tap — tighten dead air, sharpen cuts, and retune subtitles without re-running the whole job.</p>
+                </article>
+                <article class="agent-step" data-step="4">
+                  <div class="agent-step-num"><span class="agent-step-line" aria-hidden="true"></span><span class="agent-step-idx">05</span></div>
                   <h3 class="agent-step-name">Simplicity</h3>
                   <p class="agent-step-hook">Less to do. Better clips out.</p>
                   <p class="agent-step-desc">A clean path from URL to export. Fewer decisions, sharper design, publish-ready videos without the timeline grind.</p>
@@ -4495,6 +4714,39 @@
                 <div class="agent-viz" data-step="3">
                   <div class="agent-card">
                     <div class="agent-card-main">
+                      <div class="postgen-stage" id="postgenStageDemo">
+                        <div class="postgen-canvas">
+                          <div class="postgen-phone" aria-hidden="true"></div>
+                          <div class="postgen-pill" aria-hidden="true">
+                            <span class="postgen-btn postgen-btn-silence is-hot" data-postgen="silence" title="Remove silence">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="silencer-icon">
+                                <path class="silencer-bar silencer-bar--a" d="M6 6v11"/>
+                                <path class="silencer-bar silencer-bar--b" d="M10 10v11"/>
+                                <path class="silencer-bar silencer-bar--c" d="M10 3v1.35"/>
+                                <path class="silencer-bar silencer-bar--d" d="M14 14v1"/>
+                                <path class="silencer-bar silencer-bar--e" d="M14 8v.35"/>
+                                <path class="silencer-bar silencer-bar--f" d="M18 5v7.35"/>
+                                <path class="silencer-bar silencer-bar--g" d="M2 10v3"/>
+                                <path class="silencer-bar silencer-bar--h" d="M22 10v3"/>
+                                <path class="silencer-slash" d="m2 2 20 20"/>
+                              </svg>
+                            </span>
+                            <span class="postgen-btn postgen-btn-improve" data-postgen="improve" title="Improve clip">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M12.983 21.186a1 1 0 0 1-1.966 0 10 10 0 0 0-8.203-8.203 1 1 0 0 1 0-1.966 10 10 0 0 0 8.203-8.203 1 1 0 0 1 1.966 0 10 10 0 0 0 8.203 8.203 1 1 0 0 1 0 1.966 10 10 0 0 0-8.203 8.203"/>
+                              </svg>
+                            </span>
+                          </div>
+                          <p class="postgen-tip" data-tip="silence">Remove silence</p>
+                        </div>
+                        <p class="postgen-note">Same coral hover as the preview editor pill.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="agent-viz" data-step="4">
+                  <div class="agent-card">
+                    <div class="agent-card-main">
                       <div class="simp-stage" id="simpStageDemo">
                         <div class="simp-canvas">
                           <div class="simp-steps" aria-hidden="true">
@@ -4522,6 +4774,7 @@
               <button type="button" class="agent-pin-dot" data-step="1" aria-label="Step 2"></button>
               <button type="button" class="agent-pin-dot" data-step="2" aria-label="Step 3"></button>
               <button type="button" class="agent-pin-dot" data-step="3" aria-label="Step 4"></button>
+              <button type="button" class="agent-pin-dot" data-step="4" aria-label="Step 5"></button>
             </div>
           </div>
         </div>
@@ -4587,7 +4840,7 @@
           </div>
           <div class="faq">
             <button class="faq-btn" type="button" aria-expanded="false"><span>Can I edit after generation?</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="6,9 12,15 18,9" /></svg></button>
-            <div class="answer">Yes. Solis AI lets you customize text, remove elements, adjust captions, swap positions and more, all without re-running the full generation again. This is one of our most-loved features.</div>
+            <div class="answer">Yes. Customize text, captions, and layout — then one-tap <strong>Improve Clip</strong> or <strong>Remove Silence</strong> after generation without re-running the full job.</div>
           </div>
           <div class="faq">
             <button class="faq-btn" type="button" aria-expanded="false"><span>Is Solis AI B2C or B2B?</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="6,9 12,15 18,9" /></svg></button>
@@ -5544,6 +5797,30 @@
         }, 1800));
       }
 
+      function startPostgenDemo() {
+        var stage = document.getElementById('postgenStageDemo');
+        if (!stage || reducedMotion) return;
+        var btns = stage.querySelectorAll('.postgen-btn');
+        var tip = stage.querySelector('.postgen-tip');
+        var labels = { silence: 'Remove silence', improve: 'Improve clip' };
+        var order = ['silence', 'improve'];
+        var i = 0;
+        function paint(key) {
+          btns.forEach(function (btn) {
+            btn.classList.toggle('is-hot', btn.getAttribute('data-postgen') === key);
+          });
+          if (tip) {
+            tip.setAttribute('data-tip', key);
+            tip.textContent = labels[key] || '';
+          }
+        }
+        paint(order[0]);
+        demoTimers.push(setInterval(function () {
+          i = (i + 1) % order.length;
+          paint(order[i]);
+        }, 1800));
+      }
+
       function startSimpDemo() {
         var stage = document.getElementById('simpStageDemo');
         if (!stage || reducedMotion) return;
@@ -5559,7 +5836,8 @@
         clearDemoTimers();
         if (n === 1) startTplDemo();
         if (n === 2) startMemDemo();
-        if (n === 3) startSimpDemo();
+        if (n === 3) startPostgenDemo();
+        if (n === 4) startSimpDemo();
       }
 
       function setStep(n) {

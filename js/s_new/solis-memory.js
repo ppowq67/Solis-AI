@@ -1352,6 +1352,7 @@
   }
   function paintCaptionMemoryChip(e, t) {
     if (!e || typeof window.offerSubtitleMemorySuggest !== "function") return false;
+    if (t && y.has(t)) return false;
     window.offerSubtitleMemorySuggest(e, t);
     const n = !!(window.__solisPendingSubMem || document.getElementById("subMemActions")?.classList.contains("open") || document.querySelector(".sub-mem-ghost,.sub-text-block.sub-suggest"));
     if (!n) return false;
@@ -1384,6 +1385,7 @@
   }
   function offerCaptionSuggest(e, t) {
     if (isLibraryPreviewOpen()) return false;
+    if (y.has(e)) return false;
     t = t || getTemplateMemory(e);
     const n = captionsForSuggest(t, e);
     if (!n) {
@@ -1532,6 +1534,7 @@
       }
     } catch (e) {}
     const attempt = () => {
+      if (y.has(n)) return false;
       const e = document.getElementById("templatePreviewModal");
       if (!e || !e.classList.contains("active")) return false;
       const t = document.getElementById("templateVideoPreview");
@@ -1555,8 +1558,10 @@
     const o = Math.max(40, Number(t?.gapMs) || 180);
     for (let e = 1; e <= i; e++) {
       setTimeout(() => {
+        if (y.has(n)) return;
         if (h && !s && actionsOpen()) return;
         if (h && !s && !softCap() && !window.__solisPendingSubMem) return;
+        if (s && h && !softCap() && !window.__solisPendingSubMem && !actionsOpen()) return;
         try {
           attempt();
         } catch (e) {}
@@ -1961,16 +1966,36 @@
       S = null;
     }
     const n = readState();
-    const s = n.templates[t];
-    if (s) {
-      s.rejectCount = (s.rejectCount || 0) + 1;
-      s.lastRejectedFingerprint = s.fingerprint || fingerprint(s.styles, s.captions, s.layout);
-      s.lastRejectedAt = (new Date).toISOString();
-      s.acceptStreak = 0;
-      s.acceptFingerprint = null;
-      s.autoApply = false;
-      writeState(n);
+    let s = n.templates[t];
+    if (!s) {
+      s = n.templates[t] = {
+        fingerprint: "first-caption-tip",
+        rejectCount: 0,
+        styles: null,
+        captions: null,
+        layout: null
+      };
     }
+    s.rejectCount = (s.rejectCount || 0) + 1;
+    s.lastRejectedFingerprint = s.fingerprint || fingerprint(s.styles, s.captions, s.layout) || "first-caption-tip";
+    s.lastRejectedAt = (new Date).toISOString();
+    s.acceptStreak = 0;
+    s.acceptFingerprint = null;
+    s.autoApply = false;
+    writeState(n);
+  }
+  function wasSuggestionRejected(e) {
+    const t = e || b;
+    if (!t) return false;
+    if (y.has(t)) return true;
+    try {
+      const e = getTemplateMemory(t);
+      if (e?.lastRejectedFingerprint && e.lastRejectedFingerprint === e.fingerprint) {
+        const t = Date.parse(e.lastRejectedAt || 0);
+        if (Number.isFinite(t) && Date.now() - t < f) return true;
+      }
+    } catch (e) {}
+    return false;
   }
   function scheduleServerSync() {
     if (k) clearTimeout(k);
@@ -2353,6 +2378,7 @@
     pullServerMemory: pullServerMemory,
     setUserId: setUserId,
     markSuggestionRejected: markSuggestionRejected,
+    wasSuggestionRejected: wasSuggestionRejected,
     rejectSuggestion: rejectSuggestion,
     acceptSuggestion: acceptSuggestion,
     offerInstantRecipe: offerInstantRecipe,

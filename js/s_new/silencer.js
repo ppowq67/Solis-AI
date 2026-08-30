@@ -204,20 +204,17 @@
     try {
       const e = window.clipsStudio;
       if (!e?.currentTemplateForPreview?.isLibraryPreview) return;
-      e._librarySilenceDirty = o;
+      e._librarySilenceDirty = !!o;
       e._librarySilenceCuts = o ? (window.PreviewTimeline?.getSkipRegions?.() || []).slice() : [];
-      if (o) {
-        if (e._librarySplitscreenCustomize) e._librarySplitscreenDirty = true;
-        if (e._libraryRankingEditable) e._libraryRankingDirty = true;
-      } else {}
-      const t = $("confirmUseTemplateBtn");
-      if (t && o) {
-        t.textContent = "Apply & Download";
-        t.classList.add("library-download-mode");
-      }
-      if (typeof window.syncUseTemplateFab === "function") window.syncUseTemplateFab();
-      if (typeof e._configureLibraryEditingUI === "function") {
-        e._configureLibraryEditingUI();
+      if (typeof window.syncLibraryConfirmLabel === "function") {
+        window.syncLibraryConfirmLabel();
+      } else {
+        const e = $("confirmUseTemplateBtn");
+        if (e) {
+          e.textContent = o ? "Apply & Download" : "Download";
+          e.classList.add("library-download-mode");
+        }
+        if (typeof window.syncUseTemplateFab === "function") window.syncUseTemplateFab();
       }
     } catch (e) {}
   }

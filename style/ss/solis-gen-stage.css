@@ -76,13 +76,23 @@ body.solis-gen-stage-active .profile-notif-wrapper > .generation-progress-wrappe
     padding:0;margin:0;
     border:none;background:transparent;
     border-radius:14px;
-    cursor:pointer;
+    cursor:var(--solis-preview-cursor-hand, pointer) !important;
     display:inline-flex;align-items:center;justify-content:center;
     color:#111827;
     flex-shrink:0;
     outline:none;
     -webkit-tap-highlight-color:transparent;
     box-shadow:none;
+}
+.solis-gen-brand *,
+.solis-gen-brand:hover,
+.solis-gen-brand:hover *,
+.solis-gen-brand:focus,
+.solis-gen-brand:focus *{
+    cursor:inherit !important;
+}
+html[data-solis-cursor="off"] .solis-gen-brand{
+    cursor:pointer !important;
 }
 .solis-gen-brand:focus,
 .solis-gen-brand:focus-visible{

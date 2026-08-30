@@ -161,31 +161,44 @@
   }
   async function handleDashboardReturn() {
     const e = new URLSearchParams(window.location.search);
-    if (e.get("payment") !== "success") return;
-    const n = e.get("plan");
-    const t = window.location.pathname + window.location.hash;
-    window.history.replaceState({}, document.title, t);
-    showProcessingOverlay("Confirming your upgrade…");
-    let a = await pollPaymentStatus(null);
-    if (!a && n) {
-      a = await tryLocalFallback(n);
+    const n = e.get("payment") === "success" || e.get("status") === "success";
+    if (!n) return;
+    if (e.get("demo") === "1" || e.get("demo") === "true") return;
+    const t = e.get("plan");
+    const a = /\/premium(?:\.html)?$/i.test(window.location.pathname);
+    if (!a) {
+      const e = window.location.pathname + window.location.hash;
+      window.history.replaceState({}, document.title, e);
+      showProcessingOverlay("Confirming your upgrade…");
     }
-    removeProcessingOverlay();
-    const o = a?.plan || n;
-    if (o && typeof window.handlePaymentSuccessOnDashboard === "function") {
-      window.handlePaymentSuccessOnDashboard(o);
+    let o = await pollPaymentStatus(null);
+    if (!o && t) {
+      o = await tryLocalFallback(t);
     }
+    if (!a) removeProcessingOverlay();
+    const i = o?.plan || t;
+    if (i && typeof window.handlePaymentSuccessOnDashboard === "function") {
+      window.handlePaymentSuccessOnDashboard(i);
+    }
+    return {
+      ok: true,
+      plan: i || null
+    };
   }
   window.PaymentFlow = {
     openCheckout: openCheckout,
     completeCheckout: completeCheckout,
     showProcessingOverlay: showProcessingOverlay,
     removeProcessingOverlay: removeProcessingOverlay,
-    handleDashboardReturn: handleDashboardReturn
+    handleDashboardReturn: handleDashboardReturn,
+    pollPaymentStatus: pollPaymentStatus,
+    tryLocalFallback: tryLocalFallback
   };
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", handleDashboardReturn);
+    document.addEventListener("DOMContentLoaded", () => {
+      handleDashboardReturn().catch(() => {});
+    });
   } else {
-    handleDashboardReturn();
+    handleDashboardReturn().catch(() => {});
   }
 })();

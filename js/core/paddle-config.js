@@ -237,7 +237,7 @@ class PaddleManager {
       settings: {
         displayMode: "overlay",
         theme: "light",
-        successUrl: `${window.location.origin}/dashboard.html?payment=success&plan=${encodeURIComponent(t)}`
+        successUrl: `${window.location.origin}/premium?payment=success&plan=${encodeURIComponent(t)}`
       }
     };
     const c = String(t || "").toLowerCase();

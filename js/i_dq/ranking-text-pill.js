@@ -44,8 +44,8 @@
   let E = undefined;
   let z = "text";
   let C = false;
-  let R = null;
-  let L = false;
+  let L = null;
+  let R = false;
   let M = false;
   let F = false;
   let P = false;
@@ -1569,13 +1569,18 @@
       const e = window.clipsStudio;
       if (!e?.currentTemplateForPreview?.isLibraryPreview) return;
       if (!e._libraryRankingEditable) return;
+      if (e._libraryDirtyArmed === false) return;
       e._libraryRankingDirty = true;
-      const t = document.getElementById("confirmUseTemplateBtn");
-      if (t) {
-        t.textContent = "Apply & Download";
-        t.classList.add("library-download-mode");
+      if (typeof window.syncLibraryConfirmLabel === "function") {
+        window.syncLibraryConfirmLabel();
+      } else {
+        const e = document.getElementById("confirmUseTemplateBtn");
+        if (e) {
+          e.textContent = "Apply & Download";
+          e.classList.add("library-download-mode");
+        }
+        if (typeof window.syncUseTemplateFab === "function") window.syncUseTemplateFab();
       }
-      if (typeof window.syncUseTemplateFab === "function") window.syncUseTemplateFab();
     } catch (e) {}
   }
   function ensureResizeHandle(e) {
@@ -1587,13 +1592,13 @@
       e.preventDefault();
       const n = resolveApplyTargets();
       if (!n.length) return;
-      L = true;
+      R = true;
       let i = true;
       const r = e.clientX;
       const o = e.clientY;
       const a = e.pointerId;
       const s = V === "group-header" ? getPrimaryHeaderEl() || n[0] : W && document.contains(W) ? W : n[0];
-      const l = R != null ? R : getEffectiveFontSize(s);
+      const l = L != null ? L : getEffectiveFontSize(s);
       const c = V === "group-header";
       const d = V === "group-ranks";
       const p = c || V !== "single" && n.every(e => isHeaderEl(e));
@@ -1609,14 +1614,14 @@
         if (Math.abs(s - l) < 1 && Math.abs(t) < 2) return;
         b = true;
         if (c || p) {
-          R = applyHeaderBlockSize(s, {
+          L = applyHeaderBlockSize(s, {
             resizing: true
           });
           syncTopPanelToHeader({
             liveOnly: true
           });
         } else if (d) {
-          R = applyRankBlockSize(s, {
+          L = applyRankBlockSize(s, {
             resizing: true
           });
         } else {
@@ -1631,7 +1636,7 @@
               if (e) setElementFontSize(e, s);
             }
           });
-          R = e;
+          L = e;
           if (n.every(e => isHeaderEl(e))) {
             syncTopPanelToHeader({
               liveOnly: true
@@ -1652,7 +1657,7 @@
           syncTopPanelToHeader();
           const e = getRankingRoot();
           if (e && !headerLineFits(e)) {
-            const e = Math.max(le, R != null ? R : l);
+            const e = Math.max(le, L != null ? L : l);
             applyHeaderBlockSize(e, {
               resizing: false
             });
@@ -1661,14 +1666,14 @@
         if (d) {
           const e = getRankingRoot();
           if (e && !ranksListFits(e)) {
-            applyRankBlockSize(R != null ? R : l, {
+            applyRankBlockSize(L != null ? L : l, {
               resizing: false
             });
           }
         } else if (n.some(e => isRankEl(e))) {
           const e = getRankingRoot();
-          if (e && !ranksListFits(e) && R != null) {
-            let t = R;
+          if (e && !ranksListFits(e) && L != null) {
+            let t = L;
             let i = 40;
             while (i-- > 0 && t > ce && !ranksListFits(e)) {
               t -= 1;
@@ -1682,14 +1687,14 @@
                 }
               });
             }
-            R = t;
+            L = t;
           }
         }
         if (window.rankingCustomizer) window.rankingCustomizer.syncFromDOM();
         markLibraryRankingDirty();
         if (b) markRankPointerClickSuppress();
-        if (R != null && Math.abs(R - l) >= 1) {
-          scheduleResizeSuggest(n, l, R);
+        if (L != null && Math.abs(L - l) >= 1) {
+          scheduleResizeSuggest(n, l, L);
         }
         if (y.size) {
           showMenu();
@@ -1772,11 +1777,11 @@
     const o = getEffectiveFontSize(e);
     if (r && r !== "inherit" && !r.includes("clamp")) {
       const e = Math.round(parseFloat(r));
-      R = Number.isFinite(e) ? e : o;
-      L = true;
+      L = Number.isFinite(e) ? e : o;
+      R = true;
     } else {
-      R = o;
-      L = false;
+      L = o;
+      R = false;
     }
   }
   function rgbToHex(e) {
@@ -2208,10 +2213,10 @@
     const r = t.length > 1 && (n || i);
     if (r) {
       const i = n ? getPrimaryHeaderEl() || t.find(e => !isChannelEl(e)) || t[0] : t[0];
-      const r = L && R != null ? R : getEffectiveFontSize(i);
+      const r = R && L != null ? L : getEffectiveFontSize(i);
       t.forEach(t => setElementFont(t, e));
-      R = applyBoundedGroupSize(t, r);
-      L = true;
+      L = applyBoundedGroupSize(t, r);
+      R = true;
       return;
     }
     t.forEach(t => {
@@ -2221,8 +2226,8 @@
     });
     const o = t[0];
     if (o) {
-      R = getEffectiveFontSize(o);
-      L = true;
+      L = getEffectiveFontSize(o);
+      R = true;
     }
   }
   function setElementShadow(e, t) {
@@ -2252,7 +2257,7 @@
     const t = resolveApplyTargets();
     t.forEach(e => {
       if (M) setElementFont(e, b);
-      if (L && R) setElementFontSize(e, R);
+      if (R && L) setElementFontSize(e, L);
       if (F) e.style.color = w;
       if (P) setElementShadow(e, x);
     });
@@ -2881,7 +2886,7 @@
       x = e.shadow;
     }
     if (e.size != null) {
-      L = true;
+      R = true;
       const t = e.fromGroup || editedSizeGroup(i);
       if (e.comfortable) {
         i.forEach(n => {
@@ -2889,12 +2894,12 @@
           setElementFontSize(n, i);
         });
         const n = i.find(e => isHeaderEl(e) && !isChannelEl(e)) || i.find(isRankEl) || i[0];
-        R = n ? getEffectiveFontSize(n) : e.size;
+        L = n ? getEffectiveFontSize(n) : e.size;
       } else if (i.every(e => isRankEl(e)) || i.every(e => isHeaderEl(e))) {
-        R = applyBoundedGroupSize(i, e.size);
+        L = applyBoundedGroupSize(i, e.size);
       } else {
         i.forEach(t => setElementFontSize(t, e.size));
-        R = e.size;
+        L = e.size;
       }
     }
     clearSuggest();
@@ -3287,7 +3292,7 @@
     F = false;
     C = false;
     P = false;
-    L = false;
+    R = false;
     const finishSelectChrome = () => {
       syncResizeHandles();
       hideSubtitleGuidesOverRanking();

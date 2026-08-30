@@ -62,7 +62,7 @@ window.handleCheckoutSuccess = async function(e) {
     window.showPaymentSuccessModal(a.plan || n);
   }
   setTimeout(() => {
-    window.location.href = "/dashboard.html?payment=success&plan=" + encodeURIComponent(a.plan || n);
+    window.location.href = "/premium?payment=success&plan=" + encodeURIComponent(a.plan || n);
   }, 1800);
 };
 

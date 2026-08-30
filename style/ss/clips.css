@@ -269,10 +269,12 @@
 
 .clips-section {
     display: none;
+    content-visibility: hidden;
 }
 
 .clips-section.active {
     display: block;
+    content-visibility: visible;
 }
 
 .section-header {
@@ -1129,6 +1131,13 @@
     filter: blur(0.35px);
     opacity: 0.95;
     animation: cpFlameFlicker 0.5s ease-in-out infinite alternate;
+    animation-play-state: paused;
+}
+
+.create-pill--hot:hover .cp-side-fire i,
+.create-pill--hot:focus-visible .cp-side-fire i,
+.create-pill--hot:active .cp-side-fire i {
+    animation-play-state: running;
 }
 
 .create-pill--hot .cp-side-fire i:nth-child(1) {
@@ -1233,7 +1242,13 @@
     background: #fff8d6;
     box-shadow: 0 0 6px 2px rgba(255, 200, 60, 0.85);
     animation: cpSparkRise 1.35s ease-in infinite;
+    animation-play-state: paused;
     opacity: 0;
+}
+
+.create-pill--rank:hover .cp-sparks i,
+.create-pill--rank:focus-visible .cp-sparks i {
+    animation-play-state: running;
 }
 
 .create-pill--rank .cp-sparks i:nth-child(1) { left: 18%; animation-delay: 0s; }
@@ -1283,9 +1298,15 @@
     .create-pill--hot .cp-ember {
         opacity: 0.7;
     }
+    .create-pill--hot .cp-side-fire i {
+        animation-play-state: paused;
+    }
     .create-pill--hot:active .cp-side-fire,
     .create-pill--hot:active .cp-ember {
         opacity: 1;
+    }
+    .create-pill--hot:active .cp-side-fire i {
+        animation-play-state: running;
     }
     .create-pill--hot {
         color: #fff;
@@ -2806,6 +2827,7 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
     filter: blur(11px) saturate(1.35);
     opacity: 0.78;
     animation: urlFireDrift 6.2s linear infinite;
+    animation-play-state: paused;
     transition: filter 0.38s ease, opacity 0.38s ease;
 }
 
@@ -2826,10 +2848,23 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
     filter: blur(6px) saturate(1.25);
     opacity: 0.7;
     animation: urlFireDrift 6.2s linear infinite reverse;
+    animation-play-state: paused;
     transition:
         inset 0.38s cubic-bezier(0.2, 1.05, 0.28, 1),
         filter 0.38s ease,
         opacity 0.38s ease;
+}
+
+.url-input-shell:hover .url-fire-fog,
+.url-input-shell:hover .url-fire-core,
+.url-input-shell.is-nudge-focus .url-fire-fog,
+.url-input-shell.is-nudge-focus .url-fire-core {
+    animation-play-state: running;
+}
+
+.url-input-shell:focus-within:not(:hover) .url-fire-fog,
+.url-input-shell:focus-within:not(:hover) .url-fire-core {
+    animation-play-state: paused;
 }
 
 @keyframes urlFireDrift {
@@ -4156,7 +4191,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
 
 .plan-selector-popover {
     position: fixed;
-    z-index: 10002;
+    z-index: 100070;
     width: min(268px, calc(100vw - 48px));
     padding: 0;
     border: none;
@@ -4713,14 +4748,18 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     background: #fff !important;
     display: block;
     flex-shrink: 0;
+    animation: none !important;
+}
+.url-submit-btn.loading .loading-dot,
+.url-submit-btn.loading .loading-dots span {
     animation: urlSubmitDotPulse 1.15s infinite ease-in-out !important;
 }
-.url-submit-btn .loading-dot:nth-child(1),
-.url-submit-btn .loading-dots span:nth-child(1) { animation-delay: 0s !important; }
-.url-submit-btn .loading-dot:nth-child(2),
-.url-submit-btn .loading-dots span:nth-child(2) { animation-delay: 0.18s !important; }
-.url-submit-btn .loading-dot:nth-child(3),
-.url-submit-btn .loading-dots span:nth-child(3) { animation-delay: 0.36s !important; }
+.url-submit-btn.loading .loading-dot:nth-child(1),
+.url-submit-btn.loading .loading-dots span:nth-child(1) { animation-delay: 0s !important; }
+.url-submit-btn.loading .loading-dot:nth-child(2),
+.url-submit-btn.loading .loading-dots span:nth-child(2) { animation-delay: 0.18s !important; }
+.url-submit-btn.loading .loading-dot:nth-child(3),
+.url-submit-btn.loading .loading-dots span:nth-child(3) { animation-delay: 0.36s !important; }
 
 @keyframes urlSubmitDotPulse {
     0%, 80%, 100% { opacity: 0.35; transform: scale(0.85); }
@@ -4728,8 +4767,10 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
 }
 @media (prefers-reduced-motion: reduce) {
     .url-submit-btn .loading-dot,
-    .url-submit-btn .loading-dots span {
-        animation: urlSubmitDotPulse 1.15s infinite ease-in-out !important;
+    .url-submit-btn .loading-dots span,
+    .url-submit-btn.loading .loading-dot,
+    .url-submit-btn.loading .loading-dots span {
+        animation: none !important;
     }
 }
 
@@ -11091,7 +11132,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     justify-content: center;
     visibility: hidden;
     pointer-events: none;
-    z-index: 11000;
+    z-index: 100080;
     padding: 20px;
     overflow-y: auto;
     transition: all 0.3s ease;
@@ -11757,7 +11798,8 @@ html[data-solis-cursor="always"] :is(
     .template-button,
     .template-use-btn,
     .uc-btn,
-    .solis-upgrade-card-cta
+    .solis-upgrade-card-cta,
+    .solis-gen-brand
 ) {
     cursor: var(--solis-preview-cursor-hand);
 }
@@ -16179,10 +16221,6 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     box-shadow: none;
     pointer-events: none;
     will-change: width;
-    transition: width 0.14s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.multi-gen-slider.is-dragging .multi-gen-fill {
     transition: none;
 }
 
@@ -16201,7 +16239,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     z-index: 2;
     pointer-events: auto;
     cursor: pointer;
-    transition: background 0.2s ease, transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
+    transition: background 0.15s ease, opacity 0.15s ease;
 }
 
 .multi-gen-step.is-on,
@@ -16232,14 +16270,10 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     pointer-events: none;
     transform: scale(1);
     will-change: left, transform;
-    transition:
-        left 0.14s cubic-bezier(0.22, 1, 0.36, 1),
-        transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
-        box-shadow 0.2s ease;
+    transition: none;
 }
 
 .multi-gen-slider.is-dragging .multi-gen-thumb {
-    transition: none;
     transform: scale(1.08);
     box-shadow:
         0 4px 14px rgba(120, 90, 60, 0.24),
@@ -16250,7 +16284,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
 .multi-gen-slider.is-snapping .multi-gen-thumb {
     transition:
         left 0.28s cubic-bezier(0.22, 1, 0.36, 1),
-        transform 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.22s ease,
         box-shadow 0.2s ease;
 }
 
@@ -16265,7 +16299,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
 }
 
 @media (max-width: 768px) {
-    .template-preview-modal { padding: 0; z-index: 5000; }
+    .template-preview-modal { padding: 0; z-index: 100080; }
 
     .template-preview-content {
         max-width: 100%; width: 100%;
@@ -16281,7 +16315,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
 
     .template-preview-header {
         padding: 10px 14px;
-        justify-content: space-between;
+        justify-content: flex-end;
         flex-shrink: 0;
     }
 
@@ -16381,7 +16415,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
 
     .template-use-fab {
         --use-tpl-dot: rgba(255, 255, 255, 0.42);
-        display: inline-flex;
+        display: inline-flex !important;
         align-items: center;
         justify-content: center;
         gap: 0;
@@ -16391,11 +16425,13 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
         padding: 0;
         border: 1px solid rgba(255, 255, 255, 0.22);
         border-radius: 50%;
-        background: linear-gradient(165deg, #ff8a5c 0%, #ff6b35 48%, #f05428 100%);
-        color: #fff;
+        background: linear-gradient(145deg, #ff8a55 0%, #ff6b35 42%, #ff4f1a 100%) !important;
+        color: #fff !important;
         box-shadow:
-            0 1px 0 rgba(255, 255, 255, 0.28) inset,
-            0 8px 22px rgba(240, 84, 40, 0.32);
+            0 10px 26px rgba(255, 90, 40, 0.34),
+            0 3px 8px rgba(255, 107, 53, 0.22),
+            inset 0 1px 1px rgba(255, 255, 255, 0.42),
+            inset 0 -2px 4px rgba(160, 40, 0, 0.18) !important;
         font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 13px;
         font-weight: 700;
@@ -16415,6 +16451,34 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
             box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1),
             opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1),
             border-color 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .template-use-fab[hidden] {
+        display: none !important;
+    }
+
+    .template-use-confirm-shell--fab {
+        display: inline-flex !important;
+        background: linear-gradient(145deg, #ff8a55 0%, #ff6b35 42%, #ff4f1a 100%);
+        box-shadow:
+            0 10px 26px rgba(255, 90, 40, 0.34),
+            0 3px 8px rgba(255, 107, 53, 0.22);
+    }
+
+    .template-use-confirm-shell--fab .template-use-fab {
+        background: transparent !important;
+        box-shadow: none !important;
+        border-color: transparent;
+    }
+
+    .template-use-fab-icon,
+    .template-use-fab-label {
+        color: #fff !important;
+    }
+
+    .template-use-fab-icon svg {
+        stroke: #fff !important;
+        color: #fff !important;
     }
 
     .template-use-fab::after {
@@ -17813,7 +17877,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
 }
 
 @media (max-width: 768px) {
-    .template-preview-modal { padding: 0; z-index: 5000; }
+    .template-preview-modal { padding: 0; z-index: 100080; }
 
     .template-preview-content {
         max-width: 100%; width: 100%;
@@ -17826,7 +17890,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     .template-preview-header {
         padding: 10px 14px;
         background: rgba(248, 248, 252, 0.6);
-        justify-content: space-between;
+        justify-content: flex-end;
         flex-shrink: 0;
     }
 

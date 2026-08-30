@@ -305,13 +305,16 @@ class RankingCustomizer {
     try {
       const t = window.clipsStudio;
       if (t?.currentTemplateForPreview?.isLibraryPreview && t._libraryRankingEditable) {
+        if (t._libraryDirtyArmed === false) return;
         t._libraryRankingDirty = true;
-        const e = document.getElementById("confirmUseTemplateBtn");
-        if (e) {
-          e.textContent = "Apply & Download";
-          e.classList.add("library-download-mode");
+        if (typeof window.syncLibraryConfirmLabel === "function") window.syncLibraryConfirmLabel(); else {
+          const t = document.getElementById("confirmUseTemplateBtn");
+          if (t) {
+            t.textContent = "Apply & Download";
+            t.classList.add("library-download-mode");
+          }
+          if (typeof window.syncUseTemplateFab === "function") window.syncUseTemplateFab();
         }
-        if (typeof window.syncUseTemplateFab === "function") window.syncUseTemplateFab();
       }
     } catch (t) {}
   }

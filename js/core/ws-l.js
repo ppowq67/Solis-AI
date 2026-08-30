@@ -1,21 +1,21 @@
 (function() {
   let e = 0;
   let t;
-  let i;
+  let n;
   const updateIndicator = e => {};
   function initSidebarState() {
     try {
       const t = document.getElementById("navContainer");
       if (!t) return;
-      const i = t.querySelectorAll(".nav-item");
+      const n = t.querySelectorAll(".nav-item");
       if (window.SolisFirstLanding && typeof window.SolisFirstLanding.needsLanding === "function" && window.SolisFirstLanding.needsLanding() && typeof window.SolisFirstLanding.applyCreateLanding === "function") {
         window.SolisFirstLanding.applyCreateLanding();
       }
-      const n = localStorage.getItem("currentNavigationTarget") || "clips";
-      const o = t.querySelector(`.nav-item[data-target="${n}"]`) || t.querySelector('.nav-item[data-target="clips"]') || Array.from(i).find(e => !e.classList.contains("disabled"));
+      const i = localStorage.getItem("currentNavigationTarget") || "clips";
+      const o = t.querySelector(`.nav-item[data-target="${i}"]`) || t.querySelector('.nav-item[data-target="clips"]') || Array.from(n).find(e => !e.classList.contains("disabled"));
       if (!o) return;
-      e = Array.from(i).indexOf(o);
-      i.forEach(e => e.classList.remove("active"));
+      e = Array.from(n).indexOf(o);
+      n.forEach(e => e.classList.remove("active"));
       o.classList.add("active");
       setTimeout(() => updateIndicator(o), 0);
       try {
@@ -24,9 +24,10 @@
       const a = o.getAttribute("data-target") || "clips";
       switchSection(a);
       if ((a === "clips" || a === "clips-studio" || a === "clipsContainer") && typeof window.switchClipsTab === "function") {
-        const e = localStorage.getItem("clipsActiveTab") || localStorage.getItem("clipsStudioCurrentTab") || "create";
-        const t = document.querySelector(`.clips-tab[data-tab="${e}"], .clips-sub-item[data-tab="${e}"]`);
-        window.switchClipsTab(e, t);
+        const e = localStorage.getItem("clipsActiveTab") || localStorage.getItem("clipsStudioCurrentTab") || "templates";
+        const t = e === "create" && window.innerWidth <= 768 ? "templates" : e;
+        const n = document.querySelector(`.clips-tab[data-tab="${t}"], .clips-sub-item[data-tab="${t}"]`);
+        window.switchClipsTab(t, n);
       }
     } catch (e) {
       console.error("Failed to restore sidebar state:", e);
@@ -39,8 +40,8 @@
     if (t) {
       updateIndicator(t);
     }
-    if (i) i.disconnect();
-    i = new MutationObserver(e => {
+    if (n) n.disconnect();
+    n = new MutationObserver(e => {
       e.forEach(e => {
         if (e.type === "attributes" && e.attributeName === "class") {
           const t = e.target;
@@ -51,7 +52,7 @@
       });
     });
     e.querySelectorAll(".nav-item").forEach(e => {
-      i.observe(e, {
+      n.observe(e, {
         attributes: true,
         attributeFilter: [ "class" ]
       });
@@ -62,20 +63,20 @@
       window.__solisShowNotification(e, t);
       return;
     }
-    const i = document.getElementById("notificationContainer") || createNotificationContainer();
-    const n = document.createElement("div");
+    const n = document.getElementById("notificationContainer") || createNotificationContainer();
+    const i = document.createElement("div");
     const o = [ "success", "error", "warning", "info" ].includes(t) ? t : "info";
-    n.className = `notification notification-${o} ${o}`;
-    n.innerHTML = `\n                <div class="notification-content">\n                    <span class="notification-message"></span>\n                </div>\n            `;
-    n.querySelector(".notification-message").textContent = String(e || "");
-    i.appendChild(n);
+    i.className = `notification notification-${o} ${o}`;
+    i.innerHTML = `\n                <div class="notification-content">\n                    <span class="notification-message"></span>\n                </div>\n            `;
+    i.querySelector(".notification-message").textContent = String(e || "");
+    n.appendChild(i);
     requestAnimationFrame(() => {
-      requestAnimationFrame(() => n.classList.add("show"));
+      requestAnimationFrame(() => i.classList.add("show"));
     });
     setTimeout(() => {
-      n.classList.remove("show");
-      n.classList.add("is-leaving");
-      setTimeout(() => n.remove(), 320);
+      i.classList.remove("show");
+      i.classList.add("is-leaving");
+      setTimeout(() => i.remove(), 320);
     }, 3500);
   }
   function createNotificationContainer() {
@@ -142,7 +143,7 @@
       }
       const e = typeof window.getSolisSocketOrigin === "function" ? window.getSolisSocketOrigin() : (window.API_BASE_URL || "https://api.solisai.video/api").toString().replace(/\/api\/?$/, "") || "https://api.solisai.video";
       let t = sessionStorage.getItem("auth_token") || sessionStorage.getItem("jwt_token") || localStorage.getItem("auth_token");
-      const i = io(e, {
+      const n = io(e, {
         transports: [ "websocket", "polling" ],
         reconnectionDelay: 1e3,
         reconnectionAttempts: 10,
@@ -154,8 +155,8 @@
         },
         withCredentials: true
       });
-      i.on("connect", () => {});
-      i.on("video_generated", e => {
+      n.on("connect", () => {});
+      n.on("video_generated", e => {
         try {
           showNotification(` ${e.video_title || "Your video"} has been generated successfully!`, "success");
           window.dispatchEvent(new CustomEvent("videoGenerated", {
@@ -168,7 +169,7 @@
           console.error("Error handling video_generated event:", e);
         }
       });
-      i.on("video_generation_error", e => {
+      n.on("video_generation_error", e => {
         try {
           showNotification(` ${e.message || "Video generation failed"}`, "error");
           window.dispatchEvent(new CustomEvent("videoGenerationError", {
@@ -180,7 +181,7 @@
           console.error("Error handling video_generation_error event:", e);
         }
       });
-      i.on("video_generation_progress", e => {
+      n.on("video_generation_progress", e => {
         try {
           showNotification(` ${e.message || "Processing..."}`, "info");
           window.dispatchEvent(new CustomEvent("videoGenerationProgress", {
@@ -192,13 +193,13 @@
           console.error("Error handling video_generation_progress event:", e);
         }
       });
-      let n = 0;
+      let i = 0;
       const o = 5e3;
-      i.on("connect_error", e => {
+      n.on("connect_error", e => {
         console.error("Socket.IO connection error:", e);
       });
-      i.on("disconnect", () => {});
-      window.videoGenerationSocket = i;
+      n.on("disconnect", () => {});
+      window.videoGenerationSocket = n;
     } catch (e) {
       console.error("Failed to initialize video generation socket:", e);
     }
@@ -217,17 +218,17 @@
     initSidebarState();
     initIndicatorTracking();
   }
-  function navigate(t, i) {
+  function navigate(t, n) {
     if (t.classList.contains("disabled")) return;
-    if (i === e) return;
-    const n = document.getElementById("navContainer");
-    const o = n.querySelectorAll(".nav-item");
+    if (n === e) return;
+    const i = document.getElementById("navContainer");
+    const o = i.querySelectorAll(".nav-item");
     o.forEach(e => e.classList.remove("active"));
     t.classList.add("active");
-    e = i;
+    e = n;
     updateIndicator(t);
     try {
-      localStorage.setItem("sidebarActiveIndex", i);
+      localStorage.setItem("sidebarActiveIndex", n);
     } catch (e) {
       console.error("Failed to save sidebar state:", e);
     }
@@ -243,10 +244,10 @@
     }
   }
   window.navigate = navigate;
-  let n = false;
+  let i = false;
   function switchSection(e, t) {
-    const i = t || {};
-    const n = i.keepVisible || null;
+    const n = t || {};
+    const i = n.keepVisible || null;
     try {
       if (e) localStorage.setItem("currentNavigationTarget", e);
     } catch (e) {}
@@ -257,7 +258,7 @@
     const l = document.querySelector(".input-section");
     [ o, a, s, r ].forEach(e => {
       if (!e) return;
-      if (n && e === n) return;
+      if (i && e === i) return;
       e.style.display = "none";
       e.classList.remove("active");
     });
@@ -315,19 +316,19 @@
       }
       return;
     }
-    if (n) return;
+    if (i) return;
     const t = document.getElementById("portalContainer");
-    const i = document.getElementById("clipsContainer");
-    if (!t || !i) return;
-    const o = e ? t : i;
-    const a = e ? i : t;
-    const s = e ? document.body.classList.contains("mnav-on-portal") : !document.body.classList.contains("mnav-on-portal") && i.classList.contains("active");
+    const n = document.getElementById("clipsContainer");
+    if (!t || !n) return;
+    const o = e ? t : n;
+    const a = e ? n : t;
+    const s = e ? document.body.classList.contains("mnav-on-portal") : !document.body.classList.contains("mnav-on-portal") && n.classList.contains("active");
     if (s && !e) {
       goMobileClipsTab("templates");
       return;
     }
     if (s && e) return;
-    n = true;
+    i = true;
     o.style.display = "block";
     o.classList.add("active", "mnav-section-anim");
     a.classList.add("mnav-section-anim");
@@ -342,7 +343,11 @@
       const e = document.querySelector('.nav-item[data-target="Portal"]');
       document.querySelectorAll(".nav-item[data-target]").forEach(e => e.classList.remove("active"));
       e?.classList.add("active");
-      document.querySelectorAll(".clips-sub-item").forEach(e => e.classList.remove("active"));
+      document.querySelectorAll(".clips-sub-item").forEach(e => {
+        const t = e.getAttribute("data-tab") === "portal";
+        e.classList.toggle("active", t);
+        e.setAttribute("aria-selected", t ? "true" : "false");
+      });
     } else {
       try {
         localStorage.setItem("currentNavigationTarget", "clips");
@@ -371,7 +376,7 @@
       if (!e && window.clipsStudio && !window.clipsStudio.initialized) {
         window.clipsStudio.init();
       }
-      n = false;
+      i = false;
     };
     clearTimeout(transitionPortalTemplates._t);
     transitionPortalTemplates._t = setTimeout(finish, 420);
@@ -379,6 +384,9 @@
   }
   function goMobilePortal() {
     window.closeMobileNavMenu?.();
+    window.closeMobileCreateSheet?.({
+      immediate: true
+    });
     transitionPortalTemplates(true);
   }
   function goMobileTemplatesFromPortal() {
@@ -387,12 +395,12 @@
   }
   function updateMobileClipsPillIndicator(e) {
     const t = document.getElementById("clipsSubPane");
-    const i = document.querySelector(".clips-sub-pill");
-    if (!t || !i || window.innerWidth > 768) return;
-    const n = e || document.querySelector(".clips-sub-item.active")?.getAttribute("data-tab") || localStorage.getItem("clipsActiveTab") || "create";
-    const o = document.querySelector(`.clips-sub-item[data-tab="${n}"]`);
+    const n = document.querySelector(".clips-sub-pill");
+    if (!t || !n || window.innerWidth > 768) return;
+    const i = e || document.querySelector(".clips-sub-item.active")?.getAttribute("data-tab") || localStorage.getItem("clipsActiveTab") || "create";
+    const o = document.querySelector(`.clips-sub-item[data-tab="${i}"]`);
     if (!o) return;
-    const a = i.getBoundingClientRect();
+    const a = n.getBoundingClientRect();
     const s = o.getBoundingClientRect();
     t.style.width = `${s.width}px`;
     t.style.transform = `translateX(${s.left - a.left - 5}px)`;
@@ -403,14 +411,24 @@
       localStorage.setItem("currentNavigationTarget", "clips");
     } catch (e) {}
     window.closeMobileNavMenu?.();
+    if (e === "create") {
+      if (window.innerWidth <= 768) {
+        window.openMobileCreateSheet?.();
+        return;
+      }
+    } else {
+      window.closeMobileCreateSheet?.({
+        immediate: true
+      });
+    }
     if (window.innerWidth <= 768 && document.body.classList.contains("mnav-on-portal") && e === "templates") {
       transitionPortalTemplates(false);
       return;
     }
-    const i = [ "templates", "create", "library" ];
-    const n = document.querySelector(".clips-sub-item.active")?.getAttribute("data-tab") || localStorage.getItem("clipsActiveTab") || "create";
-    const o = i.indexOf(n);
-    const a = i.indexOf(e);
+    const n = [ "templates", "library" ];
+    const i = document.querySelector(".clips-sub-item.active:not(.clips-sub-create)")?.getAttribute("data-tab") || localStorage.getItem("clipsActiveTab") || "templates";
+    const o = n.indexOf(i === "create" ? "templates" : i);
+    const a = n.indexOf(e);
     const s = a > o ? "left" : a < o ? "right" : null;
     switchSection("clips");
     const r = t || document.querySelector(`.clips-sub-item[data-tab="${e}"]`);
@@ -434,9 +452,9 @@
     const e = document.getElementById("clipsContainer") || document.querySelector(".main-content");
     if (!e || e.dataset.clipsSwipeBound === "1") return;
     e.dataset.clipsSwipeBound = "1";
-    const t = [ "templates", "create", "library" ];
-    const i = 12;
-    const n = 72;
+    const t = [ "templates", "library" ];
+    const n = 12;
+    const i = 72;
     const o = .28;
     let a = 0;
     let s = 0;
@@ -469,12 +487,14 @@
       }
     }
     function currentTabIndex() {
-      const e = document.querySelector(".clips-sub-item.active");
-      const i = e?.getAttribute("data-tab") || localStorage.getItem("clipsActiveTab") || "create";
+      const e = document.querySelector(".clips-sub-item.active:not(.clips-sub-create)");
+      const n = e?.getAttribute("data-tab") || localStorage.getItem("clipsActiveTab") || "templates";
+      const i = n === "create" ? "templates" : n;
       return t.indexOf(i);
     }
     e.addEventListener("touchstart", e => {
       if (window.innerWidth > 768) return;
+      if (document.body.classList.contains("mnav-create-open")) return;
       if (!e.touches || e.touches.length !== 1) return;
       const t = e.target;
       if (t && t.closest && t.closest('input, textarea, select, [contenteditable="true"],' + ".preview-placeholder, .sub-text-block, .url-input-wrapper," + ".preview-timeline-wrap, .template-preview-modal, .stgModal," + ".mobile-clips-bar, .clips-sub-nav")) {
@@ -494,11 +514,11 @@
     e.addEventListener("touchmove", e => {
       if (!l || window.innerWidth > 768) return;
       if (!e.touches || e.touches.length !== 1) return;
-      const n = e.touches[0];
-      const o = n.clientX - a;
-      const r = n.clientY - s;
+      const i = e.touches[0];
+      const o = i.clientX - a;
+      const r = i.clientY - s;
       if (!c) {
-        if (Math.abs(o) < i && Math.abs(r) < i) return;
+        if (Math.abs(o) < n && Math.abs(r) < n) return;
         if (Math.abs(r) >= Math.abs(o)) {
           c = "y";
           l = false;
@@ -533,10 +553,10 @@
         d = null;
         return;
       }
-      const i = c === "x";
+      const n = c === "x";
       l = false;
       c = null;
-      if (!i) {
+      if (!n) {
         clearDragStyles(d, false);
         d = null;
         return;
@@ -545,13 +565,13 @@
       const m = s ? s.clientX - a : u;
       const p = Math.max(16, Date.now() - r);
       const f = Math.abs(m) / p;
-      const v = Math.max(n, window.innerWidth * o);
-      const g = Math.abs(m) >= v || Math.abs(m) > 42 && f > .55;
-      const w = currentTabIndex();
-      let y = w;
-      const h = document.body.classList.contains("mnav-on-portal");
-      if (g) {
-        if (h) {
+      const v = Math.max(i, window.innerWidth * o);
+      const w = Math.abs(m) >= v || Math.abs(m) > 42 && f > .55;
+      const g = currentTabIndex();
+      let h = g;
+      const b = document.body.classList.contains("mnav-on-portal");
+      if (w) {
+        if (b) {
           if (m < 0) {
             clearDragStyles(d, false);
             d = null;
@@ -562,18 +582,18 @@
           d = null;
           return;
         }
-        if (w === 0 && m > 0) {
+        if (g === 0 && m > 0) {
           clearDragStyles(d, false);
           d = null;
           goMobilePortal();
           return;
         }
-        y = m < 0 ? Math.min(t.length - 1, w + 1) : Math.max(0, w - 1);
+        h = m < 0 ? Math.min(t.length - 1, g + 1) : Math.max(0, g - 1);
       }
-      if (y !== w) {
+      if (h !== g) {
         clearDragStyles(d, false);
         d = null;
-        goMobileClipsTab(t[y]);
+        goMobileClipsTab(t[h]);
         return;
       }
       clearDragStyles(d, true);
@@ -592,31 +612,32 @@
   window.goMobileTemplatesFromPortal = goMobileTemplatesFromPortal;
   window.handleNav = function(e, t) {
     if (!e || e.classList.contains("disabled") || e.disabled) return;
-    const i = e.getAttribute("data-target");
-    if (i === "clips") {
-      goMobileClipsTab(localStorage.getItem("clipsActiveTab") || "create");
+    const n = e.getAttribute("data-target");
+    if (n === "clips") {
+      const e = localStorage.getItem("clipsActiveTab");
+      goMobileClipsTab(e && e !== "create" ? e : "templates");
       return;
     }
     localStorage.setItem("activeNavIndex", t);
     document.querySelectorAll(".nav-item[data-target]").forEach(e => e.classList.remove("active"));
     e.classList.add("active");
-    if (i) switchSection(i);
+    if (n) switchSection(n);
   };
   window.closeMobileNavMenu = function() {
     const e = document.getElementById("mnavMenuBtn");
     const t = document.getElementById("mnavMenuSheet");
-    const i = document.getElementById("mnavMenuBackdrop");
+    const n = document.getElementById("mnavMenuBackdrop");
     if (t) {
       t.hidden = true;
       t.classList.remove("is-open");
       t.style.display = "none";
       t.setAttribute("aria-hidden", "true");
     }
-    if (i) {
-      i.hidden = true;
-      i.classList.remove("is-open");
-      i.style.display = "none";
-      i.setAttribute("aria-hidden", "true");
+    if (n) {
+      n.hidden = true;
+      n.classList.remove("is-open");
+      n.style.display = "none";
+      n.setAttribute("aria-hidden", "true");
     }
     if (e) {
       e.setAttribute("aria-expanded", "false");
@@ -626,24 +647,24 @@
   window.openMobileNavMenu = function() {
     const e = document.getElementById("mnavMenuBtn");
     const t = document.getElementById("mnavMenuSheet");
-    const i = document.getElementById("mnavMenuBackdrop");
+    const n = document.getElementById("mnavMenuBackdrop");
     if (!t) return;
-    const n = document.body.classList.contains("mnav-on-portal");
+    const i = document.body.classList.contains("mnav-on-portal");
     const o = document.getElementById("clipsContainer")?.classList.contains("active");
     t.querySelectorAll("[data-mnav-go]").forEach(e => {
       const t = e.getAttribute("data-mnav-go");
-      const i = t === "Portal" ? n : t === "clips" ? !n && o : false;
-      e.classList.toggle("is-active", !!i);
+      const n = t === "Portal" ? i : t === "clips" ? !i && o : false;
+      e.classList.toggle("is-active", !!n);
     });
     t.hidden = false;
     t.classList.add("is-open");
     t.style.display = "flex";
     t.setAttribute("aria-hidden", "false");
-    if (i) {
-      i.hidden = false;
-      i.classList.add("is-open");
-      i.style.display = "block";
-      i.setAttribute("aria-hidden", "false");
+    if (n) {
+      n.hidden = false;
+      n.classList.add("is-open");
+      n.style.display = "block";
+      n.setAttribute("aria-hidden", "false");
     }
     if (e) {
       e.setAttribute("aria-expanded", "true");
@@ -662,74 +683,313 @@
   };
   window.toggleNavWrapperCollapse = function() {};
   window.switchSection = switchSection;
+  (function initMobileCreateSheetApi() {
+    const e = 48;
+    const t = 0;
+    const n = 78;
+    let i = e;
+    let o = null;
+    let a = false;
+    let s = 0;
+    let r = e;
+    function els() {
+      return {
+        sheet: document.getElementById("mnavCreateSheet"),
+        backdrop: document.getElementById("mnavCreateBackdrop"),
+        body: document.getElementById("mnavCreateSheetBody"),
+        grab: document.getElementById("mnavCreateGrab"),
+        fab: document.getElementById("mnavCreateFab")
+      };
+    }
+    function setSheetY(e) {
+      i = Math.max(t, Math.min(110, e));
+      const {sheet: n} = els();
+      if (n) n.style.setProperty("--mnav-sheet-y", `${i}%`);
+    }
+    function ensureUrlInSheet() {
+      const {body: e} = els();
+      if (!e) return;
+      const t = document.querySelector("#createSection .create-content") || document.querySelector(".create-content");
+      if (t) {
+        if (t.parentElement === e) return;
+        o = {
+          parent: t.parentElement,
+          next: t.nextSibling
+        };
+        e.appendChild(t);
+        return;
+      }
+      const n = document.querySelector(".url-input-container");
+      if (!n || n.parentElement === e) return;
+      o = {
+        parent: n.parentElement,
+        next: n.nextSibling
+      };
+      e.appendChild(n);
+    }
+    function restoreUrl() {
+      const {body: e} = els();
+      const t = e?.querySelector(".create-content");
+      const n = t || e?.querySelector(".url-input-container");
+      if (!n || !o?.parent) return;
+      if (o.next && o.next.parentNode === o.parent) {
+        o.parent.insertBefore(n, o.next);
+      } else {
+        o.parent.appendChild(n);
+      }
+    }
+    window.openMobileCreateSheet = function() {
+      if (window.innerWidth > 768) return;
+      const {sheet: t, backdrop: n, fab: i} = els();
+      if (!t) return;
+      clearTimeout(t._mnavCloseT);
+      window.closeMobileNavMenu?.();
+      ensureUrlInSheet();
+      t.classList.remove("is-revealed", "is-dragging");
+      t.style.transition = "none";
+      setSheetY(110);
+      t.hidden = false;
+      t.removeAttribute("hidden");
+      t.classList.add("is-open");
+      t.setAttribute("aria-hidden", "false");
+      if (n) {
+        n.hidden = false;
+        n.removeAttribute("hidden");
+        n.classList.add("is-open");
+        n.setAttribute("aria-hidden", "false");
+      }
+      i?.classList.add("is-open");
+      i?.setAttribute("aria-selected", "true");
+      document.body.classList.add("mnav-create-open");
+      document.documentElement.style.overflow = "hidden";
+      void t.offsetWidth;
+      t.style.transition = "";
+      requestAnimationFrame(() => {
+        setSheetY(e);
+        t.classList.add("is-revealed");
+      });
+      setTimeout(() => {
+        try {
+          document.getElementById("youtubeUrlInput")?.focus?.({
+            preventScroll: true
+          });
+        } catch (e) {}
+      }, 420);
+      if (window.navigator.vibrate) window.navigator.vibrate(8);
+    };
+    window.closeMobileCreateSheet = function(t) {
+      const n = !!(t && t.immediate);
+      const {sheet: o, backdrop: a, fab: s} = els();
+      if (!o || !o.classList.contains("is-open") && o.hidden) {
+        s?.classList.remove("is-open");
+        document.body.classList.remove("mnav-create-open");
+        document.documentElement.style.overflow = "";
+        return;
+      }
+      clearTimeout(o._mnavCloseT);
+      o.classList.remove("is-dragging", "is-revealed");
+      s?.classList.remove("is-open");
+      s?.setAttribute("aria-selected", "false");
+      if (a) a.classList.remove("is-open");
+      const finish = () => {
+        o.classList.remove("is-open", "is-revealed");
+        o.setAttribute("aria-hidden", "true");
+        o.hidden = true;
+        o.style.removeProperty("--mnav-sheet-y");
+        o.style.transition = "";
+        if (a) {
+          a.hidden = true;
+          a.setAttribute("aria-hidden", "true");
+        }
+        document.body.classList.remove("mnav-create-open");
+        document.documentElement.style.overflow = "";
+        restoreUrl();
+        i = e;
+      };
+      if (n) {
+        o.style.transition = "none";
+        o.style.setProperty("--mnav-sheet-y", "110%");
+        finish();
+        return;
+      }
+      setSheetY(110);
+      o._mnavCloseT = setTimeout(finish, 420);
+    };
+    window.toggleMobileCreateSheet = function(e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      if (window.innerWidth > 768) return;
+      const t = document.getElementById("mnavCreateSheet");
+      if (t && !t.hidden && t.classList.contains("is-open")) {
+        window.closeMobileCreateSheet();
+      } else {
+        window.openMobileCreateSheet();
+      }
+    };
+    window.bindMobileCreateSheetUi = function() {
+      const {sheet: o, backdrop: l, grab: c, fab: d, body: u} = els();
+      if (!o || o.dataset.dragBound === "1") return;
+      o.dataset.dragBound = "1";
+      d?.addEventListener("click", e => window.toggleMobileCreateSheet(e));
+      l?.addEventListener("click", () => window.closeMobileCreateSheet());
+      let m = 0;
+      let p = 0;
+      let f = 0;
+      let v = false;
+      function unbindWin() {
+        if (!v) return;
+        v = false;
+        window.removeEventListener("touchmove", onWinMove);
+        window.removeEventListener("touchend", onWinEnd);
+        window.removeEventListener("touchcancel", onWinEnd);
+      }
+      function onWinMove(e) {
+        if (!a || !e.touches?.[0]) return;
+        onMove(e.touches[0].clientY);
+        if (e.cancelable) e.preventDefault();
+      }
+      function onWinEnd() {
+        unbindWin();
+        onEnd();
+      }
+      function onStart(e) {
+        a = true;
+        s = e;
+        r = i;
+        m = e;
+        p = Date.now();
+        f = 0;
+        o.classList.add("is-dragging");
+        if (!v) {
+          v = true;
+          window.addEventListener("touchmove", onWinMove, {
+            passive: false
+          });
+          window.addEventListener("touchend", onWinEnd, {
+            passive: true
+          });
+          window.addEventListener("touchcancel", onWinEnd, {
+            passive: true
+          });
+        }
+      }
+      function onMove(e) {
+        if (!a) return;
+        const t = Date.now();
+        const n = Math.max(16, t - p);
+        f = (e - m) / n;
+        m = e;
+        p = t;
+        const i = o.offsetHeight || window.innerHeight;
+        const l = (e - s) / i * 100;
+        setSheetY(r + l);
+      }
+      function onEnd() {
+        if (!a) return;
+        a = false;
+        o.classList.remove("is-dragging");
+        unbindWin();
+        if (i >= n || i > 62 && f > .45) {
+          window.closeMobileCreateSheet();
+          return;
+        }
+        if (i <= 26 || f < -.45 && i < 55) {
+          setSheetY(t);
+        } else {
+          setSheetY(e);
+        }
+      }
+      function tryStartFromEvent(e) {
+        if (!o.classList.contains("is-open")) return;
+        if (!e.touches?.[0]) return;
+        onStart(e.touches[0].clientY);
+      }
+      c?.addEventListener("touchstart", tryStartFromEvent, {
+        passive: true
+      });
+      u?.addEventListener("touchstart", e => {
+        if (!o.classList.contains("is-open")) return;
+        if (u.scrollTop > 2) return;
+        const t = e.target;
+        if (t && t.closest && t.closest('input, textarea, select, button, a, [contenteditable="true"]')) return;
+        tryStartFromEvent(e);
+      }, {
+        passive: true
+      });
+      c?.addEventListener("pointerdown", e => {
+        if (e.pointerType === "touch") return;
+        if (!o.classList.contains("is-open")) return;
+        if (e.button !== 0) return;
+        e.preventDefault();
+        onStart(e.clientY);
+        const move = e => onMove(e.clientY);
+        const up = () => {
+          onEnd();
+          window.removeEventListener("pointermove", move);
+          window.removeEventListener("pointerup", up);
+          window.removeEventListener("pointercancel", up);
+        };
+        window.addEventListener("pointermove", move);
+        window.addEventListener("pointerup", up);
+        window.addEventListener("pointercancel", up);
+      });
+    };
+  })();
   document.addEventListener("DOMContentLoaded", function() {
     initMobileClipsSwipe();
+    window.bindMobileCreateSheetUi?.();
     function syncMobileProfileInNav() {
       const e = document.getElementById("profileActionCluster");
       const t = document.getElementById("profileDropdownWr");
-      const i = document.getElementById("notifWrapper") || document.querySelector(".profile-action-cluster > .notif-wrapper") || document.getElementById("bellBtn")?.closest(".notif-wrapper");
-      const n = document.getElementById("navWrapper");
+      const n = document.getElementById("notifWrapper") || document.querySelector(".profile-action-cluster > .notif-wrapper") || document.getElementById("bellBtn")?.closest(".notif-wrapper");
+      const i = document.getElementById("navWrapper");
       const o = document.querySelector(".profile-notif-wrapper");
-      if (!n || !o) return;
+      if (!i || !o) return;
       const a = window.innerWidth <= 768;
-      let s = document.getElementById("mnavSideActions") || n.querySelector(".mnav-side-actions");
+      const s = i.querySelector(".clips-sub-pill");
+      let r = document.getElementById("mnavSideActions") || i.querySelector(".mnav-side-actions");
       if (a) {
-        if (!s) {
-          s = document.createElement("div");
-          s.className = "mnav-side-actions";
-          s.id = "mnavSideActions";
-          n.appendChild(s);
-        } else if (s.parentElement !== n) {
-          n.appendChild(s);
+        const n = s?.querySelector(".clips-sub-side--right") || s || i;
+        if (!r) {
+          r = document.createElement("div");
+          r.className = "mnav-side-actions";
+          r.id = "mnavSideActions";
+          n.appendChild(r);
+        } else if (r.parentElement !== n) {
+          n.appendChild(r);
         }
-        if (e && e.parentElement !== s) {
-          s.appendChild(e);
+        document.getElementById("mnavMenuBtn")?.remove();
+        if (e && e.parentElement !== r) {
+          r.appendChild(e);
           document.getElementById("notificationsDropdown")?.classList.remove("open");
           document.getElementById("profileDropdown")?.classList.remove("open");
         } else {
-          if (i && i.parentElement !== s && !e) {
-            s.appendChild(i);
-            document.getElementById("notificationsDropdown")?.classList.remove("open");
-          }
-          if (t && t.parentElement !== s && !e) {
-            s.appendChild(t);
+          if (t && t.parentElement !== r && !e) {
+            r.appendChild(t);
             document.getElementById("profileDropdown")?.classList.remove("open");
           }
         }
-        const o = document.getElementById("mnavMenuBtn");
-        if (o && o.parentElement === s && s.firstElementChild !== o) {
-          s.insertBefore(o, s.firstElementChild);
-        } else if (!o && s) {
-          const e = document.createElement("button");
-          e.type = "button";
-          e.className = "mnav-menu-btn";
-          e.id = "mnavMenuBtn";
-          e.setAttribute("aria-label", "Open menu");
-          e.setAttribute("aria-expanded", "false");
-          e.setAttribute("aria-controls", "mnavMenuSheet");
-          e.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" width="20" height="20" class="mnav-menu-icon" aria-hidden="true"><line x1="5" y1="7" x2="19" y2="7"/><line x1="5" y1="12" x2="19" y2="12"/><line x1="5" y1="17" x2="19" y2="17"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" width="20" height="20" class="mnav-menu-close" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
-          s.insertBefore(e, s.firstElementChild);
-          e.addEventListener("click", e => window.toggleMobileNavMenu(e));
-        }
+        r.querySelectorAll(".mnav-profile-label").forEach(e => e.remove());
       } else {
         window.closeMobileNavMenu?.();
+        window.closeMobileCreateSheet?.();
         if (e && e.parentElement !== o) {
           o.appendChild(e);
           document.getElementById("profileDropdown")?.classList.remove("open");
           document.getElementById("notificationsDropdown")?.classList.remove("open");
         } else {
-          if (i && i.parentElement !== o && !e) {
+          if (n && n.parentElement !== o && !e) {
             const e = o.querySelector(".generation-progress-wrapper");
-            if (e && e.nextSibling) o.insertBefore(i, e.nextSibling); else if (t && t.parentElement === o) o.insertBefore(i, t); else o.appendChild(i);
+            if (e && e.nextSibling) o.insertBefore(n, e.nextSibling); else if (t && t.parentElement === o) o.insertBefore(n, t); else o.appendChild(n);
           }
           if (t && t.parentElement !== o && !e) {
             o.appendChild(t);
             document.getElementById("profileDropdown")?.classList.remove("open");
           }
         }
-        if (s && !s.querySelector(".profile-action-cluster") && !s.querySelector(".profile-dropdown-wr") && !s.querySelector(".notif-wrapper") && !s.querySelector("#mnavMenuBtn")) {
-          s.remove();
-        }
+        r?.querySelectorAll(".mnav-profile-label").forEach(e => e.remove());
       }
     }
     syncMobileProfileInNav();
@@ -737,15 +997,15 @@
     window.syncMobileProfileInNav = syncMobileProfileInNav;
     const e = document.getElementById("mnavMenuBtn");
     const t = document.getElementById("mnavMenuBackdrop");
-    const i = document.getElementById("mnavMenuSheet");
+    const n = document.getElementById("mnavMenuSheet");
     if (e) {
       e.addEventListener("click", e => window.toggleMobileNavMenu(e));
     }
     if (t) {
       t.addEventListener("click", () => window.closeMobileNavMenu());
     }
-    if (i) {
-      i.querySelectorAll("[data-mnav-go]").forEach(e => {
+    if (n) {
+      n.querySelectorAll("[data-mnav-go]").forEach(e => {
         e.addEventListener("click", () => {
           if (e.disabled || e.classList.contains("is-disabled")) return;
           const t = e.getAttribute("data-mnav-go");
@@ -755,12 +1015,13 @@
             return;
           }
           if (t === "clips") {
-            goMobileClipsTab(localStorage.getItem("clipsActiveTab") || "create");
+            const e = localStorage.getItem("clipsActiveTab");
+            goMobileClipsTab(e && e !== "create" ? e : "templates");
             return;
           }
-          const i = document.querySelector(`.nav-item[data-target="${t}"]`);
-          if (i && typeof window.navigate === "function") {
-            window.navigate(i, Number(i.dataset.index || 0));
+          const n = document.querySelector(`.nav-item[data-target="${t}"]`);
+          if (n && typeof window.navigate === "function") {
+            window.navigate(n, Number(n.dataset.index || 0));
           } else if (t) {
             switchSection(t);
           }
@@ -768,15 +1029,37 @@
       });
     }
     document.addEventListener("keydown", e => {
-      if (e.key === "Escape") window.closeMobileNavMenu();
+      if (e.key === "Escape") {
+        window.closeMobileCreateSheet?.();
+        window.closeMobileNavMenu?.();
+      }
     });
+    const wrapSwitchClipsTab = () => {
+      if (typeof window.switchClipsTab !== "function" || window.switchClipsTab._mnavCreateWrapped) return;
+      const e = window.switchClipsTab;
+      const wrapped = function(t, n) {
+        if (t === "create" && window.innerWidth <= 768) {
+          window.openMobileCreateSheet?.();
+          return;
+        }
+        if (window.innerWidth <= 768 && t !== "create") {
+          window.closeMobileCreateSheet?.();
+        }
+        return e.call(this, t, n);
+      };
+      wrapped._mnavCreateWrapped = true;
+      window.switchClipsTab = wrapped;
+    };
+    wrapSwitchClipsTab();
+    setTimeout(wrapSwitchClipsTab, 0);
+    setTimeout(wrapSwitchClipsTab, 400);
     const o = document.getElementById("portalContainer");
     if (o && !o.dataset.portalSwipeBound) {
       o.dataset.portalSwipeBound = "1";
-      let e = 0, t = 0, i = 0, a = false, s = null;
+      let e = 0, t = 0, n = 0, a = false, s = null;
       o.addEventListener("touchstart", o => {
         if (window.innerWidth > 768 || !document.body.classList.contains("mnav-on-portal")) return;
-        if (n) return;
+        if (i) return;
         if (!o.touches || o.touches.length !== 1) return;
         const r = o.target;
         if (r && r.closest && r.closest('input, textarea, select, [contenteditable="true"],' + ".stgModal, .mobile-clips-bar, .clips-sub-nav, .profile-dropdown-wr," + ".mnav-side-actions, .notif-wrapper")) {
@@ -785,21 +1068,21 @@
         }
         e = o.touches[0].clientX;
         t = o.touches[0].clientY;
-        i = Date.now();
+        n = Date.now();
         a = true;
         s = null;
       }, {
         passive: true
       });
-      o.addEventListener("touchmove", i => {
+      o.addEventListener("touchmove", n => {
         if (!a) return;
-        const n = i.touches[0].clientX - e;
-        const o = i.touches[0].clientY - t;
+        const i = n.touches[0].clientX - e;
+        const o = n.touches[0].clientY - t;
         if (!s) {
-          if (Math.abs(n) < 12 && Math.abs(o) < 12) return;
-          s = Math.abs(n) >= Math.abs(o) ? "x" : "y";
+          if (Math.abs(i) < 12 && Math.abs(o) < 12) return;
+          s = Math.abs(i) >= Math.abs(o) ? "x" : "y";
         }
-        if (s === "x" && Math.abs(n) > 16) i.preventDefault();
+        if (s === "x" && Math.abs(i) > 16) n.preventDefault();
       }, {
         passive: false
       });
@@ -807,10 +1090,10 @@
         if (!a) return;
         a = false;
         if (s !== "x") return;
-        const n = (t.changedTouches?.[0]?.clientX ?? e) - e;
-        const o = Math.max(16, Date.now() - i);
-        const r = Math.abs(n) / o;
-        if (n < -72 || n < -42 && r > .55) {
+        const i = (t.changedTouches?.[0]?.clientX ?? e) - e;
+        const o = Math.max(16, Date.now() - n);
+        const r = Math.abs(i) / o;
+        if (i < -72 || i < -42 && r > .55) {
           goMobileTemplatesFromPortal();
         }
       }, {
@@ -818,8 +1101,10 @@
       });
     }
     if (window.innerWidth <= 768) {
-      goMobileClipsTab("create");
-      requestAnimationFrame(() => updateMobileClipsPillIndicator("create"));
+      const e = localStorage.getItem("clipsActiveTab");
+      const t = e && e !== "create" ? e : "templates";
+      goMobileClipsTab(t);
+      requestAnimationFrame(() => updateMobileClipsPillIndicator(t));
     }
     window.addEventListener("resize", () => {
       if (window.innerWidth <= 768) updateMobileClipsPillIndicator();

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.paddle.com https://sandbox-cdn.paddle.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.paddle.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.solisai.video https://sandbox-api.paddle.com https://api.paddle.com https://sandbox-buy.paddle.com https://buy.paddle.com https://cloudflareinsights.com; frame-src 'self' https://checkout.paddle.com https://buy.paddle.com https://sandbox-buy.paddle.com https://sandbox-checkout-service.paddle.com https://checkout-service.paddle.com;" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.solisai.video https://checkout.dodopayments.com https://test.checkout.dodopayments.com https://api.dodopayments.com https://test.dodopayments.com https://cloudflareinsights.com; frame-src 'self' https://checkout.dodopayments.com https://test.checkout.dodopayments.com;" />
   <script src="/js/core/init.js?v=7"></script>
   <script defer src="/js/auth-modal.js?v=3"></script>
   <script>if ('scrollRestoration' in history) history.scrollRestoration = 'manual';</script>
@@ -2184,7 +2184,7 @@
       <div class="pricing-trust reveal" aria-label="Checkout assurances">
         <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Cancel anytime</span>
         <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Instant access</span>
-        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Secure checkout via Paddle</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Secure checkout via Dodo Payments</span>
       </div>
 
       <div class="compare-scroll-cue reveal">
@@ -2354,7 +2354,7 @@
         </div>
       </div>
       <div class="bottom">
-        <p>&copy; <span id="footerYear"></span> Solis AI. Currently in beta. Paid plans billed via Paddle.</p>
+        <p>&copy; <span id="footerYear"></span> Solis AI. Currently in beta. Paid plans billed via Dodo Payments.</p>
         <div class="legal-links">
           <a href="/terms.html">Terms</a>
           <a href="/privacy.html">Privacy</a>
@@ -2621,7 +2621,7 @@
         { q: "What counts as an upload?", a: "One upload is one source URL you submit. We analyze the video once (VideoDNA), then render the clips you chose for that run. On paid plans you can get multiple clips per upload without re-analyzing or re-downloading. Each finished clip uses one saved video slot. Submitting the same source again with a different template counts as a new upload. Failed renders caused by platform-side errors are automatically refunded to your daily limit." },
         { q: 'Do you offer refunds?', a: "You can cancel within 5 days of your first charge and receive a full refund - no questions asked. Annual plans are refundable on a prorated basis within the first 14 days. See our <a href='/refund.html'>Refund Policy</a> for the full policy." },
         { q: 'What is the 40% off launch offer?', a: "For a limited time, Basic and Prime are 40% off for your first 2 months. Basic is $5.99/mo and Prime is $14.39/mo for those first two months, then billing returns to the regular price ($9.99 / $23.99). Elite is $39.99/mo. Cancel anytime."},
-        { q: 'What payment methods do you accept?', a: 'We accept all major credit and debit cards through Paddle, our merchant of record. Apple Pay, Google Pay, and PayPal are also supported at checkout.' },
+        { q: 'What payment methods do you accept?', a: 'We accept all major credit and debit cards through Dodo Payments, our merchant of record. Apple Pay, Google Pay, and PayPal are also supported at checkout.' },
         { q: 'How does the priority queue work on Elite?', a: "Elite subscribers' renders are placed at the front of our global render queue, ahead of Basic and Prime subscribers. During peak hours this typically reduces wait time by 60–80% versus the standard queue." },
         { q: 'What happens to my clips if I cancel?', a: "All clips you've already rendered and downloaded remain yours forever. If you cancel, your saved videos in the Solis library are retained for 30 days, then permanently deleted unless you re-subscribe." },
         { q: 'Can I use Solis for client work?', a: 'Yes. Every paid tier includes a commercial license for the clips you render - so you can use Solis for your own content and for clients.' }
@@ -2725,9 +2725,7 @@
       });
     })();
   </script>
-  <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
-  <script src="/js/core/paddle-config.js?v=10"></script>
-  <script src="/js/payment/payment-flow.js?v=3"></script>
+  <script src="/js/payment/payment-flow.js?v=11"></script>
   <script src="/js/s_new/qwqs.js?v=7"></script>
   <script src="/js/payment/premium-page.js?v=6"></script>
   <script>

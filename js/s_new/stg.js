@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const u = "solis_effort_ui_mode";
   const f = "solisMacCursor";
   const g = "solis_plugin_auto_captions";
-  const p = "solis_plugin_auto_sfx";
+  const m = "solis_plugin_auto_sfx";
   function readPluginFlag(e, t = false) {
     try {
       const n = localStorage.getItem(e);
@@ -293,11 +293,11 @@ document.addEventListener("DOMContentLoaded", () => {
       switchSettingsPanel("profile");
     }
   });
-  const m = document.getElementById("stgEffortSliderToggle");
-  if (m) {
+  const p = document.getElementById("stgEffortSliderToggle");
+  if (p) {
     syncEffortUiToggle();
     applyEffortUiMode(readEffortUiMode());
-    m.addEventListener("click", () => {
+    p.addEventListener("click", () => {
       const e = readEffortUiMode() === "slider" ? "flyout" : "slider";
       applyEffortUiMode(e);
     });
@@ -619,7 +619,7 @@ document.addEventListener("DOMContentLoaded", () => {
     n.disabled = !c;
     n.textContent = "Cancel subscription";
     if (o) {
-      o.textContent = c ? "Stops future renewals through Paddle. You keep access until the end of the current billing period." : "Subscription is not linked to Paddle yet. Contact support if you need to cancel.";
+      o.textContent = c ? "Stops future renewals through Dodo Payments. You keep access until the end of the current billing period." : "Subscription is not linked to Dodo yet. Contact support if you need to cancel.";
     }
   }
   async function cancelSubscriptionViaPaddle() {
@@ -840,8 +840,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       const f = i && typeof i === "object" ? i : {};
       const g = f.storage?.videos || {};
-      const p = f.storage?.space_mb || {};
-      const m = f.daily || {};
+      const m = f.storage?.space_mb || {};
+      const p = f.daily || {};
       const w = f.monthly || {};
       const y = f.max_effort || {};
       const h = g.unlimited === true || [ "basic", "prime", "elite" ].includes(String(l || "").toLowerCase());
@@ -856,15 +856,15 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       const b = document.getElementById("stgStorage")?.closest(".stgQuota");
       if (b) b.hidden = true;
-      const C = Math.max(0, Number(m.limit ?? f.plan?.videos_per_day ?? 0) || 0);
-      const S = Math.max(0, Number(m.used ?? 0) || 0);
+      const C = Math.max(0, Number(p.limit ?? f.plan?.videos_per_day ?? 0) || 0);
+      const S = Math.max(0, Number(p.used ?? 0) || 0);
       if (C > 0) {
         setText("stgDailyGens", S + " / " + C);
         setQuotaFill(document.getElementById("stgDailyFill"), S, C);
         const e = document.getElementById("stgDailyHint");
         if (e) {
-          if (m.resets_at) {
-            e.textContent = formatQuotaResetHint(m.resets_at, S >= C ? "Daily limit reached. Resets {when}." : "Resets {when}.");
+          if (p.resets_at) {
+            e.textContent = formatQuotaResetHint(p.resets_at, S >= C ? "Daily limit reached. Resets {when}." : "Resets {when}.");
           }
         }
       } else {

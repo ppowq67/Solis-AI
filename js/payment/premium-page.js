@@ -1,13 +1,16 @@
 (function() {
   const t = {
     basic: {
-      priceId: "pri_01kbavyh2vxwy5z8pdzrwb5eqq"
+      productId: "pdt_basic_placeholder",
+      priceId: "pdt_basic_placeholder"
     },
     prime: {
-      priceId: "pri_01kbds6nnbv1hj5vef6nxgpha4"
+      productId: "pdt_prime_placeholder",
+      priceId: "pdt_prime_placeholder"
     },
     elite: {
-      priceId: "pri_01kbjphsvy40kypjk2nxh0qdzk"
+      productId: "pdt_elite_placeholder",
+      priceId: "pdt_elite_placeholder"
     }
   };
   function apiBase() {
@@ -15,16 +18,16 @@
   }
   async function fetchPlanCatalog() {
     try {
-      const t = typeof window.apiUrl === "function" ? window.apiUrl("/api/payment/paddle-config") : `${apiBase().replace(/\/$/, "")}/payment/paddle-config`;
+      const t = typeof window.apiUrl === "function" ? window.apiUrl("/api/payment/dodo-config") : `${apiBase().replace(/\/$/, "")}/payment/dodo-config`;
       const e = await fetch(t, {
         method: "GET",
         credentials: "include"
       });
-      if (!e.ok) throw new Error(`paddle-config ${e.status}`);
+      if (!e.ok) throw new Error(`dodo-config ${e.status}`);
       const n = await e.json();
       if (n.plans && Object.keys(n.plans).length) return n.plans;
     } catch (t) {
-      console.warn("[Premium] Using fallback price IDs:", t.message);
+      console.warn("[Premium] Using fallback product IDs:", t.message);
     }
     return t;
   }
@@ -91,32 +94,35 @@
     } catch (t) {}
   }
   function startCheckout(t, e, n) {
-    if (typeof window.openPaddleCheckout !== "function") {
+    if (typeof window.openCheckout !== "function" && typeof window.PaymentFlow?.openCheckout !== "function") {
       console.error("[Premium] Checkout handler not loaded");
       alert("Payment system is still loading. Please try again in a moment.");
       return;
     }
-    window.openPaddleCheckout(t, e, n);
+    const a = window.openCheckout || window.PaymentFlow.openCheckout.bind(window.PaymentFlow);
+    a(t, e, n);
   }
   function wirePlanButtons(t) {
     document.querySelectorAll(".plan-card[data-plan]").forEach(e => {
       const n = e.getAttribute("data-plan");
       const a = t[n];
-      const r = e.querySelector(".plan-btn");
-      if (!r || !a?.priceId) return;
-      r.addEventListener("click", t => {
+      const r = a?.productId || a?.priceId;
+      const o = e.querySelector(".plan-btn");
+      if (!o || !r) return;
+      o.addEventListener("click", t => {
         t.preventDefault();
-        if (r.disabled || r.classList.contains("is-current-plan")) return;
-        startCheckout(a.priceId, n, t);
+        if (o.disabled || o.classList.contains("is-current-plan")) return;
+        startCheckout(r, n, t);
       });
     });
     const e = document.querySelector("._cta-btn");
     const n = t.prime;
-    if (e && n?.priceId) {
+    const a = n?.productId || n?.priceId;
+    if (e && a) {
       e.addEventListener("click", t => {
         t.preventDefault();
         if (e.disabled || e.classList.contains("is-current-plan")) return;
-        startCheckout(n.priceId, "prime", t);
+        startCheckout(a, "prime", t);
       });
     }
   }

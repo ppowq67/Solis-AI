@@ -6,32 +6,16 @@ window.addEventListener("load", function() {
   }, 500);
 });
 
-let paddleRetryCount = 0;
-
-const MAX_PADDLE_RETRIES = 3;
-
-async function initPaddle() {
-  if (window.paddleInitialized) return;
-  const e = await window.paddleManager.init();
-  if (!e) {
-    paddleRetryCount++;
-    if (paddleRetryCount >= MAX_PADDLE_RETRIES) {
-      console.error("Failed to initialize Paddle after " + MAX_PADDLE_RETRIES + " retries");
-      console.error("Please check if backend is running and /api/payment/paddle-config endpoint exists");
-      return;
+async function initPayment() {
+  if (window.paymentReady) return;
+  try {
+    if (window.PaymentFlow?.fetchPaymentConfig) {
+      await window.PaymentFlow.fetchPaymentConfig();
     }
-    setTimeout(initPaddle, 2e3);
-    return;
+    window.paymentReady = true;
+  } catch (e) {
+    console.warn("[Payment] Config preload failed:", e.message);
   }
-  window.addEventListener("paddle:checkoutComplete", async e => {
-    window.paymentSucceeded = true;
-    history.replaceState({}, document.title, window.location.pathname);
-    await handleCheckoutSuccess(e.detail);
-  });
-  window.addEventListener("paddle:checkoutError", () => {
-    alert("Checkout could not be completed. Please try again or use a different card.");
-  });
-  window.paddleInitialized = true;
 }
 
 window.handleCheckoutSuccess = async function(e) {
@@ -66,11 +50,7 @@ window.handleCheckoutSuccess = async function(e) {
   }, 1800);
 };
 
-let checkoutRetryCount = 0;
-
-const MAX_CHECKOUT_RETRIES = 24;
-
-window.openPaddleCheckout = async function(e, n, t) {
+window.openCheckout = async function(e, n, t) {
   const o = currentAuthenticatedUser || window.currentAuthenticatedUser;
   if (!o) {
     if (typeof window.openAuthModal === "function") {
@@ -80,20 +60,10 @@ window.openPaddleCheckout = async function(e, n, t) {
     }
     return;
   }
-  if (!window.paddleInitialized) {
-    checkoutRetryCount++;
-    if (checkoutRetryCount > MAX_CHECKOUT_RETRIES) {
-      alert("Payment system failed to load. Please refresh the page and try again.");
-      checkoutRetryCount = 0;
-      return;
-    }
-    if (checkoutRetryCount === 1 || checkoutRetryCount % 4 === 0) {
-      initPaddle();
-    }
-    setTimeout(() => window.openPaddleCheckout(e, n, t), 500);
+  if (!window.PaymentFlow?.openCheckout) {
+    alert("Payment system is still loading. Please refresh and try again.");
     return;
   }
-  checkoutRetryCount = 0;
   const a = t?.currentTarget || t?.target;
   const i = a?.textContent;
   if (a) {
@@ -112,6 +82,8 @@ window.openPaddleCheckout = async function(e, n, t) {
     }
   }
 };
+
+window.openPaddleCheckout = window.openCheckout;
 
 window.showPaymentSuccessModal = function(e) {
   const n = document.getElementById("payment-success-modal");
@@ -149,7 +121,7 @@ function createConfetti() {
 
 document.addEventListener("DOMContentLoaded", function() {
   checkAuthenticationAndInit();
-  setTimeout(initPaddle, 1e3);
+  setTimeout(initPayment, 1e3);
 });
 
 let currentAuthenticatedUser = null;

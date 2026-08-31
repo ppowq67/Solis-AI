@@ -34,7 +34,7 @@
   function removeProcessingOverlay() {
     document.getElementById("payment-processing-overlay")?.remove();
   }
-  async function verifyPrice(e, n) {
+  async function verifyProduct(e, n) {
     const a = await fetch(t("/api/payment/verify-price"), {
       method: "POST",
       credentials: "include",
@@ -42,6 +42,7 @@
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
+        productId: e,
         priceId: e,
         planName: n
       })
@@ -77,7 +78,7 @@
     return null;
   }
   async function tryLocalFallback(e) {
-    const n = window.paddleManager?.getConfig?.();
+    const n = window.paymentConfig;
     if (!n?.useLocalFallback) {
       return null;
     }
@@ -96,6 +97,20 @@
     }
     return a.json();
   }
+  async function fetchPaymentConfig() {
+    if (window.paymentConfig) return window.paymentConfig;
+    const e = t("/api/payment/dodo-config");
+    const n = await fetch(e, {
+      method: "GET",
+      credentials: "include"
+    });
+    if (!n.ok) {
+      const e = await n.json().catch(() => ({}));
+      throw new Error(e.detail || e.error || `Payment config ${n.status}`);
+    }
+    window.paymentConfig = await n.json();
+    return window.paymentConfig;
+  }
   async function completeCheckout(e) {
     const n = window.pendingPlanUpgrade;
     if (!n) {
@@ -105,7 +120,7 @@
         error: "Missing plan"
       };
     }
-    const t = e?.transaction_id || e?.id || e?.transaction?.id || null;
+    const t = e?.transaction_id || e?.payment_id || e?.id || e?.sessionId || null;
     showProcessingOverlay("Activating your plan…");
     try {
       let e = await pollPaymentStatus(t);
@@ -136,27 +151,31 @@
   async function openCheckout(e, n, a) {
     if (a?.preventDefault) a.preventDefault();
     if (a?.stopPropagation) a.stopPropagation();
-    if (!window.paddleManager?.initialized) {
-      throw new Error("Payment system is still loading. Please try again.");
-    }
-    await verifyPrice(e, n);
-    const o = await fetch(t("/api/payment/prepare-checkout"), {
+    await fetchPaymentConfig();
+    await verifyProduct(e, n);
+    const o = await fetch(t("/api/payment/create-checkout"), {
       method: "POST",
       credentials: "include",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
+        productId: e,
         priceId: e,
         planName: n
       })
     });
     if (!o.ok) {
       const e = await o.json().catch(() => ({}));
-      throw new Error(e.error || "Could not start checkout");
+      throw new Error(e.detail || e.error || "Could not start checkout");
     }
     const i = await o.json();
-    await window.paddleManager.openCheckout(e, n, i);
+    window.pendingPlanUpgrade = n;
+    const r = i.checkoutUrl || i.checkout_url;
+    if (!r) {
+      throw new Error("Checkout URL missing from server");
+    }
+    window.location.href = r;
     return true;
   }
   async function handleDashboardReturn() {
@@ -171,7 +190,8 @@
       window.history.replaceState({}, document.title, e);
       showProcessingOverlay("Confirming your upgrade…");
     }
-    let o = await pollPaymentStatus(null);
+    if (t) window.pendingPlanUpgrade = t;
+    let o = await pollPaymentStatus(e.get("payment_id") || e.get("subscription_id"));
     if (!o && t) {
       o = await tryLocalFallback(t);
     }
@@ -192,7 +212,8 @@
     removeProcessingOverlay: removeProcessingOverlay,
     handleDashboardReturn: handleDashboardReturn,
     pollPaymentStatus: pollPaymentStatus,
-    tryLocalFallback: tryLocalFallback
+    tryLocalFallback: tryLocalFallback,
+    fetchPaymentConfig: fetchPaymentConfig
   };
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => {

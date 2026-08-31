@@ -1,8 +1,3 @@
-/* ╔═══════════════════════════════════════════════════════════════════════════╗
-   ║                    NEWSFEED WIDGET - Pure CSS                             ║
-   ╚═══════════════════════════════════════════════════════════════════════════╝ */
-
-/* ─── CREATE POST MODAL ─── */
 .create-post-modal {
     position: fixed;
     top: 0;
@@ -176,7 +171,6 @@
     position: relative;
 }
 
-/* ─── Content Block Transitions ─── */
 .nf-content-block {
     transition: opacity 0.45s ease, filter 0.4s ease;
 }
@@ -186,7 +180,6 @@
     filter: blur(8px);
 }
 
-/* ─── Image Overlay ─── */
 .nf-image-overlay {
     position: fixed;
     inset: 0;
@@ -253,7 +246,6 @@
     transform: scale(0.9);
 }
 
-/* ─── Profile Popover ─── */
 .nf-profile-popover {
     position: absolute;
     z-index: 50;
@@ -448,7 +440,6 @@
     font-weight: 600;
 }
 
-/* ─── Main Card ─── */
 .nf-card {
     background: #fff;
     border: 1px solid #eceff3;
@@ -547,7 +538,6 @@
     min-width: 0;
 }
 
-/* Badge SVGs must keep native SVG display (defs/stop/ellipse break if forced to block) */
 .nf-header-author-badges svg,
 .nf-header-badges-container svg,
 .nf-profile-badges-container svg {
@@ -575,7 +565,6 @@
     filter: none;
 }
 
-/* Solis orbital reads larger than the check badges — shrink it in the feed header only */
 .nf-header-badges-container .solis-user-badge--team,
 .nf-profile-badges-container .solis-user-badge--team {
     width: 18px !important;
@@ -637,7 +626,6 @@
     border-radius: 3px;
 }
 
-/* ─── Body ─── */
 .nf-body {
     position: relative;
     min-height: 96px;
@@ -660,7 +648,6 @@
     }
 }
 
-/* ─── Media Area ─── */
 .nf-media-area {
     width: 100%;
 }
@@ -729,7 +716,6 @@
     opacity: 1;
 }
 
-/* ─── Footer ─── */
 .nf-footer {
     display: flex;
     align-items: center;
@@ -802,7 +788,6 @@
     color: #f43f5e;
 }
 
-/* ─── Notify Button (card footer legacy duplicate styles) ─── */
 .nf-actions-left .nf-notify-btn {
     width: auto;
 }
@@ -854,7 +839,6 @@
     opacity: 0.85;
 }
 
-/* ─── Heart Animation ─── */
 @keyframes nf-heart-pulse {
     0% { transform: scale(1); }
     30% { transform: scale(1.4); }
@@ -867,18 +851,17 @@
     animation: nf-heart-pulse 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* ─── Burst Particles ─── */
 @keyframes nf-burst {
-    0% { 
-        transform: rotate(var(--rotation)) translateY(0) scale(1); 
-        opacity: 1; 
+    0% {
+        transform: rotate(var(--rotation)) translateY(0) scale(1);
+        opacity: 1;
     }
-    80% { 
-        opacity: 1; 
+    80% {
+        opacity: 1;
     }
-    100% { 
-        transform: rotate(var(--rotation)) translateY(-25px) scale(0); 
-        opacity: 0; 
+    100% {
+        transform: rotate(var(--rotation)) translateY(-25px) scale(0);
+        opacity: 0;
     }
 }
 
@@ -891,7 +874,6 @@
     animation: nf-burst 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* ─── Utility Classes ─── */
 .hidden {
     display: none !important;
 }

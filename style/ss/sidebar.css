@@ -42,7 +42,7 @@ body::before {
   left: 0;
   right: 0;
   bottom: 0;
-  background: 
+  background:
     radial-gradient(circle at 20% 50%, rgba(255, 107, 61, 0.03) 0%, transparent 50%),
     radial-gradient(circle at 80% 80%, rgba(100, 200, 255, 0.02) 0%, transparent 50%),
     radial-gradient(circle at 50% 20%, rgba(150, 100, 255, 0.02) 0%, transparent 40%);
@@ -193,7 +193,7 @@ body::before {
   color: white;
   font-size: 24px;
   font-weight: 700;
-  box-shadow: 
+  box-shadow:
     0 8px 28px rgba(255, 122, 86, 0.15),
     inset 1px 1px 2px rgba(255, 255, 255, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.5);
@@ -297,7 +297,7 @@ body::before {
   background: rgba(255, 247, 237, 0.5);
   border-color: rgba(255, 107, 61, 0.4);
   transform: translateX(6px);
-  box-shadow: 
+  box-shadow:
     0 8px 24px rgba(255, 107, 61, 0.15),
     inset 1px 1px 2px rgba(255, 255, 255, 0.4);
   backdrop-filter: blur(18px) saturate(150%);
@@ -726,7 +726,7 @@ body::before {
 .settings-field:hover {
   background: rgba(255, 247, 237, 0.5);
   border-color: rgba(255, 107, 61, 0.4);
-  box-shadow: 
+  box-shadow:
     0 8px 24px rgba(255, 107, 61, 0.1),
     inset 1px 1px 2px rgba(255, 255, 255, 0.4);
   backdrop-filter: blur(18px) saturate(150%);

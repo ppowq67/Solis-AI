@@ -1,4 +1,3 @@
-/* Solis generating stage — Vizard left column + affiliate hero on the right */
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap');
 
 .solis-gen-stage{
@@ -51,7 +50,6 @@
 }
 body.solis-gen-stage-active{overflow:hidden;}
 
-/* Hide spinner + tasks menu while Advanced stage is open */
 body.solis-gen-stage-active .generation-progress-wrapper{
     opacity:0 !important;
     visibility:hidden !important;
@@ -197,7 +195,6 @@ html[data-solis-cursor="off"] .solis-gen-brand{
     overflow:hidden;
 }
 
-/* Video meta card */
 .solis-gen-video-card{
     display:flex;align-items:center;gap:12px;
     width:100%;max-width:420px;
@@ -229,7 +226,6 @@ html[data-solis-cursor="off"] .solis-gen-brand{
     font-size:11px;font-weight:700;
 }
 
-/* Status icon */
 .solis-gen-mark{
     margin:18px 0 12px;
     width:48px;height:48px;
@@ -308,7 +304,6 @@ html[data-solis-cursor="off"] .solis-gen-brand{
 .solis-gen-outcome.is-error{
     background:#fef2f2;color:#991b1b;border:1px solid #fecaca;
 }
-/* Checklist — Vizard-like */
 .solis-gen-steps{
     list-style:none;margin:0;padding:0;width:100%;max-width:340px;
     min-height:0;
@@ -385,7 +380,6 @@ html[data-solis-cursor="off"] .solis-gen-brand{
     font-weight:700;
 }
 
-/* Affiliate hero — large, rising up from the bottom edge */
 .solis-gen-aff-hero{
     width:100%;
     max-width:520px;
@@ -440,7 +434,6 @@ html[data-solis-cursor="off"] .solis-gen-brand{
 }
 .solis-gen-aff-link:hover{color:#fff;}
 .solis-gen-aff-body{
-    /* Sit mid-card like the affiliate page — not glued to the clipped bottom */
     margin-top:clamp(140px,28%,220px);
     margin-bottom:auto;
     padding-bottom:0;
@@ -472,5 +465,3 @@ html[data-solis-cursor="off"] .solis-gen-brand{
     line-height:1.45;
     max-width:18em;
 }
-
-/* Tasks panel Advanced mode CTA lives in tasks-panel-v2-demo.css */

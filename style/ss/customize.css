@@ -1,10 +1,9 @@
-
 .floating-customize-bar {
     position: fixed;
     background: linear-gradient(135deg, rgba(255, 139, 94, 0.95) 0%, rgba(255, 107, 53, 0.95) 100%);
     border-radius: 16px;
     padding: 10px;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25), 
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25),
                 0 0 20px rgba(255, 139, 94, 0.4);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -351,7 +350,7 @@
     outline: 4px solid #ff8b5e !important;
     outline-offset: 1px !important;
     background-color: rgba(255, 139, 94, 0.1) !important;
-    box-shadow: 
+    box-shadow:
         0 0 0 4px rgba(255, 139, 94, 0.25),
         0 0 30px rgba(255, 139, 94, 0.8),
         inset 0 0 10px rgba(255, 139, 94, 0.2) !important;
@@ -363,7 +362,7 @@
     outline: 4px solid #ff6b3d !important;
     outline-offset: 1px !important;
     background-color: rgba(255, 107, 53, 0.15) !important;
-    box-shadow: 
+    box-shadow:
         0 0 0 4px rgba(255, 107, 53, 0.35),
         0 0 35px rgba(255, 107, 53, 0.9),
         inset 0 0 15px rgba(255, 107, 53, 0.3) !important;
@@ -410,18 +409,18 @@
         padding: 10px;
         min-width: 55px;
     }
-    
+
     .customize-btn {
         width: 40px;
         height: 40px;
         font-size: 1rem;
     }
-    
+
     .floating-customize-panel {
         min-width: 250px;
         max-height: 60vh;
     }
-    
+
     .button-group {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -433,7 +432,7 @@
     .reset-btn {
         padding: 12px;
     }
-    
+
     .customize-btn {
         width: 48px;
         height: 48px;

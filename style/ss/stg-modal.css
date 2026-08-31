@@ -1,7 +1,3 @@
-/* ══════════════════════════════════════
-   Settings modal — left nav shell
-══════════════════════════════════════ */
-
 .stgModal {
     width: min(920px, calc(100vw - 32px)) !important;
     max-width: 920px !important;
@@ -24,7 +20,6 @@
     overflow: hidden;
 }
 
-/* ── Left nav ── */
 .stgNav {
     width: 212px;
     flex-shrink: 0;
@@ -113,7 +108,6 @@
     min-height: 0;
     overflow-x: hidden;
     overflow-y: auto;
-    /* Hide OS/global orange scrollbar chrome — still mousewheel-scrollable if needed */
     scrollbar-width: none;
     -ms-overflow-style: none;
 }
@@ -305,7 +299,6 @@
     opacity: 1;
 }
 
-/* ── Main pane ── */
 .stgMain {
     flex: 1;
     min-width: 0;
@@ -425,7 +418,6 @@
     max-width: none;
 }
 
-/* Profile hero — soft card matching panel / plan-banner language */
 .stgProfileHero {
     display: flex;
     align-items: center;
@@ -454,7 +446,6 @@
     display: none;
 }
 
-/* Avatar — clickable customize control */
 .stgAvatarContainer {
     position: relative;
     flex-shrink: 0;
@@ -502,7 +493,6 @@
     border-radius: 50%;
 }
 
-/* White frosted overlay for customize-avatar affordance */
 .stgAvatarOverlay {
     position: absolute;
     inset: 0;
@@ -627,7 +617,6 @@
     border-color: #292524;
 }
 
-/* Inline profile edit — match Solis glass / hero language (no orange-border leftovers) */
 .stgNameInput,
 .stgBioInput {
     display: none;
@@ -702,7 +691,6 @@
     background: transparent;
 }
 
-/* ── Profile picture crop / adjust modal ── */
 .stgCropBackdrop {
     position: fixed;
     inset: 0;
@@ -935,7 +923,6 @@
     content: '…';
 }
 
-/* Connector rows (Connections) */
 .stgConnectorList {
     display: flex;
     flex-direction: column;
@@ -1025,7 +1012,6 @@
     cursor: not-allowed;
 }
 
-/* Connectors — Popular + filter + table (Claude layout, Solis colors) */
 .stgPanel[data-stg-panel="connectors"],
 .stgPanel[data-stg-panel="plugins"] {
     display: none;
@@ -1282,7 +1268,6 @@
     color: #15803d;
 }
 
-/* Plugins empty state */
 .stgPluginEmpty {
     flex: 1;
     min-height: 280px;
@@ -1352,7 +1337,6 @@
     }
 }
 
-/* Legacy directory helpers (kept for search field reuse) */
 .stgDir {
     display: flex;
     flex-direction: column;
@@ -1637,7 +1621,6 @@
     cursor: not-allowed;
 }
 
-/* Themes panel */
 .stgThemeGrid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1904,7 +1887,6 @@
     }
 }
 
-/* Plan banner */
 .stgPlanBanner {
     position: relative;
     display: flex;
@@ -2257,7 +2239,6 @@
     background: rgba(255, 255, 255, 0.1);
 }
 
-/* Quota meters */
 .stgQuotaGrid {
     display: grid;
     gap: 12px;
@@ -2350,7 +2331,6 @@
     color: rgba(107, 114, 128, 0.7);
 }
 
-/* Subscription skeletons — instant, no delay */
 @keyframes stgShimmer {
     0% { background-position: 100% 0; }
     100% { background-position: -100% 0; }
@@ -2481,8 +2461,6 @@
     transition: color 0.12s ease;
 }
 
-/* Flex layout only when active — bare `display:flex` here beats `.stgPanel { display:none }`
-   and left Support stacked under Profile. */
 #stgPanelSupport {
     flex-direction: column;
     gap: 6px;
@@ -2496,7 +2474,6 @@
     margin-bottom: 6px;
 }
 
-/* Privacy panel (Claude-style sections) */
 .stgInlineLink {
     color: #ea580c;
     text-decoration: underline;
@@ -2614,7 +2591,6 @@
     color: #c2410c;
 }
 
-/* Memory panel */
 .stgMemoryActions {
     display: flex;
     flex-wrap: wrap;
@@ -2755,7 +2731,6 @@
     color: rgba(107, 114, 128, 0.95);
 }
 
-/* Hide legacy stacked footer when using shell nav logout */
 .stgModal .stgFooter {
     display: none !important;
 }
@@ -2829,7 +2804,6 @@
         transform: scale(0.96);
     }
 
-    /* Stacked drill-in: keep both panes mounted so slides can animate */
     .stgModal .stgNav,
     .stgModal .stgMain {
         position: absolute !important;
@@ -2848,7 +2822,6 @@
         backface-visibility: hidden;
     }
 
-    /* ChatGPT-style home: profile on top, vertical list under */
     .stgModal[data-stg-view="home"] .stgNav {
         transform: translate3d(0, 0, 0);
         opacity: 1;
@@ -3120,7 +3093,6 @@
     }
 }
 
-/* ── Account panel ── */
 .stgRow--action { align-items: center; gap: 16px; }
 .stgAccountBlock { margin-bottom: 8px; }
 .stgAccountSection { margin-top: 28px; }

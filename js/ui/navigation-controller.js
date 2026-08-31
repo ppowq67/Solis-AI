@@ -1,9 +1,3 @@
-/**
- * Navigation Controller
- * Handles sidebar navigation with animated indicator
- * Pure JavaScript - no build system required
- */
-
 class NavigationController {
   constructor() {
     this.config = {
@@ -11,134 +5,85 @@ class NavigationController {
       itemGap: 2,
       animationDuration: 420
     };
-
     this.state = {
       direction: null,
       isMoving: false
     };
-
-    this.navContainer = document.getElementById('navContainer');
-    this.indicator = document.getElementById('indicator');
-    
+    this.navContainer = document.getElementById("navContainer");
+    this.indicator = document.getElementById("indicator");
     this.init();
   }
-
-  /**
-   * Initialize navigation controller
-   */
   init() {
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => this.initIndicatorPosition());
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", () => this.initIndicatorPosition());
     } else {
       this.initIndicatorPosition();
     }
   }
-
-  /**
-   * Initialize indicator position based on active nav item
-   */
   initIndicatorPosition() {
     if (!this.indicator) return;
-    
-    const navItems = document.querySelectorAll('.nav-item');
-    let activeIndex = 0;
-    
-    navItems.forEach((el, index) => {
-      if (el.classList.contains('active')) {
-        activeIndex = index;
+    const t = document.querySelectorAll(".nav-item");
+    let i = 0;
+    t.forEach((t, n) => {
+      if (t.classList.contains("active")) {
+        i = n;
       }
     });
-    
-    const targetY = activeIndex * (this.config.itemHeight + this.config.itemGap);
-    this.indicator.style.transition = 'none';
-    this.indicator.style.transform = `translateY(${targetY}px)`;
-    
-    // Enable transitions after initial position
+    const n = i * (this.config.itemHeight + this.config.itemGap);
+    this.indicator.style.transition = "none";
+    this.indicator.style.transform = `translateY(${n}px)`;
     setTimeout(() => {
       if (this.indicator) {
         this.indicator.style.transition = `transform ${this.config.animationDuration}ms cubic-bezier(0.2, 1, 0.2, 1)`;
       }
     }, 50);
   }
-
-  /**
-   * Navigate to a specific nav item
-   * @param {HTMLElement} el - The nav item element
-   * @param {number} index - The index of the nav item
-   */
-  navigate(el, index) {
-    // Remove active from all items
-    document.querySelectorAll('.nav-item').forEach(item => {
-      item.classList.remove('active');
+  navigate(t, i) {
+    document.querySelectorAll(".nav-item").forEach(t => {
+      t.classList.remove("active");
     });
-    
-    // Add active to clicked item
-    el.classList.add('active');
-
+    t.classList.add("active");
     if (!this.navContainer || !this.indicator) return;
-
-    // Calculate positions
-    const currentY = this.getCurrentIndicatorY();
-    const targetY = index * (this.config.itemHeight + this.config.itemGap);
-
-    // Update state
-    this.state.direction = targetY > currentY ? 'down' : 'up';
+    const n = this.getCurrentIndicatorY();
+    const e = i * (this.config.itemHeight + this.config.itemGap);
+    this.state.direction = e > n ? "down" : "up";
     this.state.isMoving = true;
-    
     this.navContainer.dataset.direction = this.state.direction;
-    this.navContainer.dataset.moving = 'true';
-
-    // Animate indicator
-    this.indicator.style.transform = `translateY(${targetY}px)`;
-
-    // Reset moving state
+    this.navContainer.dataset.moving = "true";
+    this.indicator.style.transform = `translateY(${e}px)`;
     setTimeout(() => {
       this.state.isMoving = false;
       if (this.navContainer) {
-        this.navContainer.dataset.moving = 'false';
+        this.navContainer.dataset.moving = "false";
       }
     }, this.config.animationDuration);
   }
-
-  /**
-   * Get current Y position of indicator from transform
-   * @returns {number} Current Y translation
-   */
   getCurrentIndicatorY() {
     if (!this.indicator) return 0;
-    
-    const transform = this.indicator.style.transform;
-    const match = transform.match(/translateY\(([^)]+)px\)/);
-    
-    if (match && match[1]) {
-      return parseFloat(match[1]);
+    const t = this.indicator.style.transform;
+    const i = t.match(/translateY\(([^)]+)px\)/);
+    if (i && i[1]) {
+      return parseFloat(i[1]);
     }
-    
     return 0;
   }
-
-  /**
-   * Update configuration
-   * @param {Object} config - New config options
-   */
-  setConfig(config) {
-    this.config = { ...this.config, ...config };
+  setConfig(t) {
+    this.config = {
+      ...this.config,
+      ...t
+    };
   }
-
-  /**
-   * Get current state
-   * @returns {Object} Current navigation state
-   */
   getState() {
-    return { ...this.state };
+    return {
+      ...this.state
+    };
   }
 }
 
-// Initialize global instance when DOM is ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    window.navigationController = new NavigationController();
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => {
+    window.navigationController = new NavigationController;
   });
 } else {
-  window.navigationController = new NavigationController();
+  window.navigationController = new NavigationController;
 }

@@ -100,7 +100,6 @@
     .blob-1 { width: 640px; height: 640px; top: -220px; left: 40%; background: radial-gradient(circle, rgba(251,146,60,0.26) 0%, transparent 70%); }
     .blob-2 { width: 420px; height: 420px; bottom: -120px; right: -60px; background: radial-gradient(circle, rgba(253,186,116,0.22) 0%, transparent 70%); }
 
-    /* --- Navbar (matches index) --- */
     .navbar-wrapper {
       position: relative;
       z-index: 100;
@@ -351,7 +350,6 @@
 
     body { padding-top: 0; padding-bottom: 48px; }
 
-    /* —— Clip (shareable) —— */
     .clip-wrap {
       position: relative; z-index: 2;
       width: min(420px, calc(100% - 28px));
@@ -451,7 +449,6 @@
       color: #18120e;
     }
 
-    /* —— Profile —— */
     .profile-wrap {
       position: relative; z-index: 2;
       width: min(560px, calc(100% - 32px));
@@ -489,7 +486,6 @@
       position: relative;
       z-index: 1;
       padding: 0 28px 28px;
-      /* Solid face under the avatar so the lower half reads cleanly */
       background: linear-gradient(145deg, rgba(255,255,255,0.92) 0%, rgba(255,252,248,0.88) 100%);
       border-radius: 0 0 28px 28px;
     }
@@ -662,7 +658,6 @@
     </div>
   </div>
 
-  <!-- Clip mode -->
   <main id="clipRoot" class="clip-wrap" hidden>
     <div class="phone">
       <div class="phone-skel" id="skel" aria-hidden="true"></div>
@@ -716,7 +711,6 @@
     </div>
   </main>
 
-  <!-- Profile mode (same page — no separate profile.html) -->
   <main id="profileRoot" class="profile-wrap" hidden>
     <div class="profile-card">
       <div class="profile-banner" id="profileBanner" aria-hidden="true">

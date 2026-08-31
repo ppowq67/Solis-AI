@@ -1,4 +1,3 @@
-/*no*/
 .auth-modal {
     display: none;
     position: fixed;
@@ -176,8 +175,8 @@
     right: 24px;
 
     color: rgba(50, 38, 28, 0.85);
-    
-    border-radius: 18px; 
+
+    border-radius: 18px;
     padding: 16px 22px;
 
     background: linear-gradient(
@@ -201,19 +200,18 @@
     backdrop-filter: blur(22px) saturate(165%);
     -webkit-backdrop-filter: blur(22px) saturate(165%);
 
-    /* Kept for login pages that still use right-edge toasts */
     transform: translateX(100%) scale(0.95);
     opacity: 0;
-    transition: 
-        transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+    transition:
+        transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
         opacity 0.3s ease,
         box-shadow 0.3s ease,
         background 0.3s ease;
-        
+
     z-index: 10000;
     max-width: 380px;
     min-width: 280px;
-    display: flex; 
+    display: flex;
     align-items: center;
     isolation: isolate;
 }
@@ -300,7 +298,7 @@
 }
 
 .notification-content span {
-    font-weight: 600; 
+    font-weight: 600;
     font-size: 0.95rem;
     line-height: 1.4;
     color: rgba(50, 38, 28, 0.85);
@@ -378,7 +376,7 @@
         margin: 1rem;
         width: calc(100% - 2rem);
     }
-    
+
     #notificationContainer .notification {
         left: auto;
         right: auto;

@@ -1,17 +1,9 @@
-
 setTimeout(() => {
-    
-    if (window.notificationSystem) {
-        const methods = [
-            'add', 'showVideoGenerated', 'clearUnread', 'closeDropdowns',
-            'getState', 'getStorageSize', 'isWebSocketConnected', 'testNotification',
-            'fetchUserBadges', 'fetchCurrentUserBadges', 'sendFirstLoginNotification', 'displayUserBadge',
-            'loadUserBadges'
-        ];
-        
-        methods.forEach(method => {
-            const type = typeof window.notificationSystem[method];
-            const status = type === 'undefined' ? '❌' : '✅';
-        });
-    }
+  if (window.notificationSystem) {
+    const e = [ "add", "showVideoGenerated", "clearUnread", "closeDropdowns", "getState", "getStorageSize", "isWebSocketConnected", "testNotification", "fetchUserBadges", "fetchCurrentUserBadges", "sendFirstLoginNotification", "displayUserBadge", "loadUserBadges" ];
+    e.forEach(e => {
+      const t = typeof window.notificationSystem[e];
+      const o = t === "undefined" ? "❌" : "✅";
+    });
+  }
 }, 100);

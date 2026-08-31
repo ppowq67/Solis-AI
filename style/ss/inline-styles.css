@@ -1,4 +1,3 @@
-/* Font Awesome Icon Styling */
 i.fas {
     color: inherit;
     display: inline-block;
@@ -11,7 +10,7 @@ i.fas {
     align-items: center;
     text-align: center;
     padding: 40px;
-    min-height: 200px; 
+    min-height: 200px;
 }
 
 @keyframes float {

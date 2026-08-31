@@ -1,681 +1,678 @@
-(function () {
-  'use strict';
-
-  var SOLIS_OG_IMAGE = 'https://solisai.video/assets/og-image.png?v=2';
-
-  function setOgMeta(opts) {
-    if (!opts) return;
-    function setMeta(prop, content, useName) {
-      if (!content) return;
-      var sel = useName
-        ? 'meta[name="' + prop + '"]'
-        : 'meta[property="' + prop + '"]';
-      var el = document.querySelector(sel);
-      if (!el) {
-        el = document.createElement('meta');
-        if (useName) el.setAttribute('name', prop);
-        else el.setAttribute('property', prop);
-        document.head.appendChild(el);
+(function() {
+  "use strict";
+  var e = "https://solisai.video/assets/og-image.png?v=2";
+  function setOgMeta(e) {
+    if (!e) return;
+    function setMeta(e, t, o) {
+      if (!t) return;
+      var r = o ? 'meta[name="' + e + '"]' : 'meta[property="' + e + '"]';
+      var n = document.querySelector(r);
+      if (!n) {
+        n = document.createElement("meta");
+        if (o) n.setAttribute("name", e); else n.setAttribute("property", e);
+        document.head.appendChild(n);
       }
-      el.setAttribute('content', content);
+      n.setAttribute("content", t);
     }
-    if (opts.title) {
-      document.title = opts.title;
-      setMeta('og:title', opts.title);
-      setMeta('twitter:title', opts.title, true);
+    if (e.title) {
+      document.title = e.title;
+      setMeta("og:title", e.title);
+      setMeta("twitter:title", e.title, true);
     }
-    if (opts.description) {
-      setMeta('og:description', opts.description);
-      setMeta('twitter:description', opts.description, true);
+    if (e.description) {
+      setMeta("og:description", e.description);
+      setMeta("twitter:description", e.description, true);
     }
-    if (opts.image) {
-      setMeta('og:image', opts.image);
-      setMeta('twitter:image', opts.image, true);
+    if (e.image) {
+      setMeta("og:image", e.image);
+      setMeta("twitter:image", e.image, true);
     }
-    if (opts.url) setMeta('og:url', opts.url);
+    if (e.url) setMeta("og:url", e.url);
   }
-
-  var state = {
-    mode: 'clip', // clip | profile
+  var t = {
+    mode: "clip",
     creator: null,
     following: false,
-    projectId: '',
-    solId: '',
+    projectId: "",
+    solId: ""
   };
-
   function apiBase() {
     try {
-      if (window.API_BASE_URL) return String(window.API_BASE_URL).replace(/\/$/, '');
-    } catch (_) {}
-    var host = location.hostname;
-    if (host === 'localhost' || host === '127.0.0.1') {
-      return location.protocol + '//' + host + ':5500/api';
+      if (window.API_BASE_URL) return String(window.API_BASE_URL).replace(/\/$/, "");
+    } catch (e) {}
+    var e = location.hostname;
+    if (e === "localhost" || e === "127.0.0.1") {
+      return location.protocol + "//" + e + ":5500/api";
     }
-    return 'https://api.solisai.video/api';
+    return "https://api.solisai.video/api";
   }
-
-  function absoluteApi(path) {
-    if (!path) return '';
-    if (/^https?:\/\//i.test(path)) return path;
-    var base = apiBase().replace(/\/api$/, '');
-    return base + (path.charAt(0) === '/' ? path : '/' + path);
+  function absoluteApi(e) {
+    if (!e) return "";
+    if (/^https?:\/\//i.test(e)) return e;
+    var t = apiBase().replace(/\/api$/, "");
+    return t + (e.charAt(0) === "/" ? e : "/" + e);
   }
-
   function authHeaders() {
-    var h = { Accept: 'application/json', 'Content-Type': 'application/json' };
+    var e = {
+      Accept: "application/json",
+      "Content-Type": "application/json"
+    };
     try {
-      if (typeof window.getAuthHeaders === 'function') {
-        Object.assign(h, window.getAuthHeaders());
+      if (typeof window.getAuthHeaders === "function") {
+        Object.assign(e, window.getAuthHeaders());
       }
-    } catch (_) {}
-    return h;
+    } catch (e) {}
+    return e;
   }
-
-  function looksLikeEmail(s) {
-    return typeof s === 'string' && /[^@\s]+@[^@\s]+\.[^@\s]+/.test(s);
+  function looksLikeEmail(e) {
+    return typeof e === "string" && /[^@\s]+@[^@\s]+\.[^@\s]+/.test(e);
   }
-
-  function scrubCreator(raw) {
-    if (!raw || typeof raw !== 'object') return null;
-    var out = {};
-    Object.keys(raw).forEach(function (k) {
-      var lk = String(k).toLowerCase();
-      if (lk.indexOf('email') >= 0 || lk.indexOf('mail') >= 0) return;
-      var v = raw[k];
-      if (looksLikeEmail(v)) return;
-      out[k] = v;
+  function scrubCreator(e) {
+    if (!e || typeof e !== "object") return null;
+    var t = {};
+    Object.keys(e).forEach(function(o) {
+      var r = String(o).toLowerCase();
+      if (r.indexOf("email") >= 0 || r.indexOf("mail") >= 0) return;
+      var n = e[o];
+      if (looksLikeEmail(n)) return;
+      t[o] = n;
     });
-    if (!out.public_id && out.id) out.public_id = out.id;
-    if (!out.name || looksLikeEmail(out.name)) out.name = out.username || 'Creator';
-    if (looksLikeEmail(out.username)) out.username = '';
-    return out;
+    if (!t.public_id && t.id) t.public_id = t.id;
+    if (!t.name || looksLikeEmail(t.name)) t.name = t.username || "Creator";
+    if (looksLikeEmail(t.username)) t.username = "";
+    return t;
   }
-
-  function initials(name) {
-    var s = String(name || 'S').trim();
-    var parts = s.split(/\s+/).filter(Boolean);
-    if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
-    return (s[0] || 'S').toUpperCase();
+  function initials(e) {
+    var t = String(e || "S").trim();
+    var o = t.split(/\s+/).filter(Boolean);
+    if (o.length >= 2) return (o[0][0] + o[1][0]).toUpperCase();
+    return (t[0] || "S").toUpperCase();
   }
-
-  function formatCount(n) {
-    var x = Number(n) || 0;
-    if (x >= 1000000) return (x / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
-    if (x >= 1000) return (x / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
-    return String(x);
+  function formatCount(e) {
+    var t = Number(e) || 0;
+    if (t >= 1e6) return (t / 1e6).toFixed(1).replace(/\.0$/, "") + "M";
+    if (t >= 1e3) return (t / 1e3).toFixed(1).replace(/\.0$/, "") + "K";
+    return String(t);
   }
-
   function parseRoute() {
-    var parts = (location.pathname || '').split('/').filter(Boolean);
-    var q = new URLSearchParams(location.search || '');
-    if (q.get('demo') === '1') {
-      return { mode: q.get('u') || q.get('profile') ? 'profile' : 'clip', demo: true };
+    var e = (location.pathname || "").split("/").filter(Boolean);
+    var t = new URLSearchParams(location.search || "");
+    if (t.get("demo") === "1") {
+      return {
+        mode: t.get("u") || t.get("profile") ? "profile" : "clip",
+        demo: true
+      };
     }
-
-    var fromQ = (q.get('id') || q.get('project') || q.get('sol') || '').trim();
-    var idxPreview = parts.indexOf('preview');
-    var idxShare = parts.indexOf('share');
-    var idxShareable = parts.indexOf('shareable');
-    var idxU = parts.indexOf('u');
-
-    if (idxU >= 0 && parts[idxU + 1]) {
-      return { mode: 'profile', solId: String(parts[idxU + 1]).toUpperCase() };
+    var o = (t.get("id") || t.get("project") || t.get("sol") || "").trim();
+    var r = e.indexOf("preview");
+    var n = e.indexOf("share");
+    var i = e.indexOf("shareable");
+    var a = e.indexOf("u");
+    if (a >= 0 && e[a + 1]) {
+      return {
+        mode: "profile",
+        solId: String(e[a + 1]).toUpperCase()
+      };
     }
-    if (fromQ && /^SOL-/i.test(fromQ)) {
-      return { mode: 'profile', solId: fromQ.toUpperCase() };
+    if (o && /^SOL-/i.test(o)) {
+      return {
+        mode: "profile",
+        solId: o.toUpperCase()
+      };
     }
-    if (fromQ && fromQ.indexOf('prj_') === 0) {
-      return { mode: 'clip', projectId: fromQ };
+    if (o && o.indexOf("prj_") === 0) {
+      return {
+        mode: "clip",
+        projectId: o
+      };
     }
-
-    var clipIdx = idxPreview >= 0 ? idxPreview : (idxShare >= 0 ? idxShare : idxShareable);
-    if (clipIdx >= 0 && parts[clipIdx + 1]) {
-      var cid = parts[clipIdx + 1];
-      if (/^SOL-/i.test(cid)) return { mode: 'profile', solId: cid.toUpperCase() };
-      return { mode: 'clip', projectId: cid };
+    var l = r >= 0 ? r : n >= 0 ? n : i;
+    if (l >= 0 && e[l + 1]) {
+      var d = e[l + 1];
+      if (/^SOL-/i.test(d)) return {
+        mode: "profile",
+        solId: d.toUpperCase()
+      };
+      return {
+        mode: "clip",
+        projectId: d
+      };
     }
-
-    var last = parts[parts.length - 1] || '';
-    if (/^SOL-/i.test(last)) return { mode: 'profile', solId: last.toUpperCase() };
-    if (String(last).indexOf('prj_') === 0) return { mode: 'clip', projectId: last };
-
-    // file open / bare shareable.html
-    if (location.protocol === 'file:' || /shareable\.html$/i.test(location.pathname)) {
-      return { mode: 'clip', demo: true };
+    var s = e[e.length - 1] || "";
+    if (/^SOL-/i.test(s)) return {
+      mode: "profile",
+      solId: s.toUpperCase()
+    };
+    if (String(s).indexOf("prj_") === 0) return {
+      mode: "clip",
+      projectId: s
+    };
+    if (location.protocol === "file:" || /shareable\.html$/i.test(location.pathname)) {
+      return {
+        mode: "clip",
+        demo: true
+      };
     }
-    return { mode: 'clip', projectId: '' };
+    return {
+      mode: "clip",
+      projectId: ""
+    };
   }
-
-  function showError(msg) {
-    document.getElementById('clipRoot').hidden = true;
-    document.getElementById('profileRoot').hidden = true;
-    var err = document.getElementById('pageError');
-    var errMsg = document.getElementById('pageErrorMsg');
-    err.hidden = false;
-    if (errMsg && msg) errMsg.textContent = msg;
+  function showError(e) {
+    document.getElementById("clipRoot").hidden = true;
+    document.getElementById("profileRoot").hidden = true;
+    var t = document.getElementById("pageError");
+    var o = document.getElementById("pageErrorMsg");
+    t.hidden = false;
+    if (o && e) o.textContent = e;
   }
-
-  function openWall(title, msg) {
-    var wall = document.getElementById('signupWall');
-    var login = document.getElementById('wallLogin');
-    var t = document.getElementById('wallTitle');
-    var m = document.getElementById('wallMsg');
-    if (t && title) t.textContent = title;
-    if (m && msg) m.textContent = msg;
-    if (login) {
-      login.href = '/login.html?redirect=' + encodeURIComponent(location.pathname + location.search);
+  function openWall(e, t) {
+    var o = document.getElementById("signupWall");
+    var r = document.getElementById("wallLogin");
+    var n = document.getElementById("wallTitle");
+    var i = document.getElementById("wallMsg");
+    if (n && e) n.textContent = e;
+    if (i && t) i.textContent = t;
+    if (r) {
+      r.href = "/login.html?redirect=" + encodeURIComponent(location.pathname + location.search);
     }
-    if (wall) wall.hidden = false;
+    if (o) o.hidden = false;
   }
-
   function closeWall() {
-    var wall = document.getElementById('signupWall');
-    if (wall) wall.hidden = true;
+    var e = document.getElementById("signupWall");
+    if (e) e.hidden = true;
   }
-
-  function setFollowUi(following) {
-    state.following = !!following;
-    var btn = document.getElementById('followBtn');
-    if (!btn) return;
-    btn.classList.toggle('is-following', state.following);
-    btn.textContent = state.following ? 'Following' : 'Follow';
-    btn.setAttribute('aria-pressed', state.following ? 'true' : 'false');
+  function setFollowUi(e) {
+    t.following = !!e;
+    var o = document.getElementById("followBtn");
+    if (!o) return;
+    o.classList.toggle("is-following", t.following);
+    o.textContent = t.following ? "Following" : "Follow";
+    o.setAttribute("aria-pressed", t.following ? "true" : "false");
   }
-
-  function paintBadges(containerId, badges) {
-    var el = document.getElementById(containerId);
-    if (!el) return;
-    el.innerHTML = '';
-    if (!badges || !badges.length) return;
-    if (window.SolisBadges && typeof window.SolisBadges.renderList === 'function') {
-      window.SolisBadges.renderList(el, badges, 24);
+  function paintBadges(e, o) {
+    var r = document.getElementById(e);
+    if (!r) return;
+    r.innerHTML = "";
+    if (!o || !o.length) return;
+    if (window.SolisBadges && typeof window.SolisBadges.renderList === "function") {
+      window.SolisBadges.renderList(r, o, 24);
       return;
     }
-    var sol = state.creator && (state.creator.public_id || state.creator.id);
-    if (sol && window.SolisBadges && window.SolisBadges.fetchAndRender) {
-      window.SolisBadges.fetchAndRender(sol, [containerId], 24);
+    var n = t.creator && (t.creator.public_id || t.creator.id);
+    if (n && window.SolisBadges && window.SolisBadges.fetchAndRender) {
+      window.SolisBadges.fetchAndRender(n, [ e ], 24);
     }
   }
-
-  function mixHex(hex, toward, amount) {
-    function parse(h) {
-      h = String(h || '').replace('#', '');
-      if (h.length === 3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
-      return [
-        parseInt(h.slice(0, 2), 16) || 0,
-        parseInt(h.slice(2, 4), 16) || 0,
-        parseInt(h.slice(4, 6), 16) || 0,
-      ];
+  function mixHex(e, t, o) {
+    function parse(e) {
+      e = String(e || "").replace("#", "");
+      if (e.length === 3) e = e[0] + e[0] + e[1] + e[1] + e[2] + e[2];
+      return [ parseInt(e.slice(0, 2), 16) || 0, parseInt(e.slice(2, 4), 16) || 0, parseInt(e.slice(4, 6), 16) || 0 ];
     }
-    var a = parse(hex);
-    var b = parse(toward);
-    var t = Math.max(0, Math.min(1, amount));
-    function ch(i) {
-      return Math.round(a[i] + (b[i] - a[i]) * t);
+    var r = parse(e);
+    var n = parse(t);
+    var i = Math.max(0, Math.min(1, o));
+    function ch(e) {
+      return Math.round(r[e] + (n[e] - r[e]) * i);
     }
-    return '#' + [ch(0), ch(1), ch(2)].map(function (n) {
-      return n.toString(16).padStart(2, '0');
-    }).join('');
+    return "#" + [ ch(0), ch(1), ch(2) ].map(function(e) {
+      return e.toString(16).padStart(2, "0");
+    }).join("");
   }
-
-  function applyBannerPalette(hex) {
-    var banner = document.getElementById('profileBanner');
-    if (!banner) return;
-    // Default: soft white low-poly. With a PFP color, lift it into pale pastel facets.
-    var base = hex || null;
-    if (!base) {
-      banner.style.setProperty('--poly-a', '#ffffff');
-      banner.style.setProperty('--poly-b', '#f3f1ee');
-      banner.style.setProperty('--poly-c', '#ebe7e2');
-      banner.style.setProperty('--poly-d', '#e4dfd8');
-      banner.style.setProperty('--poly-e', '#d9d3cb');
-      banner.style.background = '#f7f5f2';
+  function applyBannerPalette(e) {
+    var t = document.getElementById("profileBanner");
+    if (!t) return;
+    var o = e || null;
+    if (!o) {
+      t.style.setProperty("--poly-a", "#ffffff");
+      t.style.setProperty("--poly-b", "#f3f1ee");
+      t.style.setProperty("--poly-c", "#ebe7e2");
+      t.style.setProperty("--poly-d", "#e4dfd8");
+      t.style.setProperty("--poly-e", "#d9d3cb");
+      t.style.background = "#f7f5f2";
       return;
     }
-    banner.style.setProperty('--poly-a', mixHex(base, '#ffffff', 0.82));
-    banner.style.setProperty('--poly-b', mixHex(base, '#ffffff', 0.72));
-    banner.style.setProperty('--poly-c', mixHex(base, '#ffffff', 0.64));
-    banner.style.setProperty('--poly-d', mixHex(base, '#f5f5f5', 0.55));
-    banner.style.setProperty('--poly-e', mixHex(base, '#ffffff', 0.48));
-    banner.style.background = mixHex(base, '#ffffff', 0.88);
+    t.style.setProperty("--poly-a", mixHex(o, "#ffffff", .82));
+    t.style.setProperty("--poly-b", mixHex(o, "#ffffff", .72));
+    t.style.setProperty("--poly-c", mixHex(o, "#ffffff", .64));
+    t.style.setProperty("--poly-d", mixHex(o, "#f5f5f5", .55));
+    t.style.setProperty("--poly-e", mixHex(o, "#ffffff", .48));
+    t.style.background = mixHex(o, "#ffffff", .88);
   }
-
-  function extractDominantColor(img, cb) {
+  function extractDominantColor(e, t) {
     try {
-      if (!img || !img.complete || !img.naturalWidth) {
-        cb(null);
+      if (!e || !e.complete || !e.naturalWidth) {
+        t(null);
         return;
       }
-      var canvas = document.createElement('canvas');
-      var size = 24;
-      canvas.width = size;
-      canvas.height = size;
-      var ctx = canvas.getContext('2d', { willReadFrequently: true });
-      if (!ctx) {
-        cb(null);
+      var o = document.createElement("canvas");
+      var r = 24;
+      o.width = r;
+      o.height = r;
+      var n = o.getContext("2d", {
+        willReadFrequently: true
+      });
+      if (!n) {
+        t(null);
         return;
       }
-      ctx.drawImage(img, 0, 0, size, size);
-      var data = ctx.getImageData(0, 0, size, size).data;
-      var buckets = {};
-      var bestKey = null;
-      var bestCount = 0;
-      for (var i = 0; i < data.length; i += 4) {
-        var a = data[i + 3];
-        if (a < 180) continue;
-        var r = data[i];
-        var g = data[i + 1];
-        var b = data[i + 2];
-        // Skip near-white / near-black (avatar backgrounds)
-        var maxc = Math.max(r, g, b);
-        var minc = Math.min(r, g, b);
-        if (maxc < 40 || minc > 235) continue;
-        var rq = Math.round(r / 24) * 24;
-        var gq = Math.round(g / 24) * 24;
-        var bq = Math.round(b / 24) * 24;
-        var key = rq + ',' + gq + ',' + bq;
-        buckets[key] = (buckets[key] || 0) + 1;
-        if (buckets[key] > bestCount) {
-          bestCount = buckets[key];
-          bestKey = key;
+      n.drawImage(e, 0, 0, r, r);
+      var i = n.getImageData(0, 0, r, r).data;
+      var a = {};
+      var l = null;
+      var d = 0;
+      for (var s = 0; s < i.length; s += 4) {
+        var c = i[s + 3];
+        if (c < 180) continue;
+        var f = i[s];
+        var u = i[s + 1];
+        var p = i[s + 2];
+        var m = Math.max(f, u, p);
+        var g = Math.min(f, u, p);
+        if (m < 40 || g > 235) continue;
+        var h = Math.round(f / 24) * 24;
+        var v = Math.round(u / 24) * 24;
+        var y = Math.round(p / 24) * 24;
+        var w = h + "," + v + "," + y;
+        a[w] = (a[w] || 0) + 1;
+        if (a[w] > d) {
+          d = a[w];
+          l = w;
         }
       }
-      if (!bestKey) {
-        cb(null);
+      if (!l) {
+        t(null);
         return;
       }
-      var parts = bestKey.split(',').map(Number);
-      var hex = '#' + parts.map(function (n) {
-        return Math.max(0, Math.min(255, n)).toString(16).padStart(2, '0');
-      }).join('');
-      cb(hex);
-    } catch (_) {
-      cb(null);
+      var I = l.split(",").map(Number);
+      var E = "#" + I.map(function(e) {
+        return Math.max(0, Math.min(255, e)).toString(16).padStart(2, "0");
+      }).join("");
+      t(E);
+    } catch (e) {
+      t(null);
     }
   }
-
-  function setAvatar(imgId, fallbackId, picture, name) {
-    var img = document.getElementById(imgId);
-    var fb = document.getElementById(fallbackId);
-    if (!img || !fb) return;
-    if (picture) {
-      img.crossOrigin = 'anonymous';
-      img.src = absoluteApi(picture);
-      img.alt = name || '';
-      img.hidden = false;
-      fb.hidden = true;
-      img.onload = function () {
-        if (imgId === 'pAvatar') {
-          extractDominantColor(img, applyBannerPalette);
+  function setAvatar(e, t, o, r) {
+    var n = document.getElementById(e);
+    var i = document.getElementById(t);
+    if (!n || !i) return;
+    if (o) {
+      n.crossOrigin = "anonymous";
+      n.src = absoluteApi(o);
+      n.alt = r || "";
+      n.hidden = false;
+      i.hidden = true;
+      n.onload = function() {
+        if (e === "pAvatar") {
+          extractDominantColor(n, applyBannerPalette);
         }
       };
-      img.onerror = function () {
-        img.hidden = true;
-        fb.hidden = false;
-        fb.textContent = initials(name);
-        if (imgId === 'pAvatar') applyBannerPalette(null);
+      n.onerror = function() {
+        n.hidden = true;
+        i.hidden = false;
+        i.textContent = initials(r);
+        if (e === "pAvatar") applyBannerPalette(null);
       };
     } else {
-      img.hidden = true;
-      fb.hidden = false;
-      fb.textContent = initials(name);
-      if (imgId === 'pAvatar') applyBannerPalette(null);
+      n.hidden = true;
+      i.hidden = false;
+      i.textContent = initials(r);
+      if (e === "pAvatar") applyBannerPalette(null);
     }
   }
-
-  function paintCreatorOntoClip(creator) {
-    var c = scrubCreator(creator) || {};
-    var name = c.name || 'Creator';
-    var username = String(c.username || '').replace(/^@/, '');
-    var sol = c.public_id || c.solis_id || c.id || '';
-
-    document.getElementById('creatorName').textContent = name;
-    document.getElementById('creatorHandle').textContent = username ? '@' + username : '';
-    setAvatar('creatorAvatar', 'creatorFallback', c.picture, name);
-    paintBadges('clipBadges', c.badges);
-
-    var caption = document.getElementById('clipCaption');
-    if (caption) {
-      var bio = String(c.bio || '').trim();
-      caption.textContent = bio;
-      caption.hidden = !bio;
+  function paintCreatorOntoClip(e) {
+    var t = scrubCreator(e) || {};
+    var o = t.name || "Creator";
+    var r = String(t.username || "").replace(/^@/, "");
+    var n = t.public_id || t.solis_id || t.id || "";
+    document.getElementById("creatorName").textContent = o;
+    document.getElementById("creatorHandle").textContent = r ? "@" + r : "";
+    setAvatar("creatorAvatar", "creatorFallback", t.picture, o);
+    paintBadges("clipBadges", t.badges);
+    var i = document.getElementById("clipCaption");
+    if (i) {
+      var a = String(t.bio || "").trim();
+      i.textContent = a;
+      i.hidden = !a;
     }
   }
-
-  function paintProfile(creator, following, isSelf) {
-    var c = scrubCreator(creator) || {};
-    state.creator = c;
-    state.solId = c.public_id || c.solis_id || c.id || state.solId;
-
-    document.getElementById('clipRoot').hidden = true;
-    document.getElementById('profileRoot').hidden = false;
-    document.getElementById('pageError').hidden = true;
-
-    var name = c.name || 'Creator';
-    var username = String(c.username || '').replace(/^@/, '');
-    var sol = state.solId || '';
-
-    document.getElementById('pName').textContent = name;
-    document.getElementById('pHandle').textContent = username ? '@' + username : '';
-    document.title = name + ' · Solis AI';
+  function paintProfile(o, r, n) {
+    var i = scrubCreator(o) || {};
+    t.creator = i;
+    t.solId = i.public_id || i.solis_id || i.id || t.solId;
+    document.getElementById("clipRoot").hidden = true;
+    document.getElementById("profileRoot").hidden = false;
+    document.getElementById("pageError").hidden = true;
+    var a = i.name || "Creator";
+    var l = String(i.username || "").replace(/^@/, "");
+    var d = t.solId || "";
+    document.getElementById("pName").textContent = a;
+    document.getElementById("pHandle").textContent = l ? "@" + l : "";
+    document.title = a + " · Solis AI";
     setOgMeta({
-      title: name + ' · Solis AI',
-      description: bio || 'Follow creators on Solis AI.',
-      image: (c.picture && /^https?:\/\//i.test(c.picture)) ? c.picture : SOLIS_OG_IMAGE,
-      url: location.href.split('?')[0],
+      title: a + " · Solis AI",
+      description: c || "Follow creators on Solis AI.",
+      image: i.picture && /^https?:\/\//i.test(i.picture) ? i.picture : e,
+      url: location.href.split("?")[0]
     });
-
-    var bioEl = document.getElementById('pBio');
-    var bio = String(c.bio || '').trim();
-    if (bioEl) {
-      bioEl.textContent = bio;
-      bioEl.hidden = !bio;
+    var s = document.getElementById("pBio");
+    var c = String(i.bio || "").trim();
+    if (s) {
+      s.textContent = c;
+      s.hidden = !c;
     }
-
-    document.getElementById('pFollowers').textContent = formatCount(c.followers);
-    setAvatar('pAvatar', 'pAvatarFallback', c.picture, name);
-    if (!c.picture) applyBannerPalette(null);
-    paintBadges('pBadges', c.badges);
-    setFollowUi(following);
-
-    var followBtn = document.getElementById('followBtn');
-    if (followBtn) {
-      followBtn.hidden = !!isSelf;
+    document.getElementById("pFollowers").textContent = formatCount(i.followers);
+    setAvatar("pAvatar", "pAvatarFallback", i.picture, a);
+    if (!i.picture) applyBannerPalette(null);
+    paintBadges("pBadges", i.badges);
+    setFollowUi(r);
+    var f = document.getElementById("followBtn");
+    if (f) {
+      f.hidden = !!n;
     }
-
-    if ((!c.badges || !c.badges.length) && sol && window.SolisBadges) {
-      window.SolisBadges.fetchAndRender(sol, ['pBadges'], 24);
+    if ((!i.badges || !i.badges.length) && d && window.SolisBadges) {
+      window.SolisBadges.fetchAndRender(d, [ "pBadges" ], 24);
     }
   }
-
   async function toggleFollow() {
-    var sol = state.solId;
-    if (!sol) return;
-    var btn = document.getElementById('followBtn');
-    if (btn) btn.disabled = true;
-
-    var was = state.following;
-    setFollowUi(!was);
-    var followersEl = document.getElementById('pFollowers');
-    var prevCount = Number(state.creator && state.creator.followers) || 0;
-    var optimistic = Math.max(0, prevCount + (was ? -1 : 1));
-    if (followersEl) followersEl.textContent = formatCount(optimistic);
-
+    var e = t.solId;
+    if (!e) return;
+    var o = document.getElementById("followBtn");
+    if (o) o.disabled = true;
+    var r = t.following;
+    setFollowUi(!r);
+    var n = document.getElementById("pFollowers");
+    var i = Number(t.creator && t.creator.followers) || 0;
+    var a = Math.max(0, i + (r ? -1 : 1));
+    if (n) n.textContent = formatCount(a);
     try {
-      var res = await fetch(apiBase() + '/follows/' + encodeURIComponent(sol), {
-        method: was ? 'DELETE' : 'POST',
-        credentials: 'include',
-        headers: authHeaders(),
+      var l = await fetch(apiBase() + "/follows/" + encodeURIComponent(e), {
+        method: r ? "DELETE" : "POST",
+        credentials: "include",
+        headers: authHeaders()
       });
-      var data = await res.json().catch(function () { return {}; });
-
-      if (res.status === 401) {
-        setFollowUi(was);
-        if (followersEl) followersEl.textContent = formatCount(prevCount);
-        openWall('Sign in to follow', 'Follow creators with a free Solis account — takes a few seconds.');
+      var d = await l.json().catch(function() {
+        return {};
+      });
+      if (l.status === 401) {
+        setFollowUi(r);
+        if (n) n.textContent = formatCount(i);
+        openWall("Sign in to follow", "Follow creators with a free Solis account — takes a few seconds.");
         return;
       }
-      if (!res.ok) {
-        setFollowUi(was);
-        if (followersEl) followersEl.textContent = formatCount(prevCount);
+      if (!l.ok) {
+        setFollowUi(r);
+        if (n) n.textContent = formatCount(i);
         return;
       }
-
-      var serverFollowing = data.following != null ? !!data.following : !was;
-      setFollowUi(serverFollowing);
-      if (data.followers != null) {
-        if (state.creator) state.creator.followers = data.followers;
-        if (followersEl) followersEl.textContent = formatCount(data.followers);
-      } else if (state.creator) {
-        state.creator.followers = optimistic;
+      var s = d.following != null ? !!d.following : !r;
+      setFollowUi(s);
+      if (d.followers != null) {
+        if (t.creator) t.creator.followers = d.followers;
+        if (n) n.textContent = formatCount(d.followers);
+      } else if (t.creator) {
+        t.creator.followers = a;
       }
-    } catch (_) {
-      setFollowUi(was);
-      if (followersEl) followersEl.textContent = formatCount(prevCount);
+    } catch (e) {
+      setFollowUi(r);
+      if (n) n.textContent = formatCount(i);
     } finally {
-      if (btn) btn.disabled = false;
+      if (o) o.disabled = false;
     }
   }
-
-  function wireVideo(video) {
-    var tap = document.getElementById('tapPlay');
-    if (!video) return;
-    if (video.dataset.solisWired === '1') return;
-    video.dataset.solisWired = '1';
-
+  function wireVideo(e) {
+    var t = document.getElementById("tapPlay");
+    if (!e) return;
+    if (e.dataset.solisWired === "1") return;
+    e.dataset.solisWired = "1";
     function syncTap() {
-      if (!tap) return;
-      var show = !!video.paused;
-      tap.hidden = !show;
-      tap.setAttribute('aria-hidden', show ? 'false' : 'true');
+      if (!t) return;
+      var o = !!e.paused;
+      t.hidden = !o;
+      t.setAttribute("aria-hidden", o ? "false" : "true");
     }
-
-    if (tap) {
-      tap.addEventListener('click', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        var p = video.play();
-        if (p && typeof p.then === 'function') {
-          p.then(syncTap).catch(function () { syncTap(); });
+    if (t) {
+      t.addEventListener("click", function(t) {
+        t.preventDefault();
+        t.stopPropagation();
+        var o = e.play();
+        if (o && typeof o.then === "function") {
+          o.then(syncTap).catch(function() {
+            syncTap();
+          });
         } else {
           syncTap();
         }
       });
     }
-
-    video.addEventListener('click', function (e) {
-      // Ignore clicks that hit overlay controls
-      if (e.target.closest && e.target.closest('.side-btn, .creator-row, .tap-play')) return;
-      if (video.paused) {
-        var p = video.play();
-        if (p && typeof p.then === 'function') p.catch(function () {});
+    e.addEventListener("click", function(t) {
+      if (t.target.closest && t.target.closest(".side-btn, .creator-row, .tap-play")) return;
+      if (e.paused) {
+        var o = e.play();
+        if (o && typeof o.then === "function") o.catch(function() {});
       } else {
-        video.pause();
+        e.pause();
       }
       syncTap();
     });
-    video.addEventListener('play', syncTap);
-    video.addEventListener('pause', syncTap);
-    video.addEventListener('ended', syncTap);
+    e.addEventListener("play", syncTap);
+    e.addEventListener("pause", syncTap);
+    e.addEventListener("ended", syncTap);
     syncTap();
   }
-
-  function goToProfile(solId) {
-    if (!solId) return;
-    var isDemo = /DEMO/i.test(solId) || /(?:\?|&)demo=1(?:&|$)/.test(location.search || '');
-    if (isDemo || location.protocol === 'file:') {
-      var demoUrl = 'shareable.html?demo=1&u=1';
-      history.pushState({ mode: 'profile', solId: solId, demo: true }, '', demoUrl);
-      loadProfile(solId, true);
+  function goToProfile(e) {
+    if (!e) return;
+    var t = /DEMO/i.test(e) || /(?:\?|&)demo=1(?:&|$)/.test(location.search || "");
+    if (t || location.protocol === "file:") {
+      var o = "shareable.html?demo=1&u=1";
+      history.pushState({
+        mode: "profile",
+        solId: e,
+        demo: true
+      }, "", o);
+      loadProfile(e, true);
       return;
     }
-    var url = '/u/' + encodeURIComponent(solId);
-    history.pushState({ mode: 'profile', solId: solId }, '', url);
-    loadProfile(solId);
+    var r = "/u/" + encodeURIComponent(e);
+    history.pushState({
+      mode: "profile",
+      solId: e
+    }, "", r);
+    loadProfile(e);
   }
-
-  async function loadProfile(solId, demo) {
-    state.mode = 'profile';
-    state.solId = solId;
-
-    if (demo || solId === 'SOL-DEMO1234' || /DEMO/i.test(String(solId || ''))) {
+  async function loadProfile(e, o) {
+    t.mode = "profile";
+    t.solId = e;
+    if (o || e === "SOL-DEMO1234" || /DEMO/i.test(String(e || ""))) {
       paintProfile({
-        name: 'Speed Clips',
-        username: 'speedclips',
-        public_id: 'SOL-DEMO1234',
-        bio: 'Funny moments and viral edits. Made with Solis AI.',
-        picture: '',
+        name: "Speed Clips",
+        username: "speedclips",
+        public_id: "SOL-DEMO1234",
+        bio: "Funny moments and viral edits. Made with Solis AI.",
+        picture: "",
         followers: 1284,
-        badges: [
-          { badge_type: 'verified', badge_info: { name: 'Verified', color: '#ff6b35' } },
-          { badge_type: 'team', badge_info: { name: 'Solis Team', color: '#ea580c' } },
-        ],
+        badges: [ {
+          badge_type: "verified",
+          badge_info: {
+            name: "Verified",
+            color: "#ff6b35"
+          }
+        }, {
+          badge_type: "team",
+          badge_info: {
+            name: "Solis Team",
+            color: "#ea580c"
+          }
+        } ]
       }, false, false);
       return;
     }
-
     try {
-      var res = await fetch(apiBase() + '/public/profile/' + encodeURIComponent(solId), {
-        method: 'GET',
-        credentials: 'include',
-        headers: authHeaders(),
+      var r = await fetch(apiBase() + "/public/profile/" + encodeURIComponent(e), {
+        method: "GET",
+        credentials: "include",
+        headers: authHeaders()
       });
-      var data = await res.json().catch(function () { return {}; });
-      if (!res.ok) {
-        showError(data.error || 'Profile not found.');
+      var n = await r.json().catch(function() {
+        return {};
+      });
+      if (!r.ok) {
+        showError(n.error || "Profile not found.");
         return;
       }
-      paintProfile(data.creator, !!data.following, !!data.is_self);
-    } catch (_) {
-      showError('Could not load this profile.');
+      paintProfile(n.creator, !!n.following, !!n.is_self);
+    } catch (e) {
+      showError("Could not load this profile.");
     }
   }
-
-  async function loadClip(projectId, demo) {
-    state.mode = 'clip';
-    state.projectId = projectId;
-    document.getElementById('profileRoot').hidden = true;
-    document.getElementById('clipRoot').hidden = false;
-    document.getElementById('pageError').hidden = true;
-
-    var video = document.getElementById('previewVideo');
-    var skel = document.getElementById('skel');
-    wireVideo(video);
-
-    if (demo) {
+  async function loadClip(o, r) {
+    t.mode = "clip";
+    t.projectId = o;
+    document.getElementById("profileRoot").hidden = true;
+    document.getElementById("clipRoot").hidden = false;
+    document.getElementById("pageError").hidden = true;
+    var n = document.getElementById("previewVideo");
+    var i = document.getElementById("skel");
+    wireVideo(n);
+    if (r) {
       paintCreatorOntoClip({
-        name: 'Speed Clips',
-        username: 'speedclips',
-        public_id: 'SOL-DEMO1234',
-        bio: 'Ishowspeed Funny Moments Compilation',
+        name: "Speed Clips",
+        username: "speedclips",
+        public_id: "SOL-DEMO1234",
+        bio: "Ishowspeed Funny Moments Compilation",
         followers: 1284,
-        badges: [
-          { badge_type: 'verified', badge_info: { name: 'Verified', color: '#ff6b35' } },
-          { badge_type: 'team', badge_info: { name: 'Solis Team', color: '#ea580c' } },
-        ],
+        badges: [ {
+          badge_type: "verified",
+          badge_info: {
+            name: "Verified",
+            color: "#ff6b35"
+          }
+        }, {
+          badge_type: "team",
+          badge_info: {
+            name: "Solis Team",
+            color: "#ea580c"
+          }
+        } ]
       });
-      state.solId = 'SOL-DEMO1234';
-      state.creator = scrubCreator({
-        name: 'Speed Clips',
-        username: 'speedclips',
-        public_id: 'SOL-DEMO1234',
+      t.solId = "SOL-DEMO1234";
+      t.creator = scrubCreator({
+        name: "Speed Clips",
+        username: "speedclips",
+        public_id: "SOL-DEMO1234"
       });
-      if (skel) skel.style.display = 'none';
-      if (video) {
-        video.poster = 'https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg';
-        video.style.background =
-          'center / cover no-repeat url(https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg), #111';
+      if (i) i.style.display = "none";
+      if (n) {
+        n.poster = "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg";
+        n.style.background = "center / cover no-repeat url(https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg), #111";
       }
-      document.title = 'Clip by Speed Clips · Solis AI';
+      document.title = "Clip by Speed Clips · Solis AI";
       setOgMeta({
-        title: 'Clip by Speed Clips · Solis AI',
-        description: 'Ishowspeed Funny Moments Compilation',
-        image: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg',
-        url: location.href.split('?')[0],
+        title: "Clip by Speed Clips · Solis AI",
+        description: "Ishowspeed Funny Moments Compilation",
+        image: "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
+        url: location.href.split("?")[0]
       });
       return;
     }
-
-    if (!projectId || projectId.indexOf('prj_') !== 0) {
-      showError('Invalid share link.');
+    if (!o || o.indexOf("prj_") !== 0) {
+      showError("Invalid share link.");
       return;
     }
-
     try {
-      var res = await fetch(apiBase() + '/public/preview/' + encodeURIComponent(projectId), {
-        method: 'GET',
-        credentials: 'omit',
+      var a = await fetch(apiBase() + "/public/preview/" + encodeURIComponent(o), {
+        method: "GET",
+        credentials: "omit"
       });
-      var data = await res.json().catch(function () { return {}; });
-      if (!res.ok) {
-        showError(data.error || 'This clip may be expired or still generating.');
+      var l = await a.json().catch(function() {
+        return {};
+      });
+      if (!a.ok) {
+        showError(l.error || "This clip may be expired or still generating.");
         return;
       }
-
-      var creator = scrubCreator(data.creator);
-      state.creator = creator;
-      state.solId = (creator && (creator.public_id || creator.id)) || '';
-      paintCreatorOntoClip(creator);
-
-      var caption = document.getElementById('clipCaption');
-      if (caption && data.title && !(creator && creator.bio)) {
-        caption.textContent = data.title;
-        caption.hidden = false;
+      var d = scrubCreator(l.creator);
+      t.creator = d;
+      t.solId = d && (d.public_id || d.id) || "";
+      paintCreatorOntoClip(d);
+      var s = document.getElementById("clipCaption");
+      if (s && l.title && !(d && d.bio)) {
+        s.textContent = l.title;
+        s.hidden = false;
       }
-
-      document.title = ((data.title || 'Clip') + ' · Solis AI');
-      var ogImage = (data.thumbnail_url && /^https?:\/\//i.test(data.thumbnail_url))
-        ? data.thumbnail_url
-        : SOLIS_OG_IMAGE;
+      document.title = (l.title || "Clip") + " · Solis AI";
+      var c = l.thumbnail_url && /^https?:\/\//i.test(l.thumbnail_url) ? l.thumbnail_url : e;
       setOgMeta({
-        title: (data.title || 'Clip') + ' · Solis AI',
-        description: (creator && creator.name)
-          ? ('Watch a clip by ' + creator.name + ' on Solis AI')
-          : 'Watch this clip on Solis AI',
-        image: ogImage,
-        url: location.href.split('?')[0],
+        title: (l.title || "Clip") + " · Solis AI",
+        description: d && d.name ? "Watch a clip by " + d.name + " on Solis AI" : "Watch this clip on Solis AI",
+        image: c,
+        url: location.href.split("?")[0]
       });
-      if (video && data.thumbnail_url) {
-        video.poster = absoluteApi(data.thumbnail_url);
+      if (n && l.thumbnail_url) {
+        n.poster = absoluteApi(l.thumbnail_url);
       }
-      var videoUrl = absoluteApi(data.video_url || ('/api/public/preview/' + projectId + '/video'));
-      if (video) {
-        video.src = videoUrl;
-        video.addEventListener('loadeddata', function () {
-          if (skel) skel.style.display = 'none';
-        }, { once: true });
-        video.addEventListener('error', function () {
-          if (skel) skel.style.display = 'none';
+      var f = absoluteApi(l.video_url || "/api/public/preview/" + o + "/video");
+      if (n) {
+        n.src = f;
+        n.addEventListener("loadeddata", function() {
+          if (i) i.style.display = "none";
+        }, {
+          once: true
         });
-        try { video.play().catch(function () {}); } catch (_) {}
+        n.addEventListener("error", function() {
+          if (i) i.style.display = "none";
+        });
+        try {
+          n.play().catch(function() {});
+        } catch (e) {}
       }
-    } catch (_) {
-      showError('Could not load this clip.');
+    } catch (e) {
+      showError("Could not load this clip.");
     }
   }
-
   function wireChrome() {
-    document.getElementById('downloadBtn')?.addEventListener('click', function (e) {
+    document.getElementById("downloadBtn")?.addEventListener("click", function(e) {
       e.preventDefault();
-      openWall('Sign up to download', 'Watching is free. Downloads need a Solis account.');
+      openWall("Sign up to download", "Watching is free. Downloads need a Solis account.");
     });
-    document.getElementById('shareBtn')?.addEventListener('click', async function () {
-      var url = location.href.split('?')[0];
+    document.getElementById("shareBtn")?.addEventListener("click", async function() {
+      var e = location.href.split("?")[0];
       try {
-        await navigator.clipboard.writeText(url);
-      } catch (_) {
-        prompt('Copy this link', url);
+        await navigator.clipboard.writeText(e);
+      } catch (t) {
+        prompt("Copy this link", e);
       }
     });
-    document.getElementById('wallClose')?.addEventListener('click', closeWall);
-    document.getElementById('signupWall')?.addEventListener('click', function (e) {
+    document.getElementById("wallClose")?.addEventListener("click", closeWall);
+    document.getElementById("signupWall")?.addEventListener("click", function(e) {
       if (e.target === e.currentTarget) closeWall();
     });
-    document.getElementById('followBtn')?.addEventListener('click', function () {
+    document.getElementById("followBtn")?.addEventListener("click", function() {
       toggleFollow();
     });
-    document.getElementById('creatorLink')?.addEventListener('click', function () {
-      var sol = state.solId || (state.creator && (state.creator.public_id || state.creator.id));
-      if (sol) goToProfile(sol);
+    document.getElementById("creatorLink")?.addEventListener("click", function() {
+      var e = t.solId || t.creator && (t.creator.public_id || t.creator.id);
+      if (e) goToProfile(e);
     });
-    window.addEventListener('popstate', function () {
+    window.addEventListener("popstate", function() {
       boot(true);
     });
   }
-
-  async function boot(fromPop) {
-    var route = parseRoute();
-    if (!fromPop) wireChrome();
-
-    if (route.mode === 'profile') {
-      await loadProfile(route.solId || 'SOL-DEMO1234', route.demo);
+  async function boot(e) {
+    var t = parseRoute();
+    if (!e) wireChrome();
+    if (t.mode === "profile") {
+      await loadProfile(t.solId || "SOL-DEMO1234", t.demo);
       return;
     }
-    await loadClip(route.projectId || '', route.demo);
+    await loadClip(t.projectId || "", t.demo);
   }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function () { boot(false); });
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", function() {
+      boot(false);
+    });
   } else {
     boot(false);
   }

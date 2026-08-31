@@ -1,191 +1,162 @@
-/**
- * Silence / improve cut preview — red timeline overlay + Accept/Reject (like subtitle memory).
- */
 (function initSilenceCutSuggest() {
-    let pending = null;
-    let actionsEl = null;
-
-    function $(id) {
-        return document.getElementById(id);
-    }
-
-    function formatRemoved(sec) {
-        const n = Math.round(sec * 10) / 10;
-        return Number.isInteger(n) ? String(n) : n.toFixed(1);
-    }
-
-    function totalRemoved(regions) {
-        return (regions || []).reduce((s, r) => s + Math.max(0, Number(r.end) - Number(r.start)), 0);
-    }
-
-    function ensureActions() {
-        const wrap = $('previewTimelineWrap');
-        if (actionsEl && actionsEl.parentElement === wrap) return actionsEl;
-        if (actionsEl) actionsEl.remove();
-
-        actionsEl = document.createElement('div');
-        actionsEl.className = 'preview-timeline-cut-actions sub-mem-actions';
-        actionsEl.id = 'previewCutActions';
-        actionsEl.innerHTML = `
-            <button type="button" class="sub-mem-btn sub-mem-decline" id="previewCutReject" title="Dismiss" aria-label="Dismiss">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                    <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2.35" stroke-linecap="round"/>
-                </svg>
-            </button>
-            <button type="button" class="sub-mem-btn sub-mem-accept" id="previewCutAccept" title="Apply · Tab" aria-label="Apply">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                    <path d="M4.5 10.2l3.4 3.4 7.6-7.8" stroke="currentColor" stroke-width="2.35" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </button>`;
-
-        const bind = (sel, fn) => {
-            const btn = actionsEl.querySelector(sel);
-            if (!btn) return;
-            btn.addEventListener('pointerdown', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                fn();
-            });
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-            });
-        };
-        bind('#previewCutAccept', accept);
-        bind('#previewCutReject', reject);
-
-        if (wrap) wrap.appendChild(actionsEl);
-        else document.body.appendChild(actionsEl);
-        return actionsEl;
-    }
-
-    function showActions() {
-        const actions = ensureActions();
-        actions.classList.remove('hidden');
-        actions.classList.add('open');
-    }
-
-    function hideActions() {
-        if (!actionsEl) return;
-        actionsEl.classList.add('hidden');
-        actionsEl.classList.remove('open');
-    }
-
-    function clearPreviewVisual() {
-        try { window.PreviewTimeline?.clearSkipRegionsPreview?.(); } catch (_) { /* ignore */ }
-    }
-
-    function dismiss({ callReject = true } = {}) {
-        const p = pending;
-        pending = null;
-        clearPreviewVisual();
-        hideActions();
-        if (callReject && p?.onReject) {
-            try { p.onReject(p.regions); } catch (_) { /* ignore */ }
-        }
-    }
-
-    function accept() {
-        const p = pending;
-        if (!p) return;
-        pending = null;
-        clearPreviewVisual();
-        hideActions();
-        try { p.onAccept?.(p.regions); } catch (_) { /* ignore */ }
-    }
-
-    function reject() {
-        dismiss({ callReject: true });
-    }
-
-    function showNote(text) {
-        const note = $('silencerNote');
-        if (!note) return;
-        note.hidden = false;
-        note.textContent = text;
-        note.classList.add('is-visible');
-        if (note._cutHintTimer) clearTimeout(note._cutHintTimer);
-        note._cutHintTimer = setTimeout(() => {
-            note.classList.remove('is-visible');
-            note._cutHintTimer = setTimeout(() => {
-                if (note.textContent === text) note.hidden = true;
-            }, 180);
-        }, 2800);
-    }
-
-    /**
-     * @param {{ regions: Array, source?: string, onAccept: Function, onReject?: Function, label?: string }} opts
-     */
-    async function show(opts) {
-        const regions = Array.isArray(opts?.regions) ? opts.regions : [];
-        if (!regions.length && opts?.source === 'silencer') return false;
-
-        dismiss({ callReject: false });
-
-        pending = {
-            regions: regions.map((r) => ({ start: r.start, end: r.end })),
-            source: opts?.source || 'silencer',
-            onAccept: opts?.onAccept,
-            onReject: opts?.onReject,
-        };
-
-        const deadline = Date.now() + 4500;
-        while (Date.now() < deadline) {
-            const trim = window.PreviewTimeline?.getTrim?.();
-            if (window.PreviewTimeline?.isBound?.() && trim?.duration > 0) break;
-            await new Promise((r) => setTimeout(r, 60));
-        }
-
-        try {
-            window.PreviewTimeline?.setSkipRegionsPreview?.(pending.regions);
-        } catch (_) { /* ignore */ }
-
-        ensureActions();
-        showActions();
-
-        const removed = totalRemoved(pending.regions);
-        const label = opts?.label
-            || (removed > 0
-                ? `Red = ${formatRemoved(removed)}s to remove · Accept?`
-                : (opts?.source === 'improve'
-                    ? 'Improve clip · Accept?'
-                    : 'Review cuts · Accept?'));
-        showNote(label);
-
-        return true;
-    }
-
-    function isOpen() {
-        return Boolean(pending);
-    }
-
-    function getPending() {
-        return pending ? { ...pending, regions: pending.regions.slice() } : null;
-    }
-
-    document.addEventListener('keydown', (e) => {
-        if (!pending) return;
-        if (e.key === 'Tab' && !e.shiftKey) {
-            e.preventDefault();
-            accept();
-        } else if (e.key === 'Escape') {
-            e.preventDefault();
-            reject();
-        }
-    });
-
-    window.addEventListener('resize', () => {
-        if (pending) showActions();
-    }, { passive: true });
-
-    window.SolisSilenceCutSuggest = {
-        show,
-        accept,
-        reject,
-        dismiss,
-        clear: () => dismiss({ callReject: false }),
-        isOpen,
-        getPending,
-        reposition: showActions,
+  let e = null;
+  let t = null;
+  function $(e) {
+    return document.getElementById(e);
+  }
+  function formatRemoved(e) {
+    const t = Math.round(e * 10) / 10;
+    return Number.isInteger(t) ? String(t) : t.toFixed(1);
+  }
+  function totalRemoved(e) {
+    return (e || []).reduce((e, t) => e + Math.max(0, Number(t.end) - Number(t.start)), 0);
+  }
+  function ensureActions() {
+    const e = $("previewTimelineWrap");
+    if (t && t.parentElement === e) return t;
+    if (t) t.remove();
+    t = document.createElement("div");
+    t.className = "preview-timeline-cut-actions sub-mem-actions";
+    t.id = "previewCutActions";
+    t.innerHTML = `\n            <button type="button" class="sub-mem-btn sub-mem-decline" id="previewCutReject" title="Dismiss" aria-label="Dismiss">\n                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">\n                    <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2.35" stroke-linecap="round"/>\n                </svg>\n            </button>\n            <button type="button" class="sub-mem-btn sub-mem-accept" id="previewCutAccept" title="Apply · Tab" aria-label="Apply">\n                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">\n                    <path d="M4.5 10.2l3.4 3.4 7.6-7.8" stroke="currentColor" stroke-width="2.35" stroke-linecap="round" stroke-linejoin="round"/>\n                </svg>\n            </button>`;
+    const bind = (e, n) => {
+      const i = t.querySelector(e);
+      if (!i) return;
+      i.addEventListener("pointerdown", e => {
+        e.preventDefault();
+        e.stopPropagation();
+        n();
+      });
+      i.addEventListener("click", e => {
+        e.preventDefault();
+        e.stopPropagation();
+      });
     };
+    bind("#previewCutAccept", accept);
+    bind("#previewCutReject", reject);
+    if (e) e.appendChild(t); else document.body.appendChild(t);
+    return t;
+  }
+  function showActions() {
+    const e = ensureActions();
+    e.classList.remove("hidden");
+    e.classList.add("open");
+  }
+  function hideActions() {
+    if (!t) return;
+    t.classList.add("hidden");
+    t.classList.remove("open");
+  }
+  function clearPreviewVisual() {
+    try {
+      window.PreviewTimeline?.clearSkipRegionsPreview?.();
+    } catch (e) {}
+  }
+  function dismiss({callReject: t = true} = {}) {
+    const n = e;
+    e = null;
+    clearPreviewVisual();
+    hideActions();
+    if (t && n?.onReject) {
+      try {
+        n.onReject(n.regions);
+      } catch (e) {}
+    }
+  }
+  function accept() {
+    const t = e;
+    if (!t) return;
+    e = null;
+    clearPreviewVisual();
+    hideActions();
+    try {
+      t.onAccept?.(t.regions);
+    } catch (e) {}
+  }
+  function reject() {
+    dismiss({
+      callReject: true
+    });
+  }
+  function showNote(e) {
+    const t = $("silencerNote");
+    if (!t) return;
+    t.hidden = false;
+    t.textContent = e;
+    t.classList.add("is-visible");
+    if (t._cutHintTimer) clearTimeout(t._cutHintTimer);
+    t._cutHintTimer = setTimeout(() => {
+      t.classList.remove("is-visible");
+      t._cutHintTimer = setTimeout(() => {
+        if (t.textContent === e) t.hidden = true;
+      }, 180);
+    }, 2800);
+  }
+  async function show(t) {
+    const n = Array.isArray(t?.regions) ? t.regions : [];
+    if (!n.length && t?.source === "silencer") return false;
+    dismiss({
+      callReject: false
+    });
+    e = {
+      regions: n.map(e => ({
+        start: e.start,
+        end: e.end
+      })),
+      source: t?.source || "silencer",
+      onAccept: t?.onAccept,
+      onReject: t?.onReject
+    };
+    const i = Date.now() + 4500;
+    while (Date.now() < i) {
+      const e = window.PreviewTimeline?.getTrim?.();
+      if (window.PreviewTimeline?.isBound?.() && e?.duration > 0) break;
+      await new Promise(e => setTimeout(e, 60));
+    }
+    try {
+      window.PreviewTimeline?.setSkipRegionsPreview?.(e.regions);
+    } catch (e) {}
+    ensureActions();
+    showActions();
+    const s = totalRemoved(e.regions);
+    const o = t?.label || (s > 0 ? `Red = ${formatRemoved(s)}s to remove · Accept?` : t?.source === "improve" ? "Improve clip · Accept?" : "Review cuts · Accept?");
+    showNote(o);
+    return true;
+  }
+  function isOpen() {
+    return Boolean(e);
+  }
+  function getPending() {
+    return e ? {
+      ...e,
+      regions: e.regions.slice()
+    } : null;
+  }
+  document.addEventListener("keydown", t => {
+    if (!e) return;
+    if (t.key === "Tab" && !t.shiftKey) {
+      t.preventDefault();
+      accept();
+    } else if (t.key === "Escape") {
+      t.preventDefault();
+      reject();
+    }
+  });
+  window.addEventListener("resize", () => {
+    if (e) showActions();
+  }, {
+    passive: true
+  });
+  window.SolisSilenceCutSuggest = {
+    show: show,
+    accept: accept,
+    reject: reject,
+    dismiss: dismiss,
+    clear: () => dismiss({
+      callReject: false
+    }),
+    isOpen: isOpen,
+    getPending: getPending,
+    reposition: showActions
+  };
 })();

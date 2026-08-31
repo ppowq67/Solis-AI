@@ -113,7 +113,6 @@
     to   { opacity: 1; transform: translateX(0); }
 }
 
-/* Desktop: portal shortcut lives in the pill sidebar */
 .mnav-portal-arrow,
 .mnav-side-spacer {
     display: none !important;
@@ -661,7 +660,6 @@
         transform: translateX(-120%) !important;
     }
 
-    /* Portal ↔ Template page transition */
     #portalContainer.mnav-section-anim,
     #clipsContainer.mnav-section-anim,
     .clips-container.mnav-section-anim {
@@ -727,7 +725,6 @@
         visibility: hidden !important;
     }
 
-    /* Old floating menu chrome — replaced by mnav-menu-sheet */
     .mobile-menu-panel,
     .mobile-menu-fab,
     .mobile-nav-dock,
@@ -739,7 +736,6 @@
         display: none !important;
     }
 
-    /* ── Floating pill ── */
     .mobile-clips-bar,
     .clips-sub-nav {
         pointer-events: auto;
@@ -1019,13 +1015,11 @@
         stroke: #fff !important;
     }
 
-    /* No Ranking / Clip quick pills on mobile create sheet */
     .create-quick-pills,
     #createQuickPills {
         display: none !important;
     }
 
-    /* Hide create page on mobile — URL opens in bottom sheet */
     #createSection {
         display: none !important;
     }
@@ -1178,7 +1172,6 @@
         touch-action: none;
     }
 
-    /* Soft magic glow — clipped inside the sheet */
     .mnav-create-aura {
         position: absolute;
         inset: 0;
@@ -1401,7 +1394,6 @@
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch;
         overscroll-behavior-x: none;
-        /* Kill the loud orange scrollbar that steals the right edge */
         scrollbar-width: none !important;
         -ms-overflow-style: none !important;
     }
@@ -1452,7 +1444,6 @@
         animation: none !important;
     }
 
-    /* Directional swipe transitions (after commit) */
     .clips-section.active.clips-slide-from-right {
         animation: clipsSlideFromRight 0.36s cubic-bezier(0.22, 1, 0.36, 1) both !important;
     }
@@ -1461,7 +1452,6 @@
         animation: clipsSlideFromLeft 0.36s cubic-bezier(0.22, 1, 0.36, 1) both !important;
     }
 }
-
 
 @media (max-width: 768px) and (hover: hover) and (pointer: fine) {
     .mobile-clips-tab:hover:not(.active):not(.clips-sub-create),

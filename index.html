@@ -78,7 +78,6 @@
       background-attachment: scroll;
       color: #18120e;
     }
-    /* Low-end / reduced-motion: snappier, cheaper paints */
     html.solis-lite body {
       background-size: 22px 22px;
     }
@@ -131,7 +130,6 @@
       -webkit-text-fill-color: transparent; color: transparent;
     }
 
-    /* Native macOS cursor — slightly larger assets for landing */
     :root {
       --solis-cursor: url('/style/cursor.png?v=29') 15 11, auto;
       --solis-cursor-hand: url('/style/cursor-hand.png?v=29') 19 12, pointer;
@@ -149,6 +147,7 @@
       [role="button"],
       .nav-cta,
       .pill,
+      .pill-wrap,
       .pill-btn,
       .pill-input,
       .glass-pill,
@@ -173,7 +172,7 @@
       html[data-solis-cursor="always"] body {
         cursor: auto;
       }
-      html[data-solis-cursor="always"] :is(a[href], button, [role="button"], .nav-cta, .pill, .pill-btn, .pill-input, .glass-pill, .glass-pill-btn, .glass-pill-input, .auth-btn, .faq-btn, .mob-signup, .nav-toggle, .auth-modal-close) {
+      html[data-solis-cursor="always"] :is(a[href], button, [role="button"], .nav-cta, .pill, .pill-wrap, .pill-btn, .pill-input, .glass-pill, .glass-pill-btn, .glass-pill-input, .auth-btn, .faq-btn, .mob-signup, .nav-toggle, .auth-modal-close) {
         cursor: pointer;
       }
     }
@@ -182,7 +181,6 @@
     .dot.pulse { animation: pulse 2s ease-in-out infinite; }
     @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.55; transform: scale(0.85); } }
 
-    /* --- Navbar (static — scrolls away with page) --- */
     .navbar-wrapper {
       position: relative;
       top: auto; left: auto; width: 100%;
@@ -929,7 +927,6 @@
       text-align: center;
       box-sizing: border-box;
     }
-    /* Product Hunt banner — same layout/assets as agent/meh.html */
     @font-face {
       font-family: "Exposure VAR";
       src: url("https://arc.net/fonts/205TF-Exposure-[-30].woff2") format("woff2");
@@ -977,7 +974,6 @@
       text-align: left;
       box-shadow: 0 1px 0 rgba(255, 255, 255, 1);
     }
-    /* Full-bleed fade layer so edges never get cropped by cover */
     .ph-fade {
       position: absolute;
       inset: 0;
@@ -1577,7 +1573,6 @@
     .bottom-band-glow {
       display: none !important;
     }
-    /* Cursor-follow dots (transform only — no full-band mask repaints) */
     .bottom-band-spotlight {
       position: absolute;
       left: 0;
@@ -1648,7 +1643,6 @@
       line-height: 1.5;
       white-space: nowrap;
     }
-    /* Solid readable pill on orange (not washed-out glass) */
     .get-started .glass-pill {
       background: #fff;
       border: 1px solid rgba(255, 255, 255, 0.95);
@@ -1735,7 +1729,6 @@
     }
     .glass-pill-input::placeholder { color: rgba(255,255,255,0.45); }
     .glass-pill-btn {
-      /* Size tweak only — visuals come from .pill-btn */
       height: 52px;
       padding: 0 24px;
       font-size: 15px;
@@ -1949,7 +1942,6 @@
     }
     @media (max-width: 380px) { .foot-grid { grid-template-columns: 1fr; } }
 
-    /* Sticky dock — glassy URL input (nav / app pill vibe) */
     .scroll-dock {
       position: fixed;
       left: 50%;
@@ -2196,7 +2188,6 @@
       .cta-pill { padding: 4px 4px 4px 12px; }
     }
 
-    /* ── How it works + glass demo ── */
     .how-section {
       position: relative;
       z-index: 2;
@@ -3012,8 +3003,6 @@
       .sgd-lib-sub { animation: none; }
     }
 
-
-    /* ── Scroll features (light, full-bleed) ── */
     .agent-pin {
       position: relative;
       z-index: 2;
@@ -3186,7 +3175,6 @@
         #fff;
     }
 
-    /* AI suggestions mock — matches preview-placeholder sub-suggest + sub-mem-actions */
     .sug-stage {
       position: relative;
       width: min(340px, 92%);
@@ -3313,7 +3301,6 @@
       .sug-caption { animation: none; }
     }
 
-    /* Templates: ranking + split — match product preview-placeholder */
     .tpl-pair {
       display: flex;
       gap: 14px;
@@ -3529,7 +3516,6 @@
       margin-top: 28%;
     }
 
-    /* Memory mock */
     .mem-stage {
       width: min(420px, 94%);
       display: flex;
@@ -3679,7 +3665,6 @@
       border-color: rgba(200,185,170,0.4);
     }
 
-    /* Simplicity mock */
     .simp-stage {
       width: min(380px, 94%);
       display: flex;
@@ -3787,7 +3772,6 @@
       margin: 0;
     }
 
-    /* After generation — Improve Clip + Remove Silence (pill editor hover) */
     .postgen-stage {
       width: min(360px, 94%);
       display: flex;
@@ -4033,8 +4017,6 @@
       .agent-viz { transition: none; }
     }
 
-    /* Quote band — compact, soft poly */
-    /* Easy-style quote on Solis low-poly band */
     .audience-band {
       --poly-x: 50%;
       --poly-y: 45%;
@@ -4170,7 +4152,6 @@
       .audience-poly polygon { transition: none; }
     }
 
-    /* ── Auth popover ── */
     html.auth-modal-open, body.auth-modal-open { overflow: hidden; }
     .auth-modal {
       position: fixed; inset: 0; z-index: 4000;
@@ -5131,10 +5112,8 @@
         gsRaf = 0;
         if (!gsSpotlight) return;
         gsSpotlight.style.transform = 'translate3d(' + gsX + 'px,' + gsY + 'px,0)';
-        /* Keep bright dots locked to the static 14px grid */
         gsSpotlight.style.backgroundPosition = (-gsX) + 'px ' + (-gsY) + 'px';
       }
-      /* Transform-only spotlight — avoids mask/radial CSS var repaints every move */
       if (gsSpotlight
           && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
           && !window.matchMedia('(pointer: coarse)').matches) {
@@ -5232,12 +5211,12 @@
     var pillsAuthed = false;
 
     function triggerAuthFlow() {
-      if (typeof window.goToAppOrLogin === 'function') {
-        window.goToAppOrLogin();
-        return;
-      }
       if (typeof window.openAuthModal === 'function') {
         window.openAuthModal();
+        return;
+      }
+      if (typeof window.goToAppOrLogin === 'function') {
+        window.goToAppOrLogin();
         return;
       }
       window.location.href = '/?login=1';
@@ -5326,10 +5305,15 @@
       });
     }
 
-    // Guest default: locked — click opens login (same as before)
     lockPillsGuest();
 
     pillInputs.forEach(function (input) {
+      input.addEventListener('pointerdown', function (e) {
+        if (!pillsAuthed) {
+          e.preventDefault();
+          triggerAuthFlow();
+        }
+      });
       input.addEventListener('click', function (e) {
         e.stopPropagation();
         if (!pillsAuthed) {
@@ -5397,6 +5381,14 @@
       });
     });
 
+    document.querySelectorAll('.pill-wrap').forEach(function (wrap) {
+      wrap.addEventListener('click', function (e) {
+        if (pillsAuthed) return;
+        if (e.target.closest('.pill')) return;
+        triggerAuthFlow();
+      });
+    });
+
     document.querySelectorAll('.pill-btn, .glass-pill-btn').forEach(function (btn) {
       btn.addEventListener('click', function (e) {
         e.preventDefault();
@@ -5417,7 +5409,6 @@
       });
     });
 
-    // Unlock paste only after auth check confirms logged in
     (function checkPillAuth() {
       try {
         var host = location.hostname;
@@ -5456,7 +5447,6 @@
     }, { threshold: 0.01, rootMargin: '80px 0px 40px 0px' });
     document.querySelectorAll('.reveal, .blur-in').forEach(function(el) { revealObserver.observe(el); });
 
-    /* Low-poly Solis band hover */
     (function initAudiencePoly() {
       var band = document.getElementById('_audience');
       var poly = band && band.querySelector('.audience-poly');
@@ -5513,7 +5503,6 @@
       }
     })();
 
-    /* How it works — shelf marquee → suck into URL → clips loop */
     (function initSaasDemo() {
       var demo = document.getElementById('saasDemo');
       var frame = document.getElementById('saasFrame');
@@ -5531,7 +5520,6 @@
 
       var DEMO_URL = 'youtube.com/watch?v=solis-demo';
       var URL_PLACEHOLDER = 'Paste a YouTube link';
-      /* Only true reduced-motion skips the demo choreography — not solis-lite */
       var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       var running = false;
       var timers = [];
@@ -5699,7 +5687,6 @@
           return;
         }
 
-        /* Let the shelf scroll briefly, then pick → lift → suck → type → clip */
         later(380, function() {
           shelf.classList.add('is-paused');
           pick = pickClosest();
@@ -5746,7 +5733,6 @@
         var r = demo.getBoundingClientRect();
         var vh = window.innerHeight || 0;
         if (!vh || r.height <= 0) return false;
-        // Top of the demo (rail) is enough — don't wait for most of the tall glass
         return r.top < vh * 0.88 && r.bottom > Math.min(72, vh * 0.12);
       }
       function onDemoVisibility(on) {
@@ -5764,13 +5750,11 @@
         });
       }, { threshold: 0, rootMargin: '80px 0px -8% 0px' });
       io.observe(demo);
-      // IO can miss the first paint when the section is already on screen
       requestAnimationFrame(function() {
         if (demoInView()) onDemoVisibility(true);
       });
     })();
 
-    /* Discord tip — auto-show when footer is in view */
     (function initDiscordTip() {
       var link = document.getElementById('discordSocial');
       var footer = document.querySelector('.footer');
@@ -5800,7 +5784,6 @@
       });
     })();
 
-    /* Scroll-pin feature showcase */
     (function initAgentPin() {
       var track = document.getElementById('agentPinTrack');
       var copy = document.getElementById('agentPinCopy');

@@ -6,37 +6,37 @@
     --page: var(--bg-primary);
     --card: var(--card-bg);
     --text: var(--text-primary);
-    
+
     --text-primary: #0f172a;
     --text-secondary: #64748b;
     --text-tertiary: #94a3b8;
     --text-muted: #cbd5e1;
-    
+
     --border-subtle: #f0f3f8;
     --border-light: #e2e8f0;
     --border-medium: #cbd5e1;
-    
+
     --primary: #6366f1;
     --primary-light: #eef2ff;
     --primary-soft: #c7d2fe;
-    
+
     --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.02);
     --shadow-card: 0 2px 6px rgba(15, 23, 42, 0.05);
     --shadow-elevated: 0 8px 16px rgba(15, 23, 42, 0.08);
     --shadow-button: 0 1px 2px rgba(15, 23, 42, 0.04);
-    
+
     --icon-bg-indigo: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
     --icon-color-indigo: #6366f1;
-    
+
     --icon-bg-sky: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
     --icon-color-sky: #0ea5e9;
-    
+
     --icon-bg-amber: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
     --icon-color-amber: #f59e0b;
-    
+
     --icon-bg-emerald: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
     --icon-color-emerald: #10b981;
-    
+
     --icon-bg-violet: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
     --icon-color-violet: #8b5cf6;
     --solis: #f97316;
@@ -64,37 +64,37 @@
     --bg-primary: #0a0e17;
     --bg-secondary: #101620;
     --card-bg: #131b2a;
-    
+
     --text-primary: #f1f5f9;
     --text-secondary: #cbd5e1;
     --text-tertiary: #94a3b8;
     --text-muted: #64748b;
-    
+
     --border-subtle: #1e293b;
     --border-light: #334155;
     --border-medium: #475569;
-    
+
     --primary: #8b5cf6;
     --primary-light: #3730a3;
     --primary-soft: #4c1d95;
-    
+
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
     --shadow-card: 0 2px 6px rgba(0, 0, 0, 0.15);
     --shadow-elevated: 0 8px 16px rgba(0, 0, 0, 0.3);
     --shadow-button: 0 1px 2px rgba(0, 0, 0, 0.2);
-    
+
     --icon-bg-indigo: linear-gradient(135deg, #3730a3 0%, #4c1d95 100%);
     --icon-color-indigo: #a78bfa;
-    
+
     --icon-bg-sky: linear-gradient(135deg, #0c4a6e 0%, #0369a1 100%);
     --icon-color-sky: #38bdf8;
-    
+
     --icon-bg-amber: linear-gradient(135deg, #78350f 0%, #a16207 100%);
     --icon-color-amber: #fbbf24;
-    
+
     --icon-bg-emerald: linear-gradient(135deg, #064e3b 0%, #047857 100%);
     --icon-color-emerald: #6ee7b7;
-    
+
     --icon-bg-violet: linear-gradient(135deg, #5b21b6 0%, #7c3aed 100%);
     --icon-color-violet: #d8b4fe;
 }
@@ -124,7 +124,7 @@ body {
     right: -10%;
     width: 600px;
     height: 600px;
-    background: 
+    background:
         radial-gradient(circle at 30% 40%, rgba(99, 102, 241, 0.05) 0%, transparent 50%),
         radial-gradient(circle at 70% 60%, rgba(139, 92, 246, 0.04) 0%, transparent 50%);
     filter: blur(80px);
@@ -139,7 +139,7 @@ body {
     left: -10%;
     width: 500px;
     height: 500px;
-    background: 
+    background:
         radial-gradient(circle at 40% 50%, rgba(14, 165, 233, 0.04) 0%, transparent 50%),
         radial-gradient(circle at 60% 50%, rgba(16, 185, 129, 0.03) 0%, transparent 50%);
     filter: blur(80px);
@@ -148,11 +148,11 @@ body {
 }
 
 @keyframes float-art {
-    0%, 100% { 
+    0%, 100% {
         transform: translate(0, 0) scale(1);
         opacity: 0.5;
     }
-    50% { 
+    50% {
         transform: translate(20px, -20px) scale(1.05);
         opacity: 0.3;
     }
@@ -820,7 +820,6 @@ body {
     top: 80px;
     left: 0; right: 0; bottom: 0;
 
-    /* ✅ warm solis-tinted blur backing */
     background-color: rgba(255, 247, 237, 0.65);
     background-image: linear-gradient(
         160deg,
@@ -853,7 +852,6 @@ body {
     width: 100%;
     max-width: 360px;
 
-    /* ✅ solid warm base first, then the glass gradient on top */
     background-color: rgba(255, 248, 240, 0.75);
     background-image: var(--glass-bg);
     box-shadow: var(--glass-shadow);
@@ -873,7 +871,6 @@ body {
     }
 }
 
-/* ── Icon ─────────────────────────────────────────────── */
 .lock-icon-wrap {
     position: relative;
     width: 68px;
@@ -916,7 +913,6 @@ body {
     50%       { opacity: 0.65; transform: scale(1.1); }
 }
 
-/* ── Text ─────────────────────────────────────────────── */
 .lock-text {
     margin-bottom: 24px;
 }
@@ -937,7 +933,6 @@ body {
     max-width: 260px;
 }
 
-/* ── Button ───────────────────────────────────────────── */
 .connect-btn {
     display: inline-flex;
     align-items: center;
@@ -956,7 +951,6 @@ body {
     letter-spacing: 0.15px;
     cursor: pointer;
 
-    /* Glassy button sheen */
     box-shadow:
         0 4px 16px rgba(249, 115, 22, 0.32),
         0 1px 3px rgba(249, 115, 22, 0.2),
@@ -985,7 +979,6 @@ body {
         inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
-/* ── Locked state ─────────────────────────────────────── */
 .dashboard-grid.analytics-locked,
 .dashboard-charts.analytics-locked {
     filter: blur(5px) saturate(0.7);
@@ -995,7 +988,6 @@ body {
     transition: filter 0.4s ease, opacity 0.4s ease;
 }
 
-/* ── Responsive ───────────────────────────────────────── */
 @media (max-width: 480px) {
     .analytics-lock-overlay {
         top: 60px;
@@ -1037,7 +1029,6 @@ body {
         font-size: 0.875rem;
     }
 
-    /* ── Stats Grid ── */
     .dashboard-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 12px;
@@ -1076,7 +1067,6 @@ body {
         margin-top: 8px;
     }
 
-    /* ── Charts ── */
     .dashboard-charts {
         grid-template-columns: 1fr;
         gap: 12px;
@@ -1117,7 +1107,6 @@ body {
         font-size: 0.875rem;
     }
 
-    /* ── Recent Activity ── */
     .recent-activity {
         padding: 20px 16px;
         border-radius: 14px;
@@ -1155,7 +1144,6 @@ body {
         margin-left: 8px;
     }
 
-    /* ── Lock Overlay ── */
     .analytics-lock-overlay {
         top: 60px;
         border-radius: 0 0 14px 14px;
@@ -1216,7 +1204,6 @@ body {
     animation: fadeInOverlay 0.3s ease;
 }
 
-/* Mobile adjustments */
 @media (max-width: 768px) {
     .analytics-lock-overlay {
         padding: 24px;

@@ -17,7 +17,6 @@
     z-index: 1200;
 }
 
-/* Mid / laptop: keep cluster compact so it never eats into New Clip */
 @media (min-width: 769px) and (max-width: 1300px) {
     .profile-notif-wrapper {
         top: 16px;
@@ -45,7 +44,6 @@
     }
 }
 
-/* Desktop: separate bell + avatar. Mobile cluster chrome lives in mobile-nav.css */
 .profile-action-cluster {
     display: flex;
     align-items: center;
@@ -79,7 +77,6 @@
     align-items: center;
 }
 
-/* Notifications row in profile menu — mobile-only entry (bell is always on PC) */
 #dropdownNotifications {
     display: none;
 }
@@ -104,7 +101,6 @@
     display: none !important;
 }
 
-/* Generation progress launcher + task panel (from w.html) */
 .generation-progress-wrapper {
     display: flex;
     align-items: flex-start;
@@ -441,7 +437,6 @@
 .generation-todo-item.is-active .generation-task-pending { opacity: 0; }
 .generation-todo-item.is-active .generation-task-active-wrap { opacity: 1; }
 
-/* Queue wait — slower amber pulse so it feels paused, not mid-download */
 .generation-todo-item.is-waiting .generation-task-spinner {
     animation-duration: 2.8s;
 }
@@ -578,7 +573,6 @@
     }
 }
 
-/* ✅ Red pulsing notification badge for "My Library" tab */
 @keyframes pulseRed {
     0%, 100% {
         box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.8);
@@ -600,7 +594,6 @@
     z-index: 100;
 }
 
-/* ✅ Video Ready System Notification */
 .video-ready-notification {
     position: fixed;
     top: 20px;
@@ -700,7 +693,6 @@
     box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.18);
 }
 
-/* Don't fight the unread swing with hover transforms */
 .bell-btn.has-unread:hover {
     transform: none;
 }
@@ -776,7 +768,6 @@
     overflow-y: auto;
     isolation: isolate;
 
-    /* Glass */
     background: rgba(255, 255, 255, 0.72);
     backdrop-filter: blur(24px) saturate(160%) brightness(1.04);
     -webkit-backdrop-filter: blur(24px) saturate(160%) brightness(1.04);
@@ -795,7 +786,6 @@
     transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
 }
 
-/* Top specular bar */
 .notif-dropdown::after {
     content: '';
     position: absolute;
@@ -819,7 +809,6 @@
     transform: scale(1);
 }
 
-/* Scrollbar */
 .notif-dropdown::-webkit-scrollbar { width: 4px; }
 .notif-dropdown::-webkit-scrollbar-track { background: transparent; }
 .notif-dropdown::-webkit-scrollbar-thumb {
@@ -827,7 +816,6 @@
     border-radius: 4px;
 }
 
-/* ── Header ── */
 .notif-dropdown-header {
     display: flex;
     justify-content: space-between;
@@ -854,7 +842,6 @@
 
 .notif-dropdown-header a:hover { opacity: 0.7; }
 
-/* ── Notification item ── */
 .notif-item {
     display: flex;
     gap: 12px;
@@ -877,7 +864,6 @@
     padding-bottom: 14px;
 }
 
-/* ── Notification icon ── */
 .notif-icon {
     width: 40px;
     height: 40px;
@@ -910,7 +896,6 @@
     display: block;
 }
 
-/* ── Notification content ── */
 .notif-content {
     display: flex;
     flex-direction: column;
@@ -1001,13 +986,11 @@
     100% { background-position: -100% 0; }
 }
 
-/* Fallback */
 @supports not (backdrop-filter: blur(1px)) {
     .notif-dropdown { background: rgba(255, 255, 255, 0.97); }
     .notif-icon     { background: #fff; }
 }
 
-/* Profile avatar button */
 .profile-avatar-btn {
     width: 38px;
     height: 38px;
@@ -1049,7 +1032,6 @@
     flex-shrink: 0;
 }
 
-/* Profile info section */
 .profile-info {
     display: flex;
     align-items: center;
@@ -1097,7 +1079,6 @@
     text-transform: uppercase;
 }
 
-/* Menu links */
 .profile-link {
     padding: 8px 10px;
     display: flex;
@@ -1132,14 +1113,12 @@
     color: var(--primary-orange);
 }
 
-/* Divider */
 .profile-divider {
     height: 1px;
     background-color: rgba(0, 0, 0, 0.05);
     margin: 8px 4px;
 }
 
-/* Logout link */
 .profile-link.logout {
     color: #ef4444;
 }
@@ -1157,7 +1136,6 @@
     color: #ef4444;
 }
 
-/* Video generated notification overlay */
 .video-generated-overlay {
     position: fixed;
     top: 50%;
@@ -1280,9 +1258,7 @@
     background: rgba(0, 0, 0, 0.1);
 }
 
-/* Responsive design */
 @media (max-width: 768px) {
-    /* Mobile: Notifications lives in the profile menu */
     #dropdownNotifications {
         display: flex;
     }
@@ -1293,7 +1269,6 @@
         position: fixed !important;
         top: 16px !important;
         right: 14px !important;
-        /* Below bottom nav — gen launcher only stays up here */
         z-index: 900 !important;
         align-items: center !important;
         visibility: visible !important;
@@ -1312,7 +1287,6 @@
         pointer-events: auto !important;
     }
 
-    /* Cluster moves into bottom nav on mobile — never hide when already relocated */
     .profile-notif-wrapper > .profile-action-cluster {
         display: none !important;
     }

@@ -1,14 +1,13 @@
-
 :root {
-    
+
     --brand-orange: #ff6b35;
     --brand-peach: #ffb380;
 
-    --text: #e5e7eb;        
-    --muted: #9CA3AF;       
-    --bg: #0a0e17;          
-    --surface: #0f1419;     
-    --panel: #1a1f2e;       
+    --text: #e5e7eb;
+    --muted: #9CA3AF;
+    --bg: #0a0e17;
+    --surface: #0f1419;
+    --panel: #1a1f2e;
     --sidebar: rgba(15,20,25,0.95);
     --input: #1a1f2e;
     --border: rgba(93,103,120,0.4);

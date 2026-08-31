@@ -1,8 +1,3 @@
-/**
- * 🎬 Output Clips Manager - CSS Styles
- * Styling for output clips modal and download interface
- */
-
 .output-clips-modal {
     position: fixed;
     top: 0;
@@ -222,7 +217,6 @@
     color: #aaa;
 }
 
-/* Mobile responsiveness */
 @media (max-width: 600px) {
     .output-clips-container {
         width: 95%;

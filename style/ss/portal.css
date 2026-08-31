@@ -1,5 +1,5 @@
 :root {
-    
+
     --bg-primary: #fcfcfc;
     --card-bg: #ffffff;
     --text-primary: #1e1e1e;
@@ -29,7 +29,7 @@
 }
 
 [data-theme="dark"] {
-    
+
     --bg-primary: #0a0e17;
     --card-bg: #0f1419;
     --text-primary: #e5e7eb;
@@ -149,14 +149,13 @@
 .quick-actions-grid {
     display: grid;
     align-items: center;
-    grid-template-columns: repeat(4, 1fr); 
+    grid-template-columns: repeat(4, 1fr);
     gap: 24px;
     margin-bottom: 8px;
     position: relative;
     z-index: 1;
 }
 
-/* ── Create Content card ── */
 .quick-action-card.quick-action-create,
 #newClipBtn.quick-action-card {
     border-radius: 28px;
@@ -396,7 +395,7 @@
     z-index: 10;
     font-size: 48px;
     margin-bottom: 28px;
-    width: 110px; 
+    width: 110px;
     height: 110px;
     border-radius: 20px;
     display: flex;
@@ -412,7 +411,7 @@
     );
     backdrop-filter: blur(45px) saturate(200%);
     -webkit-backdrop-filter: blur(45px) saturate(200%);
-    box-shadow: 
+    box-shadow:
         inset 0 1px 2px rgba(255, 255, 255, 0.8),
         0 2px 6px rgba(180, 180, 180, 0.06);
 }
@@ -425,61 +424,61 @@
 }
 
 .quick-action-card.yellow {
-    background: 
+    background:
         linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%),
         linear-gradient(220deg, #FFECB3 0%, #FFD54F 50%, #FFC107 100%);
 }
 .quick-action-card.purple {
-    background: 
+    background:
         linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%),
         linear-gradient(220deg, #E1BEE7 0%, #CE93D8 50%, #BA68C8 100%);
 }
 .quick-action-card.blue {
-    background: 
+    background:
         linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%),
         linear-gradient(220deg, #BBDEFB 0%, #64B5F6 50%, #42A5F5 100%);
 }
 .quick-action-card.gold {
-    background: 
+    background:
         linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%),
         linear-gradient(220deg, #FFF9C4 0%, #FFE082 50%, #FFD54F 100%);
 }
 
 .quick-action-card.yellow .quick-action-icon-content {
-    background: 
+    background:
         linear-gradient(135deg, #ffffff 0%, #fffef8 100%);
     color: #FF8F00;
-    box-shadow: 
+    box-shadow:
         0 2px 8px rgba(255, 193, 7, 0.2),
         0 8px 24px rgba(255, 193, 7, 0.25),
         0 16px 48px rgba(255, 193, 7, 0.15),
         inset 0 2px 0 rgba(255, 255, 255, 0.9);
 }
 .quick-action-card.purple .quick-action-icon-content {
-    background: 
+    background:
         linear-gradient(135deg, #ffffff 0%, #fef8ff 100%);
     color: #7B1FA2;
-    box-shadow: 
+    box-shadow:
         0 2px 8px rgba(156, 39, 176, 0.2),
         0 8px 24px rgba(156, 39, 176, 0.25),
         0 16px 48px rgba(156, 39, 176, 0.15),
         inset 0 2px 0 rgba(255, 255, 255, 0.9);
 }
 .quick-action-card.blue .quick-action-icon-content {
-    background: 
+    background:
         linear-gradient(135deg, #ffffff 0%, #f8fcff 100%);
     color: #1976D2;
-    box-shadow: 
+    box-shadow:
         0 2px 8px rgba(33, 150, 243, 0.2),
         0 8px 24px rgba(33, 150, 243, 0.25),
         0 16px 48px rgba(33, 150, 243, 0.15),
         inset 0 2px 0 rgba(255, 255, 255, 0.9);
 }
 .quick-action-card.gold .quick-action-icon-content {
-    background: 
+    background:
         linear-gradient(135deg, #ffffff 0%, #fffef5 100%);
     color: #F57C00;
-    box-shadow: 
+    box-shadow:
         0 2px 8px rgba(255, 193, 7, 0.2),
         0 8px 24px rgba(255, 193, 7, 0.25),
         0 16px 48px rgba(255, 193, 7, 0.15),
@@ -531,7 +530,7 @@
     -webkit-backdrop-filter: blur(20px) saturate(160%);
     border-radius: 24px;
     padding: 32px;
-    box-shadow: 
+    box-shadow:
         inset 0 1px 2px rgba(255, 255, 255, 0.7),
         0 2px 6px rgba(180, 180, 180, 0.06);
     transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -561,7 +560,6 @@
     animation: none;
 }
 
-/* ── Tier plan card — low-poly + big type ── */
 .tier-color-blob,
 .tier-accent {
     display: none !important;
@@ -588,7 +586,6 @@
         transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Extra shards — hidden until hover, then gently appear */
 .tier-poly-set polygon:nth-child(n+10) {
     opacity: 0.55;
 }
@@ -747,7 +744,6 @@
     color: rgba(13, 148, 136, 0.72);
 }
 
-/* Elite — indigo high-poly (not orange) */
 .tier-info-card.tier-elite {
     background: linear-gradient(
         145deg,
@@ -812,7 +808,7 @@
 }
 
 .portal-stat-card:nth-child(1)::after {
-    background: 
+    background:
         radial-gradient(circle at 35% 35%, rgba(255, 193, 7, 0.4), transparent 45%),
         radial-gradient(ellipse 250px 180px at 75% 75%, var(--color-yellow), transparent 65%),
         radial-gradient(circle at 90% 10%, rgba(255, 235, 59, 0.2), transparent 40%);
@@ -826,7 +822,7 @@
 }
 
 .portal-stat-card:nth-child(2)::after {
-    background: 
+    background:
         radial-gradient(ellipse 180px 130px at 70% 70%, var(--color-purple), transparent 60%),
         radial-gradient(circle at 25% 25%, rgba(147, 51, 234, 0.35), transparent 50%),
         radial-gradient(circle at 85% 15%, rgba(168, 85, 247, 0.25), transparent 45%);
@@ -849,7 +845,7 @@
 }
 
 .portal-stat-card:nth-child(3)::after {
-    background: 
+    background:
         radial-gradient(ellipse 320px 160px at 65% 55%, var(--color-blue), transparent 70%),
         radial-gradient(circle at 85% 85%, rgba(59, 130, 246, 0.35), transparent 55%),
         radial-gradient(circle at 40% 30%, rgba(96, 165, 250, 0.25), transparent 60%),
@@ -873,7 +869,7 @@
 }
 
 .portal-stat-card:nth-child(1)::before {
-    background: 
+    background:
         radial-gradient(circle at 50% 50%, rgba(255, 193, 7, 0.35), transparent 60%),
         radial-gradient(circle at 80% 20%, rgba(255, 235, 59, 0.15), transparent 50%);
     width: 95px;
@@ -885,7 +881,7 @@
 }
 
 .portal-stat-card:nth-child(2)::before {
-    background: 
+    background:
         radial-gradient(circle at 50% 50%, rgba(147, 51, 234, 0.3), transparent 65%),
         radial-gradient(circle at 70% 30%, rgba(168, 85, 247, 0.2), transparent 55%);
     width: 75px;
@@ -897,7 +893,7 @@
 }
 
 .portal-stat-card:nth-child(3)::before {
-    background: 
+    background:
         radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.3), transparent 70%),
         radial-gradient(circle at 30% 70%, rgba(96, 165, 250, 0.2), transparent 60%);
     width: 120px;
@@ -914,15 +910,15 @@
 }
 
 @keyframes float {
-    0%, 100% { 
+    0%, 100% {
         transform: translate(0, 0) scale(1);
         opacity: 0.4;
     }
-    33% { 
+    33% {
         transform: translate(5px, -8px) scale(1.05);
         opacity: 0.5;
     }
-    66% { 
+    66% {
         transform: translate(-3px, 5px) scale(0.98);
         opacity: 0.45;
     }
@@ -955,21 +951,21 @@
 }
 
 .portal-stat-card:nth-child(1):hover {
-    box-shadow: 
+    box-shadow:
         var(--shadow-hover),
         inset 0 1px 0 0 rgba(255, 193, 7, 0.1),
         0 0 40px -10px rgba(255, 193, 7, 0.3);
 }
 
 .portal-stat-card:nth-child(2):hover {
-    box-shadow: 
+    box-shadow:
         var(--shadow-hover),
         inset 0 1px 0 0 rgba(147, 51, 234, 0.1),
         0 0 40px -10px rgba(147, 51, 234, 0.3);
 }
 
 .portal-stat-card:nth-child(3):hover {
-    box-shadow: 
+    box-shadow:
         var(--shadow-hover),
         inset 0 1px 0 0 rgba(59, 130, 246, 0.1),
         0 0 45px -10px rgba(59, 130, 246, 0.3);
@@ -992,7 +988,7 @@
 }
 
 .info-icon {
-    width: 16px; 
+    width: 16px;
     height: 16px;
     background: #f5f5f5;
     border-radius: 50%;
@@ -1106,7 +1102,7 @@
     transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     cursor: pointer;
     border: 1px solid rgba(255, 255, 255, 0.35);
-    box-shadow: 
+    box-shadow:
         inset 0 1px 2px rgba(255, 255, 255, 0.6),
         0 2px 6px rgba(180, 180, 180, 0.06);
     position: relative;
@@ -1167,7 +1163,7 @@
     -webkit-backdrop-filter: blur(40px) saturate(210%);
     border-radius: 24px;
     padding: 32px;
-    box-shadow: 
+    box-shadow:
         inset 0 1px 2px rgba(255, 255, 255, 0.7),
         0 2px 6px rgba(180, 180, 180, 0.06);
     cursor: pointer;
@@ -1251,7 +1247,7 @@
         grid-template-columns: 1fr;
     }
     .portal-stat-card:nth-child(3) {
-        grid-column: span 1; 
+        grid-column: span 1;
     }
 }
 
@@ -1268,7 +1264,7 @@
     .next-steps-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .selling-icons {
         grid-template-columns: repeat(3, 1fr);
     }
@@ -1343,7 +1339,7 @@
         .mesh-overlay {
             position: fixed;
             inset: 0;
-            background-image: 
+            background-image:
                 linear-gradient(to right, rgba(88, 80, 230, 0.015) 1px, transparent 1px),
                 linear-gradient(to bottom, rgba(88, 80, 230, 0.015) 1px, transparent 1px);
             background-size: 60px 60px;
@@ -2325,7 +2321,6 @@
             }
         }
 
-
         @media (max-width: 768px) {
     .portal-container {
         padding: 24px 20px 120px 20px;
@@ -2432,7 +2427,6 @@
     }
 }
 
-/* Portal Activity Grid */
 .portal-activity-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -2475,7 +2469,6 @@
 
 .portal-left-column .widget-newsfeed {
     width: 100%;
-    /* Pull the news card up toward the plan card */
     margin-top: -28px;
 }
 
@@ -2598,7 +2591,6 @@
     cursor: pointer;
 }
 
-/* Author Name & Badge Styles */
 .author-name-clickable {
     cursor: pointer;
     transition: color 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -2613,7 +2605,7 @@
     align-items: center;
     padding: 4px 10px;
     border-radius: 12px;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%), 
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%),
                 linear-gradient(220deg, #FF6B35 0%, #FF8C42 50%, #FFA500 100%);
     color: white;
     font-size: 0.75rem;
@@ -2623,7 +2615,6 @@
     letter-spacing: 0.3px;
 }
 
-/* User Profile Modal */
 .user-profile-modal {
     display: none;
     position: fixed;
@@ -2656,7 +2647,7 @@
     border-radius: 18px;
     padding: 24px;
     border: 1px solid rgba(255, 255, 255, 0.35);
-    box-shadow: 
+    box-shadow:
         inset 0 1px 2px rgba(255, 255, 255, 0.7),
         0 8px 32px rgba(0, 0, 0, 0.1);
     position: fixed;
@@ -2840,9 +2831,6 @@
         transform: scale(1);
     }
 }
-
-
-
 
 .portal-right-column {
     display: flex;
@@ -3104,7 +3092,6 @@
     }
 }
 
-/* Mid widths: two-col portal + fat create cards crush each other (≈769–1300) */
 @media (min-width: 769px) and (max-width: 1300px) {
     .portal-container {
         padding: 36px 24px 32px 24px;
@@ -3186,7 +3173,6 @@
     }
 }
 
-/* ── Modern Portal Button Styling ── */
 .admin-controls button {
     background: linear-gradient(135deg, rgba(234, 88, 12, 0.1), rgba(234, 88, 12, 0.05)) !important;
     border: 1.5px solid rgba(234, 88, 12, 0.3) !important;
@@ -3239,7 +3225,6 @@
     opacity: 0.9;
 }
 
-/* ── Canonical portal create + tier cards (beat legacy nth-child rules) ── */
 #newClipBtn.quick-action-card {
     min-height: 260px !important;
     padding: 40px 36px 36px !important;
@@ -3316,7 +3301,6 @@
     ) !important;
 }
 
-/* ── Mobile: Create + tier cards (compact, side-by-side friendly) ── */
 @media (max-width: 768px) {
     .portal-left-column {
         gap: 12px;

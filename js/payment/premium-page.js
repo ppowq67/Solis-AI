@@ -1,16 +1,16 @@
 (function() {
   const t = {
     basic: {
-      productId: "pdt_basic_placeholder",
-      priceId: "pdt_basic_placeholder"
+      productId: "pdt_0NmaMqsSpnxKvK1Yy8HVY",
+      priceId: "pdt_0NmaMqsSpnxKvK1Yy8HVY"
     },
     prime: {
-      productId: "pdt_prime_placeholder",
-      priceId: "pdt_prime_placeholder"
+      productId: "pdt_0NmaTMHpBMaWvyuPwFUvK",
+      priceId: "pdt_0NmaTMHpBMaWvyuPwFUvK"
     },
     elite: {
-      productId: "pdt_elite_placeholder",
-      priceId: "pdt_elite_placeholder"
+      productId: "pdt_0NmaUraRNVKbToVHIbJ1k",
+      priceId: "pdt_0NmaUraRNVKbToVHIbJ1k"
     }
   };
   function apiBase() {

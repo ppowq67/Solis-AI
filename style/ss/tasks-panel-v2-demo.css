@@ -1,3 +1,5 @@
+/* Solis AI Tasks — puffy glass; overrides profile.css transitions */
+
 .generation-todo-panel.solis-tasks-panel {
     transform-origin: top right;
     border-radius: 22px !important;
@@ -9,12 +11,14 @@
         0 24px 64px rgba(0, 0, 0, 0.07) !important;
 }
 
+/* Closed — override profile scale(0) snap */
 .generation-todo-panel.solis-tasks-panel:not(.is-open) {
     transform: scale(0.86);
     opacity: 0;
     pointer-events: none;
 }
 
+/* Open — bouncy pop (replaces profile 0.2s transition) */
 .generation-todo-panel.solis-tasks-panel.is-open {
     animation: solisTasksPuffyOpen 0.55s cubic-bezier(0.34, 1.45, 0.64, 1) forwards;
     opacity: 1;
@@ -61,6 +65,7 @@
     border-bottom: none !important;
 }
 
+/* Staggered crawl-in — beats profile.css generationTaskReveal */
 .solis-tasks-panel .generation-todo-item.is-revealed:not(.is-instant) {
     animation: solisTaskRowIn 0.5s cubic-bezier(0.34, 1.35, 0.64, 1) forwards !important;
     animation-delay: var(--reveal-delay, 0ms) !important;
@@ -110,6 +115,7 @@
     opacity: 0.5;
 }
 
+/* Spinning icons — left of the ACTIVE task row only */
 .solis-tasks-panel .generation-task-indicator {
     width: 22px;
     height: 22px;
@@ -157,6 +163,7 @@
     100% { opacity: 1; transform: scale(1); }
 }
 
+/* Compact header — Advanced uses same text language as task labels */
 .solis-tasks-panel .generation-todo-header {
     align-items: center;
     gap: 10px;
@@ -178,6 +185,7 @@
     color: #111827;
 }
 
+/* Same shimmer language as active solis-gen-step-label — no chip background */
 .solis-tasks-panel .generation-todo-advanced {
     appearance: none;
     position: relative;

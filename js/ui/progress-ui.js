@@ -1,103 +1,192 @@
 class ProcessingProgressUI {
-  constructor() {
-    this.progressContainerId = "processing-progress-container";
-    this.taskElements = new Map;
-  }
-  _escapeHtml(e) {
-    if (typeof e !== "string") return "";
-    const t = document.createElement("div");
-    t.textContent = e;
-    return t.innerHTML;
-  }
-  init() {
-    let e = document.getElementById(this.progressContainerId);
-    if (!e) {
-      e = document.createElement("div");
-      e.id = this.progressContainerId;
-      e.style.cssText = `\n                position: fixed;\n                top: 20px;\n                right: 20px;\n                max-width: 400px;\n                z-index: 10000;\n                font-family: 'Poppins', sans-serif;\n            `;
-      document.body.appendChild(e);
+    constructor() {
+        this.progressContainerId = "processing-progress-container";
+        this.taskElements = new Map();
     }
-    return e;
-  }
-  showProgress(e, t = "Processing") {
-    const s = this.init();
-    const n = document.createElement("div");
-    n.setAttribute("data-task-id", e);
-    n.style.cssText = `\n            background: linear-gradient(135deg, rgba(20, 20, 40, 0.95) 0%, rgba(30, 30, 50, 0.95) 100%);\n            backdrop-filter: blur(20px);\n            border: 1px solid rgba(100, 150, 255, 0.3);\n            border-radius: 12px;\n            padding: 16px;\n            margin-bottom: 12px;\n            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);\n            animation: slideIn 0.3s ease;\n        `;
-    const r = this._escapeHtml(t);
-    n.innerHTML = `\n            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">\n                <span style="color: #6496ff; font-weight: 600; font-size: 13px;">${r}</span>\n                <span class="status-text" style="color: #e0e0e0; font-size: 11px;">0%</span>\n            </div>\n            <div style="width: 100%; height: 6px; background: rgba(100, 150, 255, 0.1); border-radius: 3px; overflow: hidden; margin-bottom: 8px;">\n                <div class="progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #6496ff 0%, #4980ff 100%); transition: width 0.3s ease; border-radius: 3px;"></div>\n            </div>\n            <div class="status-step" style="color: rgba(255, 255, 255, 0.6); font-size: 11px; min-height: 14px;">Initializing...</div>\n        `;
-    s.appendChild(n);
-    this.taskElements.set(e, n);
-    if (!document.querySelector("style[data-solis-progress]")) {
-      const e = document.createElement("style");
-      e.setAttribute("data-solis-progress", "true");
-      e.textContent = `\n                @keyframes slideIn {\n                    from {\n                        opacity: 0;\n                        transform: translateX(400px);\n                    }\n                    to {\n                        opacity: 1;\n                        transform: translateX(0);\n                    }\n                }\n\n                @keyframes pulse {\n                    0%, 100% { opacity: 1; }\n                    50% { opacity: 0.5; }\n                }\n\n                .progress-bar.complete {\n                    background: linear-gradient(90deg, #4ade80 0%, #22c55e 100%);\n                }\n\n                .progress-bar.error {\n                    background: linear-gradient(90deg, #f87171 0%, #ef4444 100%);\n                }\n            `;
-      document.head.appendChild(e);
+
+    // 🔐 SECURITY: HTML entity escaping to prevent XSS
+    _escapeHtml(str) {
+        if (typeof str !== 'string') return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
     }
-  }
-  updateProgress(e, t, s = "") {
-    const n = this.taskElements.get(e);
-    if (n) {
-      const e = n.querySelector(".progress-bar");
-      const r = n.querySelector(".status-text");
-      const o = n.querySelector(".status-step");
-      if (e) {
-        e.style.width = `${t}%`;
-      }
-      if (r) {
-        r.textContent = `${t}%`;
-      }
-      if (o && s) {
-        o.textContent = s;
-      }
+
+    
+    init() {
+        let container = document.getElementById(this.progressContainerId);
+
+        if (!container) {
+            container = document.createElement("div");
+            container.id = this.progressContainerId;
+            container.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                max-width: 400px;
+                z-index: 10000;
+                font-family: 'Poppins', sans-serif;
+            `;
+            document.body.appendChild(container);
+        }
+
+        return container;
     }
-  }
-  markComplete(e) {
-    const t = this.taskElements.get(e);
-    if (t) {
-      const s = t.querySelector(".progress-bar");
-      const n = t.querySelector(".status-text");
-      const r = t.querySelector(".status-step");
-      if (s) {
-        s.classList.add("complete");
-      }
-      if (n) {
-        n.textContent = "100%";
-      }
-      if (r) {
-        r.textContent = "✅ Complete!";
-      }
-      setTimeout(() => {
-        this.removeTask(e);
-      }, 3e3);
+
+    
+    showProgress(taskId, taskName = "Processing") {
+        const container = this.init();
+
+        const taskElement = document.createElement("div");
+        taskElement.setAttribute("data-task-id", taskId);
+        taskElement.style.cssText = `
+            background: linear-gradient(135deg, rgba(20, 20, 40, 0.95) 0%, rgba(30, 30, 50, 0.95) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(100, 150, 255, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            animation: slideIn 0.3s ease;
+        `;
+
+        // 🔐 SECURITY: Sanitize taskName to prevent XSS via innerHTML
+        const safeName = this._escapeHtml(taskName);
+        
+        taskElement.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="color: #6496ff; font-weight: 600; font-size: 13px;">${safeName}</span>
+                <span class="status-text" style="color: #e0e0e0; font-size: 11px;">0%</span>
+            </div>
+            <div style="width: 100%; height: 6px; background: rgba(100, 150, 255, 0.1); border-radius: 3px; overflow: hidden; margin-bottom: 8px;">
+                <div class="progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #6496ff 0%, #4980ff 100%); transition: width 0.3s ease; border-radius: 3px;"></div>
+            </div>
+            <div class="status-step" style="color: rgba(255, 255, 255, 0.6); font-size: 11px; min-height: 14px;">Initializing...</div>
+        `;
+
+        container.appendChild(taskElement);
+        this.taskElements.set(taskId, taskElement);
+
+        // Add CSS animation
+        if (!document.querySelector("style[data-solis-progress]")) {
+            const style = document.createElement("style");
+            style.setAttribute("data-solis-progress", "true");
+            style.textContent = `
+                @keyframes slideIn {
+                    from {
+                        opacity: 0;
+                        transform: translateX(400px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateX(0);
+                    }
+                }
+                
+                @keyframes pulse {
+                    0%, 100% { opacity: 1; }
+                    50% { opacity: 0.5; }
+                }
+                
+                .progress-bar.complete {
+                    background: linear-gradient(90deg, #4ade80 0%, #22c55e 100%);
+                }
+                
+                .progress-bar.error {
+                    background: linear-gradient(90deg, #f87171 0%, #ef4444 100%);
+                }
+            `;
+            document.head.appendChild(style);
+        }
     }
-  }
-  markError(e, t = "Error occurred") {
-    const s = this.taskElements.get(e);
-    if (s) {
-      const n = s.querySelector(".progress-bar");
-      const r = s.querySelector(".status-step");
-      if (n) {
-        n.classList.add("error");
-      }
-      if (r) {
-        r.textContent = `❌ ${t}`;
-      }
-      setTimeout(() => {
-        this.removeTask(e);
-      }, 5e3);
+
+    
+    updateProgress(taskId, progress, step = "") {
+        const taskElement = this.taskElements.get(taskId);
+
+        if (taskElement) {
+            const progressBar = taskElement.querySelector(".progress-bar");
+            const statusText = taskElement.querySelector(".status-text");
+            const statusStep = taskElement.querySelector(".status-step");
+
+            if (progressBar) {
+                progressBar.style.width = `${progress}%`;
+            }
+
+            if (statusText) {
+                statusText.textContent = `${progress}%`;
+            }
+
+            if (statusStep && step) {
+                statusStep.textContent = step;
+            }
+        }
     }
-  }
-  removeTask(e) {
-    const t = this.taskElements.get(e);
-    if (t) {
-      t.style.animation = "slideIn 0.3s ease reverse";
-      setTimeout(() => {
-        t.remove();
-        this.taskElements.delete(e);
-      }, 300);
+
+    
+    markComplete(taskId) {
+        const taskElement = this.taskElements.get(taskId);
+
+        if (taskElement) {
+            const progressBar = taskElement.querySelector(".progress-bar");
+            const statusText = taskElement.querySelector(".status-text");
+            const statusStep = taskElement.querySelector(".status-step");
+
+            if (progressBar) {
+                progressBar.classList.add("complete");
+            }
+
+            if (statusText) {
+                statusText.textContent = "100%";
+            }
+
+            if (statusStep) {
+                statusStep.textContent = "✅ Complete!";
+            }
+
+            // Auto-remove after 3 seconds
+            setTimeout(() => {
+                this.removeTask(taskId);
+            }, 3000);
+        }
     }
-  }
+
+    
+    markError(taskId, errorMessage = "Error occurred") {
+        const taskElement = this.taskElements.get(taskId);
+
+        if (taskElement) {
+            const progressBar = taskElement.querySelector(".progress-bar");
+            const statusStep = taskElement.querySelector(".status-step");
+
+            if (progressBar) {
+                progressBar.classList.add("error");
+            }
+
+            if (statusStep) {
+                statusStep.textContent = `❌ ${errorMessage}`;
+            }
+
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                this.removeTask(taskId);
+            }, 5000);
+        }
+    }
+
+    
+    removeTask(taskId) {
+        const taskElement = this.taskElements.get(taskId);
+
+        if (taskElement) {
+            taskElement.style.animation = "slideIn 0.3s ease reverse";
+            setTimeout(() => {
+                taskElement.remove();
+                this.taskElements.delete(taskId);
+            }, 300);
+        }
+    }
 }
 
-const progressUI = new ProcessingProgressUI;
+// Create global instance
+const progressUI = new ProcessingProgressUI();

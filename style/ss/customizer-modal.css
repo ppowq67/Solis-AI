@@ -1,3 +1,6 @@
+/* ==================== CUSTOMIZER REDESIGN ==================== */
+/* Floating Bottom-Right Menu Customizer */
+
 :root {
     --primary-orange: #ff6b00;
     --primary-hover: #fff3eb;
@@ -12,6 +15,7 @@
     --ease: cubic-bezier(0.2, 1, 0.2, 1);
 }
 
+/* ==================== CUSTOMIZER MODAL (BOTTOM-RIGHT FLOATING MENU) ==================== */
 #customizerModal {
     position: fixed;
     bottom: 0;
@@ -28,6 +32,7 @@
     pointer-events: none;  /* Don't block interaction unless open */
 }
 
+/* ─ BACKDROP: Semi-transparent click-to-close area ─ */
 #customizerModal::before {
     content: '';
     position: absolute;
@@ -53,6 +58,7 @@
     pointer-events: auto;
 }
 
+/* ==================== CUSTOMIZER PANEL (FLOATING MENU) ==================== */
 #customizerPanel {
     position: relative;
     background: var(--bg-white);
@@ -69,6 +75,7 @@
     pointer-events: auto;
 }
 
+/* ─ UPWARD ANIMATION ─ */
 @keyframes slideUpIn {
     from {
         transform: translateY(100%) scale(0.98);
@@ -95,6 +102,7 @@
     }
 }
 
+/* ─ MOBILE OPTIMIZATION ─ */
 @media (max-width: 768px) {
     #customizerPanel {
         max-width: 100%;
@@ -124,6 +132,7 @@
     }
 }
 
+/* ==================== PANEL HEADER (COMPACT FLOATING MENU) ==================== */
 .customizer-header {
     padding: 16px 20px;
     border-bottom: 1px solid var(--border-gray);
@@ -173,6 +182,7 @@
     stroke-width: 2.5;
 }
 
+/* ==================== PANEL CONTENT (FLOATING MENU) ==================== */
 .customizer-content {
     flex: 1;
     overflow-y: auto;
@@ -181,6 +191,7 @@
     -webkit-overflow-scrolling: touch;
 }
 
+/* Smooth scrollbar styling */
 .customizer-content::-webkit-scrollbar {
     width: 6px;
 }
@@ -217,6 +228,7 @@
     padding: 0 2px;
 }
 
+/* ==================== TEXT SECTION ==================== */
 .text-input-group {
     margin-bottom: 14px;
 }
@@ -254,6 +266,7 @@
     background: var(--bg-white);
 }
 
+/* ==================== FONT SELECTOR ==================== */
 .font-options {
     display: flex;
     flex-direction: column;
@@ -298,6 +311,7 @@
     color: var(--text-main);
 }
 
+/* ==================== COLOR SECTION ==================== */
 .color-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -385,6 +399,7 @@
     color: var(--text-main);
 }
 
+/* ==================== PANEL FOOTER (ACTION BUTTONS) ==================== */
 .customizer-footer {
     padding: 14px 20px 20px;
     border-top: 1px solid var(--border-gray);
@@ -453,6 +468,7 @@
     background: #10b981;
 }
 
+/* ==================== RESPONSIVE DESIGN ==================== */
 @media (max-width: 768px) {
     #customizerPanel {
         max-width: 100%;
@@ -503,6 +519,7 @@
     }
 }
 
+/* ==================== SCROLLBAR STYLING ==================== */
 .customizer-content::-webkit-scrollbar {
     width: 6px;
 }
@@ -520,6 +537,7 @@
     background: #94a3b8;
 }
 
+/* ==================== UTILITY CLASSES ==================== */
 .customizer-loading {
     opacity: 0.6;
     pointer-events: none;
@@ -541,6 +559,7 @@
     }
 }
 
+/* Dark mode support */
 @media (prefers-color-scheme: dark) {
     #customizerPanel {
         background: #1a1f2e;

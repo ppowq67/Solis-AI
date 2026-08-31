@@ -1,168 +1,187 @@
-(function() {
-  const e = "/clips/style-pack";
-  const t = "solis_style_pack_session";
-  const n = 12 * 60 * 60 * 1e3;
-  const s = 90 * 1e3;
-  let r = null;
-  let o = null;
-  let a = 0;
-  function apiBase() {
-    try {
-      if (typeof window.API_BASE_URL === "string") return window.API_BASE_URL;
-    } catch (e) {}
-    return "";
-  }
-  function authHeaders() {
-    try {
-      if (typeof getAuthHeaders === "function") return getAuthHeaders() || {};
-    } catch (e) {}
-    return {};
-  }
-  function emptyPack() {
-    return {
-      version: 0,
-      anims: [],
-      presets: {},
-      font_weights: {},
-      shadows: {
-        none: "none"
-      }
-    };
-  }
-  function readSession() {
-    try {
-      const e = sessionStorage.getItem(t);
-      if (!e) return null;
-      const s = JSON.parse(e);
-      if (!s || !s.data || !s.t) return null;
-      if (Date.now() - Number(s.t) > n) {
-        sessionStorage.removeItem(t);
+/**
+ * Solis Style Pack — auth-only caption presets / anim catalog.
+ * Lazy: fetch only when Presets (or an explicit ensure) needs it.
+ * Session-cached so reopen / refresh within TTL does not re-hit the API.
+ */
+(function () {
+    const ENDPOINT = '/clips/style-pack';
+    const SS_KEY = 'solis_style_pack_session';
+    const SS_TTL_MS = 12 * 60 * 60 * 1000; // 12h — recipes barely change
+    const FAIL_COOLDOWN_MS = 90 * 1000;
+
+    let pack = null;
+    let inflight = null;
+    let failUntil = 0;
+
+    function apiBase() {
+        try {
+            if (typeof window.API_BASE_URL === 'string') return window.API_BASE_URL;
+        } catch (_) { /* ignore */ }
+        return '';
+    }
+
+    function authHeaders() {
+        try {
+            if (typeof getAuthHeaders === 'function') return getAuthHeaders() || {};
+        } catch (_) { /* ignore */ }
+        return {};
+    }
+
+    function emptyPack() {
+        return {
+            version: 0,
+            anims: [],
+            presets: {},
+            font_weights: {},
+            shadows: { none: 'none' },
+        };
+    }
+
+    function readSession() {
+        try {
+            const raw = sessionStorage.getItem(SS_KEY);
+            if (!raw) return null;
+            const parsed = JSON.parse(raw);
+            if (!parsed || !parsed.data || !parsed.t) return null;
+            if (Date.now() - Number(parsed.t) > SS_TTL_MS) {
+                sessionStorage.removeItem(SS_KEY);
+                return null;
+            }
+            return parsed.data;
+        } catch (_) {
+            return null;
+        }
+    }
+
+    function writeSession(data) {
+        try {
+            sessionStorage.setItem(SS_KEY, JSON.stringify({ t: Date.now(), data }));
+        } catch (_) { /* ignore */ }
+    }
+
+    function hydrateFromCache() {
+        if (pack && pack.version) return pack;
+        const cached = readSession();
+        if (cached && cached.version) {
+            pack = cached;
+            return pack;
+        }
         return null;
-      }
-      return s.data;
-    } catch (e) {
-      return null;
     }
-  }
-  function writeSession(e) {
-    try {
-      sessionStorage.setItem(t, JSON.stringify({
-        t: Date.now(),
-        data: e
-      }));
-    } catch (e) {}
-  }
-  function hydrateFromCache() {
-    if (r && r.version) return r;
-    const e = readSession();
-    if (e && e.version) {
-      r = e;
-      return r;
+
+    async function load(opts) {
+        const force = !!(opts && opts.force);
+        if (!force) {
+            const hit = hydrateFromCache();
+            if (hit) return hit;
+        }
+        if (!force && failUntil && Date.now() < failUntil) {
+            const err = new Error('style-pack cooldown');
+            err.code = 'cooldown';
+            throw err;
+        }
+        if (inflight) return inflight;
+
+        inflight = (async () => {
+            const headers = {
+                Accept: 'application/json',
+                ...authHeaders(),
+            };
+            const prev = pack || readSession();
+            if (prev && prev._etag) headers['If-None-Match'] = prev._etag;
+
+            const res = await fetch(apiBase() + ENDPOINT, {
+                method: 'GET',
+                credentials: 'include',
+                headers,
+            });
+
+            if (res.status === 304 && prev && prev.version) {
+                pack = prev;
+                writeSession(prev); // refresh TTL
+                failUntil = 0;
+                return pack;
+            }
+            if (!res.ok) {
+                failUntil = Date.now() + FAIL_COOLDOWN_MS;
+                throw new Error('style-pack ' + res.status);
+            }
+            const data = await res.json();
+            if (!data || typeof data !== 'object' || !data.version) {
+                failUntil = Date.now() + FAIL_COOLDOWN_MS;
+                throw new Error('style-pack invalid');
+            }
+            data._etag = res.headers.get('ETag') || prev?._etag || null;
+            pack = data;
+            failUntil = 0;
+            writeSession({
+                version: data.version,
+                anims: data.anims,
+                presets: data.presets,
+                font_weights: data.font_weights,
+                shadows: data.shadows,
+                _etag: data._etag,
+            });
+            try {
+                window.dispatchEvent(new CustomEvent('solis:style-pack', { detail: pack }));
+            } catch (_) { /* ignore */ }
+            return pack;
+        })();
+
+        try {
+            return await inflight;
+        } finally {
+            inflight = null;
+        }
     }
-    return null;
-  }
-  async function load(t) {
-    const n = !!(t && t.force);
-    if (!n) {
-      const e = hydrateFromCache();
-      if (e) return e;
+
+    /** Load only if missing from memory/session. Safe to call often. */
+    function ensure(opts) {
+        if (hydrateFromCache()) return Promise.resolve(pack);
+        return load(opts);
     }
-    if (!n && a && Date.now() < a) {
-      const e = new Error("style-pack cooldown");
-      e.code = "cooldown";
-      throw e;
+
+    function get() {
+        return hydrateFromCache() || emptyPack();
     }
-    if (o) return o;
-    o = (async () => {
-      const t = {
-        Accept: "application/json",
-        ...authHeaders()
-      };
-      const n = r || readSession();
-      if (n && n._etag) t["If-None-Match"] = n._etag;
-      const o = await fetch(apiBase() + e, {
-        method: "GET",
-        credentials: "include",
-        headers: t
-      });
-      if (o.status === 304 && n && n.version) {
-        r = n;
-        writeSession(n);
-        a = 0;
-        return r;
-      }
-      if (!o.ok) {
-        a = Date.now() + s;
-        throw new Error("style-pack " + o.status);
-      }
-      const i = await o.json();
-      if (!i || typeof i !== "object" || !i.version) {
-        a = Date.now() + s;
-        throw new Error("style-pack invalid");
-      }
-      i._etag = o.headers.get("ETag") || n?._etag || null;
-      r = i;
-      a = 0;
-      writeSession({
-        version: i.version,
-        anims: i.anims,
-        presets: i.presets,
-        font_weights: i.font_weights,
-        shadows: i.shadows,
-        _etag: i._etag
-      });
-      try {
-        window.dispatchEvent(new CustomEvent("solis:style-pack", {
-          detail: r
-        }));
-      } catch (e) {}
-      return r;
-    })();
-    try {
-      return await o;
-    } finally {
-      o = null;
+
+    function presets() {
+        return get().presets || {};
     }
-  }
-  function ensure(e) {
-    if (hydrateFromCache()) return Promise.resolve(r);
-    return load(e);
-  }
-  function get() {
-    return hydrateFromCache() || emptyPack();
-  }
-  function presets() {
-    return get().presets || {};
-  }
-  function anims() {
-    const e = get().anims;
-    return Array.isArray(e) ? e : [];
-  }
-  function fontWeights() {
-    return get().font_weights || {};
-  }
-  function shadows() {
-    return get().shadows || {
-      none: "none"
+
+    function anims() {
+        const list = get().anims;
+        return Array.isArray(list) ? list : [];
+    }
+
+    function fontWeights() {
+        return get().font_weights || {};
+    }
+
+    function shadows() {
+        return get().shadows || { none: 'none' };
+    }
+
+    function ready() {
+        return !!(hydrateFromCache()?.version);
+    }
+
+    function preset(id) {
+        const key = String(id || '').toLowerCase();
+        const bag = presets();
+        return bag[key] || bag[id] || null;
+    }
+
+    window.SolisStylePack = {
+        load,
+        ensure,
+        get,
+        presets,
+        anims,
+        fontWeights,
+        shadows,
+        preset,
+        ready,
     };
-  }
-  function ready() {
-    return !!hydrateFromCache()?.version;
-  }
-  function preset(e) {
-    const t = String(e || "").toLowerCase();
-    const n = presets();
-    return n[t] || n[e] || null;
-  }
-  window.SolisStylePack = {
-    load: load,
-    ensure: ensure,
-    get: get,
-    presets: presets,
-    anims: anims,
-    fontWeights: fontWeights,
-    shadows: shadows,
-    preset: preset,
-    ready: ready
-  };
+    // No boot fetch — wait until Presets / ensure() needs it
 })();

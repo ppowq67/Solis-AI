@@ -1,334 +1,399 @@
+// Default dashboard home → Clips / Create (paste URL). Once per page load only —
+// never re-force after the user navigates away.
 window.SolisFirstLanding = window.SolisFirstLanding || {
-  prefix: "solis_seen_create_landing_",
-  _appliedThisLoad: false,
-  userId: function() {
-    try {
-      const t = window.currentUser;
-      return t && (t.id || t.user_id) || null;
-    } catch (t) {
-      return null;
-    }
-  },
-  key: function(t) {
-    return this.prefix + String(t || "");
-  },
-  hasSeen: function() {
-    return !!this._appliedThisLoad;
-  },
-  markSeen: function() {
-    this._appliedThisLoad = true;
-  },
-  needsLanding: function() {
-    return !this._appliedThisLoad;
-  },
-  applyCreateLanding: function() {
-    if (this._appliedThisLoad) return;
-    this._appliedThisLoad = true;
-    try {
-      localStorage.setItem("currentNavigationTarget", "clips");
-      localStorage.setItem("clipsStudioCurrentTab", "create");
-      localStorage.setItem("clipsActiveTab", "create");
-      localStorage.setItem("sidebarActiveIndex", "2");
-      localStorage.setItem("activeNavIndex", "2");
-    } catch (t) {}
-    if (typeof window.switchSection === "function") {
-      try {
-        window.switchSection("clips");
-      } catch (t) {}
-    }
-    const t = document.querySelector('.nav-item[data-target="clips"]');
-    if (t) {
-      document.querySelectorAll(".nav-item[data-target]").forEach(t => t.classList.remove("active"));
-      t.classList.add("active");
-    }
-    if (typeof window.switchClipsTab === "function") {
-      const t = document.querySelector('.clips-tab[data-tab="create"], .clips-sub-item[data-tab="create"]');
-      try {
-        window.switchClipsTab("create", t);
-      } catch (t) {}
-    }
-    if (window.clipsStudio && typeof window.clipsStudio.goToCreateUrlSubmit === "function") {
-      window.clipsStudio.goToCreateUrlSubmit();
-    } else if (typeof window.goToCreateUrlSubmit === "function") {
-      window.goToCreateUrlSubmit();
-    }
-    if (typeof window.updateMobileClipsPillIndicator === "function") {
-      try {
-        window.updateMobileClipsPillIndicator("create");
-      } catch (t) {}
-    }
-  }
+    prefix: 'solis_seen_create_landing_',
+    _appliedThisLoad: false,
+    userId: function () {
+        try {
+            const u = window.currentUser;
+            return (u && (u.id || u.user_id)) || null;
+        } catch (_) {
+            return null;
+        }
+    },
+    key: function (uid) {
+        return this.prefix + String(uid || '');
+    },
+    hasSeen: function () {
+        return !!this._appliedThisLoad;
+    },
+    markSeen: function () {
+        this._appliedThisLoad = true;
+    },
+    needsLanding: function () {
+        return !this._appliedThisLoad;
+    },
+    applyCreateLanding: function () {
+        if (this._appliedThisLoad) return;
+        this._appliedThisLoad = true;
+        try {
+            localStorage.setItem('currentNavigationTarget', 'clips');
+            localStorage.setItem('clipsStudioCurrentTab', 'create');
+            localStorage.setItem('clipsActiveTab', 'create');
+            // Keep sidebar restore in sync with Clips (nav index 2)
+            localStorage.setItem('sidebarActiveIndex', '2');
+            localStorage.setItem('activeNavIndex', '2');
+        } catch (_) {}
+        if (typeof window.switchSection === 'function') {
+            try { window.switchSection('clips'); } catch (_) {}
+        }
+        const clipsNav = document.querySelector('.nav-item[data-target="clips"]');
+        if (clipsNav) {
+            document.querySelectorAll('.nav-item[data-target]').forEach((i) => i.classList.remove('active'));
+            clipsNav.classList.add('active');
+        }
+        if (typeof window.switchClipsTab === 'function') {
+            const btn = document.querySelector('.clips-tab[data-tab="create"], .clips-sub-item[data-tab="create"]');
+            try { window.switchClipsTab('create', btn); } catch (_) {}
+        }
+        if (window.clipsStudio && typeof window.clipsStudio.goToCreateUrlSubmit === 'function') {
+            window.clipsStudio.goToCreateUrlSubmit();
+        } else if (typeof window.goToCreateUrlSubmit === 'function') {
+            window.goToCreateUrlSubmit();
+        }
+        if (typeof window.updateMobileClipsPillIndicator === 'function') {
+            try { window.updateMobileClipsPillIndicator('create'); } catch (_) {}
+        }
+    },
 };
 
+// Navigation Handler
 function initNavigation() {
-  const t = document.querySelectorAll(".nav-item[data-target]");
-  const e = document.getElementById("dashboardContainer");
-  const i = document.getElementById("portalContainer");
-  const n = document.getElementById("clipsContainer");
-  const o = document.getElementById("customEditorContainer");
-  const s = document.querySelector(".input-section");
-  function hideAll() {
-    if (e) {
-      e.style.display = "none";
-      e.classList.remove("active");
+    const navItems = document.querySelectorAll('.nav-item[data-target]');
+    const dashboardContainer = document.getElementById('dashboardContainer');
+    const portalContainer = document.getElementById('portalContainer');
+    const clipsContainer = document.getElementById('clipsContainer');
+    const customEditorContainer = document.getElementById('customEditorContainer');
+    const inputSection = document.querySelector('.input-section');
+
+    // Helper: hide everything
+    function hideAll() {
+        if (dashboardContainer) {
+            dashboardContainer.style.display = 'none';
+            dashboardContainer.classList.remove('active');
+        }
+        if (portalContainer) {
+            portalContainer.style.display = 'none';
+            portalContainer.classList.remove('active');
+        }
+        if (clipsContainer) {
+            clipsContainer.style.display = 'none';
+            clipsContainer.classList.remove('active');
+        }
+        if (customEditorContainer) {
+            customEditorContainer.style.display = 'none';
+            customEditorContainer.classList.remove('active');
+        }
     }
-    if (i) {
-      i.style.display = "none";
-      i.classList.remove("active");
-    }
-    if (n) {
-      n.style.display = "none";
-      n.classList.remove("active");
-    }
-    if (o) {
-      o.style.display = "none";
-      o.classList.remove("active");
-    }
-  }
-  function updateActiveNav(e) {
-    t.forEach(t => {
-      t.classList.remove("active");
-      if (t.getAttribute("data-target") === e) {
-        t.classList.add("active");
-      }
-    });
-  }
-  hideAll();
-  try {
-    if (window.SolisFirstLanding && typeof window.SolisFirstLanding.applyCreateLanding === "function") {
-      window.SolisFirstLanding.applyCreateLanding();
-    } else if (n) {
-      localStorage.setItem("currentNavigationTarget", "clips");
-      n.style.display = "block";
-      n.classList.add("active");
-      updateActiveNav("clips");
-      if (typeof window.clipsStudio !== "undefined" && window.clipsStudio && !window.clipsStudio.initialized) {
-        window.clipsStudio.init();
-      }
-    } else if (i) {
-      i.style.display = "block";
-      i.classList.add("active");
-      updateActiveNav("Portal");
-    }
-  } catch (t) {
-    if (n) {
-      n.style.display = "block";
-      n.classList.add("active");
-      updateActiveNav("clips");
-    }
-  }
-  if (s) {
-    s.style.cssText = "display: none !important; position: absolute !important; visibility: hidden !important; z-index: -10000 !important; pointer-events: none !important;";
-    s.classList.remove("is-first-prompt");
-  }
-  t.forEach(t => {
-    t.addEventListener("click", a => {
-      a.preventDefault();
-      if (t.classList.contains("disabled")) return;
-      const c = t.getAttribute("data-target") || "";
-      const l = String(c).toLowerCase();
-      updateActiveNav(c);
-      hideAll();
-      if (s) {
-        s.style.cssText = "display: none !important; position: absolute !important; visibility: hidden !important; z-index: -10000 !important; pointer-events: none !important;";
-        s.classList.remove("is-first-prompt");
-      }
-      if (l === "dashboard") {
-        localStorage.setItem("currentNavigationTarget", "dashboard");
-        if (e) {
-          e.style.display = "block";
-          e.classList.add("active");
-          if (window.analyticsManager) {
-            setTimeout(() => {
-              window.analyticsManager.updateCharts();
-            }, 50);
-          }
-        }
-        if (s) {
-          s.style.display = "none";
-          try {
-            if (typeof window.dockInputInstantly === "function") window.dockInputInstantly(true);
-          } catch (a) {
-            console.error("Error docking input:", a);
-          }
-        }
-      } else if (l === "portal") {
-        localStorage.setItem("currentNavigationTarget", "portal");
-        if (i) {
-          i.style.display = "block";
-          i.classList.add("active");
-        }
-        if (s) {
-          s.style.cssText = "display: none !important; position: absolute !important; visibility: hidden !important; z-index: -10000 !important; pointer-events: none !important;";
-          s.classList.remove("is-first-prompt");
-          try {
-            if (typeof window.dockInputInstantly === "function") window.dockInputInstantly(true);
-          } catch (a) {
-            console.error("Error docking input:", a);
-          }
-        }
-      } else if (l === "clips" || l === "clips-studio" || l === "clipscontainer") {
-        localStorage.setItem("currentNavigationTarget", "clips");
-        if (n) {
-          n.style.display = "block";
-          n.classList.add("active");
-          if (typeof window.clipsStudio !== "undefined" && window.clipsStudio && !window.clipsStudio.initialized) {
-            window.clipsStudio.init();
-          }
-        }
-        if (s) {
-          s.style.cssText = "display: none !important; position: absolute !important; visibility: hidden !important; z-index: -10000 !important; pointer-events: none !important;";
-          s.classList.remove("is-first-prompt");
-          try {
-            if (typeof window.dockInputInstantly === "function") window.dockInputInstantly(true);
-          } catch (a) {
-            console.error("Error docking input:", a);
-          }
-        }
-      } else if (l === "custom-edit" || l === "custom") {
-        localStorage.setItem("currentNavigationTarget", "custom");
-        if (o) {
-          o.style.display = "block";
-          o.classList.add("active");
-        }
-        if (s) {
-          s.style.cssText = "display: none !important; position: absolute !important; visibility: hidden !important; z-index: -10000 !important; pointer-events: none !important;";
-          s.classList.remove("is-first-prompt");
-          try {
-            if (typeof window.dockInputInstantly === "function") window.dockInputInstantly(true);
-          } catch (a) {
-            console.error("Error docking input:", a);
-          }
-        }
-      }
-    });
-  });
-  const a = document.getElementById("clips-toggle");
-  if (a) {
-    a.addEventListener("click", function(t) {
-      t.preventDefault();
-      t.stopPropagation();
-      const e = document.getElementById("clips-submenu");
-      const i = this.querySelector(".chevron-icon");
-      if (e) e.classList.toggle("open");
-      if (i) i.classList.toggle("rotated");
-      if (!e || !e.contains(t.target)) {
-        const e = document.getElementById("clipsContainer");
-        const i = document.querySelector(".input-section");
-        document.querySelectorAll(".dashboard-container, .portal-container").forEach(t => {
-          t.style.display = "none";
-          t.classList.remove("active");
+
+    // Helper: update active navigation
+    function updateActiveNav(target) {
+        navItems.forEach(item => {
+            item.classList.remove('active');
+            if (item.getAttribute('data-target') === target) {
+                item.classList.add('active');
+            }
         });
-        if (e) {
-          e.style.display = "block";
-          e.classList.add("active");
-          if (typeof window.clipsStudio !== "undefined" && window.clipsStudio && !window.clipsStudio.initialized) {
-            window.clipsStudio.init();
-          }
+    }
+
+    // Default home: Clips → Create (once). User can leave freely after.
+    hideAll();
+    try {
+        if (window.SolisFirstLanding && typeof window.SolisFirstLanding.applyCreateLanding === 'function') {
+            window.SolisFirstLanding.applyCreateLanding();
+        } else if (clipsContainer) {
+            localStorage.setItem('currentNavigationTarget', 'clips');
+            clipsContainer.style.display = 'block';
+            clipsContainer.classList.add('active');
+            updateActiveNav('clips');
+            if (typeof window.clipsStudio !== 'undefined' && window.clipsStudio && !window.clipsStudio.initialized) {
+                window.clipsStudio.init();
+            }
+        } else if (portalContainer) {
+            portalContainer.style.display = 'block';
+            portalContainer.classList.add('active');
+            updateActiveNav('Portal');
         }
-        if (i) {
-          i.style.display = "none";
-          try {
-            if (typeof window.dockInputInstantly === "function") window.dockInputInstantly(true);
-          } catch (t) {
-            console.error("Error docking input:", t);
-          }
+    } catch (_) {
+        if (clipsContainer) {
+            clipsContainer.style.display = 'block';
+            clipsContainer.classList.add('active');
+            updateActiveNav('clips');
         }
-        updateActiveNav("clips");
-      }
-    });
-  }
-  const c = document.querySelectorAll(".clips-submenu .nav-item");
-  c.forEach(t => {
-    t.addEventListener("click", function(t) {
-      t.preventDefault();
-      const e = this.getAttribute("data-target");
-      if (e === "clips-studio") {
-        const e = document.getElementById("clipsContainer");
-        const i = document.querySelector(".input-section");
-        document.querySelectorAll(".dashboard-container, .portal-container").forEach(t => {
-          t.style.display = "none";
-          t.classList.remove("active");
+    }
+    
+    // Always hide input section
+    if (inputSection) {
+        inputSection.style.cssText = 'display: none !important; position: absolute !important; visibility: hidden !important; z-index: -10000 !important; pointer-events: none !important;';
+        inputSection.classList.remove('is-first-prompt');
+    }
+
+    navItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (item.classList.contains('disabled')) return;
+            const rawTarget = item.getAttribute('data-target') || '';
+            const target = String(rawTarget).toLowerCase();
+
+            // Update navigation active states
+            updateActiveNav(rawTarget);
+
+            // Hide everything then show the requested container
+            hideAll();
+            // Always hide input section
+            if (inputSection) {
+                inputSection.style.cssText = 'display: none !important; position: absolute !important; visibility: hidden !important; z-index: -10000 !important; pointer-events: none !important;';
+                inputSection.classList.remove('is-first-prompt');
+            }
+
+            if (target === 'dashboard') {
+                localStorage.setItem('currentNavigationTarget', 'dashboard');
+                if (dashboardContainer) {
+                    dashboardContainer.style.display = 'block';
+                    dashboardContainer.classList.add('active');
+                    
+                    // Trigger chart rendering when dashboard becomes visible
+                    if (window.analyticsManager) {
+                        setTimeout(() => {
+                            window.analyticsManager.updateCharts();
+                        }, 50);
+                    }
+                }
+                if (inputSection) {
+                    inputSection.style.display = 'none';
+                    try {
+                        if (typeof window.dockInputInstantly === 'function') window.dockInputInstantly(true);
+                    } catch (e) {
+                        console.error('Error docking input:', e);
+                    }
+                }
+            } else if (target === 'portal') {
+                localStorage.setItem('currentNavigationTarget', 'portal');
+                if (portalContainer) {
+                    portalContainer.style.display = 'block';
+                    portalContainer.classList.add('active');
+                }
+                if (inputSection) {
+                    inputSection.style.cssText = 'display: none !important; position: absolute !important; visibility: hidden !important; z-index: -10000 !important; pointer-events: none !important;';
+                    inputSection.classList.remove('is-first-prompt');
+                    try {
+                        if (typeof window.dockInputInstantly === 'function') window.dockInputInstantly(true);
+                    } catch (e) {
+                        console.error('Error docking input:', e);
+                    }
+                }
+            } else if (target === 'clips' || target === 'clips-studio' || target === 'clipscontainer') {
+                localStorage.setItem('currentNavigationTarget', 'clips');
+                if (clipsContainer) {
+                    clipsContainer.style.display = 'block';
+                    clipsContainer.classList.add('active');
+                    
+                    // Initialize Clips Studio if it exists and hasn't been initialized
+                    if (typeof window.clipsStudio !== 'undefined' && window.clipsStudio && !window.clipsStudio.initialized) {
+                        window.clipsStudio.init();
+                    }
+                }
+                if (inputSection) {
+                    inputSection.style.cssText = 'display: none !important; position: absolute !important; visibility: hidden !important; z-index: -10000 !important; pointer-events: none !important;';
+                    inputSection.classList.remove('is-first-prompt');
+                    try {
+                        if (typeof window.dockInputInstantly === 'function') window.dockInputInstantly(true);
+                    } catch (e) {
+                        console.error('Error docking input:', e);
+                    }
+                }
+            } else if (target === 'custom-edit' || target === 'custom') {
+                localStorage.setItem('currentNavigationTarget', 'custom');
+                if (customEditorContainer) {
+                    customEditorContainer.style.display = 'block';
+                    customEditorContainer.classList.add('active');
+                }
+                if (inputSection) {
+                    inputSection.style.cssText = 'display: none !important; position: absolute !important; visibility: hidden !important; z-index: -10000 !important; pointer-events: none !important;';
+                    inputSection.classList.remove('is-first-prompt');
+                    try {
+                        if (typeof window.dockInputInstantly === 'function') window.dockInputInstantly(true);
+                    } catch (e) {
+                        console.error('Error docking input:', e);
+                    }
+                }
+            }
         });
-        if (e) {
-          e.style.display = "block";
-          e.classList.add("active");
-          if (typeof window.clipsStudio !== "undefined" && window.clipsStudio && !window.clipsStudio.initialized) {
-            window.clipsStudio.init();
-          }
-        }
-        if (i) {
-          i.style.display = "none";
-          try {
-            if (typeof window.dockInputInstantly === "function") window.dockInputInstantly(true);
-          } catch (t) {
-            console.error("Error docking input:", t);
-          }
-        }
-        updateActiveNav("clips");
-        const n = document.getElementById("clips-submenu");
-        const o = document.querySelector("#clips-toggle .chevron-icon");
-        if (n) n.classList.remove("open");
-        if (o) o.classList.remove("rotated");
-      }
     });
-  });
-  document.addEventListener("click", function(t) {
-    const e = document.getElementById("clips-toggle");
-    const i = document.getElementById("clips-submenu");
-    if (i && e && !e.contains(t.target) && !i.contains(t.target)) {
-      i.classList.remove("open");
-      const t = e.querySelector(".chevron-icon");
-      if (t) t.classList.remove("rotated");
+
+    // Handle clips submenu toggle
+    const clipsToggle = document.getElementById('clips-toggle');
+    if (clipsToggle) {
+        clipsToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const submenu = document.getElementById('clips-submenu');
+            const chevron = this.querySelector('.chevron-icon');
+            
+            if (submenu) submenu.classList.toggle('open');
+            if (chevron) chevron.classList.toggle('rotated');
+            
+            // If clicking the main clips item, navigate to clips
+            if (!submenu || !submenu.contains(e.target)) {
+                const clipsContainer = document.getElementById('clipsContainer');
+                const inputSection = document.querySelector('.input-section');
+                
+                // Hide other containers
+                document.querySelectorAll('.dashboard-container, .portal-container').forEach(container => {
+                    container.style.display = 'none';
+                    container.classList.remove('active');
+                });
+                
+                // Show clips container
+                if (clipsContainer) {
+                    clipsContainer.style.display = 'block';
+                    clipsContainer.classList.add('active');
+                    
+                    // Initialize Clips Studio if needed
+                    if (typeof window.clipsStudio !== 'undefined' && window.clipsStudio && !window.clipsStudio.initialized) {
+                        window.clipsStudio.init();
+                    }
+                }
+                
+                // Hide input section
+                if (inputSection) {
+                    inputSection.style.display = 'none';
+                    try {
+                        if (typeof window.dockInputInstantly === 'function') window.dockInputInstantly(true);
+                    } catch (e) {
+                        console.error('Error docking input:', e);
+                    }
+                }
+                
+                // Update active navigation
+                updateActiveNav('clips');
+            }
+        });
     }
-  });
-  const l = document.querySelector('.nav-item[data-target="Portal"]');
-  if (l) {
-    l.addEventListener("click", function(t) {
-      t.preventDefault();
-      const e = document.getElementById("portalContainer");
-      const i = document.getElementById("dashboardContainer");
-      const n = document.getElementById("clipsContainer");
-      const o = document.querySelector(".input-section");
-      if (i) {
-        i.style.display = "none";
-        i.classList.remove("active");
-      }
-      if (n) {
-        n.style.display = "none";
-        n.classList.remove("active");
-      }
-      if (o) {
-        o.style.display = "none";
-      }
-      if (e) {
-        e.style.display = "block";
-        e.classList.add("active");
-      }
-      updateActiveNav("Portal");
+
+    // Handle clips submenu items
+    const clipsSubmenuItems = document.querySelectorAll('.clips-submenu .nav-item');
+    clipsSubmenuItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = this.getAttribute('data-target');
+            
+            if (target === 'clips-studio') {
+                const clipsContainer = document.getElementById('clipsContainer');
+                const inputSection = document.querySelector('.input-section');
+                
+                // Hide other containers
+                document.querySelectorAll('.dashboard-container, .portal-container').forEach(container => {
+                    container.style.display = 'none';
+                    container.classList.remove('active');
+                });
+                
+                // Show clips container
+                if (clipsContainer) {
+                    clipsContainer.style.display = 'block';
+                    clipsContainer.classList.add('active');
+                    
+                    // Initialize Clips Studio if needed
+                    if (typeof window.clipsStudio !== 'undefined' && window.clipsStudio && !window.clipsStudio.initialized) {
+                        window.clipsStudio.init();
+                    }
+                }
+                
+                // Hide input section
+                if (inputSection) {
+                    inputSection.style.display = 'none';
+                    try {
+                        if (typeof window.dockInputInstantly === 'function') window.dockInputInstantly(true);
+                    } catch (e) {
+                        console.error('Error docking input:', e);
+                    }
+                }
+                
+                // Update active navigation
+                updateActiveNav('clips');
+                
+                // Close submenu
+                const submenu = document.getElementById('clips-submenu');
+                const chevron = document.querySelector('#clips-toggle .chevron-icon');
+                if (submenu) submenu.classList.remove('open');
+                if (chevron) chevron.classList.remove('rotated');
+            }
+        });
     });
-  }
-  document.addEventListener("keydown", t => {
-    if ((t.ctrlKey || t.metaKey) && t.key === "k") {
-      t.preventDefault();
-      const e = document.querySelector(".sidebar");
-      if (e) {
-        e.classList.toggle("expanded");
-        const t = e.classList.contains("expanded");
-        localStorage.setItem("sidebarExpanded", t);
-      }
+
+    // Close submenus when clicking outside
+    document.addEventListener('click', function(e) {
+        const clipsToggle = document.getElementById('clips-toggle');
+        const clipsSubmenu = document.getElementById('clips-submenu');
+        
+        if (clipsSubmenu && clipsToggle && !clipsToggle.contains(e.target) && !clipsSubmenu.contains(e.target)) {
+            clipsSubmenu.classList.remove('open');
+            const chevron = clipsToggle.querySelector('.chevron-icon');
+            if (chevron) chevron.classList.remove('rotated');
+        }
+    });
+
+    // Handle Portal navigation specifically
+    const portalNavItem = document.querySelector('.nav-item[data-target="Portal"]');
+    if (portalNavItem) {
+        portalNavItem.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Get containers
+            const portalContainer = document.getElementById('portalContainer');
+            const dashboardContainer = document.getElementById('dashboardContainer');
+            const clipsContainer = document.getElementById('clipsContainer');
+            const inputSection = document.querySelector('.input-section');
+            
+            // Hide all containers
+            if (dashboardContainer) {
+                dashboardContainer.style.display = 'none';
+                dashboardContainer.classList.remove('active');
+            }
+            if (clipsContainer) {
+                clipsContainer.style.display = 'none';
+                clipsContainer.classList.remove('active');
+            }
+            if (inputSection) {
+                inputSection.style.display = 'none';
+            }
+            
+            // Show portal
+            if (portalContainer) {
+                portalContainer.style.display = 'block';
+                portalContainer.classList.add('active');
+            }
+            
+            // Update active nav
+            updateActiveNav('Portal');
+        });
     }
-  });
+
+
+    // Handle sidebar toggle with keyboard shortcut
+    document.addEventListener('keydown', (e) => {
+        // Ctrl/Cmd + K to toggle sidebar
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            const sidebar = document.querySelector('.sidebar');
+            if (sidebar) {
+                sidebar.classList.toggle('expanded');
+                const isExpanded = sidebar.classList.contains('expanded');
+                localStorage.setItem('sidebarExpanded', isExpanded);
+            }
+        }
+    });
 }
 
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initNavigation);
+// Initialize navigation when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initNavigation);
 } else {
-  initNavigation();
+    // DOM already loaded
+    initNavigation();
 }
 
-if (typeof module !== "undefined" && module.exports) {
-  module.exports = {
-    initNavigation: initNavigation
-  };
+// Export for use in other modules if needed
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { initNavigation };
 }

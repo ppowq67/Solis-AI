@@ -1,260 +1,338 @@
-document.addEventListener("DOMContentLoaded", function() {
-  const e = document.getElementById("platformConnectionsContainer");
-  const t = document.getElementById("platformOnboarding");
-  const n = document.getElementById("connectFirstPlatformBtn");
-  function getApiBase() {
-    return window.API_BASE_URL || "https://api.solisai.video/api";
-  }
-  const o = getApiBase();
-  const s = !!e;
-  async function fetchConnectionStatus() {
-    try {
-      const e = await fetch(`${o}/analytics/status`, {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });
-      if (e.ok) {
-        const t = await e.json();
-        if (!t || typeof t !== "object") {
-          throw new Error("Invalid response structure");
-        }
-        renderConnections(t);
-        if (t.youtube?.connected) {
-          localStorage.setItem("youtube_connected", "true");
-          if (window.analyticsManager) {
-            await window.analyticsManager.loadAnalyticsData();
-          } else {}
-        } else {}
-      } else {
-        throw new Error("Endpoint not available");
-      }
-    } catch (e) {
-      const t = localStorage.getItem("platform_connections");
-      if (t) {
+// Platform connections and analytics logic
+document.addEventListener('DOMContentLoaded', function() {
+    // --- Enhanced Platform Connection Logic ---
+    const platformConnectionsContainer = document.getElementById('platformConnectionsContainer');
+    const platformOnboarding = document.getElementById('platformOnboarding');
+    const connectFirstPlatformBtn = document.getElementById('connectFirstPlatformBtn');
+    
+    // Get API base URL - Use hardcoded value (never from localStorage for security)
+    function getApiBase() {
+        return window.API_BASE_URL || 'https://api.solisai.video/api';
+    }
+    
+    const API_BASE = getApiBase();
+    const hasConnectionsUi = !!platformConnectionsContainer;    
+
+    async function fetchConnectionStatus() {
+        
         try {
-          const e = JSON.parse(t);
-          renderConnections(e);
-        } catch (e) {
-          showOnboarding();
+            // Use httpOnly cookies instead of localStorage token
+            const response = await fetch(`${API_BASE}/analytics/status`, {
+                method: 'GET',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+
+            if (response.ok) {
+                const data = await response.json();
+                // Validate response structure
+                if (!data || typeof data !== 'object') {
+                    throw new Error('Invalid response structure');
+                }
+                renderConnections(data);
+                
+                // If YouTube is connected, refresh analytics data
+                if (data.youtube?.connected) {
+                    localStorage.setItem('youtube_connected', 'true');
+                    // Try to load analytics even if manager isn't ready yet
+                    if (window.analyticsManager) {
+                        await window.analyticsManager.loadAnalyticsData();
+                    } else {
+                    }
+                } else {
+                }
+            } else {
+                throw new Error('Endpoint not available');
+            }
+
+        } catch (error) {
+            // If endpoint fails, check localStorage for connections
+            const storedConnections = localStorage.getItem('platform_connections');
+            if (storedConnections) {
+                try {
+                    const data = JSON.parse(storedConnections);
+                    renderConnections(data);
+                } catch (e) {
+                    showOnboarding();
+                }
+            } else {
+                showOnboarding();
+            }
         }
-      } else {
-        showOnboarding();
-      }
     }
-  }
-  function renderConnections(n) {
-    if (!e) return;
-    e.innerHTML = "";
-    let o = false;
-    if (!n || typeof n !== "object") {
-      console.error("Invalid statusData:", n);
-      showOnboarding();
-      return;
-    }
-    const s = Object.values(n).filter(e => e && typeof e === "object");
-    s.forEach(t => {
-      if (!t || !t.platform) {
-        console.warn("Skipping invalid platform:", t);
-        return;
-      }
-      o = true;
-      const n = document.createElement("div");
-      n.className = "settings-option platform-connection-item";
-      n.dataset.platform = t.platform.toLowerCase();
-      n.dataset.connected = t.connected ? "true" : "false";
-      n.style.cursor = t.connected ? "default" : "pointer";
-      if (t.connected) {
-        n.innerHTML = `\n                    <div class="settings-option-icon">${t.icon || ""}</div>\n                    <div class="option-info">\n                        <div class="option-name">${t.platform}</div>\n                        <div class="option-description" style="color: #22c55e;">Connected</div>\n                    </div>\n                    <button class="disconnect-btn" data-platform="${t.platform.toLowerCase()}">Disconnect</button>\n                `;
-      } else {
-        n.innerHTML = `\n                    <div class="settings-option-icon">${t.icon || ""}</div>\n                    <div class="option-info">\n                        <div class="option-name">${t.platform}</div>\n                        <div class="option-description" style="color: #999;">Click to connect</div>\n                    </div>\n                    <button style="background: #0066ff; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">Connect</button>\n                `;
-      }
-      e.appendChild(n);
-    });
-    if (o) {
-      if (t) t.style.display = "none";
-      e.style.display = "block";
-    } else {
-      showOnboarding();
-    }
-  }
-  function showOnboarding() {
-    if (e) e.style.display = "none";
-    if (t) t.style.display = "block";
-  }
-  window.connectYouTube = async function() {
-    const e = new Promise(e => {
-      const messageHandler = t => {
-        if (t.data && t.data.type === "YOUTUBE_AUTH_SUCCESS") {
-          window.removeEventListener("message", messageHandler);
-          e(true);
+
+    function renderConnections(statusData) {
+        if (!platformConnectionsContainer) return;
+        platformConnectionsContainer.innerHTML = '';
+        let hasConnections = false;
+
+        // Ensure statusData is properly structured
+        if (!statusData || typeof statusData !== 'object') {
+            console.error('Invalid statusData:', statusData);
+            showOnboarding();
+            return;
         }
-      };
-      window.addEventListener("message", messageHandler);
-    });
-    try {
-      const t = `${o}/analytics/youtube/auth`;
-      const n = await fetch(t, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        }
-      });
-      if (!n.ok) {
-        const e = await n.json().catch(() => ({
-          error: "An unknown server error occurred."
-        }));
-        console.error("[connectYouTube] Backend error:", e);
-        throw new Error(e.error || `HTTP error! status: ${n.status}`);
-      }
-      const s = await n.json();
-      if (s.auth_url) {
-        const t = window.open(s.auth_url, "authWindow", "width=600,height=700");
-        if (!t) {
-          alert("Please allow popups to connect YouTube");
-          console.error("[connectYouTube] Popup was blocked!");
-          return;
-        }
-        const n = new Promise(e => {
-          setTimeout(() => {
-            e(false);
-          }, 3e3);
+
+        const platformsList = Object.values(statusData).filter(p => p && typeof p === 'object');
+        
+        platformsList.forEach(platform => {
+            if (!platform || !platform.platform) {
+                console.warn('Skipping invalid platform:', platform);
+                return;
+            }
+            
+            hasConnections = true;
+            const item = document.createElement('div');
+            item.className = 'settings-option platform-connection-item';
+            item.dataset.platform = platform.platform.toLowerCase();
+            item.dataset.connected = platform.connected ? 'true' : 'false';
+            item.style.cursor = platform.connected ? 'default' : 'pointer';
+            
+            if (platform.connected) {
+                item.innerHTML = `
+                    <div class="settings-option-icon">${platform.icon || ''}</div>
+                    <div class="option-info">
+                        <div class="option-name">${platform.platform}</div>
+                        <div class="option-description" style="color: #22c55e;">Connected</div>
+                    </div>
+                    <button class="disconnect-btn" data-platform="${platform.platform.toLowerCase()}">Disconnect</button>
+                `;
+            } else {
+                item.innerHTML = `
+                    <div class="settings-option-icon">${platform.icon || ''}</div>
+                    <div class="option-info">
+                        <div class="option-name">${platform.platform}</div>
+                        <div class="option-description" style="color: #999;">Click to connect</div>
+                    </div>
+                    <button style="background: #0066ff; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">Connect</button>
+                `;
+            }
+            platformConnectionsContainer.appendChild(item);
         });
-        Promise.race([ e, n ]).then(() => {
-          setTimeout(() => {
-            fetchConnectionStatus();
-          }, 500);
+
+        if (hasConnections) {
+            if (platformOnboarding) platformOnboarding.style.display = 'none';
+            platformConnectionsContainer.style.display = 'block';
+        } else {
+            showOnboarding();
+        }
+    }
+
+    function showOnboarding() {
+        if (platformConnectionsContainer) platformConnectionsContainer.style.display = 'none';
+        if (platformOnboarding) platformOnboarding.style.display = 'block';
+    }
+
+    window.connectYouTube = async function() {
+        
+        // 🔐 SECURITY: Use httpOnly cookies only, never read authToken from localStorage
+        // Authorization happens via credentials: 'include' automatically
+        
+        // Set up message listener BEFORE opening popup
+        const messagePromise = new Promise((resolve) => {
+            const messageHandler = (event) => {
+                if (event.data && event.data.type === 'YOUTUBE_AUTH_SUCCESS') {
+                    window.removeEventListener('message', messageHandler);
+                    resolve(true);
+                }
+            };
+            window.addEventListener('message', messageHandler);
         });
-      } else {
-        console.error("[connectYouTube] No auth_url in response");
-        alert("Failed to get authentication URL");
-      }
-    } catch (e) {
-      console.error("[connectYouTube] Connection failed:", e);
-      alert(`Connection failed: ${e.message}`);
-    }
-  };
-  async function disconnectPlatform(e) {
-    if (!e || typeof e !== "string" || e.length === 0) {
-      console.error("Invalid platform name");
-      return;
-    }
-    const t = document.getElementById("disconnectConfirmationModal");
-    const n = document.getElementById("confirmDisconnectBtn");
-    const s = document.getElementById("disconnectConfirmationText");
-    const c = e.replace(/[<>"']/g, "");
-    s.textContent = `Are you sure you want to disconnect ${c}?`;
-    t.classList.add("show");
-    const handleConfirm = async () => {
-      n.removeEventListener("click", handleConfirm);
-      t.classList.remove("show");
-      const s = await fetch(`${o}/analytics/disconnect`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          platform: e
-        })
-      });
-      if (s.ok) {
-        showNotification(`${e} disconnected successfully`, "success");
-        fetchConnectionStatus();
-      } else {
-        showNotification("Failed to disconnect. Please try again.", "error");
-      }
+
+        try {
+            const authUrl = `${API_BASE}/analytics/youtube/auth`;
+            const response = await fetch(authUrl, {
+                method: 'POST',
+                headers: { 
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ error: 'An unknown server error occurred.' }));
+                console.error('[connectYouTube] Backend error:', errorData);
+                throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            
+            if (data.auth_url) {
+                const authWindow = window.open(data.auth_url, 'authWindow', 'width=600,height=700');
+                
+                if (!authWindow) {
+                    alert('Please allow popups to connect YouTube');
+                    console.error('[connectYouTube] Popup was blocked!');
+                    return;
+                }
+                
+                // Wait for the message from the popup with a timeout
+                const timeoutPromise = new Promise((resolve) => {
+                    setTimeout(() => {
+                        resolve(false);
+                    }, 3000);
+                });
+                
+                Promise.race([messagePromise, timeoutPromise]).then(() => {
+                    setTimeout(() => {
+                        fetchConnectionStatus();
+                    }, 500);
+                });
+                
+            } else {
+                console.error('[connectYouTube] No auth_url in response');
+                alert('Failed to get authentication URL');
+            }
+        } catch (error) {
+            console.error('[connectYouTube] Connection failed:', error);
+            alert(`Connection failed: ${error.message}`);
+        }
     };
-    n.addEventListener("click", handleConfirm);
-  }
-  if (s && n) {
-    n.addEventListener("click", function() {
-      window.connectYouTube();
-    });
-    showOnboarding();
-  }
-  if (e) {
-    e.addEventListener("click", e => {
-      const t = e.target.closest(".disconnect-btn");
-      const n = e.target.closest(".platform-connection-item");
-      if (t) {
-        disconnectPlatform(t.dataset.platform);
-      } else if (n && n.dataset.connected === "false") {
-        const e = n.dataset.platform;
-        if (e === "youtube") {
-          window.connectYouTube();
+    
+    async function disconnectPlatform(platform) {
+        // Validate platform name
+        if (!platform || typeof platform !== 'string' || platform.length === 0) {
+            console.error('Invalid platform name');
+            return;
         }
-      }
-    });
-  }
-  const c = document.getElementById("getStartedBadge");
-  if (c) {
-    c.addEventListener("click", function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      const t = document.getElementById("userMenuPanel");
-      const n = document.getElementById("userMenuBackdrop");
-      if (t) {
-        t.classList.remove("active");
-      }
-      if (n) {
-        n.classList.remove("active");
-      }
-      if (window.setupModal) {
-        window.setupModal.openModal();
-      } else {}
-    });
-  } else {}
-  if (s) {
-    fetchConnectionStatus();
-  }
-  const i = sessionStorage.getItem("paymentSuccess");
-  if (i) {
-    try {
-      const e = JSON.parse(i);
-      showPaymentSuccessModal();
-      createConfetti();
-      if (window.clipsStudio) {
-        clipsStudio.loadAndDisplayStorageInfo();
-      }
-      sessionStorage.removeItem("paymentSuccess");
-    } catch (e) {
-      console.error("Error parsing payment success data:", e);
+
+        const modal = document.getElementById('disconnectConfirmationModal');
+        const confirmBtn = document.getElementById('confirmDisconnectBtn');
+        const confirmText = document.getElementById('disconnectConfirmationText');
+        
+        // Escape platform name for display
+        const displayName = platform.replace(/[<>"']/g, '');
+        confirmText.textContent = `Are you sure you want to disconnect ${displayName}?`;
+        modal.classList.add('show');
+        
+        const handleConfirm = async () => {
+            confirmBtn.removeEventListener('click', handleConfirm);
+            modal.classList.remove('show');
+            
+            // Use credentials: 'include' instead of localStorage token
+            const response = await fetch(`${API_BASE}/analytics/disconnect`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ platform: platform })
+            });
+
+            if (response.ok) {
+                showNotification(`${platform} disconnected successfully`, 'success');
+                fetchConnectionStatus();
+            } else {
+                showNotification('Failed to disconnect. Please try again.', 'error');
+            }
+        };
+        
+        confirmBtn.addEventListener('click', handleConfirm);
     }
-  } else {}
-  const a = document.getElementById("DeleteALLBtn");
-  if (a) {
-    a.addEventListener("click", () => {
-      const e = document.getElementById("processingList");
-      const t = e.querySelectorAll(".processing-item:not(.processing)");
-      if (t.length === 0) {
-        alert("No completed or failed items to delete.");
-        return;
-      }
-      if (confirm(`Are you sure you want to delete ${t.length} item(s)? This action cannot be undone.`)) {
-        t.forEach(e => {
-          e.remove();
+
+    // Ensure onboarding is shown by default if no connections
+    if (hasConnectionsUi && connectFirstPlatformBtn) {
+        connectFirstPlatformBtn.addEventListener('click', function() {
+            window.connectYouTube();
         });
-        const n = e.querySelectorAll(".processing-item");
-        const o = document.getElementById("emptyProcessingState");
-        if (n.length === 0 && o) {
-          o.style.display = "block";
+        showOnboarding();
+    }
+    
+    if (platformConnectionsContainer) {
+        platformConnectionsContainer.addEventListener('click', (e) => {
+            const disconnectBtn = e.target.closest('.disconnect-btn');
+            const connectionItem = e.target.closest('.platform-connection-item');
+            
+            if (disconnectBtn) {
+                disconnectPlatform(disconnectBtn.dataset.platform);
+            } else if (connectionItem && connectionItem.dataset.connected === 'false') {
+                // If clicking on a non-connected platform, trigger connect
+                const platform = connectionItem.dataset.platform;
+                if (platform === 'youtube') {
+                    window.connectYouTube();
+                }
+            }
+        });
+    }
+
+    const getStartedBadge = document.getElementById('getStartedBadge');
+    if (getStartedBadge) {
+        getStartedBadge.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const userMenuPanel = document.getElementById('userMenuPanel');
+            const userMenuBackdrop = document.getElementById('userMenuBackdrop');
+            if (userMenuPanel) {
+                userMenuPanel.classList.remove('active');
+            }
+            if (userMenuBackdrop) {
+                userMenuBackdrop.classList.remove('active');
+            }
+            
+            if (window.setupModal) {
+                window.setupModal.openModal();
+            } else {
+            }
+        });
+    } else {
+    }
+
+    if (hasConnectionsUi) {
+        fetchConnectionStatus();
+    }
+
+    const paymentSuccess = sessionStorage.getItem('paymentSuccess');
+    if (paymentSuccess) {
+        try {
+            const data = JSON.parse(paymentSuccess);
+            
+            showPaymentSuccessModal();
+            createConfetti();
+            
+            if (window.clipsStudio) {
+                clipsStudio.loadAndDisplayStorageInfo();
+            }
+            
+            sessionStorage.removeItem('paymentSuccess');
+        } catch (error) {
+            console.error('Error parsing payment success data:', error);
         }
-      }
-    });
-  }
-  const r = document.getElementById("processingList");
-  const l = document.getElementById("emptyProcessingState");
-  if (r && l) {
-    const e = new MutationObserver(() => {
-      const e = r.querySelector(".processing-item");
-      l.style.display = e ? "none" : "flex";
-    });
-    e.observe(r, {
-      childList: true
-    });
-  }
+    } else {
+    }
+
+    const deleteAllBtn = document.getElementById('DeleteALLBtn');
+    if (deleteAllBtn) {
+        deleteAllBtn.addEventListener('click', () => {
+            const processingList = document.getElementById('processingList');
+            const itemsToDelete = processingList.querySelectorAll('.processing-item:not(.processing)');
+
+            if (itemsToDelete.length === 0) {
+                alert('No completed or failed items to delete.');
+                return;
+            }
+
+            if (confirm(`Are you sure you want to delete ${itemsToDelete.length} item(s)? This action cannot be undone.`)) {
+                itemsToDelete.forEach(item => {
+                    item.remove();
+                });
+
+                const remainingItems = processingList.querySelectorAll('.processing-item');
+                const emptyState = document.getElementById('emptyProcessingState');
+                if (remainingItems.length === 0 && emptyState) {
+                    emptyState.style.display = 'block';
+                }
+            }
+        });
+    }
+
+    const processingList = document.getElementById('processingList');
+    const emptyProcessingState = document.getElementById('emptyProcessingState');
+    if (processingList && emptyProcessingState) {
+        const observer = new MutationObserver(() => {
+            const hasItems = processingList.querySelector('.processing-item');
+            emptyProcessingState.style.display = hasItems ? 'none' : 'flex';
+        });
+        observer.observe(processingList, { childList: true });
+    }
 });

@@ -1,3 +1,5 @@
+
+
 :root {
     --solis: #f97316;
     --solis-light: #fed7aa;
@@ -9,7 +11,7 @@
     --clips-accent: #fed7aa;
     --clips-gradient-start: #f97316;
     --clips-gradient-end: #ff8c42;
-
+    
     --clips-bg: #FAFBFC;
     --clips-card-bg: #FFFFFF;
     --clips-text: #1A1D23;
@@ -24,13 +26,13 @@
     --glass-shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.04);
     --glass-shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.12);
     --glass-blur: 24px;
-
+    
     --clips-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
     --clips-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
     --clips-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.08);
     --clips-shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.12);
     --clips-shadow-primary: 0 8px 24px rgba(255, 139, 94, 0.25);
-
+    
     --badge-popular: #FF6B3D;
     --badge-trending: #10B981;
     --badge-new: #8B5CF6;
@@ -112,6 +114,7 @@
     display: flex;
     align-items: center;
     justify-content: flex-end;
+    /* Profile cluster is fixed above this row — don't shove New Clip left */
     margin-right: 0;
     min-width: 0;
 }
@@ -188,6 +191,7 @@
     position: relative;
     border-radius: 20px; /* Enhanced rounding to match the sleek glass vibe */
 
+    /* Glassmorphism Styling */
     background: linear-gradient(
         145deg,
         rgba(255, 255, 255, 0.72) 0%,
@@ -221,10 +225,12 @@
     box-shadow:
         0 4px 12px rgba(120, 90, 60, 0.08),
         0 1px 3px rgba(0, 0, 0, 0.04);
-
+        
+    /* Hardware acceleration layer optimization to eliminate lag */
     will-change: left, width, transform;
     transform: translateZ(0);
-
+    
+    /* Optimized timing function for glass UI movement */
     transition: left 0.26s cubic-bezier(0.25, 1, 0.5, 1),
                 width 0.26s cubic-bezier(0.25, 1, 0.5, 1);
     pointer-events: none;
@@ -249,7 +255,8 @@
     letter-spacing: -0.2px;
     position: relative;
     z-index: 1;
-
+    
+    /* Keeps active click-scaling smooth */
     will-change: transform;
     transform: translateZ(0);
     transition: color 0.22s ease, transform 0.1s ease;
@@ -276,6 +283,7 @@
     display: block;
     content-visibility: visible;
 }
+
 
 .section-header {
     display: flex;
@@ -314,8 +322,8 @@
     font-weight: 700;
     color: var(--clips-text);
     letter-spacing: -0.6px;
-    background: linear-gradient(135deg,
-        var(--clips-text) 0%,
+    background: linear-gradient(135deg, 
+        var(--clips-text) 0%, 
         var(--clips-primary) 100%
     );
     -webkit-background-clip: text;
@@ -384,7 +392,7 @@
     background: linear-gradient(135deg, var(--clips-primary), var(--clips-accent));
     color: white;
     border-color: var(--clips-primary);
-    box-shadow:
+    box-shadow: 
         var(--clips-shadow-primary),
         inset 0 1px 2px rgba(255, 255, 255, 0.3);
 }
@@ -403,6 +411,7 @@
     }
 }
 
+/* ── Template Card ── */
 .template-card {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.32) 100%);
     border-radius: 28px;
@@ -418,6 +427,7 @@
     transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
     will-change: transform, box-shadow, background;
 
+    /* Enhanced specular rim light — premium glass effect */
     box-shadow:
         0 12px 40px rgba(0, 0, 0, 0.08),
         0 4px 12px rgba(0, 0, 0, 0.04),
@@ -440,6 +450,7 @@
         inset -1px 0 0 rgba(255, 255, 255, 0.4);
 }
 
+/* Top specular highlight bar — simulates glass lens catching light */
 .template-card::before {
     content: '';
     position: absolute;
@@ -464,6 +475,7 @@
     .template-card { max-width: 100%; border-radius: 18px; aspect-ratio: 1.1; }
 }
 
+/* ── Badges — liquid glass pill style ── */
 .pro-badge,
 .exclusive-badge,
 .template-badge {
@@ -534,7 +546,9 @@
     }
 }
 
+/* Soft light ring for the most popular pick (after Create → Templates) */
 .template-card.is-most-used {
+    /* Keep overflow hidden so corners stay clean — ring via box-shadow */
     border-color: rgba(255, 255, 255, 0.88);
     box-shadow:
         0 0 0 2px rgba(255, 255, 255, 0.82),
@@ -545,6 +559,7 @@
 }
 
 .template-card.is-most-used.selected {
+    /* Don't stack the orange selected border on top of the soft ring */
     border-color: rgba(255, 255, 255, 0.88);
     box-shadow:
         0 0 0 2px rgba(255, 255, 255, 0.82),
@@ -593,6 +608,7 @@
     }
 }
 
+/* ── Image area — frosted tint ── */
 .template-image-placeholder {
     position: relative;
     height: 68%;
@@ -606,6 +622,7 @@
     box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.4);
 }
 
+/* Soft inner glow at top of image area */
 .template-image-placeholder::after {
     content: '';
     position: absolute;
@@ -634,6 +651,7 @@
     color: #9aaec4;
 }
 
+/* ── Content area — frosted white panel ── */
 .template-content {
     padding: 12px 14px;
     display: flex;
@@ -681,6 +699,7 @@
 .template-feature svg { width: 13px; height: 13px; }
 .template-feature span { font-size: 0.65rem; font-weight: 600; font-family: "Outfit", sans-serif; }
 
+/* ── Primary button — liquid glass pill ── */
 .template-button {
     width: 100%;
     background: linear-gradient(135deg, rgba(255, 107, 53, 0.85) 0%, rgba(255, 87, 34, 0.85) 100%);
@@ -722,6 +741,7 @@
 
 .template-button:hover svg { transform: translateX(2px); }
 
+/* ── Custom use button ── */
 .template-use-custom-btn {
     position: relative;
     display: inline-flex;
@@ -766,14 +786,17 @@
 
 .template-use-custom-btn:active { transform: scale(0.98); }
 
+/* ── Hidden ── */
 .template-overlay { display: none; }
 .template-use-btn, .template-use-btn:hover { display: none; }
 
+/* ── Info ── */
 .template-info { padding: 16px; }
 
 @media (max-width: 768px) { .template-info { padding: 14px; } }
 @media (max-width: 480px) { .template-info { padding: 12px; } }
 
+/* ── Typography ── */
 .template-title,
 .stgTitle, .stgName, .stgSectionTitle,
 .profile-dropdown-header span,
@@ -830,6 +853,7 @@
     overflow: visible;
 }
 
+/* ── Create quick pills — Ranking | nudge | Clip ── */
 .create-quick-pills {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
@@ -886,6 +910,7 @@
     margin-left: 10px;
 }
 
+/* Center Paste URL — same frosted glass, slightly larger shell */
 .create-pill.create-pill--nudge {
     min-width: 188px;
     width: auto;
@@ -1017,6 +1042,7 @@
     transform: translate(-50%, -50%);
 }
 
+/* Clip (Daily top) — side fire on hover */
 .create-pill--hot {
     min-width: 148px;
     height: 48px;
@@ -1212,6 +1238,7 @@
     100% { transform: scaleY(0.94) scaleX(1.08) rotate(-1deg); }
 }
 
+/* Ranking - glass idle, gold + sparks on hover */
 .create-pill--rank .cp-rank-sheen {
     position: absolute;
     inset: 0;
@@ -1290,6 +1317,7 @@
     .create-pill:active {
         transform: scale(0.98);
     }
+    /* Touch: keep a live ember so fire isn't hover-only; badge stays clear of tongues */
     .create-pill--hot .create-pill-badge {
         opacity: 0;
         transform: translateY(-4px) scale(0.88);
@@ -1298,6 +1326,7 @@
     .create-pill--hot .cp-ember {
         opacity: 0.7;
     }
+    /* Static flames on touch — infinite flicker was a mobile FPS tax */
     .create-pill--hot .cp-side-fire i {
         animation-play-state: paused;
     }
@@ -1600,7 +1629,7 @@
     background: rgba(255, 255, 255, 0.7);
     border-radius: 20px;
     padding: 20px;
-    box-shadow:
+    box-shadow: 
         0 8px 32px rgba(0, 0, 0, 0.06),
         inset 0 1px 0 rgba(255, 255, 255, 0.8);
     display: flex;
@@ -1621,7 +1650,7 @@
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(90deg,
+    background: linear-gradient(90deg, 
         transparent,
         rgba(255, 139, 94, 0.3),
         transparent
@@ -1631,7 +1660,7 @@
 .processing-item:hover {
     border-color: rgba(255, 255, 255, 0.75);
     background: rgba(255, 255, 255, 0.75);
-    box-shadow:
+    box-shadow: 
         0 12px 40px rgba(0, 0, 0, 0.08),
         inset 0 1px 0 rgba(255, 255, 255, 0.85);
 }
@@ -1648,7 +1677,7 @@
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(90deg,
+    background: linear-gradient(90deg, 
         transparent,
         rgba(16, 185, 129, 0.3),
         transparent
@@ -1677,7 +1706,7 @@
     background: rgba(16, 185, 129, 0.2);
     color: var(--badge-trending);
     border-color: rgba(16, 185, 129, 0.3);
-    box-shadow:
+    box-shadow: 
         inset 0 1px 0 rgba(255, 255, 255, 0.4),
         0 4px 12px rgba(16, 185, 129, 0.15);
 }
@@ -1835,6 +1864,7 @@
     transform: scale(0.95);
 }
 
+/* ── Library skeleton loading cards ──────────────────────────────────── */
 @keyframes library-shimmer {
     0%   { background-position: -600px 0; }
     100% { background-position:  600px 0; }
@@ -1890,6 +1920,7 @@
     display: none;
 }
 
+/* In-flow scroll sentinel — invisible; IntersectionObserver loads the next batch */
 .library-scroll-sentinel {
     width: 100%;
     height: 1px;
@@ -1900,6 +1931,7 @@
     visibility: hidden;
 }
 
+/* ── Library "load more" — fixed dark glass circle ───────────────────── */
 .library-load-sentinel,
 #libraryLoadMoreFab {
     position: fixed;
@@ -1922,6 +1954,7 @@
     box-sizing: border-box;
 }
 
+/* Hide when library tab is not active */
 body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
     display: none !important;
 }
@@ -1993,6 +2026,7 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
     }
 }
 
+/* ── Library grid ────────────────────────────────────────────────────── */
 .library-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -2017,6 +2051,7 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
     place-self: center;
 }
 
+/* Modern Asset Library Card — Solis glass morphism */
 .library-card {
     --lib-card-radius: 20px;
     --lib-preview-radius: 14px;
@@ -2079,6 +2114,7 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
     opacity: 1;
 }
 
+/* Card Preview — 16:9 for landscape source thumbs */
 .card-preview {
     position: relative;
     width: 100%;
@@ -2105,6 +2141,7 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
     opacity: 1;
 }
 
+/* Video Status Overlay */
 .status-pill {
     position: absolute;
     top: 10px;
@@ -2145,6 +2182,7 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
     letter-spacing: inherit;
 }
 
+/* Content Details */
 .card-content {
     padding: 2px 6px 6px;
     display: flex;
@@ -2163,6 +2201,7 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
     font-weight: 700;
     margin: 0;
     letter-spacing: -0.03em;
+    /* Soft 2-line clamp — no forced min-height (that was cutting layouts) */
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -2173,6 +2212,7 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
     max-width: 100%;
 }
 
+/* Footer row: duration + download */
 .card-footer {
     display: flex;
     align-items: center;
@@ -2213,6 +2253,7 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
     font-weight: inherit;
 }
 
+/* Primary Export Action */
 .export-btn {
     background: linear-gradient(135deg, #ff6b3d 0%, #ff8c5a 100%);
     color: #fff;
@@ -2313,6 +2354,7 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
     height: 16px;
 }
 
+/* Processing Card Styles */
 .processing-preview {
     position: relative;
 }
@@ -2362,6 +2404,7 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
     cursor: not-allowed;
 }
 
+/* Unblur animation when processing complete */
 .library-card.unblurring .processing-blur-overlay {
     animation: unblur 0.6s ease-out forwards;
 }
@@ -2389,6 +2432,7 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
     to { filter: blur(0) brightness(1); opacity: 1; }
 }
 
+/* Status message notification */
 #status-msg {
     position: fixed;
     bottom: 32px;
@@ -2403,12 +2447,14 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
     box-shadow: 0 10px 20px rgba(0,0,0,0.1);
 }
 
+/* Old styles removed - using new card design */
+
 @media (max-width: 992px) {
     .templates-grid {
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
         gap: 24px;
     }
-
+    
     .ai-tools-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -2430,38 +2476,38 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
         width: 100% !important;
         padding: 80px 20px 80px 20px;
     }
-
+    
     .clips-title {
         font-size: 2.5rem;
     }
-
+    
     .clips-header {
         flex-direction: column;
         gap: 20px;
     }
-
+    
     .clips-tabs {
         flex-wrap: wrap;
     }
-
+    
     .section-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 20px;
     }
-
+    
     .templates-grid {
         grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
         gap: 16px;
         margin-left: 0;
     }
-
+    
     .ai-tools-grid {
         grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
         gap: 16px;
         margin-left: 16px;
     }
-
+    
     .upload-area {
         padding: 48px 32px;
     }
@@ -2479,6 +2525,7 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
     z-index: 1001;
 }
 
+/* ── Create upgrade card (ported from upgrade.css; centered under URL) ── */
 #createSection .uc-card,
 .uc-card {
     --uc-ink: #18120e;
@@ -2776,6 +2823,7 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
     }
 }
 
+/* ── URL shell: opaque pill sits ON TOP of flame fog (inside never tinted) ── */
 @property --url-fire-angle {
     syntax: '<angle>';
     inherits: false;
@@ -2808,6 +2856,8 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
     pointer-events: none;
 }
 
+/* Soft drifting flame fog — only the overflow past the pill is visible.
+   Idle = paused: animating @property + blur every frame tanks FPS after paste. */
 .url-fire-fog {
     background: conic-gradient(
         from var(--url-fire-angle),
@@ -2831,6 +2881,7 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
     transition: filter 0.38s ease, opacity 0.38s ease;
 }
 
+/* Tighter ember tongue under the fog — opposite drift feels more alive */
 .url-fire-core {
     inset: 18%;
     background: conic-gradient(
@@ -2862,6 +2913,7 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
     animation-play-state: running;
 }
 
+/* After paste the field stays focused — keep the lit look, don't burn FPS on drift */
 .url-input-shell:focus-within:not(:hover) .url-fire-fog,
 .url-input-shell:focus-within:not(:hover) .url-fire-core {
     animation-play-state: paused;
@@ -2871,6 +2923,7 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
     to { --url-fire-angle: 360deg; }
 }
 
+/* Focus: fog magnifies inward and bonds into one outline */
 .url-input-shell:focus-within {
     --url-fire-out: 1.5px;
 }
@@ -2944,6 +2997,7 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
 .url-quota-rail {
     position: relative;
     z-index: 1;
+    /* Tuck under the pill — keep connected, not a separate floating card */
     margin: -28px 0 0;
     padding: 0;
 }
@@ -3045,13 +3099,14 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
     color: #5c534a;
 }
 
+/* ── Icon Layering ── */
 .url-input-icon {
     display: flex;
     align-items: center;
     justify-content: flex-start;
     padding: 0;
-    margin-left: 12px;
-    width: 44px;
+    margin-left: 12px; 
+    width: 44px; 
     flex-shrink: 0;
     overflow: visible;
     position: relative;
@@ -3059,7 +3114,7 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
 }
 
 .url-input-icon img {
-    width: 36px;
+    width: 36px;   
     height: 36px;
     object-fit: contain;
     position: relative;
@@ -3069,9 +3124,10 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
 }
 
 .url-input-wrapper:focus-within .url-input-icon img {
-    filter: drop-shadow(0 4px 14px rgba(255, 122, 80, 0.45));
+    filter: drop-shadow(0 4px 14px rgba(255, 122, 80, 0.45)); 
 }
 
+/* ── Sharp, Clean Typography Area ── */
 .url-input-text {
     position: relative;
     flex: 1;
@@ -3156,6 +3212,7 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
     transition: background-color 9999s ease 0s;
 }
 
+/* ── Plan selector pill — matches url-input glass bar ── */
 .plan-selector-wrap {
     position: relative;
     flex-shrink: 0;
@@ -3212,6 +3269,7 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
     line-height: 1;
 }
 
+/* ── Plan selector loading skeletons (Solis warm glass) ── */
 @keyframes planSkelShimmer {
     0% { transform: translateX(-60%); }
     100% { transform: translateX(60%); }
@@ -3683,6 +3741,7 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
     transform: translateX(0) scale(1);
 }
 
+/* Inline Codex-style effort slider (Themes → Effort control toggle) */
 .plan-effort-slot {
     margin: 0 0 14px;
 }
@@ -3758,6 +3817,7 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
     padding-top: 0;
 }
 
+/* Compact Solis stgToggle — same squircle knob as settings, slightly smaller */
 .plan-effort-mode-row .stgToggle {
     width: 38px;
     height: 24px;
@@ -3990,6 +4050,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     will-change: transform, opacity, right, top;
 }
 
+/* Clean 2-row lattice, spaced so nothing overlaps. Opacity fades leftward. */
 .plan-effort-slider-bits span:nth-child(1)  { --br: 6px;  --bt: 2px;  --bit-o: 0.92; --delay: 0s; }
 .plan-effort-slider-bits span:nth-child(2)  { --br: 6px;  --bt: 8px;  --bit-o: 0.88; --delay: 0.02s; }
 .plan-effort-slider-bits span:nth-child(3)  { --br: 14px; --bt: 2px;  --bit-o: 0.78; --delay: 0.04s; }
@@ -4189,6 +4250,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     opacity: 0.75;
 }
 
+/* Dropdown — fixed to viewport so it escapes url-input-wrapper transform stacking */
 .plan-selector-popover {
     position: fixed;
     z-index: 100070;
@@ -4386,6 +4448,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     display: none;
 }
 
+/* Mobile / tablet: pill shows Auto mode / effort — plan name lives in the menu */
 @media (max-width: 768px) {
     .plan-selector-label {
         display: none !important;
@@ -4400,6 +4463,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
         min-width: 0;
     }
 
+    /* Skeleton matches Auto-only pill (no plan-name bar) */
     .plan-selector-wrap.is-loading .plan-selector-btn {
         min-width: 76px;
     }
@@ -4539,6 +4603,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     transform: scale(0.96) translateZ(0);
 }
 
+/* ── Generating State — button locked (no cancel / stop) ── */
 .url-submit-btn.is-generating,
 .url-submit-btn.is-stop-preview {
     background: linear-gradient(145deg, #ff8a55 0%, #ff6b35 42%, #ff4f1a 100%);
@@ -4565,6 +4630,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     pointer-events: none;
 }
 
+/* Stop square removed — keep rule so old markup stays hidden */
 .url-submit-btn .button-icon--stop {
     display: none !important;
 }
@@ -4580,6 +4646,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     cursor: wait;
 }
 
+/* Legacy cancel-locked class — treated as generating lock */
 .url-submit-btn.is-generating.is-cancel-locked {
     cursor: not-allowed;
     pointer-events: none;
@@ -4601,6 +4668,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     visibility: hidden;
 }
 
+/* Pulse when redirected from Use Template (paste URL to continue) */
 @keyframes urlSubmitNeedsUrlPulse {
     0%, 100% {
         box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.45);
@@ -4616,22 +4684,27 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     animation: urlSubmitNeedsUrlPulse 1.15s ease-in-out 3;
 }
 
+
+/* ── Smooth Cross-Fading Inside State Setup ── */
+
 .url-submit-btn .button-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     position: relative;
     z-index: 1;
-
-    transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    
+    /* Smooth, snappy transition curve */
+    transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
                 transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
                 visibility 0.25s;
-
+    
     opacity: 1;
     transform: scale(1);
     visibility: visible;
 }
 
+/* When loading, fade out and scale down the arrow icon */
 .url-submit-btn.loading .button-icon {
     opacity: 0;
     transform: scale(0.7);
@@ -4656,12 +4729,14 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     visibility: hidden;
 }
 
+/* When loading, fade in and scale up to normal sizes */
 .url-submit-btn.loading .loading-dots {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
     visibility: visible;
 }
 
+/* ── Quota exhausted → Upgrade CTA (morph from loading dots) ── */
 .url-submit-btn .url-submit-upgrade-label {
     position: absolute;
     inset: 0;
@@ -4740,6 +4815,8 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     }
 }
 
+
+/* ── Loading Dots — only animate while the submit btn is loading ── */
 .url-submit-btn .loading-dot,
 .url-submit-btn .loading-dots span {
     width: 5px;
@@ -4774,6 +4851,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     }
 }
 
+
 .loading-dot {
     width: 5px;
     height: 5px;
@@ -4785,6 +4863,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
 .loading-dot:nth-child(1) { animation-delay: 0s; }
 .loading-dot:nth-child(2) { animation-delay: 0.15s; }
 .loading-dot:nth-child(3) { animation-delay: 0.3s; }
+/* ── Glassified Input Overlay ── */
 .url-input-overlay {
     position: absolute;
     top: 0;
@@ -4800,12 +4879,13 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     z-index: 20;
     padding: 8px 16px;
 
+    /* Matching Glassmorphism */
     background: rgba(255, 255, 255, 0.85);
     border: 1px solid rgba(255, 255, 255, 0.9);
     box-shadow: 0 8px 32px rgba(120, 90, 60, 0.08);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-
+    
     transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
 }
 
@@ -4853,6 +4933,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     margin: 0;
 }
 
+/* ── Refined Action Disclaimer Button ── */
 .disclaimer-btn {
     width: 44px; /* Scaled to look sleek alongside the 52px main button */
     height: 44px;
@@ -4889,6 +4970,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     color: white;
 }
 
+/* ── Responsive & Safe Areas ── */
 .url-input-help {
     display: flex;
     align-items: center;
@@ -5098,7 +5180,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     background: rgba(255, 255, 255, 0.7);
     border-radius: 20px;
     padding: 24px;
-    box-shadow:
+    box-shadow: 
         0 8px 32px rgba(0, 0, 0, 0.06),
         inset 0 1px 0 rgba(255, 255, 255, 0.8);
     display: flex;
@@ -5112,7 +5194,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
 .processing-item:hover {
     border-color: rgba(255, 255, 255, 0.75);
     background: rgba(255, 255, 255, 0.75);
-    box-shadow:
+    box-shadow: 
         0 12px 40px rgba(0, 0, 0, 0.08),
         inset 0 1px 0 rgba(255, 255, 255, 0.85);
 }
@@ -5150,7 +5232,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     background: rgba(16, 185, 129, 0.2);
     color: var(--badge-trending);
     border-color: rgba(16, 185, 129, 0.3);
-    box-shadow:
+    box-shadow: 
         inset 0 1px 0 rgba(255, 255, 255, 0.4),
         0 4px 12px rgba(16, 185, 129, 0.15);
 }
@@ -5392,6 +5474,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     opacity: 0.9;
 }
 
+/* Button + menu share one glass shell when open */
 .library-sort-wrap.is-open .sort-btn {
     background: linear-gradient(
         145deg,
@@ -5407,6 +5490,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     color: rgba(50, 38, 28, 0.95);
 }
 
+/* Dropdown — attached to sort-btn, glass */
 .library-sort-menu {
     position: absolute;
     top: 100%;
@@ -5927,9 +6011,9 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     width: 100%;
     height: 100%;
     background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.2),
+        90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.2), 
         transparent
     );
     animation: shimmerButton 2.5s infinite;
@@ -5944,6 +6028,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     box-shadow: 0 2px 8px rgba(255, 122, 80, 0.3);
 }
 
+/* Storage Limit Warning */
 .storage-limit-warning {
     display: flex;
     align-items: center;
@@ -6079,51 +6164,51 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     .url-input-container {
         padding: 32px 0;
     }
-
+    
     .clip-preview-container {
         padding: 24px;
         border-radius: 20px;
     }
-
+    
     .preview-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 16px;
     }
-
+    
     .preview-actions {
         width: 100%;
         flex-wrap: wrap;
     }
-
+    
     .preview-action-btn {
         flex: 1;
         min-width: 140px;
         justify-content: center;
     }
-
+    
     .clip-settings {
         grid-template-columns: 1fr;
     }
-
+    
     .processing-item {
         flex-direction: column;
         align-items: flex-start;
         gap: 16px;
     }
-
+    
     .processing-info {
         width: 100%;
     }
-
+    
     .processing-actions {
         align-self: flex-end;
     }
-
+    
     .library-filters {
         width: 100%;
     }
-
+    
     .filter-select,
     .library-sort-wrap,
     .sort-btn,
@@ -6135,7 +6220,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     .library-sort-wrap .sort-btn {
         width: 100%;
     }
-
+    
     .library-grid {
         grid-template-columns: 1fr;
     }
@@ -6490,7 +6575,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     background: rgba(255, 255, 255, 0.7);
     border-radius: 16px;
     padding: 24px;
-    box-shadow:
+    box-shadow: 
         0 8px 32px rgba(0, 0, 0, 0.06),
         inset 0 1px 0 rgba(255, 255, 255, 0.8);
     display: flex;
@@ -6504,7 +6589,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
 .processing-item:hover {
     border-color: rgba(255, 255, 255, 0.75);
     background: rgba(255, 255, 255, 0.75);
-    box-shadow:
+    box-shadow: 
         0 12px 40px rgba(0, 0, 0, 0.08),
         inset 0 1px 0 rgba(255, 255, 255, 0.85);
 }
@@ -6755,7 +6840,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     .templates-grid {
         grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     }
-
+    
     .ai-tools-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -6765,35 +6850,35 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     .clips-container {
         padding: 32px 24px;
     }
-
+    
     .clips-title {
         font-size: 2.5rem;
     }
-
+    
     .clips-header {
         flex-direction: column;
         gap: 20px;
     }
-
+    
     .clips-tabs {
         flex-wrap: wrap;
     }
-
+    
     .section-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 20px;
     }
-
+    
     .templates-grid,
     .library-grid {
         grid-template-columns: 1fr;
     }
-
+    
     .ai-tools-grid {
         grid-template-columns: 1fr;
     }
-
+    
     .upload-area {
         padding: 48px 32px;
     }
@@ -6842,6 +6927,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     font-weight: 400;
 }
 
+/* Prevent browser autofill/clipboard-suggestion from tinting the input grey */
 .url-input:-webkit-autofill,
 .url-input:-webkit-autofill:hover,
 .url-input:-webkit-autofill:focus,
@@ -7093,7 +7179,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     background: rgba(255, 255, 255, 0.7);
     border-radius: 20px;
     padding: 24px;
-    box-shadow:
+    box-shadow: 
         0 8px 32px rgba(0, 0, 0, 0.06),
         inset 0 1px 0 rgba(255, 255, 255, 0.8);
     display: flex;
@@ -7109,7 +7195,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
 .processing-item:hover {
     border-color: rgba(255, 255, 255, 0.75);
     background: rgba(255, 255, 255, 0.75);
-    box-shadow:
+    box-shadow: 
         0 12px 40px rgba(0, 0, 0, 0.08),
         inset 0 1px 0 rgba(255, 255, 255, 0.85);
 }
@@ -7320,6 +7406,8 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     cursor: not-allowed;
 }
 
+/* Glass .sort-btn (above) is canonical — do not flatten it here */
+
 .library-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -7506,9 +7594,9 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     width: 100%;
     height: 100%;
     background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.2),
+        90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.2), 
         transparent
     );
     animation: shimmerButton 2.5s infinite;
@@ -7553,51 +7641,51 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     .url-input-container {
         padding: 32px 0;
     }
-
+    
     .clip-preview-container {
         padding: 24px;
         border-radius: 20px;
     }
-
+    
     .preview-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 16px;
     }
-
+    
     .preview-actions {
         width: 100%;
         flex-wrap: wrap;
     }
-
+    
     .preview-action-btn {
         flex: 1;
         min-width: 140px;
         justify-content: center;
     }
-
+    
     .clip-settings {
         grid-template-columns: 1fr;
     }
-
+    
     .processing-item {
         flex-direction: column;
         align-items: flex-start;
         gap: 16px;
     }
-
+    
     .processing-info {
         width: 100%;
     }
-
+    
     .processing-actions {
         align-self: flex-end;
     }
-
+    
     .library-filters {
         width: 100%;
     }
-
+    
     .filter-select,
     .library-sort-wrap,
     .sort-btn,
@@ -7609,7 +7697,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     .library-sort-wrap .sort-btn {
         width: 100%;
     }
-
+    
     .library-grid {
         grid-template-columns: 1fr;
     }
@@ -7834,39 +7922,39 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
         width: 100% !important;
         padding: 70px 16px 70px 16px;
     }
-
+    
     .clips-title {
         font-size: 1.75rem;
     }
-
+    
     .clips-tabs {
         flex-direction: column;
     }
-
+    
     .templates-grid,
     .library-grid {
         grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
         gap: 12px;
         margin-left: 8px;
     }
-
+    
     .ai-tools-grid {
         grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
         gap: 12px;
         margin-left: 8px;
     }
-
+    
     .template-card {
         max-width: 100%;
         aspect-ratio: 1.05;
     }
-
+    
     .template-confirmation-buttons {
         position: static;
         margin-top: 20px;
         justify-content: center;
     }
-
+    
     .template-confirm-btn,
     .template-cancel-btn {
         flex: 1;
@@ -8099,16 +8187,16 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     transform: scale(1.05);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 768px) {    
     .timeline-section {
         padding: 1rem;
     }
-
+    
     .timeline-info {
         flex-wrap: wrap;
         gap: 0.5rem;
     }
-
+    
     .timeline-info-item {
         flex: 1;
         min-width: 45%;
@@ -8171,7 +8259,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     max-width: 1400px;
     display: flex;
     flex-direction: column;
-    box-shadow:
+    box-shadow: 
         var(--glass-shadow-lg),
         inset 0 1px 2px rgba(255, 255, 255, 0.5);
     border: 1px solid var(--glass-border);
@@ -8498,7 +8586,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     transition: all 0.2s;
     -webkit-backdrop-filter: blur(28px) saturate(180%);
     backdrop-filter: blur(28px) saturate(180%);
-    box-shadow:
+    box-shadow: 
         0 8px 32px rgba(0, 0, 0, 0.06),
         inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
@@ -8506,7 +8594,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
 .processing-item:hover {
     border-color: rgba(255, 255, 255, 0.75);
     background: rgba(255, 255, 255, 0.75);
-    box-shadow:
+    box-shadow: 
         0 12px 40px rgba(0, 0, 0, 0.08),
         inset 0 1px 0 rgba(255, 255, 255, 0.85);
 }
@@ -8514,7 +8602,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
 [data-theme="_no-dark"] .processing-item:hover {
     border-color: rgba(255, 255, 255, 0.75);
     background: rgba(255, 255, 255, 0.75);
-    box-shadow:
+    box-shadow: 
         0 12px 40px rgba(0, 0, 0, 0.08),
         inset 0 1px 0 rgba(255, 255, 255, 0.85);
 }
@@ -8785,31 +8873,31 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
         height: 100%;
         border-radius: 0;
     }
-
+    
     .editor-main {
         flex-direction: column;
     }
-
+    
     .editor-sidebar {
         width: 100%;
         height: auto;
         max-height: 40%;
     }
-
+    
     .processing-item {
         flex-direction: column;
         align-items: flex-start;
     }
-
+    
     .processing-thumbnail {
         margin-bottom: 12px;
     }
-
+    
     .processing-status {
         margin: 12px 0 0 0;
         align-self: flex-start;
     }
-
+    
     .processing-actions {
         margin-top: 12px;
         align-self: flex-end;
@@ -8818,8 +8906,8 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
 
 @font-face {
     font-family: 'EmojiFont';
-    src: local('Apple Color Emoji'),
-         local('Segoe UI Emoji'),
+    src: local('Apple Color Emoji'), 
+         local('Segoe UI Emoji'), 
          local('Noto Color Emoji'),
          local('Twemoji Mozilla');
     unicode-range: U+1F300-1F9FF, U+1F600-1F64F;
@@ -9448,24 +9536,24 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
 }
 
 @keyframes slideUp {
-    from {
+    from { 
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(30px); 
     }
-    to {
+    to { 
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0); 
     }
 }
 
 @keyframes pulse {
-    0%, 100% {
+    0%, 100% { 
         opacity: 1;
-        transform: scale(1);
+        transform: scale(1); 
     }
-    50% {
+    50% { 
         opacity: 0.8;
-        transform: scale(1.05);
+        transform: scale(1.05); 
     }
 }
 
@@ -9479,20 +9567,20 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     .editor-main {
         flex-direction: column;
     }
-
+    
     .editor-sidebar {
         width: 100%;
         max-height: 40vh;
     }
-
+    
     .slot-grid {
         grid-template-columns: repeat(2, 1fr);
     }
-
+    
     .editor-actions {
         flex-wrap: wrap;
     }
-
+    
     .editor-btn {
         min-width: 140px;
     }
@@ -9502,18 +9590,18 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     .slot-grid {
         grid-template-columns: 1fr;
     }
-
+    
     .preview-slot-row {
         padding: 15px;
     }
-
+    
     .preview-slot-number {
         width: 50px;
         height: 50px;
         font-size: 24px;
         margin-right: 15px;
     }
-
+    
     .preview-slot-emoji {
         font-size: 32px;
     }
@@ -9897,11 +9985,11 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
         font-size: 28px;
         padding: 10px 20px;
     }
-
+    
     .top-header {
         font-size: 28px;
     }
-
+    
     .main-message {
         font-size: 36px;
     }
@@ -9911,16 +9999,16 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     .slot-preview {
         gap: 15px;
     }
-
+    
     .slot-preview-item {
         font-size: 22px;
         padding: 8px 15px;
     }
-
+    
     .top-header {
         font-size: 24px;
     }
-
+    
     .main-message {
         font-size: 28px;
         margin-bottom: 20px;
@@ -10515,17 +10603,17 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
         flex-direction: column;
         gap: 15px;
     }
-
+    
     .editor-preview {
         width: 100%;
         max-height: 400px;
     }
-
+    
     .editor-sidebar {
         width: 100%;
         max-height: 50vh;
     }
-
+    
     .shorts-container {
         max-width: 100%;
         aspect-ratio: auto;
@@ -10537,25 +10625,25 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     .editor-header {
         padding: 12px 15px;
     }
-
+    
     .editor-header h2 {
         font-size: 16px;
     }
-
+    
     .emoji-grid {
         grid-template-columns: repeat(4, 1fr);
     }
-
+    
     .slot-selector {
         grid-template-columns: repeat(4, 1fr);
         gap: 6px;
     }
-
+    
     .shorts-container {
         max-width: 100%;
         height: 250px;
     }
-
+    
     .watermark-text {
         font-size: 32px;
         padding: 12px 24px;
@@ -10571,7 +10659,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
 }
 
 .limit-reached-container {
-    display: none;
+    display: none; 
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -10588,7 +10676,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
 }
 
 .limit-reached-container.active {
-    display: flex;
+    display: flex; 
     animation: fadeInSlide 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -10975,6 +11063,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     color: #fca5a5;
 }
 
+/* Storage Limit Warning */
 .storage-limit-warning {
     display: flex;
     align-items: center;
@@ -11115,7 +11204,22 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
         transform: translateY(0);
     }
 }
+/* ══════════════════════════════════════════
+   iOS 26 Liquid Glass — SVG Refraction Filter
+   Inline this SVG somewhere in your HTML (hidden):
+   
+   <svg style="position:absolute;width:0;height:0">
+     <defs>
+       <filter id="liquid-glass-filter" x="-20%" y="-20%" width="140%" height="140%">
+         <feTurbulence type="fractalNoise" baseFrequency="0.015 0.015" numOctaves="2" seed="5" result="noise"/>
+         <feDisplacementMap in="SourceGraphic" in2="noise" scale="6" xChannelSelector="R" yChannelSelector="G" result="displaced"/>
+         <feComposite in="displaced" in2="SourceGraphic" operator="in"/>
+       </filter>
+     </defs>
+   </svg>
+══════════════════════════════════════════ */
 
+/* ── Modal Overlay ── */
 .template-preview-modal {
     position: fixed;
     inset: 0;
@@ -11145,6 +11249,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     animation: overlayIn 0.22s ease forwards;
 }
 
+
 .template-preview-modal.closing {
     animation: overlayIn 0.18s ease reverse forwards;
 }
@@ -11159,9 +11264,16 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     to   { transform: scale(1);    opacity: 1; }
 }
 
+/* ══════════════════════════════════════════
+   MODAL SHELL — 3-layer Liquid Glass
+   Layer 1: .template-preview-content (border + shape)
+   Layer 2: ::before (inner shadow + tint)
+   Layer 3: ::after (backdrop refraction)
+══════════════════════════════════════════ */
 .template-preview-content {
     width: 100%;
     max-width: 1100px;
+    /* Fit short laptops (ThinkPad 768-ish) — never taller than the viewport */
     height: min(86dvh, 760px);
     max-height: calc(100dvh - 24px);
     border-radius: 28px;
@@ -11171,13 +11283,16 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     position: relative;
     isolation: isolate;
 
+    /* Phone scales to leftover viewport after chrome (header + pads + toolbar) */
     --tp-chrome: 210px;
     --tp-phone-max-h: min(498px, max(200px, calc(100dvh - var(--tp-chrome))));
     --tp-phone-w: min(280px, max(160px, calc(var(--tp-phone-max-h) * 9 / 16)));
 
+    /* Layer 1: The glass border — thin, bright, glassy edge */
     background: rgba(255, 255, 255, 0.42);
     border: 1px solid rgba(255, 255, 255, 0.7);
 
+    /* Main shadow + specular rim on all 4 edges */
     box-shadow:
         0 24px 64px rgba(0, 0, 0, 0.14),
         0 8px 24px rgba(0, 0, 0, 0.08),
@@ -11192,10 +11307,12 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     transition: box-shadow 0.25s ease;
 }
 
+/* Post-gen / library: timeline + trim chrome needs more room — shrink phone further */
 .template-preview-content.is-library-preview {
     --tp-chrome: 320px;
 }
 
+/* Layer 2: Inner tint + depth shadow — simulates light bending inside glass */
 .template-preview-content::before {
     content: '';
     position: absolute;
@@ -11204,6 +11321,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     border-radius: 28px;
     pointer-events: none;
 
+    /* Inward glow that creates the "thick glass" illusion */
     box-shadow:
         inset 0 0 40px -8px rgba(255, 255, 255, 0.5),
         inset 0 2px 8px rgba(255, 255, 255, 0.3),
@@ -11217,6 +11335,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     );
 }
 
+/* Layer 3: Refraction edge — the iOS 26 signature distortion rim */
 .template-preview-content::after {
     content: '';
     position: absolute;
@@ -11225,6 +11344,7 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     border-radius: 28px;
     pointer-events: none;
 
+    /* Top specular highlight bar — lens flare effect */
     background: linear-gradient(180deg,
         rgba(255, 255, 255, 0.55) 0px,
         rgba(255, 255, 255, 0.0) 3px,
@@ -11242,11 +11362,13 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
 
 body.modal-open { overflow: hidden !important; }
 
+/* ── All children need z-index above the pseudo layers ── */
 .template-preview-content > * {
     position: relative;
     z-index: 1;
 }
 
+/* ── Loading screen ── */
 .template-preview-loading {
     position: absolute;
     inset: 0;
@@ -11270,6 +11392,7 @@ body.modal-open { overflow: hidden !important; }
     pointer-events: none;
 }
 
+/* Library preview: kill the full-modal loading veil so it can't flicker over the video/pill */
 .template-preview-content.is-library-preview .template-preview-loading.hidden {
     display: none !important;
     opacity: 0 !important;
@@ -11307,6 +11430,7 @@ body.modal-open { overflow: hidden !important; }
     border-width: 3.5px;
 }
 
+/* Arc spinner — regular ring with chasing stroke (not a flat rotate) */
 .solis-arc-spinner {
     width: 36px;
     height: 36px;
@@ -11401,6 +11525,7 @@ body.modal-open { overflow: hidden !important; }
     }
 }
 
+/* Legacy atom styles kept so old markup doesn't break */
 .solis-atom-loader {
     width: 72px;
     height: 72px;
@@ -11466,6 +11591,7 @@ body.modal-open { overflow: hidden !important; }
     to { transform: rotate(360deg); }
 }
 
+/* Legacy class kept for any leftover markup */
 .template-loading-spinner {
     width: 34px;
     height: 34px;
@@ -11481,26 +11607,26 @@ body.modal-open { overflow: hidden !important; }
 
 .atom-container {
     position: relative;
-    width: 120px;
+    width: 120px; 
     height: 120px;
-    display: flex;
-    align-items: center;
+    display: flex; 
+    align-items: center; 
     justify-content: center;
 }
 
-.nucleus {
-    animation: nucleusPulse 2s ease-in-out infinite;
+.nucleus { 
+    animation: nucleusPulse 2s ease-in-out infinite; 
     transform-origin: center;
 }
 
-.orbit-1 {
-    animation: orbitRotate1 4s linear infinite;
+.orbit-1 { 
+    animation: orbitRotate1 4s linear infinite; 
     transform-origin: center;
     transform-box: fill-box; /* Tells the browser to use the shape's center */
 }
 
-.orbit-2 {
-    animation: orbitRotate2 6s linear infinite;
+.orbit-2 { 
+    animation: orbitRotate2 6s linear infinite; 
     transform-origin: center;
     transform-box: fill-box;
 }
@@ -11510,14 +11636,16 @@ body.modal-open { overflow: hidden !important; }
     50%      { r: 10; opacity: 0.8; }
 }
 
-@keyframes orbitRotate1 {
+/* Start at 45deg and spin a full 360deg from there */
+@keyframes orbitRotate1 { 
     from { transform: rotate(45deg); }
-    to { transform: rotate(405deg); }
+    to { transform: rotate(405deg); } 
 }
 
-@keyframes orbitRotate2 {
+/* Start at -45deg and spin backward a full 360deg from there */
+@keyframes orbitRotate2 { 
     from { transform: rotate(-45deg); }
-    to { transform: rotate(-405deg); }
+    to { transform: rotate(-405deg); } 
 }
 .progress-bar {
     width: 180px; height: 2px;
@@ -11540,6 +11668,7 @@ body.modal-open { overflow: hidden !important; }
 #proFeatureModal { opacity: 0; transition: opacity 0.22s ease; }
 #proFeatureModal.active { opacity: 1; }
 
+/* ── Header — same as body, no separation ── */
 .template-preview-header {
     display: flex;
     justify-content: flex-end;
@@ -11547,9 +11676,11 @@ body.modal-open { overflow: hidden !important; }
     padding: 16px 20px;
     flex-shrink: 0;
 
+    /* Same background as body */
     background: rgba(248, 248, 252, 0.6);
 }
 
+/* ── Close button — liquid glass pill ── */
 .template-preview-close {
     background: rgba(255, 255, 255, 0.5);
     backdrop-filter: blur(12px);
@@ -11585,6 +11716,7 @@ body.modal-open { overflow: hidden !important; }
     overflow: visible;
 }
 
+/* ── Body ── */
 .template-preview-body {
     display: grid;
     grid-template-columns: 1fr 360px;
@@ -11602,12 +11734,14 @@ body.modal-open { overflow: hidden !important; }
     width: 100%;
     align-items: center !important;
     padding-right: 0;
+    /* Keep previewEditorPill fully visible on first open (was clipping under overflow) */
     overflow: visible;
     min-height: 0;
     padding-bottom: 8px;
     box-sizing: border-box;
 }
 
+/* ── Slot selector ── */
 .template-slot-selector {
     display: flex;
     gap: 5px;
@@ -11650,6 +11784,7 @@ body.modal-open { overflow: hidden !important; }
         inset 0 1px 0 rgba(255,255,255,0.3);
 }
 
+/* ── Nav arrows — glass pill ── */
 .preview-nav-arrow {
     width: 40px; height: 40px;
     border-radius: 50%;
@@ -11679,6 +11814,7 @@ body.modal-open { overflow: hidden !important; }
 .preview-nav-arrow:hover i { color: #ff7a50; }
 .preview-nav-arrow:disabled { opacity: 0.28; cursor: not-allowed; pointer-events: none; }
 
+/* ── Preview placeholder ── */
 #templateVideoPreview.library-ranking-edit {
     position: relative;
 }
@@ -11710,6 +11846,7 @@ body.modal-open { overflow: hidden !important; }
     pointer-events: auto !important;
     z-index: 95;
 }
+/* Caption orange guides are subtitle-only — never paint over ranking */
 #templateVideoPreview.library-ranking-edit > .sub-guide,
 #templateVideoPreview.library-ranking-edit > .sub-half-line,
 #templateVideoPreview.library-ranking-edit .sub-guide,
@@ -11721,6 +11858,7 @@ body.modal-open { overflow: hidden !important; }
     opacity: 0 !important;
     pointer-events: none !important;
 }
+/* Ranking list — keep gaps readable without fighting s.js template */
 #templateVideoPreview.library-ranking-edit .ranking-list {
     display: flex !important;
     flex-direction: column !important;
@@ -11738,6 +11876,7 @@ body.modal-open { overflow: hidden !important; }
     overflow: visible !important;
 }
 
+/* Empty AI rank titles — invite edit without looking broken */
 .ranking-preview-container .rank-title.rk-title-empty::before,
 .ranking-preview-container .rank-title[data-placeholder]:empty::before {
     content: attr(data-placeholder);
@@ -11749,6 +11888,7 @@ body.modal-open { overflow: hidden !important; }
     min-width: 2.5rem;
     cursor: var(--solis-preview-cursor-text);
 }
+/* Editable ranking copy — I-beam on hover (not arrow/hand); closed hand while dragging/resizing */
 .ranking-preview-container [data-template-element-id]:not([data-template-element-id$="_number"]),
 .ranking-preview-container .rank-title,
 .ranking-preview-container .rank-title:not(.rk-inline-editing):not([contenteditable="true"]) {
@@ -11760,13 +11900,20 @@ body.modal-open { overflow: hidden !important; }
 .preview-placeholder .ranking-preview-container [data-template-element-id].is-resizing * {
     cursor: var(--solis-preview-cursor-grabbing) !important;
 }
+/* Shared custom edit cursor (preview phone + floating pill / dropdowns).
+   Real macOS arrow + pointing hand + closed hand (grabbing) + I-beam (daviddarnes/mac-cursors), ~48px.
+   Prefer PNG file URLs — giant data-URIs can fail silently in Chromium.
+   Important: never force cursor on `*` alone — that fights icons inside buttons
+   and causes hover flicker between arrow/hand. */
 :root {
     --solis-preview-cursor: url('/style/cursor.png?v=30') 15 11, auto;
     --solis-preview-cursor-hand: url('/style/cursor-hand.png?v=30') 19 12, pointer;
     --solis-preview-cursor-grabbing: url('/style/cursor-hand-grabbing.png?v=30') 23 23, grabbing;
+    /* I-beam PNG only inside .preview-placeholder (see below) */
     --solis-preview-cursor-text: text;
 }
 
+/* Themes → Advanced → macOS cursor */
 html[data-solis-cursor="off"] {
     --solis-preview-cursor: auto;
     --solis-preview-cursor-hand: pointer;
@@ -11803,6 +11950,7 @@ html[data-solis-cursor="always"] :is(
 ) {
     cursor: var(--solis-preview-cursor-hand);
 }
+/* I-beam PNG only on editable text inside the phone preview */
 html:not([data-solis-cursor="off"]) .preview-placeholder :is(
     input:not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]):not([type="color"]),
     textarea,
@@ -11812,6 +11960,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder :is(
     cursor: var(--solis-preview-cursor-text) !important;
 }
 
+/* Preview column: default outside phone; mac cursor on phone + tools + timeline. */
 .template-preview-video {
     cursor: default;
 }
@@ -11820,6 +11969,7 @@ html:not([data-solis-cursor="off"]) .template-preview-video .preview-timeline-sh
     cursor: var(--solis-preview-cursor);
 }
 
+/* macOS I-beam PNG — only inside the phone preview */
 html:not([data-solis-cursor="off"]) .preview-placeholder {
     --solis-preview-cursor-text: url('/style/cursor-ibeam.png?v=30') 24 24, text;
 }
@@ -11829,6 +11979,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     position: relative;
     aspect-ratio: 9/16;
     background: #0c0c0e;
+    /* Clear phone bound — captions wrap inside this frame */
     border: 2.5px solid rgba(255, 255, 255, 0.42);
     outline: 1px solid rgba(0, 0, 0, 0.45);
     outline-offset: 1px;
@@ -11855,6 +12006,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     cursor: var(--solis-preview-cursor);
 }
 
+/* Allow caret + selection while double-click editing AI titles */
 .preview-placeholder.rk-phone-editing,
 .preview-placeholder.rk-phone-editing *,
 .ranking-preview-container .rk-inline-editing,
@@ -11871,6 +12023,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     border-color: rgba(255, 255, 255, 0.55);
 }
 
+/* Phone canvas — arrow on surfaces only (not every descendant) */
 .preview-placeholder .ranking-preview-container,
 .preview-placeholder #splitscreenRoot,
 .preview-placeholder .library-preview-video,
@@ -11884,6 +12037,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     cursor: var(--solis-preview-cursor);
 }
 
+/* Bridge the gap under the phone so cursor stays through to the pill */
 #templateVideoPreview.preview-placeholder,
 .preview-placeholder {
     margin-bottom: 0;
@@ -11895,6 +12049,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
 .template-preview-video .preview-editor-row {
     margin-top: 0;
     padding-top: 10px;
+    /* Extend the custom-cursor hit area upward into the visual gap */
     position: relative;
 }
 .template-preview-video .preview-editor-row::before {
@@ -11909,6 +12064,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     z-index: 5;
 }
 
+/* Drag captions / overlays / splitscreen — open hand idle, closed (grabbing) while dragging */
 .preview-placeholder .sub-text-block,
 .preview-placeholder .sub-text-block .sub-text-inner {
     cursor: var(--solis-preview-cursor-hand);
@@ -11921,6 +12077,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
 .preview-placeholder .sub-text-block.is-resizing * {
     cursor: var(--solis-preview-cursor-grabbing) !important;
 }
+/* Splitscreen panel / immersive drag — closed hand while grabbing */
 .preview-placeholder:has(#splitscreenRoot.is-dragging),
 .preview-placeholder:has(#splitscreenRoot.is-dragging) *,
 .preview-placeholder #splitscreenTop:active,
@@ -11930,6 +12087,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
 .preview-placeholder #splitscreenRoot.reframe-immersive-peek #splitscreenBottom:active {
     cursor: var(--solis-preview-cursor-grabbing) !important;
 }
+/* Selected overlay text is still drag/select chrome — I-beam only while editing */
 .preview-placeholder .overlay-text-block.selected:not(.overlay-editing):not(.is-dragging):not(.is-resizing):not(:active),
 .preview-placeholder .overlay-text-block.selected:not(.overlay-editing):not(.is-dragging):not(.is-resizing):not(:active) .sub-text-inner {
     cursor: var(--solis-preview-cursor-hand) !important;
@@ -11945,6 +12103,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     cursor: var(--solis-preview-cursor-text) !important;
 }
 
+/* Modes pill + dropdown — always macOS hand (incl. icons) */
 .gp-pill-menu,
 .gp-pill-menu *,
 .gp-dropdown,
@@ -11960,6 +12119,8 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     cursor: not-allowed !important;
 }
 
+/* Clickable chrome + resize handles → macOS pointing hand
+   (include descendants so SVG icons don't flicker back to arrow) */
 .preview-editor-toolbar-wrap .tool-btn,
 .preview-editor-toolbar-wrap .tool-btn *,
 .preview-editor-toolbar-wrap button,
@@ -12041,9 +12202,11 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     cursor: not-allowed !important;
 }
 
+/* Don't force nowrap on caption / hook overlays inside the phone */
 .preview-placeholder > *:not(video):not(.library-preview-video):not(.sub-text-block):not(.sub-guide):not(.sub-half-line):not(.sub-mem-ghost):not(.sub-mem-actions):not(.ranking-preview-container):not(#splitscreenRoot):not(.preview-audio-toggle):not(.preview-skel):not(.ss-mode-dots):not(#ssModeDots) {
     flex-shrink: 0;
 }
+/* Keep phone chrome clipped, but let selected caption handles sit inside comfortably */
 .preview-placeholder .sub-text-block {
     overflow: visible;
     z-index: 80;
@@ -12080,6 +12243,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     z-index: 110;
 }
 
+/* Solis Memory — match ranking AI text suggest pill (rk-suggest-actions) */
 .solis-memory-suggest {
     position: fixed;
     z-index: 99999;
@@ -12195,6 +12359,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     display: none !important;
 }
 
+/* Ranking style memory — show what Accept will apply (soft-previewed on phone) */
 .solis-memory-suggest.solis-memory-suggest--ranking .solis-memory-suggest-label,
 .solis-memory-suggest.solis-memory-suggest--ranking #solisMemorySuggestTitle,
 .solis-memory-suggest.solis-memory-suggest--recipe .solis-memory-suggest-label,
@@ -12239,6 +12404,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     pointer-events: none;
 }
 
+/* Soft anti-copy on suggestion chrome (looks the same, messier to select/copy) */
 .solis-nocopy,
 .solis-nocopy *,
 .sub-mem-ghost,
@@ -12258,6 +12424,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     position: relative;
     z-index: 2;
 }
+/* Match the tile/card radius — outline ignores border-radius */
 .gp-mode-tile.gp-mem-pick .gp-mode-preview {
     border-color: rgba(34, 197, 94, 0.95) !important;
     box-shadow:
@@ -12284,6 +12451,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
         0 0 0 5px rgba(34, 197, 94, 0.16) !important;
 }
 
+/* Preview mute — chip on the phone frame (NOT in the timeline flex row) */
 .preview-timeline-row {
     display: none;
     width: 100%;
@@ -12294,6 +12462,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     gap: 0;
     z-index: 28;
     box-sizing: border-box;
+    /* Room for playhead tip sticking above the rail */
     padding: 10px 2px 0;
     overflow: visible;
 }
@@ -12311,6 +12480,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     overflow: visible;
 }
 
+/* Purple AI-hook track — hidden for now (user request); keep markup for restore */
 .preview-timeline-hook-lane,
 #previewTimelineHookLane,
 .preview-timeline-hook-lane:not([hidden]) {
@@ -12483,6 +12653,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     background: rgba(255,255,255,0.16);
 }
 
+/* Solis watermark — splitscreen: left, slightly above center; ranking: right center */
 .solis-watermark {
     position: absolute;
     left: 12px;
@@ -12575,6 +12746,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     font-weight: 700;
 }
 
+/* Hide brand mark while hover-teach demos run (AI Text / captions / etc.) */
 #templateVideoPreview:has(#solisHoverTeach.is-on) .solis-watermark,
 #templateVideoPreview:has(.solis-rank-hook-demo) .solis-watermark,
 #templateVideoPreview:has(.solis-ss-hook-demo) .solis-watermark,
@@ -12605,6 +12777,8 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     opacity: 1 !important;
 }
 
+/* Never show native browser chrome (timestamps / scrubber) over the preview —
+   scrubbing belongs to PreviewTimeline below the phone. */
 #templateVideoPreview video::-webkit-media-controls,
 #templateVideoPreview video::-webkit-media-controls-enclosure,
 #templateVideoPreview video::-webkit-media-controls-panel,
@@ -12633,6 +12807,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     padding: 0;
     overflow: hidden;
     background: #000;
+    /* contain:paint on .preview-placeholder collapses nested video layers on desktop */
     contain: none !important;
 }
 
@@ -12642,12 +12817,15 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     border-radius: inherit;
 }
 
+/* Library splitscreen: override the global preview video rules that force
+   position:relative + contain — those make panel videos paint blank. */
 #templateVideoPreview.library-splitscreen-preview {
     position: relative !important;
     contain: none !important;
     min-height: 0 !important;
 }
 
+/* Keep the whole video/divider stack under subtitle + text overlays */
 #templateVideoPreview.library-splitscreen-preview #splitscreenRoot {
     position: absolute !important;
     inset: 0 !important;
@@ -12668,6 +12846,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
 #templateVideoPreview > .sub-text-block {
     z-index: 120 !important;
     pointer-events: auto !important;
+    /* Keep glyphs inside the phone bezel — resize handle may clip, text must not */
     max-width: calc(100% - 28px) !important;
     left: 0 !important;
     right: 0 !important;
@@ -12740,6 +12919,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     overflow: visible !important;
 }
 
+/* Invisible hit pad — thin seam only (captions near divider must stay clickable) */
 #templateVideoPreview.library-splitscreen-preview #splitscreenDivider::before,
 .preview-placeholder #splitscreenDivider::before {
     content: '';
@@ -12774,6 +12954,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     z-index: 90 !important;
 }
 
+/* Divider grip — grey at rest; thicker orange on hover/drag (layout slot stays 1px) */
 #templateVideoPreview.library-splitscreen-preview #dividerLine,
 #templateVideoPreview #dividerLine.ss-divider-grip,
 #splitscreenDivider #dividerLine {
@@ -12810,6 +12991,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     box-shadow: 0 0 6px rgba(255, 107, 0, 0.4) !important;
 }
 
+/* Fullscreen reframe: face crop or drag-down peek over content */
 #templateVideoPreview.library-splitscreen-preview #splitscreenRoot.reframe-immersive {
     position: absolute !important;
 }
@@ -12890,6 +13072,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     inset: 0 !important;
     overflow: hidden !important;
 }
+/* Black / Blur fill — never let gameplay or reframe peek underneath */
 #templateVideoPreview.library-splitscreen-preview #splitscreenBottom.ss-blank-fill #splitscreenGameplayVideo,
 #templateVideoPreview.library-splitscreen-preview #splitscreenBottom.ss-blank-fill #splitscreenReframeVideo,
 #templateVideoPreview.library-splitscreen-preview #splitscreenBottom.ss-blank-fill .ss-panel-crop-viewport > video:not(.gp-blank-blur-vid),
@@ -12903,6 +13086,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     opacity: 0 !important;
     pointer-events: none !important;
 }
+/* Reframe fill — hide gameplay so only the face crop shows */
 #templateVideoPreview.library-splitscreen-preview #splitscreenBottom.ss-reframe-fill #splitscreenGameplayVideo{
     display: none !important;
     visibility: hidden !important;
@@ -12916,6 +13100,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     opacity: 1 !important;
     visibility: visible !important;
     display: block !important;
+    /* Fill the bar fully — soft diffuse letterbox */
     filter: blur(64px) saturate(1.22) brightness(1.26) contrast(0.95) !important;
     -webkit-filter: blur(64px) saturate(1.22) brightness(1.26) contrast(0.95) !important;
     transform: scale(1.7) !important;
@@ -12962,6 +13147,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     transform: none !important;
 }
 
+/* Live face reframe: allow drag-to-pan on the secondary panel */
 #templateVideoPreview.library-splitscreen-preview #splitscreenReframeVideo {
     pointer-events: auto !important;
     cursor: grab;
@@ -12973,6 +13159,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
 }
 
 #templateVideoPreview.library-splitscreen-preview #splitscreenReframeVideo.ss-live-face-crop {
+    /* Inline !important left/top/width/height from JS override the fill rules above */
     right: auto !important;
     bottom: auto !important;
     object-fit: fill !important;
@@ -13022,6 +13209,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     to { transform: rotate(360deg); }
 }
 
+/* ── Preview editor toolbar pill (from video2.html) ── */
 .preview-editor-toolbar.toolbar-pill {
     position: relative;
     background: rgba(255, 255, 255, 0.5);
@@ -13067,6 +13255,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     pointer-events: none;
 }
 
+/* Preview pill tools — coral hover ONLY on Silencer */
 .preview-editor-toolbar .tool-btn {
     position: relative;
     z-index: 2;
@@ -13108,6 +13297,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     color: #0f172a;
 }
 
+/* Simple curve seam */
 .preview-editor-toolbar .preview-pill-divider {
     position: relative;
     z-index: 2;
@@ -13130,6 +13320,8 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     display: block;
 }
 
+
+/* Silencer — coral hover + soft dots + bar shimmer */
 .preview-editor-toolbar .tool-btn-silencer {
     --use-tpl-dot: rgba(255, 255, 255, 0.38);
     transition:
@@ -13230,6 +13422,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     display: inline;
 }
 
+/* Improve clip — url-submit coral on icon idle; silencer fill on hover */
 .preview-editor-toolbar .tool-btn-improve {
     --use-tpl-dot: rgba(255, 255, 255, 0.38);
     color: #ff6b35;
@@ -13336,6 +13529,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     transform: translateX(-50%) translateY(0);
 }
 
+/* Silencer hover tip — white bubble first, then CapCut-style content */
 .silencer-hover-card {
     --silencer-tip-x: 50%;
     position: absolute;
@@ -13531,6 +13725,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     text-align: left;
 }
 
+/* Improve clip — fatter width (not taller); media stays compact */
 #improveHoverCard {
     max-width: min(280px, calc(100vw - 28px));
     min-width: 168px;
@@ -13653,6 +13848,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     will-change: transform;
 }
 
+/* Pending silence/improve cuts — red preview before Accept */
 .preview-timeline-cut-preview {
     position: absolute;
     inset: 0;
@@ -13682,6 +13878,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
         0 0 0 2px rgba(239, 68, 68, 0.28);
 }
 
+/* Accept / reject — inside preview-timeline-wrap (not floating off-rail) */
 .preview-timeline-cut-actions {
     position: absolute;
     top: 50%;
@@ -13739,10 +13936,12 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     overflow: visible;
 }
 
+/* Desktop: Use Template stays in sidebar CTA — hide the preview fab */
 .template-use-fab {
     display: none;
 }
 
+/* ── Preview timeline / trimmer — wrap IS the rail ── */
 .preview-timeline-shell {
     display: flex;
     flex: 1 1 auto;
@@ -13794,6 +13993,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     font-weight: 600;
 }
 
+/* Clean timeline rail — big click targets, obvious customize */
 .preview-timeline-wrap {
     position: relative;
     flex: 1 1 auto;
@@ -13822,6 +14022,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     pointer-events: none;
 }
 
+/* Hidden source strip — cloned into segment pills */
 .preview-timeline-filmstrip {
     position: absolute;
     inset: 0;
@@ -13894,6 +14095,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
         0 2px 8px rgba(15, 23, 42, 0.1);
 }
 
+/* Active edit block — tools (silence / improve) target this range */
 .preview-timeline-shell.has-seg-focus .preview-timeline-segment:not(.is-selected) .preview-timeline-segment-clip {
     opacity: 0.55;
     filter: saturate(0.85);
@@ -13979,6 +14181,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     z-index: 7;
 }
 
+/* Always show trim handles on library / ranking */
 .preview-timeline-shell.handles-on .preview-timeline-segment .preview-timeline-handle,
 .preview-timeline-shell.is-ranking-edit .preview-timeline-segment .preview-timeline-handle {
     opacity: 1;
@@ -14053,6 +14256,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     backface-visibility: hidden;
 }
 
+/* Trim knobs — easy grab, no jump */
 .preview-timeline-handle {
     position: absolute;
     top: 50%;
@@ -14112,6 +14316,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
 
 .preview-timeline-playhead {
     position: absolute;
+    /* Stick out above the rail a bit */
     top: -8px;
     bottom: 2px;
     left: 0;
@@ -14126,6 +14331,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     backface-visibility: hidden;
 }
 
+/* CapCut-style tip / head on the playhead stick */
 .preview-timeline-playhead::before {
     content: '';
     position: absolute;
@@ -14143,6 +14349,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     pointer-events: none;
 }
 
+/* Grab target for the tip — drag to scrub */
 .preview-timeline-playhead-grip {
     appearance: none;
     position: absolute;
@@ -14203,6 +14410,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     }
 }
 
+/* Library preview right-click menu */
 .preview-ctx-menu {
     position: fixed;
     z-index: 10050;
@@ -14305,6 +14513,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     filter: brightness(0.96);
 }
 
+/* —— Animated ctx icons: play on open + again on hover —— */
 .preview-ctx-menu.is-icon-anim .ctx-split-top {
     transform-origin: 6px 6px;
     animation: ctxSplitTop 0.55s cubic-bezier(0.34, 1.4, 0.64, 1) both;
@@ -14589,6 +14798,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     opacity: 0.72;
 }
 
+/* Compact stgToggle for modifiers menu */
 .preview-modifiers-row .stgToggle {
     width: 34px;
     height: 20px;
@@ -14617,6 +14827,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     -webkit-appearance: none !important;
 }
 
+/* ── PC hover teach-previews (toolbar + modifiers) ── */
 @media (hover: hover) and (pointer: fine) {
     .preview-editor-toolbar .tool-btn.solis-hover-armed:not(.tool-btn-silencer):not(.tool-btn-improve) {
         color: #0f172a;
@@ -14668,6 +14879,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
         letter-spacing: -0.02em;
         text-transform: none;
     }
+    /* Captions tool = plain static subs */
     .solis-hover-teach-caption--subs {
         font-family: 'Montserrat', sans-serif;
         font-weight: 800;
@@ -14675,6 +14887,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
         letter-spacing: -0.02em;
         color: #fff;
     }
+    /* Animations tool = word-highlight karaoke/pop feel */
     .solis-hover-teach-caption--anim {
         display: flex;
         flex-wrap: nowrap;
@@ -14745,6 +14958,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     .solis-hover-teach-reaction--caption-slot.solis-smart-cap-pop {
         animation: solis-smart-cap-pop-xy 0.34s cubic-bezier(0.2, 1.45, 0.35, 1) both;
     }
+    /* In-place smart-caption beat on the real subtitle block */
     .sub-text-block.solis-smart-cap-pop .sub-text-inner {
         animation: solis-smart-cap-pop 0.34s cubic-bezier(0.2, 1.45, 0.35, 1) both;
         transform-origin: center center;
@@ -14881,6 +15095,9 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
         pointer-events: none;
     }
 
+    /* AI hook preview inside blank / reframe / blur secondary panel.
+       Size vs the blank panel (cqh), not the browser viewport — vw + 26px max
+       made the teach hook look tiny on the phone mockup. */
     .solis-ss-hook-demo {
         position: absolute;
         inset: 0;
@@ -14926,6 +15143,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     .solis-ss-hook-demo { display: none !important; }
 }
 
+/* ── Sidebar — glass panel ── */
 .template-preview-sidebar {
     width: 100%;
     max-width: 360px;
@@ -14949,6 +15167,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     background: rgba(255,255,255,0.6);
 }
 
+/* ── Tabs ── */
 .template-tabs-container {
     display: flex;
     gap: 4px;
@@ -15051,6 +15270,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     to   { opacity: 1; }
 }
 
+/* ── Info panel — Solis glass card ── */
 .template-info-panel {
     background: linear-gradient(
         145deg,
@@ -15091,6 +15311,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
 
 .template-info-panel > * { position: relative; z-index: 1; }
 
+/* Library publish pack — rating + editable title/hashtags */
 .tip-publish {
     display: flex;
     flex-direction: column;
@@ -15391,11 +15612,13 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     cursor: pointer;
     overflow: visible;
 }
+/* Allow the native change event through the label (input stays visually hidden) */
 .tip-setting-row .stgToggle.is-locked-free .stgToggleInput {
     pointer-events: auto;
 }
 
 .tip-setting-row .stgToggleInput {
+    /* keep fully clipped — never paint native checkbox chrome */
     appearance: none !important;
     -webkit-appearance: none !important;
 }
@@ -15419,9 +15642,11 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     display: none !important;
 }
 
+/* ── Solis upgrade modal (Free vs Paid watermark upsell) ── */
 .solis-upgrade-modal {
     position: fixed;
     inset: 0;
+    /* Above sub-mem-actions (99870), ranking suggest, preview chrome */
     z-index: 110000;
     display: flex;
     align-items: center;
@@ -15647,6 +15872,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     top: 0;
     left: 50%;
     z-index: 4;
+    /* Optical center on the top edge (type sits slightly heavy) */
     transform: translate(-50%, calc(-50% - 2px));
     width: auto;
     min-width: 108px;
@@ -15709,6 +15935,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     color: rgba(87, 83, 78, 0.9);
     background: rgba(168, 162, 158, 0.16);
     border: 1px solid rgba(168, 162, 158, 0.22);
+    /* Optical vertical center next to the plan name */
     transform: translateY(-1px);
 }
 .solis-upgrade-card-chip--hot {
@@ -15813,6 +16040,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     position: relative;
     z-index: 1;
 }
+/* Soft top sheen + tiny dots (same language as Use Template) */
 .solis-upgrade-card-cta--primary {
     --use-tpl-dot: rgba(255, 255, 255, 0.42);
 }
@@ -16025,6 +16253,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
 body.solis-upgrade-modal-open {
     overflow: hidden;
 }
+/* Keep memory accept/reject under the upgrade modal while it's open */
 body.solis-upgrade-modal-open .sub-mem-actions,
 body.solis-upgrade-modal-open .sub-mem-actions.open,
 body.solis-upgrade-modal-open .sub-mem-ghost,
@@ -16051,6 +16280,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     }
 }
 
+/* ── Multi generation — match effort slider ── */
 .multi-gen-card {
     margin-top: 8px;
     padding: 12px 12px 10px;
@@ -16288,6 +16518,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
         box-shadow 0.2s ease;
 }
 
+/* ── Responsive ── */
 @media (max-width: 1024px) {
     .template-preview-body {
         grid-template-columns: 1fr 300px;
@@ -16342,6 +16573,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
         padding-bottom: 28px !important; /* room for slim settings peek */
     }
 
+    /* Phone frame: height-driven so short phones / landscape don't clip half the UI */
     .preview-placeholder,
     #templateVideoPreview,
     #templateVideoPreview.has-video,
@@ -16413,6 +16645,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
         width: 52px;
     }
 
+    /* Big generate-style arrow — orange like url-submit / Create FAB */
     .template-use-fab {
         --use-tpl-dot: rgba(255, 255, 255, 0.42);
         display: inline-flex !important;
@@ -16571,6 +16804,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
         transform: translateX(0);
     }
 
+    /* Sidebar CTA hidden — FAB is primary */
     .template-preview-cta .template-use-confirm-btn {
         display: none !important;
     }
@@ -16626,6 +16860,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
         display: none;
     }
 
+    /* Settings peek — drag the handle up to expand */
     .template-preview-sidebar {
         position: fixed;
         bottom: 0; left: 10px; right: 10px;
@@ -16800,6 +17035,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     }
 }
 
+/* ── Tabs ── */
 .template-tabs-container {
     display: flex;
     gap: 4px;
@@ -16850,6 +17086,9 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     to   { opacity: 1; }
 }
 
+/* ── Info panel (legacy flat override removed — uses glass styles above) ── */
+
+/* ── AI prompt panel ── */
 .ai-prompt-panel {
     display: flex;
     flex-direction: column;
@@ -16916,6 +17155,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
 .ai-response-area::-webkit-scrollbar-track { background: transparent; }
 .ai-response-area::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 4px; }
 
+/* ── Typing indicator ── */
 .typing-indicator {
     display: inline-flex;
     align-items: center;
@@ -16970,6 +17210,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     to   { transform: rotate(360deg); }
 }
 
+/* ── CTA button — Solis coral, quiet until hover (dot field) ── */
 .template-use-confirm-btn {
     --use-tpl-dot: rgba(255, 255, 255, 0.42);
     background:
@@ -17035,6 +17276,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     margin-bottom: 0;
 }
 
+/* Soft top sheen (no looping shimmer) */
 .template-use-confirm-btn::before {
     content: '';
     position: absolute;
@@ -17050,6 +17292,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* Small dots — idle almost invisible, bloom on hover */
 .template-use-confirm-btn::after {
     content: '';
     position: absolute;
@@ -17103,6 +17346,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     transition-duration: 0.18s;
 }
 
+/* Library preview: share takes a left chunk, separate from Download / Use Template */
 .template-use-cta-cluster {
     display: flex;
     align-items: stretch;
@@ -17140,6 +17384,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     margin-bottom: 0;
 }
 
+/* One shell = full Use Template button; stripes are an overlay on top */
 .template-use-confirm-shell {
     position: relative;
     display: block;
@@ -17167,10 +17412,12 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     display: inline-block;
     text-align: center;
 }
+/* Post-gen / library: no racing stripes on the CTA */
 .template-use-confirm-shell.is-post-gen .solis-mod-stripes {
     display: none !important;
 }
 
+/* Thick italic racing strips - slanted color bars overlaid on the button */
 .solis-mod-stripes {
     position: absolute;
     top: -22%;
@@ -17236,6 +17483,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
 .solis-mod-stripe[data-mod="series-mode"] .solis-mod-stripe-bar {
     background: #fbbf24;
 }
+/* Disabled modifiers: hide the stripe entirely (not grey) */
 .solis-mod-stripe.is-off {
     display: none !important;
 }
@@ -17327,6 +17575,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     }
 }
 
+/* CapCut-like modifier teach tip */
 .solis-mod-tip {
     position: fixed;
     z-index: 100000;
@@ -17636,6 +17885,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     box-shadow: -2px -2px 6px rgba(80,50,120,.06);
 }
 
+/* FAB shell visibility is controlled above (desktop hide / mobile show) */
 .template-use-cta-cluster.is-intent-mode .template-use-cta-btn-row {
     display: none;
 }
@@ -17840,6 +18090,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     display: none;
 }
 
+/* ── Social Upload Buttons ── */
 .social-btn {
     transition: all 0.2s ease;
     position: relative;
@@ -17866,6 +18117,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     filter: drop-shadow(0 0 8px rgba(255,122,80,0.3));
 }
 
+/* ── Responsive ── */
 @media (max-width: 1024px) {
     .template-preview-body {
         grid-template-columns: 1fr 300px;
@@ -18171,6 +18423,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
 }
 
 .duration-error-message {
+    /* Glass Effect */
     background: linear-gradient(
         145deg,
         rgba(255, 255, 255, 0.72) 0%,
@@ -18183,6 +18436,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     backdrop-filter: blur(20px) saturate(160%);
     -webkit-backdrop-filter: blur(20px) saturate(160%);
 
+    /* Depth & Layout */
     box-shadow:
         0 8px 32px rgba(120, 90, 60, 0.10),
         0 2px 8px rgba(120, 90, 60, 0.07),
@@ -18200,6 +18454,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* Adjusting internal text for better contrast on glass */
 .duration-error-message .error-title {
     margin: 0;
     font-size: 1rem;
@@ -18664,6 +18919,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     background: rgba(255, 255, 255, 0.12);
 }
 
+/* Inline delete confirm on clip cards */
 .solis-clip-card.is-delete-confirm {
     z-index: 5;
 }
@@ -18899,11 +19155,11 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
 }
 
 @keyframes progressLoad {
-    from {
-        width: 0%;
+    from { 
+        width: 0%; 
     }
-    to {
-        width: 100%;
+    to { 
+        width: 100%; 
     }
 }
 
@@ -19232,6 +19488,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
         height: 14px;
     }
 
+    /* Mobile: effort / Auto mode only — never a truncated plan name */
     .plan-selector-label {
         display: none !important;
     }
@@ -19335,6 +19592,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
         min-height: 44px;
     }
 
+    /* Flyout stacks under panel on narrow screens (not side-docked) */
     .plan-effort-flyout {
         position: static;
         width: 100%;
@@ -19374,7 +19632,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
         margin-top: 0 !important;
         flex-shrink: 0;
     }
-
+    
     .url-submit-btn.is-generating {
         opacity: 1;
         cursor: pointer;
@@ -19632,6 +19890,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
         grid-template-columns: repeat(2, 1fr);
     }
 
+    /* Keep top clear of fixed avatar/bell; keep left nav gutter */
     .clips-container {
         padding: 76px 28px 96px var(--nav-shell-padding, 150px);
     }
@@ -19667,6 +19926,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     }
 }
 
+/* Smaller laptops — tighter chrome */
 @media (min-width: 769px) and (max-width: 1300px) {
     .clips-container {
         padding: 72px 24px 88px var(--nav-shell-padding, 150px);
@@ -19743,6 +20003,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     }
 }
 
+/* Short laptops (ThinkPad ~768 CSS px): shrink phone + chrome so preview isn't half-cut */
 @media (max-height: 900px) {
     .template-preview-modal {
         padding: 12px;
@@ -19904,6 +20165,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     }
 }
 
+/* Extra Small Mobile Devices (360px and below) */
 @media (max-width: 360px) {
     .url-input-container {
         padding: 14px 10px 10px;
@@ -19947,7 +20209,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
         font-size: 15px;
         margin-top: 0;
     }
-
+    
     .url-submit-btn.is-generating {
         opacity: 1;
         cursor: pointer;
@@ -19995,6 +20257,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
         transition-duration: 0.01ms !important;
     }
 
+    /* Keep URL submit dots pulsing — otherwise finishing state looks frozen */
     .url-submit-btn .loading-dot,
     .url-submit-btn .loading-dots span {
         animation: urlSubmitDotPulse 1.15s infinite ease-in-out !important;
@@ -20110,7 +20373,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
         align-self: center;
         margin-top: 0 !important;
     }
-
+    
     .url-submit-btn.is-generating {
         opacity: 1;
         cursor: pointer;
@@ -20312,6 +20575,8 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     position: relative;
     height: 320px;
 }
+
+
 
 .processing-thumbnail {
     width: 100%;
@@ -20770,6 +21035,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     display: none !important;
 }
 
+/* Tier Info Card Styles */
 .tier-info-card {
     cursor: pointer;
 }
@@ -20781,6 +21047,9 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     margin-top: 8px !important;
 }
 
+/* ═══════════════════════════════════════════════════════════════════════
+   Library card — canonical glass (wins over legacy duplicate blocks)
+   ═══════════════════════════════════════════════════════════════════════ */
 #libraryGrid .library-card {
     background: rgba(255, 255, 255, 0.42);
     border: 1px solid rgba(255, 255, 255, 0.62);
@@ -20827,6 +21096,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     }
 }
 
+/* Centered toast stack (overrides auth.css right-edge positioning) */
 #notificationContainer {
     position: fixed;
     top: 20px;
@@ -20899,6 +21169,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     color: rgba(245, 158, 11, 0.85);
 }
 
+/* -- Mobile create URL bar polish (release) -- */
 @media (max-width: 768px) {
     #createSection {
         display: flex;
@@ -20954,6 +21225,9 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     }
 }
 
+/* ═══════════════════════════════════════════════════════════════════════
+   Opus-style library cards + virality rail — white Solis
+   ═══════════════════════════════════════════════════════════════════════ */
 .preview-phone-row {
     position: relative;
     display: flex;
@@ -21097,6 +21371,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     transform: translateY(-50%) translateX(0) scale(1);
 }
 
+/* Preview rail — clean white type (no lime) */
 .preview-virality-rail .pv-score-num,
 .preview-virality-rail .pv-dim-tier,
 .preview-virality-rail .pv-dim-tier.pv-band-high,
@@ -21115,6 +21390,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     color: var(--pv-accent) !important;
 }
 
+/* Score fills — library card badges (preview rail stays white) */
 .scc-band-high .scc-viral-n {
     background: linear-gradient(155deg, #fb923c 0%, #f97316 42%, #ea580c 78%, #c2410c 100%);
     -webkit-background-clip: text;
@@ -21167,6 +21443,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     gap: 18px 14px;
 }
 
+/* Kill browser default black focus rings (Shift+Tab / keyboard) on library chrome */
 #librarySection:focus,
 #librarySection:focus-visible,
 #libraryGrid:focus,
@@ -21241,6 +21518,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     opacity: 0;
     transition: opacity 0.16s ease;
 }
+/* White disc */
 .scc-play::before {
     content: "";
     grid-area: 1 / 1;
@@ -21250,6 +21528,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     background: #fff;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
 }
+/* Play triangle — separate layer so it can be optically centered */
 .scc-play::after {
     content: "";
     grid-area: 1 / 1;
@@ -21260,6 +21539,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     border-style: solid;
     border-width: 7px 0 7px 12px;
     border-color: transparent transparent transparent #0f172a;
+    /* Triangles read left-heavy; nudge so the glyph feels centered in the disc */
     transform: translateX(1.5px);
 }
 .scc-preview:hover .scc-play {
@@ -21573,6 +21853,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     }
 }
 
+/* ── Library project folders (CapCut-style stack) ── */
 #libraryGrid .library-card.library-collection-folder,
 .library-card.library-collection-folder.solis-collection-card {
     cursor: pointer;
@@ -21790,6 +22071,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     color: rgba(255, 255, 255, 0.45);
 }
 
+/* Glassy CapCut-style ··· menu (opens upward) */
 .scc-collection-dropdown {
     position: absolute;
     right: 0;
@@ -21988,6 +22270,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     cursor: grabbing;
 }
 
+/* Resolution inline pills on library cards */
 .scc-res-wrap {
     display: inline-flex;
     align-items: center;
@@ -22036,6 +22319,7 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
     border-radius: 100px;
 }
 
+/* Library multi-select + header trash */
 #libraryRootHeader.section-header {
     display: flex;
     justify-content: space-between;

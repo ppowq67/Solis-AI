@@ -22,6 +22,7 @@ body {
     color: var(--text-main);
 }
 
+/* ── Canvas ── */
 .canvas-area {
     width: 90%;
     max-width: 600px;
@@ -44,6 +45,7 @@ body {
     letter-spacing: -0.03em;
 }
 
+/* ── Pill container ── */
 .pill-container {
     background: #ffffff;
     border: 1px solid var(--border-gray);
@@ -78,6 +80,7 @@ body {
     }
 }
 
+/* ── Action bar ── */
 .pill-actions {
     display: flex;
     align-items: center;
@@ -94,6 +97,7 @@ body {
     }
 }
 
+/* ── Menu items ── */
 .menu-item {
     display: flex;
     align-items: center;
@@ -153,6 +157,7 @@ body {
     .menu-item svg { width: 18px; height: 18px; }
 }
 
+/* ── Divider ── */
 .divider {
     width: 1px;
     height: 20px;
@@ -163,6 +168,7 @@ body {
 
 @media (max-width: 768px) { .divider { display: none; } }
 
+/* ── Expanded content ── */
 .pill-content {
     display: grid;
     grid-template-rows: 1fr;
@@ -193,6 +199,7 @@ body {
     }
 }
 
+/* Scrollbar */
 .pill-content::-webkit-scrollbar { width: 4px; }
 .pill-content::-webkit-scrollbar-track { background: transparent; }
 .pill-content::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 4px; }
@@ -207,6 +214,7 @@ body {
     user-select: text;
 }
 
+/* ── Views ── */
 .view {
     display: none;
     flex-direction: column;
@@ -221,6 +229,7 @@ body {
     to   { opacity: 1; }
 }
 
+/* ── Section labels ── */
 .section-label {
     font-size: 0.62rem;
     text-transform: uppercase;
@@ -231,6 +240,7 @@ body {
     margin-top: 6px;
 }
 
+/* ── Option items ── */
 .option-item {
     padding: 9px 11px;
     border-radius: 11px;
@@ -281,6 +291,7 @@ body {
     .option-item span:last-child { font-size: 1.2rem; }
 }
 
+/* ── Color grid ── */
 .color-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -309,6 +320,7 @@ body {
     .swatch { min-width: 48px; min-height: 48px; border-radius: 14px; }
 }
 
+/* ── Custom color row ── */
 .custom-row {
     display: flex;
     align-items: center;
@@ -361,6 +373,7 @@ body {
     color: var(--text-main);
 }
 
+/* ── Inputs ── */
 input[type="text"] {
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
@@ -384,6 +397,7 @@ input[type="text"]:hover:not(:disabled) {
     border-color: #cbd5e1 !important;
 }
 
+/* ── Status dot ── */
 .status-dot {
     width: 7px;
     height: 7px;
@@ -391,6 +405,7 @@ input[type="text"]:hover:not(:disabled) {
     background: var(--text-main);
 }
 
+/* ── Warning box ── */
 .warning-box {
     background: #fff1f2;
     padding: 14px;
@@ -424,6 +439,7 @@ input[type="text"]:hover:not(:disabled) {
 .btn-confirm { background: #e11d48; color: white; }
 .btn-cancel { background: #f1f5f9; color: var(--text-muted); }
 
+/* ── Slide animations ── */
 @keyframes slideInFromRight {
     from { opacity: 0; transform: translateX(380px); }
     to   { opacity: 1; transform: translateX(0); }
@@ -433,6 +449,7 @@ input[type="text"]:hover:not(:disabled) {
     animation: slideInFromRight 0.38s cubic-bezier(0.2,1,0.2,1) !important;
 }
 
+/* ── Multi-select mode ── */
 #pill.multi-select-mode {
     background: rgba(255,107,61,0.04);
 }

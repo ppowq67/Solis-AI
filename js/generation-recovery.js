@@ -1,140 +1,171 @@
+/**
+ * Generation Recovery System
+ * Restores in-progress generations after page reload via secure server API.
+ */
+
 class GenerationRecoverySystem {
   constructor() {
-    this.API_BASE = window.API_BASE_URL || window.API_BASE || "/api";
-    this.activeGenerations = new Map;
-    this.socketListeners = new Map;
+    this.API_BASE = window.API_BASE_URL || window.API_BASE || '/api';
+    this.activeGenerations = new Map();
+    this.socketListeners = new Map();
     this.recoveryInProgress = false;
   }
+
   get spinnerSystem() {
     return window.generationProgressSpinner || null;
   }
+
   async autoRecover() {
     if (this.recoveryInProgress) return;
     this.recoveryInProgress = true;
+
     try {
-      const e = typeof initGenerationProgressSpinner === "function" ? initGenerationProgressSpinner() : this.spinnerSystem;
-      if (e && typeof e.syncFromServer === "function") {
-        await e.syncFromServer({
-          force: true
-        });
+      const spinner = typeof initGenerationProgressSpinner === 'function'
+        ? initGenerationProgressSpinner()
+        : this.spinnerSystem;
+      if (spinner && typeof spinner.syncFromServer === 'function') {
+        await spinner.syncFromServer({ force: true });
         return;
       }
-      const t = await this.fetchActiveGenerations();
-      if (!t.length) return;
-      for (const e of t) {
-        await this.recoverGeneration(e);
+
+      const activeGenerations = await this.fetchActiveGenerations();
+      if (!activeGenerations.length) return;
+
+      for (const generation of activeGenerations) {
+        await this.recoverGeneration(generation);
       }
-    } catch (e) {
-      console.error("[RECOVERY] Error during recovery:", e);
+    } catch (error) {
+      console.error('[RECOVERY] Error during recovery:', error);
     } finally {
       this.recoveryInProgress = false;
     }
   }
+
   async fetchActiveGenerations() {
     try {
-      const e = await fetch(`${this.API_BASE}/clips/status/active`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        credentials: "include"
+      const response = await fetch(`${this.API_BASE}/clips/status/active`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
       });
-      if (!e.ok) return [];
-      const t = await e.json();
-      if (!t.success) return [];
-      return t.active_generations || [];
-    } catch (e) {
-      console.error("[RECOVERY] Network error fetching active generations:", e);
+
+      if (!response.ok) return [];
+      const data = await response.json();
+      if (!data.success) return [];
+      return data.active_generations || [];
+    } catch (error) {
+      console.error('[RECOVERY] Network error fetching active generations:', error);
       return [];
     }
   }
-  async recoverGeneration(e) {
-    const {project_id: t, status: n, progress: s, message: r, template_id: o, template: i, splitscreen_secondary_type: a} = e;
-    if (!t) return;
-    this.activeGenerations.set(t, e);
-    const c = a ? {
-      secondaryType: a
-    } : {};
-    const d = this.spinnerSystem;
-    if (d && typeof d.restoreGeneration === "function") {
-      d.restoreGeneration(t, s || 0, r || "Resuming...", n || "processing", o || i || null, c);
-    } else if (d && typeof d.updateProgress === "function") {
-      d.updateProgress(t, s || 0, r || "Resuming...");
+
+  async recoverGeneration(generation) {
+    const { project_id, status, progress, message, template_id, template, splitscreen_secondary_type } = generation;
+    if (!project_id) return;
+
+    this.activeGenerations.set(project_id, generation);
+
+    const templateOptions = splitscreen_secondary_type
+      ? { secondaryType: splitscreen_secondary_type }
+      : {};
+    const spinner = this.spinnerSystem;
+    if (spinner && typeof spinner.restoreGeneration === 'function') {
+      spinner.restoreGeneration(
+        project_id,
+        progress || 0,
+        message || 'Resuming...',
+        status || 'processing',
+        template_id || template || null,
+        templateOptions
+      );
+    } else if (spinner && typeof spinner.updateProgress === 'function') {
+      spinner.updateProgress(project_id, progress || 0, message || 'Resuming...');
     }
-    this.attachWebSocketListener(t);
+
+    this.attachWebSocketListener(project_id);
   }
-  attachWebSocketListener(e) {
-    if (this.socketListeners.has(e)) return;
-    const t = typeof window.getSolisSocketOrigin === "function" ? window.getSolisSocketOrigin() : "https://api.solisai.video";
-    const n = window.socket || window.videoGenerationSocket || window.io && window.io(t, {
-      path: "/socket.io/",
-      transports: [ "websocket", "polling" ],
-      withCredentials: true
-    });
-    if (!n) return;
-    const listener = t => {
-      if (t.project_id !== e) return;
-      const n = this.spinnerSystem;
-      if (t.status === "completed") {
-        if (n?.updateProgress) n.updateProgress(e, 100, t.message || "Complete!");
-        if (n?.completeGeneration) n.completeGeneration(e);
-        this.handleGenerationComplete(e);
-      } else if (t.status === "error") {
-        if (n?.failGeneration) n.failGeneration(e);
-        this.handleGenerationError(e, t.message);
-      } else if (n?.updateProgress) {
-        n.updateProgress(e, t.progress, t.message);
+
+  attachWebSocketListener(projectId) {
+    if (this.socketListeners.has(projectId)) return;
+
+    const socketOrigin = (typeof window.getSolisSocketOrigin === 'function')
+      ? window.getSolisSocketOrigin()
+      : 'https://api.solisai.video';
+    const socket = window.socket
+      || window.videoGenerationSocket
+      || (window.io && window.io(socketOrigin, {
+        path: '/socket.io/',
+        transports: ['websocket', 'polling'],
+        withCredentials: true,
+      }));
+    if (!socket) return;
+
+    const listener = (data) => {
+      if (data.project_id !== projectId) return;
+      const spinner = this.spinnerSystem;
+
+      if (data.status === 'completed') {
+        if (spinner?.updateProgress) spinner.updateProgress(projectId, 100, data.message || 'Complete!');
+        if (spinner?.completeGeneration) spinner.completeGeneration(projectId);
+        this.handleGenerationComplete(projectId);
+      } else if (data.status === 'error') {
+        if (spinner?.failGeneration) spinner.failGeneration(projectId);
+        this.handleGenerationError(projectId, data.message);
+      } else if (spinner?.updateProgress) {
+        spinner.updateProgress(projectId, data.progress, data.message);
       }
-      if (this.activeGenerations.has(e)) {
-        const n = this.activeGenerations.get(e);
-        n.progress = t.progress;
-        n.message = t.message;
-        n.status = t.status;
+
+      if (this.activeGenerations.has(projectId)) {
+        const gen = this.activeGenerations.get(projectId);
+        gen.progress = data.progress;
+        gen.message = data.message;
+        gen.status = data.status;
       }
     };
-    n.on("clips_status_update", listener);
-    this.socketListeners.set(e, {
-      socket: n,
-      listener: listener,
-      eventName: "clips_status_update"
-    });
+
+    socket.on('clips_status_update', listener);
+    this.socketListeners.set(projectId, { socket, listener, eventName: 'clips_status_update' });
   }
-  handleGenerationComplete(e) {
-    this.activeGenerations.delete(e);
-    this.detachSocketListener(e);
-    if (window.onGenerationComplete) window.onGenerationComplete(e);
+
+  handleGenerationComplete(projectId) {
+    this.activeGenerations.delete(projectId);
+    this.detachSocketListener(projectId);
+    if (window.onGenerationComplete) window.onGenerationComplete(projectId);
   }
-  handleGenerationError(e) {
-    this.activeGenerations.delete(e);
-    this.detachSocketListener(e);
+
+  handleGenerationError(projectId) {
+    this.activeGenerations.delete(projectId);
+    this.detachSocketListener(projectId);
   }
-  detachSocketListener(e) {
-    const t = this.socketListeners.get(e);
-    if (t) {
-      const {socket: n, listener: s, eventName: r} = t;
-      n.off(r, s);
-      this.socketListeners.delete(e);
+
+  detachSocketListener(projectId) {
+    const listenerConfig = this.socketListeners.get(projectId);
+    if (listenerConfig) {
+      const { socket, listener, eventName } = listenerConfig;
+      socket.off(eventName, listener);
+      this.socketListeners.delete(projectId);
     }
   }
+
   getCsrfToken() {
-    return document.querySelector('meta[name="csrf-token"]')?.content || "";
+    return document.querySelector('meta[name="csrf-token"]')?.content || '';
   }
 }
 
-window.generationRecovery = new GenerationRecoverySystem;
+window.generationRecovery = new GenerationRecoverySystem();
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
     window.generationRecovery.autoRecover().then(() => {
-      if (typeof restoreGenerationStateFromServer === "function") {
+      if (typeof restoreGenerationStateFromServer === 'function') {
         restoreGenerationStateFromServer();
       }
     });
   }, 300);
 });
 
-if (typeof window.socket !== "undefined" && window.socket !== null) {
-  window.socket.on("connect", () => {
+if (typeof window.socket !== 'undefined' && window.socket !== null) {
+  window.socket.on('connect', () => {
     window.generationRecovery.autoRecover();
   });
 }

@@ -1,6 +1,6 @@
 function analyzeVideoForCreate() {
-  const o = window.clipsStudio || window.clipStudio;
-  if (o && typeof o.processYouTubeUrl === "function") {
-    o.processYouTubeUrl();
-  }
+    const studio = window.clipsStudio || window.clipStudio;
+    if (studio && typeof studio.processYouTubeUrl === 'function') {
+        studio.processYouTubeUrl();
+    }
 }

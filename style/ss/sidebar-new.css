@@ -1,3 +1,7 @@
+
+/* ══════════════════════════════════
+   PROFILE BUTTON — liquid glass circle
+══════════════════════════════════ */
 .profile-btn {
     position: fixed;
     bottom: 28px;
@@ -12,6 +16,7 @@
     z-index: 100;
     isolation: isolate;
 
+    /* Glass material */
     background: rgba(255, 255, 255, 0.52);
     backdrop-filter: blur(28px) saturate(180%) brightness(1.06);
     -webkit-backdrop-filter: blur(28px) saturate(180%) brightness(1.06);
@@ -28,6 +33,7 @@
     will-change: transform, background;
 }
 
+/* Specular top-edge highlight */
 .profile-btn::before {
     content: '';
     position: absolute;
@@ -64,6 +70,9 @@
     position: relative; z-index: 1;
 }
 
+/* ══════════════════════════════════
+   NAV ITEMS
+══════════════════════════════════ */
 .nav-item {
     width: 100%;
     height: var(--nav-item-h);

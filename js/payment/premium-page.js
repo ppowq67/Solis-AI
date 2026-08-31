@@ -1,152 +1,160 @@
-(function() {
-  const t = {
-    basic: {
-      priceId: "pri_01kbavyh2vxwy5z8pdzrwb5eqq"
-    },
-    prime: {
-      priceId: "pri_01kbds6nnbv1hj5vef6nxgpha4"
-    },
-    elite: {
-      priceId: "pri_01kbjphsvy40kypjk2nxh0qdzk"
-    }
+/**
+ * Premium page — wire plan CTAs to Paddle checkout + nav sign-in links.
+ */
+(function () {
+  const FALLBACK_PLANS = {
+    basic: { priceId: 'pri_01kbavyh2vxwy5z8pdzrwb5eqq' },
+    prime: { priceId: 'pri_01kbds6nnbv1hj5vef6nxgpha4' },
+    elite: { priceId: 'pri_01kbjphsvy40kypjk2nxh0qdzk' },
   };
+
   function apiBase() {
     return window.API_BASE_URL || `${window.location.origin}/api`;
   }
+
   async function fetchPlanCatalog() {
     try {
-      const t = typeof window.apiUrl === "function" ? window.apiUrl("/api/payment/paddle-config") : `${apiBase().replace(/\/$/, "")}/payment/paddle-config`;
-      const e = await fetch(t, {
-        method: "GET",
-        credentials: "include"
+      const url = typeof window.apiUrl === 'function'
+        ? window.apiUrl('/api/payment/paddle-config')
+        : `${apiBase().replace(/\/$/, '')}/payment/paddle-config`;
+      const res = await fetch(url, {
+        method: 'GET',
+        credentials: 'include',
       });
-      if (!e.ok) throw new Error(`paddle-config ${e.status}`);
-      const n = await e.json();
-      if (n.plans && Object.keys(n.plans).length) return n.plans;
-    } catch (t) {
-      console.warn("[Premium] Using fallback price IDs:", t.message);
+      if (!res.ok) throw new Error(`paddle-config ${res.status}`);
+      const data = await res.json();
+      if (data.plans && Object.keys(data.plans).length) return data.plans;
+    } catch (err) {
+      console.warn('[Premium] Using fallback price IDs:', err.message);
     }
-    return t;
+    return FALLBACK_PLANS;
   }
-  const e = {
-    free: 0,
-    basic: 1,
-    prime: 2,
-    elite: 3
-  };
-  function normalizePlan(t) {
-    const n = String(t || "free").trim().toLowerCase();
-    return Object.prototype.hasOwnProperty.call(e, n) ? n : "free";
+
+  const PLAN_RANK = { free: 0, basic: 1, prime: 2, elite: 3 };
+
+  function normalizePlan(plan) {
+    const key = String(plan || 'free').trim().toLowerCase();
+    return Object.prototype.hasOwnProperty.call(PLAN_RANK, key) ? key : 'free';
   }
-  function currentPlanLabel(t) {
-    const e = String(t || "free");
-    return e.charAt(0).toUpperCase() + e.slice(1);
+
+  function currentPlanLabel(planKey) {
+    const name = String(planKey || 'free');
+    return name.charAt(0).toUpperCase() + name.slice(1);
   }
-  function applyCurrentPlan(t) {
-    const e = normalizePlan(t);
-    document.querySelectorAll(".plan-card[data-plan]").forEach(t => {
-      const n = t.getAttribute("data-plan");
-      const a = t.querySelector(".plan-btn");
-      const r = n === e && e !== "free";
-      t.classList.toggle("is-current", r);
-      if (!a) return;
-      if (!a.dataset.defaultHtml) a.dataset.defaultHtml = a.innerHTML.trim();
-      if (r) {
-        a.classList.add("is-current-plan");
-        a.disabled = true;
-        a.setAttribute("aria-current", "true");
-        a.textContent = "Current plan";
+
+  function applyCurrentPlan(plan) {
+    const current = normalizePlan(plan);
+    document.querySelectorAll('.plan-card[data-plan]').forEach((card) => {
+      const planKey = card.getAttribute('data-plan');
+      const btn = card.querySelector('.plan-btn');
+      const isCurrent = planKey === current && current !== 'free';
+      card.classList.toggle('is-current', isCurrent);
+      if (!btn) return;
+      if (!btn.dataset.defaultHtml) btn.dataset.defaultHtml = btn.innerHTML.trim();
+      if (isCurrent) {
+        btn.classList.add('is-current-plan');
+        btn.disabled = true;
+        btn.setAttribute('aria-current', 'true');
+        btn.textContent = 'Current plan';
       } else {
-        a.classList.remove("is-current-plan");
-        a.disabled = false;
-        a.removeAttribute("aria-current");
-        if (a.dataset.defaultHtml) a.innerHTML = a.dataset.defaultHtml;
+        btn.classList.remove('is-current-plan');
+        btn.disabled = false;
+        btn.removeAttribute('aria-current');
+        if (btn.dataset.defaultHtml) btn.innerHTML = btn.dataset.defaultHtml;
       }
     });
-    const n = document.querySelector("._cta-btn");
-    const a = document.getElementById("_ctaPrice");
-    if (e !== "free" && n) {
-      n.textContent = e === "elite" ? "You are on Elite" : `You are on ${currentPlanLabel(e)}`;
-      n.classList.add("is-current-plan");
-      n.disabled = true;
+
+    const stickyBtn = document.querySelector('._cta-btn');
+    const stickyPrice = document.getElementById('_ctaPrice');
+    if (current !== 'free' && stickyBtn) {
+      stickyBtn.textContent = current === 'elite' ? 'You are on Elite' : `You are on ${currentPlanLabel(current)}`;
+      stickyBtn.classList.add('is-current-plan');
+      stickyBtn.disabled = true;
     }
-    if (e !== "free" && a) {
-      a.textContent = "Manage billing from your dashboard";
+    if (current !== 'free' && stickyPrice) {
+      stickyPrice.textContent = 'Manage billing from your dashboard';
     }
   }
+
   window.applyPremiumCurrentPlan = applyCurrentPlan;
+
   async function resolveCurrentPlan() {
-    const t = window.currentAuthenticatedUser || window.currentUser;
-    if (t?.plan) applyCurrentPlan(t.plan);
+    const user = window.currentAuthenticatedUser || window.currentUser;
+    if (user?.plan) applyCurrentPlan(user.plan);
     try {
-      const t = typeof window.apiUrl === "function" ? window.apiUrl("/api/auth/subscription") : `${apiBase().replace(/\/$/, "")}/auth/subscription`;
-      const e = await fetch(t, {
-        method: "GET",
-        credentials: "include"
-      });
-      if (!e.ok) return;
-      const n = await e.json();
-      const a = n?.subscription?.plan || n?.plan;
-      if (a) applyCurrentPlan(a);
-    } catch (t) {}
+      const url = typeof window.apiUrl === 'function'
+        ? window.apiUrl('/api/auth/subscription')
+        : `${apiBase().replace(/\/$/, '')}/auth/subscription`;
+      const res = await fetch(url, { method: 'GET', credentials: 'include' });
+      if (!res.ok) return;
+      const data = await res.json();
+      const plan = data?.subscription?.plan || data?.plan;
+      if (plan) applyCurrentPlan(plan);
+    } catch (_) { /* guest or network — keep default CTAs */ }
   }
-  function startCheckout(t, e, n) {
-    if (typeof window.openPaddleCheckout !== "function") {
-      console.error("[Premium] Checkout handler not loaded");
-      alert("Payment system is still loading. Please try again in a moment.");
+
+  function startCheckout(priceId, planKey, event) {
+    if (typeof window.openPaddleCheckout !== 'function') {
+      console.error('[Premium] Checkout handler not loaded');
+      alert('Payment system is still loading. Please try again in a moment.');
       return;
     }
-    window.openPaddleCheckout(t, e, n);
+    window.openPaddleCheckout(priceId, planKey, event);
   }
-  function wirePlanButtons(t) {
-    document.querySelectorAll(".plan-card[data-plan]").forEach(e => {
-      const n = e.getAttribute("data-plan");
-      const a = t[n];
-      const r = e.querySelector(".plan-btn");
-      if (!r || !a?.priceId) return;
-      r.addEventListener("click", t => {
-        t.preventDefault();
-        if (r.disabled || r.classList.contains("is-current-plan")) return;
-        startCheckout(a.priceId, n, t);
+
+  function wirePlanButtons(plans) {
+    document.querySelectorAll('.plan-card[data-plan]').forEach((card) => {
+      const planKey = card.getAttribute('data-plan');
+      const info = plans[planKey];
+      const btn = card.querySelector('.plan-btn');
+      if (!btn || !info?.priceId) return;
+
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (btn.disabled || btn.classList.contains('is-current-plan')) return;
+        startCheckout(info.priceId, planKey, e);
       });
     });
-    const e = document.querySelector("._cta-btn");
-    const n = t.prime;
-    if (e && n?.priceId) {
-      e.addEventListener("click", t => {
-        t.preventDefault();
-        if (e.disabled || e.classList.contains("is-current-plan")) return;
-        startCheckout(n.priceId, "prime", t);
+
+    const stickyBtn = document.querySelector('._cta-btn');
+    const prime = plans.prime;
+    if (stickyBtn && prime?.priceId) {
+      stickyBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (stickyBtn.disabled || stickyBtn.classList.contains('is-current-plan')) return;
+        startCheckout(prime.priceId, 'prime', e);
       });
     }
   }
+
   function wireAuthLinks() {
-    document.querySelectorAll(".nav-login, .nav-mobile-signin, .nav-cta[data-open-auth], .nav-mobile-cta[data-open-auth]").forEach(t => {
-      t.setAttribute("href", "/?login=1");
-      if (!t.hasAttribute("data-open-auth")) t.setAttribute("data-open-auth", "");
+    document.querySelectorAll('.nav-login, .nav-mobile-signin, .nav-cta[data-open-auth], .nav-mobile-cta[data-open-auth]').forEach((el) => {
+      el.setAttribute('href', '/?login=1');
+      if (!el.hasAttribute('data-open-auth')) el.setAttribute('data-open-auth', '');
     });
-    document.querySelectorAll(".nav-cta, .nav-mobile-cta").forEach(t => {
-      if (!t.dataset.boundDashboard) {
-        t.dataset.boundDashboard = "1";
-        t.addEventListener("click", t => {
-          const e = window.currentAuthenticatedUser || window.currentUser;
-          if (e) {
-            t.preventDefault();
-            window.location.href = "/dashboard.html";
+    document.querySelectorAll('.nav-cta, .nav-mobile-cta').forEach((el) => {
+      if (!el.dataset.boundDashboard) {
+        el.dataset.boundDashboard = '1';
+        el.addEventListener('click', (e) => {
+          const user = window.currentAuthenticatedUser || window.currentUser;
+          if (user) {
+            e.preventDefault();
+            window.location.href = '/dashboard.html';
             return;
           }
-          if (typeof window.openAuthModal === "function") {
-            t.preventDefault();
+          if (typeof window.openAuthModal === 'function') {
+            e.preventDefault();
             window.openAuthModal();
           }
         });
       }
     });
   }
-  document.addEventListener("DOMContentLoaded", async () => {
+
+  document.addEventListener('DOMContentLoaded', async () => {
     wireAuthLinks();
-    const t = await fetchPlanCatalog();
-    wirePlanButtons(t);
+    const plans = await fetchPlanCatalog();
+    wirePlanButtons(plans);
     await resolveCurrentPlan();
   });
 })();

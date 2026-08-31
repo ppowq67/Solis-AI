@@ -78,6 +78,7 @@
       background-attachment: scroll;
       color: #18120e;
     }
+    /* Low-end / reduced-motion: snappier, cheaper paints */
     html.solis-lite body {
       background-size: 22px 22px;
     }
@@ -130,6 +131,7 @@
       -webkit-text-fill-color: transparent; color: transparent;
     }
 
+    /* Native macOS cursor — slightly larger assets for landing */
     :root {
       --solis-cursor: url('/style/cursor.png?v=29') 15 11, auto;
       --solis-cursor-hand: url('/style/cursor-hand.png?v=29') 19 12, pointer;
@@ -180,6 +182,7 @@
     .dot.pulse { animation: pulse 2s ease-in-out infinite; }
     @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.55; transform: scale(0.85); } }
 
+    /* --- Navbar (static — scrolls away with page) --- */
     .navbar-wrapper {
       position: relative;
       top: auto; left: auto; width: 100%;
@@ -614,9 +617,10 @@
     }
     main { flex: 1; position: relative; z-index: 1; }
     .hero {
-      padding: 40px 20px 12px;
+      padding: 40px 16px 12px;
       text-align: center; position: relative;
-      max-width: 920px; margin: 0 auto;
+      max-width: min(1140px, 100%);
+      margin: 0 auto;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       min-height: 0;
     }
@@ -717,16 +721,17 @@
     }
     .mega-title {
       font-family: var(--font-display), system-ui, sans-serif;
-      font-size: clamp(22px, 6.4vw, 64px); font-weight: 800;
-      letter-spacing: -0.045em; line-height: 1.1;
+      font-size: clamp(20px, 3.35vw, 46px); font-weight: 800;
+      letter-spacing: -0.04em; line-height: 1.08;
       color: var(--text-primary);
       margin: 0 auto 18px;
-      max-width: 100%;
+      width: max-content;
+      max-width: calc(100% - 8px);
       text-align: center;
       position: relative;
-      white-space: normal;
-      text-wrap: balance;
-      overflow-wrap: anywhere;
+      white-space: nowrap;
+      text-wrap: nowrap;
+      overflow-wrap: normal;
       padding: 0 4px;
       box-sizing: border-box;
     }
@@ -738,9 +743,11 @@
       z-index: -1; pointer-events: none;
     }
     .hero .subtitle {
-      font-size: clamp(14px, 2.6vw, 17px); color: var(--text-secondary);
-      max-width: 34em; margin: 0 auto 28px; line-height: 1.45;
-      white-space: normal;
+      font-size: clamp(12px, 1.25vw, 17px); color: var(--text-secondary);
+      width: max-content;
+      max-width: calc(100% - 16px);
+      margin: 0 auto 28px; line-height: 1.45;
+      white-space: nowrap;
       padding: 0 8px;
     }
     .pill-wrap {
@@ -922,6 +929,7 @@
       text-align: center;
       box-sizing: border-box;
     }
+    /* Product Hunt banner — same layout/assets as agent/meh.html */
     @font-face {
       font-family: "Exposure VAR";
       src: url("https://arc.net/fonts/205TF-Exposure-[-30].woff2") format("woff2");
@@ -969,6 +977,7 @@
       text-align: left;
       box-shadow: 0 1px 0 rgba(255, 255, 255, 1);
     }
+    /* Full-bleed fade layer so edges never get cropped by cover */
     .ph-fade {
       position: absolute;
       inset: 0;
@@ -1568,6 +1577,7 @@
     .bottom-band-glow {
       display: none !important;
     }
+    /* Cursor-follow dots (transform only — no full-band mask repaints) */
     .bottom-band-spotlight {
       position: absolute;
       left: 0;
@@ -1620,22 +1630,25 @@
     }
     .get-started-title {
       font-family: var(--font-display), system-ui, sans-serif;
-      font-size: clamp(28px, 5vw, 48px);
+      font-size: clamp(28px, 4.2vw, 48px);
       font-weight: 800;
       letter-spacing: -0.04em;
       line-height: 1.12;
       color: #fff;
       margin: 0 auto 12px;
-      max-width: 720px;
+      max-width: none;
+      white-space: nowrap;
       text-shadow: 0 2px 24px rgba(120, 40, 0, 0.2);
     }
     .get-started-sub {
-      font-size: clamp(14px, 1.6vw, 17px);
+      font-size: clamp(13px, 1.35vw, 17px);
       color: rgba(255, 255, 255, 0.88);
       margin: 0 auto 28px;
-      max-width: 480px;
+      max-width: none;
       line-height: 1.5;
+      white-space: nowrap;
     }
+    /* Solid readable pill on orange (not washed-out glass) */
     .get-started .glass-pill {
       background: #fff;
       border: 1px solid rgba(255, 255, 255, 0.95);
@@ -1722,6 +1735,7 @@
     }
     .glass-pill-input::placeholder { color: rgba(255,255,255,0.45); }
     .glass-pill-btn {
+      /* Size tweak only — visuals come from .pill-btn */
       height: 52px;
       padding: 0 24px;
       font-size: 15px;
@@ -1935,6 +1949,7 @@
     }
     @media (max-width: 380px) { .foot-grid { grid-template-columns: 1fr; } }
 
+    /* Sticky dock — glassy URL input (nav / app pill vibe) */
     .scroll-dock {
       position: fixed;
       left: 50%;
@@ -2092,20 +2107,36 @@
       -webkit-text-fill-color: transparent; color: transparent;
       animation: hero-shimmer 6s linear infinite;
     }
+    @media (max-width: 900px) {
+      .get-started-title,
+      .get-started-sub {
+        white-space: normal;
+        text-wrap: balance;
+      }
+      .get-started-sub {
+        max-width: 480px;
+        font-size: clamp(14px, 1.6vw, 17px);
+      }
+    }
     @media (max-width: 640px) {
       .hero { padding: 28px 16px 8px; min-height: auto; }
+      .mega-title,
+      .hero .subtitle {
+        white-space: normal;
+        text-wrap: balance;
+        width: auto;
+        max-width: 100%;
+      }
       .mega-title {
         font-size: clamp(22px, 7.2vw, 34px);
-        white-space: normal;
         letter-spacing: -0.04em;
         line-height: 1.12;
         padding: 0 2px;
       }
       .hero .subtitle {
+        max-width: 100%;
         font-size: 14.5px;
         margin-bottom: 22px;
-        white-space: normal;
-        max-width: 100%;
       }
       .pill-wrap { margin-top: 0; max-width: 100%; padding: 0; }
       .pill {
@@ -2165,6 +2196,7 @@
       .cta-pill { padding: 4px 4px 4px 12px; }
     }
 
+    /* ── How it works + glass demo ── */
     .how-section {
       position: relative;
       z-index: 2;
@@ -2980,6 +3012,8 @@
       .sgd-lib-sub { animation: none; }
     }
 
+
+    /* ── Scroll features (light, full-bleed) ── */
     .agent-pin {
       position: relative;
       z-index: 2;
@@ -3152,6 +3186,7 @@
         #fff;
     }
 
+    /* AI suggestions mock — matches preview-placeholder sub-suggest + sub-mem-actions */
     .sug-stage {
       position: relative;
       width: min(340px, 92%);
@@ -3278,6 +3313,7 @@
       .sug-caption { animation: none; }
     }
 
+    /* Templates: ranking + split — match product preview-placeholder */
     .tpl-pair {
       display: flex;
       gap: 14px;
@@ -3493,6 +3529,7 @@
       margin-top: 28%;
     }
 
+    /* Memory mock */
     .mem-stage {
       width: min(420px, 94%);
       display: flex;
@@ -3642,6 +3679,7 @@
       border-color: rgba(200,185,170,0.4);
     }
 
+    /* Simplicity mock */
     .simp-stage {
       width: min(380px, 94%);
       display: flex;
@@ -3749,6 +3787,7 @@
       margin: 0;
     }
 
+    /* After generation — Improve Clip + Remove Silence (pill editor hover) */
     .postgen-stage {
       width: min(360px, 94%);
       display: flex;
@@ -3994,6 +4033,8 @@
       .agent-viz { transition: none; }
     }
 
+    /* Quote band — compact, soft poly */
+    /* Easy-style quote on Solis low-poly band */
     .audience-band {
       --poly-x: 50%;
       --poly-y: 45%;
@@ -4129,6 +4170,7 @@
       .audience-poly polygon { transition: none; }
     }
 
+    /* ── Auth popover ── */
     html.auth-modal-open, body.auth-modal-open { overflow: hidden; }
     .auth-modal {
       position: fixed; inset: 0; z-index: 4000;
@@ -5089,8 +5131,10 @@
         gsRaf = 0;
         if (!gsSpotlight) return;
         gsSpotlight.style.transform = 'translate3d(' + gsX + 'px,' + gsY + 'px,0)';
+        /* Keep bright dots locked to the static 14px grid */
         gsSpotlight.style.backgroundPosition = (-gsX) + 'px ' + (-gsY) + 'px';
       }
+      /* Transform-only spotlight — avoids mask/radial CSS var repaints every move */
       if (gsSpotlight
           && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
           && !window.matchMedia('(pointer: coarse)').matches) {
@@ -5282,6 +5326,7 @@
       });
     }
 
+    // Guest default: locked — click opens login (same as before)
     lockPillsGuest();
 
     pillInputs.forEach(function (input) {
@@ -5372,6 +5417,7 @@
       });
     });
 
+    // Unlock paste only after auth check confirms logged in
     (function checkPillAuth() {
       try {
         var host = location.hostname;
@@ -5410,6 +5456,7 @@
     }, { threshold: 0.01, rootMargin: '80px 0px 40px 0px' });
     document.querySelectorAll('.reveal, .blur-in').forEach(function(el) { revealObserver.observe(el); });
 
+    /* Low-poly Solis band hover */
     (function initAudiencePoly() {
       var band = document.getElementById('_audience');
       var poly = band && band.querySelector('.audience-poly');
@@ -5466,6 +5513,7 @@
       }
     })();
 
+    /* How it works — shelf marquee → suck into URL → clips loop */
     (function initSaasDemo() {
       var demo = document.getElementById('saasDemo');
       var frame = document.getElementById('saasFrame');
@@ -5483,6 +5531,7 @@
 
       var DEMO_URL = 'youtube.com/watch?v=solis-demo';
       var URL_PLACEHOLDER = 'Paste a YouTube link';
+      /* Only true reduced-motion skips the demo choreography — not solis-lite */
       var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       var running = false;
       var timers = [];
@@ -5650,6 +5699,7 @@
           return;
         }
 
+        /* Let the shelf scroll briefly, then pick → lift → suck → type → clip */
         later(380, function() {
           shelf.classList.add('is-paused');
           pick = pickClosest();
@@ -5696,6 +5746,7 @@
         var r = demo.getBoundingClientRect();
         var vh = window.innerHeight || 0;
         if (!vh || r.height <= 0) return false;
+        // Top of the demo (rail) is enough — don't wait for most of the tall glass
         return r.top < vh * 0.88 && r.bottom > Math.min(72, vh * 0.12);
       }
       function onDemoVisibility(on) {
@@ -5713,11 +5764,13 @@
         });
       }, { threshold: 0, rootMargin: '80px 0px -8% 0px' });
       io.observe(demo);
+      // IO can miss the first paint when the section is already on screen
       requestAnimationFrame(function() {
         if (demoInView()) onDemoVisibility(true);
       });
     })();
 
+    /* Discord tip — auto-show when footer is in view */
     (function initDiscordTip() {
       var link = document.getElementById('discordSocial');
       var footer = document.querySelector('.footer');
@@ -5747,6 +5800,7 @@
       });
     })();
 
+    /* Scroll-pin feature showcase */
     (function initAgentPin() {
       var track = document.getElementById('agentPinTrack');
       var copy = document.getElementById('agentPinCopy');

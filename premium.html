@@ -104,6 +104,7 @@
     .bg-canvas { display: none; }
     .blob { display: none; }
 
+    /* Native macOS cursor */
     :root {
       --solis-cursor: url('/style/cursor.png?v=29') 15 11, auto;
       --solis-cursor-hand: url('/style/cursor-hand.png?v=29') 19 12, pointer;
@@ -1156,6 +1157,7 @@
     .addon-title { font-family: var(--font-display); font-size: 15px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 6px; }
     .addon-desc { font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; }
 
+    /* ---------- Enterprise CTA ---------- */
     .enterprise-card { max-width: var(--max-width); margin: 0 auto; padding: 40px; border-radius: var(--radius-xl); background: linear-gradient(135deg, #18120e 0%, #2d1f17 50%, #1a1410 100%); box-shadow: 0 18px 60px rgba(24,18,14,0.30), inset 0 1px 0 rgba(255,255,255,0.06); position: relative; overflow: hidden; display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: center; }
     @media (max-width: 768px) { .enterprise-card { grid-template-columns: 1fr; padding: 32px 24px; gap: 24px; } }
     .enterprise-glow { position: absolute; top: -100px; right: -80px; width: 380px; height: 380px; border-radius: 50%; background: radial-gradient(circle, rgba(249,115,22,0.3) 0%, transparent 65%); opacity: 0.6; pointer-events: none; }
@@ -1173,6 +1175,7 @@
     .enterprise-cta .btn-light svg { width: 14px; height: 14px; }
     .enterprise-cta .btn-ghost-light { font-size: 13.5px; padding: 12px 22px; }
 
+    /* ---------- FAQ (match landing) ---------- */
     .faqs { max-width: 680px; margin: 0 auto; }
     .faq { border-bottom: 1px solid rgba(200,185,170,0.25); padding-bottom: 14px; margin-bottom: 14px; }
     .faq.open { padding-bottom: 20px; }
@@ -1257,6 +1260,7 @@
     .bottom-band-glow {
       display: none !important;
     }
+    /* Cursor-follow dots (transform only — no full-band mask repaints) */
     .bottom-band-spotlight {
       position: absolute;
       left: 0;
@@ -1711,6 +1715,7 @@
       }
     }
 
+    /* ── Auth popover ── */
     html.auth-modal-open, body.auth-modal-open { overflow: hidden; }
     .auth-modal {
       position: fixed; inset: 0; z-index: 4000;
@@ -1811,6 +1816,7 @@
       .auth-btn { height: 48px; font-size: 14px; }
     }
 
+    /* ── Creem return: payment success ── */
     .pay-success {
       position: fixed;
       inset: 0;
@@ -2521,6 +2527,7 @@
         navToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
         if (open) {
           navMobile.hidden = false;
+          // Force reflow so the open transition always plays
           void navMobile.offsetWidth;
           navMobile.classList.add('is-open');
         } else {
@@ -2703,6 +2710,7 @@
           });
         });
       }
+      // Deep links (#pricing, #features, #faq). Plain refresh → top (plan cards), not last scroll position.
       function scrollHashTarget() {
         var hash = (location.hash || '').trim();
         if (!hash || hash === '#') {
@@ -2762,6 +2770,8 @@
         if (goBtn) goBtn.textContent = 'Go to homepage';
         return;
       }
+
+      // Confirm Paddle activation runs via payment-flow.js on load
 
       try {
         history.replaceState({}, document.title, window.location.pathname + window.location.hash);

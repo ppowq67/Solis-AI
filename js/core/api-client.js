@@ -1,54 +1,74 @@
-(function() {
+/**
+ * Standard API client for Solis AI SaaS.
+ * Auth is httpOnly cookie-based — no CSRF meta tags or X-CSRF-Token headers.
+ */
+(function () {
   function apiBase() {
-    return window.API_BASE_URL || "";
+    return window.API_BASE_URL || '';
   }
-  function resolveApiUrl(e) {
-    if (!e) return apiBase();
-    const t = String(e);
-    if (t.startsWith("http://") || t.startsWith("https://")) return t;
-    if (typeof window.apiUrl === "function") return window.apiUrl(t);
-    const n = apiBase().replace(/\/$/, "");
-    let i = t.startsWith("/") ? t : "/" + t;
-    if (n.endsWith("/api") && i.startsWith("/api/")) {
-      i = i.slice(4);
+
+  /** Resolve relative /api paths without doubling the /api prefix on API_BASE_URL. */
+  function resolveApiUrl(url) {
+    if (!url) return apiBase();
+    const s = String(url);
+    if (s.startsWith('http://') || s.startsWith('https://')) return s;
+    if (typeof window.apiUrl === 'function') return window.apiUrl(s);
+    const base = apiBase().replace(/\/$/, '');
+    let path = s.startsWith('/') ? s : '/' + s;
+    if (base.endsWith('/api') && path.startsWith('/api/')) {
+      path = path.slice(4);
     }
-    return n + i;
+    return base + path;
   }
-  async function apiFetch(e, t = {}) {
-    const n = {
-      ...t.headers || {}
-    };
-    const i = t.body != null;
-    const o = (t.method || "GET").toUpperCase();
-    const r = typeof FormData !== "undefined" && t.body instanceof FormData;
-    if (i && !r && !n["Content-Type"] && !n["content-type"]) {
-      n["Content-Type"] = "application/json";
+
+  async function apiFetch(url, options = {}) {
+    const headers = { ...(options.headers || {}) };
+    const hasBody = options.body != null;
+    const method = (options.method || 'GET').toUpperCase();
+    const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
+
+    // Never set Content-Type for FormData — browser must add multipart boundary
+    if (
+      hasBody &&
+      !isFormData &&
+      !headers['Content-Type'] &&
+      !headers['content-type']
+    ) {
+      headers['Content-Type'] = 'application/json';
     }
-    if (r) {
-      delete n["Content-Type"];
-      delete n["content-type"];
+
+    if (isFormData) {
+      delete headers['Content-Type'];
+      delete headers['content-type'];
     }
-    return fetch(resolveApiUrl(e), {
-      ...t,
-      method: o,
-      credentials: "include",
-      headers: n
+
+    return fetch(resolveApiUrl(url), {
+      ...options,
+      method,
+      credentials: 'include',
+      headers,
     });
   }
+
   function getAuthHeaders() {
-    return {
-      "Content-Type": "application/json"
-    };
+    return { 'Content-Type': 'application/json' };
   }
+
+  /** @deprecated Use apiFetch — kept so older scripts keep working */
   function getCSRFToken() {
     return null;
   }
+
+  /** @deprecated */
   async function initializeCSRFToken() {
     return true;
   }
-  async function secureFetch(e, t = {}) {
-    return apiFetch(e, t);
+
+  /** @deprecated alias */
+  async function secureFetch(url, options = {}) {
+    return apiFetch(url, options);
   }
+
   window.apiFetch = apiFetch;
   window.secureFetch = secureFetch;
   window.resolveApiUrl = resolveApiUrl;

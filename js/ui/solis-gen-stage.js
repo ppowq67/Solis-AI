@@ -1,598 +1,702 @@
-(function() {
-  const e = [ {
-    title: "Meet Solis AI,<br>your clip co-pilot",
-    sub: "We turn long videos into short-form clips with captions, modes, and polish built in."
-  }, {
-    title: "Named after<br>the sun",
-    sub: "Solis means sun. Bright ideas, warm orange energy, and clips that feel alive."
-  }, {
-    title: "Beast captions<br>that actually pop",
-    sub: "Komika Axis, thick stroke, soft glow. Made for that “wait, what font is that?” energy."
-  }, {
-    title: "AI Reframe,<br>Blur, and Focus",
-    sub: "Modes keep faces framed, letterbox wide shots, or go full-focus when the moment needs it."
-  }, {
-    title: "Built tiny,<br>shipping fast",
-    sub: "We are early and moving quick. Your generations help Solis get sharper every week."
-  }, {
-    title: "Fun fact",
-    sub: "Solis was built by a 16-year-old from Georgia — still shipping, still iterating."
-  }, {
-    title: "Library is<br>home base",
-    sub: "Finished clips land in Library ready to tweak, download, and post wherever you create."
-  } ];
-  function safeCall(e, t, n) {
-    try {
-      if (typeof e === "function") return e.apply(t, n || []);
-    } catch (e) {}
-    return undefined;
-  }
-  function patch() {
-    const t = typeof getGenerationProgressSpinner === "function" && getGenerationProgressSpinner() || window.generationProgressSpinner || null;
-    const n = t && t.constructor && t.constructor.prototype || typeof GenerationProgressSpinner !== "undefined" && GenerationProgressSpinner.prototype || null;
-    if (!n) return false;
-    if (n.__solisGenStagePatched) {
-      t?._bindGenStageChrome?.();
-      return true;
+/**
+ * Solis generating stage — fullscreen wait UI.
+ * Extends GenerationProgressSpinner without breaking the launcher.
+ */
+(function () {
+    const AffTips = [
+        {
+            title: 'Meet Solis AI,<br>your clip co-pilot',
+            sub: 'We turn long videos into short-form clips with captions, modes, and polish built in.',
+        },
+        {
+            title: 'Named after<br>the sun',
+            sub: 'Solis means sun. Bright ideas, warm orange energy, and clips that feel alive.',
+        },
+        {
+            title: 'Beast captions<br>that actually pop',
+            sub: 'Komika Axis, thick stroke, soft glow. Made for that “wait, what font is that?” energy.',
+        },
+        {
+            title: 'AI Reframe,<br>Blur, and Focus',
+            sub: 'Modes keep faces framed, letterbox wide shots, or go full-focus when the moment needs it.',
+        },
+        {
+            title: 'Built tiny,<br>shipping fast',
+            sub: 'We are early and moving quick. Your generations help Solis get sharper every week.',
+        },
+        {
+            title: 'Fun fact',
+            sub: 'Solis was built by a 16-year-old from Georgia — still shipping, still iterating.',
+        },
+        {
+            title: 'Library is<br>home base',
+            sub: 'Finished clips land in Library ready to tweak, download, and post wherever you create.',
+        },
+    ];
+
+    function safeCall(fn, ctx, args) {
+        try {
+            if (typeof fn === 'function') return fn.apply(ctx, args || []);
+        } catch (_) { /* never break the launcher */ }
+        return undefined;
     }
-    n.__solisGenStagePatched = true;
-    if (typeof n._syncGenStageSteps !== "function") {
-      n._syncGenStageSteps = function() {};
-    }
-    if (typeof n._fillGenStageVideoMeta !== "function") {
-      n._fillGenStageVideoMeta = function() {};
-    }
-    if (typeof n._syncGenStageOutcome !== "function") {
-      n._syncGenStageOutcome = function() {};
-    }
-    if (typeof n._showGenStageAlert !== "function") {
-      n._showGenStageAlert = function() {};
-    }
-    n._bindGenStageChrome = function _bindGenStageChrome() {
-      if (this._genStageBound) return;
-      const e = document.getElementById("solisGenStage");
-      if (!e) return;
-      this._genStageBound = true;
-      const dismiss = () => this.closeGenStage();
-      document.getElementById("solisGenContinueBg")?.addEventListener("click", dismiss);
-      document.getElementById("solisGenExitBtn")?.addEventListener("click", dismiss);
-      const t = document.getElementById("generationTodoMoreBtn");
-      if (t && !t.__solisBound) {
-        t.__solisBound = true;
-        t.addEventListener("click", e => {
-          e.stopPropagation();
-          this.closePanel?.();
-          this.openGenStage({
-            reveal: true
-          });
-        });
-      }
-    };
-    n.openGenStage = function openGenStage(t) {
-      const n = document.getElementById("solisGenStage");
-      if (!n) return;
-      if (this._genTipIndex == null) this._genTipIndex = 0;
-      this._bindGenStageChrome();
-      this._parkProfileClusterInGenStage();
-      this._fillGenStageVideoMeta();
-      this._renderAffHeroTip();
-      const s = !t || t.reveal !== false;
-      this._syncGenStageSteps(undefined, undefined, {
-        reveal: s
-      });
-      n.classList.remove("is-leaving");
-      n.classList.add("is-open");
-      n.classList.remove("is-complete", "is-error");
-      n.setAttribute("aria-hidden", "false");
-      const i = document.getElementById("solisGenOutcome");
-      const o = document.getElementById("solisGenLiveLog");
-      if (i) {
-        i.hidden = true;
-        i.textContent = "";
-        i.classList.remove("is-complete", "is-error");
-      }
-      if (o) {
-        o.hidden = true;
-        o.textContent = "";
-        o.classList.remove("is-complete", "is-error", "is-warn");
-      }
-      this.genStageOpen = true;
-      document.body.classList.add("solis-gen-stage-active");
-      try {
-        this.closePanel?.();
-      } catch (e) {}
-      if (!this._affTipTimer) {
-        this._affTipTimer = setInterval(() => {
-          this._genTipIndex = ((this._genTipIndex || 0) + 1) % e.length;
-          this._renderAffHeroTip({
-            animate: true
-          });
-        }, 7e3);
-      }
-    };
-    n.closeGenStage = function closeGenStage() {
-      const e = document.getElementById("solisGenStage");
-      if (!e || !e.classList.contains("is-open") && !this.genStageOpen) {
-        this.genStageOpen = false;
-        document.body.classList.remove("solis-gen-stage-active");
-        return;
-      }
-      if (e.classList.contains("is-leaving")) return;
-      if (this._affTipTimer) {
-        clearInterval(this._affTipTimer);
-        this._affTipTimer = null;
-      }
-      e.classList.add("is-leaving");
-      const finish = () => {
-        e.classList.remove("is-open", "is-leaving");
-        e.setAttribute("aria-hidden", "true");
-        this._restoreProfileClusterFromGenStage();
-        this.genStageOpen = false;
-        document.body.classList.remove("solis-gen-stage-active");
-      };
-      const onEnd = n => {
-        if (n.target !== e || n.propertyName !== "opacity") return;
-        e.removeEventListener("transitionend", onEnd);
-        clearTimeout(t);
-        finish();
-      };
-      e.addEventListener("transitionend", onEnd);
-      const t = setTimeout(() => {
-        e.removeEventListener("transitionend", onEnd);
-        finish();
-      }, 420);
-    };
-    n._parkProfileClusterInGenStage = function _parkProfileClusterInGenStage() {
-      const e = document.getElementById("profileActionCluster");
-      const t = document.getElementById("solisGenAccountHost");
-      if (!e || !t) return;
-      if (!this._clusterHome) {
-        this._clusterHome = {
-          parent: e.parentElement,
-          next: e.nextSibling
+
+    function patch() {
+        const instance = (typeof getGenerationProgressSpinner === 'function'
+            && getGenerationProgressSpinner())
+            || window.generationProgressSpinner
+            || null;
+        const Proto = (instance && instance.constructor && instance.constructor.prototype)
+            || (typeof GenerationProgressSpinner !== 'undefined' && GenerationProgressSpinner.prototype)
+            || null;
+        if (!Proto) return false;
+        if (Proto.__solisGenStagePatched) {
+            instance?._bindGenStageChrome?.();
+            return true;
+        }
+        Proto.__solisGenStagePatched = true;
+
+        // No-op defaults so displayProgress never throws before full patch methods run
+        if (typeof Proto._syncGenStageSteps !== 'function') {
+            Proto._syncGenStageSteps = function () {};
+        }
+        if (typeof Proto._fillGenStageVideoMeta !== 'function') {
+            Proto._fillGenStageVideoMeta = function () {};
+        }
+        if (typeof Proto._syncGenStageOutcome !== 'function') {
+            Proto._syncGenStageOutcome = function () {};
+        }
+        if (typeof Proto._showGenStageAlert !== 'function') {
+            Proto._showGenStageAlert = function () {};
+        }
+
+        Proto._bindGenStageChrome = function _bindGenStageChrome() {
+            if (this._genStageBound) return;
+            const stage = document.getElementById('solisGenStage');
+            if (!stage) return;
+            this._genStageBound = true;
+            const dismiss = () => this.closeGenStage();
+            document.getElementById('solisGenContinueBg')?.addEventListener('click', dismiss);
+            document.getElementById('solisGenExitBtn')?.addEventListener('click', dismiss);
+            const moreBtn = document.getElementById('generationTodoMoreBtn');
+            if (moreBtn && !moreBtn.__solisBound) {
+                moreBtn.__solisBound = true;
+                moreBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.closePanel?.();
+                    this.openGenStage({ reveal: true });
+                });
+            }
         };
-      }
-      if (e.parentElement !== t) {
-        t.appendChild(e);
-        document.getElementById("notificationsDropdown")?.classList.remove("open");
-        document.getElementById("profileDropdown")?.classList.remove("open");
-      }
-    };
-    n._restoreProfileClusterFromGenStage = function _restoreProfileClusterFromGenStage() {
-      const e = document.getElementById("profileActionCluster");
-      const t = this._clusterHome;
-      if (!e || !t?.parent) {
-        this._clusterHome = null;
-        return;
-      }
-      if (t.next && t.next.parentElement === t.parent) {
-        t.parent.insertBefore(e, t.next);
-      } else {
-        t.parent.appendChild(e);
-      }
-      this._clusterHome = null;
-      document.getElementById("notificationsDropdown")?.classList.remove("open");
-      document.getElementById("profileDropdown")?.classList.remove("open");
-    };
-    n._fillGenStageVideoMeta = function _fillGenStageVideoMeta() {
-      const e = document.getElementById("solisGenVideoTitle");
-      const t = document.getElementById("solisGenTemplateBadge");
-      const n = document.getElementById("solisGenThumb");
-      const s = this.activeTemplateOptions || {};
-      const i = window.clipsStudio;
-      const o = i?.processingItems?.[0];
-      const r = (typeof i?.resolveSourceVideoCardMeta === "function" ? i.resolveSourceVideoCardMeta() : null) || {};
-      let a = String(s.videoTitle || s.title || r.title || o?.name || "").trim();
-      if (!a || /^https?:\/\//i.test(a) || /^Clip\s*·\s*https?/i.test(a)) {
-        a = r.title || "Your video";
-      }
-      a = a.replace(/^Clip\s*·\s*/i, "").replace(/^Ranking\s*·\s*/i, "");
-      const l = this.activeTemplateId || "ranked_compilation";
-      const c = i?.templates?.[l]?.name || (l === "splitscreen" ? "Clip" : l === "ranked_compilation" ? "Ranking" : "Clip");
-      if (e) {
-        e.textContent = a || "Your video";
-        e.title = a || "Your video";
-      }
-      if (t) t.textContent = c;
-      const d = String(s.thumbnailUrl || r.thumbnailUrl || "").trim();
-      const u = s.videoId || r.videoId || null;
-      const g = d || (u ? `https://i.ytimg.com/vi/${u}/hqdefault.jpg` : "");
-      if (n) {
-        if (g && /^https?:\/\//i.test(g)) {
-          const e = g.replace(/"/g, "");
-          const t = n.querySelector("img");
-          if (!t || t.getAttribute("src") !== e) {
-            n.innerHTML = `<img src="${e}" alt="" loading="lazy">`;
-          }
-        } else if (!n.querySelector("img")) {
-          n.innerHTML = '<span class="solis-gen-thumb-fallback">CLIP</span>';
-        }
-      }
-      const p = !a || a === "Your video" || a === "YouTube video";
-      if (p && u && !this._genStageMetaFetchId) {
-        this._genStageMetaFetchId = u;
-        const e = window.API_BASE_URL || "/api";
-        fetch(`${e}/youtube/get-metadata/${encodeURIComponent(u)}`, {
-          credentials: "include",
-          signal: AbortSignal.timeout(5e3)
-        }).then(e => e.ok ? e.json() : null).then(e => {
-          if (!e?.title) return;
-          if (i) i._lastVideoTitle = e.title;
-          if (e.thumbnail && i) i._lastVideoThumbnail = e.thumbnail;
-          this.activeTemplateOptions = {
-            ...this.activeTemplateOptions || {},
-            videoTitle: e.title,
-            title: e.title,
-            thumbnailUrl: e.thumbnail || this.activeTemplateOptions?.thumbnailUrl || (u ? `https://i.ytimg.com/vi/${u}/hqdefault.jpg` : null),
-            videoId: u
-          };
-          this._fillGenStageVideoMeta();
-        }).catch(() => {}).finally(() => {
-          if (this._genStageMetaFetchId === u) this._genStageMetaFetchId = null;
-        });
-      }
-    };
-    n._renderAffHeroTip = function _renderAffHeroTip(t) {
-      const n = e[this._genTipIndex] || e[0];
-      const s = document.getElementById("solisGenAffTitle");
-      const i = document.getElementById("solisGenAffSub");
-      const o = s?.closest(".solis-gen-aff-body") || document.querySelector("#solisGenAffHero .solis-gen-aff-body");
-      const apply = () => {
-        if (s) s.innerHTML = n.title;
-        if (i) i.textContent = n.sub;
-      };
-      if (!t?.animate || !o) {
-        o?.classList.remove("is-tip-out");
-        apply();
-        return;
-      }
-      if (this._affTipAnimating) return;
-      this._affTipAnimating = true;
-      o.classList.add("is-tip-out");
-      const finish = () => {
-        apply();
-        requestAnimationFrame(() => {
-          o.classList.remove("is-tip-out");
-          this._affTipAnimating = false;
-        });
-      };
-      const onEnd = e => {
-        if (e.target !== o || e.propertyName !== "filter") return;
-        o.removeEventListener("transitionend", onEnd);
-        clearTimeout(r);
-        finish();
-      };
-      o.addEventListener("transitionend", onEnd);
-      const r = setTimeout(() => {
-        o.removeEventListener("transitionend", onEnd);
-        finish();
-      }, 500);
-    };
-    n._syncGenStageSteps = function _syncGenStageSteps(e, t, n) {
-      const s = document.getElementById("solisGenSteps");
-      const i = document.getElementById("solisGenHeading");
-      const o = document.getElementById("solisGenProgressLabel");
-      const r = document.getElementById("solisGenLiveLog");
-      const a = document.getElementById("solisGenOutcome");
-      const l = document.getElementById("solisGenStage");
-      if (!s || typeof this._getActiveTasks !== "function") return;
-      const c = this._getActiveTasks();
-      if (!c.length) return;
-      let d = Number(e);
-      if (!Number.isFinite(d)) {
-        const e = this.activeGenerations?.values?.().next?.().value;
-        d = Number(e?.progress);
-      }
-      if (!Number.isFinite(d)) d = 0;
-      d = Math.max(0, Math.min(100, d));
-      const u = String(t || firstMessage(this) || "");
-      let g = 0;
-      if (typeof this._resolveTaskIndex === "function") {
-        g = this._resolveTaskIndex(d, u);
-      } else {
-        for (let e = 0; e < c.length; e++) {
-          const t = e === 0 ? 0 : Number(c[e - 1]?.maxProgress) || 0;
-          if (d >= t) g = e;
-        }
-      }
-      const p = n && n.reveal;
-      const m = `${c.map(e => e.id).join("|")}|${g}|${d >= 100 ? 1 : 0}`;
-      const f = p || this._genStepSignature !== m || s.children.length !== c.length;
-      if (f) {
-        this._genStepSignature = m;
-        s.innerHTML = c.map((e, t) => {
-          const n = t < g || d >= 100;
-          const s = !n && t === g;
-          const i = n ? `<span class="solis-gen-step-ico"><svg class="solis-gen-step-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>` : s ? `<span class="solis-gen-step-ico"><span class="solis-gen-step-spin" aria-hidden="true"></span></span>` : `<span class="solis-gen-step-ico"></span>`;
-          return `<li class="solis-gen-step${n ? " is-done" : ""}${s ? " is-active" : ""}" data-step-i="${t}">${i}<span class="solis-gen-step-label"></span></li>`;
-        }).join("");
-        if (p) {
-          s.querySelectorAll(".solis-gen-step").forEach((e, t) => {
-            e.classList.remove("is-shown");
-            setTimeout(() => e.classList.add("is-shown"), 80 + t * 100);
-          });
-        } else {
-          s.querySelectorAll(".solis-gen-step").forEach(e => e.classList.add("is-shown"));
-        }
-      }
-      s.querySelectorAll(".solis-gen-step").forEach((e, t) => {
-        const n = c[t];
-        if (!n) return;
-        const s = t < g || d >= 100;
-        const i = !s && t === g;
-        const o = e.querySelector(".solis-gen-step-label");
-        if (!o) return;
-        if (i && d < 100 && d > 0) {
-          o.innerHTML = `${escapeHtml(n.label)}<span class="solis-gen-step-pct">...${Math.floor(d)}%</span>`;
-        } else if (i) {
-          o.textContent = `${n.label}...`;
-        } else {
-          o.textContent = n.label;
-        }
-        e.classList.toggle("is-done", s);
-        e.classList.toggle("is-active", i);
-      });
-      const h = c[Math.min(g, c.length - 1)];
-      const y = d >= 100 ? "Your clips are ready" : h?.id === "moment" || h?.id === "clip" ? "Analyzing content and finding clips" : h?.label || "Analyzing content and finding clips";
-      if (i && y !== this._lastGenHeadline) {
-        i.textContent = y;
-        this._lastGenHeadline = y;
-      }
-      if (o) {
-        o.textContent = d >= 100 ? "Complete" : d > 0 ? `${Math.floor(d)}%` : "Starting...";
-      }
-      const S = typeof this._cleanMessage === "function" ? this._cleanMessage(u) : String(u || "").trim();
-      if (r) {
-        r.classList.remove("is-complete", "is-error", "is-warn");
-        if (d >= 100) {
-          r.hidden = true;
-          r.textContent = "";
-        } else {
-          r.hidden = true;
-          r.textContent = "";
-        }
-      }
-      if (a && d < 100) {
-        a.hidden = true;
-        a.textContent = "";
-        a.classList.remove("is-complete", "is-error");
-      }
-      if (l) {
-        l.classList.remove("is-complete", "is-error");
-      }
-    };
-    n._showGenStageAlert = function _showGenStageAlert(e, t) {
-      const n = document.getElementById("solisGenLiveLog");
-      if (!n) return;
-      const s = String(t || "").trim();
-      if (!s) {
-        n.hidden = true;
-        n.textContent = "";
-        n.classList.remove("is-error", "is-warn", "is-complete");
-        return;
-      }
-      n.hidden = false;
-      n.classList.remove("is-complete", "is-error", "is-warn");
-      n.classList.add(e === "warn" ? "is-warn" : "is-error");
-      n.textContent = s;
-    };
-    n._syncGenStageOutcome = function _syncGenStageOutcome(e, t) {
-      const n = document.getElementById("solisGenStage");
-      const s = document.getElementById("solisGenLiveLog");
-      const i = document.getElementById("solisGenOutcome");
-      const o = document.getElementById("solisGenHeading");
-      const r = String(t || "").trim();
-      if (n) {
-        n.classList.remove("is-complete", "is-error");
-        if (e === "error") n.classList.add("is-error");
-      }
-      if (o) {
-        o.textContent = e === "error" ? "Generation failed" : "Your clips are ready";
-      }
-      if (s) {
-        if (e === "error") {
-          this._showGenStageAlert("error", r || "Something went wrong — try again");
-        } else {
-          s.hidden = true;
-          s.textContent = "";
-          s.classList.remove("is-complete", "is-error", "is-warn");
-        }
-      }
-      if (i) {
-        if (e === "error") {
-          i.hidden = true;
-          i.textContent = "";
-          i.classList.remove("is-complete", "is-error");
-        } else {
-          i.hidden = false;
-          i.classList.remove("is-error");
-          i.classList.add("is-complete");
-          i.textContent = r || "Complete — your clip is ready";
-        }
-      }
-      try {
-        this._syncGenStageSteps(e === "error" ? 0 : 100, r, {
-          reveal: false
-        });
-      } catch (e) {}
-    };
-    function firstMessage(e) {
-      try {
-        const t = e.activeGenerations?.values?.().next?.().value;
-        return t?.message || "";
-      } catch (e) {
-        return "";
-      }
-    }
-    function escapeHtml(e) {
-      return String(e || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-    }
-    const s = n.beginOptimisticGeneration;
-    if (typeof s === "function" && !n.__solisGenStageBeginWrapped) {
-      n.__solisGenStageBeginWrapped = true;
-      n.beginOptimisticGeneration = function beginOptimisticGenerationPatched(e, t, n) {
-        s.call(this, e, t, n);
-        requestAnimationFrame(() => {
-          safeCall(this.openGenStage, this, [ {
-            reveal: true
-          } ]);
-        });
-      };
-    }
-    const i = n.startGeneration;
-    if (typeof i === "function" && !n.__solisGenStageStartWrapped) {
-      n.__solisGenStageStartWrapped = true;
-      n.startGeneration = function startGenerationPatched(e, t, n, s) {
-        i.call(this, e, t, n, s);
-        if (!this.genStageOpen) {
-          requestAnimationFrame(() => safeCall(this.openGenStage, this, [ {
-            reveal: false
-          } ]));
-        }
-      };
-    }
-    return true;
-  }
-  function fillDemoSteps() {
-    const e = document.getElementById("solisGenSteps");
-    if (!e) return;
-    const t = '<svg class="solis-gen-step-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-    e.innerHTML = [ [ "Fetch video", "done" ], [ "Create project", "done" ], [ "Finding best moment", "active" ], [ "Preparing secondary panel", "" ], [ "Building split screen", "" ], [ "Exporting", "" ] ].map(([e, n], s) => {
-      const i = n === "done";
-      const o = n === "active";
-      const r = i ? `<span class="solis-gen-step-ico">${t}</span>` : o ? '<span class="solis-gen-step-ico"><span class="solis-gen-step-spin" aria-hidden="true"></span></span>' : '<span class="solis-gen-step-ico"></span>';
-      const a = o ? `${e}<span class="solis-gen-step-pct">...37%</span>` : e;
-      return `<li class="solis-gen-step is-shown${i ? " is-done" : ""}${o ? " is-active" : ""}" data-step-i="${s}">${r}<span class="solis-gen-step-label">${a}</span></li>`;
-    }).join("");
-    const n = document.getElementById("solisGenHeading");
-    const s = document.getElementById("solisGenProgressLabel");
-    const i = document.getElementById("solisGenVideoTitle");
-    if (n) n.textContent = "Analyzing content and finding clips";
-    if (s) s.textContent = "37%";
-    if (i) i.textContent = "I Ate Nothing But YouTuber Products for 7 Days";
-    const o = document.getElementById("solisGenThumb");
-    if (o) {
-      o.innerHTML = '<img src="https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg" alt="" loading="lazy">';
-    }
-  }
-  function forceOpenDemoStage() {
-    const e = document.getElementById("solisGenStage");
-    if (!e) return false;
-    fillDemoSteps();
-    const t = typeof getGenerationProgressSpinner === "function" && getGenerationProgressSpinner() || window.generationProgressSpinner || null;
-    if (t && typeof t.openGenStage === "function") {
-      try {
-        t.activeTemplateId = "splitscreen";
-        t.activeTemplateOptions = {
-          videoTitle: "I Ate Nothing But YouTuber Products for 7 Days",
-          title: "I Ate Nothing But YouTuber Products for 7 Days",
-          thumbnailUrl: "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
-          videoId: "dQw4w9WgXcQ"
+
+        Proto.openGenStage = function openGenStage(opts) {
+            const stage = document.getElementById('solisGenStage');
+            if (!stage) return;
+            if (this._genTipIndex == null) this._genTipIndex = 0;
+            this._bindGenStageChrome();
+            this._parkProfileClusterInGenStage();
+            this._fillGenStageVideoMeta();
+            this._renderAffHeroTip();
+            const reveal = !opts || opts.reveal !== false;
+            this._syncGenStageSteps(undefined, undefined, { reveal });
+            stage.classList.remove('is-leaving');
+            stage.classList.add('is-open');
+            stage.classList.remove('is-complete', 'is-error');
+            stage.setAttribute('aria-hidden', 'false');
+            const outcome = document.getElementById('solisGenOutcome');
+            const liveLog = document.getElementById('solisGenLiveLog');
+            if (outcome) {
+                outcome.hidden = true;
+                outcome.textContent = '';
+                outcome.classList.remove('is-complete', 'is-error');
+            }
+            if (liveLog) {
+                liveLog.hidden = true;
+                liveLog.textContent = '';
+                liveLog.classList.remove('is-complete', 'is-error', 'is-warn');
+            }
+            this.genStageOpen = true;
+            document.body.classList.add('solis-gen-stage-active');
+            // Don't leave the compact spinner menu open over Advanced
+            try { this.closePanel?.(); } catch (_) { /* ignore */ }
+            if (!this._affTipTimer) {
+                this._affTipTimer = setInterval(() => {
+                    this._genTipIndex = ((this._genTipIndex || 0) + 1) % AffTips.length;
+                    this._renderAffHeroTip({ animate: true });
+                }, 7000);
+            }
         };
-        t.openGenStage({
-          reveal: true
-        });
-        t.displayProgress?.(37, "Finding best moment...");
+
+        Proto.closeGenStage = function closeGenStage() {
+            const stage = document.getElementById('solisGenStage');
+            if (!stage || (!stage.classList.contains('is-open') && !this.genStageOpen)) {
+                this.genStageOpen = false;
+                document.body.classList.remove('solis-gen-stage-active');
+                return;
+            }
+            if (stage.classList.contains('is-leaving')) return;
+            if (this._affTipTimer) {
+                clearInterval(this._affTipTimer);
+                this._affTipTimer = null;
+            }
+            stage.classList.add('is-leaving');
+            const finish = () => {
+                stage.classList.remove('is-open', 'is-leaving');
+                stage.setAttribute('aria-hidden', 'true');
+                this._restoreProfileClusterFromGenStage();
+                this.genStageOpen = false;
+                document.body.classList.remove('solis-gen-stage-active');
+            };
+            const onEnd = (e) => {
+                if (e.target !== stage || e.propertyName !== 'opacity') return;
+                stage.removeEventListener('transitionend', onEnd);
+                clearTimeout(fallback);
+                finish();
+            };
+            stage.addEventListener('transitionend', onEnd);
+            const fallback = setTimeout(() => {
+                stage.removeEventListener('transitionend', onEnd);
+                finish();
+            }, 420);
+        };
+
+        Proto._parkProfileClusterInGenStage = function _parkProfileClusterInGenStage() {
+            const cluster = document.getElementById('profileActionCluster');
+            const host = document.getElementById('solisGenAccountHost');
+            if (!cluster || !host) return;
+            if (!this._clusterHome) {
+                this._clusterHome = {
+                    parent: cluster.parentElement,
+                    next: cluster.nextSibling,
+                };
+            }
+            if (cluster.parentElement !== host) {
+                host.appendChild(cluster);
+                document.getElementById('notificationsDropdown')?.classList.remove('open');
+                document.getElementById('profileDropdown')?.classList.remove('open');
+            }
+        };
+
+        Proto._restoreProfileClusterFromGenStage = function _restoreProfileClusterFromGenStage() {
+            const cluster = document.getElementById('profileActionCluster');
+            const home = this._clusterHome;
+            if (!cluster || !home?.parent) {
+                this._clusterHome = null;
+                return;
+            }
+            if (home.next && home.next.parentElement === home.parent) {
+                home.parent.insertBefore(cluster, home.next);
+            } else {
+                home.parent.appendChild(cluster);
+            }
+            this._clusterHome = null;
+            document.getElementById('notificationsDropdown')?.classList.remove('open');
+            document.getElementById('profileDropdown')?.classList.remove('open');
+        };
+
+        Proto._fillGenStageVideoMeta = function _fillGenStageVideoMeta() {
+            const titleEl = document.getElementById('solisGenVideoTitle');
+            const badgeEl = document.getElementById('solisGenTemplateBadge');
+            const thumbEl = document.getElementById('solisGenThumb');
+            const opts = this.activeTemplateOptions || {};
+            const studio = window.clipsStudio;
+            const processing = studio?.processingItems?.[0];
+            const source = (typeof studio?.resolveSourceVideoCardMeta === 'function'
+                ? studio.resolveSourceVideoCardMeta()
+                : null) || {};
+
+            let title = String(
+                opts.videoTitle
+                || opts.title
+                || source.title
+                || processing?.name
+                || ''
+            ).trim();
+            // Never show raw URL / "Clip · https…" in the card
+            if (!title || /^https?:\/\//i.test(title) || /^Clip\s*·\s*https?/i.test(title)) {
+                title = source.title || 'Your video';
+            }
+            title = title.replace(/^Clip\s*·\s*/i, '').replace(/^Ranking\s*·\s*/i, '');
+
+            const templateId = this.activeTemplateId || 'ranked_compilation';
+            const templateName = studio?.templates?.[templateId]?.name
+                || (templateId === 'splitscreen' ? 'Clip'
+                    : templateId === 'ranked_compilation' ? 'Ranking' : 'Clip');
+            if (titleEl) {
+                titleEl.textContent = title || 'Your video';
+                titleEl.title = title || 'Your video';
+            }
+            if (badgeEl) badgeEl.textContent = templateName;
+
+            const thumbUrl = String(
+                opts.thumbnailUrl
+                || source.thumbnailUrl
+                || ''
+            ).trim();
+            const videoId = opts.videoId || source.videoId || null;
+            const resolvedThumb = thumbUrl
+                || (videoId ? `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg` : '');
+            if (thumbEl) {
+                if (resolvedThumb && /^https?:\/\//i.test(resolvedThumb)) {
+                    const safe = resolvedThumb.replace(/"/g, '');
+                    const existing = thumbEl.querySelector('img');
+                    if (!existing || existing.getAttribute('src') !== safe) {
+                        thumbEl.innerHTML = `<img src="${safe}" alt="" loading="lazy">`;
+                    }
+                } else if (!thumbEl.querySelector('img')) {
+                    thumbEl.innerHTML = '<span class="solis-gen-thumb-fallback">CLIP</span>';
+                }
+            }
+
+            // If we only have a video id (no title yet), fetch once and refresh the card
+            const needsTitle = !title || title === 'Your video' || title === 'YouTube video';
+            if (needsTitle && videoId && !this._genStageMetaFetchId) {
+                this._genStageMetaFetchId = videoId;
+                const apiBase = window.API_BASE_URL || '/api';
+                fetch(`${apiBase}/youtube/get-metadata/${encodeURIComponent(videoId)}`, {
+                    credentials: 'include',
+                    signal: AbortSignal.timeout(5000),
+                })
+                    .then((r) => (r.ok ? r.json() : null))
+                    .then((data) => {
+                        if (!data?.title) return;
+                        if (studio) studio._lastVideoTitle = data.title;
+                        if (data.thumbnail && studio) studio._lastVideoThumbnail = data.thumbnail;
+                        this.activeTemplateOptions = {
+                            ...(this.activeTemplateOptions || {}),
+                            videoTitle: data.title,
+                            title: data.title,
+                            thumbnailUrl: data.thumbnail
+                                || this.activeTemplateOptions?.thumbnailUrl
+                                || (videoId ? `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg` : null),
+                            videoId,
+                        };
+                        this._fillGenStageVideoMeta();
+                    })
+                    .catch(() => { /* ignore */ })
+                    .finally(() => {
+                        if (this._genStageMetaFetchId === videoId) this._genStageMetaFetchId = null;
+                    });
+            }
+        };
+
+        Proto._renderAffHeroTip = function _renderAffHeroTip(opts) {
+            const tip = AffTips[this._genTipIndex] || AffTips[0];
+            const title = document.getElementById('solisGenAffTitle');
+            const sub = document.getElementById('solisGenAffSub');
+            const body = title?.closest('.solis-gen-aff-body')
+                || document.querySelector('#solisGenAffHero .solis-gen-aff-body');
+            const apply = () => {
+                if (title) title.innerHTML = tip.title;
+                if (sub) sub.textContent = tip.sub;
+            };
+            if (!opts?.animate || !body) {
+                body?.classList.remove('is-tip-out');
+                apply();
+                return;
+            }
+            if (this._affTipAnimating) return;
+            this._affTipAnimating = true;
+            body.classList.add('is-tip-out');
+            const finish = () => {
+                apply();
+                // Next frame so the browser paints blurred empty state before clearing
+                requestAnimationFrame(() => {
+                    body.classList.remove('is-tip-out');
+                    this._affTipAnimating = false;
+                });
+            };
+            const onEnd = (e) => {
+                if (e.target !== body || e.propertyName !== 'filter') return;
+                body.removeEventListener('transitionend', onEnd);
+                clearTimeout(fallback);
+                finish();
+            };
+            body.addEventListener('transitionend', onEnd);
+            const fallback = setTimeout(() => {
+                body.removeEventListener('transitionend', onEnd);
+                finish();
+            }, 500);
+        };
+
+        Proto._syncGenStageSteps = function _syncGenStageSteps(progress, message, opts) {
+            const list = document.getElementById('solisGenSteps');
+            const heading = document.getElementById('solisGenHeading');
+            const progressLabel = document.getElementById('solisGenProgressLabel');
+            const liveLog = document.getElementById('solisGenLiveLog');
+            const outcome = document.getElementById('solisGenOutcome');
+            const stage = document.getElementById('solisGenStage');
+            if (!list || typeof this._getActiveTasks !== 'function') return;
+            const tasks = this._getActiveTasks();
+            if (!tasks.length) return;
+
+            let pct = Number(progress);
+            if (!Number.isFinite(pct)) {
+                const first = this.activeGenerations?.values?.().next?.().value;
+                pct = Number(first?.progress);
+            }
+            if (!Number.isFinite(pct)) pct = 0;
+            pct = Math.max(0, Math.min(100, pct));
+            const msg = String(message || firstMessage(this) || '');
+
+            let activeIdx = 0;
+            if (typeof this._resolveTaskIndex === 'function') {
+                activeIdx = this._resolveTaskIndex(pct, msg);
+            } else {
+                for (let i = 0; i < tasks.length; i++) {
+                    const floor = i === 0 ? 0 : (Number(tasks[i - 1]?.maxProgress) || 0);
+                    if (pct >= floor) activeIdx = i;
+                }
+            }
+
+            const reveal = opts && opts.reveal;
+            const signature = `${tasks.map((t) => t.id).join('|')}|${activeIdx}|${pct >= 100 ? 1 : 0}`;
+            const needsRebuild = reveal || this._genStepSignature !== signature || list.children.length !== tasks.length;
+
+            if (needsRebuild) {
+                this._genStepSignature = signature;
+                list.innerHTML = tasks.map((task, i) => {
+                    const done = i < activeIdx || pct >= 100;
+                    const active = !done && i === activeIdx;
+                    const ico = done
+                        ? `<span class="solis-gen-step-ico"><svg class="solis-gen-step-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>`
+                        : active
+                            ? `<span class="solis-gen-step-ico"><span class="solis-gen-step-spin" aria-hidden="true"></span></span>`
+                            : `<span class="solis-gen-step-ico"></span>`;
+                    return `<li class="solis-gen-step${done ? ' is-done' : ''}${active ? ' is-active' : ''}" data-step-i="${i}">${ico}<span class="solis-gen-step-label"></span></li>`;
+                }).join('');
+
+                if (reveal) {
+                    list.querySelectorAll('.solis-gen-step').forEach((el, i) => {
+                        el.classList.remove('is-shown');
+                        setTimeout(() => el.classList.add('is-shown'), 80 + i * 100);
+                    });
+                } else {
+                    list.querySelectorAll('.solis-gen-step').forEach((el) => el.classList.add('is-shown'));
+                }
+            }
+
+            // Update labels / % without remounting the active spinner
+            list.querySelectorAll('.solis-gen-step').forEach((el, i) => {
+                const task = tasks[i];
+                if (!task) return;
+                const done = i < activeIdx || pct >= 100;
+                const active = !done && i === activeIdx;
+                const labelEl = el.querySelector('.solis-gen-step-label');
+                if (!labelEl) return;
+                if (active && pct < 100 && pct > 0) {
+                    labelEl.innerHTML = `${escapeHtml(task.label)}<span class="solis-gen-step-pct">...${Math.floor(pct)}%</span>`;
+                } else if (active) {
+                    labelEl.textContent = `${task.label}...`;
+                } else {
+                    labelEl.textContent = task.label;
+                }
+                el.classList.toggle('is-done', done);
+                el.classList.toggle('is-active', active);
+            });
+
+            const activeTask = tasks[Math.min(activeIdx, tasks.length - 1)];
+            const headline = pct >= 100
+                ? 'Your clips are ready'
+                : (activeTask?.id === 'moment' || activeTask?.id === 'clip'
+                    ? 'Analyzing content and finding clips'
+                    : (activeTask?.label || 'Analyzing content and finding clips'));
+            if (heading && headline !== this._lastGenHeadline) {
+                heading.textContent = headline;
+                this._lastGenHeadline = headline;
+            }
+            if (progressLabel) {
+                progressLabel.textContent = pct >= 100 ? 'Complete' : (pct > 0 ? `${Math.floor(pct)}%` : 'Starting...');
+            }
+
+            const cleanedMsg = typeof this._cleanMessage === 'function'
+                ? this._cleanMessage(msg)
+                : String(msg || '').trim();
+            if (liveLog) {
+                liveLog.classList.remove('is-complete', 'is-error', 'is-warn');
+                if (pct >= 100) {
+                    liveLog.hidden = true;
+                    liveLog.textContent = '';
+                } else {
+                    liveLog.hidden = true;
+                    liveLog.textContent = '';
+                }
+            }
+            if (outcome && pct < 100) {
+                outcome.hidden = true;
+                outcome.textContent = '';
+                outcome.classList.remove('is-complete', 'is-error');
+            }
+            if (stage) {
+                stage.classList.remove('is-complete', 'is-error');
+            }
+        };
+
+        Proto._showGenStageAlert = function _showGenStageAlert(kind, message) {
+            const liveLog = document.getElementById('solisGenLiveLog');
+            if (!liveLog) return;
+            const safe = String(message || '').trim();
+            if (!safe) {
+                liveLog.hidden = true;
+                liveLog.textContent = '';
+                liveLog.classList.remove('is-error', 'is-warn', 'is-complete');
+                return;
+            }
+            liveLog.hidden = false;
+            liveLog.classList.remove('is-complete', 'is-error', 'is-warn');
+            liveLog.classList.add(kind === 'warn' ? 'is-warn' : 'is-error');
+            liveLog.textContent = safe;
+        };
+
+        Proto._syncGenStageOutcome = function _syncGenStageOutcome(kind, message) {
+            const stage = document.getElementById('solisGenStage');
+            const liveLog = document.getElementById('solisGenLiveLog');
+            const outcome = document.getElementById('solisGenOutcome');
+            const heading = document.getElementById('solisGenHeading');
+            const safe = String(message || '').trim();
+            if (stage) {
+                stage.classList.remove('is-complete', 'is-error');
+                if (kind === 'error') stage.classList.add('is-error');
+            }
+            if (heading) {
+                heading.textContent = kind === 'error'
+                    ? 'Generation failed'
+                    : 'Your clips are ready';
+            }
+            if (liveLog) {
+                if (kind === 'error') {
+                    this._showGenStageAlert('error', safe || 'Something went wrong — try again');
+                } else {
+                    liveLog.hidden = true;
+                    liveLog.textContent = '';
+                    liveLog.classList.remove('is-complete', 'is-error', 'is-warn');
+                }
+            }
+            if (outcome) {
+                if (kind === 'error') {
+                    outcome.hidden = true;
+                    outcome.textContent = '';
+                    outcome.classList.remove('is-complete', 'is-error');
+                } else {
+                    outcome.hidden = false;
+                    outcome.classList.remove('is-error');
+                    outcome.classList.add('is-complete');
+                    outcome.textContent = safe || 'Complete — your clip is ready';
+                }
+            }
+            try {
+                this._syncGenStageSteps(kind === 'error' ? 0 : 100, safe, { reveal: false });
+            } catch (_) { /* ignore */ }
+        };
+
+        function firstMessage(self) {
+            try {
+                const first = self.activeGenerations?.values?.().next?.().value;
+                return first?.message || '';
+            } catch (_) {
+                return '';
+            }
+        }
+
+        function escapeHtml(str) {
+            return String(str || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        // Harden: stage sync is already guarded inside displayProgress
+        // Generation start → full stage with checklist reveal
+        const prevBegin = Proto.beginOptimisticGeneration;
+        if (typeof prevBegin === 'function' && !Proto.__solisGenStageBeginWrapped) {
+            Proto.__solisGenStageBeginWrapped = true;
+            Proto.beginOptimisticGeneration = function beginOptimisticGenerationPatched(message, templateId, options) {
+                prevBegin.call(this, message, templateId, options);
+                requestAnimationFrame(() => {
+                    safeCall(this.openGenStage, this, [{ reveal: true }]);
+                });
+            };
+        }
+
+        const prevStart = Proto.startGeneration;
+        if (typeof prevStart === 'function' && !Proto.__solisGenStageStartWrapped) {
+            Proto.__solisGenStageStartWrapped = true;
+            Proto.startGeneration = function startGenerationPatched(projectId, message, templateId, options) {
+                prevStart.call(this, projectId, message, templateId, options);
+                if (!this.genStageOpen) {
+                    requestAnimationFrame(() => safeCall(this.openGenStage, this, [{ reveal: false }]));
+                }
+            };
+        }
+
         return true;
-      } catch (e) {}
     }
-    e.classList.remove("is-leaving");
-    e.classList.add("is-open");
-    e.setAttribute("aria-hidden", "false");
-    document.body.classList.add("solis-gen-stage-active");
-    try {
-      const e = document.getElementById("profileActionCluster");
-      const t = document.getElementById("solisGenAccountHost");
-      if (e && t && e.parentElement !== t) t.appendChild(e);
-    } catch (e) {}
-    document.getElementById("solisGenExitBtn")?.addEventListener("click", () => {
-      e.classList.add("is-leaving");
-      setTimeout(() => {
-        e.classList.remove("is-open", "is-leaving");
-        e.setAttribute("aria-hidden", "true");
-        document.body.classList.remove("solis-gen-stage-active");
-      }, 380);
-    }, {
-      once: true
-    });
-    document.getElementById("solisGenContinueBg")?.addEventListener("click", () => {
-      document.getElementById("solisGenExitBtn")?.click();
-    }, {
-      once: true
-    });
-    return true;
-  }
-  function forceOpenDemoTasks() {
-    const e = typeof getGenerationProgressSpinner === "function" && getGenerationProgressSpinner() || window.generationProgressSpinner || null;
-    const t = document.getElementById("generationProgressWrapper");
-    if (!t) return false;
-    try {
-      e?.closeGenStage?.();
-    } catch (e) {}
-    if (e) {
-      try {
-        e.activeTemplateId = "splitscreen";
-        e.activeTemplateOptions = {
-          videoTitle: "I Ate Nothing But YouTuber Products for 7 Days",
-          title: "I Ate Nothing But YouTuber Products for 7 Days",
-          thumbnailUrl: "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
-          videoId: "dQw4w9WgXcQ"
-        };
-        e.optimisticPending = true;
-        e.tasksIntroPlayed = false;
-        e._ensureDomRefs?.();
-        e._ensureTaskList?.();
-        if (e.wrapper) e.wrapper.style.display = "flex";
-        e.displayProgress?.(37, "Finding best moment...");
-        e.openPanel?.();
-        e._bindGenStageChrome?.();
+
+    function fillDemoSteps() {
+        const list = document.getElementById('solisGenSteps');
+        if (!list) return;
+        const check = '<svg class="solis-gen-step-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+        list.innerHTML = [
+            ['Fetch video', 'done'],
+            ['Create project', 'done'],
+            ['Finding best moment', 'active'],
+            ['Preparing secondary panel', ''],
+            ['Building split screen', ''],
+            ['Exporting', ''],
+        ].map(([label, state], i) => {
+            const done = state === 'done';
+            const active = state === 'active';
+            const ico = done
+                ? `<span class="solis-gen-step-ico">${check}</span>`
+                : active
+                    ? '<span class="solis-gen-step-ico"><span class="solis-gen-step-spin" aria-hidden="true"></span></span>'
+                    : '<span class="solis-gen-step-ico"></span>';
+            const text = active
+                ? `${label}<span class="solis-gen-step-pct">...37%</span>`
+                : label;
+            return `<li class="solis-gen-step is-shown${done ? ' is-done' : ''}${active ? ' is-active' : ''}" data-step-i="${i}">${ico}<span class="solis-gen-step-label">${text}</span></li>`;
+        }).join('');
+        const heading = document.getElementById('solisGenHeading');
+        const progressLabel = document.getElementById('solisGenProgressLabel');
+        const title = document.getElementById('solisGenVideoTitle');
+        if (heading) heading.textContent = 'Analyzing content and finding clips';
+        if (progressLabel) progressLabel.textContent = '37%';
+        if (title) title.textContent = 'I Ate Nothing But YouTuber Products for 7 Days';
+        const thumb = document.getElementById('solisGenThumb');
+        if (thumb) {
+            thumb.innerHTML = '<img src="https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg" alt="" loading="lazy">';
+        }
+    }
+
+    function forceOpenDemoStage() {
+        const stage = document.getElementById('solisGenStage');
+        if (!stage) return false;
+        fillDemoSteps();
+        const s = (typeof getGenerationProgressSpinner === 'function' && getGenerationProgressSpinner())
+            || window.generationProgressSpinner
+            || null;
+        if (s && typeof s.openGenStage === 'function') {
+            try {
+                s.activeTemplateId = 'splitscreen';
+                s.activeTemplateOptions = {
+                    videoTitle: 'I Ate Nothing But YouTuber Products for 7 Days',
+                    title: 'I Ate Nothing But YouTuber Products for 7 Days',
+                    thumbnailUrl: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg',
+                    videoId: 'dQw4w9WgXcQ',
+                };
+                s.openGenStage({ reveal: true });
+                s.displayProgress?.(37, 'Finding best moment...');
+                return true;
+            } catch (_) { /* fall through */ }
+        }
+        stage.classList.remove('is-leaving');
+        stage.classList.add('is-open');
+        stage.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('solis-gen-stage-active');
+        // Park profile cluster if possible
+        try {
+            const cluster = document.getElementById('profileActionCluster');
+            const host = document.getElementById('solisGenAccountHost');
+            if (cluster && host && cluster.parentElement !== host) host.appendChild(cluster);
+        } catch (_) { /* ignore */ }
+        document.getElementById('solisGenExitBtn')?.addEventListener('click', () => {
+            stage.classList.add('is-leaving');
+            setTimeout(() => {
+                stage.classList.remove('is-open', 'is-leaving');
+                stage.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('solis-gen-stage-active');
+            }, 380);
+        }, { once: true });
+        document.getElementById('solisGenContinueBg')?.addEventListener('click', () => {
+            document.getElementById('solisGenExitBtn')?.click();
+        }, { once: true });
         return true;
-      } catch (e) {}
     }
-    t.style.display = "flex";
-    const n = document.getElementById("generationTodoPanel");
-    n?.classList.add("is-open");
-    return Boolean(n);
-  }
-  function maybeRunDashboardDemo() {
-    const e = String(location.search || "");
-    const t = /[?&]solisTasksDemo=1(?:&|$)/.test(e) || /[?&]solisGenDemo=1(?:&|$)/.test(e);
-    const n = /[?&]solisGenStageDemo=1(?:&|$)/.test(e);
-    if (!t && !n) return;
-    let s = 0;
-    const tick = () => {
-      s += 1;
-      const e = n ? forceOpenDemoStage() : forceOpenDemoTasks();
-      if (e) return;
-      if (s < 50) setTimeout(tick, 120);
-    };
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", () => setTimeout(tick, 80));
+
+    function forceOpenDemoTasks() {
+        const s = (typeof getGenerationProgressSpinner === 'function' && getGenerationProgressSpinner())
+            || window.generationProgressSpinner
+            || null;
+        const wrapper = document.getElementById('generationProgressWrapper');
+        if (!wrapper) return false;
+
+        // Keep full stage closed — show spinner + Solis Tasks menu
+        try { s?.closeGenStage?.(); } catch (_) { /* ignore */ }
+
+        if (s) {
+            try {
+                s.activeTemplateId = 'splitscreen';
+                s.activeTemplateOptions = {
+                    videoTitle: 'I Ate Nothing But YouTuber Products for 7 Days',
+                    title: 'I Ate Nothing But YouTuber Products for 7 Days',
+                    thumbnailUrl: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg',
+                    videoId: 'dQw4w9WgXcQ',
+                };
+                s.optimisticPending = true;
+                s.tasksIntroPlayed = false;
+                s._ensureDomRefs?.();
+                s._ensureTaskList?.();
+                if (s.wrapper) s.wrapper.style.display = 'flex';
+                s.displayProgress?.(37, 'Finding best moment...');
+                s.openPanel?.();
+                s._bindGenStageChrome?.();
+                return true;
+            } catch (_) { /* fall through */ }
+        }
+
+        wrapper.style.display = 'flex';
+        const panel = document.getElementById('generationTodoPanel');
+        panel?.classList.add('is-open');
+        return Boolean(panel);
+    }
+
+    function maybeRunDashboardDemo() {
+        const search = String(location.search || '');
+        const wantTasks = /[?&]solisTasksDemo=1(?:&|$)/.test(search)
+            || /[?&]solisGenDemo=1(?:&|$)/.test(search);
+        const wantStage = /[?&]solisGenStageDemo=1(?:&|$)/.test(search);
+        if (!wantTasks && !wantStage) return;
+
+        let tries = 0;
+        const tick = () => {
+            tries += 1;
+            const ok = wantStage ? forceOpenDemoStage() : forceOpenDemoTasks();
+            if (ok) return;
+            if (tries < 50) setTimeout(tick, 120);
+        };
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => setTimeout(tick, 80));
+        } else {
+            setTimeout(tick, 80);
+        }
+        setTimeout(() => {
+            if (wantStage) forceOpenDemoStage();
+            else forceOpenDemoTasks();
+        }, 1600);
+    }
+
+    function boot() {
+        const ok = patch();
+        try {
+            const s = typeof getGenerationProgressSpinner === 'function'
+                ? getGenerationProgressSpinner()
+                : window.generationProgressSpinner;
+            if (s) {
+                if (s.genStageOpen == null) s.genStageOpen = false;
+                s._bindGenStageChrome?.();
+            }
+        } catch (_) { /* ignore */ }
+        return ok;
+    }
+
+    if (!boot()) {
+        document.addEventListener('DOMContentLoaded', () => {
+            boot();
+            setTimeout(boot, 400);
+        });
     } else {
-      setTimeout(tick, 80);
+        setTimeout(boot, 200);
     }
-    setTimeout(() => {
-      if (n) forceOpenDemoStage(); else forceOpenDemoTasks();
-    }, 1600);
-  }
-  function boot() {
-    const e = patch();
-    try {
-      const e = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
-      if (e) {
-        if (e.genStageOpen == null) e.genStageOpen = false;
-        e._bindGenStageChrome?.();
-      }
-    } catch (e) {}
-    return e;
-  }
-  if (!boot()) {
-    document.addEventListener("DOMContentLoaded", () => {
-      boot();
-      setTimeout(boot, 400);
-    });
-  } else {
-    setTimeout(boot, 200);
-  }
-  maybeRunDashboardDemo();
+    maybeRunDashboardDemo();
 })();

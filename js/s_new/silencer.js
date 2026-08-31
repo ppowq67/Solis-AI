@@ -1,455 +1,500 @@
+/**
+ * Solis Silencer — one-tap dead-air cleanup after generation.
+ * Preview-only skip (no GPU). Undo restores instantly.
+ */
 (function initSolisSilencer() {
-  const e = .5;
-  const t = .14;
-  const i = .22;
-  const n = .05;
-  const r = .11;
-  let o = false;
-  let s = 0;
-  let c = null;
-  let a = false;
-  function $(e) {
-    return document.getElementById(e);
-  }
-  function isLibraryPreview() {
-    return Boolean(document.querySelector(".template-preview-content.is-library-preview"));
-  }
-  function getPreviewVideo() {
-    const e = $("templateVideoPreview");
-    if (!e) return null;
-    return e.querySelector("#splitscreenContentVideo") || e.querySelector(".library-preview-video") || e.querySelector("video");
-  }
-  function getDuration() {
-    const e = window.PreviewTimeline?.getTrim?.();
-    if (e?.duration > 0) return e.duration;
-    const t = getPreviewVideo();
-    return t && Number.isFinite(t.duration) && t.duration > 0 ? t.duration : 0;
-  }
-  function getTimedWords() {
-    if (typeof window.resolveLiveCaptionTimed === "function") {
-      const e = window.resolveLiveCaptionTimed();
-      if (Array.isArray(e) && e.length) return e;
+    const MIN_SILENCE_SEC = 0.5;
+    const BREATH_SEC = 0.14;
+    const MIN_CUT_SEC = 0.22;
+    const AUDIO_FRAME_SEC = 0.05;
+    const AUDIO_SILENCE_RATIO = 0.11;
+
+    let applied = false;
+    let removedSec = 0;
+    let captionBackup = null;
+    let busy = false;
+
+    function $(id) {
+        return document.getElementById(id);
     }
-    try {
-      const e = window.__solisLiveCaptionTimed;
-      if (Array.isArray(e) && e.length) return e;
-    } catch (e) {}
-    return null;
-  }
-  function mergeRegions(e) {
-    if (!e.length) return [];
-    const t = e.map(e => ({
-      start: Number(e.start),
-      end: Number(e.end)
-    })).filter(e => Number.isFinite(e.start) && Number.isFinite(e.end) && e.end - e.start >= i).sort((e, t) => e.start - t.start);
-    const n = [];
-    for (const e of t) {
-      const t = n[n.length - 1];
-      if (t && e.start <= t.end + .05) {
-        t.end = Math.max(t.end, e.end);
-      } else {
-        n.push({
-          start: e.start,
-          end: e.end
-        });
-      }
+
+    function isLibraryPreview() {
+        return Boolean(document.querySelector('.template-preview-content.is-library-preview'));
     }
-    return n;
-  }
-  function cutFromGap(n, r) {
-    const o = r - n;
-    if (o < e) return null;
-    const s = Math.min(t, Math.max(.08, o * .22));
-    const c = n + s;
-    const a = r;
-    if (a - c < i) return null;
-    return {
-      start: Math.round(c * 1e3) / 1e3,
-      end: Math.round(a * 1e3) / 1e3
-    };
-  }
-  function detectFromWords(t, i) {
-    const n = (t || []).filter(e => e && e.kind !== "reaction").map(e => ({
-      start: Number(e.start),
-      end: Number(e.end)
-    })).filter(e => Number.isFinite(e.start) && Number.isFinite(e.end) && e.end > e.start).sort((e, t) => e.start - t.start);
-    if (!n.length) return [];
-    const r = [];
-    const o = n[0].start;
-    if (o >= e) {
-      const e = cutFromGap(0, o);
-      if (e) r.push(e);
+
+    function getPreviewVideo() {
+        const cont = $('templateVideoPreview');
+        if (!cont) return null;
+        return cont.querySelector('#splitscreenContentVideo')
+            || cont.querySelector('.library-preview-video')
+            || cont.querySelector('video');
     }
-    for (let e = 0; e < n.length - 1; e++) {
-      const t = n[e].end;
-      const i = n[e + 1].start;
-      const o = cutFromGap(t, i);
-      if (o) r.push(o);
+
+    function getDuration() {
+        const trim = window.PreviewTimeline?.getTrim?.();
+        if (trim?.duration > 0) return trim.duration;
+        const v = getPreviewVideo();
+        return (v && Number.isFinite(v.duration) && v.duration > 0) ? v.duration : 0;
     }
-    const s = n[n.length - 1].end;
-    if (i > 0 && i - s >= e) {
-      const e = cutFromGap(s, i);
-      if (e) r.push(e);
-    }
-    return mergeRegions(r);
-  }
-  async function detectFromAudio(e, t) {
-    if (!e || t < 1) return [];
-    let i = e.currentSrc || e.src;
-    if (!i) return [];
-    let o;
-    try {
-      if (typeof fetchSecureVideoObjectUrl === "function" && i.startsWith("http")) {
-        try {
-          i = await fetchSecureVideoObjectUrl(i);
-        } catch (e) {}
-      }
-      const e = await fetch(i, {
-        credentials: "include",
-        cache: "force-cache"
-      });
-      if (!e.ok) return [];
-      o = await e.arrayBuffer();
-    } catch (e) {
-      return [];
-    }
-    if (!o || o.byteLength < 1e3) return [];
-    const s = window.OfflineAudioContext || window.webkitOfflineAudioContext;
-    const c = window.AudioContext || window.webkitAudioContext;
-    if (!c) return [];
-    let a;
-    try {
-      a = new c;
-      const e = await a.decodeAudioData(o.slice(0));
-      await a.close().catch(() => {});
-      a = null;
-      const i = e.getChannelData(0);
-      const s = e.sampleRate || 44100;
-      const l = Math.max(1, Math.floor(s * n));
-      const d = [];
-      for (let e = 0; e < i.length; e += l) {
-        let t = 0;
-        const n = Math.min(i.length, e + l);
-        for (let r = e; r < n; r++) t += i[r] * i[r];
-        d.push(Math.sqrt(t / Math.max(1, n - e)));
-      }
-      if (!d.length) return [];
-      const u = d.slice().sort((e, t) => e - t);
-      const f = u[Math.floor(u.length * .85)] || .01;
-      const w = Math.max(.004, f * r);
-      const m = [];
-      let p = -1;
-      for (let e = 0; e < d.length; e++) {
-        const i = e * n;
-        const r = d[e] < w;
-        if (r && p < 0) p = i;
-        if ((!r || e === d.length - 1) && p >= 0) {
-          const e = r ? Math.min(t, i + n) : i;
-          const o = cutFromGap(p, e);
-          if (o) m.push(o);
-          p = -1;
+
+    function getTimedWords() {
+        if (typeof window.resolveLiveCaptionTimed === 'function') {
+            const w = window.resolveLiveCaptionTimed();
+            if (Array.isArray(w) && w.length) return w;
         }
-      }
-      return mergeRegions(m);
-    } catch (e) {
-      try {
-        await (a?.close?.());
-      } catch (e) {}
-      return [];
-    } finally {
-      void s;
+        try {
+            const w = window.__solisLiveCaptionTimed;
+            if (Array.isArray(w) && w.length) return w;
+        } catch (_) { /* ignore */ }
+        return null;
     }
-  }
-  function totalRemoved(e) {
-    return e.reduce((e, t) => e + Math.max(0, t.end - t.start), 0);
-  }
-  function formatRemoved(e) {
-    const t = Math.round(e * 10) / 10;
-    return Number.isInteger(t) ? String(t) : t.toFixed(1);
-  }
-  function showNote(e, {sticky: t = false} = {}) {
-    const i = $("silencerNote");
-    if (!i) return;
-    i.hidden = false;
-    i.textContent = e;
-    i.classList.add("is-visible");
-    if (i._hideTimer) clearTimeout(i._hideTimer);
-    if (!t) {
-      i._hideTimer = setTimeout(() => {
-        i.classList.remove("is-visible");
-        i.hidden = true;
-      }, 3200);
+
+    function mergeRegions(regions) {
+        if (!regions.length) return [];
+        const sorted = regions
+            .map((r) => ({ start: Number(r.start), end: Number(r.end) }))
+            .filter((r) => Number.isFinite(r.start) && Number.isFinite(r.end) && r.end - r.start >= MIN_CUT_SEC)
+            .sort((a, b) => a.start - b.start);
+        const out = [];
+        for (const r of sorted) {
+            const last = out[out.length - 1];
+            if (last && r.start <= last.end + 0.05) {
+                last.end = Math.max(last.end, r.end);
+            } else {
+                out.push({ start: r.start, end: r.end });
+            }
+        }
+        return out;
     }
-  }
-  function hideNote() {
-    const e = $("silencerNote");
-    if (!e) return;
-    if (e._hideTimer) clearTimeout(e._hideTimer);
-    e.classList.remove("is-visible");
-    e.hidden = true;
-    e.textContent = "";
-  }
-  function setButtonState() {
-    const e = $("previewSilencerBtn");
-    if (!e) return;
-    e.classList.toggle("is-silenced", o);
-    e.classList.toggle("active", o);
-    e.setAttribute("aria-pressed", o ? "true" : "false");
-    e.removeAttribute("title");
-    e.setAttribute("aria-label", o ? "Undo silence cleanup" : "Remove silences");
-    const t = e.querySelector(".silencer-btn-label");
-    if (t) t.textContent = o ? "Undo" : "";
-  }
-  function markDirty() {
-    try {
-      const e = window.clipsStudio;
-      if (!e?.currentTemplateForPreview?.isLibraryPreview) return;
-      e._librarySilenceDirty = !!o;
-      e._librarySilenceCuts = o ? (window.PreviewTimeline?.getSkipRegions?.() || []).slice() : [];
-      if (typeof window.syncLibraryConfirmLabel === "function") {
-        window.syncLibraryConfirmLabel();
-      } else {
-        const e = $("confirmUseTemplateBtn");
+
+    /** Cut interior of long pauses; keep a tiny breath so it doesn't feel choppy. */
+    function cutFromGap(gapStart, gapEnd) {
+        const len = gapEnd - gapStart;
+        if (len < MIN_SILENCE_SEC) return null;
+        const keep = Math.min(BREATH_SEC, Math.max(0.08, len * 0.22));
+        const start = gapStart + keep;
+        const end = gapEnd;
+        if (end - start < MIN_CUT_SEC) return null;
+        return { start: Math.round(start * 1000) / 1000, end: Math.round(end * 1000) / 1000 };
+    }
+
+    function detectFromWords(words, duration) {
+        const speech = (words || [])
+            .filter((w) => w && w.kind !== 'reaction')
+            .map((w) => ({
+                start: Number(w.start),
+                end: Number(w.end),
+            }))
+            .filter((w) => Number.isFinite(w.start) && Number.isFinite(w.end) && w.end > w.start)
+            .sort((a, b) => a.start - b.start);
+
+        if (!speech.length) return [];
+
+        const regions = [];
+        const first = speech[0].start;
+        if (first >= MIN_SILENCE_SEC) {
+            const cut = cutFromGap(0, first);
+            if (cut) regions.push(cut);
+        }
+        for (let i = 0; i < speech.length - 1; i++) {
+            const gapStart = speech[i].end;
+            const gapEnd = speech[i + 1].start;
+            const cut = cutFromGap(gapStart, gapEnd);
+            if (cut) regions.push(cut);
+        }
+        const lastEnd = speech[speech.length - 1].end;
+        if (duration > 0 && duration - lastEnd >= MIN_SILENCE_SEC) {
+            const cut = cutFromGap(lastEnd, duration);
+            if (cut) regions.push(cut);
+        }
+        return mergeRegions(regions);
+    }
+
+    async function detectFromAudio(video, duration) {
+        if (!video || duration < 1) return [];
+        let src = video.currentSrc || video.src;
+        if (!src) return [];
+
+        let arrayBuf;
+        try {
+            if (typeof fetchSecureVideoObjectUrl === 'function' && src.startsWith('http')) {
+                try {
+                    src = await fetchSecureVideoObjectUrl(src);
+                } catch (_) { /* fall through to direct fetch */ }
+            }
+            const res = await fetch(src, { credentials: 'include', cache: 'force-cache' });
+            if (!res.ok) return [];
+            arrayBuf = await res.arrayBuffer();
+        } catch (_) {
+            return [];
+        }
+        if (!arrayBuf || arrayBuf.byteLength < 1000) return [];
+
+        const AC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return [];
+
+        let audioCtx;
+        try {
+            audioCtx = new AudioCtx();
+            const decoded = await audioCtx.decodeAudioData(arrayBuf.slice(0));
+            await audioCtx.close().catch(() => {});
+            audioCtx = null;
+
+            const channel = decoded.getChannelData(0);
+            const sr = decoded.sampleRate || 44100;
+            const frame = Math.max(1, Math.floor(sr * AUDIO_FRAME_SEC));
+            const energies = [];
+            for (let i = 0; i < channel.length; i += frame) {
+                let sum = 0;
+                const end = Math.min(channel.length, i + frame);
+                for (let j = i; j < end; j++) sum += channel[j] * channel[j];
+                energies.push(Math.sqrt(sum / Math.max(1, end - i)));
+            }
+            if (!energies.length) return [];
+
+            const sorted = energies.slice().sort((a, b) => a - b);
+            const p85 = sorted[Math.floor(sorted.length * 0.85)] || 0.01;
+            const threshold = Math.max(0.004, p85 * AUDIO_SILENCE_RATIO);
+
+            const regions = [];
+            let silentStart = -1;
+            for (let i = 0; i < energies.length; i++) {
+                const t = i * AUDIO_FRAME_SEC;
+                const silent = energies[i] < threshold;
+                if (silent && silentStart < 0) silentStart = t;
+                if ((!silent || i === energies.length - 1) && silentStart >= 0) {
+                    const endT = silent ? Math.min(duration, t + AUDIO_FRAME_SEC) : t;
+                    const cut = cutFromGap(silentStart, endT);
+                    if (cut) regions.push(cut);
+                    silentStart = -1;
+                }
+            }
+            return mergeRegions(regions);
+        } catch (_) {
+            try { await audioCtx?.close?.(); } catch (_) { /* ignore */ }
+            return [];
+        } finally {
+            void AC;
+        }
+    }
+
+    function totalRemoved(regions) {
+        return regions.reduce((s, r) => s + Math.max(0, r.end - r.start), 0);
+    }
+
+    function formatRemoved(sec) {
+        const n = Math.round(sec * 10) / 10;
+        return Number.isInteger(n) ? String(n) : n.toFixed(1);
+    }
+
+    function showNote(text, { sticky = false } = {}) {
+        const note = $('silencerNote');
+        if (!note) return;
+        note.hidden = false;
+        note.textContent = text;
+        note.classList.add('is-visible');
+        if (note._hideTimer) clearTimeout(note._hideTimer);
+        if (!sticky) {
+            note._hideTimer = setTimeout(() => {
+                note.classList.remove('is-visible');
+                note.hidden = true;
+            }, 3200);
+        }
+    }
+
+    function hideNote() {
+        const note = $('silencerNote');
+        if (!note) return;
+        if (note._hideTimer) clearTimeout(note._hideTimer);
+        note.classList.remove('is-visible');
+        note.hidden = true;
+        note.textContent = '';
+    }
+
+    function setButtonState() {
+        const btn = $('previewSilencerBtn');
+        if (!btn) return;
+        btn.classList.toggle('is-silenced', applied);
+        btn.classList.toggle('active', applied);
+        btn.setAttribute('aria-pressed', applied ? 'true' : 'false');
+        btn.removeAttribute('title');
+        btn.setAttribute('aria-label', applied ? 'Undo silence cleanup' : 'Remove silences');
+        const label = btn.querySelector('.silencer-btn-label');
+        if (label) label.textContent = applied ? 'Undo' : '';
+    }
+
+    function markDirty() {
+        try {
+            const studio = window.clipsStudio;
+            if (!studio?.currentTemplateForPreview?.isLibraryPreview) return;
+            // Real silence toggle — arm gate only blocks seed/layout false-dirties
+            studio._librarySilenceDirty = !!applied;
+            studio._librarySilenceCuts = applied
+                ? (window.PreviewTimeline?.getSkipRegions?.() || []).slice()
+                : [];
+            if (typeof window.syncLibraryConfirmLabel === 'function') {
+                window.syncLibraryConfirmLabel();
+            } else {
+                const confirmBtn = $('confirmUseTemplateBtn');
+                if (confirmBtn) {
+                    confirmBtn.textContent = applied ? 'Apply & Download' : 'Download';
+                    confirmBtn.classList.add('library-download-mode');
+                }
+                if (typeof window.syncUseTemplateFab === 'function') window.syncUseTemplateFab();
+            }
+        } catch (_) { /* ignore */ }
+    }
+
+    function remapCaptionsForCuts(words, regions) {
+        if (!Array.isArray(words) || !words.length || !regions.length) return words;
+        return words.map((w) => {
+            const start = Number(w.start);
+            const end = Number(w.end);
+            if (!Number.isFinite(start)) return w;
+            // Drop words that live entirely inside a cut
+            for (const r of regions) {
+                if (start >= r.start - 0.01 && end <= r.end + 0.01) return null;
+            }
+            // Words keep source times — playback seeks over cuts, so alignment stays true.
+            return { ...w, start, end };
+        }).filter(Boolean);
+    }
+
+    async function detectCutsFromServer() {
+        try {
+            const projectId = window.clipsStudio?.currentTemplateForPreview?.projectId;
+            if (!projectId) return [];
+            const apiBase = (typeof API_BASE_URL !== 'undefined' && API_BASE_URL) ? API_BASE_URL : '';
+            const headers = (typeof getAuthHeaders === 'function') ? getAuthHeaders() : {};
+            const res = await fetch(
+                `${apiBase}/clips/projects/${encodeURIComponent(projectId)}/silence-preview`,
+                { credentials: 'include', headers },
+            );
+            if (!res.ok) return [];
+            const body = await res.json().catch(() => ({}));
+            const words = body.caption_preview_words;
+            if (Array.isArray(words) && words.length
+                && typeof window.setLiveCaptionTimedWords === 'function') {
+                try { window.setLiveCaptionTimedWords(words); } catch (_) { /* ignore */ }
+            }
+            const cuts = Array.isArray(body.cuts) ? body.cuts : [];
+            return mergeRegions(
+                cuts.map((r) => ({ start: Number(r.start), end: Number(r.end) })),
+            );
+        } catch (_) {
+            return [];
+        }
+    }
+
+    async function detectCuts() {
+        const duration = getDuration();
+        const words = getTimedWords();
+        let regions = detectFromWords(words, duration);
+        if (!regions.length) {
+            regions = await detectFromAudio(getPreviewVideo(), duration);
+        }
+        if (!regions.length) {
+            regions = await detectCutsFromServer();
+        }
+        regions = mergeRegions(regions);
+
+        // Scope to selected timeline block when user focused a split segment
+        try {
+            const range = window.PreviewTimeline?.getActiveEditRange?.();
+            if (range && range.segIndex != null
+                && Number.isFinite(range.start) && Number.isFinite(range.end)
+                && range.end - range.start > 0.4) {
+                regions = regions
+                    .map((r) => ({
+                        start: Math.max(r.start, range.start),
+                        end: Math.min(r.end, range.end),
+                    }))
+                    .filter((r) => r.end - r.start >= 0.22);
+                regions = mergeRegions(regions);
+            }
+        } catch (_) { /* ignore */ }
+
+        return regions;
+    }
+
+    async function commitSilencer(regions) {
+        if (!regions.length) return;
+
+        const words = getTimedWords();
+        removedSec = totalRemoved(regions);
+        captionBackup = words ? words.map((w) => ({ ...w })) : null;
+
+        window.PreviewTimeline.setSkipRegions(regions);
+
+        if (words && typeof window.setLiveCaptionTimedWords === 'function') {
+            const next = remapCaptionsForCuts(words, regions);
+            window.setLiveCaptionTimedWords(next);
+        }
+
+        applied = true;
+        setButtonState();
+        markDirty();
+        const range = window.PreviewTimeline?.getActiveEditRange?.();
+        const scoped = range && range.segIndex != null;
+        showNote(
+            scoped
+                ? `Removed ${formatRemoved(removedSec)}s silence in block ${range.segIndex + 1}`
+                : `Removed ${formatRemoved(removedSec)}s of silence`,
+        );
+
+        const video = getPreviewVideo();
+        if (video) {
+            try {
+                const t = video.currentTime || 0;
+                const exit = window.PreviewTimeline.resolveSkipTime?.(t);
+                if (exit != null && Math.abs(exit - t) > 0.05) {
+                    video.currentTime = exit;
+                }
+                video.play().catch(() => {});
+            } catch (_) { /* ignore */ }
+        }
+    }
+
+    async function applySilencer() {
+        if (busy || applied) return;
+        if (!isLibraryPreview()) return;
+        if (!window.PreviewTimeline?.setSkipRegions) {
+            showNote('Preview not ready yet');
+            return;
+        }
+        if (window.SolisSilenceCutSuggest?.isOpen?.()) return;
+
+        busy = true;
+        const btn = $('previewSilencerBtn');
+        if (btn) btn.classList.add('is-working');
+
+        try {
+            showNote('Scanning for pauses…');
+            const regions = await detectCuts();
+
+            if (!regions.length) {
+                showNote('No long pauses found');
+                return;
+            }
+
+            const range = window.PreviewTimeline?.getActiveEditRange?.();
+            const scoped = range && range.segIndex != null;
+            const removed = formatRemoved(totalRemoved(regions));
+
+            window.SolisSilenceCutSuggest?.show({
+                source: 'silencer',
+                regions,
+                label: scoped
+                    ? `Red = ${removed}s silence in block ${range.segIndex + 1} · Accept?`
+                    : `Red = ${removed}s silence · Accept?`,
+                onAccept: (regs) => { commitSilencer(regs); },
+                onReject: () => { showNote('Silence cleanup dismissed'); },
+            });
+        } finally {
+            busy = false;
+            if (btn) btn.classList.remove('is-working');
+        }
+    }
+
+    function undoSilencer() {
+        if (!applied) return;
+        try { window.SolisSilenceCutSuggest?.clear?.(); } catch (_) { /* ignore */ }
+        if (window.PreviewTimeline?.clearSkipRegions) {
+            window.PreviewTimeline.clearSkipRegions();
+        }
+        if (captionBackup && typeof window.setLiveCaptionTimedWords === 'function') {
+            window.setLiveCaptionTimedWords(captionBackup);
+        }
+        captionBackup = null;
+        removedSec = 0;
+        applied = false;
+        setButtonState();
+        markDirty();
+        hideNote();
+        showNote('Silence restored');
+    }
+
+    function resetSilencer() {
+        try { window.SolisSilenceCutSuggest?.clear?.(); } catch (_) { /* ignore */ }
+        if (window.PreviewTimeline?.clearSkipRegions) {
+            window.PreviewTimeline.clearSkipRegions();
+        }
+        captionBackup = null;
+        removedSec = 0;
+        applied = false;
+        busy = false;
+        setButtonState();
+        hideNote();
+        try {
+            if (window.clipsStudio) {
+                window.clipsStudio._librarySilenceDirty = false;
+                window.clipsStudio._librarySilenceCuts = [];
+            }
+        } catch (_) { /* ignore */ }
+    }
+
+    function toggleSilencer(e) {
         if (e) {
-          e.textContent = o ? "Apply & Download" : "Download";
-          e.classList.add("library-download-mode");
+            e.preventDefault();
+            e.stopPropagation();
         }
-        if (typeof window.syncUseTemplateFab === "function") window.syncUseTemplateFab();
-      }
-    } catch (e) {}
-  }
-  function remapCaptionsForCuts(e, t) {
-    if (!Array.isArray(e) || !e.length || !t.length) return e;
-    return e.map(e => {
-      const i = Number(e.start);
-      const n = Number(e.end);
-      if (!Number.isFinite(i)) return e;
-      for (const e of t) {
-        if (i >= e.start - .01 && n <= e.end + .01) return null;
-      }
-      return {
-        ...e,
-        start: i,
-        end: n
-      };
-    }).filter(Boolean);
-  }
-  async function detectCutsFromServer() {
-    try {
-      const e = window.clipsStudio?.currentTemplateForPreview?.projectId;
-      if (!e) return [];
-      const t = typeof API_BASE_URL !== "undefined" && API_BASE_URL ? API_BASE_URL : "";
-      const i = typeof getAuthHeaders === "function" ? getAuthHeaders() : {};
-      const n = await fetch(`${t}/clips/projects/${encodeURIComponent(e)}/silence-preview`, {
-        credentials: "include",
-        headers: i
-      });
-      if (!n.ok) return [];
-      const r = await n.json().catch(() => ({}));
-      const o = r.caption_preview_words;
-      if (Array.isArray(o) && o.length && typeof window.setLiveCaptionTimedWords === "function") {
-        try {
-          window.setLiveCaptionTimedWords(o);
-        } catch (e) {}
-      }
-      const s = Array.isArray(r.cuts) ? r.cuts : [];
-      return mergeRegions(s.map(e => ({
-        start: Number(e.start),
-        end: Number(e.end)
-      })));
-    } catch (e) {
-      return [];
+        if (!isLibraryPreview()) return;
+        if (applied) undoSilencer();
+        else applySilencer();
     }
-  }
-  async function detectCuts() {
-    const e = getDuration();
-    const t = getTimedWords();
-    let i = detectFromWords(t, e);
-    if (!i.length) {
-      i = await detectFromAudio(getPreviewVideo(), e);
-    }
-    if (!i.length) {
-      i = await detectCutsFromServer();
-    }
-    i = mergeRegions(i);
-    try {
-      const e = window.PreviewTimeline?.getActiveEditRange?.();
-      if (e && e.segIndex != null && Number.isFinite(e.start) && Number.isFinite(e.end) && e.end - e.start > .4) {
-        i = i.map(t => ({
-          start: Math.max(t.start, e.start),
-          end: Math.min(t.end, e.end)
-        })).filter(e => e.end - e.start >= .22);
-        i = mergeRegions(i);
-      }
-    } catch (e) {}
-    return i;
-  }
-  async function commitSilencer(e) {
-    if (!e.length) return;
-    const t = getTimedWords();
-    s = totalRemoved(e);
-    c = t ? t.map(e => ({
-      ...e
-    })) : null;
-    window.PreviewTimeline.setSkipRegions(e);
-    if (t && typeof window.setLiveCaptionTimedWords === "function") {
-      const i = remapCaptionsForCuts(t, e);
-      window.setLiveCaptionTimedWords(i);
-    }
-    o = true;
-    setButtonState();
-    markDirty();
-    const i = window.PreviewTimeline?.getActiveEditRange?.();
-    const n = i && i.segIndex != null;
-    showNote(n ? `Removed ${formatRemoved(s)}s silence in block ${i.segIndex + 1}` : `Removed ${formatRemoved(s)}s of silence`);
-    const r = getPreviewVideo();
-    if (r) {
-      try {
-        const e = r.currentTime || 0;
-        const t = window.PreviewTimeline.resolveSkipTime?.(e);
-        if (t != null && Math.abs(t - e) > .05) {
-          r.currentTime = t;
+
+    function syncVisibility() {
+        const btn = $('previewSilencerBtn');
+        const improve = $('previewImproveBtn');
+        const mod = $('previewModifiersBtn');
+        const menu = $('previewModifiersMenu');
+        const pill = $('previewEditorPill');
+        const lib = isLibraryPreview();
+        if (btn) {
+            btn.style.display = lib ? '' : 'none';
+            if (!lib) resetSilencer();
+            else setButtonState();
         }
-        r.play().catch(() => {});
-      } catch (e) {}
-    }
-  }
-  async function applySilencer() {
-    if (a || o) return;
-    if (!isLibraryPreview()) return;
-    if (!window.PreviewTimeline?.setSkipRegions) {
-      showNote("Preview not ready yet");
-      return;
-    }
-    if (window.SolisSilenceCutSuggest?.isOpen?.()) return;
-    a = true;
-    const e = $("previewSilencerBtn");
-    if (e) e.classList.add("is-working");
-    try {
-      showNote("Scanning for pauses…");
-      const e = await detectCuts();
-      if (!e.length) {
-        showNote("No long pauses found");
-        return;
-      }
-      const t = window.PreviewTimeline?.getActiveEditRange?.();
-      const i = t && t.segIndex != null;
-      const n = formatRemoved(totalRemoved(e));
-      window.SolisSilenceCutSuggest?.show({
-        source: "silencer",
-        regions: e,
-        label: i ? `Red = ${n}s silence in block ${t.segIndex + 1} · Accept?` : `Red = ${n}s silence · Accept?`,
-        onAccept: e => {
-          commitSilencer(e);
-        },
-        onReject: () => {
-          showNote("Silence cleanup dismissed");
+        if (improve) {
+            improve.style.display = lib ? '' : 'none';
+            if (!lib) {
+                try { window.SolisImproveClip?.reset?.(); } catch (_) { /* ignore */ }
+            } else {
+                try { window.SolisImproveClip?.syncVisibility?.(); } catch (_) { /* ignore */ }
+            }
         }
-      });
-    } finally {
-      a = false;
-      if (e) e.classList.remove("is-working");
+        if (mod) mod.style.display = lib ? 'none' : '';
+        if (menu && lib) {
+            menu.hidden = true;
+            if (mod) mod.setAttribute('aria-expanded', 'false');
+        }
+        if (pill) {
+            const silencerOn = lib && btn && btn.style.display !== 'none';
+            const improveOn = lib && improve && improve.style.display !== 'none';
+            const modifiersOn = !lib && mod && mod.style.display !== 'none';
+            pill.classList.toggle('has-feature-tools', Boolean(silencerOn || improveOn || modifiersOn));
+        }
     }
-  }
-  function undoSilencer() {
-    if (!o) return;
-    try {
-      window.SolisSilenceCutSuggest?.clear?.();
-    } catch (e) {}
-    if (window.PreviewTimeline?.clearSkipRegions) {
-      window.PreviewTimeline.clearSkipRegions();
-    }
-    if (c && typeof window.setLiveCaptionTimedWords === "function") {
-      window.setLiveCaptionTimedWords(c);
-    }
-    c = null;
-    s = 0;
-    o = false;
-    setButtonState();
-    markDirty();
-    hideNote();
-    showNote("Silence restored");
-  }
-  function resetSilencer() {
-    try {
-      window.SolisSilenceCutSuggest?.clear?.();
-    } catch (e) {}
-    if (window.PreviewTimeline?.clearSkipRegions) {
-      window.PreviewTimeline.clearSkipRegions();
-    }
-    c = null;
-    s = 0;
-    o = false;
-    a = false;
-    setButtonState();
-    hideNote();
-    try {
-      if (window.clipsStudio) {
-        window.clipsStudio._librarySilenceDirty = false;
-        window.clipsStudio._librarySilenceCuts = [];
-      }
-    } catch (e) {}
-  }
-  function toggleSilencer(e) {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    if (!isLibraryPreview()) return;
-    if (o) undoSilencer(); else applySilencer();
-  }
-  function syncVisibility() {
-    const e = $("previewSilencerBtn");
-    const t = $("previewImproveBtn");
-    const i = $("previewModifiersBtn");
-    const n = $("previewModifiersMenu");
-    const r = $("previewEditorPill");
-    const o = isLibraryPreview();
-    if (e) {
-      e.style.display = o ? "" : "none";
-      if (!o) resetSilencer(); else setButtonState();
-    }
-    if (t) {
-      t.style.display = o ? "" : "none";
-      if (!o) {
-        try {
-          window.SolisImproveClip?.reset?.();
-        } catch (e) {}
-      } else {
-        try {
-          window.SolisImproveClip?.syncVisibility?.();
-        } catch (e) {}
-      }
-    }
-    if (i) i.style.display = o ? "none" : "";
-    if (n && o) {
-      n.hidden = true;
-      if (i) i.setAttribute("aria-expanded", "false");
-    }
-    if (r) {
-      const n = o && e && e.style.display !== "none";
-      const s = o && t && t.style.display !== "none";
-      const c = !o && i && i.style.display !== "none";
-      r.classList.toggle("has-feature-tools", Boolean(n || s || c));
-    }
-  }
-  window.SolisSilencer = {
-    toggle: toggleSilencer,
-    apply: applySilencer,
-    undo: undoSilencer,
-    reset: resetSilencer,
-    syncVisibility: syncVisibility,
-    detectCuts: detectCuts,
-    isApplied: () => o,
-    getCuts: () => o ? (window.PreviewTimeline?.getSkipRegions?.() || []).slice() : [],
-    getRemovedSec: () => s
-  };
-  document.addEventListener("DOMContentLoaded", () => {
-    const e = $("previewSilencerBtn");
-    if (e && !e.dataset.bound) {
-      e.dataset.bound = "1";
-      e.addEventListener("click", toggleSilencer);
-    }
-    syncVisibility();
-  });
+
+    window.SolisSilencer = {
+        toggle: toggleSilencer,
+        apply: applySilencer,
+        undo: undoSilencer,
+        reset: resetSilencer,
+        syncVisibility,
+        detectCuts,
+        isApplied: () => applied,
+        getCuts: () => (applied ? (window.PreviewTimeline?.getSkipRegions?.() || []).slice() : []),
+        getRemovedSec: () => removedSec,
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const btn = $('previewSilencerBtn');
+        if (btn && !btn.dataset.bound) {
+            btn.dataset.bound = '1';
+            btn.addEventListener('click', toggleSilencer);
+        }
+        syncVisibility();
+    });
 })();

@@ -1,3 +1,5 @@
+/* Limit Modal Styling */
+
 .limit-overlay {
     position: fixed;
     inset: 0;
@@ -35,6 +37,7 @@
     to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
+/* LEFT panel */
 .limit-modal .panel-left {
     width: 52%;
     background: #FDF6F3;
@@ -123,6 +126,7 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
+/* Usage box */
 .limit-modal .usage-box {
     position: relative;
     z-index: 1;
@@ -182,6 +186,7 @@
     font-weight: 600;
 }
 
+/* RIGHT panel */
 .limit-modal .panel-right {
     flex: 1;
     padding: 32px 40px;
@@ -354,6 +359,7 @@
     transform: translateY(0);
 }
 
+/* Mobile responsive */
 @media (max-width: 640px) {
     .limit-modal {
         flex-direction: column;

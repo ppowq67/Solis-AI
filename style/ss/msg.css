@@ -1,5 +1,7 @@
-:root {
 
+
+:root {
+    
     --color-orange-primary: #ff6b35;
     --color-peach-secondary: #ffb380;
 
@@ -15,7 +17,7 @@
 }
 
 [data-theme="_no-dark"] {
-
+    
     --bg-page: #0a0e17;
     --bg-ai-message: #0f1419;
     --bg-user-message: linear-gradient(135deg, #1a2332 0%, #0f1824 100%);
@@ -416,7 +418,7 @@
     }
 
 .chat-container {
-    padding-bottom: 320px;
+    padding-bottom: 320px; 
     display: flex;
     flex-direction: column;
     height: calc(100vh - 80px);

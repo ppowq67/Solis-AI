@@ -1,3 +1,5 @@
+
+
 :root {
     --peach-50: #FFF5F0;
     --peach-100: #FFE8DC;
@@ -9,7 +11,7 @@
     --peach-700: #C44E1A;
     --peach-800: #8A3712;
     --peach-900: #5C240C;
-
+    
     --neutral-50: #FAFAF9;
     --neutral-100: #F5F5F4;
     --neutral-200: #E7E5E4;
@@ -17,7 +19,7 @@
     --neutral-600: #57534E;
     --neutral-700: #44403C;
     --neutral-900: #1C1917;
-
+    
     --card-bg: #ffffff;
     --text-primary: #1C1917;
     --accent-primary: #FF7A56;
@@ -242,6 +244,7 @@
     box-shadow: 0 2px 8px rgba(255, 107, 107, 0.25);
 }
 
+/* 🔐 SECURITY: Settings action button styles */
 .settings-action-btn {
     padding: 10px 20px;
     background: linear-gradient(135deg, #ff6b35 0%, #ff8856 100%);
@@ -431,15 +434,16 @@ input:checked + .toggle-slider:before {
         width: 100%;
         max-width: 420px;
     }
-
+    
     .settings-header {
         padding: 28px 24px;
     }
+    
 
     .settings-title {
         font-size: 24px;
     }
-
+    
     .settings-option {
         padding: 16px 18px;
     }

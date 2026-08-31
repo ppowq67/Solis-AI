@@ -1,3 +1,5 @@
+/* 💳 Billing Panel Styles */
+
 .billing-backdrop {
     position: fixed;
     top: 0;
@@ -244,6 +246,7 @@
     line-height: 1.4;
 }
 
+/* Scrollbar styling for billing panel */
 .billing-content::-webkit-scrollbar {
     width: 8px;
 }
@@ -261,6 +264,7 @@
     background: rgba(255, 122, 80, 0.6);
 }
 
+/* Responsive */
 @media (max-width: 768px) {
     .billing-panel {
         width: 100%;

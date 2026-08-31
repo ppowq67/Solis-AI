@@ -1,3 +1,8 @@
+/*
+ * Pill Nav — single source of truth for the desktop left-side nav
+ */
+
+/* ── Variables ─────────────────────────────────── */
 :root {
     --nav-glass:      rgba(255, 255, 255, 0.70);
     --nav-blur:       blur(32px) saturate(190%) brightness(1.06);
@@ -21,6 +26,7 @@
     --nav-shell-padding: 150px;
 }
 
+/* ── Layout: app shell ─────────────────────────── */
 #appContainer {
     display: block;
     width: 100%;
@@ -39,6 +45,7 @@
     scroll-behavior: smooth;
 }
 
+/* Sections shift right to clear the nav */
 .chat-container,
 .dashboard-container,
 #portalContainer,
@@ -61,6 +68,7 @@
     display: block;
 }
 
+/* ── Nav wrapper ───────────────────────────────── */
 .ui-wrapper {
     position: fixed !important;
     left: var(--nav-left) !important;
@@ -72,10 +80,12 @@
     transform-style: flat !important;
 }
 
+/* Hide old mobile nav on desktop */
 @media (min-width: 769px) {
     .nav-wrapper { display: none !important; }
 }
 
+/* ── Pill ──────────────────────────────────────── */
 .pill-nav {
     background: var(--nav-glass);
     backdrop-filter: var(--nav-blur);
@@ -96,6 +106,7 @@
     transform-style: flat !important;
 }
 
+/* Inner tint gradient */
 .pill-nav::before {
     content: '';
     position: absolute;
@@ -111,6 +122,7 @@
     z-index: 0;
 }
 
+/* Top specular line */
 .pill-nav::after {
     content: '';
     position: absolute;
@@ -127,6 +139,7 @@
     z-index: 2;
 }
 
+/* ── Nav items ─────────────────────────────────── */
 .nav-item {
     width: 100%;
     height: var(--nav-item-h);
@@ -156,6 +169,7 @@
 
 .nav-item:active { transform: scale(0.95); }
 
+/* Explicit reset — overrides any cached translateX(-3px) from old versions */
 .nav-item,
 .nav-item.active {
     transform: none;
@@ -206,6 +220,7 @@
     color: var(--nav-accent);
 }
 
+/* ── Lumen icon ────────────────────────────────── */
 .lumen-icon .core {
     transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
 }
@@ -215,6 +230,7 @@
     filter: drop-shadow(0 0 8px var(--nav-accent-glow));
 }
 
+/* ── Profile button ────────────────────────────── */
 .profile-btn {
     position: fixed;
     bottom: 26px;
@@ -264,6 +280,7 @@
     pointer-events: none;
 }
 
+/* ── User menu dropdown ────────────────────────── */
 .user-menu-dropdown {
     position: fixed !important;
     bottom: 130px !important;
@@ -343,6 +360,7 @@
     margin: 4px 0;
 }
 
+/* ── Mobile ────────────────────────────────────── */
 @media (max-width: 768px) {
     .ui-wrapper    { display: none !important; }
     #profileBtn    { display: none !important; }

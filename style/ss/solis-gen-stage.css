@@ -48,7 +48,15 @@
     filter:blur(5px);
     pointer-events:none;
 }
-body.solis-gen-stage-active{overflow:hidden;}
+.solis-gen-stage.is-open.is-error{
+    filter:blur(0);
+}
+.solis-gen-stage.is-error .solis-gen-aff-body,
+.solis-gen-stage.is-error .solis-gen-aff-body.is-tip-out{
+    filter:blur(0) !important;
+    opacity:1 !important;
+    transform:none !important;
+}
 
 body.solis-gen-stage-active .generation-progress-wrapper{
     opacity:0 !important;
@@ -228,7 +236,7 @@ html[data-solis-cursor="off"] .solis-gen-brand{
 
 .solis-gen-mark{
     margin:18px 0 12px;
-    width:48px;height:48px;
+    width:64px;height:64px;
     display:flex;align-items:center;justify-content:center;
     filter:none;
     flex-shrink:0;
@@ -244,17 +252,168 @@ html[data-solis-cursor="off"] .solis-gen-brand{
     z-index:0;
 }
 .solis-gen-mark svg{
-    width:48px;height:48px;display:block;
+    width:64px;height:64px;display:block;
     position:relative;z-index:1;
     overflow:visible;
+    shape-rendering:geometricPrecision;
 }
-.solis-gen-mark svg circle{
-    fill:#ea580c !important;
-    stroke:none !important;
+.solis-gen-mark svg path[fill="url(#gen-companion-gradient)"]{
+    stroke:none;
 }
-.solis-gen-mark svg ellipse{
-    fill:none !important;
-    stroke:#ea580c !important;
+.solis-gen-mark .sleep-zzz{
+    position:absolute;
+    inset:-4px -8px -4px -4px;
+    pointer-events:none;
+    opacity:0;
+    transition:opacity .25s ease;
+    overflow:visible;
+    z-index:2;
+}
+.solis-gen-mark .sleep-zzz .zzz{
+    position:absolute;
+    font-family:ui-rounded,'Segoe UI',system-ui,sans-serif;
+    font-weight:900;
+    font-style:italic;
+    line-height:1;
+    color:#fff;
+    opacity:0;
+    text-shadow:
+        0 0 8px rgba(255,255,255,.45),
+        0 1px 6px rgba(0,0,0,.4);
+}
+.solis-gen-mark .sleep-zzz .zzz--big{
+    left:54%;
+    top:8%;
+    font-size:15px;
+    animation:solis-gen-zzz-float 4.4s ease-in-out infinite;
+}
+.solis-gen-mark .sleep-zzz .zzz--mid{
+    left:48%;
+    top:20%;
+    font-size:11px;
+    animation:solis-gen-zzz-float 4.4s ease-in-out infinite;
+    animation-delay:.32s;
+}
+.solis-gen-mark .sleep-zzz .zzz--sm{
+    left:60%;
+    top:28%;
+    font-size:8px;
+    animation:solis-gen-zzz-float 4.4s ease-in-out infinite;
+    animation-delay:.64s;
+}
+@keyframes solis-gen-zzz-float{
+    0%,58%{opacity:0;transform:translate(0,6px) scale(.5) rotate(-8deg);}
+    66%{opacity:.8;transform:translate(0,0) scale(1) rotate(-4deg);}
+    82%{opacity:.45;transform:translate(6px,-18px) scale(.94) rotate(4deg);}
+    92%,100%{opacity:0;transform:translate(8px,-26px) scale(.84) rotate(8deg);}
+}
+.solis-gen-mark .solis-companion-scan{
+    transform-box:fill-box;
+    transform-origin:center center;
+}
+.solis-gen-mark .solis-eye-group{
+    transform-box:fill-box;
+    transform-origin:center center;
+    transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+}
+.solis-gen-mark .eye-normal{
+    transform-box:fill-box;
+    transform-origin:center center;
+    transition:all .28s cubic-bezier(.34,1.56,.64,1);
+    opacity:1;
+    stroke:none;
+}
+.solis-gen-mark .eye-x{
+    transform-box:fill-box;
+    transform-origin:center center;
+    transition:all .3s cubic-bezier(.34,1.56,.64,1);
+    opacity:0;
+    transform:scale(.5) rotate(-45deg);
+}
+.solis-gen-mark[data-state="scanning"] .solis-companion-scan{
+    animation:solis-gen-scan-move 2.6s ease-in-out infinite;
+}
+.solis-gen-mark[data-state="scanning"] .solis-eye-group--left{
+    animation:solis-gen-scan-eye-left 2.6s ease-in-out infinite;
+}
+.solis-gen-mark[data-state="scanning"] .solis-eye-group--right{
+    animation:solis-gen-scan-eye-right 2.6s ease-in-out infinite;
+}
+@keyframes solis-gen-scan-move{
+    0%,100%{transform:translate(-8px,5px) rotate(-1.2deg);}
+    50%{transform:translate(8px,5px) rotate(1.2deg);}
+}
+@keyframes solis-gen-scan-eye-left{
+    0%,100%{transform:translate(-2px,1px);}
+    50%{transform:translate(3px,1px);}
+}
+@keyframes solis-gen-scan-eye-right{
+    0%,100%{transform:translate(-1px,0);}
+    50%{transform:translate(4px,0);}
+}
+.solis-gen-mark[data-state="blink"] .solis-eye-group,
+.solis-gen-mark[data-state="blink-fast"] .solis-eye-group{
+    animation:solis-gen-blink .34s cubic-bezier(.4,0,.2,1);
+}
+@keyframes solis-gen-blink{
+    0%{transform:scaleY(1);}
+    15%{transform:scaleY(.05);}
+    28%{transform:scaleY(.05);}
+    45%{transform:scaleY(1);}
+    100%{transform:scaleY(1);}
+}
+.solis-gen-mark[data-state="failed"] .solis-companion-scan,
+.solis-gen-mark[data-state="failed"] .solis-eye-group{
+    animation:none !important;
+}
+.solis-gen-mark[data-state="failed"] .solis-eye-group{
+    transform:translateY(2px);
+}
+.solis-gen-mark[data-state="failed"] .eye-normal{
+    opacity:0 !important;
+    transform:scale(.3) rotate(90deg);
+}
+.solis-gen-mark[data-state="failed"] .eye-x{
+    opacity:1 !important;
+    transform:scale(1.08) rotate(0deg);
+}
+.solis-gen-mark[data-state="failed"] .eye-x path{
+    stroke:#fff !important;
+    stroke-width:11;
+    stroke-linecap:round;
+    fill:none;
+}
+.solis-gen-mark[data-state="failed"] .sleep-zzz{
+    opacity:0 !important;
+}
+.solis-gen-mark[data-state="active"] .solis-companion-scan,
+.solis-gen-mark[data-state="active"] .solis-eye-group{
+    animation:none;
+}
+.solis-gen-mark[data-state="active"] .solis-eye-group{
+    transform:translateY(-4px) scale(1.05);
+}
+.solis-gen-mark[data-state="sleeping"] .solis-companion-scan,
+.solis-gen-mark[data-state="waking"] .solis-companion-scan{
+    animation:solis-gen-sleep-breathe 3.2s ease-in-out infinite;
+}
+.solis-gen-mark[data-state="sleeping"] .solis-eye-group,
+.solis-gen-mark[data-state="waking"] .solis-eye-group{
+    animation:none;
+}
+@keyframes solis-gen-sleep-breathe{
+    0%,100%{transform:translateY(5px) scale(.94) rotate(-1.5deg);}
+    50%{transform:translateY(7px) scale(.92) rotate(1.5deg);}
+}
+.solis-gen-mark[data-state="sleeping"] .eye-normal,
+.solis-gen-mark[data-state="waking"] .eye-normal{
+    transform:scaleY(.22);
+}
+.solis-gen-mark[data-state="sleeping"] .sleep-zzz{
+    opacity:1;
+}
+.solis-gen-mark[data-state="waking"] .sleep-zzz{
+    opacity:0;
 }
 
 .solis-gen-heading{

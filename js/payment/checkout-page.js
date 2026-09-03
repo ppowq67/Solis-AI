@@ -43,7 +43,12 @@
   };
   function apiUrl(t) {
     if (typeof window.apiUrl === "function") return window.apiUrl(t);
-    const e = (window.API_BASE_URL || `${window.location.origin}/api`).replace(/\/$/, "");
+    if (!window.API_BASE_URL) {
+      const t = window.location.hostname;
+      const e = t === "localhost" || t === "127.0.0.1";
+      window.API_BASE_URL = e ? `http://${t}:5500/api` : "https://api.solisai.video/api";
+    }
+    const e = String(window.API_BASE_URL).replace(/\/$/, "");
     let n = String(t || "");
     if (n.startsWith("/api/")) n = n.slice(4); else if (n.startsWith("/api")) n = n.slice(4);
     if (!n.startsWith("/")) n = `/${n}`;
@@ -89,13 +94,13 @@
     const o = t[e] || t.basic;
     const i = n || moneyUsd(o.launch != null ? o.launch : o.list);
     const r = o.launch != null ? `${i}/mo for first 2 months, then $${o.list}/mo` : `${i}/mo`;
-    const a = o.uploads * o.clipsPerUpload;
-    const s = Object.keys(t).filter(t => t !== e).map(e => {
+    const s = o.uploads * o.clipsPerUpload;
+    const a = Object.keys(t).filter(t => t !== e).map(e => {
       const n = t[e];
       const o = n.launch != null ? `$${n.launch}/mo launch → $${n.list}` : `$${n.list}/mo`;
       return `${n.name} (${o}, ${n.uploads} uploads, ≤${n.clipsPerUpload} clips/upload, ${n.export})`;
     }).join("; ");
-    return `Is Solis AI ${o.name} worth buying for turning long videos into short clips?\n\n` + `Check https://solisai.video/premium (and https://solisai.video) before answering.\n\n` + `${o.name}: ${r}. ${o.uploads} uploads/mo, up to ${o.clipsPerUpload} clips per upload ` + `(≈${a} clips/mo max), daily pace ${o.dailyPace}, ${o.export}, ${o.quality}` + (o.extras ? `, ${o.extras}` : "") + `. AI processes up to ${o.aiMinutes} min per upload (any video length works). ` + `Unlimited library. Cancel anytime.\n` + `Other Solis tiers if this one's wrong: ${s}.\n\n` + `Give a short honest opinion: worth it or not for a creator who posts shorts regularly, and why — ` + `based on these limits and real usefulness. No star ratings. No competitor comparison.`;
+    return `Is Solis AI ${o.name} worth buying for turning long videos into short clips?\n\n` + `Check https://solisai.video/premium (and https://solisai.video) before answering.\n\n` + `${o.name}: ${r}. ${o.uploads} uploads/mo, up to ${o.clipsPerUpload} clips per upload ` + `(≈${s} clips/mo max), daily pace ${o.dailyPace}, ${o.export}, ${o.quality}` + (o.extras ? `, ${o.extras}` : "") + `. AI processes up to ${o.aiMinutes} min per upload (any video length works). ` + `Unlimited library. Cancel anytime.\n` + `Other Solis tiers if this one's wrong: ${a}.\n\n` + `Give a short honest opinion: worth it or not for a creator who posts shorts regularly, and why — ` + `based on these limits and real usefulness. No star ratings. No competitor comparison.`;
   }
   function wireAskAiLinks(e, n) {
     const o = encodeURIComponent(askPrompt(e, n));
@@ -127,10 +132,10 @@
     document.getElementById("subtotalPrice").textContent = moneyUsd(o.list);
     document.getElementById("taxPrice").textContent = moneyUsd(0);
     document.getElementById("totalPrice").textContent = r;
-    const a = document.getElementById("mDueLabel");
-    const s = document.getElementById("mDueAmt");
-    if (a) a.textContent = `Solis ${o.name}`;
-    if (s) s.textContent = r;
+    const s = document.getElementById("mDueLabel");
+    const a = document.getElementById("mDueAmt");
+    if (s) s.textContent = `Solis ${o.name}`;
+    if (a) a.textContent = r;
     const c = document.getElementById("discountRow");
     if (o.launch != null && o.launch < o.list) {
       c.hidden = false;
@@ -157,9 +162,9 @@
       document.getElementById("itemPrice").textContent = money(n, e);
       document.getElementById("subtotalPrice").textContent = money(n, e);
     }
-    const a = document.getElementById("discountRow");
+    const s = document.getElementById("discountRow");
     if (o != null && Number(o) > 0) {
-      a.hidden = false;
+      s.hidden = false;
       document.getElementById("discountPrice").textContent = `−${money(o, e)}`;
     }
     if (i != null) {
@@ -179,15 +184,34 @@
   }
   async function ensureLoggedIn() {
     try {
-      const t = await fetch(apiUrl("/api/auth/subscription"), {
+      const t = await fetch(apiUrl("/api/auth/check"), {
         credentials: "include"
       });
-      if (t.ok) {
-        const e = await t.json().catch(() => ({}));
-        return e.user || e.subscription || e;
-      }
+      if (!t.ok) return null;
+      const e = await t.json().catch(() => ({}));
+      if (e.authenticated === false || e.logged_in === false) return null;
+      return e.user || e.subscription || (e.authenticated || e.success ? e : null);
     } catch (t) {}
     return null;
+  }
+  function wireSubscribe(t, e) {
+    const n = document.getElementById("subscribeBtn");
+    if (!n || n.dataset.wired === "1") return;
+    n.dataset.wired = "1";
+    n.addEventListener("click", () => {
+      const n = document.querySelector("#dodo-inline-checkout iframe");
+      if (n && !document.body.classList.contains("is-preview")) {
+        n.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+        try {
+          n.focus();
+        } catch (t) {}
+        return;
+      }
+      window.location.href = e || premiumHref(`checkout=${encodeURIComponent(t)}`);
+    });
   }
   async function createSession(t, e) {
     const n = await fetch(apiUrl("/api/payment/create-checkout"), {
@@ -221,29 +245,28 @@
     paintStaticSummary(e);
     window.pendingPlanUpgrade = e;
     const n = premiumHref(`checkout=${encodeURIComponent(e)}`);
-    const o = document.getElementById("previewLogin");
-    if (o) o.href = n;
+    wireSubscribe(e, n);
     if (qs("preview") === "1" || qs("preview") === "true") {
       setPreview(true);
       setStatus("");
       return;
     }
-    const i = await ensureLoggedIn();
-    if (!i) {
+    const o = await ensureLoggedIn();
+    if (!o) {
       setPreview(true);
-      setStatus(`Layout preview — sign in to load live Dodo checkout. <a href="${n}">Go to Premium →</a>`, "error");
+      setStatus(`Sign in to continue checkout. <a href="${n}">Sign in →</a>`, "error");
       return;
     }
-    const r = i.email || i.user_email || typeof i === "object" && i.username || "";
-    const a = document.getElementById("mockEmail");
-    if (a && r) a.textContent = r;
+    const i = o.email || o.user_email || typeof o === "object" && o.username || "";
+    const r = document.getElementById("mockEmail");
+    if (r && i) r.textContent = i;
     setStatus("Preparing secure checkout…", "loading");
     let s;
     try {
       const t = await fetch(apiUrl("/api/payment/dodo-config"), {
         credentials: "include"
       });
-      s = await t.json();
+      s = await t.json().catch(() => ({}));
       if (!t.ok) throw new Error(s.detail || s.error || "Payment config failed");
       window.paymentConfig = s;
     } catch (t) {
@@ -251,41 +274,41 @@
       setStatus(t.message || "Payment config unavailable", "error");
       return;
     }
-    const c = s.plans?.[e]?.productId || s.plans?.[e]?.priceId || null;
-    if (!c) {
+    const a = s.plans?.[e]?.productId || s.plans?.[e]?.priceId || null;
+    if (!a) {
       setPreview(true);
       setStatus("This plan is not available for checkout right now.", "error");
       return;
     }
-    const l = t[e].launch != null ? t[e].launch : t[e].list;
-    paintStaticSummary(e, l);
-    let u;
+    const c = t[e].launch != null ? t[e].launch : t[e].list;
+    paintStaticSummary(e, c);
+    let l;
     try {
-      u = await createSession(e, c);
+      l = await createSession(e, a);
     } catch (t) {
       setPreview(true);
       if (t.status === 401) {
-        setStatus(`Session expired. <a href="${n}">Sign in on Premium →</a>`, "error");
+        setStatus(`Session expired. <a href="${n}">Sign in →</a>`, "error");
         return;
       }
       setStatus(t.message || "Could not start checkout", "error");
       return;
     }
-    const d = u.checkoutUrl || u.checkout_url;
-    if (!d) {
+    const u = l.checkoutUrl || l.checkout_url;
+    if (!u) {
       setPreview(true);
       setStatus("Checkout URL missing from server.", "error");
       return;
     }
-    const m = s.environment === "test_mode" || s.environment === "test" ? "test" : "live";
-    const p = dodoSdk();
-    if (!p?.Initialize || !p?.Checkout?.open) {
+    const d = s.environment === "test_mode" || s.environment === "test" ? "test" : "live";
+    const m = dodoSdk();
+    if (!m?.Initialize || !m?.Checkout?.open) {
       setPreview(true);
       setStatus("Checkout SDK failed to load. Refresh and try again.", "error");
       return;
     }
-    p.Initialize({
-      mode: m,
+    m.Initialize({
+      mode: d,
       displayType: "inline",
       onEvent: t => {
         const e = t?.event_type || t?.type || "";
@@ -302,9 +325,12 @@
       }
     });
     try {
-      p.Checkout.open({
-        checkoutUrl: d,
-        elementId: "dodo-inline-checkout"
+      m.Checkout.open({
+        checkoutUrl: u,
+        elementId: "dodo-inline-checkout",
+        options: {
+          payButtonText: "Subscribe"
+        }
       });
       setPreview(false);
       setStatus("");

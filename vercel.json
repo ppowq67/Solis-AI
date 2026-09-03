@@ -21,6 +21,7 @@
     { "source": "/u", "destination": "/shareable" },
     { "source": "/shareable.html", "destination": "/shareable" },
     { "source": "/api/auth/:path*", "destination": "https://api.solisai.video/api/auth/:path*" },
+    { "source": "/api/payment/:path*", "destination": "https://api.solisai.video/api/payment/:path*" },
     { "source": "/pricing", "destination": "/premium.html" },
     { "source": "/pricing.html", "destination": "/premium.html" },
     { "source": "/checkout", "destination": "/checkout.html" },

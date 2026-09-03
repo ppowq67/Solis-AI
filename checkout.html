@@ -679,17 +679,8 @@
     .legal a { text-decoration: underline; text-underline-offset: 2px; }
 
     .alt-link {
-      text-align: center;
-      font-size: 13px;
-      color: var(--ink);
-      text-decoration: underline;
-      text-underline-offset: 2px;
-      font-weight: 600;
-      display: none;
-      padding: 8px;
-      min-height: 44px;
+      display: none !important;
     }
-    body.is-preview .alt-link { display: flex; align-items: center; justify-content: center; }
 
     .pay-foot {
       margin-top: 4px;
@@ -990,8 +981,6 @@
           See our <a href="/refund.html">refund policy</a>.
         </p>
 
-        <a class="alt-link" id="previewLogin" href="/premium.html">Continue on Premium to pay for real →</a>
-
         <div class="pay-foot">
           <span class="dodo-powered">
             Powered by
@@ -1005,8 +994,19 @@
     </main>
   </div>
 
+  <script>
+    (function () {
+      var host = location.hostname;
+      var local = host === 'localhost' || host === '127.0.0.1';
+      if (!window.API_BASE_URL) {
+        window.API_BASE_URL = local
+          ? ('http://' + host + ':5500/api')
+          : 'https://api.solisai.video/api';
+      }
+    })();
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/dodopayments-checkout@1.9.8/dist/index.js"></script>
-  <script src="/js/payment/checkout-page.js?v=13"></script>
+  <script src="/js/payment/checkout-page.js?v=14"></script>
   <script>
     (function () {
       var panel = document.getElementById('summaryPanel');

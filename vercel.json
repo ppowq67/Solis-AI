@@ -23,6 +23,8 @@
     { "source": "/api/auth/:path*", "destination": "https://api.solisai.video/api/auth/:path*" },
     { "source": "/pricing", "destination": "/premium.html" },
     { "source": "/pricing.html", "destination": "/premium.html" },
+    { "source": "/checkout", "destination": "/checkout.html" },
+    { "source": "/checkout.html", "destination": "/checkout.html" },
     { "source": "/features", "destination": "/features.html" },
     { "source": "/faq", "destination": "/faq.html" },
     { "source": "/contact", "destination": "/contact.html" },

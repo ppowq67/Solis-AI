@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self' https://checkout.dodopayments.com https://test.checkout.dodopayments.com; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.solisai.video https://checkout.dodopayments.com https://test.checkout.dodopayments.com https://api.dodopayments.com https://test.dodopayments.com https://cdn.jsdelivr.net https://cloudflareinsights.com; frame-src https://checkout.dodopayments.com https://test.checkout.dodopayments.com; child-src https://checkout.dodopayments.com https://test.checkout.dodopayments.com;" />
+  <script src="/js/core/init.js?v=7"></script>
+  <title>Checkout · Solis AI</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon/genfavicon-32.png?v=15" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --ink: #0a2540;
+      --muted: #697386;
+      --muted-2: #8792a2;
+      --line: #e6e8eb;
+      --line-2: #d8dee4;
+      --bg: #ffffff;
+      --panel: #f6f9fc;
+      --solis: #ea580c;
+      --font: "Plus Jakarta Sans", "Segoe UI", sans-serif;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bot: env(safe-area-inset-bottom, 0px);
+      --safe-x: max(16px, env(safe-area-inset-left, 0px));
+    }
+    html, body {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+
+    .icon { display: block; flex-shrink: 0; }
+    .icon-inline {
+      display: inline-block;
+      vertical-align: -2px;
+      flex-shrink: 0;
+    }
+
+    .m-bar {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: calc(10px + var(--safe-top)) var(--safe-x) 10px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .m-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      min-height: 40px;
+      padding: 0 4px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .m-back svg { width: 18px; height: 18px; }
+    .m-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: -0.02em;
+    }
+    .m-brand svg { width: 22px; height: 22px; }
+    .m-secure {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted-2);
+    }
+    .m-secure svg { width: 14px; height: 14px; color: #16a34a; }
+
+    .shell {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 100vh;
+    }
+    .summary {
+      background: var(--panel);
+      padding: 48px 48px 40px clamp(40px, 8vw, 112px);
+      display: flex;
+      justify-content: flex-end;
+    }
+    .summary-inner {
+      width: 100%;
+      max-width: 380px;
+      padding-top: 8px;
+    }
+    .pay {
+      background: var(--bg);
+      padding: 48px clamp(40px, 8vw, 112px) calc(40px + var(--safe-bot)) 48px;
+      display: flex;
+      justify-content: flex-start;
+    }
+    .pay-inner {
+      width: 100%;
+      max-width: 400px;
+      padding-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .logo-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .logo-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 0;
+      color: var(--ink);
+    }
+    .logo-link svg.atom { width: 28px; height: 28px; }
+    .logo-word {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .logo-beta {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--solis);
+      border: 1px solid rgba(234, 88, 12, 0.35);
+      border-radius: 999px;
+      padding: 2px 7px;
+    }
+    .back-desktop {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin: 0;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+    .back-desktop svg { width: 16px; height: 16px; }
+    .back-desktop:hover {
+      color: var(--ink);
+      border-color: var(--line);
+      background: #fff;
+    }
+
+    .subscribe-to {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+    .price-big {
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      color: var(--ink);
+    }
+    .price-period {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--muted);
+    }
+    .price-note {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 20px;
+      line-height: 1.45;
+    }
+
+    .fx {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .fx-btn {
+      appearance: none;
+      border: 1px solid var(--line-2);
+      background: #fff;
+      border-radius: 999px;
+      padding: 7px 12px 7px 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      cursor: default;
+    }
+    .fx-btn.is-on {
+      border-color: var(--ink);
+      box-shadow: 0 0 0 1px var(--ink);
+    }
+    .fx-btn svg { width: 16px; height: 16px; border-radius: 50%; }
+    .fx-note {
+      font-size: 12px;
+      color: var(--muted-2);
+      line-height: 1.45;
+      margin-bottom: 24px;
+    }
+
+    .m-summary-toggle {
+      display: none;
+      width: 100%;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 0 4px;
+      background: transparent;
+      border: 0;
+      color: var(--ink);
+      text-align: left;
+      cursor: pointer;
+    }
+    .m-summary-toggle .left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .m-summary-toggle .label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .m-summary-toggle .label svg {
+      width: 14px; height: 14px;
+      transition: transform .2s ease;
+    }
+    .summary.is-open .m-summary-toggle .label svg { transform: rotate(180deg); }
+    .m-summary-toggle .due {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .m-summary-toggle .right-amt {
+      font-size: 16px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .details-block {}
+    .lines { margin-top: 4px; }
+    .line {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 14px 0;
+      border-top: 1px solid var(--line);
+      font-size: 14px;
+      color: #3c4257;
+    }
+    .line .amt { font-variant-numeric: tabular-nums; color: var(--ink); white-space: nowrap; }
+    .line-title { font-weight: 600; color: var(--ink); }
+    .line-sub { display: block; margin-top: 2px; font-size: 13px; font-weight: 400; color: var(--muted); }
+    .line.total {
+      font-weight: 700;
+      color: var(--ink);
+      padding-top: 16px;
+    }
+    .line.total .amt { font-weight: 700; }
+    .tax-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      position: relative;
+    }
+    .tax-tip-btn {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      padding: 2px;
+      margin: 0;
+      cursor: pointer;
+      color: var(--muted-2);
+      display: inline-flex;
+      border-radius: 50%;
+      line-height: 0;
+    }
+    .tax-tip-btn:hover,
+    .tax-tip-btn[aria-expanded="true"] { color: var(--ink); }
+    .tax-tip-btn svg { width: 14px; height: 14px; }
+    .tax-tip {
+      display: none;
+      position: absolute;
+      left: 0;
+      top: calc(100% + 8px);
+      z-index: 30;
+      width: min(260px, 70vw);
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #0a2540;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.45;
+      box-shadow: 0 10px 28px rgba(10, 37, 64, 0.28);
+    }
+    .tax-tip.is-open { display: block; }
+    .tax-tip::before {
+      content: "";
+      position: absolute;
+      left: 18px;
+      top: -5px;
+      width: 10px;
+      height: 10px;
+      background: #0a2540;
+      transform: rotate(45deg);
+    }
+
+    .mock-more-wrap { position: relative; }
+    .mock-more-btn {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      padding: 6px;
+      border-radius: 8px;
+      cursor: pointer;
+      color: var(--muted-2);
+      display: inline-flex;
+      line-height: 0;
+    }
+    .mock-more-btn:hover,
+    .mock-more-btn[aria-expanded="true"] {
+      color: var(--ink);
+      background: rgba(10, 37, 64, 0.05);
+    }
+    .mock-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: calc(100% + 6px);
+      z-index: 80;
+      min-width: 188px;
+      padding: 6px;
+      border-radius: 12px;
+      background: #fff;
+      border: 1px solid var(--line-2);
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.14);
+    }
+    .mock-menu.is-open { display: block; }
+    .mock-menu a {
+      display: block;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .mock-menu a:hover { background: var(--panel); }
+
+    .pay-methods {
+      display: none;
+    }
+    .pay-accept {
+      border: 1px solid var(--line-2);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .pay-accept-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .pay-accept-head .powered {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted-2);
+    }
+    .pay-accept-head .powered img {
+      height: 14px;
+      width: auto;
+      display: block;
+    }
+    .pay-accept-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      font-size: 14px;
+    }
+    .pay-accept-row:last-child { border-bottom: 0; }
+    .pay-accept-label {
+      color: var(--muted);
+      font-weight: 500;
+      font-size: 13px;
+    }
+    .pay-accept-val {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--ink);
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .mock-val img.visa-badge,
+    .pay-accept-val img.visa-badge {
+      width: auto;
+      height: 22px;
+      max-width: none;
+      display: block;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+    .pay-accept-val img {
+      display: block;
+      height: 20px;
+      width: auto;
+      max-width: 64px;
+      object-fit: contain;
+    }
+
+    .ask-confidence {
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+    .ask-confidence-label {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+    .ask-ais {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .ask-ai {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 0;
+      background: transparent;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s ease, opacity 0.2s ease;
+      opacity: 0.92;
+    }
+    .ask-ai:hover {
+      background: rgba(10, 37, 64, 0.08);
+      opacity: 1;
+    }
+    .ask-ai img { width: 22px; height: 22px; display: block; }
+
+    .pay-box {
+      border: 1px solid var(--line-2);
+      border-radius: 10px;
+      overflow: visible;
+      background: #fff;
+      min-height: 180px;
+      position: relative;
+      z-index: 2;
+    }
+    .mock-link {
+      display: none;
+      border-radius: 10px;
+      overflow: visible;
+    }
+    #dodo-inline-checkout { min-height: 280px; width: 100%; }
+    #dodo-inline-checkout iframe { width: 100% !important; min-height: 280px; border: 0; }
+
+    body.is-preview .mock-link { display: block; }
+    body.is-preview #dodo-inline-checkout { display: none; }
+    .mock-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+    .mock-link-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--ink);
+    }
+    .mock-link-logo svg { width: 20px; height: 20px; }
+    .mock-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      font-size: 14px;
+    }
+    .mock-row:last-child { border-bottom: 0; }
+    .mock-label { color: var(--muted); font-weight: 500; }
+    .mock-val {
+      color: var(--ink);
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .subscribe-btn {
+      --use-tpl-dot: rgba(255, 255, 255, 0.5);
+      appearance: none;
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      border: 1px solid transparent;
+      width: 100%;
+      background: #0a0a0a;
+      color: #fff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      border-radius: 999px;
+      padding: 14px 22px;
+      min-height: 52px;
+      cursor: pointer;
+      transition:
+        background 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+        border-color 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+        filter 0.4s ease;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16);
+    }
+    .subscribe-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background:
+        linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.22) 0%,
+          rgba(255, 255, 255, 0.06) 28%,
+          transparent 55%
+        );
+      opacity: 0;
+      pointer-events: none;
+      z-index: 0;
+      transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .subscribe-btn::after {
+      content: '';
+      position: absolute;
+      inset: -12%;
+      border-radius: inherit;
+      background-image:
+        radial-gradient(circle, rgba(255, 255, 255, 0.55) 0.35px, transparent 0.55px),
+        radial-gradient(circle, rgba(255, 255, 255, 0.35) 0.3px, transparent 0.5px),
+        radial-gradient(circle, rgba(255, 255, 255, 0.22) 0.25px, transparent 0.45px);
+      background-size: 3px 3px, 4px 4px, 5px 5px;
+      background-position: 0 0, 1.5px 1px, 0.5px 2px;
+      opacity: 0;
+      transform: scale(1.04);
+      transition:
+        opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+      pointer-events: none;
+      z-index: 0;
+      mix-blend-mode: soft-light;
+      will-change: opacity, transform;
+    }
+    .subscribe-btn:hover:not(:disabled),
+    .subscribe-btn:focus-visible:not(:disabled) {
+      background:
+        linear-gradient(155deg, #ffa06a 0%, #ff6b35 42%, #f04518 78%, #d63a12 100%);
+      border-color: rgba(255, 255, 255, 0.28);
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.38) inset,
+        0 0 0 1px rgba(255, 140, 90, 0.18),
+        0 10px 28px rgba(240, 84, 40, 0.36),
+        0 2px 6px rgba(214, 58, 18, 0.2);
+      outline: none;
+      filter: saturate(1.06);
+    }
+    .subscribe-btn:hover:not(:disabled)::before,
+    .subscribe-btn:focus-visible:not(:disabled)::before {
+      opacity: 1;
+    }
+    .subscribe-btn:hover:not(:disabled)::after,
+    .subscribe-btn:focus-visible:not(:disabled)::after {
+      opacity: 0.95;
+      transform: scale(1);
+    }
+    .subscribe-btn:active:not(:disabled) {
+      transform: scale(0.985);
+      transition-duration: 0.12s;
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.22) inset,
+        0 3px 10px rgba(240, 84, 40, 0.28);
+      filter: saturate(1);
+    }
+    .subscribe-btn:active:not(:disabled)::after {
+      opacity: 0.55;
+      transition-duration: 0.18s;
+    }
+    .subscribe-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+    body:not(.is-preview) .subscribe-btn { display: none; }
+
+    .mock-link-logo img.dodo-mark {
+      width: 22px;
+      height: 22px;
+      display: block;
+      border-radius: 50%;
+    }
+    .pay-foot .dodo-powered {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: #1f2023;
+      font-weight: 500;
+    }
+    .pay-foot .dodo-powered img {
+      height: 16px;
+      width: auto;
+      display: block;
+    }
+
+    .legal {
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--muted-2);
+    }
+    .legal a { text-decoration: underline; text-underline-offset: 2px; }
+
+    .alt-link {
+      text-align: center;
+      font-size: 13px;
+      color: var(--ink);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      font-weight: 600;
+      display: none;
+      padding: 8px;
+      min-height: 44px;
+    }
+    body.is-preview .alt-link { display: flex; align-items: center; justify-content: center; }
+
+    .pay-foot {
+      margin-top: 4px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 10px;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: var(--muted-2);
+      padding-bottom: 8px;
+    }
+    .pay-foot a:hover { color: var(--ink); }
+    .pay-foot .sep { opacity: 0.5; }
+
+    .status {
+      font-size: 13px;
+      color: var(--muted);
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      line-height: 1.45;
+    }
+    .status.error { color: #b91c1c; border-color: #fecaca; background: #fff7f7; }
+    .status.loading { display: flex; align-items: center; gap: 10px; }
+    .status a { color: var(--solis); font-weight: 700; text-decoration: underline; }
+    .spin {
+      width: 14px; height: 14px; border-radius: 50%;
+      border: 2px solid #dbe3ec; border-top-color: var(--ink);
+      animation: spin .7s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .desktop-only {}
+
+    @media (max-width: 880px) {
+      .m-bar { display: flex; }
+      .shell {
+        grid-template-columns: 1fr;
+        min-height: calc(100vh - 52px);
+      }
+      .summary, .pay {
+        padding: 16px var(--safe-x) 20px;
+        justify-content: stretch;
+      }
+      .summary {
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 8px;
+      }
+      .summary-inner, .pay-inner { max-width: none; padding-top: 0; }
+      .logo-row { display: none; }
+
+      .m-summary-toggle { display: flex; }
+      .details-block {
+        display: none;
+        padding-bottom: 8px;
+      }
+      .summary.is-open .details-block { display: block; }
+      .summary.is-open .desktop-hero { display: none; }
+
+      .desktop-hero { display: none; }
+      .fx-note { margin-bottom: 12px; }
+      .price-big { font-size: 28px; }
+      .line { padding: 12px 0; font-size: 13.5px; }
+      .pay-inner { gap: 14px; }
+      #dodo-inline-checkout { min-height: 320px; }
+      #dodo-inline-checkout iframe { min-height: 320px; }
+
+      .pay { padding-top: 20px; padding-bottom: calc(28px + var(--safe-bot)); }
+      .subscribe-btn { border-radius: 999px; }
+    }
+
+    @media (max-width: 400px) {
+      .price-big { font-size: 24px; }
+      .mock-row { padding: 12px 14px; font-size: 13px; }
+      .m-brand span { display: none; }
+    }
+  </style>
+</head>
+<body class="is-preview">
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+    <symbol id="i-atom" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="12" fill="#ea580c" />
+      <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#ea580c" stroke-width="6" transform="rotate(45 50 50)" fill="none" />
+      <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#ea580c" stroke-width="6" transform="rotate(-45 50 50)" fill="none" />
+    </symbol>
+    <symbol id="i-us" viewBox="0 0 16 16">
+      <rect width="16" height="16" rx="8" fill="#fff"/>
+      <path fill="#B22234" d="M0 2h16v1.33H0zm0 2.67h16V6H0zm0 2.66h16v1.34H0zm0 2.67h16V12H0zm0 2.67h16V16H0z"/>
+      <rect width="8" height="8" fill="#3C3B6E"/>
+    </symbol>
+    <symbol id="i-chevron-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="15 18 9 12 15 6"/>
+    </symbol>
+    <symbol id="i-chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="6 9 12 15 18 9"/>
+    </symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="11" width="18" height="11" rx="2"/>
+      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+    </symbol>
+    <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="16" x2="12" y2="12"/>
+      <line x1="12" y1="8" x2="12.01" y2="8"/>
+    </symbol>
+    <symbol id="i-more" viewBox="0 0 24 24" fill="currentColor">
+      <circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>
+    </symbol>
+  </svg>
+
+  <header class="m-bar" aria-label="Checkout">
+    <a class="m-back" id="mBack" href="/premium.html">
+      <svg class="icon" viewBox="0 0 24 24"><use href="#i-chevron-left"/></svg>
+      Plans
+    </a>
+    <a class="m-brand" href="/" aria-label="Solis AI home">
+      <svg class="icon" viewBox="0 0 100 100"><use href="#i-atom"/></svg>
+      <span>Solis AI</span>
+    </a>
+    <span class="m-secure" title="Secure checkout">
+      <svg class="icon" viewBox="0 0 24 24"><use href="#i-lock"/></svg>
+      Secure
+    </span>
+  </header>
+
+  <div class="shell">
+    <aside class="summary" id="summaryPanel" aria-label="Order summary">
+      <div class="summary-inner">
+        <div class="logo-row">
+          <a class="logo-link" href="/" aria-label="Solis AI home">
+            <svg class="atom icon" viewBox="0 0 100 100" aria-hidden="true"><use href="#i-atom"/></svg>
+            <span class="logo-word">Solis AI</span>
+            <span class="logo-beta">Beta</span>
+          </a>
+          <a class="back-desktop" id="deskBack" href="/premium.html">
+            <svg class="icon" viewBox="0 0 24 24"><use href="#i-chevron-left"/></svg>
+            Back to plans
+          </a>
+        </div>
+
+        <button type="button" class="m-summary-toggle" id="summaryToggle" aria-expanded="false" aria-controls="orderDetails">
+          <span class="left">
+            <span class="label">
+              Order summary
+              <svg class="icon-inline" viewBox="0 0 24 24"><use href="#i-chevron-down"/></svg>
+            </span>
+            <span class="due" id="mDueLabel">Subscribe to Solis</span>
+          </span>
+          <span class="right-amt" id="mDueAmt">USD 0.00</span>
+        </button>
+
+        <div class="desktop-hero">
+          <p class="subscribe-to" id="subscribeLabel">Subscribe to Solis</p>
+          <div class="price-row">
+            <span class="price-big" id="heroAmount">USD 0.00</span>
+            <span class="price-period">per month</span>
+          </div>
+          <p class="price-note" id="heroSub">Billed monthly · Cancel anytime</p>
+        </div>
+
+        <div class="details-block" id="orderDetails">
+          <div class="desktop-hero">
+            <div class="fx" aria-label="Currency">
+              <button type="button" class="fx-btn is-on" disabled>
+                <svg class="icon" viewBox="0 0 16 16" aria-hidden="true"><use href="#i-us"/></svg>
+                USD
+              </button>
+            </div>
+            <p class="fx-note">Prices shown in USD. Applicable tax is calculated at checkout based on your location.</p>
+          </div>
+
+          <div class="lines" aria-live="polite">
+            <div class="line">
+              <div>
+                <span class="line-title" id="itemName">Solis</span>
+                <span class="line-sub" id="itemCadence">Billed monthly</span>
+              </div>
+              <span class="amt" id="itemPrice">USD 0.00</span>
+            </div>
+            <div class="line" id="discountRow" hidden>
+              <span>Discount</span>
+              <span class="amt" id="discountPrice">−USD 0.00</span>
+            </div>
+            <div class="line">
+              <span>Subtotal</span>
+              <span class="amt" id="subtotalPrice">USD 0.00</span>
+            </div>
+            <div class="line">
+              <span class="tax-label">
+                Tax
+                <button type="button" class="tax-tip-btn" id="taxTipBtn" aria-expanded="false" aria-controls="taxTip" aria-label="About tax">
+                  <svg class="icon-inline" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-info"/></svg>
+                </button>
+                <span class="tax-tip" id="taxTip" role="tooltip">
+                  Tax is calculated from your billing country and postal code in the payment form. It may show USD 0.00 until you enter your address.
+                </span>
+              </span>
+              <span class="amt" id="taxPrice">USD 0.00</span>
+            </div>
+            <div class="line total">
+              <span>Total due today</span>
+              <span class="amt" id="totalPrice">USD 0.00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="ask-confidence" id="askConfidence">
+          <p class="ask-confidence-label" id="askConfidenceLabel">Unsure? Ask an AI if this plan is worth it</p>
+          <span class="ask-ais" aria-label="Ask an AI about this Solis plan">
+            <a class="ask-ai" data-ai="chatgpt" aria-label="Ask ChatGPT" target="_blank" rel="noopener noreferrer" href="#">
+              <img src="/assets/brands/chatgpt.svg" alt="" width="20" height="20" />
+            </a>
+            <a class="ask-ai" data-ai="grok" aria-label="Ask Grok" target="_blank" rel="noopener noreferrer" href="#">
+              <img src="/assets/brands/grok.svg" alt="" width="20" height="20" />
+            </a>
+            <a class="ask-ai" data-ai="claude" aria-label="Ask Claude" target="_blank" rel="noopener noreferrer" href="#">
+              <img src="/assets/brands/claude.svg" alt="" width="20" height="20" />
+            </a>
+          </span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="pay" aria-label="Payment">
+      <div class="pay-inner">
+        <div id="checkoutStatus" class="status loading" role="status" hidden></div>
+
+        <div class="pay-box">
+          <div class="mock-link">
+            <div class="mock-head">
+              <div class="mock-link-logo">
+                <img class="dodo-mark" src="/assets/brands/dodo-brandmark.svg" width="22" height="22" alt="" />
+                Dodo Payments
+              </div>
+              <div class="mock-more-wrap">
+                <button type="button" class="mock-more-btn" id="mockMoreBtn" aria-expanded="false" aria-haspopup="true" aria-controls="mockMenu" aria-label="More options">
+                  <svg class="icon" width="18" height="18" viewBox="0 0 24 24"><use href="#i-more"/></svg>
+                </button>
+                <div class="mock-menu" id="mockMenu" role="menu" hidden>
+                  <a href="/premium.html" id="menuBack" role="menuitem">Back to plans</a>
+                  <a href="/refund.html" role="menuitem">Refund policy</a>
+                  <a href="/legal/terms.html" role="menuitem">Terms</a>
+                  <a href="/contact.html" role="menuitem">Contact</a>
+                </div>
+              </div>
+            </div>
+            <div class="mock-row">
+              <span class="mock-label">Email</span>
+              <span class="mock-val" id="mockEmail">you@email.com</span>
+            </div>
+            <div class="mock-row">
+              <span class="mock-label">Pay with</span>
+              <span class="mock-val">
+                <img src="/assets/brands/visa.svg?v=3" alt="Visa" height="22" class="visa-badge" />
+                ···· 4242
+              </span>
+            </div>
+          </div>
+          <div id="dodo-inline-checkout"></div>
+        </div>
+
+        <div class="pay-accept" aria-label="Accepted payment methods">
+          <div class="pay-accept-head">
+            <span>Payment methods</span>
+            <span class="powered">
+              Powered by
+              <img src="/assets/brands/dodo-logo-black.svg" alt="Dodo Payments" height="14" />
+            </span>
+          </div>
+          <div class="pay-accept-row">
+            <span class="pay-accept-label">Apple Pay</span>
+            <span class="pay-accept-val">
+              <img src="/assets/brands/apple-pay.svg" alt="" height="18" />
+            </span>
+          </div>
+          <div class="pay-accept-row">
+            <span class="pay-accept-label">Google Pay</span>
+            <span class="pay-accept-val">
+              <img src="/assets/brands/google-pay.svg" alt="" height="18" />
+            </span>
+          </div>
+          <div class="pay-accept-row">
+            <span class="pay-accept-label">Visa</span>
+            <span class="pay-accept-val">
+              <img class="visa-badge" src="/assets/brands/visa.svg?v=3" alt="Visa" height="22" />
+            </span>
+          </div>
+        </div>
+
+        <button type="button" class="subscribe-btn" id="subscribeBtn">Subscribe</button>
+
+        <p class="legal">
+          By subscribing, you authorize Solis AI (via Dodo Payments as merchant of record)
+          to charge you according to your plan until you cancel.
+          See our <a href="/refund.html">refund policy</a>.
+        </p>
+
+        <a class="alt-link" id="previewLogin" href="/premium.html">Continue on Premium to pay for real →</a>
+
+        <div class="pay-foot">
+          <span class="dodo-powered">
+            Powered by
+            <img src="/assets/brands/dodo-logo-black.svg" alt="Dodo Payments" height="16" />
+          </span>
+          <span class="sep">|</span>
+          <a href="/legal/terms.html">Legal</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/dodopayments-checkout@1.9.8/dist/index.js"></script>
+  <script src="/js/payment/checkout-page.js?v=12"></script>
+  <script>
+    (function () {
+      var panel = document.getElementById('summaryPanel');
+      var btn = document.getElementById('summaryToggle');
+      if (panel && btn) {
+        btn.addEventListener('click', function () {
+          var open = panel.classList.toggle('is-open');
+          btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+      }
+
+      function setOpen(trigger, tip, open) {
+        tip.classList.toggle('is-open', open);
+        tip.hidden = !open;
+        trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      }
+
+      function closeAll(except) {
+        [
+          ['taxTipBtn', 'taxTip'],
+          ['mockMoreBtn', 'mockMenu'],
+        ].forEach(function (pair) {
+          var t = document.getElementById(pair[0]);
+          var p = document.getElementById(pair[1]);
+          if (!t || !p || p === except) return;
+          setOpen(t, p, false);
+        });
+      }
+
+      function wireToggle(triggerId, panelId) {
+        var trigger = document.getElementById(triggerId);
+        var tip = document.getElementById(panelId);
+        if (!trigger || !tip) return;
+        tip.hidden = true;
+        tip.classList.remove('is-open');
+        trigger.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          var open = !tip.classList.contains('is-open');
+          closeAll(open ? tip : null);
+          setOpen(trigger, tip, open);
+        });
+        tip.addEventListener('click', function (e) {
+          e.stopPropagation();
+        });
+      }
+
+      wireToggle('taxTipBtn', 'taxTip');
+      wireToggle('mockMoreBtn', 'mockMenu');
+
+      document.addEventListener('click', function () {
+        closeAll(null);
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeAll(null);
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -148,34 +148,25 @@
       };
     }
   }
-  async function openCheckout(e, n, a) {
-    if (a?.preventDefault) a.preventDefault();
-    if (a?.stopPropagation) a.stopPropagation();
+  async function openCheckout(e, n, t) {
+    if (t?.preventDefault) t.preventDefault();
+    if (t?.stopPropagation) t.stopPropagation();
+    const a = String(n || "").trim().toLowerCase();
+    if (!a) throw new Error("Missing plan");
     await fetchPaymentConfig();
-    await verifyProduct(e, n);
-    const o = await fetch(t("/api/payment/create-checkout"), {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        productId: e,
-        priceId: e,
-        planName: n
-      })
+    if (e) {
+      await verifyProduct(e, a);
+    }
+    window.pendingPlanUpgrade = a;
+    try {
+      sessionStorage.setItem("solis_pending_plan", a);
+      if (e) sessionStorage.setItem("solis_pending_product", e);
+    } catch (e) {}
+    const o = new URLSearchParams({
+      plan: a
     });
-    if (!o.ok) {
-      const e = await o.json().catch(() => ({}));
-      throw new Error(e.detail || e.error || "Could not start checkout");
-    }
-    const i = await o.json();
-    window.pendingPlanUpgrade = n;
-    const r = i.checkoutUrl || i.checkout_url;
-    if (!r) {
-      throw new Error("Checkout URL missing from server");
-    }
-    window.location.href = r;
+    if (e) o.set("product", e);
+    window.location.href = `/checkout?${o.toString()}`;
     return true;
   }
   async function handleDashboardReturn() {

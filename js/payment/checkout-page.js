@@ -210,7 +210,7 @@
         } catch (t) {}
         return;
       }
-      window.location.href = e || premiumHref(`checkout=${encodeURIComponent(t)}`);
+      setStatus(`Checkout still loading. If needed, <a href="${e || premiumHref(`checkout=${encodeURIComponent(t)}`)}">sign in</a> then return here.`, "error");
     });
   }
   async function createSession(t, e) {
@@ -251,40 +251,37 @@
       setStatus("");
       return;
     }
-    const o = await ensureLoggedIn();
-    if (!o) {
-      setPreview(true);
-      setStatus(`Sign in to continue checkout. <a href="${n}">Sign in →</a>`, "error");
-      return;
-    }
-    const i = o.email || o.user_email || typeof o === "object" && o.username || "";
-    const r = document.getElementById("mockEmail");
-    if (r && i) r.textContent = i;
+    ensureLoggedIn().then(t => {
+      if (!t) return;
+      const e = t.email || t.user_email || typeof t === "object" && t.username || "";
+      const n = document.getElementById("mockEmail");
+      if (n && e) n.textContent = e;
+    }).catch(() => {});
     setStatus("Preparing secure checkout…", "loading");
-    let s;
+    let o;
     try {
       const t = await fetch(apiUrl("/api/payment/dodo-config"), {
         credentials: "include"
       });
-      s = await t.json().catch(() => ({}));
-      if (!t.ok) throw new Error(s.detail || s.error || "Payment config failed");
-      window.paymentConfig = s;
+      o = await t.json().catch(() => ({}));
+      if (!t.ok) throw new Error(o.detail || o.error || "Payment config failed");
+      window.paymentConfig = o;
     } catch (t) {
       setPreview(true);
       setStatus(t.message || "Payment config unavailable", "error");
       return;
     }
-    const a = s.plans?.[e]?.productId || s.plans?.[e]?.priceId || null;
-    if (!a) {
+    const i = o.plans?.[e]?.productId || o.plans?.[e]?.priceId || null;
+    if (!i) {
       setPreview(true);
       setStatus("This plan is not available for checkout right now.", "error");
       return;
     }
-    const c = t[e].launch != null ? t[e].launch : t[e].list;
-    paintStaticSummary(e, c);
-    let l;
+    const r = t[e].launch != null ? t[e].launch : t[e].list;
+    paintStaticSummary(e, r);
+    let s;
     try {
-      l = await createSession(e, a);
+      s = await createSession(e, i);
     } catch (t) {
       setPreview(true);
       if (t.status === 401) {
@@ -294,21 +291,21 @@
       setStatus(t.message || "Could not start checkout", "error");
       return;
     }
-    const u = l.checkoutUrl || l.checkout_url;
-    if (!u) {
+    const a = s.checkoutUrl || s.checkout_url;
+    if (!a) {
       setPreview(true);
       setStatus("Checkout URL missing from server.", "error");
       return;
     }
-    const d = s.environment === "test_mode" || s.environment === "test" ? "test" : "live";
-    const m = dodoSdk();
-    if (!m?.Initialize || !m?.Checkout?.open) {
+    const c = o.environment === "test_mode" || o.environment === "test" ? "test" : "live";
+    const l = dodoSdk();
+    if (!l?.Initialize || !l?.Checkout?.open) {
       setPreview(true);
       setStatus("Checkout SDK failed to load. Refresh and try again.", "error");
       return;
     }
-    m.Initialize({
-      mode: d,
+    l.Initialize({
+      mode: c,
       displayType: "inline",
       onEvent: t => {
         const e = t?.event_type || t?.type || "";
@@ -325,8 +322,8 @@
       }
     });
     try {
-      m.Checkout.open({
-        checkoutUrl: u,
+      l.Checkout.open({
+        checkoutUrl: a,
         elementId: "dodo-inline-checkout",
         options: {
           payButtonText: "Subscribe"

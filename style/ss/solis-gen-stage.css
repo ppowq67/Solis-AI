@@ -188,6 +188,7 @@ html[data-solis-cursor="off"] .solis-gen-brand{
     }
     .solis-gen-main{align-items:center;text-align:center;max-width:440px;max-height:100%;}
     .solis-gen-steps{margin-left:auto;margin-right:auto;text-align:left;}
+    .solis-gen-activity{margin-left:auto;margin-right:auto;}
     .solis-gen-video-card{margin-left:auto;margin-right:auto;}
     .solis-gen-aff-hero{
         display:none;
@@ -417,12 +418,65 @@ html[data-solis-cursor="off"] .solis-gen-brand{
 }
 
 .solis-gen-heading{
-    margin:0 0 8px;
-    font-size:clamp(1.25rem,2.2vw,1.7rem);
+    margin:0 0 6px;
+    font-size:clamp(1.35rem,2.2vw,1.85rem);
     font-weight:800;letter-spacing:-.04em;line-height:1.2;
     color:#0f172a;
     flex-shrink:0;
 }
+.solis-gen-thinking{
+    font-weight:700;
+    background:linear-gradient(
+        90deg,
+        #6b7280 0%,
+        #6b7280 42%,
+        #ffffff 50%,
+        #6b7280 58%,
+        #6b7280 100%
+    );
+    background-size:220% 100%;
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    color:#6b7280;
+    animation:solisGenThinkSweep 1.6s linear infinite;
+}
+@keyframes solisGenThinkSweep{
+    0%{background-position:120% 0;}
+    100%{background-position:-120% 0;}
+}
+.solis-gen-now{
+    margin:0 0 10px;
+    font-size:14px;font-weight:600;line-height:1.35;color:#6b7280;
+    flex-shrink:0;
+}
+.solis-gen-now[hidden]{display:none !important;}
+.solis-gen-activity{
+    width:100%;max-width:340px;
+    margin:0 0 4px;
+    text-align:left;
+}
+.solis-gen-activity-summary{
+    appearance:none;border:0;background:none;padding:0;
+    display:flex;align-items:center;gap:7px;
+    width:100%;max-width:340px;
+    font:inherit;font-size:12.5px;font-weight:500;color:#9ca3af;
+    cursor:pointer;text-align:left;user-select:none;
+}
+.solis-gen-activity-text{
+    min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.solis-gen-activity-chev{
+    width:11px;height:11px;flex-shrink:0;color:#9ca3af;
+    transition:transform .2s ease;
+}
+.solis-gen-activity-summary.is-expanded .solis-gen-activity-chev{
+    transform:rotate(90deg);
+}
+.solis-gen-activity-details{
+    margin-top:6px;
+}
+.solis-gen-activity-details[hidden]{display:none !important;}
 .solis-gen-sub{
     margin:0 0 16px;
     font-size:14px;font-weight:500;line-height:1.45;color:#6b7280;

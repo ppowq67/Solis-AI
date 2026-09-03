@@ -50,7 +50,7 @@
     <link rel="stylesheet" href="/style/ss/clips.css?v=211">
     <link rel="stylesheet" href="/style/ss/profile.css?v=34">
     <link rel="stylesheet" href="/style/ss/tasks-panel-v2-demo.css?v=18">
-    <link rel="stylesheet" href="/style/ss/solis-gen-stage.css?v=36">
+    <link rel="stylesheet" href="/style/ss/solis-gen-stage.css?v=37">
     <link rel="stylesheet" href="/style/ss/newsfeed-widget.css?v=71">
     <script src="/js/ui/navigation.js?v=8"></script>
     <script src="/js/ui/menu.js?v=7"></script>
@@ -62,8 +62,8 @@
     <script src="/js/s_new/stg.js?v=72"></script>
     <script src="/js/i_dq/video-generation-hook.js?v=1"></script>
     <script src="/js/ui/progress-ui.js?v=2"></script>
-    <script src="/js/ui/generation-progress-spinner.js?v=79"></script>
-    <script src="/js/ui/solis-gen-stage.js?v=34"></script>
+    <script src="/js/ui/generation-progress-spinner.js?v=80"></script>
+    <script src="/js/ui/solis-gen-stage.js?v=35"></script>
     <script src="/js/generation-recovery.js?v=7"></script>
     <script src="/js/i_dq/ranking-customizer.js?v=26"></script>
     <script src="/js/s_new/solis-style-pack.js?v=3"></script>
@@ -1171,12 +1171,19 @@
                         </g>
                     </svg>
                 </div>
-                <h1 class="solis-gen-heading" id="solisGenHeading">Analyzing content and finding clips</h1>
+                <h1 class="solis-gen-heading solis-gen-thinking" id="solisGenHeading">Thinking</h1>
+                <p class="solis-gen-now" id="solisGenNow" aria-live="polite">Watching the source</p>
                 <p class="solis-gen-sub">
                     You can safely leave this page. We’ll keep working in the background.
                     <button type="button" id="solisGenContinueBg">Do not stay</button>
                 </p>
-                <ul class="solis-gen-steps" id="solisGenSteps"></ul>
+                <div class="solis-gen-activity" id="solisGenActivity">
+                    <button type="button" class="solis-gen-activity-summary" id="solisGenActivitySummary" aria-expanded="false">
+                        <span class="solis-gen-activity-text" id="solisGenActivityText">Getting started</span>
+                        <svg class="solis-gen-activity-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+                    </button>
+                    <ul class="solis-gen-steps solis-gen-activity-details" id="solisGenSteps" hidden></ul>
+                </div>
                 <p class="solis-gen-live-log" id="solisGenLiveLog" hidden aria-live="polite"></p>
                 <div class="solis-gen-outcome" id="solisGenOutcome" hidden aria-live="polite"></div>
             </div>

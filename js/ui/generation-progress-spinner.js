@@ -1,63 +1,63 @@
 const GENERATION_TASK_PIPELINES = {
   ranked_compilation: [ {
     id: "wait",
-    label: "High demand · Almost there",
+    label: "Waiting in line",
     keywords: [ "high demand", "will be ready", "queued", "waiting", "starting shortly", "processing soon" ],
     maxProgress: 8
   }, {
     id: "install",
-    label: "Fetch video",
+    label: "Watching the source",
     keywords: [ "download", "installing", "preparing download", "starting generation", "starting download", "fetching", "fetch &", "source video", "video info", "streaming", "stream", "starting", "processing" ],
     maxProgress: 35
   }, {
     id: "clip",
-    label: "Clipping moments",
+    label: "Finding the hook",
     keywords: [ "moment", "detect", "segment", "highlight", "analyz", "extract", "audio", "finding", "post-process", "scene", "operator", "clipping" ],
     maxProgress: 62
   }, {
     id: "overlay",
-    label: "Overlaying ranking",
+    label: "Writing the overlay",
     keywords: [ "overlay", "ranking", "hook text", "writing ai", "overlaying" ],
     maxProgress: 78
   }, {
     id: "compile",
-    label: "Compiling video",
+    label: "Putting the clip together",
     keywords: [ "compil", "concat", "timeline", "master extract", "encoding master", "assembling" ],
     maxProgress: 90
   }, {
     id: "export",
-    label: "Exporting",
+    label: "Finishing up",
     keywords: [ "encoding final", "finaliz", "final touch", "watermark", "adding caption", "exporting", "uploading to storage" ],
     maxProgress: 100
   } ],
   splitscreen: [ {
     id: "wait",
-    label: "High demand · Almost there",
+    label: "Waiting in line",
     keywords: [ "high demand", "will be ready", "queued", "waiting", "starting shortly", "processing soon" ],
     maxProgress: 8
   }, {
     id: "install",
-    label: "Fetch video",
+    label: "Watching the source",
     keywords: [ "download", "installing", "preparing download", "starting generation", "starting download", "fetching", "streaming", "stream", "starting", "processing" ],
     maxProgress: 30
   }, {
     id: "moment",
-    label: "Finding best moment",
+    label: "Finding the best moment",
     keywords: [ "moment", "audio", "analyz", "finding", "extract", "30-second", "30 second", "adaptive" ],
     maxProgress: 55
   }, {
     id: "secondary",
-    label: "Preparing secondary panel",
+    label: "Setting up the second panel",
     keywords: [ "reframe", "face", "gameplay", "minecraft", "layout", "secondary", "panel" ],
     maxProgress: 70
   }, {
     id: "compose",
-    label: "Building split screen",
+    label: "Building the split",
     keywords: [ "split-screen", "split screen", "compos", "stack", "creating split" ],
     maxProgress: 88
   }, {
     id: "export",
-    label: "Exporting",
+    label: "Finishing up",
     keywords: [ "encoding final", "finaliz", "final touch", "watermark", "adding caption", "exporting", "uploading to storage" ],
     maxProgress: 100
   } ],

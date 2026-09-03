@@ -179,6 +179,17 @@
           });
         });
       }
+      const n = document.getElementById("solisGenActivitySummary");
+      const i = document.getElementById("solisGenSteps");
+      if (n && i && !n.__solisBound) {
+        n.__solisBound = true;
+        n.addEventListener("click", () => {
+          const e = n.getAttribute("aria-expanded") === "true";
+          n.setAttribute("aria-expanded", e ? "false" : "true");
+          n.classList.toggle("is-expanded", !e);
+          i.hidden = e;
+        });
+      }
     };
     n.openGenStage = function openGenStage(t) {
       const n = document.getElementById("solisGenStage");
@@ -317,12 +328,12 @@
         e.title = r || "Your video";
       }
       if (t) t.textContent = c;
-      const m = String(i.thumbnailUrl || a.thumbnailUrl || "").trim();
-      const g = i.videoId || a.videoId || null;
-      const u = m || (g ? `https://i.ytimg.com/vi/${g}/hqdefault.jpg` : "");
+      const d = String(i.thumbnailUrl || a.thumbnailUrl || "").trim();
+      const m = i.videoId || a.videoId || null;
+      const g = d || (m ? `https://i.ytimg.com/vi/${m}/hqdefault.jpg` : "");
       if (n) {
-        if (u && /^https?:\/\//i.test(u)) {
-          const e = u.replace(/"/g, "");
+        if (g && /^https?:\/\//i.test(g)) {
+          const e = g.replace(/"/g, "");
           const t = n.querySelector("img");
           if (!t || t.getAttribute("src") !== e) {
             n.innerHTML = `<img src="${e}" alt="" loading="lazy">`;
@@ -331,11 +342,11 @@
           n.innerHTML = '<span class="solis-gen-thumb-fallback">CLIP</span>';
         }
       }
-      const d = !r || r === "Your video" || r === "YouTube video";
-      if (d && g && !this._genStageMetaFetchId) {
-        this._genStageMetaFetchId = g;
+      const u = !r || r === "Your video" || r === "YouTube video";
+      if (u && m && !this._genStageMetaFetchId) {
+        this._genStageMetaFetchId = m;
         const e = window.API_BASE_URL || "/api";
-        fetch(`${e}/youtube/get-metadata/${encodeURIComponent(g)}`, {
+        fetch(`${e}/youtube/get-metadata/${encodeURIComponent(m)}`, {
           credentials: "include",
           signal: AbortSignal.timeout(5e3)
         }).then(e => e.ok ? e.json() : null).then(e => {
@@ -346,12 +357,12 @@
             ...this.activeTemplateOptions || {},
             videoTitle: e.title,
             title: e.title,
-            thumbnailUrl: e.thumbnail || this.activeTemplateOptions?.thumbnailUrl || (g ? `https://i.ytimg.com/vi/${g}/hqdefault.jpg` : null),
-            videoId: g
+            thumbnailUrl: e.thumbnail || this.activeTemplateOptions?.thumbnailUrl || (m ? `https://i.ytimg.com/vi/${m}/hqdefault.jpg` : null),
+            videoId: m
           };
           this._fillGenStageVideoMeta();
         }).catch(() => {}).finally(() => {
-          if (this._genStageMetaFetchId === g) this._genStageMetaFetchId = null;
+          if (this._genStageMetaFetchId === m) this._genStageMetaFetchId = null;
         });
       }
     };
@@ -406,35 +417,35 @@
       if (!i || typeof this._getActiveTasks !== "function") return;
       const c = this._getActiveTasks();
       if (!c.length) return;
-      let m = Number(e);
-      if (!Number.isFinite(m)) {
+      let d = Number(e);
+      if (!Number.isFinite(d)) {
         const e = this.activeGenerations?.values?.().next?.().value;
-        m = Number(e?.progress);
+        d = Number(e?.progress);
       }
-      if (!Number.isFinite(m)) m = 0;
-      m = Math.max(0, Math.min(100, m));
-      const g = String(t || firstMessage(this) || "");
-      let u = 0;
+      if (!Number.isFinite(d)) d = 0;
+      d = Math.max(0, Math.min(100, d));
+      const m = String(t || firstMessage(this) || "");
+      let g = 0;
       if (typeof this._resolveTaskIndex === "function") {
-        u = this._resolveTaskIndex(m, g);
+        g = this._resolveTaskIndex(d, m);
       } else {
         for (let e = 0; e < c.length; e++) {
           const t = e === 0 ? 0 : Number(c[e - 1]?.maxProgress) || 0;
-          if (m >= t) u = e;
+          if (d >= t) g = e;
         }
       }
-      const d = n && n.reveal;
-      const p = `${c.map(e => e.id).join("|")}|${u}|${m >= 100 ? 1 : 0}`;
-      const f = d || this._genStepSignature !== p || i.children.length !== c.length;
+      const u = n && n.reveal;
+      const p = `${c.map(e => e.id).join("|")}|${g}|${d >= 100 ? 1 : 0}`;
+      const f = u || this._genStepSignature !== p || i.children.length !== c.length;
       if (f) {
         this._genStepSignature = p;
         i.innerHTML = c.map((e, t) => {
-          const n = t < u || m >= 100;
-          const i = !n && t === u;
+          const n = t < g || d >= 100;
+          const i = !n && t === g;
           const s = n ? `<span class="solis-gen-step-ico"><svg class="solis-gen-step-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>` : i ? `<span class="solis-gen-step-ico"><span class="solis-gen-step-spin" aria-hidden="true"></span></span>` : `<span class="solis-gen-step-ico"></span>`;
           return `<li class="solis-gen-step${n ? " is-done" : ""}${i ? " is-active" : ""}" data-step-i="${t}">${s}<span class="solis-gen-step-label"></span></li>`;
         }).join("");
-        if (d) {
+        if (u) {
           i.querySelectorAll(".solis-gen-step").forEach((e, t) => {
             e.classList.remove("is-shown");
             setTimeout(() => e.classList.add("is-shown"), 80 + t * 100);
@@ -446,12 +457,12 @@
       i.querySelectorAll(".solis-gen-step").forEach((e, t) => {
         const n = c[t];
         if (!n) return;
-        const i = t < u || m >= 100;
-        const s = !i && t === u;
+        const i = t < g || d >= 100;
+        const s = !i && t === g;
         const o = e.querySelector(".solis-gen-step-label");
         if (!o) return;
-        if (s && m < 100 && m > 0) {
-          o.innerHTML = `${escapeHtml(n.label)}<span class="solis-gen-step-pct">...${Math.floor(m)}%</span>`;
+        if (s && d < 100 && d > 0) {
+          o.innerHTML = `${escapeHtml(n.label)}<span class="solis-gen-step-pct">...${Math.floor(d)}%</span>`;
         } else if (s) {
           o.textContent = `${n.label}...`;
         } else {
@@ -460,21 +471,30 @@
         e.classList.toggle("is-done", i);
         e.classList.toggle("is-active", s);
       });
-      const h = c[Math.min(u, c.length - 1)];
+      const h = c[Math.min(g, c.length - 1)];
       if (s && !this._genStageOutcomeKind) {
-        const e = m >= 100 ? "Your clips are ready" : h?.id === "moment" || h?.id === "clip" ? "Analyzing content and finding clips" : h?.label || "Analyzing content and finding clips";
-        if (e !== this._lastGenHeadline) {
-          s.textContent = e;
-          this._lastGenHeadline = e;
-        }
+        const e = d < 100;
+        s.textContent = e ? "Thinking" : "Your clips are ready";
+        s.classList.toggle("solis-gen-thinking", e);
+        this._lastGenHeadline = s.textContent;
+      }
+      const _ = document.getElementById("solisGenNow");
+      if (_ && !this._genStageOutcomeKind) {
+        _.hidden = d >= 100;
+        _.textContent = d >= 100 ? "" : h?.label || "Working";
+      }
+      const S = document.getElementById("solisGenActivityText");
+      if (S) {
+        const e = c.slice(0, Math.min(c.length, g + (d >= 100 ? 0 : 1))).map(e => e.label).filter(Boolean);
+        S.textContent = e.length ? e.join(", ") : "Getting started";
       }
       if (o) {
-        o.textContent = m >= 100 ? "Complete" : m > 0 ? `${Math.floor(m)}%` : "Starting...";
+        o.textContent = d >= 100 ? "Complete" : d > 0 ? `${Math.floor(d)}%` : "Starting...";
       }
-      const _ = typeof this._cleanMessage === "function" ? this._cleanMessage(g) : String(g || "").trim();
+      const y = typeof this._cleanMessage === "function" ? this._cleanMessage(m) : String(m || "").trim();
       if (a) {
         a.classList.remove("is-complete", "is-error", "is-warn");
-        if (m >= 100) {
+        if (d >= 100) {
           a.hidden = true;
           a.textContent = "";
         } else {
@@ -482,7 +502,7 @@
           a.textContent = "";
         }
       }
-      if (r && m < 100 && !this._genStageOutcomeKind) {
+      if (r && d < 100 && !this._genStageOutcomeKind) {
         r.hidden = true;
         r.textContent = "";
         r.classList.remove("is-complete", "is-error");
@@ -492,7 +512,7 @@
       }
       if (!this._genStageOutcomeKind) {
         this._syncGenStageCompanion?.(h?.id, {
-          pct: m
+          pct: d
         });
       }
     };
@@ -537,7 +557,13 @@
         if (e === "error") n.classList.add("is-error");
       }
       if (o) {
-        o.textContent = e === "error" ? "Generation failed" : "Your clips are ready";
+        o.classList.remove("solis-gen-thinking");
+        o.textContent = e === "error" ? "Something went wrong" : "Your clips are ready";
+      }
+      const r = document.getElementById("solisGenNow");
+      if (r) {
+        r.hidden = true;
+        r.textContent = "";
       }
       if (i) {
         if (e === "error") {
@@ -607,22 +633,40 @@
     const e = document.getElementById("solisGenSteps");
     if (!e) return;
     const t = '<svg class="solis-gen-step-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-    e.innerHTML = [ [ "Fetch video", "done" ], [ "Create project", "done" ], [ "Finding best moment", "active" ], [ "Preparing secondary panel", "" ], [ "Building split screen", "" ], [ "Exporting", "" ] ].map(([e, n], i) => {
+    e.innerHTML = [ [ "Watching the source", "done" ], [ "Finding the best moment", "active" ], [ "Setting up the second panel", "" ], [ "Building the split", "" ], [ "Finishing up", "" ] ].map(([e, n], i) => {
       const s = n === "done";
       const o = n === "active";
       const a = s ? `<span class="solis-gen-step-ico">${t}</span>` : o ? '<span class="solis-gen-step-ico"><span class="solis-gen-step-spin" aria-hidden="true"></span></span>' : '<span class="solis-gen-step-ico"></span>';
-      const r = o ? `${e}<span class="solis-gen-step-pct">...37%</span>` : e;
+      const r = o ? `${e}<span class="solis-gen-step-pct">…37%</span>` : e;
       return `<li class="solis-gen-step is-shown${s ? " is-done" : ""}${o ? " is-active" : ""}" data-step-i="${i}">${a}<span class="solis-gen-step-label">${r}</span></li>`;
     }).join("");
     const n = document.getElementById("solisGenHeading");
     const i = document.getElementById("solisGenProgressLabel");
     const s = document.getElementById("solisGenVideoTitle");
-    if (n) n.textContent = "Analyzing content and finding clips";
+    const o = document.getElementById("solisGenNow");
+    const a = document.getElementById("solisGenActivityText");
+    if (n) {
+      n.textContent = "Thinking";
+      n.classList.add("solis-gen-thinking");
+    }
+    if (o) {
+      o.hidden = false;
+      o.textContent = "Finding the best moment";
+    }
+    if (a) {
+      a.textContent = "Watching the source, Finding the best moment";
+    }
     if (i) i.textContent = "37%";
     if (s) s.textContent = "I Ate Nothing But YouTuber Products for 7 Days";
-    const o = document.getElementById("solisGenThumb");
-    if (o) {
-      o.innerHTML = '<img src="https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg" alt="" loading="lazy">';
+    const r = document.getElementById("solisGenThumb");
+    if (r) {
+      r.innerHTML = '<img src="https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg" alt="" loading="lazy">';
+    }
+    const l = document.getElementById("solisGenActivitySummary");
+    if (l && e) {
+      l.setAttribute("aria-expanded", "true");
+      l.classList.add("is-expanded");
+      e.hidden = false;
     }
   }
   function forceOpenDemoStage() {
@@ -642,7 +686,14 @@
         t.openGenStage({
           reveal: true
         });
-        t.displayProgress?.(37, "Finding best moment...");
+        t.displayProgress?.(37, "Finding the best moment...");
+        const e = document.getElementById("solisGenActivitySummary");
+        const n = document.getElementById("solisGenSteps");
+        if (e && n) {
+          e.setAttribute("aria-expanded", "true");
+          e.classList.add("is-expanded");
+          n.hidden = false;
+        }
         return true;
       } catch (e) {}
     }
@@ -693,7 +744,7 @@
         e._ensureDomRefs?.();
         e._ensureTaskList?.();
         if (e.wrapper) e.wrapper.style.display = "flex";
-        e.displayProgress?.(37, "Finding best moment...");
+        e.displayProgress?.(37, "Finding the best moment...");
         e.openPanel?.();
         e._bindGenStageChrome?.();
         return true;

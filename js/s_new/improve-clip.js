@@ -185,7 +185,7 @@
     if (n) n.disabled = true;
     try {
       const t = String(i || "").trim();
-      showNote(t ? "Working from your note…" : "Improving…");
+      showNote(t ? "Watching with Google…" : "Improving…");
       let o = null;
       try {
         const e = window.PreviewTimeline?.getActiveEditRange?.();

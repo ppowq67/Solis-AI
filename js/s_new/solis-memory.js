@@ -2,18 +2,18 @@
   const e = "solis_template_memory";
   const t = "solis_caption_by_template";
   const n = "solis_session_style_draft";
-  const s = "solis_memory_owner_id";
-  const i = "solis_template_memory";
-  const o = "solis_caption_by_template";
-  const r = 5;
+  const i = "solis_memory_owner_id";
+  const s = "solis_template_memory";
+  const r = "solis_caption_by_template";
+  const o = 5;
   const l = 900;
   const a = 999;
   const c = 40;
   const u = 1200;
-  const f = 45 * 1e3;
-  const p = 18 * 1e3;
-  const g = 20 * 1e3;
-  const y = new Set;
+  const p = 45 * 1e3;
+  const f = 18 * 1e3;
+  const y = 20 * 1e3;
+  const g = new Set;
   function isRankingTemplate(e) {
     const t = String(e || "").toLowerCase();
     return t === "ranked_compilation" || t === "ranking" || t.includes("rank");
@@ -55,22 +55,22 @@
   function rankingOverlayDiffers(e, t) {
     const n = rankingOverlayForSuggest(e);
     if (!n) return false;
-    const s = sanitizeRankingOverlay(collectLiveCaptions(t));
-    if (!s) return true;
-    return Math.abs(Number(n.y_pct) - Number(s.y_pct)) > .015;
+    const i = sanitizeRankingOverlay(collectLiveCaptions(t));
+    if (!i) return true;
+    return Math.abs(Number(n.y_pct) - Number(i.y_pct)) > .015;
   }
-  function sanitizeForTemplate(e, {styles: t = null, captions: n = null, layout: s = null} = {}) {
-    const i = templateMemoryProfile(e);
-    let o = null;
-    if (i.rankingOverlay) {
-      o = sanitizeRankingOverlay(n);
-    } else if (i.captions && n && typeof n === "object" && Object.keys(n).length) {
-      o = n;
+  function sanitizeForTemplate(e, {styles: t = null, captions: n = null, layout: i = null} = {}) {
+    const s = templateMemoryProfile(e);
+    let r = null;
+    if (s.rankingOverlay) {
+      r = sanitizeRankingOverlay(n);
+    } else if (s.captions && n && typeof n === "object" && Object.keys(n).length) {
+      r = n;
     }
     return {
-      styles: i.styles && t && typeof t === "object" && Object.keys(t).length ? t : null,
-      captions: o,
-      layout: i.layout && layoutUseful(s) ? normalizeLayout(s) : null
+      styles: s.styles && t && typeof t === "object" && Object.keys(t).length ? t : null,
+      captions: r,
+      layout: s.layout && layoutUseful(i) ? normalizeLayout(i) : null
     };
   }
   function layoutUseful(e) {
@@ -114,17 +114,17 @@
     if (!t || t === "transparent") return null;
     const n = t.match(/^([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i);
     if (!n) return null;
-    const s = parseInt(n[1], 16);
-    const i = parseInt(n[2], 16);
-    const o = parseInt(n[3], 16);
-    if (s > 200 && i < 150 && o < 90) return "orange";
-    if (s > 210 && i > 170 && o < 90) return "gold";
-    if (i > s + 30 && i > o + 20) return "green";
-    if (o > s + 30 && o > i + 10) return "blue";
-    if (s > 180 && o > 140 && i < 140) return "pink";
-    if (s > 200 && i < 100 && o < 100) return "red";
-    if (s > 220 && i > 220 && o > 220) return "white";
-    if (s < 45 && i < 45 && o < 45) return "black";
+    const i = parseInt(n[1], 16);
+    const s = parseInt(n[2], 16);
+    const r = parseInt(n[3], 16);
+    if (i > 200 && s < 150 && r < 90) return "orange";
+    if (i > 210 && s > 170 && r < 90) return "gold";
+    if (s > i + 30 && s > r + 20) return "green";
+    if (r > i + 30 && r > s + 10) return "blue";
+    if (i > 180 && r > 140 && s < 140) return "pink";
+    if (i > 200 && s < 100 && r < 100) return "red";
+    if (i > 220 && s > 220 && r > 220) return "white";
+    if (i < 45 && s < 45 && r < 45) return "black";
     return null;
   }
   function memFontShort(e) {
@@ -143,20 +143,20 @@
     if (!e || !e.length) return "";
     return e[memHashSeed(t) % e.length];
   }
-  function suggestHookLine({captions: e = null, styles: t = null, layout: n = null, mode: s = "captions", seed: i = ""} = {}) {
-    const o = e && typeof e === "object" ? e : null;
-    const r = String(o?.anim || "").toLowerCase();
-    const l = m[r] || (r && r !== "none" ? r : null);
-    const a = memColorName(o?.color || o?.highlight || o?.fill);
-    const c = memFontShort(o?.font);
+  function suggestHookLine({captions: e = null, styles: t = null, layout: n = null, mode: i = "captions", seed: s = ""} = {}) {
+    const r = e && typeof e === "object" ? e : null;
+    const o = String(r?.anim || "").toLowerCase();
+    const l = m[o] || (o && o !== "none" ? o : null);
+    const a = memColorName(r?.color || r?.highlight || r?.fill);
+    const c = memFontShort(r?.font);
     const u = [ a, l, c ].filter(Boolean);
-    const f = u.length ? u.slice(0, 2).join(" ") : "your look";
-    const p = u.length ? u.join(" · ") : "your look";
-    const g = `${s}|${i}|${p}|${String(o?.__tip || "")}`;
-    if (s === "tip" || o?.__tip === "animations" || o?.__tip === "captions") {
-      return memPick([ "Captions on — keep them?", "Add captions to this clip?", "Keep captions?", "Captions ready — apply?" ], g);
+    const p = u.length ? u.slice(0, 2).join(" ") : "your look";
+    const f = u.length ? u.join(" · ") : "your look";
+    const y = `${i}|${s}|${f}|${String(r?.__tip || "")}`;
+    if (i === "tip" || r?.__tip === "animations" || r?.__tip === "captions") {
+      return memPick([ "Captions on — keep them?", "Add captions to this clip?", "Keep captions?", "Captions ready — apply?" ], y);
     }
-    if (s === "ranking") {
+    if (i === "ranking") {
       let e = "your ranking look";
       try {
         const n = t && typeof t === "object" ? t : null;
@@ -168,18 +168,18 @@
           }
         }
       } catch (e) {}
-      return memPick([ `Keep ${e}?`, "Your ranking style — apply?", "Same ranking look as last time", "One click. Your ranking again.", "Still you on the board?", `Back to ${e}?` ], g + e);
+      return memPick([ `Keep ${e}?`, "Your ranking style — apply?", "Same ranking look as last time", "One click. Your ranking again.", "Still you on the board?", `Back to ${e}?` ], y + e);
     }
-    if (s === "layout") {
+    if (i === "layout") {
       const e = String(n?.splitscreen_secondary_type || "").replace(/_/g, " ");
       const t = e ? `your ${e} split` : "your split";
-      return memPick([ `${t} — keep it?`, "Same split as last time", "Pick up your layout?", "Don’t rebuild the split", "Your composition. Apply?" ], g + e);
+      return memPick([ `${t} — keep it?`, "Same split as last time", "Pick up your layout?", "Don’t rebuild the split", "Your composition. Apply?" ], y + e);
     }
-    return memPick([ `Your ${f} — keep it?`, `Still rocking ${f}?`, `This is yours. Apply?`, `Back to ${f}?`, "Your signature. One click.", "Don’t start from zero", "Pick up where you left off", `${p} — still you?`, `Solis remembered ${f}`, c ? `Keep ${c}?` : `Keep ${f}?` ], g);
+    return memPick([ `Your ${p} — keep it?`, `Still rocking ${p}?`, `This is yours. Apply?`, `Back to ${p}?`, "Your signature. One click.", "Don’t start from zero", "Pick up where you left off", `${f} — still you?`, `Solis remembered ${p}`, c ? `Keep ${c}?` : `Keep ${p}?` ], y);
   }
   function trustFields(e, t, {resetOnFpChange: n = true} = {}) {
-    const s = !!(e && e.fingerprint && t && e.fingerprint === t);
-    if (s || !n) {
+    const i = !!(e && e.fingerprint && t && e.fingerprint === t);
+    if (i || !n) {
       return {
         acceptStreak: Number(e.acceptStreak) || 0,
         acceptFingerprint: e.acceptFingerprint || null,
@@ -197,33 +197,33 @@
   function recordSuggestionAccepted(e, t = {}) {
     const n = e || b;
     if (!n || t.tip) return;
-    const s = readState();
-    const i = s.templates[n];
-    if (!i) return;
-    const o = i.fingerprint || fingerprint(i.styles, i.captions, i.layout) || i.acceptFingerprint || "ok";
-    if (i.acceptFingerprint === o) {
-      i.acceptStreak = (Number(i.acceptStreak) || 0) + 1;
+    const i = readState();
+    const s = i.templates[n];
+    if (!s) return;
+    const r = s.fingerprint || fingerprint(s.styles, s.captions, s.layout) || s.acceptFingerprint || "ok";
+    if (s.acceptFingerprint === r) {
+      s.acceptStreak = (Number(s.acceptStreak) || 0) + 1;
     } else {
-      i.acceptFingerprint = o;
-      i.acceptStreak = 1;
+      s.acceptFingerprint = r;
+      s.acceptStreak = 1;
     }
-    i.lastAcceptedAt = (new Date).toISOString();
-    i.lastRejectedFingerprint = null;
-    i.lastRejectedAt = null;
-    if (i.acceptStreak >= d) {
-      i.autoApply = true;
+    s.lastAcceptedAt = (new Date).toISOString();
+    s.lastRejectedFingerprint = null;
+    s.lastRejectedAt = null;
+    if (s.acceptStreak >= d) {
+      s.autoApply = true;
     }
-    writeState(s);
+    writeState(i);
   }
   function clearAcceptTrust(e) {
     const t = e || b;
     if (!t) return;
     const n = readState();
-    const s = n.templates[t];
-    if (!s) return;
-    s.acceptStreak = 0;
-    s.acceptFingerprint = null;
-    s.autoApply = false;
+    const i = n.templates[t];
+    if (!i) return;
+    i.acceptStreak = 0;
+    i.acceptFingerprint = null;
+    i.autoApply = false;
     writeState(n);
   }
   function shouldAutoApply(e, t) {
@@ -235,8 +235,8 @@
     if (isLibraryPreviewOpen()) return false;
     const n = t.fingerprint || fingerprint(t.styles, t.captions, t.layout);
     if (t.acceptFingerprint && n && t.acceptFingerprint !== n) return false;
-    const s = !!(captionsForSuggest(t, e) || stylesForSuggest(t, e) || layoutUseful(t.layout));
-    return s;
+    const i = !!(captionsForSuggest(t, e) || stylesForSuggest(t, e) || layoutUseful(t.layout));
+    return i;
   }
   function silentlyApplyMemory(e) {
     const t = getTemplateMemory(e);
@@ -245,8 +245,8 @@
     try {
       if (window.SolisMemory) window.SolisMemory._applying = true;
       if (isSplitscreenTemplate(e) && layoutUseful(t.layout)) {
-        const s = collectLiveLayout(e);
-        if (layoutDiffers(t.layout, s) && typeof window.applySplitscreenMemoryLayout === "function") {
+        const i = collectLiveLayout(e);
+        if (layoutDiffers(t.layout, i) && typeof window.applySplitscreenMemoryLayout === "function") {
           window.applySplitscreenMemoryLayout(t.layout, {
             commit: true
           });
@@ -254,20 +254,20 @@
         }
       }
       if (!isRankingTemplate(e)) {
-        const s = captionsForSuggest(t, e);
-        if (s) {
-          const t = smarterCaptions(s, e);
-          const i = collectLiveCaptions(e);
-          if (!i || captionsDiffer(t, i)) {
+        const i = captionsForSuggest(t, e);
+        if (i) {
+          const t = smarterCaptions(i, e);
+          const s = collectLiveCaptions(e);
+          if (!s || captionsDiffer(t, s)) {
             if (applyCaptions(t, e)) n = true;
           }
         }
       }
       if (isRankingTemplate(e)) {
-        const s = stylesForSuggest(t, e);
-        if (s && Object.keys(s).length) {
+        const i = stylesForSuggest(t, e);
+        if (i && Object.keys(i).length) {
           window.__solisRankingDeferCustoms = false;
-          applyStyles(e, s);
+          applyStyles(e, i);
           n = true;
         }
       }
@@ -294,10 +294,10 @@
     try {
       const e = _storageKey(t);
       const n = _resolveUserId();
-      const s = localStorage.getItem(e) || sessionStorage.getItem(e) || (!n ? localStorage.getItem(o) : null) || (!n ? sessionStorage.getItem(o) : null);
-      if (!s) return {};
-      const i = JSON.parse(s);
-      return i && typeof i === "object" ? i : {};
+      const i = localStorage.getItem(e) || sessionStorage.getItem(e) || (!n ? localStorage.getItem(r) : null) || (!n ? sessionStorage.getItem(r) : null);
+      if (!i) return {};
+      const s = JSON.parse(i);
+      return s && typeof s === "object" ? s : {};
     } catch (e) {
       return {};
     }
@@ -305,9 +305,9 @@
   function writeCaptionMap(e) {
     try {
       const n = _storageKey(t);
-      const s = JSON.stringify(e || {});
-      localStorage.setItem(n, s);
-      sessionStorage.setItem(n, s);
+      const i = JSON.stringify(e || {});
+      localStorage.setItem(n, i);
+      sessionStorage.setItem(n, i);
     } catch (e) {}
   }
   function rememberCaptionSnap(e, t) {
@@ -383,14 +383,14 @@
     const t = e || b || window.clipsStudio?.currentTemplateForPreview?.id;
     if (!t || !isEnabled()) return null;
     const n = templateMemoryProfile(t);
-    const s = {};
+    const i = {};
     try {
       if (n.captions) {
         const e = collectLiveCaptions(t, {
           allowSnap: true
         });
         if (e && Object.keys(e).length) {
-          s.captions = {
+          i.captions = {
             ...e
           };
           rememberCaptionSnap(t, e);
@@ -400,32 +400,32 @@
     try {
       if (n.styles) {
         const e = collectLiveStyles(t);
-        if (e && Object.keys(e).length) s.styles = JSON.parse(JSON.stringify(e));
+        if (e && Object.keys(e).length) i.styles = JSON.parse(JSON.stringify(e));
       }
     } catch (e) {}
     try {
       if (n.layout) {
         const e = collectLiveLayout(t);
-        if (layoutUseful(e)) s.layout = JSON.parse(JSON.stringify(e));
+        if (layoutUseful(e)) i.layout = JSON.parse(JSON.stringify(e));
       }
     } catch (e) {}
-    if (!Object.keys(s).length) return null;
-    writeSessionDraft(t, s);
+    if (!Object.keys(i).length) return null;
+    writeSessionDraft(t, i);
     try {
       upsertTemplateMemory(t, {
-        captions: s.captions || undefined,
-        styles: s.styles || undefined,
-        layout: s.layout || undefined,
+        captions: i.captions || undefined,
+        styles: i.styles || undefined,
+        layout: i.layout || undefined,
         source: "close"
       });
     } catch (e) {}
     try {
-      if (s.captions) {
+      if (i.captions) {
         window.__solisCaptionsOptedIn = true;
         window.__solisCaptionsClearedForGenerate = false;
       }
     } catch (e) {}
-    return s;
+    return i;
   }
   function blendSessionPrefs(e, t) {
     if (!e || typeof e !== "object") return e;
@@ -453,20 +453,20 @@
   let w = 0;
   let h = false;
   let b = null;
-  let k = null;
-  let _ = false;
-  let M = null;
+  let _ = null;
+  let k = false;
   let v = null;
+  let M = null;
   let C = false;
   function _resolveUserId(e) {
     if (e != null && String(e).trim()) return String(e).trim();
-    if (v) return v;
+    if (M) return M;
     try {
       const e = window.currentUser?.id ?? window.currentUser?.user_id;
       if (e != null && String(e).trim()) return String(e).trim();
     } catch (e) {}
     try {
-      const e = localStorage.getItem(s);
+      const e = localStorage.getItem(i);
       if (e) return e;
     } catch (e) {}
     return null;
@@ -477,27 +477,27 @@
   }
   function _purgeLegacyGlobalKeys() {
     try {
-      localStorage.removeItem(i);
-      localStorage.removeItem(o);
-      sessionStorage.removeItem(o);
+      localStorage.removeItem(s);
+      localStorage.removeItem(r);
+      sessionStorage.removeItem(r);
     } catch (e) {}
   }
   function setUserId(e, {clearLocal: t = false} = {}) {
     const n = _resolveUserId(e);
-    const i = !!(v && n && v !== n);
-    v = n;
-    _ = false;
+    const s = !!(M && n && M !== n);
+    M = n;
+    k = false;
     if (n) {
       try {
-        localStorage.setItem(s, n);
+        localStorage.setItem(i, n);
       } catch (e) {}
     } else {
       try {
-        localStorage.removeItem(s);
+        localStorage.removeItem(i);
       } catch (e) {}
     }
     _purgeLegacyGlobalKeys();
-    if (t || i) {
+    if (t || s) {
       try {
         writeState(defaultState(), {
           sync: false
@@ -506,7 +506,7 @@
       C = true;
     }
     return {
-      switched: i,
+      switched: s,
       userId: n
     };
   }
@@ -516,7 +516,7 @@
     } catch (e) {}
     return null;
   }
-  const L = {
+  const A = {
     karaoke: {
       color: "#FFFFFF",
       fill: null
@@ -544,29 +544,44 @@
   };
   function defaultState() {
     return {
-      version: r,
+      version: o,
       enabled: true,
       suggestEnabled: true,
       templates: {},
-      usageLog: []
+      usageLog: [],
+      editorial: {
+        events: [],
+        liked_reasons: [],
+        improve_prompts: [],
+        prefs: {},
+        updatedAt: null
+      }
     };
   }
   function readState() {
     try {
       const t = _storageKey(e);
       const n = _resolveUserId();
-      const s = localStorage.getItem(t) || (!n ? localStorage.getItem(i) : null);
-      if (!s) return defaultState();
-      const o = JSON.parse(s);
-      if (!o || typeof o !== "object") return defaultState();
+      const i = localStorage.getItem(t) || (!n ? localStorage.getItem(s) : null);
+      if (!i) return defaultState();
+      const r = JSON.parse(i);
+      if (!r || typeof r !== "object") return defaultState();
       const l = {
         ...defaultState(),
-        ...o,
-        version: r,
-        templates: o.templates && typeof o.templates === "object" ? o.templates : {},
-        usageLog: Array.isArray(o.usageLog) ? o.usageLog : []
+        ...r,
+        version: o,
+        templates: r.templates && typeof r.templates === "object" ? r.templates : {},
+        usageLog: Array.isArray(r.usageLog) ? r.usageLog : [],
+        editorial: r.editorial && typeof r.editorial === "object" ? {
+          ...defaultState().editorial,
+          ...r.editorial,
+          events: Array.isArray(r.editorial.events) ? r.editorial.events : [],
+          liked_reasons: Array.isArray(r.editorial.liked_reasons) ? r.editorial.liked_reasons : [],
+          improve_prompts: Array.isArray(r.editorial.improve_prompts) ? r.editorial.improve_prompts : [],
+          prefs: r.editorial.prefs && typeof r.editorial.prefs === "object" ? r.editorial.prefs : {}
+        } : defaultState().editorial
       };
-      let a = o.version !== r;
+      let a = r.version !== o;
       Object.keys(l.templates).forEach(e => {
         const t = l.templates[e];
         if (!t || typeof t !== "object") return;
@@ -575,10 +590,10 @@
           captions: t.captions,
           layout: t.layout
         });
-        const s = JSON.stringify(t.styles || null) !== JSON.stringify(n.styles || null);
-        const i = JSON.stringify(t.layout || null) !== JSON.stringify(n.layout || null);
-        const o = JSON.stringify(t.captions || null) !== JSON.stringify(n.captions || null);
-        if (s || i || o) {
+        const i = JSON.stringify(t.styles || null) !== JSON.stringify(n.styles || null);
+        const s = JSON.stringify(t.layout || null) !== JSON.stringify(n.layout || null);
+        const r = JSON.stringify(t.captions || null) !== JSON.stringify(n.captions || null);
+        if (i || s || r) {
           t.styles = n.styles;
           t.layout = n.layout;
           t.captions = n.captions;
@@ -602,14 +617,14 @@
     } catch (e) {}
     if (n) scheduleServerSync();
   }
-  function fingerprint(e, t, n, s) {
+  function fingerprint(e, t, n, i) {
     try {
-      const i = sanitizeRankingOverlay(s);
+      const s = sanitizeRankingOverlay(i);
       return JSON.stringify({
         s: e || null,
         c: t || null,
-        o: i ? {
-          y_pct: Number(i.y_pct).toFixed(3)
+        o: s ? {
+          y_pct: Number(s.y_pct).toFixed(3)
         } : null,
         l: n ? {
           secondary_type: n.splitscreen_secondary_type || null,
@@ -624,32 +639,32 @@
     }
   }
   function summarizeStyles(e, t, n) {
-    const s = [];
+    const i = [];
     if (n && typeof n === "object") {
       const e = String(n.splitscreen_secondary_type || "");
-      if (n.splitscreen_secondary_collapsed) s.push("Focus"); else if (e === "face_track") s.push("AI Reframe"); else if (e === "blank") s.push("Blank"); else if (e === "blank_blur") s.push("Blur"); else if (e === "gameplay") s.push("Focus");
-      if (n.splitscreen_inverted) s.push("flip");
+      if (n.splitscreen_secondary_collapsed) i.push("Focus"); else if (e === "face_track") i.push("AI Reframe"); else if (e === "blank") i.push("Blank"); else if (e === "blank_blur") i.push("Blur"); else if (e === "gameplay") i.push("Focus");
+      if (n.splitscreen_inverted) i.push("flip");
       const t = Number(n.splitscreen_content_ratio);
-      if (Number.isFinite(t)) s.push(`split ${Math.round(t * 100)}%`);
+      if (Number.isFinite(t)) i.push(`split ${Math.round(t * 100)}%`);
     }
     if (t && typeof t === "object") {
-      if (t.font) s.push(String(t.font).split(",")[0].replace(/['"]/g, ""));
-      if (t.anim) s.push(String(t.anim));
-      if (t.color) s.push(String(t.color));
-      if (t.y_pct != null) s.push(`y${Math.round(Number(t.y_pct) * 100)}`);
+      if (t.font) i.push(String(t.font).split(",")[0].replace(/['"]/g, ""));
+      if (t.anim) i.push(String(t.anim));
+      if (t.color) i.push(String(t.color));
+      if (t.y_pct != null) i.push(`y${Math.round(Number(t.y_pct) * 100)}`);
     }
-    if (!s.length && e && typeof e === "object") {
+    if (!i.length && e && typeof e === "object") {
       const t = Object.keys(e);
       if (t.length) {
         const n = e[t[0]] || {};
-        if (n.font) s.push(String(n.font).split(",")[0].replace(/['"]/g, ""));
-        if (n.font_size) s.push(`${n.font_size}px`);
+        if (n.font) i.push(String(n.font).split(",")[0].replace(/['"]/g, ""));
+        if (n.font_size) i.push(`${n.font_size}px`);
         if (Array.isArray(n.color) && n.color.length >= 3) {
-          s.push(`rgb(${n.color.slice(0, 3).join(",")})`);
+          i.push(`rgb(${n.color.slice(0, 3).join(",")})`);
         }
       }
     }
-    if (s.length) return s.slice(0, 4).join(" · ");
+    if (i.length) return i.slice(0, 4).join(" · ");
     if (e && Object.keys(e).length) {
       return `${Object.keys(e).length} saved style${Object.keys(e).length === 1 ? "" : "s"}`;
     }
@@ -717,10 +732,10 @@
     e.setAttribute("aria-label", n);
     e.classList.add("solis-nocopy");
     for (let t = 0; t < n.length; t++) {
-      const s = document.createElement("span");
-      s.textContent = n[t];
-      s.setAttribute("aria-hidden", "true");
-      e.appendChild(s);
+      const i = document.createElement("span");
+      i.textContent = n[t];
+      i.setAttribute("aria-hidden", "true");
+      e.appendChild(i);
       if (t < n.length - 1) {
         e.appendChild(document.createTextNode("​"));
       }
@@ -731,17 +746,17 @@
     const n = {
       ...e
     };
-    const s = String(n.font || "").replace(/['"]/g, "").split(",")[0].trim();
-    const i = fontAnimHint(s);
-    if (i && (!n.anim || n.anim === "center" || n.anim === "skew" || n.anim === "slide")) {
-      n.anim = i;
+    const i = String(n.font || "").replace(/['"]/g, "").split(",")[0].trim();
+    const s = fontAnimHint(i);
+    if (s && (!n.anim || n.anim === "center" || n.anim === "skew" || n.anim === "slide")) {
+      n.anim = s;
     }
     if (n.anim === "center") n.anim = "fade";
-    const o = String(n.anim || "").toLowerCase();
-    const r = L[o];
-    if (r) {
-      if (!n.color) n.color = r.color;
-      if (!("fill" in n) && r.fill) n.fill = r.fill;
+    const r = String(n.anim || "").toLowerCase();
+    const o = A[r];
+    if (o) {
+      if (!n.color) n.color = o.color;
+      if (!("fill" in n) && o.fill) n.fill = o.fill;
     }
     if (!n.font_size || n.font_size < 28) n.font_size = n.font_size || 70;
     if (n.y_pct == null || !Number.isFinite(Number(n.y_pct))) {
@@ -780,17 +795,17 @@
     const t = readState();
     const n = t.templates[e] || null;
     if (!n) return null;
-    const s = sanitizeForTemplate(e, {
+    const i = sanitizeForTemplate(e, {
       styles: n.styles,
       captions: n.captions,
       layout: n.layout
     });
     return {
       ...n,
-      styles: s.styles,
-      captions: s.captions,
-      layout: s.layout,
-      fingerprint: fingerprint(s.styles, s.captions, s.layout) || n.fingerprint
+      styles: i.styles,
+      captions: i.captions,
+      layout: i.layout,
+      fingerprint: fingerprint(i.styles, i.captions, i.layout) || n.fingerprint
     };
   }
   function listMemories() {
@@ -844,24 +859,24 @@
         window.SolisMemory._applying = true;
         const e = JSON.parse(JSON.stringify(t));
         const n = window.rankingCustomizer.customizations || {};
-        const s = typeof window.rankingCustomizer.countFonts === "function" ? window.rankingCustomizer.countFonts(n) : 0;
-        const i = typeof window.rankingCustomizer.countFonts === "function" ? window.rankingCustomizer.countFonts(e) : 0;
-        if (i === 0 && s > 0) {
+        const i = typeof window.rankingCustomizer.countFonts === "function" ? window.rankingCustomizer.countFonts(n) : 0;
+        const s = typeof window.rankingCustomizer.countFonts === "function" ? window.rankingCustomizer.countFonts(e) : 0;
+        if (s === 0 && i > 0) {
           const t = {
             ...n
           };
-          Object.entries(e).forEach(([e, s]) => {
+          Object.entries(e).forEach(([e, i]) => {
             if (e === "__ranking_layout") {
-              t[e] = s;
+              t[e] = i;
               return;
             }
-            if (!s || typeof s !== "object") {
-              if (s != null) t[e] = s;
+            if (!i || typeof i !== "object") {
+              if (i != null) t[e] = i;
               return;
             }
             t[e] = {
               ...t[e] || {},
-              ...s
+              ...i
             };
             if (n[e]?.font && !t[e].font) t[e].font = n[e].font;
           });
@@ -926,14 +941,14 @@
     }
     return false;
   }
-  function upsertTemplateMemory(e, {styles: t, captions: n, layout: s, source: i} = {}) {
+  function upsertTemplateMemory(e, {styles: t, captions: n, layout: i, source: s} = {}) {
     if (!e || !isEnabled()) return;
-    const o = readState();
-    const r = o.templates[e] || {};
+    const r = readState();
+    const o = r.templates[e] || {};
     const l = templateMemoryProfile(e);
-    let a = t !== undefined ? t : r.styles || null;
-    let c = n !== undefined ? n : r.captions || null;
-    let u = s !== undefined ? mergeLayouts(r.layout, s) : r.layout || null;
+    let a = t !== undefined ? t : o.styles || null;
+    let c = n !== undefined ? n : o.captions || null;
+    let u = i !== undefined ? mergeLayouts(o.layout, i) : o.layout || null;
     if (!l.styles) a = null;
     if (!l.layout) u = null;
     if (!l.captions) c = null;
@@ -943,116 +958,116 @@
     if (!(a && Object.keys(a).length) && !(c && Object.keys(c).length) && !layoutUseful(u)) {
       return;
     }
-    const f = fingerprint(a, c, u);
-    const p = trustFields(r, f);
-    o.templates[e] = {
+    const p = fingerprint(a, c, u);
+    const f = trustFields(o, p);
+    r.templates[e] = {
       updatedAt: (new Date).toISOString(),
       styles: a ? JSON.parse(JSON.stringify(a)) : null,
       captions: c ? JSON.parse(JSON.stringify(c)) : null,
-      lastGeneratedCaptions: r.lastGeneratedCaptions ? JSON.parse(JSON.stringify(r.lastGeneratedCaptions)) : null,
-      lastGeneratedStyles: r.lastGeneratedStyles ? JSON.parse(JSON.stringify(r.lastGeneratedStyles)) : null,
+      lastGeneratedCaptions: o.lastGeneratedCaptions ? JSON.parse(JSON.stringify(o.lastGeneratedCaptions)) : null,
+      lastGeneratedStyles: o.lastGeneratedStyles ? JSON.parse(JSON.stringify(o.lastGeneratedStyles)) : null,
       layout: u ? JSON.parse(JSON.stringify(u)) : null,
-      fingerprint: f,
-      rejectCount: r.fingerprint === f ? r.rejectCount || 0 : 0,
-      lastRejectedFingerprint: r.fingerprint === f ? r.lastRejectedFingerprint || null : null,
-      lastSuggestedAt: r.fingerprint === f ? r.lastSuggestedAt : null,
-      acceptStreak: p.acceptStreak,
-      acceptFingerprint: p.acceptFingerprint,
-      autoApply: p.autoApply,
-      lastAcceptedAt: p.lastAcceptedAt,
-      source: i || r.source || "edit"
+      fingerprint: p,
+      rejectCount: o.fingerprint === p ? o.rejectCount || 0 : 0,
+      lastRejectedFingerprint: o.fingerprint === p ? o.lastRejectedFingerprint || null : null,
+      lastSuggestedAt: o.fingerprint === p ? o.lastSuggestedAt : null,
+      acceptStreak: f.acceptStreak,
+      acceptFingerprint: f.acceptFingerprint,
+      autoApply: f.autoApply,
+      lastAcceptedAt: f.lastAcceptedAt,
+      source: s || o.source || "edit"
     };
     if (c) rememberCaptionSnap(e, c);
-    writeState(o, {
+    writeState(r, {
       sync: false
     });
     syncSettingsUI();
   }
-  function recordFromGeneration(e, t, n, s) {
+  function recordFromGeneration(e, t, n, i) {
     if (!e || !isEnabled()) return;
-    const i = templateMemoryProfile(e);
-    const o = readState();
-    const r = o.templates[e] || {};
-    let l = i.styles ? t || collectLiveStyles(e) : null;
-    let a = i.captions ? n || collectLiveCaptions(e, {
+    const s = templateMemoryProfile(e);
+    const r = readState();
+    const o = r.templates[e] || {};
+    let l = s.styles ? t || collectLiveStyles(e) : null;
+    let a = s.captions ? n || collectLiveCaptions(e, {
       allowSnap: true
     }) : null;
-    let u = i.rankingOverlay ? sanitizeRankingOverlay(n || collectLiveCaptions(e, {
+    let u = s.rankingOverlay ? sanitizeRankingOverlay(n || collectLiveCaptions(e, {
       allowSnap: true
     })) : null;
-    let f = i.layout ? mergeLayouts(r.layout, s || collectLiveLayout(e)) : null;
-    if (i.captions && (!a || !Object.keys(a).length)) {
+    let p = s.layout ? mergeLayouts(o.layout, i || collectLiveLayout(e)) : null;
+    if (s.captions && (!a || !Object.keys(a).length)) {
       a = recallCaptionSnap(e);
     }
-    const p = sanitizeForTemplate(e, {
+    const f = sanitizeForTemplate(e, {
       styles: l,
       captions: a,
-      layout: f
+      layout: p
     });
-    l = p.styles;
-    a = p.captions;
-    f = p.layout;
-    if (i.rankingOverlay && u) {
+    l = f.styles;
+    a = f.captions;
+    p = f.layout;
+    if (s.rankingOverlay && u) {
       a = null;
     }
-    if (i.layout && !f && layoutUseful(r.layout)) {
-      f = normalizeLayout(r.layout);
+    if (s.layout && !p && layoutUseful(o.layout)) {
+      p = normalizeLayout(o.layout);
     }
-    if (!(l && Object.keys(l).length) && !(a && Object.keys(a).length) && !u && !layoutUseful(f)) {
+    if (!(l && Object.keys(l).length) && !(a && Object.keys(a).length) && !u && !layoutUseful(p)) {
       return;
     }
-    const g = fingerprint(l, a, f, u);
-    const d = r.fingerprint === g;
-    const m = trustFields(r, g);
-    o.templates[e] = {
+    const y = fingerprint(l, a, p, u);
+    const d = o.fingerprint === y;
+    const m = trustFields(o, y);
+    r.templates[e] = {
       updatedAt: (new Date).toISOString(),
       styles: l ? JSON.parse(JSON.stringify(l)) : null,
       captions: a ? JSON.parse(JSON.stringify(a)) : null,
-      lastGeneratedCaptions: a ? JSON.parse(JSON.stringify(a)) : r.lastGeneratedCaptions || null,
-      lastGeneratedStyles: l ? JSON.parse(JSON.stringify(l)) : r.lastGeneratedStyles || null,
-      lastGeneratedOverlay: u ? JSON.parse(JSON.stringify(u)) : r.lastGeneratedOverlay || null,
-      overlayPosition: u ? JSON.parse(JSON.stringify(u)) : r.overlayPosition || null,
-      layout: f ? JSON.parse(JSON.stringify(f)) : null,
-      fingerprint: g,
-      rejectCount: d ? r.rejectCount || 0 : 0,
-      lastRejectedFingerprint: d ? r.lastRejectedFingerprint || null : null,
-      lastRejectedAt: d ? r.lastRejectedAt || null : null,
-      lastSuggestedAt: d ? r.lastSuggestedAt : null,
+      lastGeneratedCaptions: a ? JSON.parse(JSON.stringify(a)) : o.lastGeneratedCaptions || null,
+      lastGeneratedStyles: l ? JSON.parse(JSON.stringify(l)) : o.lastGeneratedStyles || null,
+      lastGeneratedOverlay: u ? JSON.parse(JSON.stringify(u)) : o.lastGeneratedOverlay || null,
+      overlayPosition: u ? JSON.parse(JSON.stringify(u)) : o.overlayPosition || null,
+      layout: p ? JSON.parse(JSON.stringify(p)) : null,
+      fingerprint: y,
+      rejectCount: d ? o.rejectCount || 0 : 0,
+      lastRejectedFingerprint: d ? o.lastRejectedFingerprint || null : null,
+      lastRejectedAt: d ? o.lastRejectedAt || null : null,
+      lastSuggestedAt: d ? o.lastSuggestedAt : null,
       acceptStreak: m.acceptStreak,
       acceptFingerprint: m.acceptFingerprint,
       autoApply: d ? m.autoApply : true,
       lastAcceptedAt: m.lastAcceptedAt,
       source: "generate"
     };
-    o.usageLog.unshift({
+    r.usageLog.unshift({
       templateId: e,
       at: (new Date).toISOString(),
-      fingerprint: g
+      fingerprint: y
     });
-    o.usageLog = o.usageLog.slice(0, c);
+    r.usageLog = r.usageLog.slice(0, c);
     if (a) rememberCaptionSnap(e, a);
     try {
       writeSessionDraft(e, {
         captions: a || undefined,
         styles: l || undefined,
-        layout: layoutUseful(f) ? f : undefined
+        layout: layoutUseful(p) ? p : undefined
       });
     } catch (e) {}
-    writeState(o, {
+    writeState(r, {
       sync: true
     });
     w = 0;
-    y.delete(e);
+    g.delete(e);
     syncSettingsUI();
   }
   function recordLayout(e, t) {
     if (!isEnabled()) return;
     const n = e || b || window.clipsStudio?.currentTemplateForPreview?.id;
     if (!n || !isSplitscreenTemplate(n)) return;
-    const s = t || collectLiveLayout(n);
-    if (!layoutUseful(s)) return;
+    const i = t || collectLiveLayout(n);
+    if (!layoutUseful(i)) return;
     upsertTemplateMemory(n, {
-      layout: s,
+      layout: i,
       source: "layout"
     });
   }
@@ -1060,10 +1075,10 @@
     if (!isEnabled()) return;
     const n = e || b || window.clipsStudio?.currentTemplateForPreview?.id;
     if (!n) return;
-    const s = t || collectLiveCaptions(n);
-    if (!s || !Object.keys(s).length) return;
+    const i = t || collectLiveCaptions(n);
+    if (!i || !Object.keys(i).length) return;
     upsertTemplateMemory(n, {
-      captions: s,
+      captions: i,
       source: "caption"
     });
   }
@@ -1085,7 +1100,7 @@
     }
     const t = canOfferFirstAnimTip(e);
     const n = t ? 160 : l;
-    const s = t ? 20 : 40 + Math.floor(Math.random() * 80);
+    const i = t ? 20 : 40 + Math.floor(Math.random() * 80);
     S = setTimeout(() => {
       S = null;
       const t = document.getElementById("templatePreviewModal");
@@ -1095,7 +1110,7 @@
         return;
       }
       showSuggestion(e);
-    }, n + s);
+    }, n + i);
   }
   function captionsDiffer(e, t) {
     return fingerprint(null, e) !== fingerprint(null, t);
@@ -1103,20 +1118,20 @@
   function shouldSuggest(e) {
     if (!isSuggestEnabled() || !e) return false;
     if (h) return false;
-    if (y.has(e)) return false;
+    if (g.has(e)) return false;
     const t = getTemplateMemory(e);
     if (!t) return false;
     const n = stylesForSuggest(t, e);
-    const s = !!(n && Object.keys(n).length);
-    const i = captionsForSuggest(t, e);
-    const o = !!(i && Object.keys(i).length);
-    const r = isRankingTemplate(e) && rankingOverlayDiffers(t, e);
+    const i = !!(n && Object.keys(n).length);
+    const s = captionsForSuggest(t, e);
+    const r = !!(s && Object.keys(s).length);
+    const o = isRankingTemplate(e) && rankingOverlayDiffers(t, e);
     const l = layoutUseful(t.layout);
-    if (!s && !o && !l && !r) return false;
+    if (!i && !r && !l && !o) return false;
     if (t.lastRejectedFingerprint && t.lastRejectedFingerprint === t.fingerprint) {
       const n = Date.parse(t.lastRejectedAt || 0);
-      if (Number.isFinite(n) && Date.now() - n < f) return false;
-      if (!Number.isFinite(n) || Date.now() - n >= f) {
+      if (Number.isFinite(n) && Date.now() - n < p) return false;
+      if (!Number.isFinite(n) || Date.now() - n >= p) {
         try {
           const t = readState();
           if (t.templates[e]) {
@@ -1134,27 +1149,27 @@
     const d = !!(c && Object.keys(c).length);
     const m = !!(a && Object.keys(a).length);
     const S = templateMemoryProfile(e);
-    const w = o && S.captions && !isLibraryPreviewOpen();
-    const b = s && S.styles;
-    const k = r && S.rankingOverlay;
-    const _ = l && S.layout;
-    if (!w && !b && !_ && !k) return false;
-    const M = Date.parse(t.lastSuggestedAt || 0);
-    if (Number.isFinite(M)) {
-      const n = isRankingTemplate(e) ? g : p;
-      if (Date.now() - M < n) {
-        const e = _ && layoutDiffers(t.layout, u);
+    const w = r && S.captions && !isLibraryPreviewOpen();
+    const b = i && S.styles;
+    const _ = o && S.rankingOverlay;
+    const k = l && S.layout;
+    if (!w && !b && !k && !_) return false;
+    const v = Date.parse(t.lastSuggestedAt || 0);
+    if (Number.isFinite(v)) {
+      const n = isRankingTemplate(e) ? y : f;
+      if (Date.now() - v < n) {
+        const e = k && layoutDiffers(t.layout, u);
         if (!e) return false;
       }
     }
-    if (_ && layoutDiffers(t.layout, u)) return true;
+    if (k && layoutDiffers(t.layout, u)) return true;
     if (b && isRankingTemplate(e)) return true;
     if (w && !d) return true;
     if (b && !m && !d) return true;
-    const v = smarterCaptions(i, e);
+    const M = smarterCaptions(s, e);
     const C = fingerprint(a, c, u) === t.fingerprint;
-    const L = !v || fingerprint(null, c) === fingerprint(null, v);
-    if (C && L) return false;
+    const A = !M || fingerprint(null, c) === fingerprint(null, M);
+    if (C && A) return false;
     return true;
   }
   function flushDeferredRankingCustoms() {
@@ -1224,20 +1239,20 @@
     const t = document.getElementById("templateVideoPreview");
     const n = t || null;
     revealSuggestEl(e);
-    const s = e.offsetWidth || 64;
-    const i = e.offsetHeight || 34;
+    const i = e.offsetWidth || 64;
+    const s = e.offsetHeight || 34;
     if (!n) {
-      e.style.left = `${Math.max(12, window.innerWidth - s - 16)}px`;
+      e.style.left = `${Math.max(12, window.innerWidth - i - 16)}px`;
       e.style.top = "16px";
       e.style.transform = "none";
       return;
     }
-    const o = n.getBoundingClientRect();
-    let r = Math.round(o.right - s - 6);
-    let l = Math.round(o.top + 8);
-    r = Math.min(window.innerWidth - s - 8, Math.max(8, r));
-    l = Math.min(window.innerHeight - i - 8, Math.max(8, l));
-    e.style.left = `${r}px`;
+    const r = n.getBoundingClientRect();
+    let o = Math.round(r.right - i - 6);
+    let l = Math.round(r.top + 8);
+    o = Math.min(window.innerWidth - i - 8, Math.max(8, o));
+    l = Math.min(window.innerHeight - s - 8, Math.max(8, l));
+    e.style.left = `${o}px`;
     e.style.top = `${l}px`;
     e.style.transform = "none";
   }
@@ -1293,14 +1308,14 @@
   }
   function captionsForSuggest(e, t) {
     const n = t || b || window.clipsStudio?.currentTemplateForPreview?.id || null;
-    const s = n ? readSessionDraft(n) : null;
-    const i = e && typeof e === "object" ? e.lastGeneratedCaptions : null;
-    if (i && typeof i === "object" && Object.keys(i).length) {
-      return smarterCaptions(blendSessionPrefs(i, s?.captions), n);
+    const i = n ? readSessionDraft(n) : null;
+    const s = e && typeof e === "object" ? e.lastGeneratedCaptions : null;
+    if (s && typeof s === "object" && Object.keys(s).length) {
+      return smarterCaptions(blendSessionPrefs(s, i?.captions), n);
     }
-    if (s?.captions && typeof s.captions === "object" && Object.keys(s.captions).length) {
+    if (i?.captions && typeof i.captions === "object" && Object.keys(i.captions).length) {
       return smarterCaptions({
-        ...s.captions
+        ...i.captions
       }, n);
     }
     return null;
@@ -1308,13 +1323,13 @@
   function stylesForSuggest(e, t) {
     const n = t || b || window.clipsStudio?.currentTemplateForPreview?.id || null;
     if (!e || typeof e !== "object") return null;
-    const s = e.lastGeneratedStyles;
-    if (!(s && typeof s === "object" && Object.keys(s).length)) return null;
-    const i = n ? readSessionDraft(n) : null;
-    if (i?.styles && typeof i.styles === "object") {
+    const i = e.lastGeneratedStyles;
+    if (!(i && typeof i === "object" && Object.keys(i).length)) return null;
+    const s = n ? readSessionDraft(n) : null;
+    if (s?.styles && typeof s.styles === "object") {
       try {
-        const e = JSON.parse(JSON.stringify(s));
-        Object.entries(i.styles).forEach(([t, n]) => {
+        const e = JSON.parse(JSON.stringify(i));
+        Object.entries(s.styles).forEach(([t, n]) => {
           if (t === "__ranking_layout") {
             e[t] = n;
             return;
@@ -1326,22 +1341,22 @@
         });
         return e;
       } catch (e) {
-        return s;
+        return i;
       }
     }
-    return s;
+    return i;
   }
   function rankingStylesReady(e) {
     const t = e || "ranked_compilation";
     const n = getTemplateMemory(t);
-    const s = stylesForSuggest(n, t);
-    const i = !!(s && Object.keys(s).some(e => {
+    const i = stylesForSuggest(n, t);
+    const s = !!(i && Object.keys(i).some(e => {
       if (e === "__ranking_layout") return false;
-      const t = s[e];
+      const t = i[e];
       return t && typeof t === "object" && (t.font || t.font_size || t.color);
     }));
-    const o = !!rankingOverlayForSuggest(n);
-    return i || o;
+    const r = !!rankingOverlayForSuggest(n);
+    return s || r;
   }
   function isLibraryPreviewOpen() {
     try {
@@ -1352,7 +1367,7 @@
   }
   function paintCaptionMemoryChip(e, t) {
     if (!e || typeof window.offerSubtitleMemorySuggest !== "function") return false;
-    if (t && y.has(t)) return false;
+    if (t && g.has(t)) return false;
     window.offerSubtitleMemorySuggest(e, t);
     const n = !!(window.__solisPendingSubMem || document.getElementById("subMemActions")?.classList.contains("open") || document.querySelector(".sub-mem-ghost,.sub-text-block.sub-suggest"));
     if (!n) return false;
@@ -1385,20 +1400,20 @@
   }
   function offerCaptionSuggest(e, t) {
     if (isLibraryPreviewOpen()) return false;
-    if (y.has(e)) return false;
+    if (g.has(e)) return false;
     t = t || getTemplateMemory(e);
     const n = captionsForSuggest(t, e);
     if (!n) {
       const t = collectLiveCaptions(e);
       const n = !!(t && Object.keys(t).length);
-      const s = String(t?.anim || "").toLowerCase();
-      let i = false;
+      const i = String(t?.anim || "").toLowerCase();
+      let s = false;
       try {
-        i = !!(document.querySelector("#templateVideoPreview .sub-text-block.sub-suggest:not(.overlay-text-block)") || document.querySelector("#templateVideoPreview .sub-text-block.sub-mem-pick:not(.overlay-text-block)") || window.__solisPendingSubMem);
+        s = !!(document.querySelector("#templateVideoPreview .sub-text-block.sub-suggest:not(.overlay-text-block)") || document.querySelector("#templateVideoPreview .sub-text-block.sub-mem-pick:not(.overlay-text-block)") || window.__solisPendingSubMem);
       } catch (e) {}
-      const o = i || !n || !s || s === "none" || s === "static";
-      if (!o) return false;
-      const r = smarterCaptions({
+      const r = s || !n || !i || i === "none" || i === "static";
+      if (!r) return false;
+      const o = smarterCaptions({
         anim: "karaoke",
         font: String(t?.font || "Montserrat"),
         color: t?.color || "#ffffff",
@@ -1410,32 +1425,32 @@
         enabled: true,
         __tip: "captions"
       }, e);
-      return paintCaptionMemoryChip(r, e);
+      return paintCaptionMemoryChip(o, e);
     }
     if (isRankingTemplate(e)) {
       let t = smarterCaptions(n, e);
       if (!t) return false;
-      const s = collectLiveCaptions(e);
-      const i = !!(s && Object.keys(s).length);
-      if (i && !captionsDiffer(t, s)) return false;
+      const i = collectLiveCaptions(e);
+      const s = !!(i && Object.keys(i).length);
+      if (s && !captionsDiffer(t, i)) return false;
       return paintCaptionMemoryChip(t, e);
     }
-    let s = smarterCaptions(n, e);
-    if (s) {
-      const e = String(s.anim || "").toLowerCase();
+    let i = smarterCaptions(n, e);
+    if (i) {
+      const e = String(i.anim || "").toLowerCase();
       if (!e || e === "center" || e === "fade" || e === "none") {
-        s = {
-          ...s,
+        i = {
+          ...i,
           anim: "karaoke",
           __tip: "animations"
         };
       }
     }
-    if (!s) return false;
-    const i = collectLiveCaptions(e);
-    const o = !!(i && Object.keys(i).length);
-    if (o && !captionsDiffer(s, i)) return false;
-    return paintCaptionMemoryChip(s, e);
+    if (!i) return false;
+    const s = collectLiveCaptions(e);
+    const r = !!(s && Object.keys(s).length);
+    if (r && !captionsDiffer(i, s)) return false;
+    return paintCaptionMemoryChip(i, e);
   }
   function showSuggestion(e) {
     if (!shouldSuggest(e) && !canOfferFirstAnimTip(e) && !shouldAutoApply(e)) return;
@@ -1462,10 +1477,10 @@
       }
     } else if (isRankingTemplate(e)) {
       if (t) {
-        const s = stylesForSuggest(t, e);
-        const i = !!(s && Object.keys(s).length);
-        const o = !!rankingOverlayForSuggest(t);
-        if (i || o) {
+        const i = stylesForSuggest(t, e);
+        const s = !!(i && Object.keys(i).length);
+        const r = !!rankingOverlayForSuggest(t);
+        if (s || r) {
           n = !!offerRankingStylesSuggest(e, t);
         }
       }
@@ -1482,10 +1497,10 @@
       flushDeferredRankingCustoms();
       return;
     }
-    const s = document.getElementById("solisMemorySuggest");
-    const i = !!(s && !s.hidden && s.classList.contains("open"));
-    const o = !!document.getElementById("subMemActions")?.classList.contains("open") || !!document.querySelector(".sub-mem-ghost");
-    if (!i && !o && isRankingTemplate(e)) {
+    const i = document.getElementById("solisMemorySuggest");
+    const s = !!(i && !i.hidden && i.classList.contains("open"));
+    const r = !!document.getElementById("subMemActions")?.classList.contains("open") || !!document.querySelector(".sub-mem-ghost");
+    if (!s && !r && isRankingTemplate(e)) {
       flushDeferredRankingCustoms();
       return;
     }
@@ -1501,7 +1516,7 @@
   function canOfferFirstAnimTip(e) {
     if (!isSuggestEnabled() || !e) return false;
     if (h) return false;
-    if (y.has(e)) return false;
+    if (g.has(e)) return false;
     if (isLibraryPreviewOpen()) return false;
     const t = getTemplateMemory(e);
     if (captionsForSuggest(t, e)) return false;
@@ -1511,11 +1526,11 @@
     const n = e || b;
     if (!n || !isSuggestEnabled()) return false;
     if (isLibraryPreviewOpen()) return false;
-    if (y.has(n)) return false;
-    const s = !!(t && t.force);
+    if (g.has(n)) return false;
+    const i = !!(t && t.force);
     const actionsOpen = () => !!document.getElementById("subMemActions")?.classList.contains("open");
     const softCap = () => !!document.querySelector("#templateVideoPreview .sub-text-block.sub-suggest, #templateVideoPreview .sub-text-block.sub-mem-pick, .sub-mem-ghost");
-    if (h && !s) {
+    if (h && !i) {
       if (softCap() && actionsOpen() || document.getElementById("solisMemorySuggest")?.classList.contains("open")) {
         return true;
       }
@@ -1534,7 +1549,7 @@
       }
     } catch (e) {}
     const attempt = () => {
-      if (y.has(n)) return false;
+      if (g.has(n)) return false;
       const e = document.getElementById("templatePreviewModal");
       if (!e || !e.classList.contains("active")) return false;
       const t = document.getElementById("templateVideoPreview");
@@ -1542,30 +1557,30 @@
       try {
         const e = !!document.querySelector("#templateVideoPreview .sub-text-block.sub-suggest:not(.overlay-text-block), #templateVideoPreview .sub-text-block.sub-mem-pick:not(.overlay-text-block)");
         const t = collectLiveCaptions(n);
-        const s = String(t?.anim || "").toLowerCase();
-        if (!e && t && Object.keys(t).length && s && s !== "none" && s !== "static") {
+        const i = String(t?.anim || "").toLowerCase();
+        if (!e && t && Object.keys(t).length && i && i !== "none" && i !== "static") {
           if (document.querySelector(".sub-text-block:not(.overlay-text-block)")) {
             return false;
           }
         }
       } catch (e) {}
-      const s = offerCaptionSuggest(n, getTemplateMemory(n));
-      if (s) h = true;
-      return !!s;
+      const i = offerCaptionSuggest(n, getTemplateMemory(n));
+      if (i) h = true;
+      return !!i;
     };
     if (attempt()) return true;
-    const i = Math.max(0, Number(t?.retries) || 4);
-    const o = Math.max(40, Number(t?.gapMs) || 180);
-    for (let e = 1; e <= i; e++) {
+    const s = Math.max(0, Number(t?.retries) || 4);
+    const r = Math.max(40, Number(t?.gapMs) || 180);
+    for (let e = 1; e <= s; e++) {
       setTimeout(() => {
-        if (y.has(n)) return;
-        if (h && !s && actionsOpen()) return;
-        if (h && !s && !softCap() && !window.__solisPendingSubMem) return;
-        if (s && h && !softCap() && !window.__solisPendingSubMem && !actionsOpen()) return;
+        if (g.has(n)) return;
+        if (h && !i && actionsOpen()) return;
+        if (h && !i && !softCap() && !window.__solisPendingSubMem) return;
+        if (i && h && !softCap() && !window.__solisPendingSubMem && !actionsOpen()) return;
         try {
           attempt();
         } catch (e) {}
-      }, o * e);
+      }, r * e);
     }
     return false;
   }
@@ -1578,33 +1593,33 @@
     const n = e.splitscreen;
     if (!n || typeof n !== "object") return false;
     if (typeof window.offerSplitscreenMemorySuggest !== "function") return false;
-    const s = window.offerSplitscreenMemorySuggest(n, t);
-    if (!s) return false;
-    const i = ensureSuggestEl();
-    const o = i.querySelector("#solisMemorySuggestTitle");
-    const r = String(e.why_short || e.why || "").trim();
-    if (o) {
-      o.hidden = !r;
-      o.textContent = r;
-      if (r) {
-        o.removeAttribute("hidden");
-        o.style.display = "";
+    const i = window.offerSplitscreenMemorySuggest(n, t);
+    if (!i) return false;
+    const s = ensureSuggestEl();
+    const r = s.querySelector("#solisMemorySuggestTitle");
+    const o = String(e.why_short || e.why || "").trim();
+    if (r) {
+      r.hidden = !o;
+      r.textContent = o;
+      if (o) {
+        r.removeAttribute("hidden");
+        r.style.display = "";
       }
     }
-    const l = i.querySelector("#solisMemorySuggestSub");
+    const l = s.querySelector("#solisMemorySuggestSub");
     if (l) l.textContent = "";
-    i.dataset.templateId = t;
-    i.dataset.mode = "instant-recipe";
-    i.classList.add("solis-memory-suggest--recipe");
-    i.classList.remove("solis-memory-suggest--ranking");
+    s.dataset.templateId = t;
+    s.dataset.mode = "instant-recipe";
+    s.classList.add("solis-memory-suggest--recipe");
+    s.classList.remove("solis-memory-suggest--ranking");
     try {
-      i._solisInstantRecipe = JSON.parse(JSON.stringify(e));
+      s._solisInstantRecipe = JSON.parse(JSON.stringify(e));
     } catch (t) {
-      i._solisInstantRecipe = e;
+      s._solisInstantRecipe = e;
     }
     h = true;
     placeSuggestNearPreview();
-    revealSuggestEl(i);
+    revealSuggestEl(s);
     return true;
   }
   function retrySuggest(e) {
@@ -1620,35 +1635,35 @@
     if (typeof window.offerSplitscreenMemorySuggest !== "function") return false;
     const n = window.offerSplitscreenMemorySuggest(t.layout, e);
     if (!n) return false;
-    const s = ensureSuggestEl();
-    const i = s.querySelector("#solisMemorySuggestTitle");
-    if (i) {
-      i.hidden = true;
-      i.textContent = "";
+    const i = ensureSuggestEl();
+    const s = i.querySelector("#solisMemorySuggestTitle");
+    if (s) {
+      s.hidden = true;
+      s.textContent = "";
     }
-    const o = s.querySelector("#solisMemorySuggestSub");
-    if (o) o.textContent = "";
-    s.dataset.templateId = e;
-    s.dataset.mode = "layout-only";
-    s.classList.remove("solis-memory-suggest--recipe", "solis-memory-suggest--ranking");
+    const r = i.querySelector("#solisMemorySuggestSub");
+    if (r) r.textContent = "";
+    i.dataset.templateId = e;
+    i.dataset.mode = "layout-only";
+    i.classList.remove("solis-memory-suggest--recipe", "solis-memory-suggest--ranking");
     placeSuggestNearPreview();
-    revealSuggestEl(s);
+    revealSuggestEl(i);
     return true;
   }
   function offerRankingStylesSuggest(e, t) {
     if (!isRankingTemplate(e)) return false;
     t = t || getTemplateMemory(e);
     const n = stylesForSuggest(t, e);
-    const s = rankingOverlayForSuggest(t);
-    const i = n ? Object.keys(n).filter(e => e !== "__ranking_layout") : [];
-    const o = i.some(e => {
+    const i = rankingOverlayForSuggest(t);
+    const s = n ? Object.keys(n).filter(e => e !== "__ranking_layout") : [];
+    const r = s.some(e => {
       const t = n[e];
       return t && typeof t === "object" && (t.font || t.font_size || t.color);
     });
-    if (!o && !s) return false;
-    if (!rankingOverlayDiffers(t, e) && !o) return false;
-    const r = document.getElementById("solisMemorySuggest");
-    if (r && !r.hidden && r.classList.contains("open") && r.dataset.mode === "styles-only" && r.dataset.templateId === String(e)) {
+    if (!r && !i) return false;
+    if (!rankingOverlayDiffers(t, e) && !r) return false;
+    const o = document.getElementById("solisMemorySuggest");
+    if (o && !o.hidden && o.classList.contains("open") && o.dataset.mode === "styles-only" && o.dataset.templateId === String(e)) {
       return true;
     }
     try {
@@ -1664,12 +1679,12 @@
     if (a) {
       a.hidden = false;
       a.removeAttribute("hidden");
-      const t = o ? suggestHookLine({
+      const t = r ? suggestHookLine({
         styles: n,
         mode: "ranking",
         seed: e
       }) : "Use your last text placement?";
-      a.textContent = s && o ? `${t} · same text spot` : t;
+      a.textContent = i && r ? `${t} · same text spot` : t;
       a.style.display = "";
     }
     const c = l.querySelector("#solisMemorySuggestSub");
@@ -1683,9 +1698,9 @@
       l._solisMemStyles = n;
     }
     try {
-      l._solisMemOverlay = s ? JSON.parse(JSON.stringify(s)) : null;
+      l._solisMemOverlay = i ? JSON.parse(JSON.stringify(i)) : null;
     } catch (e) {
-      l._solisMemOverlay = s;
+      l._solisMemOverlay = i;
     }
     l._solisMemStylesPreviewed = false;
     try {
@@ -1698,14 +1713,14 @@
   function continueSuggestAfterCaption(e) {
     const t = e || b;
     if (!t || !isSuggestEnabled()) return;
-    if (y.has(t)) return;
+    if (g.has(t)) return;
     const n = getTemplateMemory(t);
     if (!n) return;
     if (n.lastRejectedFingerprint && n.lastRejectedFingerprint === n.fingerprint) return;
     setTimeout(() => {
       const e = document.getElementById("templatePreviewModal");
       if (!e || !e.classList.contains("active")) return;
-      if (y.has(t)) return;
+      if (g.has(t)) return;
       if (!isSplitscreenTemplate(t) && wantsLayoutSuggest(t, n) && offerLayoutSuggest(t, n)) return;
       offerRankingStylesSuggest(t, n);
     }, 180);
@@ -1713,13 +1728,13 @@
   function continueSuggestAfterLayout(e) {
     const t = e || b;
     if (!t || !isSuggestEnabled()) return;
-    if (y.has(t)) return;
+    if (g.has(t)) return;
     const n = getTemplateMemory(t);
     if (!n) return;
     setTimeout(() => {
       const e = document.getElementById("templatePreviewModal");
       if (!e || !e.classList.contains("active")) return;
-      if (y.has(t)) return;
+      if (g.has(t)) return;
       if (!isRankingTemplate(t) && offerCaptionSuggest(t, n)) {
         h = true;
         return;
@@ -1735,7 +1750,7 @@
     const t = e.dataset.templateId || b;
     const n = e.dataset.mode || "all";
     if (n === "captions-pending") {
-      if (t) y.delete(t);
+      if (t) g.delete(t);
       try {
         if (typeof window.acceptSubtitleMemorySuggest === "function") {
           window.acceptSubtitleMemorySuggest();
@@ -1747,16 +1762,16 @@
       return;
     }
     hideSuggest();
-    if (t) y.delete(t);
-    const s = getTemplateMemory(t);
-    if (!s && n !== "instant-recipe") return;
+    if (t) g.delete(t);
+    const i = getTemplateMemory(t);
+    if (!i && n !== "instant-recipe") return;
     if (n === "instant-recipe") {
       const n = e._solisInstantRecipe || window.SolisInstantRecipe?.get?.();
-      const s = n?.splitscreen;
+      const i = n?.splitscreen;
       try {
         if (window.SolisMemory) window.SolisMemory._applying = true;
-        if (s && typeof window.applySplitscreenMemoryLayout === "function") {
-          window.applySplitscreenMemoryLayout(s, {
+        if (i && typeof window.applySplitscreenMemoryLayout === "function") {
+          window.applySplitscreenMemoryLayout(i, {
             commit: true
           });
         }
@@ -1782,8 +1797,8 @@
     if (n === "layout-only") {
       try {
         if (window.SolisMemory) window.SolisMemory._applying = true;
-        if (typeof window.applySplitscreenMemoryLayout === "function" && s.layout) {
-          window.applySplitscreenMemoryLayout(s.layout, {
+        if (typeof window.applySplitscreenMemoryLayout === "function" && i.layout) {
+          window.applySplitscreenMemoryLayout(i.layout, {
             commit: true
           });
         }
@@ -1808,29 +1823,29 @@
       return;
     }
     if (n === "styles-only") {
-      const n = e._solisMemStyles || stylesForSuggest(s, t);
+      const n = e._solisMemStyles || stylesForSuggest(i, t);
       if (n && Object.keys(n).length) {
         window.__solisRankingDeferCustoms = false;
         applyStyles(t, n);
       }
-      const i = e._solisMemOverlay || rankingOverlayForSuggest(s);
-      if (i && isRankingTemplate(t)) {
+      const s = e._solisMemOverlay || rankingOverlayForSuggest(i);
+      if (s && isRankingTemplate(t)) {
         applyCaptions({
-          ...i,
+          ...s,
           anim: "none",
           enabled: true
         }, t);
       }
     } else {
-      if (s.captions) applyCaptions(s.captions, t);
-      if (s.layout && typeof window.applySplitscreenMemoryLayout === "function") {
+      if (i.captions) applyCaptions(i.captions, t);
+      if (i.layout && typeof window.applySplitscreenMemoryLayout === "function") {
         try {
-          window.applySplitscreenMemoryLayout(s.layout, {
+          window.applySplitscreenMemoryLayout(i.layout, {
             commit: true
           });
         } catch (e) {}
       }
-      const e = stylesForSuggest(s, t);
+      const e = stylesForSuggest(i, t);
       if (e && Object.keys(e).length) {
         window.__solisRankingDeferCustoms = false;
         applyStyles(t, e);
@@ -1843,11 +1858,11 @@
       delete e._solisMemOverlay;
       e.classList.remove("solis-memory-suggest--ranking");
     } catch (e) {}
-    const i = readState();
-    if (i.templates[t]) {
-      i.templates[t].lastAcceptedAt = (new Date).toISOString();
-      i.templates[t].lastRejectedFingerprint = null;
-      writeState(i);
+    const s = readState();
+    if (s.templates[t]) {
+      s.templates[t].lastAcceptedAt = (new Date).toISOString();
+      s.templates[t].lastRejectedFingerprint = null;
+      writeState(s);
     }
     recordSuggestionAccepted(t);
     w = 0;
@@ -1886,7 +1901,7 @@
       w = 0;
       if (!window.__solisRecipeSkipCaptions) {
         setTimeout(() => {
-          if (!t || y.has(t)) return;
+          if (!t || g.has(t)) return;
           const e = getTemplateMemory(t);
           if (e && offerCaptionSuggest(t, e)) {
             h = true;
@@ -1924,7 +1939,7 @@
       h = false;
       w = 0;
       setTimeout(() => {
-        if (!t || y.has(t)) return;
+        if (!t || g.has(t)) return;
         if (isRankingTemplate(t)) return;
         const e = getTemplateMemory(t);
         if (!e) return;
@@ -1958,7 +1973,7 @@
   function markSuggestionRejected(e) {
     const t = e || b;
     if (!t) return;
-    y.add(t);
+    g.add(t);
     h = true;
     w = 0;
     if (S) {
@@ -1966,9 +1981,9 @@
       S = null;
     }
     const n = readState();
-    let s = n.templates[t];
-    if (!s) {
-      s = n.templates[t] = {
+    let i = n.templates[t];
+    if (!i) {
+      i = n.templates[t] = {
         fingerprint: "first-caption-tip",
         rejectCount: 0,
         styles: null,
@@ -1976,31 +1991,31 @@
         layout: null
       };
     }
-    s.rejectCount = (s.rejectCount || 0) + 1;
-    s.lastRejectedFingerprint = s.fingerprint || fingerprint(s.styles, s.captions, s.layout) || "first-caption-tip";
-    s.lastRejectedAt = (new Date).toISOString();
-    s.acceptStreak = 0;
-    s.acceptFingerprint = null;
-    s.autoApply = false;
+    i.rejectCount = (i.rejectCount || 0) + 1;
+    i.lastRejectedFingerprint = i.fingerprint || fingerprint(i.styles, i.captions, i.layout) || "first-caption-tip";
+    i.lastRejectedAt = (new Date).toISOString();
+    i.acceptStreak = 0;
+    i.acceptFingerprint = null;
+    i.autoApply = false;
     writeState(n);
   }
   function wasSuggestionRejected(e) {
     const t = e || b;
     if (!t) return false;
-    if (y.has(t)) return true;
+    if (g.has(t)) return true;
     try {
       const e = getTemplateMemory(t);
       if (e?.lastRejectedFingerprint && e.lastRejectedFingerprint === e.fingerprint) {
         const t = Date.parse(e.lastRejectedAt || 0);
-        if (Number.isFinite(t) && Date.now() - t < f) return true;
+        if (Number.isFinite(t) && Date.now() - t < p) return true;
       }
     } catch (e) {}
     return false;
   }
   function scheduleServerSync() {
-    if (k) clearTimeout(k);
-    k = setTimeout(() => {
-      k = null;
+    if (_) clearTimeout(_);
+    _ = setTimeout(() => {
+      _ = null;
       pushServerMemory();
     }, u);
   }
@@ -2055,15 +2070,19 @@
         enabled: t.enabled !== undefined ? t.enabled : true,
         suggestEnabled: t.suggestEnabled !== undefined ? t.suggestEnabled : true,
         templates: {},
-        usageLog: Array.isArray(t.usageLog) ? t.usageLog : []
+        usageLog: Array.isArray(t.usageLog) ? t.usageLog : [],
+        editorial: t.editorial && typeof t.editorial === "object" ? {
+          ...defaultState().editorial,
+          ...t.editorial
+        } : defaultState().editorial
       };
       Object.entries(t.templates || {}).forEach(([t, n]) => {
-        const s = _sanitizeRemoteTemplate(t, n);
-        if (s) e.templates[t] = s;
+        const i = _sanitizeRemoteTemplate(t, n);
+        if (i) e.templates[t] = i;
       });
       return e;
     }
-    const s = {
+    const i = {
       ...defaultState(),
       ...e,
       enabled: e.enabled !== undefined ? e.enabled : t.enabled,
@@ -2072,40 +2091,41 @@
         ...t.templates || {},
         ...e.templates || {}
       },
-      usageLog: Array.isArray(e.usageLog) && e.usageLog.length ? e.usageLog : Array.isArray(t.usageLog) ? t.usageLog : []
+      usageLog: Array.isArray(e.usageLog) && e.usageLog.length ? e.usageLog : Array.isArray(t.usageLog) ? t.usageLog : [],
+      editorial: _mergeEditorial(e.editorial, t.editorial)
     };
-    const i = t.templates || {};
-    Object.keys(i).forEach(e => {
-      const t = s.templates[e];
-      const n = _sanitizeRemoteTemplate(e, i[e]);
+    const s = t.templates || {};
+    Object.keys(s).forEach(e => {
+      const t = i.templates[e];
+      const n = _sanitizeRemoteTemplate(e, s[e]);
       if (!t) {
-        if (n) s.templates[e] = n;
+        if (n) i.templates[e] = n;
         return;
       }
       if (!n) return;
-      const o = Date.parse(t.updatedAt || 0) || 0;
-      const r = Date.parse(n.updatedAt || 0) || 0;
-      if (r > o) s.templates[e] = n; else if (r === o) {
-        const i = {
+      const r = Date.parse(t.updatedAt || 0) || 0;
+      const o = Date.parse(n.updatedAt || 0) || 0;
+      if (o > r) i.templates[e] = n; else if (o === r) {
+        const s = {
           ...t,
           captions: t.captions || n.captions || null,
           styles: t.styles || n.styles || null,
           layout: t.layout || n.layout || null
         };
-        s.templates[e] = _sanitizeRemoteTemplate(e, i) || i;
+        i.templates[e] = _sanitizeRemoteTemplate(e, s) || s;
       } else {
-        s.templates[e] = _sanitizeRemoteTemplate(e, t) || t;
+        i.templates[e] = _sanitizeRemoteTemplate(e, t) || t;
       }
     });
-    Object.keys(s.templates).forEach(e => {
-      s.templates[e] = _sanitizeRemoteTemplate(e, s.templates[e]) || s.templates[e];
+    Object.keys(i.templates).forEach(e => {
+      i.templates[e] = _sanitizeRemoteTemplate(e, i.templates[e]) || i.templates[e];
     });
-    return s;
+    return i;
   }
   async function pullServerMemory() {
     if (!_resolveUserId()) return null;
-    if (M) return M;
-    M = (async () => {
+    if (v) return v;
+    v = (async () => {
       try {
         const e = await fetch(apiUrl("/api/clips/memory"), {
           method: "POST",
@@ -2131,29 +2151,29 @@
           }
           return null;
         }
-        const s = C;
+        const i = C;
         C = false;
-        const i = mergeMemoryStates(readState(), n, {
-          preferRemote: s
+        const s = mergeMemoryStates(readState(), n, {
+          preferRemote: i
         });
-        writeState(i, {
+        writeState(s, {
           sync: false
         });
-        _ = true;
+        k = true;
         syncSettingsUI();
         if (typeof window.solisLog === "function") {
-          const e = Object.keys(i.templates || {}).length;
+          const e = Object.keys(s.templates || {}).length;
           window.solisLog("Memory API", `loaded ${e} template profile(s)`);
         }
-        return i;
+        return s;
       } catch (e) {
         console.warn("[SolisMemory] pull error:", e?.message || e);
         return null;
       } finally {
-        M = null;
+        v = null;
       }
     })();
-    return M;
+    return v;
   }
   async function onTemplatePreviewOpen(e) {
     b = e || null;
@@ -2161,12 +2181,12 @@
     w = 0;
     hideSuggest();
     try {
-      y.delete(e);
+      g.delete(e);
       const t = getTemplateMemory(e);
       if (t?.lastRejectedAt && t?.lastRejectedFingerprint && t.lastRejectedFingerprint === t.fingerprint) {
         const n = Date.parse(t.lastRejectedAt);
-        if (Number.isFinite(n) && Date.now() - n < f) {
-          y.add(e);
+        if (Number.isFinite(n) && Date.now() - n < p) {
+          g.add(e);
         } else {
           const t = readState();
           if (t.templates[e]) {
@@ -2188,7 +2208,7 @@
         } catch (e) {}
       }, 60);
     } catch (e) {}
-    if (!_) {
+    if (!k) {
       pullServerMemory().then(() => {
         if (!h) scheduleSuggest(e);
         if (!h) {
@@ -2284,33 +2304,33 @@
     const e = readState();
     const t = document.getElementById("stgMemoryEnabledToggle");
     const n = document.getElementById("stgMemorySuggestToggle");
-    const s = document.getElementById("stgMemoryEnabledLabel");
-    const i = document.getElementById("stgMemorySuggestLabel");
+    const i = document.getElementById("stgMemoryEnabledLabel");
+    const s = document.getElementById("stgMemorySuggestLabel");
     if (t) {
       t.classList.toggle("is-on", !!e.enabled);
       t.setAttribute("aria-checked", e.enabled ? "true" : "false");
     }
-    if (s) s.textContent = e.enabled ? "On" : "Off";
+    if (i) i.textContent = e.enabled ? "On" : "Off";
     if (n) {
       n.classList.toggle("is-on", !!e.suggestEnabled);
       n.setAttribute("aria-checked", e.suggestEnabled ? "true" : "false");
       n.disabled = !e.enabled;
       n.classList.toggle("is-disabled", !e.enabled);
     }
-    if (i) i.textContent = e.suggestEnabled ? "On" : "Off";
-    const o = document.getElementById("stgPrivacyMemoryToggle");
-    if (o) {
-      o.classList.toggle("is-on", !!e.enabled);
-      o.setAttribute("aria-checked", e.enabled ? "true" : "false");
+    if (s) s.textContent = e.suggestEnabled ? "On" : "Off";
+    const r = document.getElementById("stgPrivacyMemoryToggle");
+    if (r) {
+      r.classList.toggle("is-on", !!e.enabled);
+      r.setAttribute("aria-checked", e.enabled ? "true" : "false");
     }
-    const r = document.getElementById("stgMemoryList");
-    if (!r) return;
+    const o = document.getElementById("stgMemoryList");
+    if (!o) return;
     const l = listMemories();
     if (!l.length) {
-      r.innerHTML = `<p class="stgMemoryEmpty">No saved styles yet. Customize a preview and generate a clip. Memory will learn from that.</p>`;
+      o.innerHTML = `<p class="stgMemoryEmpty">No saved styles yet. Customize a preview and generate a clip. Memory will learn from that.</p>`;
       return;
     }
-    r.innerHTML = l.map(e => `\n            <div class="stgMemoryItem" data-mem-id="${e.templateId}">\n                <div class="stgMemoryItemBody">\n                    <div class="stgMemoryItemTitle">${escapeHtml(prettyTemplateName(e.templateId))}${e.hasCaptions ? " · Captions" : ""}${e.hasLayout ? " · Layout" : ""}</div>\n                    <div class="stgMemoryItemMeta">${escapeHtml(e.summary)}${e.updatedAt ? ` · ${formatRelative(e.updatedAt)}` : ""}</div>\n                </div>\n                <button type="button" class="stgMemoryClearOne" data-clear-mem="${e.templateId}" title="Clear">Clear</button>\n            </div>\n        `).join("");
+    o.innerHTML = l.map(e => `\n            <div class="stgMemoryItem" data-mem-id="${e.templateId}">\n                <div class="stgMemoryItemBody">\n                    <div class="stgMemoryItemTitle">${escapeHtml(prettyTemplateName(e.templateId))}${e.hasCaptions ? " · Captions" : ""}${e.hasLayout ? " · Layout" : ""}</div>\n                    <div class="stgMemoryItemMeta">${escapeHtml(e.summary)}${e.updatedAt ? ` · ${formatRelative(e.updatedAt)}` : ""}</div>\n                </div>\n                <button type="button" class="stgMemoryClearOne" data-clear-mem="${e.templateId}" title="Clear">Clear</button>\n            </div>\n        `).join("");
   }
   function prettyTemplateName(e) {
     return String(e || "template").replace(/_/g, " ").replace(/\b\w/g, e => e.toUpperCase());
@@ -2334,7 +2354,7 @@
     const e = document.getElementById("stgMemoryEnabledToggle");
     const t = document.getElementById("stgMemorySuggestToggle");
     const n = document.getElementById("stgMemoryClearAllBtn");
-    const s = document.getElementById("stgMemoryList");
+    const i = document.getElementById("stgMemoryList");
     e?.addEventListener("click", () => setEnabled(!isEnabled()));
     t?.addEventListener("click", () => {
       if (!isEnabled()) return;
@@ -2343,12 +2363,130 @@
     n?.addEventListener("click", () => {
       clearAll();
     });
-    s?.addEventListener("click", e => {
+    i?.addEventListener("click", e => {
       const t = e.target.closest("[data-clear-mem]");
       if (!t) return;
       clearTemplate(t.getAttribute("data-clear-mem"));
     });
     syncSettingsUI();
+  }
+  function _mergeEditorial(e, t) {
+    const n = e && typeof e === "object" ? e : {};
+    const i = t && typeof t === "object" ? t : {};
+    const s = Date.parse(n.updatedAt || 0) || 0;
+    const r = Date.parse(i.updatedAt || 0) || 0;
+    const o = r > s ? i : n;
+    const l = r > s ? n : i;
+    const a = [];
+    const c = new Set;
+    [ ...Array.isArray(o.events) ? o.events : [], ...Array.isArray(l.events) ? l.events : [] ].forEach(e => {
+      if (!e || typeof e !== "object") return;
+      const t = `${e.at}|${e.action}|${e.reason || ""}`;
+      if (c.has(t)) return;
+      c.add(t);
+      a.push(e);
+    });
+    return {
+      ...defaultState().editorial,
+      ...l,
+      ...o,
+      events: a.slice(-40),
+      liked_reasons: [ ...Array.isArray(o.liked_reasons) ? o.liked_reasons : [], ...Array.isArray(l.liked_reasons) ? l.liked_reasons : [] ].filter((e, t, n) => typeof e === "string" && n.indexOf(e) === t).slice(-20),
+      improve_prompts: [ ...Array.isArray(o.improve_prompts) ? o.improve_prompts : [], ...Array.isArray(l.improve_prompts) ? l.improve_prompts : [] ].filter((e, t, n) => typeof e === "string" && n.indexOf(e) === t).slice(-20),
+      prefs: {
+        ...l.prefs || {},
+        ...o.prefs || {}
+      },
+      updatedAt: o.updatedAt || l.updatedAt || null
+    };
+  }
+  async function recordEditorialTaste(e) {
+    const t = {
+      at: (new Date).toISOString(),
+      action: String(e?.action || "").trim(),
+      category: String(e?.category || ""),
+      reason: String(e?.reason || "").slice(0, 160),
+      keep: Array.isArray(e?.keep) ? e.keep.slice(0, 8) : [],
+      prefer: e?.prefer || null,
+      prompt: e?.prompt ? String(e.prompt).slice(0, 200) : undefined,
+      source: String(e?.source || "companion")
+    };
+    if (!t.action) return {
+      ok: false,
+      error: "missing_action"
+    };
+    try {
+      const e = readState();
+      const n = _mergeEditorial(e.editorial, {
+        updatedAt: t.at,
+        events: [ t ],
+        liked_reasons: [ "taste_more", "prioritize_style", "discovery_yes" ].includes(t.action) && t.reason ? [ t.reason ] : [],
+        improve_prompts: t.prompt ? [ t.prompt ] : [],
+        prefs: {}
+      });
+      const i = {
+        ...n.prefs || {}
+      };
+      if (t.action === "taste_more" || t.action === "discovery_yes") i.want_more_like_this = true;
+      if (t.action === "taste_pass") i.want_more_like_this = false;
+      if (t.action === "prioritize_style") {
+        i.prioritize_style = true;
+        i.keep_variety = false;
+      }
+      if (t.action === "keep_variety") {
+        i.keep_variety = true;
+        i.prioritize_style = false;
+      }
+      if (t.action === "prefer_a" || t.action === "prefer_b") i.favor_clip_style = t.action;
+      n.prefs = i;
+      n.updatedAt = t.at;
+      writeState({
+        ...e,
+        editorial: n
+      }, {
+        sync: false
+      });
+    } catch (e) {}
+    try {
+      const e = await fetch(apiUrl("/api/clips/companion-taste"), {
+        method: "POST",
+        credentials: "include",
+        headers: authHeaders(),
+        body: JSON.stringify(t)
+      });
+      if (!e.ok) return {
+        ok: false,
+        error: `http_${e.status}`
+      };
+      const n = await e.json().catch(() => ({}));
+      if (n?.editorial && typeof n.editorial === "object") {
+        try {
+          const e = readState();
+          writeState({
+            ...e,
+            editorial: _mergeEditorial(e.editorial, n.editorial)
+          }, {
+            sync: false
+          });
+        } catch (e) {}
+      }
+      return {
+        ok: true,
+        editorial: n?.editorial || null
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        error: String(e?.message || e || "network")
+      };
+    }
+  }
+  function getEditorialTaste() {
+    try {
+      return readState().editorial || defaultState().editorial;
+    } catch (e) {
+      return defaultState().editorial;
+    }
   }
   window.SolisMemory = {
     recordFromGeneration: recordFromGeneration,
@@ -2390,6 +2528,8 @@
     recallCaptionSnap: recallCaptionSnap,
     suggestHookLine: suggestHookLine,
     recordSuggestionAccepted: recordSuggestionAccepted,
+    recordEditorialTaste: recordEditorialTaste,
+    getEditorialTaste: getEditorialTaste,
     lockSuggestForOpen: () => {
       h = true;
       w = 0;

@@ -1,7 +1,7 @@
 (function() {
   const e = [ {
-    title: "Meet Solis AI,<br>your clip co-pilot",
-    sub: "We turn long videos into short-form clips with captions, modes, and polish built in."
+    title: "Made for<br>short-form",
+    sub: "Long videos in. Tight clips out, with captions and polish already on."
   }, {
     title: "Named after<br>the sun",
     sub: "Solis means sun. Bright ideas, warm orange energy, and clips that feel alive."
@@ -14,9 +14,6 @@
   }, {
     title: "Built tiny,<br>shipping fast",
     sub: "We are early and moving quick. Your generations help Solis get sharper every week."
-  }, {
-    title: "Fun fact",
-    sub: "Solis was built by a 16-year-old from Georgia — still shipping, still iterating."
   }, {
     title: "Library is<br>home base",
     sub: "Finished clips land in Library ready to tweak, download, and post wherever you create."
@@ -79,14 +76,14 @@
       if (!e || this._genCompanionState !== "scanning" || this._genCompanionWakeLock) return;
       this._genCompanionBlinkTimer = setTimeout(() => {
         if (this._genCompanionState !== "scanning" || this._genCompanionWakeLock) return;
-        e.setAttribute("data-state", "blink");
+        e.classList.add("is-blinking");
         this._genCompanionBlinkRestoreTimer = setTimeout(() => {
+          e.classList.remove("is-blinking");
           if (this._genCompanionState === "scanning") {
-            e.setAttribute("data-state", "scanning");
             this._scheduleGenCompanionBlink();
           }
-        }, 450);
-      }, 900 + Math.random() * 1800);
+        }, 340);
+      }, 1600 + Math.random() * 1800);
     };
     n._runGenCompanionWakeSequence = function _runGenCompanionWakeSequence() {
       const e = this._genCompanionRoot;
@@ -180,14 +177,259 @@
         });
       }
       const n = document.getElementById("solisGenActivitySummary");
-      const i = document.getElementById("solisGenSteps");
+      const i = document.getElementById("solisGenActivity");
       if (n && i && !n.__solisBound) {
         n.__solisBound = true;
         n.addEventListener("click", () => {
-          const e = n.getAttribute("aria-expanded") === "true";
-          n.setAttribute("aria-expanded", e ? "false" : "true");
-          n.classList.toggle("is-expanded", !e);
-          i.hidden = e;
+          const e = i.classList.contains("is-open");
+          const t = !e;
+          i.classList.toggle("is-open", t);
+          n.classList.toggle("is-expanded", t);
+          n.setAttribute("aria-expanded", t ? "true" : "false");
+          if (t) {
+            const e = document.getElementById("solisGenSteps");
+            e?.querySelectorAll(".solis-gen-step").forEach((e, t) => {
+              e.classList.remove("is-shown");
+              requestAnimationFrame(() => {
+                setTimeout(() => e.classList.add("is-shown"), 40 + t * 55);
+              });
+            });
+          }
+        });
+      }
+    };
+    n._stepCheckSvg = function _stepCheckSvg() {
+      return '<svg class="solis-gen-step-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+    };
+    n._stepSpinSvg = function _stepSpinSvg() {
+      return '<svg class="solis-gen-step-spin" viewBox="0 0 24 24" aria-hidden="true">' + '<circle class="solis-gen-step-spin-track" cx="12" cy="12" r="9"></circle>' + '<circle class="solis-gen-step-spin-arc" cx="12" cy="12" r="9" transform="rotate(-90 12 12)"></circle>' + "</svg>";
+    };
+    n._stepIcoHtml = function _stepIcoHtml() {
+      return `<span class="solis-gen-step-ico">${this._stepSpinSvg()}${this._stepCheckSvg()}</span>`;
+    };
+    n._setActivitySummary = function _setActivitySummary(e, t) {
+      const n = document.getElementById("solisGenActivityText");
+      const i = document.getElementById("solisGenActivityCount");
+      if (i) {
+        if (t) {
+          i.hidden = false;
+          i.textContent = t;
+        } else {
+          i.hidden = true;
+          i.textContent = "";
+        }
+      }
+      if (!n) return;
+      const s = String(e || "").trim() || "Getting started";
+      if (n.textContent === s) return;
+      if (!n.textContent || n.textContent === "Getting started") {
+        n.textContent = s;
+        return;
+      }
+      n.classList.add("is-swap");
+      const apply = () => {
+        n.textContent = s;
+        requestAnimationFrame(() => n.classList.remove("is-swap"));
+      };
+      const onEnd = e => {
+        if (e.target !== n || e.propertyName !== "opacity") return;
+        n.removeEventListener("transitionend", onEnd);
+        clearTimeout(o);
+        apply();
+      };
+      n.addEventListener("transitionend", onEnd);
+      const o = setTimeout(() => {
+        n.removeEventListener("transitionend", onEnd);
+        apply();
+      }, 320);
+    };
+    n._paintStepState = function _paintStepState(e, {done: t, active: n}) {
+      if (!e) return;
+      e.classList.toggle("is-done", !!t);
+      e.classList.toggle("is-active", !!n);
+      e.classList.toggle("is-pending", !t && !n);
+      e.classList.remove("is-just-done");
+    };
+    n._thinkWordEl = function _thinkWordEl() {
+      let e = document.getElementById("solisGenThinkWord");
+      const t = document.getElementById("solisGenHeading");
+      if (!e && t) {
+        t.innerHTML = '<span class="solis-gen-think-word" id="solisGenThinkWord"></span>';
+        e = document.getElementById("solisGenThinkWord");
+      }
+      return e;
+    };
+    n._setThinkWord = function _setThinkWord(e) {
+      const t = this._thinkWordEl();
+      if (!t) return;
+      const n = String(e || "");
+      t.textContent = n;
+      t.classList.toggle("is-thinking", n === "Thinking");
+    };
+    n._thinkBeatsFor = function _thinkBeatsFor(e, t, n) {
+      const i = String(e || "");
+      const s = String(t || "").toLowerCase();
+      const o = Number.isFinite(Number(n)) ? Number(n) : 0;
+      const r = /think|analy|scout|gemini|telescope|understand|reason|model|prompt|llm|brain|consider/.test(s);
+      const a = /watch|fetch|download|pull|ingest|source|stream|yt-?dl|proxy|buffer|install/.test(s);
+      const l = /find|moment|clip|rank|score|viral|highlight|best|select|pick|segment/.test(s);
+      const c = /caption|overlay|title|subtitle|hook|text|write|script/.test(s);
+      const d = /frame|panel|secondary|b-?roll|layout|split/.test(s);
+      const u = /compose|compile|render|build|assemble|stitch|encode/.test(s);
+      const g = /export|upload|finish|final|package|download clip|ready/.test(s);
+      const m = /queue|wait|pending|start/.test(s);
+      if (g && (i === "export" || i === "download" || o >= 88)) return [ "Finishing" ];
+      if (c && (i === "overlay" || /caption|overlay|hook/.test(s))) return [ "Writing" ];
+      if (d && (i === "secondary" || /panel|secondary|split/.test(s))) return [ "Framing" ];
+      if (u && (i === "compose" || i === "compile" || /render|compose|encode/.test(s))) {
+        return r ? [ "Thinking", "Building" ] : [ "Building" ];
+      }
+      if (i === "wait" || m && o < 4 && !a && !r) return [ "Waiting" ];
+      if (i === "install" || a && !l && o < 28) {
+        if (r) return [ "Watching", "Thinking" ];
+        return [ "Watching" ];
+      }
+      if (i === "clip" || i === "moment" || l) {
+        if (r && !l) return [ "Thinking" ];
+        if (o < 22 || r && o < 40) return [ "Thinking", "Finding" ];
+        if (r) return [ "Finding", "Thinking" ];
+        return [ "Finding" ];
+      }
+      if (i === "overlay") return r ? [ "Thinking", "Writing" ] : [ "Writing" ];
+      if (i === "secondary") return r ? [ "Thinking", "Framing" ] : [ "Framing" ];
+      if (i === "compose" || i === "compile") return r ? [ "Thinking", "Building" ] : [ "Building" ];
+      if (i === "export" || i === "download") return [ "Finishing" ];
+      if (i === "apply") return [ "Applying" ];
+      if (o < 18) return [ "Watching" ];
+      if (o < 55) return l ? [ "Thinking", "Finding" ] : [ "Thinking" ];
+      if (o < 85) return [ "Building" ];
+      return [ "Finishing" ];
+    };
+    n._thinkHoldMs = function _thinkHoldMs(e, t) {
+      if (!t || t.length < 2) return 0;
+      if (e === "Thinking") return 1600;
+      if (e === "Watching") return 1400;
+      if (e === "Finding") return 1500;
+      return 1300;
+    };
+    n._clearThinkWordTimers = function _clearThinkWordTimers() {
+      if (this._thinkWordHold) clearTimeout(this._thinkWordHold);
+      if (this._thinkWordFallback) clearTimeout(this._thinkWordFallback);
+      this._thinkWordHold = this._thinkWordFallback = null;
+      if (this._thinkWordOnEnd && this._thinkWordElNode) {
+        this._thinkWordElNode.removeEventListener("transitionend", this._thinkWordOnEnd);
+      }
+      this._thinkWordOnEnd = null;
+      this._thinkWordElNode = null;
+    };
+    n._transitionToThinkWord = function _transitionToThinkWord(e, t) {
+      const n = this._thinkWordEl();
+      const i = String(e || "");
+      if (!n) {
+        if (typeof t === "function") t();
+        return;
+      }
+      if (n.textContent === i && !n.classList.contains("is-out")) {
+        if (typeof t === "function") t();
+        return;
+      }
+      if (this._thinkWordHold) clearTimeout(this._thinkWordHold);
+      this._thinkWordHold = null;
+      if (this._thinkWordOnEnd && this._thinkWordElNode) {
+        this._thinkWordElNode.removeEventListener("transitionend", this._thinkWordOnEnd);
+      }
+      if (this._thinkWordFallback) clearTimeout(this._thinkWordFallback);
+      this._thinkWordFallback = null;
+      this._thinkWordElNode = n;
+      n.classList.add("is-out");
+      let s = false;
+      const finish = () => {
+        if (s) return;
+        s = true;
+        if (this._thinkWordOnEnd) {
+          n.removeEventListener("transitionend", this._thinkWordOnEnd);
+          this._thinkWordOnEnd = null;
+        }
+        clearTimeout(this._thinkWordFallback);
+        this._thinkWordFallback = null;
+        this._setThinkWord(i);
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            n.classList.remove("is-out");
+            if (typeof t === "function") t();
+          });
+        });
+      };
+      const onEnd = e => {
+        if (e.target !== n) return;
+        if (e.propertyName !== "opacity" && e.propertyName !== "filter") return;
+        finish();
+      };
+      this._thinkWordOnEnd = onEnd;
+      n.addEventListener("transitionend", onEnd);
+      this._thinkWordFallback = setTimeout(finish, 340);
+    };
+    n._stopThinkWordCycle = function _stopThinkWordCycle(e) {
+      this._clearThinkWordTimers();
+      this._thinkWordRunning = false;
+      this._thinkWordSig = null;
+      const t = this._thinkWordEl();
+      if (!t) return;
+      if (e) {
+        this._transitionToThinkWord(e);
+      } else {
+        t.classList.remove("is-out");
+      }
+    };
+    n._scheduleThinkAdvance = function _scheduleThinkAdvance(e) {
+      const t = this._thinkWordBeats || [];
+      const n = this._thinkHoldMs(e, t);
+      if (n <= 0 || !this._thinkWordRunning) return;
+      if (this._thinkWordHold) clearTimeout(this._thinkWordHold);
+      this._thinkWordHold = setTimeout(() => this._advanceThinkWord(), n);
+    };
+    n._advanceThinkWord = function _advanceThinkWord() {
+      const e = this._thinkWordBeats || [];
+      if (!this._thinkWordRunning || e.length < 2) return;
+      this._thinkWordIndex = ((this._thinkWordIndex || 0) + 1) % e.length;
+      const t = e[this._thinkWordIndex];
+      this._transitionToThinkWord(t, () => {
+        if (!this._thinkWordRunning) return;
+        this._scheduleThinkAdvance(t);
+      });
+    };
+    n._ensureThinkWordCycle = function _ensureThinkWordCycle(e, t, n) {
+      if (this._genStageOutcomeKind) return;
+      const i = this._thinkBeatsFor(e, t, n);
+      const s = i.join("|");
+      const o = this._thinkWordEl();
+      if (!o || !i.length) return;
+      const startHold = e => {
+        this._scheduleThinkAdvance(e);
+      };
+      if (this._thinkWordRunning && this._thinkWordSig !== s) {
+        this._thinkWordBeats = i;
+        this._thinkWordSig = s;
+        this._thinkWordIndex = 0;
+        this._transitionToThinkWord(i[0], () => {
+          if (!this._thinkWordRunning || this._thinkWordSig !== s) return;
+          startHold(i[0]);
+        });
+        return;
+      }
+      if (this._thinkWordRunning && this._thinkWordSig === s) return;
+      this._thinkWordBeats = i;
+      this._thinkWordSig = s;
+      this._thinkWordRunning = true;
+      this._thinkWordIndex = 0;
+      if (!o.textContent) {
+        o.classList.remove("is-out");
+        this._setThinkWord(i[0]);
+        startHold(i[0]);
+      } else {
+        this._transitionToThinkWord(i[0], () => {
+          if (!this._thinkWordRunning) return;
+          startHold(i[0]);
         });
       }
     };
@@ -225,6 +467,9 @@
       this._clearGenCompanionTimers?.();
       this._genCompanionWakeLock = false;
       this._genCompanionState = null;
+      this._thinkWordRunning = false;
+      this._thinkWordIndex = 0;
+      this._ensureThinkWordCycle("install", "", 0);
       this._syncGenStageCompanion?.("install", {
         pct: 0
       });
@@ -260,6 +505,7 @@
         this.genStageOpen = false;
         document.body.classList.remove("solis-gen-stage-active");
         this._clearGenCompanionTimers?.();
+        this._stopThinkWordCycle?.();
         if (this._genCompanionRoot) {
           this._setGenCompanionState?.("sleeping");
         }
@@ -315,22 +561,22 @@
       const i = this.activeTemplateOptions || {};
       const s = window.clipsStudio;
       const o = s?.processingItems?.[0];
-      const a = (typeof s?.resolveSourceVideoCardMeta === "function" ? s.resolveSourceVideoCardMeta() : null) || {};
-      let r = String(i.videoTitle || i.title || a.title || o?.name || "").trim();
-      if (!r || /^https?:\/\//i.test(r) || /^Clip\s*·\s*https?/i.test(r)) {
-        r = a.title || "Your video";
+      const r = (typeof s?.resolveSourceVideoCardMeta === "function" ? s.resolveSourceVideoCardMeta() : null) || {};
+      let a = String(i.videoTitle || i.title || r.title || o?.name || "").trim();
+      if (!a || /^https?:\/\//i.test(a) || /^Clip\s*·\s*https?/i.test(a)) {
+        a = r.title || "Your video";
       }
-      r = r.replace(/^Clip\s*·\s*/i, "").replace(/^Ranking\s*·\s*/i, "");
+      a = a.replace(/^Clip\s*·\s*/i, "").replace(/^Ranking\s*·\s*/i, "");
       const l = this.activeTemplateId || "ranked_compilation";
       const c = s?.templates?.[l]?.name || (l === "splitscreen" ? "Clip" : l === "ranked_compilation" ? "Ranking" : "Clip");
       if (e) {
-        e.textContent = r || "Your video";
-        e.title = r || "Your video";
+        e.textContent = a || "Your video";
+        e.title = a || "Your video";
       }
       if (t) t.textContent = c;
-      const d = String(i.thumbnailUrl || a.thumbnailUrl || "").trim();
-      const m = i.videoId || a.videoId || null;
-      const g = d || (m ? `https://i.ytimg.com/vi/${m}/hqdefault.jpg` : "");
+      const d = String(i.thumbnailUrl || r.thumbnailUrl || "").trim();
+      const u = i.videoId || r.videoId || null;
+      const g = d || (u ? `https://i.ytimg.com/vi/${u}/hqdefault.jpg` : "");
       if (n) {
         if (g && /^https?:\/\//i.test(g)) {
           const e = g.replace(/"/g, "");
@@ -342,11 +588,11 @@
           n.innerHTML = '<span class="solis-gen-thumb-fallback">CLIP</span>';
         }
       }
-      const u = !r || r === "Your video" || r === "YouTube video";
-      if (u && m && !this._genStageMetaFetchId) {
-        this._genStageMetaFetchId = m;
+      const m = !a || a === "Your video" || a === "YouTube video";
+      if (m && u && !this._genStageMetaFetchId) {
+        this._genStageMetaFetchId = u;
         const e = window.API_BASE_URL || "/api";
-        fetch(`${e}/youtube/get-metadata/${encodeURIComponent(m)}`, {
+        fetch(`${e}/youtube/get-metadata/${encodeURIComponent(u)}`, {
           credentials: "include",
           signal: AbortSignal.timeout(5e3)
         }).then(e => e.ok ? e.json() : null).then(e => {
@@ -357,12 +603,12 @@
             ...this.activeTemplateOptions || {},
             videoTitle: e.title,
             title: e.title,
-            thumbnailUrl: e.thumbnail || this.activeTemplateOptions?.thumbnailUrl || (m ? `https://i.ytimg.com/vi/${m}/hqdefault.jpg` : null),
-            videoId: m
+            thumbnailUrl: e.thumbnail || this.activeTemplateOptions?.thumbnailUrl || (u ? `https://i.ytimg.com/vi/${u}/hqdefault.jpg` : null),
+            videoId: u
           };
           this._fillGenStageVideoMeta();
         }).catch(() => {}).finally(() => {
-          if (this._genStageMetaFetchId === m) this._genStageMetaFetchId = null;
+          if (this._genStageMetaFetchId === u) this._genStageMetaFetchId = null;
         });
       }
     };
@@ -398,11 +644,11 @@
       const onEnd = e => {
         if (e.target !== o || e.propertyName !== "filter") return;
         o.removeEventListener("transitionend", onEnd);
-        clearTimeout(a);
+        clearTimeout(r);
         finish();
       };
       o.addEventListener("transitionend", onEnd);
-      const a = setTimeout(() => {
+      const r = setTimeout(() => {
         o.removeEventListener("transitionend", onEnd);
         finish();
       }, 500);
@@ -411,8 +657,8 @@
       const i = document.getElementById("solisGenSteps");
       const s = document.getElementById("solisGenHeading");
       const o = document.getElementById("solisGenProgressLabel");
-      const a = document.getElementById("solisGenLiveLog");
-      const r = document.getElementById("solisGenOutcome");
+      const r = document.getElementById("solisGenLiveLog");
+      const a = document.getElementById("solisGenOutcome");
       const l = document.getElementById("solisGenStage");
       if (!i || typeof this._getActiveTasks !== "function") return;
       const c = this._getActiveTasks();
@@ -424,31 +670,33 @@
       }
       if (!Number.isFinite(d)) d = 0;
       d = Math.max(0, Math.min(100, d));
-      const m = String(t || firstMessage(this) || "");
+      const u = String(t || firstMessage(this) || "");
       let g = 0;
       if (typeof this._resolveTaskIndex === "function") {
-        g = this._resolveTaskIndex(d, m);
+        g = this._resolveTaskIndex(d, u);
       } else {
         for (let e = 0; e < c.length; e++) {
           const t = e === 0 ? 0 : Number(c[e - 1]?.maxProgress) || 0;
           if (d >= t) g = e;
         }
       }
-      const u = n && n.reveal;
-      const p = `${c.map(e => e.id).join("|")}|${g}|${d >= 100 ? 1 : 0}`;
-      const f = u || this._genStepSignature !== p || i.children.length !== c.length;
-      if (f) {
-        this._genStepSignature = p;
+      const m = n && n.reveal;
+      const h = c.map(e => e.id).join("|");
+      const p = m || this._genStepListSig !== h || i.children.length !== c.length;
+      if (p) {
+        this._genStepListSig = h;
         i.innerHTML = c.map((e, t) => {
           const n = t < g || d >= 100;
           const i = !n && t === g;
-          const s = n ? `<span class="solis-gen-step-ico"><svg class="solis-gen-step-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>` : i ? `<span class="solis-gen-step-ico"><span class="solis-gen-step-spin" aria-hidden="true"></span></span>` : `<span class="solis-gen-step-ico"></span>`;
-          return `<li class="solis-gen-step${n ? " is-done" : ""}${i ? " is-active" : ""}" data-step-i="${t}">${s}<span class="solis-gen-step-label"></span></li>`;
+          const s = n ? "is-done" : i ? "is-active" : "is-pending";
+          return `<li class="solis-gen-step ${s}" data-step-i="${t}">${this._stepIcoHtml()}<span class="solis-gen-step-label"></span></li>`;
         }).join("");
-        if (u) {
+        const e = document.getElementById("solisGenActivity");
+        const t = e?.classList.contains("is-open");
+        if (m || t) {
           i.querySelectorAll(".solis-gen-step").forEach((e, t) => {
             e.classList.remove("is-shown");
-            setTimeout(() => e.classList.add("is-shown"), 80 + t * 100);
+            setTimeout(() => e.classList.add("is-shown"), 60 + t * 70);
           });
         } else {
           i.querySelectorAll(".solis-gen-step").forEach(e => e.classList.add("is-shown"));
@@ -460,58 +708,52 @@
         const i = t < g || d >= 100;
         const s = !i && t === g;
         const o = e.querySelector(".solis-gen-step-label");
-        if (!o) return;
-        if (s && d < 100 && d > 0) {
-          o.innerHTML = `${escapeHtml(n.label)}<span class="solis-gen-step-pct">...${Math.floor(d)}%</span>`;
-        } else if (s) {
-          o.textContent = `${n.label}...`;
-        } else {
-          o.textContent = n.label;
+        if (o) {
+          if (s && d < 100 && d > 0) {
+            o.innerHTML = `${escapeHtml(n.label)}<span class="solis-gen-step-pct">…${Math.floor(d)}%</span>`;
+          } else if (s) {
+            o.textContent = `${n.label}…`;
+          } else {
+            o.textContent = n.label;
+          }
         }
-        e.classList.toggle("is-done", i);
-        e.classList.toggle("is-active", s);
+        this._paintStepState(e, {
+          done: i,
+          active: s
+        });
       });
-      const h = c[Math.min(g, c.length - 1)];
+      this._genStepActiveIdx = g;
+      const f = c[Math.min(g, c.length - 1)];
       if (s && !this._genStageOutcomeKind) {
-        const e = d < 100;
-        s.textContent = e ? "Thinking" : "Your clips are ready";
-        s.classList.toggle("solis-gen-thinking", e);
-        this._lastGenHeadline = s.textContent;
+        s.classList.remove("solis-gen-thinking");
+        if (d >= 100) {
+          this._stopThinkWordCycle("Ready");
+        } else {
+          this._ensureThinkWordCycle(f?.id || "install", u, d);
+        }
       }
-      const _ = document.getElementById("solisGenNow");
-      if (_ && !this._genStageOutcomeKind) {
-        _.hidden = d >= 100;
-        _.textContent = d >= 100 ? "" : h?.label || "Working";
-      }
-      const S = document.getElementById("solisGenActivityText");
-      if (S) {
-        const e = c.slice(0, Math.min(c.length, g + (d >= 100 ? 0 : 1))).map(e => e.label).filter(Boolean);
-        S.textContent = e.length ? e.join(", ") : "Getting started";
-      }
+      const _ = d >= 100 ? c.length : g;
+      const k = d >= 100 ? "All set" : f?.label || "Getting started";
+      const y = c.length > 1 ? `${Math.min(_ + (d >= 100 ? 0 : 1), c.length)}/${c.length}` : "";
+      this._setActivitySummary(k, y);
       if (o) {
         o.textContent = d >= 100 ? "Complete" : d > 0 ? `${Math.floor(d)}%` : "Starting...";
       }
-      const y = typeof this._cleanMessage === "function" ? this._cleanMessage(m) : String(m || "").trim();
-      if (a) {
-        a.classList.remove("is-complete", "is-error", "is-warn");
-        if (d >= 100) {
-          a.hidden = true;
-          a.textContent = "";
-        } else {
-          a.hidden = true;
-          a.textContent = "";
-        }
-      }
-      if (r && d < 100 && !this._genStageOutcomeKind) {
+      if (r) {
+        r.classList.remove("is-complete", "is-error", "is-warn");
         r.hidden = true;
         r.textContent = "";
-        r.classList.remove("is-complete", "is-error");
+      }
+      if (a && d < 100 && !this._genStageOutcomeKind) {
+        a.hidden = true;
+        a.textContent = "";
+        a.classList.remove("is-complete", "is-error");
       }
       if (l && !this._genStageOutcomeKind) {
         l.classList.remove("is-complete", "is-error");
       }
       if (!this._genStageOutcomeKind) {
-        this._syncGenStageCompanion?.(h?.id, {
+        this._syncGenStageCompanion?.(f?.id, {
           pct: d
         });
       }
@@ -551,23 +793,18 @@
       const i = document.getElementById("solisGenLiveLog");
       const s = document.getElementById("solisGenOutcome");
       const o = document.getElementById("solisGenHeading");
-      const a = String(t || "").trim();
+      const r = String(t || "").trim();
       if (n) {
         n.classList.remove("is-complete", "is-error");
         if (e === "error") n.classList.add("is-error");
       }
       if (o) {
         o.classList.remove("solis-gen-thinking");
-        o.textContent = e === "error" ? "Something went wrong" : "Your clips are ready";
-      }
-      const r = document.getElementById("solisGenNow");
-      if (r) {
-        r.hidden = true;
-        r.textContent = "";
+        this._stopThinkWordCycle(e === "error" ? "Stuck" : "Ready");
       }
       if (i) {
         if (e === "error") {
-          this._showGenStageAlert("error", a || "Something went wrong — try again");
+          this._showGenStageAlert("error", r || "Something went wrong. Try again.");
         } else {
           i.hidden = true;
           i.textContent = "";
@@ -583,11 +820,11 @@
           s.hidden = false;
           s.classList.remove("is-error");
           s.classList.add("is-complete");
-          s.textContent = a || "Complete — your clip is ready";
+          s.textContent = r || "Complete. Your clip is ready.";
         }
       }
       try {
-        this._syncGenStageSteps(e === "error" ? 0 : 100, a, {
+        this._syncGenStageSteps(e === "error" ? 0 : 100, r, {
           reveal: false
         });
       } catch (e) {}
@@ -632,41 +869,42 @@
   function fillDemoSteps() {
     const e = document.getElementById("solisGenSteps");
     if (!e) return;
-    const t = '<svg class="solis-gen-step-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-    e.innerHTML = [ [ "Watching the source", "done" ], [ "Finding the best moment", "active" ], [ "Setting up the second panel", "" ], [ "Building the split", "" ], [ "Finishing up", "" ] ].map(([e, n], i) => {
-      const s = n === "done";
-      const o = n === "active";
-      const a = s ? `<span class="solis-gen-step-ico">${t}</span>` : o ? '<span class="solis-gen-step-ico"><span class="solis-gen-step-spin" aria-hidden="true"></span></span>' : '<span class="solis-gen-step-ico"></span>';
-      const r = o ? `${e}<span class="solis-gen-step-pct">…37%</span>` : e;
-      return `<li class="solis-gen-step is-shown${s ? " is-done" : ""}${o ? " is-active" : ""}" data-step-i="${i}">${a}<span class="solis-gen-step-label">${r}</span></li>`;
+    const t = '<svg class="solis-gen-step-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+    const n = '<svg class="solis-gen-step-spin" viewBox="0 0 24 24" aria-hidden="true"><circle class="solis-gen-step-spin-track" cx="12" cy="12" r="9"></circle><circle class="solis-gen-step-spin-arc" cx="12" cy="12" r="9" transform="rotate(-90 12 12)"></circle></svg>';
+    const i = `<span class="solis-gen-step-ico">${n}${t}</span>`;
+    e.innerHTML = [ [ "Watching the source", "done" ], [ "Finding the best moment", "active" ], [ "Setting up the second panel", "pending" ], [ "Building the split", "pending" ], [ "Finishing up", "pending" ] ].map(([e, t], n) => {
+      const s = t === "done";
+      const o = t === "active";
+      const r = s ? "is-done" : o ? "is-active" : "is-pending";
+      const a = o ? `${e}<span class="solis-gen-step-pct">…37%</span>` : e;
+      return `<li class="solis-gen-step is-shown ${r}" data-step-i="${n}">${i}<span class="solis-gen-step-label">${a}</span></li>`;
     }).join("");
-    const n = document.getElementById("solisGenHeading");
-    const i = document.getElementById("solisGenProgressLabel");
-    const s = document.getElementById("solisGenVideoTitle");
-    const o = document.getElementById("solisGenNow");
+    const s = document.getElementById("solisGenHeading");
+    const o = document.getElementById("solisGenProgressLabel");
+    const r = document.getElementById("solisGenVideoTitle");
     const a = document.getElementById("solisGenActivityText");
-    if (n) {
-      n.textContent = "Thinking";
-      n.classList.add("solis-gen-thinking");
+    const l = document.getElementById("solisGenActivityCount");
+    if (s) {
+      s.classList.remove("solis-gen-thinking");
+      s.innerHTML = '<span class="solis-gen-think-word" id="solisGenThinkWord">Finding</span>';
     }
-    if (o) {
-      o.hidden = false;
-      o.textContent = "Finding the best moment";
+    if (a) a.textContent = "Finding the best moment";
+    if (l) {
+      l.hidden = false;
+      l.textContent = "2/5";
     }
-    if (a) {
-      a.textContent = "Watching the source, Finding the best moment";
+    if (o) o.textContent = "37%";
+    if (r) r.textContent = "I Ate Nothing But YouTuber Products for 7 Days";
+    const c = document.getElementById("solisGenThumb");
+    if (c) {
+      c.innerHTML = '<img src="https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg" alt="" loading="lazy">';
     }
-    if (i) i.textContent = "37%";
-    if (s) s.textContent = "I Ate Nothing But YouTuber Products for 7 Days";
-    const r = document.getElementById("solisGenThumb");
-    if (r) {
-      r.innerHTML = '<img src="https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg" alt="" loading="lazy">';
-    }
-    const l = document.getElementById("solisGenActivitySummary");
-    if (l && e) {
-      l.setAttribute("aria-expanded", "true");
-      l.classList.add("is-expanded");
-      e.hidden = false;
+    const d = document.getElementById("solisGenActivity");
+    const u = document.getElementById("solisGenActivitySummary");
+    if (d && u) {
+      d.classList.add("is-open");
+      u.setAttribute("aria-expanded", "true");
+      u.classList.add("is-expanded");
     }
   }
   function forceOpenDemoStage() {
@@ -687,12 +925,13 @@
           reveal: true
         });
         t.displayProgress?.(37, "Finding the best moment...");
-        const e = document.getElementById("solisGenActivitySummary");
-        const n = document.getElementById("solisGenSteps");
+        t._ensureThinkWordCycle?.("moment", "Finding the best moment...", 37);
+        const e = document.getElementById("solisGenActivity");
+        const n = document.getElementById("solisGenActivitySummary");
         if (e && n) {
-          e.setAttribute("aria-expanded", "true");
-          e.classList.add("is-expanded");
-          n.hidden = false;
+          e.classList.add("is-open");
+          n.setAttribute("aria-expanded", "true");
+          n.classList.add("is-expanded");
         }
         return true;
       } catch (e) {}

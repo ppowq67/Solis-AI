@@ -2,6 +2,7 @@
   let e = false;
   let t = false;
   let i = null;
+  let r = false;
   function $(e) {
     return document.getElementById(e);
   }
@@ -39,16 +40,42 @@
         t.textContent = "";
         i = null;
       }, 200);
-    }, 2800);
+    }, 3200);
   }
   function setButtonState() {
     const t = $("previewImproveBtn");
     if (!t) return;
     t.classList.toggle("is-improved", e);
-    t.classList.toggle("active", e);
-    t.setAttribute("aria-pressed", e ? "true" : "false");
+    t.classList.toggle("active", e || r);
+    t.setAttribute("aria-pressed", e || r ? "true" : "false");
     t.removeAttribute("title");
     t.setAttribute("aria-label", e ? "Clip improved" : "Improve clip (uses 1 upload)");
+  }
+  function setBarOpen(e) {
+    r = !!e;
+    const t = $("improveEditBar");
+    const i = $("templateVideoPreview");
+    if (t) {
+      if (r) {
+        t.hidden = false;
+        t.classList.add("is-open");
+      } else {
+        t.classList.remove("is-open");
+        t.hidden = true;
+      }
+    }
+    if (i) i.classList.toggle("improve-bar-open", r);
+    setButtonState();
+    if (r) {
+      const e = $("improveEditInput");
+      if (e) {
+        requestAnimationFrame(() => {
+          try {
+            e.focus();
+          } catch (e) {}
+        });
+      }
+    }
   }
   function syncVisibility() {
     const t = $("previewImproveBtn");
@@ -58,11 +85,13 @@
       t.style.display = r ? "" : "none";
       if (!r) {
         e = false;
+        setBarOpen(false);
         setButtonState();
       } else {
         setButtonState();
       }
     }
+    if (!r) setBarOpen(false);
     if (i) {
       const e = $("previewSilencerBtn");
       const o = r && e && e.style.display !== "none";
@@ -151,21 +180,23 @@
     }
     t = true;
     const o = $("previewImproveBtn");
+    const n = $("improveEditSend");
     if (o) o.classList.add("is-working");
+    if (n) n.disabled = true;
     try {
-      showNote("Improving…");
-      if (!Array.isArray(i)) i = [];
-      let t = null;
+      const t = String(i || "").trim();
+      showNote(t ? "Working from your note…" : "Improving…");
+      let o = null;
       try {
         const e = window.PreviewTimeline?.getActiveEditRange?.();
         if (e && e.segIndex != null && Number.isFinite(e.start) && Number.isFinite(e.end)) {
-          t = {
+          o = {
             start: Number(e.start.toFixed(3)),
             end: Number(e.end.toFixed(3))
           };
         }
       } catch (e) {}
-      const o = await fetch(`${apiBase()}/clips/projects/${encodeURIComponent(r)}/improve`, {
+      const n = await fetch(`${apiBase()}/clips/projects/${encodeURIComponent(r)}/improve`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -173,64 +204,69 @@
           ...authHeaders()
         },
         body: JSON.stringify({
-          silence_cuts: i.map(e => ({
-            start: Number(Number(e.start).toFixed(3)),
-            end: Number(Number(e.end).toFixed(3))
-          })),
-          ...t ? {
-            edit_range: t
+          prompt: t || undefined,
+          silence_cuts: [],
+          ...o ? {
+            edit_range: o
           } : {}
         })
       });
-      const n = await o.json().catch(() => ({}));
-      if (!o.ok) {
-        const e = n?.error_code || "";
+      const s = await n.json().catch(() => ({}));
+      if (!n.ok) {
+        const e = s?.error_code || "";
         if (e === "NOTHING_TO_IMPROVE") {
-          showNote(n?.error || "Already tight — nothing to improve");
+          showNote(s?.error || "Already tight — nothing to improve");
           return;
         }
-        if (e === "DAILY_LIMIT_REACHED" || e === "MONTHLY_LIMIT_REACHED" || o.status === 429) {
+        if (e === "DAILY_LIMIT_REACHED" || e === "MONTHLY_LIMIT_REACHED" || n.status === 429) {
           showOutOfUploadsUpgrade();
           return;
         }
-        showNote(n?.error || "Couldn’t improve yet");
+        showNote(s?.error || "Couldn’t improve yet");
         return;
       }
       e = true;
+      setBarOpen(false);
       setButtonState();
       await reloadImprovedPreview(r);
       try {
         if (window.clipsStudio?.refreshQuotaAfterApply) {
-          await window.clipsStudio.refreshQuotaAfterApply(n);
+          await window.clipsStudio.refreshQuotaAfterApply(s);
         }
       } catch (e) {}
-      const s = Number(n?.removed_sec);
-      const a = Boolean(n?.boundaries_fixed || n?.edge_trimmed);
-      const l = Boolean(n?.captions_fixed);
-      if (l && a && Number.isFinite(s) && s > 0) {
-        showNote(`Cuts + captions retuned · −${s.toFixed(1)}s (1 upload)`);
-      } else if (a && Number.isFinite(s) && s > 0) {
-        showNote(`Cuts sharpened · removed ${s.toFixed(1)}s (1 upload)`);
-      } else if (Number.isFinite(s) && s > 0) {
-        showNote(`Improved — removed ${s.toFixed(1)}s (1 upload)`);
-      } else if (l) {
-        showNote("Captions retuned (1 upload)");
+      const a = String(s?.prompt_summary || "").trim();
+      const l = Number(s?.removed_sec);
+      if (s?.idea_found && a) {
+        showNote(`${a} · 1 upload`);
       } else if (a) {
-        showNote("Cut boundaries sharpened (1 upload)");
+        showNote(`${a} · 1 upload`);
+      } else if (Number.isFinite(l) && l > 0) {
+        showNote(`Improved — removed ${l.toFixed(1)}s (1 upload)`);
       } else {
         showNote("Clip improved (1 upload)");
+      }
+      if (t) {
+        try {
+          window.SolisMemory?.recordEditorialTaste?.({
+            action: "improve_prompt",
+            category: "improve",
+            reason: a || "Directed clip rework",
+            prompt: t,
+            source: "improve"
+          });
+        } catch (e) {}
       }
     } catch (e) {
       showNote("Couldn’t improve yet");
     } finally {
       t = false;
       if (o) o.classList.remove("is-working");
+      if (n) n.disabled = false;
     }
   }
-  async function applyImprove() {
+  async function submitImprove() {
     if (t || e) return;
     if (!isLibraryPreview()) return;
-    if (window.SolisSilenceCutSuggest?.isOpen?.()) return;
     const i = getProjectId();
     if (!i) {
       showNote("Open a library clip first");
@@ -241,35 +277,9 @@
       showOutOfUploadsUpgrade();
       return;
     }
-    t = true;
-    const o = $("previewImproveBtn");
-    if (o) o.classList.add("is-working");
-    try {
-      const e = window.SolisSilencer;
-      let t = [];
-      if (typeof e?.detectCuts === "function") {
-        t = await e.detectCuts();
-      } else if (typeof e?.isApplied === "function" && e.isApplied()) {
-        t = e.getCuts?.() || [];
-      }
-      if (!Array.isArray(t)) t = [];
-      const i = t.reduce((e, t) => e + Math.max(0, Number(t.end) - Number(t.start)), 0);
-      const r = i > 0 ? `Red = ~${i.toFixed(1)}s to trim · Improve uses 1 upload` : "Improve clip boundaries · uses 1 upload";
-      window.SolisSilenceCutSuggest?.show({
-        source: "improve",
-        regions: t,
-        label: r,
-        onAccept: e => {
-          runImproveApi(e);
-        },
-        onReject: () => {
-          showNote("Improve dismissed");
-        }
-      });
-    } finally {
-      t = false;
-      if (o) o.classList.remove("is-working");
-    }
+    const o = $("improveEditInput");
+    const n = String(o?.value || "").trim();
+    await runImproveApi(n);
   }
   function toggleImprove() {
     if (t) return;
@@ -278,30 +288,61 @@
       showNote("Already improved for this clip");
       return;
     }
-    applyImprove();
+    setBarOpen(!r);
+  }
+  function openImproveBar(t) {
+    if (!isLibraryPreview() || e) return;
+    setBarOpen(true);
+    const i = $("improveEditInput");
+    if (i && t != null) {
+      i.value = String(t);
+    }
   }
   function resetImprove() {
     e = false;
     t = false;
-    try {
-      window.SolisSilenceCutSuggest?.clear?.();
-    } catch (e) {}
-    const i = $("previewImproveBtn");
-    if (i) i.classList.remove("is-working", "is-improved", "active");
+    setBarOpen(false);
+    const i = $("improveEditInput");
+    if (i) i.value = "";
+    const r = $("previewImproveBtn");
+    if (r) r.classList.remove("is-working", "is-improved", "active");
     setButtonState();
   }
   window.SolisImproveClip = {
     toggle: toggleImprove,
-    apply: applyImprove,
+    apply: submitImprove,
+    open: openImproveBar,
+    close: () => setBarOpen(false),
     reset: resetImprove,
     syncVisibility: syncVisibility,
-    isApplied: () => e
+    isApplied: () => e,
+    isOpen: () => r
   };
   document.addEventListener("DOMContentLoaded", () => {
     const e = $("previewImproveBtn");
     if (e && !e.dataset.bound) {
       e.dataset.bound = "1";
       e.addEventListener("click", toggleImprove);
+    }
+    const t = $("improveEditSend");
+    if (t && !t.dataset.bound) {
+      t.dataset.bound = "1";
+      t.addEventListener("click", () => {
+        submitImprove();
+      });
+    }
+    const i = $("improveEditInput");
+    if (i && !i.dataset.bound) {
+      i.dataset.bound = "1";
+      i.addEventListener("keydown", e => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          submitImprove();
+        }
+        if (e.key === "Escape") {
+          setBarOpen(false);
+        }
+      });
     }
     syncVisibility();
   });

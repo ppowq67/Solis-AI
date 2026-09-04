@@ -1427,7 +1427,10 @@ class GenerationProgressSpinner {
         thumbnail_url: r,
         template_name: n,
         template: o,
-        virality: e?.virality
+        virality: e?.virality,
+        batch_parent: e?.batch_parent,
+        batch_index: e?.batch_index,
+        requested_clip_count: e?.requested_clip_count
       });
       if (typeof window.notificationSystem?.showVideoGenerated === "function") {
         window.notificationSystem.showVideoGenerated({
@@ -1870,6 +1873,9 @@ class GenerationProgressSpinner {
         status: "completed",
         thumbnailUrl: t.thumbnail_url || t.thumbnailUrl || null,
         virality: t.virality || null,
+        batchParent: t.batch_parent || t.batchParent || null,
+        batchIndex: t.batch_index || t.batchIndex || null,
+        requestedClipCount: t.requested_clip_count || t.requestedClipCount || null,
         _optimistic: true,
         _justCompleted: true
       };
@@ -1886,6 +1892,15 @@ class GenerationProgressSpinner {
         r.templateName = t.template_name || t.templateName;
       }
       if (t.virality) r.virality = t.virality;
+      if (t.batch_parent || t.batchParent) {
+        r.batchParent = t.batch_parent || t.batchParent;
+      }
+      if (t.batch_index != null || t.batchIndex != null) {
+        r.batchIndex = t.batch_index ?? t.batchIndex;
+      }
+      if (t.requested_clip_count != null || t.requestedClipCount != null) {
+        r.requestedClipCount = t.requested_clip_count ?? t.requestedClipCount;
+      }
     }
     s._libraryLastLoaded = 0;
     try {
@@ -1945,7 +1960,7 @@ class GenerationProgressSpinner {
     }
     this.displayProgress(100, "Processing complete! Video ready!");
     if (this.genStageOpen && typeof this._syncGenStageOutcome === "function") {
-      this._syncGenStageOutcome("complete", "Your clip is ready — opening preview…");
+      this._syncGenStageOutcome("complete", "Your clip is ready. Opening preview…");
     }
     this._openCompletedClipPreview(e);
     this._unlockUrlSubmitButton();

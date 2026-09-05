@@ -493,6 +493,15 @@
     }
     .ask-ai img { width: 22px; height: 22px; display: block; }
 
+    .summary-trust {
+      margin-top: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .summary-trust .legal { margin: 0; }
+    .summary-trust .pay-foot { margin-top: 0; }
+
     .pay-box {
       border: 1px solid var(--line-2);
       border-radius: 10px;
@@ -716,6 +725,56 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    .checkout-toast {
+      position: fixed;
+      left: 50%;
+      bottom: calc(20px + var(--safe-bot, 0px));
+      transform: translateX(-50%) translateY(12px);
+      z-index: 120;
+      max-width: min(420px, calc(100vw - 28px));
+      padding: 12px 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      background:
+        linear-gradient(155deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.18) 100%),
+        rgba(28, 25, 23, 0.88);
+      color: #fff;
+      font-size: 13.5px;
+      font-weight: 600;
+      line-height: 1.45;
+      box-shadow: 0 16px 40px -18px rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(14px) saturate(160%);
+      -webkit-backdrop-filter: blur(14px) saturate(160%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.22s ease, transform 0.22s ease;
+    }
+    .checkout-toast.is-visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
+    }
+    .checkout-toast.is-error {
+      background:
+        linear-gradient(155deg, rgba(255, 240, 240, 0.2) 0%, rgba(185, 28, 28, 0.55) 100%),
+        rgba(70, 20, 20, 0.92);
+    }
+    .checkout-toast.is-loading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .checkout-toast .spin {
+      border-color: rgba(255, 255, 255, 0.28);
+      border-top-color: #fff;
+    }
+    .checkout-toast a {
+      color: #fdba74;
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
     .desktop-only {}
 
     @media (max-width: 880px) {
@@ -750,6 +809,7 @@
       .pay-inner { gap: 14px; }
       #dodo-inline-checkout { min-height: 320px; }
       #dodo-inline-checkout iframe { min-height: 320px; }
+      .summary-trust { margin-top: 14px; }
 
       .pay { padding-top: 20px; padding-bottom: calc(28px + var(--safe-bot)); }
       .subscribe-btn { border-radius: 999px; }
@@ -904,13 +964,57 @@
             </a>
           </span>
         </div>
+
+        <div class="summary-trust">
+          <div class="pay-accept" aria-label="Accepted payment methods">
+            <div class="pay-accept-head">
+              <span>Payment methods</span>
+              <span class="powered">
+                Powered by
+                <img src="/assets/brands/dodo-logo-black.svg" alt="Dodo Payments" height="14" />
+              </span>
+            </div>
+            <div class="pay-accept-row">
+              <span class="pay-accept-label">Apple Pay</span>
+              <span class="pay-accept-val">
+                <img src="/assets/brands/apple-pay.svg" alt="" height="18" />
+              </span>
+            </div>
+            <div class="pay-accept-row">
+              <span class="pay-accept-label">Google Pay</span>
+              <span class="pay-accept-val">
+                <img src="/assets/brands/google-pay.svg" alt="" height="18" />
+              </span>
+            </div>
+            <div class="pay-accept-row">
+              <span class="pay-accept-label">Visa</span>
+              <span class="pay-accept-val">
+                <img class="visa-badge" src="/assets/brands/visa.svg?v=3" alt="Visa" height="22" />
+              </span>
+            </div>
+          </div>
+
+          <p class="legal">
+            By subscribing, you authorize Solis AI (via Dodo Payments as merchant of record)
+            to charge you according to your plan until you cancel.
+            See our <a href="/refund.html">refund policy</a>.
+          </p>
+
+          <div class="pay-foot">
+            <span class="dodo-powered">
+              Powered by
+              <img src="/assets/brands/dodo-logo-black.svg" alt="Dodo Payments" height="16" />
+            </span>
+            <span class="sep">|</span>
+            <a href="/legal/terms.html">Legal</a>
+            <a href="/contact.html">Contact</a>
+          </div>
+        </div>
       </div>
     </aside>
 
     <main class="pay" aria-label="Payment">
       <div class="pay-inner">
-        <div id="checkoutStatus" class="status loading" role="status" hidden></div>
-
         <div class="pay-box">
           <div class="mock-link">
             <div class="mock-head">
@@ -945,54 +1049,12 @@
           <div id="dodo-inline-checkout"></div>
         </div>
 
-        <div class="pay-accept" aria-label="Accepted payment methods">
-          <div class="pay-accept-head">
-            <span>Payment methods</span>
-            <span class="powered">
-              Powered by
-              <img src="/assets/brands/dodo-logo-black.svg" alt="Dodo Payments" height="14" />
-            </span>
-          </div>
-          <div class="pay-accept-row">
-            <span class="pay-accept-label">Apple Pay</span>
-            <span class="pay-accept-val">
-              <img src="/assets/brands/apple-pay.svg" alt="" height="18" />
-            </span>
-          </div>
-          <div class="pay-accept-row">
-            <span class="pay-accept-label">Google Pay</span>
-            <span class="pay-accept-val">
-              <img src="/assets/brands/google-pay.svg" alt="" height="18" />
-            </span>
-          </div>
-          <div class="pay-accept-row">
-            <span class="pay-accept-label">Visa</span>
-            <span class="pay-accept-val">
-              <img class="visa-badge" src="/assets/brands/visa.svg?v=3" alt="Visa" height="22" />
-            </span>
-          </div>
-        </div>
-
         <button type="button" class="subscribe-btn" id="subscribeBtn">Subscribe</button>
-
-        <p class="legal">
-          By subscribing, you authorize Solis AI (via Dodo Payments as merchant of record)
-          to charge you according to your plan until you cancel.
-          See our <a href="/refund.html">refund policy</a>.
-        </p>
-
-        <div class="pay-foot">
-          <span class="dodo-powered">
-            Powered by
-            <img src="/assets/brands/dodo-logo-black.svg" alt="Dodo Payments" height="16" />
-          </span>
-          <span class="sep">|</span>
-          <a href="/legal/terms.html">Legal</a>
-          <a href="/contact.html">Contact</a>
-        </div>
       </div>
     </main>
   </div>
+
+  <div id="checkoutToast" class="checkout-toast" role="status" aria-live="polite" hidden></div>
 
   <script>
     (function () {
@@ -1006,7 +1068,7 @@
     })();
   </script>
   <script src="https://cdn.jsdelivr.net/npm/dodopayments-checkout@1.9.8/dist/index.js"></script>
-  <script src="/js/payment/checkout-page.js?v=17"></script>
+  <script src="/js/payment/checkout-page.js?v=18"></script>
   <script>
     (function () {
       var panel = document.getElementById('summaryPanel');

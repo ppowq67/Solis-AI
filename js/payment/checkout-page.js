@@ -68,21 +68,39 @@
   function setPreview(e) {
     document.body.classList.toggle("is-preview", !!e);
   }
-  function setStatus(e, t) {
-    const n = document.getElementById("checkoutStatus");
-    if (!n) return;
+  let t = null;
+  function setStatus(e, n) {
+    const o = document.getElementById("checkoutToast");
+    if (!o) return;
+    if (t) {
+      clearTimeout(t);
+      t = null;
+    }
     if (!e) {
-      n.hidden = true;
-      n.textContent = "";
+      o.classList.remove("is-visible", "is-error", "is-loading");
+      o.hidden = true;
+      o.innerHTML = "";
       return;
     }
-    n.hidden = false;
-    n.className = `status${t ? ` ${t}` : ""}`;
-    if (t === "loading") {
-      n.innerHTML = `<span class="spin" aria-hidden="true"></span>${e}`;
-    } else {
-      n.innerHTML = e;
+    if (n === "loading" && /preparing secure checkout/i.test(String(e))) {
+      return;
     }
+    o.hidden = false;
+    o.className = `checkout-toast is-visible${n === "error" ? " is-error" : ""}${n === "loading" ? " is-loading" : ""}`;
+    if (n === "loading") {
+      o.innerHTML = `<span class="spin" aria-hidden="true"></span><span>${e}</span>`;
+    } else {
+      o.innerHTML = e;
+    }
+    const r = n === "error" ? 6500 : n === "loading" ? 2800 : 4200;
+    t = setTimeout(() => {
+      o.classList.remove("is-visible");
+      t = setTimeout(() => {
+        o.hidden = true;
+        o.innerHTML = "";
+        t = null;
+      }, 220);
+    }, r);
   }
   function premiumHref(e) {
     const t = /(?:localhost|127\.0\.0\.1)/i.test(window.location.hostname) ? "/premium.html" : "/premium";
@@ -191,7 +209,7 @@
     }
     return dodoSdk();
   }
-  const t = {
+  const n = {
     phase: "booting",
     planKey: "prime",
     loginUrl: "",
@@ -214,7 +232,7 @@
   function findCheckoutIframe() {
     return document.querySelector("#dodo-inline-checkout iframe");
   }
-  function wireSubscribe(e, n) {
+  function wireSubscribe(e, t) {
     const o = document.getElementById("subscribeBtn");
     if (!o || o.dataset.wired === "1") return;
     o.dataset.wired = "1";
@@ -231,21 +249,21 @@
         } catch (e) {}
         return;
       }
-      if (t.checkoutUrl) {
+      if (n.checkoutUrl) {
         setStatus("Opening secure checkout…", "loading");
-        window.location.href = t.checkoutUrl;
+        window.location.href = n.checkoutUrl;
         return;
       }
-      if (t.phase === "booting") {
+      if (n.phase === "booting") {
         setStatus("Checkout is still preparing — hang on a second…", "loading");
         return;
       }
-      if (t.phase === "auth" || t.loggedIn === false) {
-        setStatus(`Sign in to continue. <a href="${n || t.loginUrl}">Sign in →</a>`, "error");
+      if (n.phase === "auth" || n.loggedIn === false) {
+        setStatus(`Sign in to continue. <a href="${t || n.loginUrl}">Sign in →</a>`, "error");
         return;
       }
-      const r = t.lastError ? ` ${t.lastError}` : "";
-      setStatus(`Checkout isn’t ready yet.${r} <a href="${n || t.loginUrl}">Back to plans</a> or refresh.`, "error");
+      const r = n.lastError ? ` ${n.lastError}` : "";
+      setStatus(`Checkout isn’t ready yet.${r} <a href="${t || n.loginUrl}">Back to plans</a> or refresh.`, "error");
     });
   }
   async function createSession(e, t) {
@@ -271,34 +289,34 @@
     return o;
   }
   async function boot() {
-    const n = String(qs("plan") || "prime").trim().toLowerCase();
-    t.planKey = n;
-    if (!e[n]) {
-      t.phase = "error";
-      t.lastError = "Unknown plan.";
+    const t = String(qs("plan") || "prime").trim().toLowerCase();
+    n.planKey = t;
+    if (!e[t]) {
+      n.phase = "error";
+      n.lastError = "Unknown plan.";
       setPreview(true);
       setStatus("Pick a plan on the pricing page to continue.", "error");
       return;
     }
-    paintStaticSummary(n);
-    window.pendingPlanUpgrade = n;
-    const o = premiumHref(`checkout=${encodeURIComponent(n)}`);
-    t.loginUrl = o;
-    wireSubscribe(n, o);
+    paintStaticSummary(t);
+    window.pendingPlanUpgrade = t;
+    const o = premiumHref(`checkout=${encodeURIComponent(t)}`);
+    n.loginUrl = o;
+    wireSubscribe(t, o);
     if (qs("preview") === "1" || qs("preview") === "true") {
-      t.phase = "ready";
+      n.phase = "ready";
       setPreview(true);
       setStatus("");
       return;
     }
     ensureLoggedIn().then(e => {
-      t.loggedIn = !!e;
+      n.loggedIn = !!e;
       if (!e) return;
-      const n = e.email || e.user_email || typeof e === "object" && e.username || "";
+      const t = e.email || e.user_email || typeof e === "object" && e.username || "";
       const o = document.getElementById("mockEmail");
-      if (o && n) o.textContent = n;
+      if (o && t) o.textContent = t;
     }).catch(() => {
-      t.loggedIn = false;
+      n.loggedIn = false;
     });
     setStatus("Preparing secure checkout…", "loading");
     let r;
@@ -310,53 +328,53 @@
       if (!e.ok) throw new Error(r.detail || r.error || "Payment config failed");
       window.paymentConfig = r;
     } catch (e) {
-      t.phase = "error";
-      t.lastError = e.message || "Payment config unavailable";
+      n.phase = "error";
+      n.lastError = e.message || "Payment config unavailable";
       setPreview(true);
-      setStatus(t.lastError, "error");
+      setStatus(n.lastError, "error");
       return;
     }
-    const i = r.plans?.[n]?.productId || r.plans?.[n]?.priceId || null;
+    const i = r.plans?.[t]?.productId || r.plans?.[t]?.priceId || null;
     if (!i) {
-      t.phase = "error";
-      t.lastError = "This plan is not available for checkout right now.";
+      n.phase = "error";
+      n.lastError = "This plan is not available for checkout right now.";
       setPreview(true);
-      setStatus(t.lastError, "error");
+      setStatus(n.lastError, "error");
       return;
     }
-    const a = e[n].launch != null ? e[n].launch : e[n].list;
-    paintStaticSummary(n, a);
+    const a = e[t].launch != null ? e[t].launch : e[t].list;
+    paintStaticSummary(t, a);
     let s;
     try {
-      s = await createSession(n, i);
+      s = await createSession(t, i);
     } catch (e) {
       setPreview(true);
       if (e.status === 401) {
-        t.phase = "auth";
-        t.loggedIn = false;
-        t.lastError = "Session expired.";
+        n.phase = "auth";
+        n.loggedIn = false;
+        n.lastError = "Session expired.";
         setStatus(`Session expired. <a href="${o}">Sign in →</a>`, "error");
         return;
       }
-      t.phase = "error";
-      t.lastError = e.message || "Could not start checkout";
-      setStatus(t.lastError, "error");
+      n.phase = "error";
+      n.lastError = e.message || "Could not start checkout";
+      setStatus(n.lastError, "error");
       return;
     }
     const c = s.checkoutUrl || s.checkout_url;
     if (!c) {
-      t.phase = "error";
-      t.lastError = "Checkout URL missing from server.";
+      n.phase = "error";
+      n.lastError = "Checkout URL missing from server.";
       setPreview(true);
-      setStatus(t.lastError, "error");
+      setStatus(n.lastError, "error");
       return;
     }
-    t.checkoutUrl = c;
-    t.loggedIn = true;
+    n.checkoutUrl = c;
+    n.loggedIn = true;
     const l = r.environment === "test_mode" || r.environment === "test" ? "test" : "live";
     const u = await waitForDodoSdk(8e3);
     if (!u?.Initialize || !u?.Checkout?.open) {
-      t.phase = "ready";
+      n.phase = "ready";
       setPreview(true);
       setStatus('Inline form unavailable. <a href="#" id="hostedCheckoutLink">Continue to secure checkout →</a>', "error");
       const e = document.getElementById("hostedCheckoutLink");
@@ -372,16 +390,16 @@
       mode: l,
       displayType: "inline",
       onEvent: e => {
-        const n = e?.event_type || e?.type || "";
-        if (n === "checkout.breakdown") {
+        const t = e?.event_type || e?.type || "";
+        if (t === "checkout.breakdown") {
           const t = e?.data?.message || e?.data || e?.message;
           if (t && typeof t === "object") applyBreakdown(t);
         }
-        if (n === "checkout.error") {
-          t.lastError = "Checkout error — try again or refresh.";
-          setStatus(t.lastError, "error");
+        if (t === "checkout.error") {
+          n.lastError = "Checkout error — try again or refresh.";
+          setStatus(n.lastError, "error");
         }
-        if (n === "checkout.redirect") {
+        if (t === "checkout.redirect") {
           setStatus("Redirecting to complete payment…", "loading");
         }
       }
@@ -400,25 +418,25 @@
       while (Date.now() < e && !findCheckoutIframe()) {
         await new Promise(e => setTimeout(e, 100));
       }
-      t.phase = "ready";
+      n.phase = "ready";
       setStatus("");
       if (!findCheckoutIframe()) {
         setStatus("Payment form loading… Use Subscribe if it doesn’t appear.", "loading");
         setTimeout(() => {
-          if (!findCheckoutIframe() && t.checkoutUrl) {
+          if (!findCheckoutIframe() && n.checkoutUrl) {
             setStatus("");
           }
         }, 2500);
       }
     } catch (e) {
       console.error("[Checkout] open failed", e);
-      t.phase = "ready";
-      t.lastError = e.message || "Could not open inline checkout";
+      n.phase = "ready";
+      n.lastError = e.message || "Could not open inline checkout";
       setPreview(true);
-      setStatus(`${t.lastError} <a href="#" id="hostedCheckoutLink">Continue to secure checkout →</a>`, "error");
-      const n = document.getElementById("hostedCheckoutLink");
-      if (n) {
-        n.addEventListener("click", e => {
+      setStatus(`${n.lastError} <a href="#" id="hostedCheckoutLink">Continue to secure checkout →</a>`, "error");
+      const t = document.getElementById("hostedCheckoutLink");
+      if (t) {
+        t.addEventListener("click", e => {
           e.preventDefault();
           window.location.href = c;
         });

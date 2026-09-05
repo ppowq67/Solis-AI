@@ -1863,7 +1863,32 @@ const PreviewTimeline = (() => {
       L = setTimeout(run, e);
     }
   }
-  function attach(e) {
+  function seedDuration(e, t = {}) {
+    refreshEls();
+    const i = Number(e);
+    if (!(i > .25)) return false;
+    const n = Math.abs(i - u) > .05;
+    u = i;
+    if (n || p <= d || p > u + .2) {
+      d = 0;
+      p = u;
+    }
+    m = Math.max(d, Math.min(p, m || 0));
+    show();
+    buildPlaceholderFilmstrip();
+    cacheTrackMetrics();
+    paintChrome({
+      rebuildSegments: t.rebuildSegments !== false
+    });
+    flushPendingPreviewRegions();
+    if (N && N.length) {
+      const e = N.slice();
+      N = null;
+      setSplits(e);
+    }
+    return true;
+  }
+  function attach(e, t = {}) {
     detach();
     if (!e) return;
     refreshEls();
@@ -1872,12 +1897,13 @@ const PreviewTimeline = (() => {
     a.removeAttribute("controls");
     a.setAttribute("controlslist", "nodownload nofullscreen noremoteplayback noplaybackrate");
     a.disablePictureInPicture = true;
-    u = Number.isFinite(a.duration) && a.duration > 0 ? a.duration : 0;
+    const i = Number(t.durationHint);
+    u = Number.isFinite(a.duration) && a.duration > 0 ? a.duration : i > .25 ? i : 0;
     d = 0;
     p = u || 1;
     m = Number.isFinite(a.currentTime) ? a.currentTime : 0;
-    const t = !!document.querySelector(".template-preview-content.is-library-preview");
-    setHandlesUnlocked(t);
+    const n = !!document.querySelector(".template-preview-content.is-library-preview");
+    setHandlesUnlocked(n);
     if (se) {
       se.style.left = "0";
       se.style.right = "auto";
@@ -1896,6 +1922,13 @@ const PreviewTimeline = (() => {
       rebuildSegments: true
     });
     flushPendingPreviewRegions();
+    if (u > .25 && !(Number.isFinite(a.duration) && a.duration > 0)) {
+      if (N && N.length) {
+        const e = N.slice();
+        N = null;
+        setSplits(e);
+      }
+    }
     const kickFilmstrip = () => {
       if (!a || a !== e) return;
       u = Number.isFinite(a.duration) && a.duration > 0 ? a.duration : u;
@@ -1927,7 +1960,12 @@ const PreviewTimeline = (() => {
       });
       setTimeout(() => {
         if (!l || a !== e) return;
-        if (Number.isFinite(a.duration) && a.duration > 0) kickFilmstrip();
+        if (Number.isFinite(a.duration) && a.duration > 0) kickFilmstrip(); else if (u > .25) {
+          cacheTrackMetrics();
+          paintChrome({
+            rebuildSegments: true
+          });
+        }
       }, 350);
     }
   }
@@ -2157,6 +2195,7 @@ const PreviewTimeline = (() => {
     detach: detach,
     show: show,
     hide: hide,
+    seedDuration: seedDuration,
     getTrim: getTrim,
     focusTrim: focusTrim,
     splitAt: splitAt,
@@ -8780,6 +8819,9 @@ class ClipsStudio {
     if (!e) return;
     e.classList.remove("has-video");
     e.innerHTML = `<div class="preview-skel" aria-hidden="true"></div>`;
+    try {
+      this._ensureLibraryTimelineVisible(this._libraryPreviewProjectId || this.currentTemplateForPreview?.projectId);
+    } catch (e) {}
   }
   _showLibraryPreviewError(e, t = "Could not load video preview", i = null) {
     if (!e) return;
@@ -8799,6 +8841,110 @@ class ClipsStudio {
       });
     }
     this._hideLibraryPreviewLoading();
+    try {
+      this._ensureLibraryTimelineVisible(r || null);
+    } catch (e) {}
+  }
+  _parseDurationToSeconds(e) {
+    if (e == null || e === "") return 0;
+    if (typeof e === "number" && Number.isFinite(e) && e > 0) return e;
+    const t = String(e).trim();
+    if (!t) return 0;
+    if (/^\d+(\.\d+)?$/.test(t)) return Math.max(0, Number(t));
+    const i = t.match(/^(\d+):(\d{1,2})(?::(\d{1,2}))?$/);
+    if (i) {
+      if (i[3] != null) {
+        return Number(i[1]) * 3600 + Number(i[2]) * 60 + Number(i[3]);
+      }
+      return Number(i[1]) * 60 + Number(i[2]);
+    }
+    let n = 0;
+    const r = t.match(/(\d+)\s*h/i);
+    const o = t.match(/(\d+)\s*m/i);
+    const s = t.match(/(\d+(?:\.\d+)?)\s*s/i);
+    if (r) n += Number(r[1]) * 3600;
+    if (o) n += Number(o[1]) * 60;
+    if (s) n += Number(s[1]);
+    return n > 0 ? n : 0;
+  }
+  _resolveLibraryDurationSeconds(e, t = null) {
+    const i = e || (this.libraryItems || []).find(e => String(e.projectId || e.id) === String(t || ""));
+    if (!i) return 0;
+    const n = this._parseDurationToSeconds(i.duration_seconds);
+    if (n > 0) return n;
+    return this._parseDurationToSeconds(i.duration);
+  }
+  _ensureLibraryTimelineStubVideo(e) {
+    if (!e) return null;
+    let t = e.querySelector("video.library-preview-video, video.timeline-stub");
+    if (t) return t;
+    t = document.createElement("video");
+    t.className = "library-preview-video timeline-stub";
+    t.muted = true;
+    t.playsInline = true;
+    t.preload = "none";
+    t.setAttribute("playsinline", "");
+    t.setAttribute("aria-hidden", "true");
+    t.style.cssText = "position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;z-index:0;";
+    e.appendChild(t);
+    return t;
+  }
+  _ensureLibraryTimelineVisible(e = null, t = null) {
+    if (typeof PreviewTimeline === "undefined") return;
+    const i = document.getElementById("templateVideoPreview");
+    if (!i) return;
+    const n = e || this._libraryPreviewProjectId || this.currentTemplateForPreview?.projectId || null;
+    const r = t || (this.libraryItems || []).find(e => String(e.projectId || e.id) === String(n || "")) || this.currentTemplateForPreview?.data || null;
+    const o = this._ensureLibraryTimelineStubVideo(i);
+    let s = this._resolveLibraryDurationSeconds(r, n);
+    if (!(s > .25) && this._libraryRankingTimelineState) {
+      try {
+        const e = this._libraryRankingTimelineState?.ranking_timeline?.segments;
+        if (Array.isArray(e) && e.length) {
+          const t = Math.max(...e.map(e => Number(e?.output_end) || 0).filter(e => e > 0));
+          if (t > .25) s = t;
+        }
+      } catch (e) {}
+    }
+    if (!(s > .25)) {
+      s = this._isCurrentLibraryRanking?.() ? 40 : 15;
+    }
+    try {
+      PreviewTimeline.attach(o, {
+        durationHint: s
+      });
+      PreviewTimeline.show?.();
+      PreviewTimeline.seedDuration?.(s);
+      if (this._libraryRankingTimelineState) {
+        this.seedLibraryRankingTimelineSplits(this._libraryRankingTimelineState);
+      } else if (n) {
+        this._seedTimelineFromProjectMeta(n);
+      }
+    } catch (e) {}
+  }
+  async _seedTimelineFromProjectMeta(e) {
+    if (!e || typeof PreviewTimeline === "undefined") return;
+    try {
+      const t = await fetch(`${API_BASE_URL}/clips/projects/${encodeURIComponent(e)}/ranking-edit-state`, {
+        credentials: "include",
+        headers: getAuthHeaders()
+      });
+      if (!t.ok) return;
+      const i = await t.json();
+      this._libraryRankingTimelineState = i;
+      let n = 0;
+      const r = i?.ranking_timeline?.segments;
+      if (Array.isArray(r) && r.length) {
+        n = Math.max(...r.map(e => Number(e?.output_end) || 0), 0);
+      }
+      if (!(n > .25)) {
+        const e = i?.base_durations || {};
+        n = Object.values(e).reduce((e, t) => e + (Number(t) || 0), 0);
+      }
+      if (n > .25) PreviewTimeline.seedDuration?.(n);
+      this.seedLibraryRankingTimelineSplits(i);
+      PreviewTimeline.show?.();
+    } catch (e) {}
   }
   openLibraryPreviewWhenReady(e, t, i = 0) {
     const n = t != null ? String(t) : "";
@@ -8938,6 +9084,9 @@ class ClipsStudio {
     } catch (e) {}
     try {
       window.SolisSilencer?.syncVisibility?.();
+    } catch (e) {}
+    try {
+      this._ensureLibraryTimelineVisible(t, s);
     } catch (e) {}
     this._watermarkCheckCache = null;
     this.setupWatermarkToggle();
@@ -9772,7 +9921,10 @@ class ClipsStudio {
     e.classList.remove("has-video");
     try {
       if (typeof PreviewTimeline !== "undefined") {
-        PreviewTimeline.attach(o);
+        const e = this._resolveLibraryDurationSeconds(null, t) || (this._isCurrentLibraryRanking?.() ? 40 : 15);
+        PreviewTimeline.attach(o, {
+          durationHint: e
+        });
         PreviewTimeline.show?.();
       }
     } catch (e) {}
@@ -9830,6 +9982,12 @@ class ClipsStudio {
     o.addEventListener("canplay", () => reveal());
     o.addEventListener("durationchange", () => reveal());
     o.addEventListener("playing", () => reveal());
+    o.addEventListener("error", () => {
+      if (isStale() || s) return;
+      try {
+        this._ensureLibraryTimelineVisible(t);
+      } catch (e) {}
+    });
     let a = 0;
     const l = setInterval(() => {
       if (s || isStale()) {
@@ -10690,6 +10848,9 @@ class ClipsStudio {
       safeLog("Preview load gave up:", i);
       this._libraryPreviewFailedId = String(t);
       this._showLibraryPreviewError(e, "Could not load video preview", t);
+      try {
+        this._ensureLibraryTimelineVisible(t);
+      } catch (e) {}
     };
     const retrySoon = i => {
       if (isStale()) return;

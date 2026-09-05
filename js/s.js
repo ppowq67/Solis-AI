@@ -407,8 +407,8 @@ const PreviewTimeline = (() => {
   let O = null;
   let j = false;
   let G = false;
-  const z = 220;
-  const H = 14;
+  const H = 220;
+  const z = 14;
   let V = null;
   let q = false;
   let W = 0;
@@ -759,28 +759,40 @@ const PreviewTimeline = (() => {
       segIndex: null
     };
   }
+  function effectiveDuration() {
+    if (u > .25) return u;
+    if (p > d + .25) return p;
+    return 0;
+  }
   function paintManualRange() {
-    if (!ae || !u) return;
-    if (!V || V.end - V.start < .05) {
+    if (!ae) refreshEls();
+    if (!ae) return;
+    const e = effectiveDuration();
+    if (!V || !e) {
       ae.hidden = true;
       ae.setAttribute("aria-hidden", "true");
       X?.classList.remove("is-range-picking");
       return;
     }
-    const e = X?.clientWidth || 0;
-    if (!e) return;
-    const t = Math.max(0, Math.min(V.start, u)) / u;
-    const i = Math.max(0, Math.min(V.end, u)) / u;
-    const n = Math.min(t, i) * e;
-    const r = Math.max(8, Math.abs(i - t) * e);
+    const t = X?.clientWidth || X?.getBoundingClientRect?.()?.width || 0;
+    if (!t) {
+      requestAnimationFrame(() => paintManualRange());
+      return;
+    }
+    const i = Math.max(0, Math.min(V.start, e)) / e;
+    const n = Math.max(0, Math.min(V.end, e)) / e;
+    const r = Math.min(i, n) * t;
+    const o = Math.max(12, Math.abs(n - i) * t);
     ae.hidden = false;
+    ae.removeAttribute("hidden");
     ae.setAttribute("aria-hidden", "false");
     X?.classList.add("is-range-picking");
-    ae.style.transform = `translate3d(${n}px,0,0)`;
-    ae.style.width = `${r}px`;
+    ae.style.display = "block";
+    ae.style.transform = `translate3d(${r}px,0,0)`;
+    ae.style.width = `${o}px`;
   }
   function setManualRange(e, t) {
-    const i = u || 1;
+    const i = effectiveDuration() || 1;
     let n = Math.max(0, Math.min(Number(e) || 0, i));
     let r = Math.max(0, Math.min(Number(t) || 0, i));
     if (r < n) {
@@ -803,6 +815,14 @@ const PreviewTimeline = (() => {
   }
   function clearManualRange() {
     V = null;
+    if (ae) {
+      ae.hidden = true;
+      ae.setAttribute("hidden", "");
+      ae.setAttribute("aria-hidden", "true");
+      ae.style.width = "0px";
+      ae.style.display = "";
+    }
+    X?.classList.remove("is-range-picking");
     paintManualRange();
     try {
       window.TimelineRangeGlass?.hide?.();
@@ -810,7 +830,7 @@ const PreviewTimeline = (() => {
   }
   function timeFromClientX(e) {
     const t = X?.getBoundingClientRect?.();
-    const i = u || 0;
+    const i = effectiveDuration();
     if (!t || !i || !t.width) return 0;
     const n = (e - t.left) / t.width;
     return Math.max(0, Math.min(i, n * i));
@@ -961,20 +981,20 @@ const PreviewTimeline = (() => {
       $ = 0;
       G = true;
       O?.target?.classList.add("is-hold-ready");
-    }, z);
+    }, H);
   }
   function onSegmentPointerMove(e) {
     if (!O) return;
     const t = Math.abs(e.clientX - O.startX);
     if (c === "segment") {
       e.preventDefault();
-      if (t >= H) j = true;
+      if (t >= z) j = true;
       if (!j) return;
       paintSegmentMove(e.clientX);
       return;
     }
     if (isRankingEdit()) {
-      if (G && t >= H) {
+      if (G && t >= z) {
         beginSegmentDrag();
         if (c === "segment") {
           j = true;
@@ -983,7 +1003,7 @@ const PreviewTimeline = (() => {
       }
       return;
     }
-    if (t >= H) {
+    if (t >= z) {
       beginSegmentDrag();
       j = true;
       paintSegmentMove(e.clientX);
@@ -1406,7 +1426,7 @@ const PreviewTimeline = (() => {
           o.push(a);
           continue;
         }
-        d.fillStyle = "#334155";
+        d.fillStyle = "#ffffff";
         d.fillRect(0, 0, i, n);
         const p = c.videoWidth || 0;
         const u = c.videoHeight || 0;
@@ -1641,28 +1661,57 @@ const PreviewTimeline = (() => {
     });
     const onTrackDown = e => {
       if (e.target?.closest?.(".preview-timeline-handle")) return;
-      if (e.target?.closest?.(".preview-timeline-segment-clip")) return;
       if (e.target?.closest?.(".preview-timeline-playhead-grip")) return;
       if (e.pointerType === "mouse" && e.button === 2) {
         e.preventDefault();
         e.stopPropagation();
+        e.stopImmediatePropagation?.();
+        refreshEls();
+        if (!(effectiveDuration() > .25)) {
+          seedDuration(u > .25 ? u : p > .25 ? p : 15, {
+            rebuildSegments: true
+          });
+        }
         cacheTrackMetrics();
         q = true;
         Y = false;
         W = timeFromClientX(e.clientX);
+        V = {
+          start: W,
+          end: W
+        };
+        paintManualRange();
         try {
-          window.PreviewCtxMenu?.suppressNext?.(4e3);
+          window.PreviewCtxMenu?.suppressNext?.(5e3);
         } catch (e) {}
         try {
-          e.currentTarget?.setPointerCapture?.(e.pointerId);
+          X?.setPointerCapture?.(e.pointerId);
         } catch (e) {}
         return;
       }
+      if (e.target?.closest?.(".preview-timeline-segment-clip")) return;
       startDrag("scrub", e);
     };
     const onStartDown = e => startDrag("start", e);
     const onEndDown = e => startDrag("end", e);
-    te?.addEventListener("pointerdown", onTrackDown);
+    te?.addEventListener("pointerdown", onTrackDown, true);
+    const onDocRangeDown = e => {
+      if (!(e.pointerType === "mouse" && e.button === 2)) return;
+      if (q) return;
+      const t = e.target;
+      if (!(t instanceof Element)) return;
+      if (!t.closest?.("#previewTimelineWrap")) return;
+      if (t.closest?.(".preview-timeline-handle")) return;
+      if (t.closest?.(".preview-timeline-playhead-grip")) return;
+      onTrackDown(e);
+    };
+    document.addEventListener("pointerdown", onDocRangeDown, true);
+    te?.addEventListener("contextmenu", e => {
+      e.preventDefault();
+      try {
+        window.PreviewCtxMenu?.suppressNext?.(800);
+      } catch (e) {}
+    });
     le?.addEventListener("pointerdown", onStartDown);
     ce?.addEventListener("pointerdown", onEndDown);
     const e = document.getElementById("previewTimelinePlayheadGrip");
@@ -1676,7 +1725,7 @@ const PreviewTimeline = (() => {
       if (!q) return;
       e.preventDefault();
       const t = timeFromClientX(e.clientX);
-      if (Math.abs(t - W) > .12) Y = true;
+      if (Math.abs(t - W) > .08) Y = true;
       const i = Math.min(W, t);
       const n = Math.max(W, t);
       V = {
@@ -1718,7 +1767,8 @@ const PreviewTimeline = (() => {
     window.addEventListener("pointercancel", endDrag);
     window.addEventListener("pointercancel", onRangeUp);
     K.push(() => {
-      te?.removeEventListener("pointerdown", onTrackDown);
+      te?.removeEventListener("pointerdown", onTrackDown, true);
+      document.removeEventListener("pointerdown", onDocRangeDown, true);
       le?.removeEventListener("pointerdown", onStartDown);
       ce?.removeEventListener("pointerdown", onEndDown);
       e?.removeEventListener("pointerdown", onPlayheadDown);
@@ -10889,53 +10939,107 @@ class ClipsStudio {
         bust: o > 0,
         clean: l
       });
+      const n = `${i}${i.includes("?") ? "&" : "?"}resolve=1`;
       if (isStale()) return;
-      const n = await fetch(i, {
+      const s = await fetch(n, {
         credentials: "include",
         headers: typeof getAuthHeaders === "function" ? getAuthHeaders() : {},
         signal: c.signal,
-        cache: o > 0 ? "no-store" : "force-cache"
+        cache: "no-store"
       });
       if (isStale()) return;
-      if (!n.ok) {
-        if (n.status === 404 || n.status === 409 || n.status === 425 || n.status === 202) {
-          retrySoon(`http ${n.status}`);
+      if (!s.ok) {
+        if (s.status === 404 || s.status === 409 || s.status === 425 || s.status === 202) {
+          retrySoon(`http ${s.status}`);
           return;
         }
-        retrySoon(`http ${n.status}`);
+        retrySoon(`http ${s.status}`);
         return;
       }
-      const s = await n.blob();
-      if (isStale()) return;
-      if (!s || s.size < 64) {
-        retrySoon("empty blob");
+      const a = String(s.headers.get("content-type") || "").toLowerCase();
+      let d = null;
+      let p = false;
+      if (a.includes("application/json")) {
+        const e = await s.json().catch(() => ({}));
+        if (isStale()) return;
+        if (e?.url) {
+          d = String(e.url);
+        } else if (e?.mode === "proxy") {
+          const e = await fetch(i, {
+            credentials: "include",
+            headers: typeof getAuthHeaders === "function" ? getAuthHeaders() : {},
+            signal: c.signal,
+            cache: "no-store",
+            redirect: "follow"
+          });
+          if (isStale()) return;
+          if (!e.ok) {
+            retrySoon(`proxy ${e.status}`);
+            return;
+          }
+          const n = await e.blob();
+          if (isStale()) return;
+          if (!n || n.size < 64) {
+            retrySoon("empty blob");
+            return;
+          }
+          const r = n.type && n.type.startsWith("video/") ? n : new Blob([ n ], {
+            type: "video/mp4"
+          });
+          d = URL.createObjectURL(r);
+          p = true;
+          this._libraryPreviewObjectUrl = d;
+          try {
+            window.LibraryPreviewMediaCache?.rememberProject?.(t, l, r, d, i);
+          } catch (e) {}
+        } else {
+          retrySoon("resolve empty");
+          return;
+        }
+      } else {
+        const e = await s.blob();
+        if (isStale()) return;
+        if (!e || e.size < 64) {
+          retrySoon("empty blob");
+          return;
+        }
+        const n = e.type && e.type.startsWith("video/") ? e : new Blob([ e ], {
+          type: "video/mp4"
+        });
+        d = URL.createObjectURL(n);
+        p = true;
+        this._libraryPreviewObjectUrl = d;
+        try {
+          window.LibraryPreviewMediaCache?.rememberProject?.(t, l, n, d, i);
+        } catch (e) {}
+      }
+      if (!d) {
+        retrySoon("no play url");
         return;
       }
-      const a = s.type && s.type.startsWith("video/") ? s : new Blob([ s ], {
-        type: "video/mp4"
-      });
-      const d = URL.createObjectURL(a);
-      this._libraryPreviewObjectUrl = d;
-      try {
-        window.LibraryPreviewMediaCache?.rememberProject?.(t, l, a, d, i);
-      } catch (e) {}
       this._mountLibraryPreviewFromUrl(e, t, d, {
         loadGen: r,
-        clean: l
+        clean: l,
+        fromCache: false
       });
-      const p = e.querySelector("video.library-preview-video");
-      if (!p) {
+      const u = e.querySelector("video.library-preview-video");
+      if (!u) {
         retrySoon("video missing");
         return;
       }
-      let u = false;
+      let m = false;
       const scheduleRetry = t => {
-        if (u || isStale()) return;
-        if (e.classList.contains("has-video") && p.videoWidth > 0) return;
-        u = true;
+        if (m || isStale()) return;
+        if (e.classList.contains("has-video") && u.videoWidth > 0) return;
+        m = true;
+        if (p && this._libraryPreviewObjectUrl === d) {
+          try {
+            URL.revokeObjectURL(d);
+          } catch (e) {}
+        }
         retrySoon(t);
       };
-      p.addEventListener("error", () => {
+      u.addEventListener("error", () => {
         scheduleRetry("video decode error");
       }, {
         once: true

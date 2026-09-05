@@ -13879,10 +13879,10 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     cursor: var(--solis-preview-cursor);
     touch-action: none;
     isolation: isolate;
-    background: rgba(255, 255, 255, 0.78);
-    border: 1px solid rgba(255, 255, 255, 0.92);
+    background: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.98);
     box-shadow:
-        0 1px 0 rgba(255, 255, 255, 0.85) inset,
+        0 1px 0 rgba(255, 255, 255, 0.95) inset,
         0 2px 10px rgba(15, 23, 42, 0.06);
 }
 
@@ -13891,8 +13891,9 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: transparent;
     z-index: 0;
     pointer-events: none;
 }
@@ -13937,8 +13938,8 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     inset: 0;
     border-radius: 9px;
     overflow: hidden;
-    background: rgba(255, 255, 255, 0.55);
-    border: 1px solid rgba(255, 255, 255, 0.65);
+    background: #ffffff !important;
+    border: 1px solid rgba(226, 232, 240, 0.95);
     box-shadow: none;
     pointer-events: auto;
     cursor: var(--solis-preview-cursor-hand);
@@ -14076,7 +14077,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     min-width: 0;
     height: 100%;
     display: block;
-    background: rgba(100, 116, 139, 0.55);
+    background: #ffffff !important;
     pointer-events: none;
     overflow: hidden;
 }
@@ -14093,7 +14094,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     top: 0;
     bottom: 0;
     z-index: 3;
-    background: rgba(148, 163, 184, 0.35);
+    background: rgba(15, 23, 42, 0.08);
     pointer-events: none;
 }
 

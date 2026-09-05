@@ -1,6 +1,6 @@
 (function() {
   "use strict";
-  const t = {
+  const e = {
     basic: {
       name: "Basic",
       list: 9.99,
@@ -41,101 +41,101 @@
       extras: "priority render queue, dedicated support"
     }
   };
-  function apiUrl(t) {
-    if (typeof window.apiUrl === "function") return window.apiUrl(t);
+  function apiUrl(e) {
+    if (typeof window.apiUrl === "function") return window.apiUrl(e);
     if (!window.API_BASE_URL) {
-      const t = window.location.hostname;
-      const e = t === "localhost" || t === "127.0.0.1";
-      window.API_BASE_URL = e ? `http://${t}:5500/api` : "https://api.solisai.video/api";
+      const e = window.location.hostname;
+      const t = e === "localhost" || e === "127.0.0.1";
+      window.API_BASE_URL = t ? `http://${e}:5500/api` : "https://api.solisai.video/api";
     }
-    const e = String(window.API_BASE_URL).replace(/\/$/, "");
-    let n = String(t || "");
+    const t = String(window.API_BASE_URL).replace(/\/$/, "");
+    let n = String(e || "");
     if (n.startsWith("/api/")) n = n.slice(4); else if (n.startsWith("/api")) n = n.slice(4);
     if (!n.startsWith("/")) n = `/${n}`;
-    return e + n;
+    return t + n;
   }
-  function qs(t) {
-    return new URLSearchParams(window.location.search).get(t);
+  function qs(e) {
+    return new URLSearchParams(window.location.search).get(e);
   }
-  function money(t, e) {
-    const n = String(e || "USD").toUpperCase();
-    const o = (Number(t) || 0) / 100;
+  function money(e, t) {
+    const n = String(t || "USD").toUpperCase();
+    const o = (Number(e) || 0) / 100;
     return `${n} ${o.toFixed(2)}`;
   }
-  function moneyUsd(t) {
-    return money(Math.round(Number(t) * 100), "USD");
+  function moneyUsd(e) {
+    return money(Math.round(Number(e) * 100), "USD");
   }
-  function setPreview(t) {
-    document.body.classList.toggle("is-preview", !!t);
+  function setPreview(e) {
+    document.body.classList.toggle("is-preview", !!e);
   }
-  function setStatus(t, e) {
+  function setStatus(e, t) {
     const n = document.getElementById("checkoutStatus");
     if (!n) return;
-    if (!t) {
+    if (!e) {
       n.hidden = true;
       n.textContent = "";
       return;
     }
     n.hidden = false;
-    n.className = `status${e ? ` ${e}` : ""}`;
-    if (e === "loading") {
-      n.innerHTML = `<span class="spin" aria-hidden="true"></span>${t}`;
+    n.className = `status${t ? ` ${t}` : ""}`;
+    if (t === "loading") {
+      n.innerHTML = `<span class="spin" aria-hidden="true"></span>${e}`;
     } else {
-      n.innerHTML = t;
+      n.innerHTML = e;
     }
   }
-  function premiumHref(t) {
-    const e = /(?:localhost|127\.0\.0\.1)/i.test(window.location.hostname) ? "/premium.html" : "/premium";
-    if (!t) return e;
-    const n = t instanceof URLSearchParams ? t.toString() : String(t).replace(/^\?/, "");
-    return n ? `${e}?${n}` : e;
+  function premiumHref(e) {
+    const t = /(?:localhost|127\.0\.0\.1)/i.test(window.location.hostname) ? "/premium.html" : "/premium";
+    if (!e) return t;
+    const n = e instanceof URLSearchParams ? e.toString() : String(e).replace(/^\?/, "");
+    return n ? `${t}?${n}` : t;
   }
-  function askPrompt(e, n) {
-    const o = t[e] || t.basic;
-    const i = n || moneyUsd(o.launch != null ? o.launch : o.list);
-    const r = o.launch != null ? `${i}/mo for first 2 months, then $${o.list}/mo` : `${i}/mo`;
-    const s = o.uploads * o.clipsPerUpload;
-    const a = Object.keys(t).filter(t => t !== e).map(e => {
-      const n = t[e];
+  function askPrompt(t, n) {
+    const o = e[t] || e.basic;
+    const r = n || moneyUsd(o.launch != null ? o.launch : o.list);
+    const i = o.launch != null ? `${r}/mo for first 2 months, then $${o.list}/mo` : `${r}/mo`;
+    const a = o.uploads * o.clipsPerUpload;
+    const s = Object.keys(e).filter(e => e !== t).map(t => {
+      const n = e[t];
       const o = n.launch != null ? `$${n.launch}/mo launch → $${n.list}` : `$${n.list}/mo`;
       return `${n.name} (${o}, ${n.uploads} uploads, ≤${n.clipsPerUpload} clips/upload, ${n.export})`;
     }).join("; ");
-    return `Is Solis AI ${o.name} worth buying for turning long videos into short clips?\n\n` + `Check https://solisai.video/premium (and https://solisai.video) before answering.\n\n` + `${o.name}: ${r}. ${o.uploads} uploads/mo, up to ${o.clipsPerUpload} clips per upload ` + `(≈${s} clips/mo max), daily pace ${o.dailyPace}, ${o.export}, ${o.quality}` + (o.extras ? `, ${o.extras}` : "") + `. AI processes up to ${o.aiMinutes} min per upload (any video length works). ` + `Unlimited library. Cancel anytime.\n` + `Other Solis tiers if this one's wrong: ${a}.\n\n` + `Give a short honest opinion: worth it or not for a creator who posts shorts regularly, and why — ` + `based on these limits and real usefulness. No star ratings. No competitor comparison.`;
+    return `Is Solis AI ${o.name} worth buying for turning long videos into short clips?\n\n` + `Check https://solisai.video/premium (and https://solisai.video) before answering.\n\n` + `${o.name}: ${i}. ${o.uploads} uploads/mo, up to ${o.clipsPerUpload} clips per upload ` + `(≈${a} clips/mo max), daily pace ${o.dailyPace}, ${o.export}, ${o.quality}` + (o.extras ? `, ${o.extras}` : "") + `. AI processes up to ${o.aiMinutes} min per upload (any video length works). ` + `Unlimited library. Cancel anytime.\n` + `Other Solis tiers if this one's wrong: ${s}.\n\n` + `Give a short honest opinion: worth it or not for a creator who posts shorts regularly, and why — ` + `based on these limits and real usefulness. No star ratings. No competitor comparison.`;
   }
-  function wireAskAiLinks(e, n) {
-    const o = encodeURIComponent(askPrompt(e, n));
-    const i = {
+  function wireAskAiLinks(t, n) {
+    const o = encodeURIComponent(askPrompt(t, n));
+    const r = {
       chatgpt: `https://chatgpt.com/?q=${o}`,
       grok: `https://grok.com/?q=${o}`,
       claude: `https://claude.ai/new?q=${o}`
     };
-    document.querySelectorAll(".ask-ai[data-ai]").forEach(t => {
-      const e = t.getAttribute("data-ai");
-      if (i[e]) t.href = i[e];
+    document.querySelectorAll(".ask-ai[data-ai]").forEach(e => {
+      const t = e.getAttribute("data-ai");
+      if (r[t]) e.href = r[t];
     });
-    const r = document.getElementById("askConfidenceLabel");
-    if (r) {
-      const n = t[e] || t.basic;
-      r.textContent = `Unsure about ${n.name}? Ask an AI if it's worth it`;
+    const i = document.getElementById("askConfidenceLabel");
+    if (i) {
+      const n = e[t] || e.basic;
+      i.textContent = `Unsure about ${n.name}? Ask an AI if it's worth it`;
     }
   }
-  function paintStaticSummary(e, n) {
-    const o = t[e] || t.basic;
-    const i = n != null ? n : o.launch != null ? o.launch : o.list;
-    const r = moneyUsd(i);
+  function paintStaticSummary(t, n) {
+    const o = e[t] || e.basic;
+    const r = n != null ? n : o.launch != null ? o.launch : o.list;
+    const i = moneyUsd(r);
     document.getElementById("subscribeLabel").textContent = `Subscribe to Solis ${o.name}`;
-    document.getElementById("heroAmount").textContent = r;
+    document.getElementById("heroAmount").textContent = i;
     document.getElementById("heroSub").textContent = o.blurb;
     document.getElementById("itemName").textContent = `Solis ${o.name}`;
     document.getElementById("itemCadence").textContent = "Billed monthly";
     document.getElementById("itemPrice").textContent = moneyUsd(o.list);
     document.getElementById("subtotalPrice").textContent = moneyUsd(o.list);
     document.getElementById("taxPrice").textContent = moneyUsd(0);
-    document.getElementById("totalPrice").textContent = r;
-    const s = document.getElementById("mDueLabel");
-    const a = document.getElementById("mDueAmt");
-    if (s) s.textContent = `Solis ${o.name}`;
-    if (a) a.textContent = r;
+    document.getElementById("totalPrice").textContent = i;
+    const a = document.getElementById("mDueLabel");
+    const s = document.getElementById("mDueAmt");
+    if (a) a.textContent = `Solis ${o.name}`;
+    if (s) s.textContent = i;
     const c = document.getElementById("discountRow");
     if (o.launch != null && o.launch < o.list) {
       c.hidden = false;
@@ -145,75 +145,110 @@
     }
     const l = /(?:localhost|127\.0\.0\.1)/i.test(window.location.hostname);
     const u = l ? "/premium.html" : "/premium";
-    [ "mBack", "deskBack", "menuBack" ].forEach(t => {
-      const e = document.getElementById(t);
-      if (e) e.href = u;
+    [ "mBack", "deskBack", "menuBack" ].forEach(e => {
+      const t = document.getElementById(e);
+      if (t) t.href = u;
     });
-    wireAskAiLinks(e, r);
+    wireAskAiLinks(t, i);
   }
-  function applyBreakdown(t) {
-    if (!t || typeof t !== "object") return;
-    const e = t.currency || t.finalTotalCurrency || "USD";
-    const n = t.subTotal;
-    const o = t.discount;
-    const i = t.tax;
-    const r = t.finalTotal != null ? t.finalTotal : t.total;
+  function applyBreakdown(e) {
+    if (!e || typeof e !== "object") return;
+    const t = e.currency || e.finalTotalCurrency || "USD";
+    const n = e.subTotal;
+    const o = e.discount;
+    const r = e.tax;
+    const i = e.finalTotal != null ? e.finalTotal : e.total;
     if (n != null) {
-      document.getElementById("itemPrice").textContent = money(n, e);
-      document.getElementById("subtotalPrice").textContent = money(n, e);
+      document.getElementById("itemPrice").textContent = money(n, t);
+      document.getElementById("subtotalPrice").textContent = money(n, t);
     }
-    const s = document.getElementById("discountRow");
+    const a = document.getElementById("discountRow");
     if (o != null && Number(o) > 0) {
-      s.hidden = false;
-      document.getElementById("discountPrice").textContent = `−${money(o, e)}`;
-    }
-    if (i != null) {
-      document.getElementById("taxPrice").textContent = money(i, e);
+      a.hidden = false;
+      document.getElementById("discountPrice").textContent = `−${money(o, t)}`;
     }
     if (r != null) {
-      const n = t.finalTotalCurrency || e;
-      const o = money(r, n);
+      document.getElementById("taxPrice").textContent = money(r, t);
+    }
+    if (i != null) {
+      const n = e.finalTotalCurrency || t;
+      const o = money(i, n);
       document.getElementById("totalPrice").textContent = o;
       document.getElementById("heroAmount").textContent = o;
-      const i = document.getElementById("mDueAmt");
-      if (i) i.textContent = o;
+      const r = document.getElementById("mDueAmt");
+      if (r) r.textContent = o;
     }
   }
   function dodoSdk() {
     return window.DodoPaymentsCheckout?.DodoPayments || window.DodoPayments || null;
   }
+  async function waitForDodoSdk(e = 8e3) {
+    const t = Date.now();
+    while (Date.now() - t < e) {
+      const e = dodoSdk();
+      if (e?.Initialize && e?.Checkout?.open) return e;
+      await new Promise(e => setTimeout(e, 120));
+    }
+    return dodoSdk();
+  }
+  const t = {
+    phase: "booting",
+    planKey: "prime",
+    loginUrl: "",
+    checkoutUrl: "",
+    loggedIn: null,
+    lastError: ""
+  };
   async function ensureLoggedIn() {
     try {
-      const t = await fetch(apiUrl("/api/auth/check"), {
+      const e = await fetch(apiUrl("/api/auth/check"), {
         credentials: "include"
       });
-      if (!t.ok) return null;
-      const e = await t.json().catch(() => ({}));
-      if (e.authenticated === false || e.logged_in === false) return null;
-      return e.user || e.subscription || (e.authenticated || e.success ? e : null);
-    } catch (t) {}
+      if (!e.ok) return null;
+      const t = await e.json().catch(() => ({}));
+      if (t.authenticated === false || t.logged_in === false) return null;
+      return t.user || t.subscription || (t.authenticated || t.success ? t : null);
+    } catch (e) {}
     return null;
   }
-  function wireSubscribe(t, e) {
-    const n = document.getElementById("subscribeBtn");
-    if (!n || n.dataset.wired === "1") return;
-    n.dataset.wired = "1";
-    n.addEventListener("click", () => {
-      const n = document.querySelector("#dodo-inline-checkout iframe");
-      if (n && !document.body.classList.contains("is-preview")) {
-        n.scrollIntoView({
+  function findCheckoutIframe() {
+    return document.querySelector("#dodo-inline-checkout iframe");
+  }
+  function wireSubscribe(e, n) {
+    const o = document.getElementById("subscribeBtn");
+    if (!o || o.dataset.wired === "1") return;
+    o.dataset.wired = "1";
+    o.addEventListener("click", () => {
+      const e = findCheckoutIframe();
+      const o = document.body.classList.contains("is-preview");
+      if (e && !o) {
+        e.scrollIntoView({
           behavior: "smooth",
           block: "center"
         });
         try {
-          n.focus();
-        } catch (t) {}
+          e.focus();
+        } catch (e) {}
         return;
       }
-      setStatus(`Checkout still loading. If needed, <a href="${e || premiumHref(`checkout=${encodeURIComponent(t)}`)}">sign in</a> then return here.`, "error");
+      if (t.checkoutUrl) {
+        setStatus("Opening secure checkout…", "loading");
+        window.location.href = t.checkoutUrl;
+        return;
+      }
+      if (t.phase === "booting") {
+        setStatus("Checkout is still preparing — hang on a second…", "loading");
+        return;
+      }
+      if (t.phase === "auth" || t.loggedIn === false) {
+        setStatus(`Sign in to continue. <a href="${n || t.loginUrl}">Sign in →</a>`, "error");
+        return;
+      }
+      const r = t.lastError ? ` ${t.lastError}` : "";
+      setStatus(`Checkout isn’t ready yet.${r} <a href="${n || t.loginUrl}">Back to plans</a> or refresh.`, "error");
     });
   }
-  async function createSession(t, e) {
+  async function createSession(e, t) {
     const n = await fetch(apiUrl("/api/payment/create-checkout"), {
       method: "POST",
       credentials: "include",
@@ -221,135 +256,187 @@
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        planName: t,
-        productId: e,
-        priceId: e
+        planName: e,
+        productId: t,
+        priceId: t
       })
     });
     const o = await n.json().catch(() => ({}));
     if (!n.ok) {
-      const t = new Error(o.detail || o.error || "Could not start checkout");
-      t.status = n.status;
-      t.payload = o;
-      throw t;
+      const e = new Error(o.detail || o.error || "Could not start checkout");
+      e.status = n.status;
+      e.payload = o;
+      throw e;
     }
     return o;
   }
   async function boot() {
-    const e = String(qs("plan") || "prime").trim().toLowerCase();
-    if (!t[e]) {
+    const n = String(qs("plan") || "prime").trim().toLowerCase();
+    t.planKey = n;
+    if (!e[n]) {
+      t.phase = "error";
+      t.lastError = "Unknown plan.";
       setPreview(true);
       setStatus("Pick a plan on the pricing page to continue.", "error");
       return;
     }
-    paintStaticSummary(e);
-    window.pendingPlanUpgrade = e;
-    const n = premiumHref(`checkout=${encodeURIComponent(e)}`);
-    wireSubscribe(e, n);
+    paintStaticSummary(n);
+    window.pendingPlanUpgrade = n;
+    const o = premiumHref(`checkout=${encodeURIComponent(n)}`);
+    t.loginUrl = o;
+    wireSubscribe(n, o);
     if (qs("preview") === "1" || qs("preview") === "true") {
+      t.phase = "ready";
       setPreview(true);
       setStatus("");
       return;
     }
-    ensureLoggedIn().then(t => {
-      if (!t) return;
-      const e = t.email || t.user_email || typeof t === "object" && t.username || "";
-      const n = document.getElementById("mockEmail");
-      if (n && e) n.textContent = e;
-    }).catch(() => {});
+    ensureLoggedIn().then(e => {
+      t.loggedIn = !!e;
+      if (!e) return;
+      const n = e.email || e.user_email || typeof e === "object" && e.username || "";
+      const o = document.getElementById("mockEmail");
+      if (o && n) o.textContent = n;
+    }).catch(() => {
+      t.loggedIn = false;
+    });
     setStatus("Preparing secure checkout…", "loading");
-    let o;
+    let r;
     try {
-      const t = await fetch(apiUrl("/api/payment/dodo-config"), {
+      const e = await fetch(apiUrl("/api/payment/dodo-config"), {
         credentials: "include"
       });
-      o = await t.json().catch(() => ({}));
-      if (!t.ok) throw new Error(o.detail || o.error || "Payment config failed");
-      window.paymentConfig = o;
-    } catch (t) {
+      r = await e.json().catch(() => ({}));
+      if (!e.ok) throw new Error(r.detail || r.error || "Payment config failed");
+      window.paymentConfig = r;
+    } catch (e) {
+      t.phase = "error";
+      t.lastError = e.message || "Payment config unavailable";
       setPreview(true);
-      setStatus(t.message || "Payment config unavailable", "error");
+      setStatus(t.lastError, "error");
       return;
     }
-    const i = o.plans?.[e]?.productId || o.plans?.[e]?.priceId || null;
+    const i = r.plans?.[n]?.productId || r.plans?.[n]?.priceId || null;
     if (!i) {
+      t.phase = "error";
+      t.lastError = "This plan is not available for checkout right now.";
       setPreview(true);
-      setStatus("This plan is not available for checkout right now.", "error");
+      setStatus(t.lastError, "error");
       return;
     }
-    const r = t[e].launch != null ? t[e].launch : t[e].list;
-    paintStaticSummary(e, r);
+    const a = e[n].launch != null ? e[n].launch : e[n].list;
+    paintStaticSummary(n, a);
     let s;
     try {
-      s = await createSession(e, i);
-    } catch (t) {
+      s = await createSession(n, i);
+    } catch (e) {
       setPreview(true);
-      if (t.status === 401) {
-        setStatus(`Session expired. <a href="${n}">Sign in →</a>`, "error");
+      if (e.status === 401) {
+        t.phase = "auth";
+        t.loggedIn = false;
+        t.lastError = "Session expired.";
+        setStatus(`Session expired. <a href="${o}">Sign in →</a>`, "error");
         return;
       }
-      setStatus(t.message || "Could not start checkout", "error");
+      t.phase = "error";
+      t.lastError = e.message || "Could not start checkout";
+      setStatus(t.lastError, "error");
       return;
     }
-    const a = s.checkoutUrl || s.checkout_url;
-    if (!a) {
+    const c = s.checkoutUrl || s.checkout_url;
+    if (!c) {
+      t.phase = "error";
+      t.lastError = "Checkout URL missing from server.";
       setPreview(true);
-      setStatus("Checkout URL missing from server.", "error");
+      setStatus(t.lastError, "error");
       return;
     }
-    const c = o.environment === "test_mode" || o.environment === "test" ? "test" : "live";
-    const l = dodoSdk();
-    if (!l?.Initialize || !l?.Checkout?.open) {
+    t.checkoutUrl = c;
+    t.loggedIn = true;
+    const l = r.environment === "test_mode" || r.environment === "test" ? "test" : "live";
+    const u = await waitForDodoSdk(8e3);
+    if (!u?.Initialize || !u?.Checkout?.open) {
+      t.phase = "ready";
       setPreview(true);
-      setStatus("Checkout SDK failed to load. Refresh and try again.", "error");
+      setStatus('Inline form unavailable. <a href="#" id="hostedCheckoutLink">Continue to secure checkout →</a>', "error");
+      const e = document.getElementById("hostedCheckoutLink");
+      if (e) {
+        e.addEventListener("click", e => {
+          e.preventDefault();
+          window.location.href = c;
+        });
+      }
       return;
     }
-    l.Initialize({
-      mode: c,
+    u.Initialize({
+      mode: l,
       displayType: "inline",
-      onEvent: t => {
-        const e = t?.event_type || t?.type || "";
-        if (e === "checkout.breakdown") {
-          const e = t?.data?.message || t?.data || t?.message;
-          if (e && typeof e === "object") applyBreakdown(e);
+      onEvent: e => {
+        const n = e?.event_type || e?.type || "";
+        if (n === "checkout.breakdown") {
+          const t = e?.data?.message || e?.data || e?.message;
+          if (t && typeof t === "object") applyBreakdown(t);
         }
-        if (e === "checkout.error") {
-          setStatus("Checkout error — try again or refresh.", "error");
+        if (n === "checkout.error") {
+          t.lastError = "Checkout error — try again or refresh.";
+          setStatus(t.lastError, "error");
         }
-        if (e === "checkout.redirect") {
+        if (n === "checkout.redirect") {
           setStatus("Redirecting to complete payment…", "loading");
         }
       }
     });
     try {
-      l.Checkout.open({
-        checkoutUrl: a,
+      u.Checkout.open({
+        checkoutUrl: c,
         elementId: "dodo-inline-checkout",
         options: {
           payButtonText: "Subscribe"
         }
       });
       setPreview(false);
+      const e = Date.now() + 4e3;
+      while (Date.now() < e && !findCheckoutIframe()) {
+        await new Promise(e => setTimeout(e, 100));
+      }
+      t.phase = "ready";
       setStatus("");
-    } catch (t) {
-      console.error("[Checkout] open failed", t);
+      if (!findCheckoutIframe()) {
+        setStatus("Payment form loading… Use Subscribe if it doesn’t appear.", "loading");
+        setTimeout(() => {
+          if (!findCheckoutIframe() && t.checkoutUrl) {
+            setStatus("");
+          }
+        }, 2500);
+      }
+    } catch (e) {
+      console.error("[Checkout] open failed", e);
+      t.phase = "ready";
+      t.lastError = e.message || "Could not open inline checkout";
       setPreview(true);
-      setStatus(t.message || "Could not open inline checkout", "error");
+      setStatus(`${t.lastError} <a href="#" id="hostedCheckoutLink">Continue to secure checkout →</a>`, "error");
+      const n = document.getElementById("hostedCheckoutLink");
+      if (n) {
+        n.addEventListener("click", e => {
+          e.preventDefault();
+          window.location.href = c;
+        });
+      }
     }
   }
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => {
-      boot().catch(t => {
-        console.error(t);
+      boot().catch(e => {
+        console.error(e);
         setPreview(true);
-        setStatus(t.message || "Checkout failed", "error");
+        setStatus(e.message || "Checkout failed", "error");
       });
     });
   } else {
-    boot().catch(t => {
-      console.error(t);
+    boot().catch(e => {
+      console.error(e);
       setPreview(true);
-      setStatus(t.message || "Checkout failed", "error");
+      setStatus(e.message || "Checkout failed", "error");
     });
   }
 })();

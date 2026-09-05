@@ -521,7 +521,7 @@
       border-radius: 10px;
       overflow: visible;
       background: #fff;
-      min-height: 180px;
+      min-height: 0;
       position: relative;
       z-index: 2;
     }
@@ -530,8 +530,14 @@
       border-radius: 10px;
       overflow: visible;
     }
-    #dodo-inline-checkout { min-height: 280px; width: 100%; }
-    #dodo-inline-checkout iframe { width: 100% !important; min-height: 280px; border: 0; }
+    #dodo-inline-checkout { min-height: 0; width: 100%; line-height: 0; }
+    #dodo-inline-checkout iframe {
+      width: 100% !important;
+      min-height: 220px !important;
+      border: 0;
+      display: block;
+      vertical-align: top;
+    }
 
     body.is-preview .mock-link { display: block; }
     body.is-preview #dodo-inline-checkout { display: none; }
@@ -852,8 +858,7 @@
         padding: 0;
       }
       .pay-inner { gap: 14px; }
-      #dodo-inline-checkout { min-height: 320px; }
-      #dodo-inline-checkout iframe { min-height: 320px; }
+      #dodo-inline-checkout iframe { min-height: 240px !important; }
 
       .pay { padding-top: 20px; padding-bottom: calc(28px + var(--safe-bot)); }
       .subscribe-btn { border-radius: 999px; }
@@ -1092,7 +1097,7 @@
     })();
   </script>
   <script src="https://cdn.jsdelivr.net/npm/dodopayments-checkout@1.9.8/dist/index.js"></script>
-  <script src="/js/payment/checkout-page.js?v=18"></script>
+  <script src="/js/payment/checkout-page.js?v=19"></script>
   <script>
     (function () {
       var panel = document.getElementById('summaryPanel');

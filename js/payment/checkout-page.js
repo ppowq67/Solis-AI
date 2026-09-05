@@ -112,13 +112,13 @@
     const o = e[t] || e.basic;
     const r = n || moneyUsd(o.launch != null ? o.launch : o.list);
     const i = o.launch != null ? `${r}/mo for first 2 months, then $${o.list}/mo` : `${r}/mo`;
-    const a = o.uploads * o.clipsPerUpload;
-    const s = Object.keys(e).filter(e => e !== t).map(t => {
+    const s = o.uploads * o.clipsPerUpload;
+    const a = Object.keys(e).filter(e => e !== t).map(t => {
       const n = e[t];
       const o = n.launch != null ? `$${n.launch}/mo launch → $${n.list}` : `$${n.list}/mo`;
       return `${n.name} (${o}, ${n.uploads} uploads, ≤${n.clipsPerUpload} clips/upload, ${n.export})`;
     }).join("; ");
-    return `Is Solis AI ${o.name} worth buying for turning long videos into short clips?\n\n` + `Check https://solisai.video/premium (and https://solisai.video) before answering.\n\n` + `${o.name}: ${i}. ${o.uploads} uploads/mo, up to ${o.clipsPerUpload} clips per upload ` + `(≈${a} clips/mo max), daily pace ${o.dailyPace}, ${o.export}, ${o.quality}` + (o.extras ? `, ${o.extras}` : "") + `. AI processes up to ${o.aiMinutes} min per upload (any video length works). ` + `Unlimited library. Cancel anytime.\n` + `Other Solis tiers if this one's wrong: ${s}.\n\n` + `Give a short honest opinion: worth it or not for a creator who posts shorts regularly, and why — ` + `based on these limits and real usefulness. No star ratings. No competitor comparison.`;
+    return `Is Solis AI ${o.name} worth buying for turning long videos into short clips?\n\n` + `Check https://solisai.video/premium (and https://solisai.video) before answering.\n\n` + `${o.name}: ${i}. ${o.uploads} uploads/mo, up to ${o.clipsPerUpload} clips per upload ` + `(≈${s} clips/mo max), daily pace ${o.dailyPace}, ${o.export}, ${o.quality}` + (o.extras ? `, ${o.extras}` : "") + `. AI processes up to ${o.aiMinutes} min per upload (any video length works). ` + `Unlimited library. Cancel anytime.\n` + `Other Solis tiers if this one's wrong: ${a}.\n\n` + `Give a short honest opinion: worth it or not for a creator who posts shorts regularly, and why — ` + `based on these limits and real usefulness. No star ratings. No competitor comparison.`;
   }
   function wireAskAiLinks(t, n) {
     const o = encodeURIComponent(askPrompt(t, n));
@@ -150,10 +150,10 @@
     document.getElementById("subtotalPrice").textContent = moneyUsd(o.list);
     document.getElementById("taxPrice").textContent = moneyUsd(0);
     document.getElementById("totalPrice").textContent = i;
-    const a = document.getElementById("mDueLabel");
-    const s = document.getElementById("mDueAmt");
-    if (a) a.textContent = `Solis ${o.name}`;
-    if (s) s.textContent = i;
+    const s = document.getElementById("mDueLabel");
+    const a = document.getElementById("mDueAmt");
+    if (s) s.textContent = `Solis ${o.name}`;
+    if (a) a.textContent = i;
     const c = document.getElementById("discountRow");
     if (o.launch != null && o.launch < o.list) {
       c.hidden = false;
@@ -180,9 +180,9 @@
       document.getElementById("itemPrice").textContent = money(n, t);
       document.getElementById("subtotalPrice").textContent = money(n, t);
     }
-    const a = document.getElementById("discountRow");
+    const s = document.getElementById("discountRow");
     if (o != null && Number(o) > 0) {
-      a.hidden = false;
+      s.hidden = false;
       document.getElementById("discountPrice").textContent = `−${money(o, t)}`;
     }
     if (r != null) {
@@ -342,11 +342,11 @@
       setStatus(n.lastError, "error");
       return;
     }
-    const a = e[t].launch != null ? e[t].launch : e[t].list;
-    paintStaticSummary(t, a);
-    let s;
+    const s = e[t].launch != null ? e[t].launch : e[t].list;
+    paintStaticSummary(t, s);
+    let a;
     try {
-      s = await createSession(t, i);
+      a = await createSession(t, i);
     } catch (e) {
       setPreview(true);
       if (e.status === 401) {
@@ -361,7 +361,7 @@
       setStatus(n.lastError, "error");
       return;
     }
-    const c = s.checkoutUrl || s.checkout_url;
+    const c = a.checkoutUrl || a.checkout_url;
     if (!c) {
       n.phase = "error";
       n.lastError = "Checkout URL missing from server.";
@@ -418,6 +418,17 @@
       while (Date.now() < e && !findCheckoutIframe()) {
         await new Promise(e => setTimeout(e, 100));
       }
+      const fitIframe = () => {
+        const e = findCheckoutIframe();
+        if (!e) return;
+        try {
+          const t = e.getBoundingClientRect().height;
+          if (t > 720) e.style.minHeight = "240px";
+        } catch (e) {}
+      };
+      fitIframe();
+      setTimeout(fitIframe, 600);
+      setTimeout(fitIframe, 1600);
       n.phase = "ready";
       setStatus("");
       if (!findCheckoutIframe()) {

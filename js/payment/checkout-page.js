@@ -391,7 +391,8 @@
         checkoutUrl: c,
         elementId: "dodo-inline-checkout",
         options: {
-          payButtonText: "Subscribe"
+          payButtonText: "Subscribe",
+          theme: "light"
         }
       });
       setPreview(false);

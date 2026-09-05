@@ -1836,7 +1836,10 @@ const PreviewTimeline = (() => {
       J.classList.remove("has-silence-cuts");
       J.classList.remove("has-seg-focus");
     }
-    if (X) X.classList.remove("has-cut-preview");
+    if (X) {
+      X.classList.remove("has-cut-preview");
+      X.classList.remove("is-range-picking");
+    }
     if (ne) ne.innerHTML = "";
     a = null;
     l = false;

@@ -764,6 +764,7 @@ const PreviewTimeline = (() => {
     if (!V || V.end - V.start < .05) {
       ae.hidden = true;
       ae.setAttribute("aria-hidden", "true");
+      X?.classList.remove("is-range-picking");
       return;
     }
     const e = X?.clientWidth || 0;
@@ -771,9 +772,10 @@ const PreviewTimeline = (() => {
     const t = Math.max(0, Math.min(V.start, u)) / u;
     const i = Math.max(0, Math.min(V.end, u)) / u;
     const n = Math.min(t, i) * e;
-    const r = Math.max(2, Math.abs(i - t) * e);
+    const r = Math.max(8, Math.abs(i - t) * e);
     ae.hidden = false;
     ae.setAttribute("aria-hidden", "false");
+    X?.classList.add("is-range-picking");
     ae.style.transform = `translate3d(${n}px,0,0)`;
     ae.style.width = `${r}px`;
   }

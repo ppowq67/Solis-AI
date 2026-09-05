@@ -108,10 +108,17 @@
       display: flex;
       justify-content: flex-start;
     }
-    .pay-inner {
+    .pay-stack {
       width: 100%;
       max-width: 400px;
-      padding-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      align-self: flex-start;
+    }
+    .pay-inner {
+      width: 100%;
+      padding-top: 0;
       display: flex;
       flex-direction: column;
       gap: 18px;
@@ -388,6 +395,8 @@
       display: none;
     }
     .pay-accept {
+      order: -1;
+      flex-shrink: 0;
       border: 1px solid var(--line-2);
       border-radius: 10px;
       overflow: hidden;
@@ -398,9 +407,9 @@
       align-items: center;
       justify-content: space-between;
       gap: 10px;
-      padding: 12px 14px;
+      padding: 10px 14px;
       border-bottom: 1px solid var(--line);
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 700;
       color: var(--ink);
     }
@@ -408,53 +417,52 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 500;
       color: var(--muted-2);
     }
     .pay-accept-head .powered img {
-      height: 14px;
+      height: 13px;
       width: auto;
       display: block;
     }
-    .pay-accept-row {
+    .pay-accept-methods {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 12px 14px;
-      border-bottom: 1px solid var(--line);
-      font-size: 14px;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+      padding: 10px 14px 12px;
     }
-    .pay-accept-row:last-child { border-bottom: 0; }
-    .pay-accept-label {
-      color: var(--muted);
-      font-weight: 500;
-      font-size: 13px;
-    }
-    .pay-accept-val {
+    .pay-accept-chip {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      color: var(--ink);
+      gap: 7px;
+      font-size: 12.5px;
       font-weight: 600;
-      font-size: 13px;
+      color: var(--muted);
     }
-    .mock-val img.visa-badge,
-    .pay-accept-val img.visa-badge {
+    .pay-accept-chip img {
+      display: block;
+      height: 18px;
+      width: auto;
+      max-width: 52px;
+      object-fit: contain;
+    }
+    .pay-accept-chip img.visa-badge {
+      height: 20px;
+      max-width: none;
+    }
+    .pay-accept-row,
+    .pay-accept-label,
+    .pay-accept-val { display: none; }
+    .mock-val img.visa-badge {
       width: auto;
       height: 22px;
       max-width: none;
       display: block;
       object-fit: contain;
       flex-shrink: 0;
-    }
-    .pay-accept-val img {
-      display: block;
-      height: 20px;
-      width: auto;
-      max-width: 64px;
-      object-fit: contain;
     }
 
     .ask-confidence {
@@ -782,7 +790,7 @@
         border-bottom: 1px solid var(--line);
         padding-bottom: 8px;
       }
-      .summary-inner, .pay-inner { max-width: none; padding-top: 0; }
+      .summary-inner, .pay-stack, .pay-inner { max-width: none; padding-top: 0; }
       .logo-row { display: none; }
 
       .m-summary-toggle { display: flex; }
@@ -960,7 +968,7 @@
     </aside>
 
     <main class="pay" aria-label="Payment">
-      <div class="pay-inner">
+      <div class="pay-stack">
         <div class="pay-accept" aria-label="Accepted payment methods">
           <div class="pay-accept-head">
             <span>Payment methods</span>
@@ -969,26 +977,23 @@
               <img src="/assets/brands/dodo-logo-black.svg" alt="Dodo Payments" height="14" />
             </span>
           </div>
-          <div class="pay-accept-row">
-            <span class="pay-accept-label">Apple Pay</span>
-            <span class="pay-accept-val">
+          <div class="pay-accept-methods">
+            <span class="pay-accept-chip">
               <img src="/assets/brands/apple-pay.svg" alt="" height="18" />
+              Apple Pay
             </span>
-          </div>
-          <div class="pay-accept-row">
-            <span class="pay-accept-label">Google Pay</span>
-            <span class="pay-accept-val">
+            <span class="pay-accept-chip">
               <img src="/assets/brands/google-pay.svg" alt="" height="18" />
+              Google Pay
             </span>
-          </div>
-          <div class="pay-accept-row">
-            <span class="pay-accept-label">Visa</span>
-            <span class="pay-accept-val">
-              <img class="visa-badge" src="/assets/brands/visa.svg?v=3" alt="Visa" height="22" />
+            <span class="pay-accept-chip">
+              <img class="visa-badge" src="/assets/brands/visa.svg?v=3" alt="" height="20" />
+              Visa
             </span>
           </div>
         </div>
 
+        <div class="pay-inner">
         <div class="pay-box">
           <div class="mock-link">
             <div class="mock-head">

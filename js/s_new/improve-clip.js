@@ -138,10 +138,27 @@
   function showOutOfUploadsUpgrade() {
     showNote("Need extra uploads");
     try {
+      const e = window.clipsStudio;
+      if (e && typeof e.openWatermarkPlanPopover === "function") {
+        e.openWatermarkPlanPopover({
+          reason: "quota"
+        });
+        return;
+      }
+    } catch (e) {}
+    try {
       if (typeof window.showUpgradeModal === "function") {
         window.showUpgradeModal("Need extra uploads", "Improve clip uses 1 upload. You’re out for today — upgrade anytime for a higher daily limit.");
       }
     } catch (e) {}
+  }
+  async function gateImproveQuota() {
+    const e = await hasUploadQuota();
+    if (!e) {
+      showOutOfUploadsUpgrade();
+      return false;
+    }
+    return true;
   }
   async function hasUploadQuota() {
     try {
@@ -272,26 +289,26 @@
       showNote("Open a library clip first");
       return;
     }
-    const r = await hasUploadQuota();
-    if (!r) {
-      showOutOfUploadsUpgrade();
-      return;
-    }
-    const o = $("improveEditInput");
-    const n = String(o?.value || "").trim();
-    await runImproveApi(n);
+    if (!await gateImproveQuota()) return;
+    const r = $("improveEditInput");
+    const o = String(r?.value || "").trim();
+    await runImproveApi(o);
   }
-  function toggleImprove() {
+  async function toggleImprove() {
     if (t) return;
     if (!isLibraryPreview()) return;
     if (e) {
       showNote("Already improved for this clip");
       return;
     }
+    if (!r) {
+      if (!await gateImproveQuota()) return;
+    }
     setBarOpen(!r);
   }
-  function openImproveBar(t) {
+  async function openImproveBar(t) {
     if (!isLibraryPreview() || e) return;
+    if (!await gateImproveQuota()) return;
     setBarOpen(true);
     const i = $("improveEditInput");
     if (i && t != null) {

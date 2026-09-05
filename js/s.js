@@ -415,8 +415,8 @@ const PreviewTimeline = (() => {
   let Y = false;
   let Q = [ 5, 4, 3, 2, 1 ];
   const K = [];
-  let X;
   let J;
+  let X;
   let Z;
   let ee;
   let te;
@@ -430,11 +430,11 @@ const PreviewTimeline = (() => {
   let ce;
   let de;
   function refreshEls() {
-    X = document.getElementById("previewTimelineShell");
-    J = document.getElementById("previewTimelineWrap");
+    J = document.getElementById("previewTimelineShell");
+    X = document.getElementById("previewTimelineWrap");
     Z = document.getElementById("previewTimelineCurrent");
     ee = document.getElementById("previewTimelineDuration");
-    te = J;
+    te = X;
     ie = document.getElementById("previewTimelineFilmstrip");
     ne = document.getElementById("previewTimelineSegments");
     re = document.getElementById("previewTimelineDimLeft");
@@ -447,16 +447,16 @@ const PreviewTimeline = (() => {
   }
   function setHandlesUnlocked(e) {
     F = !!e;
-    if (X) X.classList.toggle("handles-on", F);
+    if (J) J.classList.toggle("handles-on", F);
   }
   function setRankingEditMode(e) {
     refreshEls();
-    if (X) X.classList.toggle("is-ranking-edit", !!e);
+    if (J) J.classList.toggle("is-ranking-edit", !!e);
     if (e) setHandlesUnlocked(true);
     if (!e) Q = [ 5, 4, 3, 2, 1 ];
   }
   function isRankingEdit() {
-    return !!X?.classList.contains("is-ranking-edit");
+    return !!J?.classList.contains("is-ranking-edit");
   }
   function getClipOrder() {
     const e = Math.max(1, getSegmentBounds().length - 1);
@@ -617,21 +617,21 @@ const PreviewTimeline = (() => {
     paintCutPreview();
   }
   function paintCutPreview() {
-    if (!J || !u || P <= 0) return;
-    let e = J.querySelector(".preview-timeline-cut-preview");
+    if (!X || !u || P <= 0) return;
+    let e = X.querySelector(".preview-timeline-cut-preview");
     if (!M.length) {
       if (e) e.remove();
-      if (J) J.classList.remove("has-cut-preview");
+      if (X) X.classList.remove("has-cut-preview");
       return;
     }
-    if (!J.classList.contains("has-cut-preview")) {
-      J.classList.add("has-cut-preview");
+    if (!X.classList.contains("has-cut-preview")) {
+      X.classList.add("has-cut-preview");
     }
     if (!e) {
       e = document.createElement("div");
       e.className = "preview-timeline-cut-preview";
       e.setAttribute("aria-hidden", "true");
-      J.appendChild(e);
+      X.appendChild(e);
     }
     e.innerHTML = "";
     const t = document.createDocumentFragment();
@@ -653,8 +653,8 @@ const PreviewTimeline = (() => {
     paintCutPreview();
   }
   function paintSilenceCuts() {
-    if (!J || !u || P <= 0) return;
-    let e = J.querySelector(".preview-timeline-silence-cuts");
+    if (!X || !u || P <= 0) return;
+    let e = X.querySelector(".preview-timeline-silence-cuts");
     if (!x.length) {
       if (e) e.remove();
       return;
@@ -663,7 +663,7 @@ const PreviewTimeline = (() => {
       e = document.createElement("div");
       e.className = "preview-timeline-silence-cuts";
       e.setAttribute("aria-hidden", "true");
-      J.appendChild(e);
+      X.appendChild(e);
     }
     e.innerHTML = "";
     const t = document.createDocumentFragment();
@@ -732,9 +732,9 @@ const PreviewTimeline = (() => {
     G = false;
   }
   function syncSegFocusClass() {
-    if (!X) return;
+    if (!J) return;
     const e = E != null && getSegmentBounds().length > 2;
-    X.classList.toggle("has-seg-focus", e);
+    J.classList.toggle("has-seg-focus", e);
   }
   function getActiveEditRange() {
     if (V && Number.isFinite(V.start) && Number.isFinite(V.end) && V.end - V.start > .35) {
@@ -766,7 +766,7 @@ const PreviewTimeline = (() => {
       ae.setAttribute("aria-hidden", "true");
       return;
     }
-    const e = J?.clientWidth || 0;
+    const e = X?.clientWidth || 0;
     if (!e) return;
     const t = Math.max(0, Math.min(V.start, u)) / u;
     const i = Math.max(0, Math.min(V.end, u)) / u;
@@ -807,7 +807,7 @@ const PreviewTimeline = (() => {
     } catch (e) {}
   }
   function timeFromClientX(e) {
-    const t = J?.getBoundingClientRect?.();
+    const t = X?.getBoundingClientRect?.();
     const i = u || 0;
     if (!t || !i || !t.width) return 0;
     const n = (e - t.left) / t.width;
@@ -938,7 +938,7 @@ const PreviewTimeline = (() => {
     if (t.pointerType === "mouse" && t.button !== 0) return;
     t.preventDefault();
     t.stopPropagation();
-    if (!F && !X?.classList.contains("is-ranking-edit")) {
+    if (!F && !J?.classList.contains("is-ranking-edit")) {
       setHandlesUnlocked(true);
     }
     cacheTrackMetrics();
@@ -1147,7 +1147,7 @@ const PreviewTimeline = (() => {
     paintSegmentsFast();
   }
   function startBoundDrag(t, i) {
-    if (!F && !X?.classList.contains("is-ranking-edit")) return;
+    if (!F && !J?.classList.contains("is-ranking-edit")) return;
     if (!F) setHandlesUnlocked(true);
     if (i.pointerType === "mouse" && i.button !== 0) return;
     i.preventDefault();
@@ -1569,7 +1569,7 @@ const PreviewTimeline = (() => {
     });
   }
   function startDrag(e, t) {
-    if ((e === "start" || e === "end" || e === "bound") && !F && !X?.classList.contains("is-ranking-edit")) return;
+    if ((e === "start" || e === "end" || e === "bound") && !F && !J?.classList.contains("is-ranking-edit")) return;
     if ((e === "start" || e === "end" || e === "bound") && !F) {
       setHandlesUnlocked(true);
     }
@@ -1598,7 +1598,7 @@ const PreviewTimeline = (() => {
     });
   }
   function bindEvents() {
-    if (!X || !J || !a) return;
+    if (!J || !X || !a) return;
     const onTime = () => {
       if (c) return;
       clampPlayback();
@@ -1731,7 +1731,7 @@ const PreviewTimeline = (() => {
       e.preventDefault();
       e.stopPropagation();
       setHandlesUnlocked(true);
-      J?.focus?.({
+      X?.focus?.({
         preventScroll: true
       });
     };
@@ -1771,7 +1771,7 @@ const PreviewTimeline = (() => {
   function show() {
     const e = document.getElementById("previewTimelineRow");
     if (e) e.hidden = false;
-    if (X) X.hidden = false;
+    if (J) J.hidden = false;
     const t = document.getElementById("previewAudioToggle");
     if (t) t.hidden = false;
     try {
@@ -1783,7 +1783,7 @@ const PreviewTimeline = (() => {
   function hide() {
     const e = document.getElementById("previewTimelineRow");
     if (e) e.hidden = true;
-    if (X) X.hidden = true;
+    if (J) J.hidden = true;
     const t = document.getElementById("previewAudioToggle");
     if (t) t.hidden = true;
     const i = document.getElementById("previewTimelineHookLane");
@@ -1828,13 +1828,13 @@ const PreviewTimeline = (() => {
     x = [];
     M = [];
     F = false;
-    if (X) {
-      X.classList.remove("handles-on");
-      X.classList.remove("is-ranking-edit");
-      X.classList.remove("has-silence-cuts");
-      X.classList.remove("has-seg-focus");
+    if (J) {
+      J.classList.remove("handles-on");
+      J.classList.remove("is-ranking-edit");
+      J.classList.remove("has-silence-cuts");
+      J.classList.remove("has-seg-focus");
     }
-    if (J) J.classList.remove("has-cut-preview");
+    if (X) X.classList.remove("has-cut-preview");
     if (ne) ne.innerHTML = "";
     a = null;
     l = false;
@@ -2012,7 +2012,7 @@ const PreviewTimeline = (() => {
       };
       e.addEventListener("animationend", done);
     });
-    J?.focus?.({
+    X?.focus?.({
       preventScroll: true
     });
   }
@@ -2088,7 +2088,7 @@ const PreviewTimeline = (() => {
     }
     i.sort((e, t) => e.start - t.start);
     x = i;
-    if (X) X.classList.toggle("has-silence-cuts", x.length > 0);
+    if (J) J.classList.toggle("has-silence-cuts", x.length > 0);
     paintChrome({
       rebuildSegments: true
     });
@@ -2102,7 +2102,7 @@ const PreviewTimeline = (() => {
   }
   function clearSkipRegions() {
     x = [];
-    if (X) X.classList.remove("has-silence-cuts");
+    if (J) J.classList.remove("has-silence-cuts");
     if (l) paintChrome({
       rebuildSegments: true
     });
@@ -2148,8 +2148,8 @@ const PreviewTimeline = (() => {
   function clearSkipRegionsPreview() {
     M = [];
     B = null;
-    if (J) J.classList.remove("has-cut-preview");
-    const e = J?.querySelector(".preview-timeline-cut-preview");
+    if (X) X.classList.remove("has-cut-preview");
+    const e = X?.querySelector(".preview-timeline-cut-preview");
     if (e) e.remove();
   }
   return {
@@ -7223,6 +7223,7 @@ class ClipsStudio {
         if (e && this.isValidMediaUrl(e)) {
           this._getCachedDurationCheck(e);
           this._getCachedLimitCheck();
+          this._softWakeModalWorker("url_paste");
           try {
             window.SolisInstantRecipe?.prefetch?.(e);
           } catch (e) {}
@@ -13874,6 +13875,7 @@ class ClipsStudio {
       }
       this.toggleUrlButtonLoading(true);
       const i = this._getCachedDurationCheck(t);
+      this._softWakeModalWorker("url_submit");
       const n = this._limitCheckCache && Date.now() - this._limitCheckCache.at < 3e4 ? this._limitCheckCache.data : null;
       const r = this._getCachedLimitCheck(!n);
       const o = n || await Promise.race([ r, new Promise(e => setTimeout(() => e(null), 180)) ]);
@@ -14072,6 +14074,33 @@ class ClipsStudio {
     });
     this._durationInflight[e] = i;
     return i;
+  }
+  _softWakeModalWorker(e = "url_paste") {
+    try {
+      const t = this._userPlanSlug();
+      if (t && t !== "free") return;
+      const i = Date.now();
+      if (this._modalSoftWakeAt && i - this._modalSoftWakeAt < 9e4) return;
+      if (this._modalSoftWakeInflight) return;
+      this._modalSoftWakeAt = i;
+      this._modalSoftWakeInflight = true;
+      const n = typeof getAuthHeaders === "function" ? getAuthHeaders() : {};
+      fetch(`${API_BASE_URL}/clips/modal-warmup`, {
+        method: "POST",
+        headers: {
+          ...n,
+          "Content-Type": "application/json"
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          reason: String(e || "url_paste").slice(0, 64)
+        })
+      }).catch(() => {}).finally(() => {
+        this._modalSoftWakeInflight = false;
+      });
+    } catch (e) {
+      this._modalSoftWakeInflight = false;
+    }
   }
   _getCachedLimitCheck(e = false) {
     const t = this._limitCheckCache;

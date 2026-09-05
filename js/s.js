@@ -406,17 +406,17 @@ const PreviewTimeline = (() => {
   let $ = 0;
   let O = null;
   let j = false;
-  let z = false;
-  const G = 220;
+  let G = false;
+  const z = 220;
   const H = 14;
-  let V = [ 5, 4, 3, 2, 1 ];
-  const q = [];
-  let W;
-  let Y;
-  let Q;
-  let K;
-  let J;
+  let V = null;
+  let q = false;
+  let W = 0;
+  let Y = false;
+  let Q = [ 5, 4, 3, 2, 1 ];
+  const K = [];
   let X;
+  let J;
   let Z;
   let ee;
   let te;
@@ -424,49 +424,55 @@ const PreviewTimeline = (() => {
   let ne;
   let re;
   let oe;
+  let se;
+  let ae;
+  let le;
+  let ce;
+  let de;
   function refreshEls() {
-    W = document.getElementById("previewTimelineShell");
-    Y = document.getElementById("previewTimelineWrap");
-    Q = document.getElementById("previewTimelineCurrent");
-    K = document.getElementById("previewTimelineDuration");
-    J = Y;
-    X = document.getElementById("previewTimelineFilmstrip");
-    Z = document.getElementById("previewTimelineSegments");
-    ee = document.getElementById("previewTimelineDimLeft");
-    te = document.getElementById("previewTimelineDimRight");
-    ie = document.getElementById("previewTimelineSelection");
-    ne = document.getElementById("previewTimelineHandleL");
-    re = document.getElementById("previewTimelineHandleR");
-    oe = document.getElementById("previewTimelinePlayhead");
+    X = document.getElementById("previewTimelineShell");
+    J = document.getElementById("previewTimelineWrap");
+    Z = document.getElementById("previewTimelineCurrent");
+    ee = document.getElementById("previewTimelineDuration");
+    te = J;
+    ie = document.getElementById("previewTimelineFilmstrip");
+    ne = document.getElementById("previewTimelineSegments");
+    re = document.getElementById("previewTimelineDimLeft");
+    oe = document.getElementById("previewTimelineDimRight");
+    se = document.getElementById("previewTimelineSelection");
+    ae = document.getElementById("previewTimelineRangePick");
+    le = document.getElementById("previewTimelineHandleL");
+    ce = document.getElementById("previewTimelineHandleR");
+    de = document.getElementById("previewTimelinePlayhead");
   }
   function setHandlesUnlocked(e) {
     F = !!e;
-    if (W) W.classList.toggle("handles-on", F);
+    if (X) X.classList.toggle("handles-on", F);
   }
   function setRankingEditMode(e) {
     refreshEls();
-    if (W) W.classList.toggle("is-ranking-edit", !!e);
+    if (X) X.classList.toggle("is-ranking-edit", !!e);
     if (e) setHandlesUnlocked(true);
-    if (!e) V = [ 5, 4, 3, 2, 1 ];
+    if (!e) Q = [ 5, 4, 3, 2, 1 ];
   }
   function isRankingEdit() {
-    return !!W?.classList.contains("is-ranking-edit");
+    return !!X?.classList.contains("is-ranking-edit");
   }
   function getClipOrder() {
     const e = Math.max(1, getSegmentBounds().length - 1);
-    while (V.length < e) {
-      const e = Math.max(1, 5 - V.length);
-      if (!V.includes(e)) V.push(e); else V.push(V.length + 1);
+    while (Q.length < e) {
+      const e = Math.max(1, 5 - Q.length);
+      if (!Q.includes(e)) Q.push(e); else Q.push(Q.length + 1);
     }
-    return V.slice(0, e);
+    return Q.slice(0, e);
   }
   function setClipOrder(e) {
     if (!Array.isArray(e) || !e.length) {
-      V = [ 5, 4, 3, 2, 1 ];
+      Q = [ 5, 4, 3, 2, 1 ];
       return;
     }
     const t = e.map(e => Math.max(1, Math.min(5, Number(e) || 0))).filter(Boolean);
-    V = t.length ? t : [ 5, 4, 3, 2, 1 ];
+    Q = t.length ? t : [ 5, 4, 3, 2, 1 ];
   }
   function markRankingTimelineDirty() {
     try {
@@ -522,14 +528,14 @@ const PreviewTimeline = (() => {
     const o = getClipOrder();
     const [s] = o.splice(t, 1);
     o.splice(i, 0, s);
-    V = o;
+    Q = o;
     const a = [];
     for (let t = 0; t < r; t++) a.push(Math.max(e, n[t + 1] - n[t]));
     const [l] = a.splice(t, 1);
     a.splice(i, 0, l);
     rebuildSplitsFromLengths(a);
     try {
-      window.clipsStudio?.onRankingClipReorder?.(V.slice());
+      window.clipsStudio?.onRankingClipReorder?.(Q.slice());
     } catch (e) {}
     return true;
   }
@@ -537,7 +543,7 @@ const PreviewTimeline = (() => {
     if (!O || !isRankingEdit()) return;
     const t = segmentIndexAtClientX(e);
     O.hoverIndex = t;
-    const i = Array.from(Z?.children || []);
+    const i = Array.from(ne?.children || []);
     i.forEach((e, i) => {
       e.classList.toggle("is-drop-target", i === t && i !== O.index);
       e.classList.toggle("is-dragging", i === O.index);
@@ -571,8 +577,8 @@ const PreviewTimeline = (() => {
     }
   }
   function cacheTrackMetrics() {
-    if (!J) return;
-    const e = J.getBoundingClientRect();
+    if (!te) return;
+    const e = te.getBoundingClientRect();
     I = e.left;
     P = Math.max(1, e.width);
   }
@@ -584,48 +590,48 @@ const PreviewTimeline = (() => {
   function paintChrome({rebuildSegments: e = false} = {}) {
     const t = c === "start" || c === "end" || c === "bound" || c === "segment";
     if (!t) {
-      if (Q) Q.textContent = fmt(m);
-      if (K) K.textContent = fmt(u || 0);
+      if (Z) Z.textContent = fmt(m);
+      if (ee) ee.textContent = fmt(u || 0);
     }
     if (!u || P <= 0) return;
     const i = d / u * P;
     const n = p / u * P;
     const r = Math.max(2, n - i);
-    if (ie) {
-      ie.style.width = `${r}px`;
-      ie.style.transform = `translate3d(${i}px,0,0)`;
+    if (se) {
+      se.style.width = `${r}px`;
+      se.style.transform = `translate3d(${i}px,0,0)`;
     }
-    if (ee) ee.style.width = `${i}px`;
-    if (te) te.style.width = `${Math.max(0, P - n)}px`;
-    if (oe && !t) {
+    if (re) re.style.width = `${i}px`;
+    if (oe) oe.style.width = `${Math.max(0, P - n)}px`;
+    if (de && !t) {
       const e = Math.max(d, Math.min(p, m));
       const t = e / u * P;
-      oe.style.transform = `translate3d(${t}px,0,0) translateX(-50%)`;
+      de.style.transform = `translate3d(${t}px,0,0) translateX(-50%)`;
     }
-    if (!t && J) {
-      J.setAttribute("aria-valuenow", String(Math.round(m / u * 100)));
-      J.setAttribute("aria-valuetext", fmt(m));
+    if (!t && te) {
+      te.setAttribute("aria-valuenow", String(Math.round(m / u * 100)));
+      te.setAttribute("aria-valuetext", fmt(m));
     }
     if (t) paintSegmentsFast(); else if (e) paintSegments();
     paintSilenceCuts();
     paintCutPreview();
   }
   function paintCutPreview() {
-    if (!Y || !u || P <= 0) return;
-    let e = Y.querySelector(".preview-timeline-cut-preview");
+    if (!J || !u || P <= 0) return;
+    let e = J.querySelector(".preview-timeline-cut-preview");
     if (!M.length) {
       if (e) e.remove();
-      if (Y) Y.classList.remove("has-cut-preview");
+      if (J) J.classList.remove("has-cut-preview");
       return;
     }
-    if (!Y.classList.contains("has-cut-preview")) {
-      Y.classList.add("has-cut-preview");
+    if (!J.classList.contains("has-cut-preview")) {
+      J.classList.add("has-cut-preview");
     }
     if (!e) {
       e = document.createElement("div");
       e.className = "preview-timeline-cut-preview";
       e.setAttribute("aria-hidden", "true");
-      Y.appendChild(e);
+      J.appendChild(e);
     }
     e.innerHTML = "";
     const t = document.createDocumentFragment();
@@ -647,8 +653,8 @@ const PreviewTimeline = (() => {
     paintCutPreview();
   }
   function paintSilenceCuts() {
-    if (!Y || !u || P <= 0) return;
-    let e = Y.querySelector(".preview-timeline-silence-cuts");
+    if (!J || !u || P <= 0) return;
+    let e = J.querySelector(".preview-timeline-silence-cuts");
     if (!x.length) {
       if (e) e.remove();
       return;
@@ -657,7 +663,7 @@ const PreviewTimeline = (() => {
       e = document.createElement("div");
       e.className = "preview-timeline-silence-cuts";
       e.setAttribute("aria-hidden", "true");
-      Y.appendChild(e);
+      J.appendChild(e);
     }
     e.innerHTML = "";
     const t = document.createDocumentFragment();
@@ -679,8 +685,8 @@ const PreviewTimeline = (() => {
     });
   }
   function cloneFilmInto(e) {
-    if (!X) return;
-    const i = X.querySelectorAll(".preview-timeline-frame");
+    if (!ie) return;
+    const i = ie.querySelectorAll(".preview-timeline-frame");
     if (!i.length) {
       for (let i = 0; i < t; i++) {
         const t = document.createElement("div");
@@ -703,7 +709,7 @@ const PreviewTimeline = (() => {
       e.appendChild(i);
     });
   }
-  const se = 6;
+  const pe = 6;
   function getSegmentBounds() {
     const e = T.filter(e => e > d + .04 && e < p - .04);
     return [ d, ...e, p ];
@@ -723,14 +729,22 @@ const PreviewTimeline = (() => {
       clearTimeout($);
       $ = 0;
     }
-    z = false;
+    G = false;
   }
   function syncSegFocusClass() {
-    if (!W) return;
+    if (!X) return;
     const e = E != null && getSegmentBounds().length > 2;
-    W.classList.toggle("has-seg-focus", e);
+    X.classList.toggle("has-seg-focus", e);
   }
   function getActiveEditRange() {
+    if (V && Number.isFinite(V.start) && Number.isFinite(V.end) && V.end - V.start > .35) {
+      return {
+        start: V.start,
+        end: V.end,
+        segIndex: "range",
+        manual: true
+      };
+    }
     const e = getSegmentBounds();
     if (E != null && E >= 0 && E < e.length - 1) {
       return {
@@ -744,6 +758,60 @@ const PreviewTimeline = (() => {
       end: p > d ? p : u,
       segIndex: null
     };
+  }
+  function paintManualRange() {
+    if (!ae || !u) return;
+    if (!V || V.end - V.start < .05) {
+      ae.hidden = true;
+      ae.setAttribute("aria-hidden", "true");
+      return;
+    }
+    const e = J?.clientWidth || 0;
+    if (!e) return;
+    const t = Math.max(0, Math.min(V.start, u)) / u;
+    const i = Math.max(0, Math.min(V.end, u)) / u;
+    const n = Math.min(t, i) * e;
+    const r = Math.max(2, Math.abs(i - t) * e);
+    ae.hidden = false;
+    ae.setAttribute("aria-hidden", "false");
+    ae.style.transform = `translate3d(${n}px,0,0)`;
+    ae.style.width = `${r}px`;
+  }
+  function setManualRange(e, t) {
+    const i = u || 1;
+    let n = Math.max(0, Math.min(Number(e) || 0, i));
+    let r = Math.max(0, Math.min(Number(t) || 0, i));
+    if (r < n) {
+      const e = n;
+      n = r;
+      r = e;
+    }
+    if (r - n < .35) {
+      clearManualRange();
+      return null;
+    }
+    V = {
+      start: n,
+      end: r
+    };
+    E = null;
+    syncSegFocusClass();
+    paintManualRange();
+    return V;
+  }
+  function clearManualRange() {
+    V = null;
+    paintManualRange();
+    try {
+      window.TimelineRangeGlass?.hide?.();
+    } catch (e) {}
+  }
+  function timeFromClientX(e) {
+    const t = J?.getBoundingClientRect?.();
+    const i = u || 0;
+    if (!t || !i || !t.width) return 0;
+    const n = (e - t.left) / t.width;
+    return Math.max(0, Math.min(i, n * i));
   }
   function selectSegmentAtTime(e) {
     const t = getSegmentBounds();
@@ -769,8 +837,8 @@ const PreviewTimeline = (() => {
     m = Math.max(i, Math.min(n - .05, r));
     scheduleSeek(m, true);
     paintChrome();
-    Z?.querySelectorAll(".preview-timeline-segment.is-selected").forEach(e => e.classList.remove("is-selected"));
-    Z?.children?.[e]?.classList.add("is-selected");
+    ne?.querySelectorAll(".preview-timeline-segment.is-selected").forEach(e => e.classList.remove("is-selected"));
+    ne?.children?.[e]?.classList.add("is-selected");
     if (!F) setHandlesUnlocked(true);
     syncSegFocusClass();
     try {
@@ -839,26 +907,26 @@ const PreviewTimeline = (() => {
     m = Math.max(d, Math.min(p, n + o));
     const s = d / u * P;
     const a = p / u * P;
-    if (ie) {
-      ie.style.width = `${Math.max(2, a - s)}px`;
-      ie.style.transform = `translate3d(${s}px,0,0)`;
+    if (se) {
+      se.style.width = `${Math.max(2, a - s)}px`;
+      se.style.transform = `translate3d(${s}px,0,0)`;
     }
-    if (ee) ee.style.width = `${s}px`;
-    if (te) te.style.width = `${Math.max(0, P - a)}px`;
+    if (re) re.style.width = `${s}px`;
+    if (oe) oe.style.width = `${Math.max(0, P - a)}px`;
     paintSegmentsFast();
   }
   function beginSegmentDrag() {
     if (!O || c === "segment") return;
     clearTimeout($);
     $ = 0;
-    if (isRankingEdit() && !z) return;
+    if (isRankingEdit() && !G) return;
     c = "segment";
     f = a ? !a.paused : false;
     if (a && !a.paused) a.pause();
-    J?.classList.add("is-dragging", "is-trimming");
-    if (isRankingEdit()) J?.classList.add("is-reordering");
+    te?.classList.add("is-dragging", "is-trimming");
+    if (isRankingEdit()) te?.classList.add("is-reordering");
     O.target?.classList.add("is-dragging");
-    Z?.children?.[O.index]?.classList.add("is-dragging");
+    ne?.children?.[O.index]?.classList.add("is-dragging");
     if (O.target?.setPointerCapture && O.pointerId != null) {
       try {
         O.target.setPointerCapture(O.pointerId);
@@ -870,7 +938,7 @@ const PreviewTimeline = (() => {
     if (t.pointerType === "mouse" && t.button !== 0) return;
     t.preventDefault();
     t.stopPropagation();
-    if (!F && !W?.classList.contains("is-ranking-edit")) {
+    if (!F && !X?.classList.contains("is-ranking-edit")) {
       setHandlesUnlocked(true);
     }
     cacheTrackMetrics();
@@ -878,7 +946,7 @@ const PreviewTimeline = (() => {
     const i = getSegmentBounds();
     if (e < 0 || e >= i.length - 1) return;
     j = false;
-    z = false;
+    G = false;
     O = {
       index: e,
       pointerId: t.pointerId,
@@ -889,9 +957,9 @@ const PreviewTimeline = (() => {
     };
     $ = setTimeout(() => {
       $ = 0;
-      z = true;
+      G = true;
       O?.target?.classList.add("is-hold-ready");
-    }, G);
+    }, z);
   }
   function onSegmentPointerMove(e) {
     if (!O) return;
@@ -904,7 +972,7 @@ const PreviewTimeline = (() => {
       return;
     }
     if (isRankingEdit()) {
-      if (z && t >= H) {
+      if (G && t >= H) {
         beginSegmentDrag();
         if (c === "segment") {
           j = true;
@@ -926,13 +994,13 @@ const PreviewTimeline = (() => {
     const n = t.hoverIndex;
     clearSegHold();
     t.target?.classList.remove("is-dragging", "is-hold-ready");
-    Z?.children?.[t.index]?.classList.remove("is-dragging");
-    Z?.querySelectorAll(".is-drop-target").forEach(e => e.classList.remove("is-drop-target"));
-    J?.classList.remove("is-reordering");
+    ne?.children?.[t.index]?.classList.remove("is-dragging");
+    ne?.querySelectorAll(".is-drop-target").forEach(e => e.classList.remove("is-drop-target"));
+    te?.classList.remove("is-reordering");
     if (c === "segment" && !i) {
       c = null;
       O = null;
-      J?.classList.remove("is-dragging", "is-trimming");
+      te?.classList.remove("is-dragging", "is-trimming");
       if (f) a?.play().catch(() => {});
       f = false;
       customizeSegment(t.index);
@@ -961,16 +1029,16 @@ const PreviewTimeline = (() => {
     customizeSegment(t.index);
   }
   function paintSegments(e) {
-    if (!Z || !u || P <= 0) return;
+    if (!ne || !u || P <= 0) return;
     const t = getSegmentBounds();
-    Z.innerHTML = "";
+    ne.innerHTML = "";
     for (let i = 0; i < t.length - 1; i++) {
       const n = t[i];
       const r = t[i + 1];
       let o = n / u * P;
       let s = r / u * P;
-      if (i > 0) o += se / 2;
-      if (i < t.length - 2) s -= se / 2;
+      if (i > 0) o += pe / 2;
+      if (i < t.length - 2) s -= pe / 2;
       const a = Math.max(8, s - o);
       const l = document.createElement("div");
       l.className = "preview-timeline-segment";
@@ -1006,16 +1074,16 @@ const PreviewTimeline = (() => {
       l.appendChild(c);
       if (i === 0) l.appendChild(makeSegHandle("left", i));
       l.appendChild(makeSegHandle("right", i + 1));
-      Z.appendChild(l);
+      ne.appendChild(l);
     }
-    if (E != null && Z?.children?.[E]) {
-      Z.children[E].classList.add("is-selected");
+    if (E != null && ne?.children?.[E]) {
+      ne.children[E].classList.add("is-selected");
     }
     syncSegFocusClass();
   }
   function paintSegmentsFast() {
-    if (!Z || !u || P <= 0) return;
-    const e = Array.from(Z.children);
+    if (!ne || !u || P <= 0) return;
+    const e = Array.from(ne.children);
     const t = getSegmentBounds();
     if (e.length !== t.length - 1) {
       paintSegments();
@@ -1026,8 +1094,8 @@ const PreviewTimeline = (() => {
       const r = t[i + 1];
       let o = n / u * P;
       let s = r / u * P;
-      if (i > 0) o += se / 2;
-      if (i < t.length - 2) s -= se / 2;
+      if (i > 0) o += pe / 2;
+      if (i < t.length - 2) s -= pe / 2;
       const a = Math.max(6, s - o);
       const l = e[i];
       l.style.width = `${a}px`;
@@ -1070,16 +1138,16 @@ const PreviewTimeline = (() => {
     m = i;
     const n = d / u * P;
     const r = p / u * P;
-    if (ie) {
-      ie.style.width = `${Math.max(2, r - n)}px`;
-      ie.style.transform = `translate3d(${n}px,0,0)`;
+    if (se) {
+      se.style.width = `${Math.max(2, r - n)}px`;
+      se.style.transform = `translate3d(${n}px,0,0)`;
     }
-    if (ee) ee.style.width = `${n}px`;
-    if (te) te.style.width = `${Math.max(0, P - r)}px`;
+    if (re) re.style.width = `${n}px`;
+    if (oe) oe.style.width = `${Math.max(0, P - r)}px`;
     paintSegmentsFast();
   }
   function startBoundDrag(t, i) {
-    if (!F && !W?.classList.contains("is-ranking-edit")) return;
+    if (!F && !X?.classList.contains("is-ranking-edit")) return;
     if (!F) setHandlesUnlocked(true);
     if (i.pointerType === "mouse" && i.button !== 0) return;
     i.preventDefault();
@@ -1094,7 +1162,7 @@ const PreviewTimeline = (() => {
     D = t > 0 && t < n.length - 1 ? n[t] : null;
     f = a ? !a.paused : false;
     if (a && !a.paused) a.pause();
-    J?.classList.add("is-dragging", "is-trimming");
+    te?.classList.add("is-dragging", "is-trimming");
     i.currentTarget?.classList.add("is-dragging");
     if (i.currentTarget?.setPointerCapture && i.pointerId != null) {
       try {
@@ -1120,12 +1188,12 @@ const PreviewTimeline = (() => {
     const n = d / u * P;
     const r = p / u * P;
     const o = Math.max(2, r - n);
-    if (ie) {
-      ie.style.width = `${o}px`;
-      ie.style.transform = `translate3d(${n}px,0,0)`;
+    if (se) {
+      se.style.width = `${o}px`;
+      se.style.transform = `translate3d(${n}px,0,0)`;
     }
-    if (ee) ee.style.width = `${n}px`;
-    if (te) te.style.width = `${Math.max(0, P - r)}px`;
+    if (re) re.style.width = `${n}px`;
+    if (oe) oe.style.width = `${Math.max(0, P - r)}px`;
     paintSegmentsFast();
   }
   function scheduleSeek(e, t = false) {
@@ -1263,8 +1331,8 @@ const PreviewTimeline = (() => {
     }
   }
   function mountFilmstripCanvases(e) {
-    if (!X) return;
-    X.innerHTML = "";
+    if (!ie) return;
+    ie.innerHTML = "";
     const i = document.createDocumentFragment();
     for (let n = 0; n < t; n++) {
       const t = document.createElement("div");
@@ -1280,14 +1348,14 @@ const PreviewTimeline = (() => {
       }
       i.appendChild(t);
     }
-    X.appendChild(i);
+    ie.appendChild(i);
     paintSegments();
   }
   function buildPlaceholderFilmstrip() {
     mountFilmstripCanvases(null);
   }
   async function buildFilmstripFromVideo() {
-    if (!X || !a) return;
+    if (!ie || !a) return;
     const e = a.currentSrc || a.src;
     if (!e || !u || u <= 0) {
       buildPlaceholderFilmstrip();
@@ -1356,7 +1424,7 @@ const PreviewTimeline = (() => {
       }
     } catch (e) {} finally {
       if (h === c) destroyCaptureVideo();
-      if (l === y && !X?.querySelector("canvas")) {
+      if (l === y && !ie?.querySelector("canvas")) {
         paintSegments();
       }
     }
@@ -1462,10 +1530,10 @@ const PreviewTimeline = (() => {
     }
     if (!c) return;
     const e = c;
-    J?.classList.remove("is-scrubbing", "is-trimming", "is-dragging");
-    Z?.querySelectorAll(".preview-timeline-handle.is-dragging").forEach(e => e.classList.remove("is-dragging"));
-    ne?.classList.remove("is-dragging");
-    re?.classList.remove("is-dragging");
+    te?.classList.remove("is-scrubbing", "is-trimming", "is-dragging");
+    ne?.querySelectorAll(".preview-timeline-handle.is-dragging").forEach(e => e.classList.remove("is-dragging"));
+    le?.classList.remove("is-dragging");
+    ce?.classList.remove("is-dragging");
     if (v != null) {
       applyPointer(v, {
         seek: false
@@ -1501,7 +1569,7 @@ const PreviewTimeline = (() => {
     });
   }
   function startDrag(e, t) {
-    if ((e === "start" || e === "end" || e === "bound") && !F && !W?.classList.contains("is-ranking-edit")) return;
+    if ((e === "start" || e === "end" || e === "bound") && !F && !X?.classList.contains("is-ranking-edit")) return;
     if ((e === "start" || e === "end" || e === "bound") && !F) {
       setHandlesUnlocked(true);
     }
@@ -1509,17 +1577,17 @@ const PreviewTimeline = (() => {
     t.preventDefault();
     t.stopPropagation();
     cacheTrackMetrics();
-    if (te) {
-      te.style.left = "auto";
-      te.style.right = "0";
+    if (oe) {
+      oe.style.left = "auto";
+      oe.style.right = "0";
     }
     c = e;
     f = a ? !a.paused : false;
     if (a && !a.paused) a.pause();
-    J?.classList.add("is-dragging");
-    if (e === "scrub") J?.classList.add("is-scrubbing"); else J?.classList.add("is-trimming");
-    if (e === "start") ne?.classList.add("is-dragging");
-    if (e === "end") re?.classList.add("is-dragging");
+    te?.classList.add("is-dragging");
+    if (e === "scrub") te?.classList.add("is-scrubbing"); else te?.classList.add("is-trimming");
+    if (e === "start") le?.classList.add("is-dragging");
+    if (e === "end") ce?.classList.add("is-dragging");
     if (t.currentTarget?.setPointerCapture && t.pointerId != null) {
       try {
         t.currentTarget.setPointerCapture(t.pointerId);
@@ -1530,7 +1598,7 @@ const PreviewTimeline = (() => {
     });
   }
   function bindEvents() {
-    if (!W || !Y || !a) return;
+    if (!X || !J || !a) return;
     const onTime = () => {
       if (c) return;
       clampPlayback();
@@ -1563,7 +1631,7 @@ const PreviewTimeline = (() => {
     window.addEventListener("resize", onResize, {
       passive: true
     });
-    q.push(() => {
+    K.push(() => {
       a.removeEventListener("timeupdate", onTime);
       a.removeEventListener("loadedmetadata", onMeta);
       a.removeEventListener("durationchange", onMeta);
@@ -1573,13 +1641,28 @@ const PreviewTimeline = (() => {
       if (e.target?.closest?.(".preview-timeline-handle")) return;
       if (e.target?.closest?.(".preview-timeline-segment-clip")) return;
       if (e.target?.closest?.(".preview-timeline-playhead-grip")) return;
+      if (e.pointerType === "mouse" && e.button === 2) {
+        e.preventDefault();
+        e.stopPropagation();
+        cacheTrackMetrics();
+        q = true;
+        Y = false;
+        W = timeFromClientX(e.clientX);
+        try {
+          window.PreviewCtxMenu?.suppressNext?.(4e3);
+        } catch (e) {}
+        try {
+          e.currentTarget?.setPointerCapture?.(e.pointerId);
+        } catch (e) {}
+        return;
+      }
       startDrag("scrub", e);
     };
     const onStartDown = e => startDrag("start", e);
     const onEndDown = e => startDrag("end", e);
-    J?.addEventListener("pointerdown", onTrackDown);
-    ne?.addEventListener("pointerdown", onStartDown);
-    re?.addEventListener("pointerdown", onEndDown);
+    te?.addEventListener("pointerdown", onTrackDown);
+    le?.addEventListener("pointerdown", onStartDown);
+    ce?.addEventListener("pointerdown", onEndDown);
     const e = document.getElementById("previewTimelinePlayheadGrip");
     const onPlayheadDown = e => {
       e.preventDefault();
@@ -1587,33 +1670,76 @@ const PreviewTimeline = (() => {
       startDrag("scrub", e);
     };
     e?.addEventListener("pointerdown", onPlayheadDown);
+    const onRangeMove = e => {
+      if (!q) return;
+      e.preventDefault();
+      const t = timeFromClientX(e.clientX);
+      if (Math.abs(t - W) > .12) Y = true;
+      const i = Math.min(W, t);
+      const n = Math.max(W, t);
+      V = {
+        start: i,
+        end: n
+      };
+      paintManualRange();
+    };
+    const onRangeUp = e => {
+      if (!q) return;
+      q = false;
+      const t = timeFromClientX(e.clientX);
+      const i = Math.min(W, t);
+      const n = Math.max(W, t);
+      if (Y && n - i >= .35) {
+        setManualRange(i, n);
+        try {
+          window.PreviewCtxMenu?.suppressNext?.(800);
+        } catch (e) {}
+        try {
+          window.TimelineRangeGlass?.showForRange?.(i, n, {
+            clientX: e.clientX,
+            clientY: e.clientY
+          });
+        } catch (e) {}
+      } else {
+        clearManualRange();
+      }
+      Y = false;
+    };
     window.addEventListener("pointermove", onPointerMove, {
       passive: false
     });
+    window.addEventListener("pointermove", onRangeMove, {
+      passive: false
+    });
     window.addEventListener("pointerup", endDrag);
+    window.addEventListener("pointerup", onRangeUp);
     window.addEventListener("pointercancel", endDrag);
-    q.push(() => {
-      J?.removeEventListener("pointerdown", onTrackDown);
-      ne?.removeEventListener("pointerdown", onStartDown);
-      re?.removeEventListener("pointerdown", onEndDown);
+    window.addEventListener("pointercancel", onRangeUp);
+    K.push(() => {
+      te?.removeEventListener("pointerdown", onTrackDown);
+      le?.removeEventListener("pointerdown", onStartDown);
+      ce?.removeEventListener("pointerdown", onEndDown);
       e?.removeEventListener("pointerdown", onPlayheadDown);
       window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointermove", onRangeMove);
       window.removeEventListener("pointerup", endDrag);
+      window.removeEventListener("pointerup", onRangeUp);
       window.removeEventListener("pointercancel", endDrag);
+      window.removeEventListener("pointercancel", onRangeUp);
     });
     const onTimeChipDown = e => {
       e.preventDefault();
       e.stopPropagation();
       setHandlesUnlocked(true);
-      Y?.focus?.({
+      J?.focus?.({
         preventScroll: true
       });
     };
-    Q?.addEventListener("pointerdown", onTimeChipDown);
-    K?.addEventListener("pointerdown", onTimeChipDown);
-    q.push(() => {
-      Q?.removeEventListener("pointerdown", onTimeChipDown);
-      K?.removeEventListener("pointerdown", onTimeChipDown);
+    Z?.addEventListener("pointerdown", onTimeChipDown);
+    ee?.addEventListener("pointerdown", onTimeChipDown);
+    K.push(() => {
+      Z?.removeEventListener("pointerdown", onTimeChipDown);
+      ee?.removeEventListener("pointerdown", onTimeChipDown);
     });
     const onKey = e => {
       if (!a || !u) return;
@@ -1625,8 +1751,8 @@ const PreviewTimeline = (() => {
         scheduleSeek(m, true);
       }
     };
-    J?.addEventListener("keydown", onKey);
-    q.push(() => J?.removeEventListener("keydown", onKey));
+    te?.addEventListener("keydown", onKey);
+    K.push(() => te?.removeEventListener("keydown", onKey));
     const t = document.getElementById("previewTimelineSplitBtn");
     const onSplitClick = e => {
       e.preventDefault();
@@ -1640,12 +1766,12 @@ const PreviewTimeline = (() => {
       }
     };
     t?.addEventListener("click", onSplitClick);
-    q.push(() => t?.removeEventListener("click", onSplitClick));
+    K.push(() => t?.removeEventListener("click", onSplitClick));
   }
   function show() {
     const e = document.getElementById("previewTimelineRow");
     if (e) e.hidden = false;
-    if (W) W.hidden = false;
+    if (X) X.hidden = false;
     const t = document.getElementById("previewAudioToggle");
     if (t) t.hidden = false;
     try {
@@ -1657,7 +1783,7 @@ const PreviewTimeline = (() => {
   function hide() {
     const e = document.getElementById("previewTimelineRow");
     if (e) e.hidden = true;
-    if (W) W.hidden = true;
+    if (X) X.hidden = true;
     const t = document.getElementById("previewAudioToggle");
     if (t) t.hidden = true;
     const i = document.getElementById("previewTimelineHookLane");
@@ -1683,9 +1809,9 @@ const PreviewTimeline = (() => {
       cancelAnimationFrame(b);
       b = 0;
     }
-    while (q.length) {
+    while (K.length) {
       try {
-        q.pop()();
+        K.pop()();
       } catch (e) {}
     }
     v = null;
@@ -1702,14 +1828,14 @@ const PreviewTimeline = (() => {
     x = [];
     M = [];
     F = false;
-    if (W) {
-      W.classList.remove("handles-on");
-      W.classList.remove("is-ranking-edit");
-      W.classList.remove("has-silence-cuts");
-      W.classList.remove("has-seg-focus");
+    if (X) {
+      X.classList.remove("handles-on");
+      X.classList.remove("is-ranking-edit");
+      X.classList.remove("has-silence-cuts");
+      X.classList.remove("has-seg-focus");
     }
-    if (Y) Y.classList.remove("has-cut-preview");
-    if (Z) Z.innerHTML = "";
+    if (J) J.classList.remove("has-cut-preview");
+    if (ne) ne.innerHTML = "";
     a = null;
     l = false;
     u = 0;
@@ -1752,14 +1878,14 @@ const PreviewTimeline = (() => {
     m = Number.isFinite(a.currentTime) ? a.currentTime : 0;
     const t = !!document.querySelector(".template-preview-content.is-library-preview");
     setHandlesUnlocked(t);
-    if (ie) {
-      ie.style.left = "0";
-      ie.style.right = "auto";
+    if (se) {
+      se.style.left = "0";
+      se.style.right = "auto";
     }
-    if (oe) oe.style.left = "0";
-    if (te) {
-      te.style.left = "auto";
-      te.style.right = "0";
+    if (de) de.style.left = "0";
+    if (oe) {
+      oe.style.left = "auto";
+      oe.style.right = "0";
     }
     buildPlaceholderFilmstrip();
     bindEvents();
@@ -1875,7 +2001,7 @@ const PreviewTimeline = (() => {
       rebuildSegments: true
     });
     scheduleSeek(m, true);
-    [ ne, re ].forEach(e => {
+    [ le, ce ].forEach(e => {
       if (!e) return;
       e.classList.remove("is-pulse");
       void e.offsetWidth;
@@ -1886,7 +2012,7 @@ const PreviewTimeline = (() => {
       };
       e.addEventListener("animationend", done);
     });
-    Y?.focus?.({
+    J?.focus?.({
       preventScroll: true
     });
   }
@@ -1962,7 +2088,7 @@ const PreviewTimeline = (() => {
     }
     i.sort((e, t) => e.start - t.start);
     x = i;
-    if (W) W.classList.toggle("has-silence-cuts", x.length > 0);
+    if (X) X.classList.toggle("has-silence-cuts", x.length > 0);
     paintChrome({
       rebuildSegments: true
     });
@@ -1976,7 +2102,7 @@ const PreviewTimeline = (() => {
   }
   function clearSkipRegions() {
     x = [];
-    if (W) W.classList.remove("has-silence-cuts");
+    if (X) X.classList.remove("has-silence-cuts");
     if (l) paintChrome({
       rebuildSegments: true
     });
@@ -2022,8 +2148,8 @@ const PreviewTimeline = (() => {
   function clearSkipRegionsPreview() {
     M = [];
     B = null;
-    if (Y) Y.classList.remove("has-cut-preview");
-    const e = Y?.querySelector(".preview-timeline-cut-preview");
+    if (J) J.classList.remove("has-cut-preview");
+    const e = J?.querySelector(".preview-timeline-cut-preview");
     if (e) e.remove();
   }
   return {
@@ -2048,6 +2174,12 @@ const PreviewTimeline = (() => {
     getActiveEditRange: getActiveEditRange,
     selectSegmentAtTime: selectSegmentAtTime,
     getSelectedSegIndex: () => E,
+    setManualRange: setManualRange,
+    clearManualRange: clearManualRange,
+    getManualRange: () => V ? {
+      ...V
+    } : null,
+    isRangeDragging: () => q,
     getClipOrder: getClipOrder,
     setClipOrder: setClipOrder,
     scheduleFilmstripBuild: scheduleFilmstripBuild,
@@ -2064,6 +2196,7 @@ const PreviewCtxMenu = (() => {
   let t = 0;
   let i = 0;
   let n = false;
+  let r = 0;
   function ensure() {
     e = document.getElementById("previewCtxMenu");
     if (e && e.parentElement !== document.body) {
@@ -2075,6 +2208,10 @@ const PreviewCtxMenu = (() => {
     const e = ensure();
     if (!e) return;
     e.hidden = true;
+  }
+  function suppressNext(e = 600) {
+    r = performance.now() + Math.max(200, e);
+    close();
   }
   function isLibraryPreview() {
     return Boolean(document.querySelector(".template-preview-content.is-library-preview"));
@@ -2112,16 +2249,28 @@ const PreviewCtxMenu = (() => {
     return Math.max(0, Math.min(n, o * n));
   }
   function openFromEvent(e) {
+    if (performance.now() < r) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+    try {
+      if (window.PreviewTimeline?.isRangeDragging?.()) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+    } catch (e) {}
     if (!isLibraryPreview()) return false;
     const i = e.target;
     if (!(i instanceof Element)) return false;
     const n = i.closest("#previewTimelineWrap, #previewTimelineShell");
-    const r = i.closest("#templateVideoPreview");
-    if (!n && !r) return false;
+    const o = i.closest("#templateVideoPreview");
+    if (!n && !o) return false;
     e.preventDefault();
     e.stopPropagation();
-    const o = document.getElementById("previewTimelineWrap");
-    t = n ? timeAtEvent(e, o) : document.querySelector("#templateVideoPreview video")?.currentTime || 0;
+    const s = document.getElementById("previewTimelineWrap");
+    t = n ? timeAtEvent(e, s) : document.querySelector("#templateVideoPreview video")?.currentTime || 0;
     if (n && typeof PreviewTimeline !== "undefined") {
       try {
         PreviewTimeline.selectSegmentAtTime?.(t);
@@ -2208,11 +2357,140 @@ const PreviewCtxMenu = (() => {
   return {
     open: openFromEvent,
     close: close,
-    bindTargets: bindTargets
+    bindTargets: bindTargets,
+    suppressNext: suppressNext
   };
 })();
 
 window.PreviewCtxMenu = PreviewCtxMenu;
+
+const TimelineRangeGlass = (() => {
+  let e = null;
+  let t = false;
+  function ensure() {
+    e = document.getElementById("timelineRangeGlass");
+    if (e && e.parentElement !== document.body) {
+      document.body.appendChild(e);
+    }
+    return e;
+  }
+  function hide() {
+    const e = ensure();
+    if (!e) return;
+    e.hidden = true;
+  }
+  function placeNear(e, t) {
+    const i = ensure();
+    if (!i) return;
+    i.hidden = false;
+    i.style.left = "0px";
+    i.style.top = "0px";
+    const n = 10;
+    const r = i.getBoundingClientRect();
+    let o = (e || window.innerWidth / 2) - r.width / 2;
+    let s = (t || 120) - r.height - 14;
+    const a = document.getElementById("previewTimelineShell");
+    if (a) {
+      const e = a.getBoundingClientRect();
+      s = e.top - r.height - 10;
+      o = e.left + (e.width - r.width) / 2;
+    }
+    o = Math.max(n, Math.min(o, window.innerWidth - r.width - n));
+    s = Math.max(n, s);
+    i.style.left = `${Math.round(o)}px`;
+    i.style.top = `${Math.round(s)}px`;
+  }
+  function showForRange(e, t, i) {
+    if (!Number.isFinite(e) || !Number.isFinite(t) || t - e < .35) {
+      hide();
+      return;
+    }
+    try {
+      PreviewCtxMenu.close?.();
+    } catch (e) {}
+    placeNear(i?.clientX, i?.clientY);
+    const n = document.getElementById("timelineRangeImproveInput");
+    if (n) {
+      n.value = "";
+      setTimeout(() => {
+        try {
+          n.focus();
+        } catch (e) {}
+      }, 40);
+    }
+  }
+  async function onSilence() {
+    try {
+      if (window.SolisSilencer?.apply) await window.SolisSilencer.apply(); else if (window.SolisSilencer?.toggle) window.SolisSilencer.toggle();
+    } catch (e) {}
+    hide();
+  }
+  async function onImproveSend() {
+    const e = document.getElementById("timelineRangeImproveInput");
+    const t = String(e?.value || "").trim();
+    hide();
+    try {
+      if (t && window.SolisImproveClip?.run) {
+        await window.SolisImproveClip.run(t);
+      } else if (window.SolisImproveClip?.open) {
+        await window.SolisImproveClip.open(t || "");
+        if (t && window.SolisImproveClip?.apply) {
+          await window.SolisImproveClip.apply();
+        }
+      }
+    } catch (e) {}
+    try {
+      PreviewTimeline.clearManualRange?.();
+    } catch (e) {}
+  }
+  function bind() {
+    if (t) return;
+    t = true;
+    ensure();
+    document.getElementById("timelineRangeSilenceBtn")?.addEventListener("click", e => {
+      e.preventDefault();
+      onSilence();
+    });
+    document.getElementById("timelineRangeImproveSend")?.addEventListener("click", e => {
+      e.preventDefault();
+      onImproveSend();
+    });
+    document.getElementById("timelineRangeImproveInput")?.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        onImproveSend();
+      }
+      if (e.key === "Escape") {
+        hide();
+        try {
+          PreviewTimeline.clearManualRange?.();
+        } catch (e) {}
+      }
+    });
+    document.addEventListener("pointerdown", e => {
+      const t = ensure();
+      if (!t || t.hidden) return;
+      if (t.contains(e.target)) return;
+      if (e.target?.closest?.("#previewTimelineWrap, #previewTimelineShell")) return;
+      hide();
+    }, true);
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bind, {
+      once: true
+    });
+  } else {
+    bind();
+  }
+  setTimeout(bind, 0);
+  return {
+    showForRange: showForRange,
+    hide: hide,
+    bind: bind
+  };
+})();
+
+window.TimelineRangeGlass = TimelineRangeGlass;
 
 function scheduleLibrarySplitscreenCropSync() {
   if (_libraryCropSyncRaf) return;

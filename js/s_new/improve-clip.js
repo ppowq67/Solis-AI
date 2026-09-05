@@ -206,7 +206,7 @@
       let o = null;
       try {
         const e = window.PreviewTimeline?.getActiveEditRange?.();
-        if (e && e.segIndex != null && Number.isFinite(e.start) && Number.isFinite(e.end)) {
+        if (e && (e.manual || e.segIndex != null) && Number.isFinite(e.start) && Number.isFinite(e.end) && e.end - e.start > .35) {
           o = {
             start: Number(e.start.toFixed(3)),
             end: Number(e.end.toFixed(3))
@@ -294,6 +294,20 @@
     const o = String(r?.value || "").trim();
     await runImproveApi(o);
   }
+  async function runImprove(i) {
+    if (t || e) return;
+    if (!isLibraryPreview()) return;
+    const r = getProjectId();
+    if (!r) {
+      showNote("Open a library clip first");
+      return;
+    }
+    if (!await gateImproveQuota()) return;
+    const o = $("improveEditInput");
+    const n = String(i != null ? i : o?.value || "").trim();
+    if (o && i != null) o.value = n;
+    await runImproveApi(n);
+  }
   async function toggleImprove() {
     if (t) return;
     if (!isLibraryPreview()) return;
@@ -328,6 +342,7 @@
   window.SolisImproveClip = {
     toggle: toggleImprove,
     apply: submitImprove,
+    run: runImprove,
     open: openImproveBar,
     close: () => setBarOpen(false),
     reset: resetImprove,

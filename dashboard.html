@@ -48,7 +48,7 @@
     <link rel="stylesheet" href="/style/ss/ios-pill-nav.css?v=29">
     <link rel="stylesheet" href="/style/ss/mobile-nav.css?v=43">
     <link rel="stylesheet" href="/style/ss/customize.css?v=27">
-    <link rel="stylesheet" href="/style/ss/clips.css?v=224">
+    <link rel="stylesheet" href="/style/ss/clips.css?v=225">
     <link rel="stylesheet" href="/style/ss/profile.css?v=34">
     <link rel="stylesheet" href="/style/ss/tasks-panel-v2-demo.css?v=18">
     <link rel="stylesheet" href="/style/ss/solis-gen-stage.css?v=54">
@@ -79,10 +79,10 @@
     <script src="/js/ui/plan-selector.js?v=72"></script>
     <script src="/js/core/video-preview-system.js?v=2"></script>
     <script src="/js/s_new/clip-card.js?v=28"></script>
-    <script src="/js/s.js?v=324"></script>
+    <script src="/js/s.js?v=325"></script>
     <script src="/js/s_new/silence-cut-suggest.js?v=2"></script>
-    <script src="/js/s_new/silencer.js?v=7"></script>
-    <script src="/js/s_new/improve-clip.js?v=8"></script>
+    <script src="/js/s_new/silencer.js?v=8"></script>
+    <script src="/js/s_new/improve-clip.js?v=9"></script>
 
     <script src="/js/s_new/procc.js?v=2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -3775,6 +3775,7 @@
                                 <div class="preview-timeline-dim preview-timeline-dim-left" id="previewTimelineDimLeft" aria-hidden="true"></div>
                                 <div class="preview-timeline-dim preview-timeline-dim-right" id="previewTimelineDimRight" aria-hidden="true"></div>
                                 <div class="preview-timeline-selection" id="previewTimelineSelection" aria-hidden="true"></div>
+                                <div class="preview-timeline-range-pick" id="previewTimelineRangePick" hidden aria-hidden="true"></div>
                                 <button type="button" class="preview-timeline-handle left" id="previewTimelineHandleL" aria-label="Trim start"></button>
                                 <button type="button" class="preview-timeline-handle right" id="previewTimelineHandleR" aria-label="Trim end"></button>
                                 <div class="preview-timeline-playhead" id="previewTimelinePlayhead" aria-hidden="true">
@@ -3795,6 +3796,31 @@
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>
                         </button>
                     </div>
+                </div>
+
+                <div class="timeline-range-glass" id="timelineRangeGlass" hidden>
+                    <button type="button" class="timeline-range-glass-silence" id="timelineRangeSilenceBtn"
+                        title="Remove silence in selection" aria-label="Remove silence">
+                        <svg class="ctx-icon ctx-icon-silence silencer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path class="silencer-bar silencer-bar--a" d="M6 6v11"/>
+                            <path class="silencer-bar silencer-bar--b" d="M10 10v11"/>
+                            <path class="silencer-bar silencer-bar--c" d="M10 3v1.35"/>
+                            <path class="silencer-bar silencer-bar--d" d="M14 14v1"/>
+                            <path class="silencer-bar silencer-bar--e" d="M14 8v.35"/>
+                            <path class="silencer-bar silencer-bar--f" d="M18 5v7.35"/>
+                            <path class="silencer-bar silencer-bar--g" d="M2 10v3"/>
+                            <path class="silencer-bar silencer-bar--h" d="M22 10v3"/>
+                            <path class="silencer-slash" d="m2 2 20 20"/>
+                        </svg>
+                        <span>Silence</span>
+                    </button>
+                    <div class="timeline-range-glass-sep" aria-hidden="true"></div>
+                    <input type="text" class="timeline-range-glass-input" id="timelineRangeImproveInput"
+                        placeholder="Improve this part…" autocomplete="off" maxlength="500"
+                        aria-label="Improve selected range" />
+                    <button type="button" class="timeline-range-glass-send" id="timelineRangeImproveSend" aria-label="Improve selection">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+                    </button>
                 </div>
 
                 <div class="preview-ctx-menu" id="previewCtxMenu" hidden role="menu" aria-label="Preview actions">

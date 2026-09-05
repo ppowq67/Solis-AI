@@ -274,7 +274,7 @@
     i = mergeRegions(i);
     try {
       const e = window.PreviewTimeline?.getActiveEditRange?.();
-      if (e && e.segIndex != null && Number.isFinite(e.start) && Number.isFinite(e.end) && e.end - e.start > .4) {
+      if (e && (e.manual || e.segIndex != null) && Number.isFinite(e.start) && Number.isFinite(e.end) && e.end - e.start > .4) {
         i = i.map(t => ({
           start: Math.max(t.start, e.start),
           end: Math.min(t.end, e.end)

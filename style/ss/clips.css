@@ -14128,6 +14128,154 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     backface-visibility: hidden;
 }
 
+.preview-timeline-range-pick {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    z-index: 5;
+    border-radius: 10px;
+    pointer-events: none;
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.28) 0%,
+        rgba(255, 140, 60, 0.22) 45%,
+        rgba(255, 255, 255, 0.12) 100%
+    );
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.55),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.12),
+        0 0 0 1px rgba(255, 255, 255, 0.35);
+    transform: translate3d(0, 0, 0);
+}
+.preview-timeline-range-pick[hidden] {
+    display: none !important;
+}
+
+.timeline-range-glass {
+    position: fixed;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: min(340px, calc(100vw - 32px));
+    max-width: min(420px, calc(100vw - 24px));
+    padding: 6px;
+    border-radius: 22px;
+    border: 1px solid rgba(255, 255, 255, 0.62);
+    background:
+        linear-gradient(
+            125deg,
+            rgba(255, 255, 255, 0.55) 0%,
+            rgba(255, 255, 255, 0.12) 28%,
+            rgba(180, 210, 255, 0.16) 52%,
+            rgba(255, 255, 255, 0.28) 78%,
+            rgba(255, 255, 255, 0.4) 100%
+        ),
+        rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(18px) saturate(220%) contrast(1.05) brightness(1.12);
+    -webkit-backdrop-filter: blur(18px) saturate(220%) contrast(1.05) brightness(1.12);
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.85) inset,
+        0 -0.5px 0 rgba(255, 255, 255, 0.2) inset,
+        0 0 0 0.5px rgba(255, 255, 255, 0.35),
+        0 22px 48px -18px rgba(30, 45, 80, 0.38),
+        0 8px 20px -12px rgba(255, 255, 255, 0.35);
+    color: #1c1917;
+    isolation: isolate;
+    overflow: hidden;
+    animation: timelineRangeGlassIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.timeline-range-glass::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+        radial-gradient(120% 80% at 12% -10%, rgba(255, 255, 255, 0.72) 0%, transparent 42%),
+        radial-gradient(90% 60% at 88% 110%, rgba(140, 190, 255, 0.22) 0%, transparent 50%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, transparent 35%);
+    mix-blend-mode: soft-light;
+    z-index: 0;
+}
+.timeline-range-glass > * {
+    position: relative;
+    z-index: 1;
+}
+.timeline-range-glass[hidden] {
+    display: none !important;
+}
+@keyframes timelineRangeGlassIn {
+    from { opacity: 0; transform: translateY(6px) scale(0.97); filter: saturate(0.85); }
+    to { opacity: 1; transform: translateY(0) scale(1); filter: none; }
+}
+.timeline-range-glass-silence {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex: 0 0 auto;
+    height: 36px;
+    padding: 0 12px 0 10px;
+    border: 0;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.28);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    color: inherit;
+    font: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.timeline-range-glass-silence:hover {
+    background: rgba(255, 255, 255, 0.42);
+}
+.timeline-range-glass-silence .ctx-icon {
+    width: 16px;
+    height: 16px;
+}
+.timeline-range-glass-sep {
+    width: 1px;
+    height: 22px;
+    background: linear-gradient(180deg, transparent, rgba(30, 30, 40, 0.18), transparent);
+    flex: 0 0 auto;
+}
+.timeline-range-glass-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 36px;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 13px;
+    padding: 0 4px;
+}
+.timeline-range-glass-input::placeholder {
+    color: rgba(40, 36, 32, 0.45);
+}
+.timeline-range-glass-send {
+    flex: 0 0 auto;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    color: #fff;
+    background: linear-gradient(160deg, #ff8a3d 0%, #ea580c 55%, #c2410c 100%);
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.35) inset,
+        0 6px 14px -6px rgba(194, 65, 12, 0.55);
+}
+.timeline-range-glass-send:hover {
+    filter: brightness(1.05);
+}
+
 .preview-timeline-handle {
     position: absolute;
     top: 50%;

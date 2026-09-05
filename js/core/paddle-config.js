@@ -116,7 +116,7 @@ class PaddleManager {
       return;
     }
     if (r || !n) {
-      alert(`Paddle checkout cannot open until Default payment link is set (LIVE).\n\n` + `1. Open ${i}\n` + `2. Set Default payment link to exactly:\n   https://www.solisai.video/\n` + `3. Save, hard-refresh, try again.\n\n` + `This is a Paddle dashboard setting, not a card issue.` + this._originMismatchHint());
+      alert(`Paddle checkout cannot open until Default payment link is set (LIVE).\n\n` + `1. Open ${i}\n` + `2. Set Default payment link to exactly:\n   https://solisai.video/\n` + `3. Save, hard-refresh, try again.\n\n` + `This is a Paddle dashboard setting, not a card issue.` + this._originMismatchHint());
       return;
     }
     alert(`Checkout failed.\n\n${n}`);

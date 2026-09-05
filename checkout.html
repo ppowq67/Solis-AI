@@ -493,15 +493,6 @@
     }
     .ask-ai img { width: 22px; height: 22px; display: block; }
 
-    .summary-trust {
-      margin-top: 22px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-    .summary-trust .legal { margin: 0; }
-    .summary-trust .pay-foot { margin-top: 0; }
-
     .pay-box {
       border: 1px solid var(--line-2);
       border-radius: 10px;
@@ -809,7 +800,6 @@
       .pay-inner { gap: 14px; }
       #dodo-inline-checkout { min-height: 320px; }
       #dodo-inline-checkout iframe { min-height: 320px; }
-      .summary-trust { margin-top: 14px; }
 
       .pay { padding-top: 20px; padding-bottom: calc(28px + var(--safe-bot)); }
       .subscribe-btn { border-radius: 999px; }
@@ -965,40 +955,40 @@
           </span>
         </div>
 
-        <div class="summary-trust">
-          <div class="pay-accept" aria-label="Accepted payment methods">
-            <div class="pay-accept-head">
-              <span>Payment methods</span>
-              <span class="powered">
-                Powered by
-                <img src="/assets/brands/dodo-logo-black.svg" alt="Dodo Payments" height="14" />
-              </span>
-            </div>
-            <div class="pay-accept-row">
-              <span class="pay-accept-label">Apple Pay</span>
-              <span class="pay-accept-val">
-                <img src="/assets/brands/apple-pay.svg" alt="" height="18" />
-              </span>
-            </div>
-            <div class="pay-accept-row">
-              <span class="pay-accept-label">Google Pay</span>
-              <span class="pay-accept-val">
-                <img src="/assets/brands/google-pay.svg" alt="" height="18" />
-              </span>
-            </div>
-            <div class="pay-accept-row">
-              <span class="pay-accept-label">Visa</span>
-              <span class="pay-accept-val">
-                <img class="visa-badge" src="/assets/brands/visa.svg?v=3" alt="Visa" height="22" />
-              </span>
-            </div>
-          </div>
         </div>
       </div>
     </aside>
 
     <main class="pay" aria-label="Payment">
       <div class="pay-inner">
+        <div class="pay-accept" aria-label="Accepted payment methods">
+          <div class="pay-accept-head">
+            <span>Payment methods</span>
+            <span class="powered">
+              Powered by
+              <img src="/assets/brands/dodo-logo-black.svg" alt="Dodo Payments" height="14" />
+            </span>
+          </div>
+          <div class="pay-accept-row">
+            <span class="pay-accept-label">Apple Pay</span>
+            <span class="pay-accept-val">
+              <img src="/assets/brands/apple-pay.svg" alt="" height="18" />
+            </span>
+          </div>
+          <div class="pay-accept-row">
+            <span class="pay-accept-label">Google Pay</span>
+            <span class="pay-accept-val">
+              <img src="/assets/brands/google-pay.svg" alt="" height="18" />
+            </span>
+          </div>
+          <div class="pay-accept-row">
+            <span class="pay-accept-label">Visa</span>
+            <span class="pay-accept-val">
+              <img class="visa-badge" src="/assets/brands/visa.svg?v=3" alt="Visa" height="22" />
+            </span>
+          </div>
+        </div>
+
         <div class="pay-box">
           <div class="mock-link">
             <div class="mock-head">

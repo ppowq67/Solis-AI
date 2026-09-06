@@ -48,7 +48,7 @@
     <link rel="stylesheet" href="/style/ss/ios-pill-nav.css?v=29">
     <link rel="stylesheet" href="/style/ss/mobile-nav.css?v=43">
     <link rel="stylesheet" href="/style/ss/customize.css?v=27">
-    <link rel="stylesheet" href="/style/ss/clips.css?v=225">
+    <link rel="stylesheet" href="/style/ss/clips.css?v=256">
     <link rel="stylesheet" href="/style/ss/profile.css?v=34">
     <link rel="stylesheet" href="/style/ss/tasks-panel-v2-demo.css?v=18">
     <link rel="stylesheet" href="/style/ss/solis-gen-stage.css?v=54">
@@ -68,7 +68,7 @@
     <script src="/js/generation-recovery.js?v=7"></script>
     <script src="/js/i_dq/ranking-customizer.js?v=26"></script>
     <script src="/js/s_new/solis-style-pack.js?v=3"></script>
-    <script src="/js/s_new/solis-memory.js?v=79"></script>
+    <script src="/js/s_new/solis-memory.js?v=81"></script>
     <script src="/js/s_new/instant-recipe.js?v=7"></script>
     <script src="/js/settings/settings-manager.js?v=2"></script>
     <script src="/js/payment/payment-flow.js?v=1"></script>
@@ -79,10 +79,10 @@
     <script src="/js/ui/plan-selector.js?v=72"></script>
     <script src="/js/core/video-preview-system.js?v=2"></script>
     <script src="/js/s_new/clip-card.js?v=28"></script>
-    <script src="/js/s.js?v=325"></script>
-    <script src="/js/s_new/silence-cut-suggest.js?v=2"></script>
-    <script src="/js/s_new/silencer.js?v=8"></script>
-    <script src="/js/s_new/improve-clip.js?v=9"></script>
+    <script src="/js/s.js?v=344"></script>
+    <script src="/js/s_new/silence-cut-suggest.js?v=4"></script>
+    <script src="/js/s_new/silencer.js?v=14"></script>
+    <script src="/js/s_new/improve-clip.js?v=30"></script>
 
     <script src="/js/s_new/procc.js?v=2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -1055,6 +1055,63 @@
 
 </head>
 <body>
+
+    <aside class="improve-promo" id="improvePromo" aria-label="Improve Clip">
+        <button type="button" class="improve-promo-dismiss" id="improvePromoDismiss" aria-label="Dismiss">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <path d="M3.5 3.5l7 7M10.5 3.5l-7 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            </svg>
+        </button>
+        <div class="improve-promo-glass">
+            <div class="improve-promo-copy">
+                <p class="improve-promo-title">Edit by talking to it</p>
+                <p class="improve-promo-sub">Describe what you want changed, and Solis applies the edits for you, whether it’s a single moment or the entire video.</p>
+            </div>
+            <div class="improve-promo-shot-wrap" aria-hidden="true">
+                <img class="improve-promo-shot" src="/assets/improveclip.png" alt="" draggable="false" />
+            </div>
+        </div>
+    </aside>
+    <script>
+    (function initImprovePromo() {
+        const KEY = 'solis_improve_promo_dismissed_v4';
+        const el = document.getElementById('improvePromo');
+        const btn = document.getElementById('improvePromoDismiss');
+        if (!el) return;
+        try {
+            sessionStorage.removeItem('solis_improve_promo_dismissed_v1');
+            sessionStorage.removeItem('solis_improve_promo_dismissed_v2');
+            sessionStorage.removeItem('solis_improve_promo_dismissed_v3');
+        } catch (_) { /* ignore */ }
+        try {
+            if (sessionStorage.getItem(KEY) === '1') {
+                el.hidden = true;
+                el.setAttribute('hidden', '');
+                return;
+            }
+        } catch (_) { /* ignore */ }
+        el.hidden = false;
+        el.removeAttribute('hidden');
+        btn?.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            el.classList.add('is-out');
+            setTimeout(() => {
+                el.hidden = true;
+                el.setAttribute('hidden', '');
+            }, 280);
+            try { sessionStorage.setItem(KEY, '1'); } catch (_) { /* ignore */ }
+        });
+        const sync = () => {
+            const previewOn = document.getElementById('templatePreviewModal')?.classList.contains('active');
+            const genOn = document.getElementById('solisGenStage')?.classList.contains('is-open')
+                || document.getElementById('solisGenStage')?.getAttribute('aria-hidden') === 'false';
+            el.classList.toggle('is-hidden-by-modal', Boolean(previewOn || genOn));
+        };
+        sync();
+        setInterval(sync, 800);
+    })();
+    </script>
 
 <div class="profile-notif-wrapper">
     <div class="generation-progress-wrapper" id="generationProgressWrapper" style="display: none;">
@@ -3741,16 +3798,6 @@
                             <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
                         </svg>
                     </div>
-                    <button type="button" class="preview-audio-toggle" id="previewAudioToggle" hidden
-                        aria-pressed="false" title="Unmute preview" aria-label="Unmute preview"></button>
-                    <div class="improve-edit-bar" id="improveEditBar" hidden>
-                        <textarea class="improve-edit-input" id="improveEditInput"
-                            placeholder="What do you want instead — find a topic, start on the laugh, cut dead air…"
-                            rows="1" aria-label="Describe how to improve this clip"></textarea>
-                        <button type="button" class="improve-edit-send" id="improveEditSend" aria-label="Improve clip">
-                            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3.5c.4 0 .78.16 1.06.44l6.5 6.5a1.5 1.5 0 0 1-2.12 2.12l-3.94-3.94V19a1.5 1.5 0 0 1-3 0V8.62l-3.94 3.94a1.5 1.5 0 0 1-2.12-2.12l6.5-6.5c.28-.28.66-.44 1.06-.44z"/></svg>
-                        </button>
-                    </div>
                 </div>
                 </div>
                 <div class="clip-batch-pager" id="clipBatchPager" hidden>
@@ -3801,9 +3848,32 @@
                     </div>
                 </div>
 
+                <div class="improve-edit-bar" id="improveEditBar" hidden>
+                    <button type="button" class="improve-edit-silence" id="improveEditSilence" hidden
+                        title="Remove silence in selection" aria-label="Remove silence">
+                        <svg class="silencer-icon" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path class="silencer-bar silencer-bar--a" d="M6 6v11"/>
+                            <path class="silencer-bar silencer-bar--b" d="M10 10v11"/>
+                            <path class="silencer-bar silencer-bar--c" d="M10 3v1.35"/>
+                            <path class="silencer-bar silencer-bar--d" d="M14 14v1"/>
+                            <path class="silencer-bar silencer-bar--e" d="M14 8v.35"/>
+                            <path class="silencer-bar silencer-bar--f" d="M18 5v7.35"/>
+                            <path class="silencer-bar silencer-bar--g" d="M2 10v3"/>
+                            <path class="silencer-bar silencer-bar--h" d="M22 10v3"/>
+                            <path class="silencer-slash" d="m2 2 20 20"/>
+                        </svg>
+                    </button>
+                    <textarea class="improve-edit-input" id="improveEditInput"
+                        placeholder="Describe the edit…"
+                        rows="1" aria-label="Describe how to improve this clip"></textarea>
+                    <button type="button" class="improve-edit-send" id="improveEditSend" aria-label="Improve clip">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 19V5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M5 12l7-7 7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                </div>
+
                 <div class="timeline-range-glass" id="timelineRangeGlass" hidden>
                     <button type="button" class="timeline-range-glass-silence" id="timelineRangeSilenceBtn"
-                        title="Remove silence in selection" aria-label="Remove silence">
+                        title="Remove silence" aria-label="Remove silence">
                         <svg class="ctx-icon ctx-icon-silence silencer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path class="silencer-bar silencer-bar--a" d="M6 6v11"/>
                             <path class="silencer-bar silencer-bar--b" d="M10 10v11"/>
@@ -3815,7 +3885,6 @@
                             <path class="silencer-bar silencer-bar--h" d="M22 10v3"/>
                             <path class="silencer-slash" d="m2 2 20 20"/>
                         </svg>
-                        <span>Silence</span>
                     </button>
                     <div class="timeline-range-glass-sep" aria-hidden="true"></div>
                     <input type="text" class="timeline-range-glass-input" id="timelineRangeImproveInput"
@@ -3842,7 +3911,7 @@
                                 <line x1="20" y1="4" x2="8.12" y2="15.88"/>
                             </g>
                         </svg>
-                        <span>Split</span>
+                        <span>Cut</span>
                     </button>
                     <span class="preview-ctx-sep" aria-hidden="true"></span>
                     <button type="button" class="preview-ctx-item" data-ctx-action="silence" role="menuitem">
@@ -6102,8 +6171,9 @@
        const HOVER_MS = 280;
        const finePointer = () => {
            try {
-               return window.matchMedia('(hover: hover) and (pointer: fine)').matches
-                   && !window.matchMedia('(pointer: coarse)').matches;
+               if (window.matchMedia('(hover: hover)').matches) return true;
+               if (window.matchMedia('(pointer: fine)').matches) return true;
+               return false;
            } catch (_) {
                return true;
            }
@@ -6258,6 +6328,187 @@
                card.classList.remove('is-on', 'is-rich');
                card.hidden = true;
            }
+       }
+
+       function placeHoverCardFixed(card, btn) {
+           if (!card || !btn) return;
+           const r = btn.getBoundingClientRect();
+           const pad = 10;
+           const maxW = Math.min(300, window.innerWidth - 24);
+           let left = r.left + r.width / 2;
+           left = Math.max(pad + maxW / 2, Math.min(window.innerWidth - pad - maxW / 2, left));
+           card.style.position = 'fixed';
+           card.style.left = `${Math.round(left)}px`;
+           card.style.top = 'auto';
+           card.style.bottom = `${Math.round(window.innerHeight - r.top + 10)}px`;
+           card.style.transform = 'translateX(-50%)';
+           card.style.zIndex = '10060';
+           card.style.setProperty('--silencer-tip-x', '50%');
+       }
+
+       function positionSilencerCard(card, btn) {
+           placeHoverCardFixed(card, btn);
+       }
+
+       function positionImproveCard(card, btn) {
+           placeHoverCardFixed(card, btn);
+       }
+
+       function ensureImproveCard() {
+           let card = document.getElementById('improveHoverCard');
+           if (card?.dataset?.v === '13') {
+               if (card.parentElement !== document.body) {
+                   document.body.appendChild(card);
+               }
+               return card;
+           }
+           if (card) {
+               try { card.remove(); } catch (_) {}
+           }
+           card = document.createElement('div');
+           card.id = 'improveHoverCard';
+           card.className = 'silencer-hover-card';
+           card.dataset.v = '13';
+           card.hidden = true;
+           card.setAttribute('aria-hidden', 'true');
+           card.innerHTML =
+               `<div class="silencer-hover-card-shell">` +
+                 `<span class="silencer-hover-card-hint">Describe your edit · 1 upload</span>` +
+                 `<div class="silencer-hover-card-body">` +
+                   `<div class="silencer-hover-card-art improve-hover-card-art">` +
+                     `<div class="silencer-hover-card-art-top">` +
+                       `<span class="silencer-hover-card-cta">` +
+                         `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="improve-icon">` +
+                           `<path d="M12.983 21.186a1 1 0 0 1-1.966 0 10 10 0 0 0-8.203-8.203 1 1 0 0 1 0-1.966 10 10 0 0 0 8.203-8.203 1 1 0 0 1 1.966 0 10 10 0 0 0 8.203 8.203 1 1 0 0 1 0 1.966 10 10 0 0 0-8.203 8.203"/>` +
+                         `</svg>` +
+                         `Improve clip` +
+                       `</span>` +
+                     `</div>` +
+                     `<div class="improve-hover-card-media" aria-hidden="true">` +
+                       `<span class="improve-hover-card-send">` +
+                         `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" aria-hidden="true">` +
+                           `<path d="M12 19V5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>` +
+                           `<path d="M5 12l7-7 7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>` +
+                         `</svg>` +
+                       `</span>` +
+                     `</div>` +
+                   `</div>` +
+                   `<p class="silencer-hover-card-copy">Sharpens cut boundaries, trims soft opens/closes, cleans dead air, and retunes subtitles. Uses 1 upload.</p>` +
+                 `</div>` +
+               `</div>` +
+               `<div class="silencer-hover-card-caret" aria-hidden="true"></div>`;
+           document.body.appendChild(card);
+           return card;
+       }
+
+       function startImproveTeach() {
+           activeKind = 'improve';
+           const btn = document.getElementById('previewImproveBtn');
+           if (!btn || btn.style.display === 'none' || btn.offsetParent === null) return;
+           if (improveExpandT) {
+               clearTimeout(improveExpandT);
+               improveExpandT = null;
+           }
+           hideSilencerHoverCard();
+           const card = ensureImproveCard();
+           card.classList.remove('is-rich');
+           placeHoverCardFixed(card, btn);
+           card.hidden = false;
+           card.removeAttribute('hidden');
+           requestAnimationFrame(() => {
+               if (activeKind !== 'improve') return;
+               card.classList.add('is-on');
+               placeHoverCardFixed(card, btn);
+           });
+           improveExpandT = setTimeout(() => {
+               improveExpandT = null;
+               if (activeKind !== 'improve') return;
+               placeHoverCardFixed(card, btn);
+               card.classList.add('is-rich');
+           }, IMPROVE_RICH_MS);
+       }
+
+       function ensureSilencerCard() {
+           let card = document.getElementById('silencerHoverCard');
+           if (card?.dataset?.v === '3') {
+               if (card.parentElement !== document.body) {
+                   document.body.appendChild(card);
+               }
+               return card;
+           }
+           if (card) {
+               try { card.remove(); } catch (_) {}
+           }
+           card = document.createElement('div');
+           card.id = 'silencerHoverCard';
+           card.className = 'silencer-hover-card';
+           card.dataset.v = '3';
+           card.hidden = true;
+           card.setAttribute('aria-hidden', 'true');
+           card.innerHTML =
+               `<div class="silencer-hover-card-shell">` +
+                 `<span class="silencer-hover-card-hint">Remove silences</span>` +
+                 `<div class="silencer-hover-card-body">` +
+                   `<div class="silencer-hover-card-art">` +
+                     `<div class="silencer-hover-card-art-top">` +
+                       `<span class="silencer-hover-card-cta">` +
+                         `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="silencer-icon">` +
+                           `<path class="silencer-bar silencer-bar--a" d="M6 6v11"/>` +
+                           `<path class="silencer-bar silencer-bar--b" d="M10 10v11"/>` +
+                           `<path class="silencer-bar silencer-bar--c" d="M10 3v1.35"/>` +
+                           `<path class="silencer-bar silencer-bar--d" d="M14 14v1"/>` +
+                           `<path class="silencer-bar silencer-bar--e" d="M14 8v.35"/>` +
+                           `<path class="silencer-bar silencer-bar--f" d="M18 5v7.35"/>` +
+                           `<path class="silencer-bar silencer-bar--g" d="M2 10v3"/>` +
+                           `<path class="silencer-bar silencer-bar--h" d="M22 10v3"/>` +
+                           `<path class="silencer-slash" d="m2 2 20 20"/>` +
+                         `</svg>` +
+                         `Remove silences` +
+                       `</span>` +
+                     `</div>` +
+                     `<div class="silencer-hover-card-timeline" aria-hidden="true">` +
+                       `<div class="silencer-hover-card-clip">${waveBars([35, 62, 48, 78, 40, 70, 52])}</div>` +
+                       `<div class="silencer-hover-card-gap"></div>` +
+                       `<div class="silencer-hover-card-clip">${waveBars([44, 72, 38, 85, 55, 68])}</div>` +
+                       `<div class="silencer-hover-card-gap"></div>` +
+                       `<div class="silencer-hover-card-clip">${waveBars([50, 40, 75, 45, 80, 58, 36])}</div>` +
+                       `<div class="silencer-hover-card-gap"></div>` +
+                       `<div class="silencer-hover-card-clip">${waveBars([60, 42, 78, 50, 65])}</div>` +
+                     `</div>` +
+                   `</div>` +
+                   `<p class="silencer-hover-card-copy">Remove silence pauses from your video to keep your audience engaged.</p>` +
+                 `</div>` +
+               `</div>` +
+               `<div class="silencer-hover-card-caret" aria-hidden="true"></div>`;
+           document.body.appendChild(card);
+           return card;
+       }
+
+       function startSilencerTeach() {
+           activeKind = 'silencer';
+           const btn = document.getElementById('previewSilencerBtn');
+           if (!btn || btn.style.display === 'none' || btn.offsetParent === null) return;
+           if (silencerExpandT) {
+               clearTimeout(silencerExpandT);
+               silencerExpandT = null;
+           }
+           hideImproveHoverCard();
+           const card = ensureSilencerCard();
+           card.classList.remove('is-rich');
+           placeHoverCardFixed(card, btn);
+           card.hidden = false;
+           card.removeAttribute('hidden');
+           requestAnimationFrame(() => {
+               if (activeKind !== 'silencer') return;
+               card.classList.add('is-on');
+               placeHoverCardFixed(card, btn);
+           });
+           silencerExpandT = setTimeout(() => {
+               silencerExpandT = null;
+               if (activeKind !== 'silencer') return;
+               placeHoverCardFixed(card, btn);
+               card.classList.add('is-rich');
+           }, SILENCER_RICH_MS);
        }
 
        function clearTeachVisuals() {
@@ -6689,158 +6940,6 @@
            return heights.map((h) => `<i style="height:${h}%"></i>`).join('');
        }
 
-       function positionSilencerCard(card, btn, wrap) {
-           if (!card || !btn || !wrap) return;
-           const wR = wrap.getBoundingClientRect();
-           const bR = btn.getBoundingClientRect();
-           const x = bR.left + bR.width / 2 - wR.left;
-           card.style.setProperty('--silencer-tip-x', `${Math.round(x)}px`);
-       }
-
-       function positionImproveCard(card, btn, wrap) {
-           if (!card || !btn || !wrap) return;
-           const wR = wrap.getBoundingClientRect();
-           const bR = btn.getBoundingClientRect();
-           const x = bR.left + bR.width / 2 - wR.left;
-           card.style.setProperty('--silencer-tip-x', `${Math.round(x)}px`);
-       }
-
-       function ensureImproveCard(wrap) {
-           let card = document.getElementById('improveHoverCard');
-           if (card?.dataset?.v === '8') return card;
-           if (card) {
-               try { card.remove(); } catch (_) {}
-           }
-           card = document.createElement('div');
-           card.id = 'improveHoverCard';
-           card.className = 'silencer-hover-card';
-           card.dataset.v = '8';
-           card.hidden = true;
-           card.setAttribute('aria-hidden', 'true');
-           card.innerHTML =
-               `<div class="silencer-hover-card-shell">` +
-                 `<span class="silencer-hover-card-hint">Describe your edit · 1 upload</span>` +
-                 `<div class="silencer-hover-card-body">` +
-                   `<div class="silencer-hover-card-art improve-hover-card-art">` +
-                     `<div class="silencer-hover-card-art-top">` +
-                       `<span class="silencer-hover-card-cta">` +
-                         `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="improve-icon">` +
-                           `<path d="M12.983 21.186a1 1 0 0 1-1.966 0 10 10 0 0 0-8.203-8.203 1 1 0 0 1 0-1.966 10 10 0 0 0 8.203-8.203 1 1 0 0 1 1.966 0 10 10 0 0 0 8.203 8.203 1 1 0 0 1 0 1.966 10 10 0 0 0-8.203 8.203"/>` +
-                         `</svg>` +
-                         `Improve clip` +
-                       `</span>` +
-                     `</div>` +
-                     `<div class="improve-hover-card-media" aria-hidden="true"></div>` +
-                   `</div>` +
-                   `<p class="silencer-hover-card-copy">Sharpens cut boundaries, trims soft opens/closes, cleans dead air, and retunes subtitles. Uses 1 upload.</p>` +
-                 `</div>` +
-               `</div>` +
-               `<div class="silencer-hover-card-caret" aria-hidden="true"></div>`;
-           wrap.appendChild(card);
-           return card;
-       }
-
-       function startImproveTeach() {
-           activeKind = 'improve';
-           const wrap = document.getElementById('previewEditorToolbarWrap');
-           const btn = document.getElementById('previewImproveBtn');
-           if (!wrap || !btn) return;
-           if (improveExpandT) {
-               clearTimeout(improveExpandT);
-               improveExpandT = null;
-           }
-           const card = ensureImproveCard(wrap);
-           card.classList.remove('is-rich');
-           positionImproveCard(card, btn, wrap);
-           card.hidden = false;
-           requestAnimationFrame(() => {
-               if (activeKind !== 'improve') return;
-               card.classList.add('is-on');
-           });
-           improveExpandT = setTimeout(() => {
-               improveExpandT = null;
-               if (activeKind !== 'improve') return;
-               positionImproveCard(card, btn, wrap);
-               card.classList.add('is-rich');
-           }, IMPROVE_RICH_MS);
-       }
-
-       function ensureSilencerCard(wrap) {
-           let card = document.getElementById('silencerHoverCard');
-           if (card?.dataset?.v === '2') return card;
-           if (card) {
-               try { card.remove(); } catch (_) {}
-           }
-           card = document.createElement('div');
-           card.id = 'silencerHoverCard';
-           card.className = 'silencer-hover-card';
-           card.dataset.v = '2';
-           card.hidden = true;
-           card.setAttribute('aria-hidden', 'true');
-           card.innerHTML =
-               `<div class="silencer-hover-card-shell">` +
-                 `<span class="silencer-hover-card-hint">Remove silences</span>` +
-                 `<div class="silencer-hover-card-body">` +
-                   `<div class="silencer-hover-card-art">` +
-                     `<div class="silencer-hover-card-art-top">` +
-                       `<span class="silencer-hover-card-cta">` +
-                         `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="silencer-icon">` +
-                           `<path class="silencer-bar silencer-bar--a" d="M6 6v11"/>` +
-                           `<path class="silencer-bar silencer-bar--b" d="M10 10v11"/>` +
-                           `<path class="silencer-bar silencer-bar--c" d="M10 3v1.35"/>` +
-                           `<path class="silencer-bar silencer-bar--d" d="M14 14v1"/>` +
-                           `<path class="silencer-bar silencer-bar--e" d="M14 8v.35"/>` +
-                           `<path class="silencer-bar silencer-bar--f" d="M18 5v7.35"/>` +
-                           `<path class="silencer-bar silencer-bar--g" d="M2 10v3"/>` +
-                           `<path class="silencer-bar silencer-bar--h" d="M22 10v3"/>` +
-                           `<path class="silencer-slash" d="m2 2 20 20"/>` +
-                         `</svg>` +
-                         `Remove silences` +
-                       `</span>` +
-                     `</div>` +
-                     `<div class="silencer-hover-card-timeline" aria-hidden="true">` +
-                       `<div class="silencer-hover-card-clip">${waveBars([35, 62, 48, 78, 40, 70, 52])}</div>` +
-                       `<div class="silencer-hover-card-gap"></div>` +
-                       `<div class="silencer-hover-card-clip">${waveBars([44, 72, 38, 85, 55, 68])}</div>` +
-                       `<div class="silencer-hover-card-gap"></div>` +
-                       `<div class="silencer-hover-card-clip">${waveBars([50, 40, 75, 45, 80, 58, 36])}</div>` +
-                       `<div class="silencer-hover-card-gap"></div>` +
-                       `<div class="silencer-hover-card-clip">${waveBars([60, 42, 78, 50, 65])}</div>` +
-                     `</div>` +
-                   `</div>` +
-                   `<p class="silencer-hover-card-copy">Remove silence pauses from your video to keep your audience engaged.</p>` +
-                 `</div>` +
-               `</div>` +
-               `<div class="silencer-hover-card-caret" aria-hidden="true"></div>`;
-           wrap.appendChild(card);
-           return card;
-       }
-
-       function startSilencerTeach() {
-           activeKind = 'silencer';
-           const wrap = document.getElementById('previewEditorToolbarWrap');
-           const btn = document.getElementById('previewSilencerBtn');
-           if (!wrap || !btn) return;
-           if (silencerExpandT) {
-               clearTimeout(silencerExpandT);
-               silencerExpandT = null;
-           }
-           const card = ensureSilencerCard(wrap);
-           card.classList.remove('is-rich');
-           positionSilencerCard(card, btn, wrap);
-           card.hidden = false;
-           requestAnimationFrame(() => {
-               if (activeKind !== 'silencer') return;
-               card.classList.add('is-on');
-           });
-           silencerExpandT = setTimeout(() => {
-               silencerExpandT = null;
-               if (activeKind !== 'silencer') return;
-               positionSilencerCard(card, btn, wrap);
-               card.classList.add('is-rich');
-           }, SILENCER_RICH_MS);
-       }
-
        function armTool(btn) {
            if (!finePointer()) return;
            const tool = btn.dataset.tool;
@@ -6869,7 +6968,26 @@
 
            enterT = setTimeout(() => {
                enterT = null;
-               stopTeach({ keepMenu: false });
+               if (tool !== 'silencer' && tool !== 'improve') {
+                   stopTeach({ keepMenu: false });
+               } else {
+                   clearEnter();
+                   clearLeave();
+                   const layer = document.getElementById('solisHoverTeach');
+                   if (layer) {
+                       layer.classList.remove('is-on');
+                       layer.hidden = true;
+                       layer.innerHTML = '';
+                   }
+                   dimRealOverlays(false);
+                   restoreRankingHeader();
+                   removeRankHookDemo();
+                   removeSsHookDemo();
+                   try { restoreSmartCapBlock(); } catch (_) {}
+                   try {
+                       if (typeof window.solisTeachStopAll === 'function') window.solisTeachStopAll();
+                   } catch (_) {}
+               }
                btn.classList.add('solis-hover-armed');
                if (tool === 'animations') startAnimationsTeach();
                else if (tool === 'modifiers') startModifiersPeek();

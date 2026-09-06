@@ -2,7 +2,15 @@
   let e = false;
   let t = false;
   let i = null;
+  let n = false;
   let r = false;
+  let o = 0;
+  let a = 0;
+  let s = false;
+  let l = null;
+  let c = false;
+  let d = 0;
+  const u = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 19V5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M5 12l7-7 7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   function $(e) {
     return document.getElementById(e);
   }
@@ -26,6 +34,128 @@
       return {};
     }
   }
+  function cancelPlace() {
+    if (o) {
+      cancelAnimationFrame(o);
+      o = 0;
+    }
+    if (a) {
+      cancelAnimationFrame(a);
+      a = 0;
+    }
+  }
+  function hideAllImproveBars() {
+    const e = Array.from(document.querySelectorAll(".improve-edit-bar"));
+    let t = e.find(e => e.id === "improveEditBar") || e[0] || null;
+    e.forEach(e => {
+      e.classList.remove("is-open", "is-range-mode", "has-rainbow", "is-receiving-rainbow");
+      e.hidden = true;
+      e.setAttribute("hidden", "");
+      e.style.left = "";
+      e.style.top = "";
+      e.style.transform = "";
+      e.style.width = "";
+      e.style.right = "";
+      e.style.bottom = "";
+      if (t && e !== t) {
+        try {
+          e.remove();
+        } catch (e) {}
+      }
+    });
+    if (t) {
+      t.id = "improveEditBar";
+      if (t.parentElement !== document.body) {
+        document.body.appendChild(t);
+      }
+    }
+    try {
+      const e = $("timelineRangeGlass");
+      if (e) {
+        e.hidden = true;
+        e.setAttribute("hidden", "");
+      }
+    } catch (e) {}
+    return t;
+  }
+  function clearRainbowFly() {
+    if (d) {
+      clearTimeout(d);
+      d = 0;
+    }
+    if (l) {
+      try {
+        l.remove();
+      } catch (e) {}
+      l = null;
+    }
+    document.querySelectorAll(".range-rainbow-fly").forEach(e => {
+      try {
+        e.remove();
+      } catch (e) {}
+    });
+  }
+  function clearRainbowState() {
+    clearRainbowFly();
+    s = false;
+    document.querySelectorAll(".improve-edit-bar").forEach(e => {
+      e.classList.remove("has-rainbow", "is-receiving-rainbow");
+    });
+    const e = $("previewTimelineRangePick");
+    e?.classList.remove("is-dimmed", "is-collecting");
+  }
+  function transferRainbowToInput() {
+    if (s || !r || !n) return;
+    const e = ensureBar();
+    const t = $("previewTimelineRangePick");
+    if (!e) return;
+    clearRainbowFly();
+    s = true;
+    if (t) {
+      t.classList.remove("is-collecting");
+      t.classList.add("is-dimmed");
+    }
+    e.classList.add("is-receiving-rainbow");
+    e.classList.remove("is-rainbow-from-glow");
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (!n || !s) return;
+        e.classList.add("has-rainbow");
+      });
+    });
+  }
+  function ensureBar() {
+    const e = Array.from(document.querySelectorAll(".improve-edit-bar"));
+    let t = e.find(e => e.id === "improveEditBar") || e[0] || null;
+    e.forEach(e => {
+      if (t && e !== t) {
+        try {
+          e.remove();
+        } catch (e) {}
+      }
+    });
+    if (!t) {
+      t = document.createElement("div");
+      t.className = "improve-edit-bar";
+      t.id = "improveEditBar";
+      t.hidden = true;
+      t.innerHTML = `\n                <button type="button" class="improve-edit-silence" id="improveEditSilence" hidden\n                    title="Remove silence in selection" aria-label="Remove silence">\n                    <svg class="silencer-icon" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">\n                        <path class="silencer-bar silencer-bar--a" d="M6 6v11"/>\n                        <path class="silencer-bar silencer-bar--b" d="M10 10v11"/>\n                        <path class="silencer-bar silencer-bar--c" d="M10 3v1.35"/>\n                        <path class="silencer-bar silencer-bar--d" d="M14 14v1"/>\n                        <path class="silencer-bar silencer-bar--e" d="M14 8v.35"/>\n                        <path class="silencer-bar silencer-bar--f" d="M18 5v7.35"/>\n                        <path class="silencer-bar silencer-bar--g" d="M2 10v3"/>\n                        <path class="silencer-bar silencer-bar--h" d="M22 10v3"/>\n                        <path class="silencer-slash" d="m2 2 20 20"/>\n                    </svg>\n                </button>\n                <textarea class="improve-edit-input" id="improveEditInput"\n                    placeholder="Describe your edit"\n                    rows="1" aria-label="Describe your edit"></textarea>\n                <button type="button" class="improve-edit-send" id="improveEditSend" aria-label="Improve clip">\n                    ${u}\n                </button>\n            `;
+      document.body.appendChild(t);
+      bindBarControls(t);
+    } else {
+      t.id = "improveEditBar";
+      if (t.parentElement !== document.body) {
+        document.body.appendChild(t);
+      }
+      const e = $("improveEditSend") || t.querySelector("#improveEditSend");
+      if (e) {
+        e.innerHTML = u;
+        e.style.color = "#ffffff";
+      }
+      if (!t.dataset.controlsBound) bindBarControls(t);
+    }
+    return t;
+  }
   function showNote(e) {
     const t = $("silencerNote");
     if (!t) return;
@@ -46,29 +176,152 @@
     const t = $("previewImproveBtn");
     if (!t) return;
     t.classList.toggle("is-improved", e);
-    t.classList.toggle("active", e || r);
-    t.setAttribute("aria-pressed", e || r ? "true" : "false");
+    t.classList.toggle("active", e || n);
+    t.setAttribute("aria-pressed", e || n ? "true" : "false");
     t.removeAttribute("title");
-    t.setAttribute("aria-label", e ? "Clip improved" : "Improve clip (uses 1 upload)");
+    t.setAttribute("aria-label", e ? "Clip improved" : "Improve clip");
   }
-  function setBarOpen(e) {
+  function setRangeChrome(e) {
     r = !!e;
-    const t = $("improveEditBar");
-    const i = $("templateVideoPreview");
-    if (t) {
-      if (r) {
-        t.hidden = false;
-        t.classList.add("is-open");
+    const t = ensureBar();
+    const i = $("improveEditSilence");
+    const n = $("improveEditInput");
+    if (t) t.classList.toggle("is-range-mode", r);
+    if (i) {
+      i.hidden = !r;
+      if (!r) i.setAttribute("hidden", ""); else i.removeAttribute("hidden");
+    }
+    if (n) {
+      n.placeholder = "Describe your edit";
+    }
+  }
+  function clearBarPosition() {
+    const e = $("improveEditBar");
+    if (!e) return;
+    e.style.left = "";
+    e.style.top = "";
+    e.style.transform = "";
+    e.style.width = "";
+    e.style.right = "";
+    e.style.bottom = "";
+  }
+  function placeBarAboveSelection(e, t) {
+    if (!n) return;
+    const i = ensureBar();
+    if (!i || !n) return;
+    if (i.parentElement !== document.body) {
+      document.body.appendChild(i);
+    }
+    const r = $("previewTimelineWrap");
+    const o = $("previewTimelineRangePick");
+    const a = $("previewTimelineShell") || $("previewTimelineRow");
+    const s = 8;
+    let l = null;
+    if (o && !o.hidden && o.getBoundingClientRect().width > 4) {
+      l = o.getBoundingClientRect();
+    } else if (r && Number.isFinite(e) && Number.isFinite(t)) {
+      const i = r.getBoundingClientRect();
+      const n = window.PreviewTimeline?.getTrim?.();
+      const o = Math.max(.01, Number(n?.duration) || Math.max(t, 1));
+      const a = Math.max(0, Math.min(e, o)) / o;
+      const s = Math.max(0, Math.min(t, o)) / o;
+      const c = i.left + Math.min(a, s) * i.width;
+      const d = Math.max(24, Math.abs(s - a) * i.width);
+      l = {
+        left: c,
+        width: d,
+        top: i.top,
+        bottom: i.bottom,
+        height: i.height
+      };
+    } else if (r) {
+      l = r.getBoundingClientRect();
+    } else if (a) {
+      l = a.getBoundingClientRect();
+    }
+    if (!l) return;
+    i.style.position = "fixed";
+    i.style.right = "auto";
+    i.style.bottom = "auto";
+    i.style.transform = "none";
+    const c = Math.min(320, Math.max(240, Math.min(l.width + 48, window.innerWidth - 24)));
+    i.style.width = `${c}px`;
+    const d = i.getBoundingClientRect();
+    const u = d.height || 46;
+    let p = l.left + (l.width - c) / 2;
+    let m = l.top - u - 12;
+    if (m < s) m = s;
+    p = Math.max(s, Math.min(p, window.innerWidth - c - s));
+    i.style.left = `${Math.round(p)}px`;
+    i.style.top = `${Math.round(m)}px`;
+  }
+  function schedulePlace(e, t) {
+    cancelPlace();
+    o = requestAnimationFrame(() => {
+      o = 0;
+      if (!n) return;
+      placeBarAboveSelection(e, t);
+      a = requestAnimationFrame(() => {
+        a = 0;
+        if (!n) return;
+        placeBarAboveSelection(e, t);
+      });
+    });
+  }
+  function dismissSelection() {
+    cancelPlace();
+    clearRainbowState();
+    n = false;
+    hideAllImproveBars();
+    setRangeChrome(false);
+    setButtonState();
+    try {
+      window.TimelineRangeGlass?.hide?.();
+    } catch (e) {}
+    try {
+      window.clipsStudio?._setCompanionWatchTyping?.(false);
+    } catch (e) {}
+  }
+  function setBarOpen(e, t = {}) {
+    n = !!e;
+    const i = ensureBar();
+    const r = $("templateVideoPreview");
+    if (i) {
+      if (n) {
+        document.querySelectorAll(".improve-edit-bar").forEach(e => {
+          if (e !== i) {
+            e.classList.remove("is-open");
+            e.hidden = true;
+            e.setAttribute("hidden", "");
+            try {
+              e.remove();
+            } catch (e) {}
+          }
+        });
+        i.hidden = false;
+        i.removeAttribute("hidden");
+        i.classList.add("is-open");
+        const e = $("improveEditSend") || i.querySelector("#improveEditSend");
+        if (e) {
+          e.innerHTML = u;
+          e.style.color = "#ffffff";
+        }
+        if (t.range) setRangeChrome(true); else if (!t.keepRange) setRangeChrome(false);
+        if (!t.keepRainbow) clearRainbowState();
+        schedulePlace(t.start, t.end);
       } else {
-        t.classList.remove("is-open");
-        t.hidden = true;
+        hideAllImproveBars();
+        setRangeChrome(false);
+        clearBarPosition();
+        if (!t.fromDismiss) clearRainbowState(); else clearRainbowFly();
       }
     }
-    if (i) i.classList.toggle("improve-bar-open", r);
+    if (r) r.classList.remove("improve-bar-open");
     setButtonState();
-    if (r) {
-      const e = $("improveEditInput");
-      if (e) {
+    if (n) {
+      const e = $("improveEditInput") || i?.querySelector?.("#improveEditInput");
+      if (e && t.prefill != null) e.value = String(t.prefill);
+      if (e && (t.focus === true || t.focus !== false && !t.range)) {
         requestAnimationFrame(() => {
           try {
             e.focus();
@@ -76,14 +329,18 @@
         });
       }
     }
+    try {
+      window.TimelineRangeGlass?.hide?.();
+    } catch (e) {}
   }
   function syncVisibility() {
     const t = $("previewImproveBtn");
     const i = $("previewEditorPill");
-    const r = isLibraryPreview();
+    const n = isLibraryPreview();
+    ensureBar();
     if (t) {
-      t.style.display = r ? "" : "none";
-      if (!r) {
+      t.style.display = n ? "" : "none";
+      if (!n) {
         e = false;
         setBarOpen(false);
         setButtonState();
@@ -91,14 +348,14 @@
         setButtonState();
       }
     }
-    if (!r) setBarOpen(false);
+    if (!n) setBarOpen(false);
     if (i) {
       const e = $("previewSilencerBtn");
-      const o = r && e && e.style.display !== "none";
-      const n = r && t && t.style.display !== "none";
-      const s = $("previewModifiersBtn");
-      const a = !r && s && s.style.display !== "none";
-      i.classList.toggle("has-feature-tools", Boolean(o || n || a));
+      const r = n && e && e.style.display !== "none";
+      const o = n && t && t.style.display !== "none";
+      const a = $("previewModifiersBtn");
+      const s = !n && a && a.style.display !== "none";
+      i.classList.toggle("has-feature-tools", Boolean(r || o || s));
     }
   }
   async function reloadImprovedPreview(e) {
@@ -124,14 +381,14 @@
         return;
       } catch (e) {}
     }
-    const r = $("templateVideoPreview");
-    const o = r?.querySelector("video");
-    if (o?.src) {
+    const n = $("templateVideoPreview");
+    const r = n?.querySelector("video");
+    if (r?.src) {
       try {
-        const e = new URL(o.src, window.location.origin);
+        const e = new URL(r.src, window.location.origin);
         e.searchParams.set("_imp", String(Date.now()));
-        o.src = e.toString();
-        o.load();
+        r.src = e.toString();
+        r.load();
       } catch (e) {}
     }
   }
@@ -176,12 +433,12 @@
       }
       const i = t?.clips || t || {};
       if (i.daily_limit_reached === true) return false;
-      const r = i.daily || {};
-      const o = r.remaining;
-      if (o != null && Number(o) <= 0) return false;
+      const n = i.daily || {};
+      const r = n.remaining;
+      if (r != null && Number(r) <= 0) return false;
       if (i.monthly_limit_reached === true) return false;
-      const n = i.monthly || {};
-      if (n.remaining != null && Number(n.remaining) <= 0 && Number(n.limit) > 0) {
+      const o = i.monthly || {};
+      if (o.remaining != null && Number(o.remaining) <= 0 && Number(o.limit) > 0) {
         return false;
       }
       return true;
@@ -190,30 +447,30 @@
     }
   }
   async function runImproveApi(i) {
-    const r = getProjectId();
-    if (!r) {
+    const n = getProjectId();
+    if (!n) {
       showNote("Open a library clip first");
       return;
     }
     t = true;
-    const o = $("previewImproveBtn");
-    const n = $("improveEditSend");
-    if (o) o.classList.add("is-working");
-    if (n) n.disabled = true;
+    const r = $("previewImproveBtn");
+    const o = $("improveEditSend");
+    if (r) r.classList.add("is-working");
+    if (o) o.disabled = true;
     try {
       const t = String(i || "").trim();
       showNote(t ? "Watching with Google…" : "Improving…");
-      let o = null;
+      let r = null;
       try {
         const e = window.PreviewTimeline?.getActiveEditRange?.();
         if (e && (e.manual || e.segIndex != null) && Number.isFinite(e.start) && Number.isFinite(e.end) && e.end - e.start > .35) {
-          o = {
+          r = {
             start: Number(e.start.toFixed(3)),
             end: Number(e.end.toFixed(3))
           };
         }
       } catch (e) {}
-      const n = await fetch(`${apiBase()}/clips/projects/${encodeURIComponent(r)}/improve`, {
+      const o = await fetch(`${apiBase()}/clips/projects/${encodeURIComponent(n)}/improve`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -223,40 +480,41 @@
         body: JSON.stringify({
           prompt: t || undefined,
           silence_cuts: [],
-          ...o ? {
-            edit_range: o
+          ...r ? {
+            edit_range: r
           } : {}
         })
       });
-      const s = await n.json().catch(() => ({}));
-      if (!n.ok) {
-        const e = s?.error_code || "";
+      const a = await o.json().catch(() => ({}));
+      if (!o.ok) {
+        const e = a?.error_code || "";
         if (e === "NOTHING_TO_IMPROVE") {
-          showNote(s?.error || "Already tight — nothing to improve");
+          showNote(a?.error || "Already tight — nothing to improve");
           return;
         }
-        if (e === "DAILY_LIMIT_REACHED" || e === "MONTHLY_LIMIT_REACHED" || n.status === 429) {
+        if (e === "DAILY_LIMIT_REACHED" || e === "MONTHLY_LIMIT_REACHED" || o.status === 429) {
           showOutOfUploadsUpgrade();
           return;
         }
-        showNote(s?.error || "Couldn’t improve yet");
+        showNote(a?.error || "Couldn’t improve yet");
         return;
       }
       e = true;
       setBarOpen(false);
       setButtonState();
-      await reloadImprovedPreview(r);
+      try {
+        window.PreviewTimeline?.clearManualRange?.();
+      } catch (e) {}
+      await reloadImprovedPreview(n);
       try {
         if (window.clipsStudio?.refreshQuotaAfterApply) {
-          await window.clipsStudio.refreshQuotaAfterApply(s);
+          await window.clipsStudio.refreshQuotaAfterApply(a);
         }
       } catch (e) {}
-      const a = String(s?.prompt_summary || "").trim();
-      const l = Number(s?.removed_sec);
-      if (s?.idea_found && a) {
-        showNote(`${a} · 1 upload`);
-      } else if (a) {
-        showNote(`${a} · 1 upload`);
+      const s = String(a?.prompt_summary || "").trim();
+      const l = Number(a?.removed_sec);
+      if (s) {
+        showNote(`${s} · 1 upload`);
       } else if (Number.isFinite(l) && l > 0) {
         showNote(`Improved — removed ${l.toFixed(1)}s (1 upload)`);
       } else {
@@ -267,9 +525,33 @@
           window.SolisMemory?.recordEditorialTaste?.({
             action: "improve_prompt",
             category: "improve",
-            reason: a || "Directed clip rework",
+            reason: s || "Directed clip rework",
             prompt: t,
             source: "improve"
+          });
+        } catch (e) {}
+      } else {
+        try {
+          window.SolisMemory?.recordEditorialHabit?.("silence", null, {
+            source: "improve_bare",
+            weight: .7,
+            reason: s || "Bare improve"
+          });
+        } catch (e) {}
+      }
+      if (a?.hook_cleared) {
+        try {
+          window.SolisMemory?.recordEditorialHabit?.("no_hook", true, {
+            source: "improve",
+            prompt: t || undefined
+          });
+        } catch (e) {}
+      }
+      if (a?.cut_selection) {
+        try {
+          window.SolisMemory?.recordEditorialHabit?.("tight_open", true, {
+            source: "improve",
+            prompt: t || undefined
           });
         } catch (e) {}
       }
@@ -277,8 +559,8 @@
       showNote("Couldn’t improve yet");
     } finally {
       t = false;
-      if (o) o.classList.remove("is-working");
-      if (n) n.disabled = false;
+      if (r) r.classList.remove("is-working");
+      if (o) o.disabled = false;
     }
   }
   async function submitImprove() {
@@ -290,23 +572,42 @@
       return;
     }
     if (!await gateImproveQuota()) return;
-    const r = $("improveEditInput");
-    const o = String(r?.value || "").trim();
-    await runImproveApi(o);
+    const n = $("improveEditInput");
+    const r = String(n?.value || "").trim();
+    await runImproveApi(r);
   }
   async function runImprove(i) {
     if (t || e) return;
     if (!isLibraryPreview()) return;
-    const r = getProjectId();
-    if (!r) {
+    const n = getProjectId();
+    if (!n) {
       showNote("Open a library clip first");
       return;
     }
     if (!await gateImproveQuota()) return;
-    const o = $("improveEditInput");
-    const n = String(i != null ? i : o?.value || "").trim();
-    if (o && i != null) o.value = n;
-    await runImproveApi(n);
+    const r = $("improveEditInput");
+    const o = String(i != null ? i : r?.value || "").trim();
+    if (r && i != null) r.value = o;
+    await runImproveApi(o);
+  }
+  function selectFullClipRange() {
+    try {
+      const e = window.PreviewTimeline?.getTrim?.();
+      const t = Number.isFinite(e?.start) ? e.start : 0;
+      let i = Number.isFinite(e?.end) ? e.end : 0;
+      const n = Number.isFinite(e?.duration) ? e.duration : 0;
+      if (!(i - t > .35) && n > .35) {
+        i = n;
+      }
+      if (i - t > .35) {
+        window.PreviewTimeline.setManualRange(t, i);
+        return {
+          start: t,
+          end: i
+        };
+      }
+    } catch (e) {}
+    return null;
   }
   async function toggleImprove() {
     if (t) return;
@@ -315,67 +616,253 @@
       showNote("Already improved for this clip");
       return;
     }
-    if (!r) {
-      if (!await gateImproveQuota()) return;
+    if (n) {
+      try {
+        window.PreviewTimeline?.clearManualRange?.();
+      } catch (e) {}
+      dismissSelection();
+      return;
     }
-    setBarOpen(!r);
+    let i = window.PreviewTimeline?.getActiveEditRange?.();
+    let r = i && (i.manual || i.segIndex != null) && Number.isFinite(i.start) && i.end - i.start > .35;
+    if (!r) {
+      const e = selectFullClipRange();
+      if (e) {
+        i = e;
+        r = true;
+      }
+    }
+    setBarOpen(true, {
+      range: !!r,
+      start: r ? i.start : undefined,
+      end: r ? i.end : undefined
+    });
   }
   async function openImproveBar(t) {
     if (!isLibraryPreview() || e) return;
-    if (!await gateImproveQuota()) return;
-    setBarOpen(true);
-    const i = $("improveEditInput");
-    if (i && t != null) {
-      i.value = String(t);
+    let i = window.PreviewTimeline?.getActiveEditRange?.();
+    let n = i && (i.manual || i.segIndex != null) && Number.isFinite(i.start) && i.end - i.start > .35;
+    if (!n) {
+      const e = selectFullClipRange();
+      if (e) {
+        i = e;
+        n = true;
+      }
     }
+    setBarOpen(true, {
+      prefill: t != null ? t : undefined,
+      range: !!n,
+      start: n ? i.start : undefined,
+      end: n ? i.end : undefined
+    });
+  }
+  function openForRange(t, i, n) {
+    if (!isLibraryPreview() || e) return;
+    if (Number.isFinite(t) && Number.isFinite(i) && i - t >= .35) {
+      try {
+        window.PreviewTimeline?.setManualRange?.(t, i);
+      } catch (e) {}
+    }
+    setBarOpen(true, {
+      range: true,
+      start: t,
+      end: i,
+      prefill: n != null ? n : "",
+      focus: true,
+      keepRainbow: true
+    });
   }
   function resetImprove() {
     e = false;
     t = false;
-    setBarOpen(false);
+    dismissSelection();
     const i = $("improveEditInput");
     if (i) i.value = "";
-    const r = $("previewImproveBtn");
-    if (r) r.classList.remove("is-working", "is-improved", "active");
+    const n = $("previewImproveBtn");
+    if (n) n.classList.remove("is-working", "is-improved", "active");
     setButtonState();
   }
-  window.SolisImproveClip = {
-    toggle: toggleImprove,
-    apply: submitImprove,
-    run: runImprove,
-    open: openImproveBar,
-    close: () => setBarOpen(false),
-    reset: resetImprove,
-    syncVisibility: syncVisibility,
-    isApplied: () => e,
-    isOpen: () => r
-  };
-  document.addEventListener("DOMContentLoaded", () => {
-    const e = $("previewImproveBtn");
-    if (e && !e.dataset.bound) {
-      e.dataset.bound = "1";
-      e.addEventListener("click", toggleImprove);
-    }
-    const t = $("improveEditSend");
+  async function onSilenceClick(e) {
+    e?.preventDefault?.();
+    e?.stopPropagation?.();
+    try {
+      if (window.SolisSilencer?.apply) await window.SolisSilencer.apply(); else if (window.SolisSilencer?.toggle) window.SolisSilencer.toggle();
+    } catch (e) {}
+  }
+  function bindBarControls(e) {
+    if (!e || e.dataset.controlsBound === "1") return;
+    e.dataset.controlsBound = "1";
+    const t = e.querySelector("#improveEditSend") || $("improveEditSend");
     if (t && !t.dataset.bound) {
       t.dataset.bound = "1";
       t.addEventListener("click", () => {
         submitImprove();
       });
     }
-    const i = $("improveEditInput");
+    const i = e.querySelector("#improveEditInput") || $("improveEditInput");
     if (i && !i.dataset.bound) {
       i.dataset.bound = "1";
+      i.addEventListener("focus", () => {
+        transferRainbowToInput();
+        try {
+          window.clipsStudio?._setCompanionWatchTyping?.(true);
+        } catch (e) {}
+      });
+      i.addEventListener("pointerdown", () => {
+        requestAnimationFrame(() => transferRainbowToInput());
+      });
+      i.addEventListener("input", () => {
+        try {
+          window.clipsStudio?._setCompanionWatchTyping?.(true);
+        } catch (e) {}
+      });
+      i.addEventListener("blur", () => {
+        try {
+          window.clipsStudio?._setCompanionWatchTyping?.(false);
+        } catch (e) {}
+      });
       i.addEventListener("keydown", e => {
         if (e.key === "Enter" && !e.shiftKey) {
           e.preventDefault();
           submitImprove();
         }
         if (e.key === "Escape") {
-          setBarOpen(false);
+          try {
+            window.PreviewTimeline?.clearManualRange?.();
+          } catch (e) {}
+          dismissSelection();
         }
       });
     }
+    const n = e.querySelector("#improveEditSilence") || $("improveEditSilence");
+    if (n && !n.dataset.bound) {
+      n.dataset.bound = "1";
+      n.addEventListener("click", onSilenceClick);
+    }
+  }
+  function onGlobalDismiss(e) {
+    if (!n && !window.PreviewTimeline?.getManualRange?.()) return;
+    if (window.PreviewTimeline?.isRangeDragging?.()) return;
+    const t = e.target;
+    if (!(t instanceof Element)) return;
+    if (t.closest("#improveEditBar") || t.closest(".improve-edit-bar")) return;
+    if (t.closest("#previewCtxMenu")) return;
+    if (t.closest("#timelineRangeGlass")) return;
+    if (t.closest(".range-rainbow-fly")) return;
+    try {
+      window.PreviewTimeline?.clearManualRange?.();
+    } catch (e) {}
+    dismissSelection();
+    try {
+      window.PreviewCtxMenu?.close?.();
+    } catch (e) {}
+  }
+  function bindDismiss() {
+    if (c) return;
+    c = true;
+    window.addEventListener("pointerdown", onGlobalDismiss, true);
+    window.addEventListener("mousedown", onGlobalDismiss, true);
+    document.addEventListener("keydown", e => {
+      if (e.key !== "Escape") return;
+      if (!n && !window.PreviewTimeline?.getManualRange?.()) return;
+      try {
+        window.PreviewTimeline?.clearManualRange?.();
+      } catch (e) {}
+      dismissSelection();
+    });
+  }
+  function bindAll() {
+    ensureBar();
+    bindDismiss();
+    const e = $("previewImproveBtn");
+    if (e && !e.dataset.bound) {
+      e.dataset.bound = "1";
+      e.addEventListener("click", e => {
+        e.preventDefault();
+        e.stopPropagation();
+        try {
+          const e = document.getElementById("improveHoverCard");
+          if (e) {
+            e.classList.remove("is-on", "is-rich");
+            e.hidden = true;
+          }
+        } catch (e) {}
+        toggleImprove();
+      });
+    }
+    const t = $("improveEditBar");
+    if (t) bindBarControls(t);
+    window.addEventListener("resize", () => {
+      if (!n) return;
+      const e = window.PreviewTimeline?.getManualRange?.();
+      schedulePlace(e?.start, e?.end);
+    });
     syncVisibility();
-  });
+  }
+  function clearHookLocally(e) {
+    try {
+      if (window.clipsStudio) {
+        window.clipsStudio._libraryHookCleared = true;
+        window.clipsStudio._libraryOverlayDirty = true;
+      }
+    } catch (e) {}
+    try {
+      const e = $("templateVideoPreview") || document.querySelector(".template-preview-content");
+      if (typeof window.clearPreviewCaptionOverlays === "function") {
+        window.clearPreviewCaptionOverlays({
+          hooks: true,
+          overlays: false,
+          container: e
+        });
+      } else {
+        document.querySelectorAll('.overlay-text-block[data-ai-hook="1"]').forEach(e => {
+          try {
+            e.remove();
+          } catch (e) {}
+        });
+      }
+    } catch (e) {}
+    try {
+      if (typeof window.syncLibraryConfirmLabel === "function") window.syncLibraryConfirmLabel(); else if (typeof window.setConfirmUseTemplateLabel === "function") {
+        window.setConfirmUseTemplateLabel("Apply & Download");
+      }
+    } catch (e) {}
+    showNote(e || "Hook cleared — Apply & Download to keep it.");
+    try {
+      window.SolisCompanion?.speak?.(e || "Skipped the hook — like you prefer.", {
+        reasoning: [ "Remembered your no-hook habit." ]
+      });
+    } catch (t) {
+      try {
+        window.clipsStudio?._speakCompanionTask?.(e || "Skipped the hook — like you prefer.");
+      } catch (e) {}
+    }
+  }
+  async function maybeOfferHabit() {
+    return false;
+  }
+  window.SolisImproveClip = {
+    toggle: toggleImprove,
+    apply: submitImprove,
+    run: runImprove,
+    open: openImproveBar,
+    openForRange: openForRange,
+    close: () => setBarOpen(false),
+    dismissSelection: dismissSelection,
+    reset: resetImprove,
+    syncVisibility: syncVisibility,
+    ensureBar: ensureBar,
+    maybeOfferHabit: maybeOfferHabit,
+    isApplied: () => e,
+    isOpen: () => n
+  };
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bindAll, {
+      once: true
+    });
+  } else {
+    bindAll();
+  }
+  setTimeout(bindAll, 0);
+  setTimeout(bindAll, 400);
 })();

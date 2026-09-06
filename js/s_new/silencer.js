@@ -3,11 +3,11 @@
   const t = .14;
   const i = .22;
   const n = .05;
-  const r = .11;
-  let o = false;
+  const o = .11;
+  let r = false;
   let s = 0;
-  let c = null;
-  let a = false;
+  let a = null;
+  let c = false;
   function $(e) {
     return document.getElementById(e);
   }
@@ -56,16 +56,16 @@
     }
     return n;
   }
-  function cutFromGap(n, r) {
-    const o = r - n;
-    if (o < e) return null;
-    const s = Math.min(t, Math.max(.08, o * .22));
-    const c = n + s;
-    const a = r;
-    if (a - c < i) return null;
+  function cutFromGap(n, o) {
+    const r = o - n;
+    if (r < e) return null;
+    const s = Math.min(t, Math.max(.08, r * .22));
+    const a = n + s;
+    const c = o;
+    if (c - a < i) return null;
     return {
-      start: Math.round(c * 1e3) / 1e3,
-      end: Math.round(a * 1e3) / 1e3
+      start: Math.round(a * 1e3) / 1e3,
+      end: Math.round(c * 1e3) / 1e3
     };
   }
   function detectFromWords(t, i) {
@@ -74,30 +74,30 @@
       end: Number(e.end)
     })).filter(e => Number.isFinite(e.start) && Number.isFinite(e.end) && e.end > e.start).sort((e, t) => e.start - t.start);
     if (!n.length) return [];
-    const r = [];
-    const o = n[0].start;
-    if (o >= e) {
-      const e = cutFromGap(0, o);
-      if (e) r.push(e);
+    const o = [];
+    const r = n[0].start;
+    if (r >= e) {
+      const e = cutFromGap(0, r);
+      if (e) o.push(e);
     }
     for (let e = 0; e < n.length - 1; e++) {
       const t = n[e].end;
       const i = n[e + 1].start;
-      const o = cutFromGap(t, i);
-      if (o) r.push(o);
+      const r = cutFromGap(t, i);
+      if (r) o.push(r);
     }
     const s = n[n.length - 1].end;
     if (i > 0 && i - s >= e) {
       const e = cutFromGap(s, i);
-      if (e) r.push(e);
+      if (e) o.push(e);
     }
-    return mergeRegions(r);
+    return mergeRegions(o);
   }
   async function detectFromAudio(e, t) {
     if (!e || t < 1) return [];
     let i = e.currentSrc || e.src;
     if (!i) return [];
-    let o;
+    let r;
     try {
       if (typeof fetchSecureVideoObjectUrl === "function" && i.startsWith("http")) {
         try {
@@ -109,20 +109,20 @@
         cache: "force-cache"
       });
       if (!e.ok) return [];
-      o = await e.arrayBuffer();
+      r = await e.arrayBuffer();
     } catch (e) {
       return [];
     }
-    if (!o || o.byteLength < 1e3) return [];
+    if (!r || r.byteLength < 1e3) return [];
     const s = window.OfflineAudioContext || window.webkitOfflineAudioContext;
-    const c = window.AudioContext || window.webkitAudioContext;
-    if (!c) return [];
-    let a;
+    const a = window.AudioContext || window.webkitAudioContext;
+    if (!a) return [];
+    let c;
     try {
-      a = new c;
-      const e = await a.decodeAudioData(o.slice(0));
-      await a.close().catch(() => {});
-      a = null;
+      c = new a;
+      const e = await c.decodeAudioData(r.slice(0));
+      await c.close().catch(() => {});
+      c = null;
       const i = e.getChannelData(0);
       const s = e.sampleRate || 44100;
       const l = Math.max(1, Math.floor(s * n));
@@ -130,30 +130,30 @@
       for (let e = 0; e < i.length; e += l) {
         let t = 0;
         const n = Math.min(i.length, e + l);
-        for (let r = e; r < n; r++) t += i[r] * i[r];
+        for (let o = e; o < n; o++) t += i[o] * i[o];
         d.push(Math.sqrt(t / Math.max(1, n - e)));
       }
       if (!d.length) return [];
       const u = d.slice().sort((e, t) => e - t);
       const f = u[Math.floor(u.length * .85)] || .01;
-      const w = Math.max(.004, f * r);
-      const m = [];
+      const m = Math.max(.004, f * o);
+      const w = [];
       let p = -1;
       for (let e = 0; e < d.length; e++) {
         const i = e * n;
-        const r = d[e] < w;
-        if (r && p < 0) p = i;
-        if ((!r || e === d.length - 1) && p >= 0) {
-          const e = r ? Math.min(t, i + n) : i;
-          const o = cutFromGap(p, e);
-          if (o) m.push(o);
+        const o = d[e] < m;
+        if (o && p < 0) p = i;
+        if ((!o || e === d.length - 1) && p >= 0) {
+          const e = o ? Math.min(t, i + n) : i;
+          const r = cutFromGap(p, e);
+          if (r) w.push(r);
           p = -1;
         }
       }
-      return mergeRegions(m);
+      return mergeRegions(w);
     } catch (e) {
       try {
-        await (a?.close?.());
+        await (c?.close?.());
       } catch (e) {}
       return [];
     } finally {
@@ -181,6 +181,42 @@
       }, 3200);
     }
   }
+  function companionBegin(e) {
+    try {
+      const t = window.clipsStudio;
+      if (t?._beginCompanionTask && isLibraryPreview()) {
+        hideNote();
+        return t._beginCompanionTask({
+          reasoning: e
+        });
+      }
+    } catch (e) {}
+    return Promise.resolve();
+  }
+  function companionFinish(e) {
+    try {
+      const t = window.clipsStudio;
+      if (t?._finishCompanionTask && isLibraryPreview()) {
+        hideNote();
+        return t._finishCompanionTask(String(e || ""));
+      }
+    } catch (e) {}
+    showNote(e);
+    return Promise.resolve();
+  }
+  function companionSpeak(e, t) {
+    try {
+      const i = window.clipsStudio;
+      if (i?._speakCompanionTask && isLibraryPreview()) {
+        hideNote();
+        return i._speakCompanionTask(String(e || ""), {
+          reasoning: t
+        });
+      }
+    } catch (e) {}
+    showNote(e);
+    return Promise.resolve();
+  }
   function hideNote() {
     const e = $("silencerNote");
     if (!e) return;
@@ -192,26 +228,32 @@
   function setButtonState() {
     const e = $("previewSilencerBtn");
     if (!e) return;
-    e.classList.toggle("is-silenced", o);
-    e.classList.toggle("active", o);
-    e.setAttribute("aria-pressed", o ? "true" : "false");
+    e.classList.toggle("is-silenced", r);
+    e.classList.toggle("active", r);
+    e.setAttribute("aria-pressed", r ? "true" : "false");
     e.removeAttribute("title");
-    e.setAttribute("aria-label", o ? "Undo silence cleanup" : "Remove silences");
+    e.setAttribute("aria-label", r ? "Undo silence cleanup" : "Remove silences");
     const t = e.querySelector(".silencer-btn-label");
-    if (t) t.textContent = o ? "Undo" : "";
+    if (t) t.textContent = r ? "Undo" : "";
   }
   function markDirty() {
     try {
       const e = window.clipsStudio;
       if (!e?.currentTemplateForPreview?.isLibraryPreview) return;
-      e._librarySilenceDirty = !!o;
-      e._librarySilenceCuts = o ? (window.PreviewTimeline?.getSkipRegions?.() || []).slice() : [];
+      e._librarySilenceDirty = !!r;
+      e._librarySilenceCuts = r ? (window.PreviewTimeline?.getSkipRegions?.() || []).slice() : [];
       if (typeof window.syncLibraryConfirmLabel === "function") {
         window.syncLibraryConfirmLabel();
       } else {
         const e = $("confirmUseTemplateBtn");
         if (e) {
-          e.textContent = o ? "Apply & Download" : "Download";
+          const t = r ? "Apply & Download" : "Download";
+          if (typeof window.setConfirmUseTemplateLabel === "function") {
+            window.setConfirmUseTemplateLabel(t);
+          } else {
+            const i = e.querySelector(".template-use-confirm-label");
+            if (i) i.textContent = t; else e.textContent = t;
+          }
           e.classList.add("library-download-mode");
         }
         if (typeof window.syncUseTemplateFab === "function") window.syncUseTemplateFab();
@@ -245,14 +287,14 @@
         headers: i
       });
       if (!n.ok) return [];
-      const r = await n.json().catch(() => ({}));
-      const o = r.caption_preview_words;
-      if (Array.isArray(o) && o.length && typeof window.setLiveCaptionTimedWords === "function") {
+      const o = await n.json().catch(() => ({}));
+      const r = o.caption_preview_words;
+      if (Array.isArray(r) && r.length && typeof window.setLiveCaptionTimedWords === "function") {
         try {
-          window.setLiveCaptionTimedWords(o);
+          window.setLiveCaptionTimedWords(r);
         } catch (e) {}
       }
-      const s = Array.isArray(r.cuts) ? r.cuts : [];
+      const s = Array.isArray(o.cuts) ? o.cuts : [];
       return mergeRegions(s.map(e => ({
         start: Number(e.start),
         end: Number(e.end)
@@ -284,91 +326,109 @@
     } catch (e) {}
     return i;
   }
-  async function commitSilencer(e) {
+  async function commitSilencer(e, t = {}) {
     if (!e.length) return;
-    const t = getTimedWords();
+    const i = getTimedWords();
     s = totalRemoved(e);
-    c = t ? t.map(e => ({
+    a = i ? i.map(e => ({
       ...e
     })) : null;
     window.PreviewTimeline.setSkipRegions(e);
-    if (t && typeof window.setLiveCaptionTimedWords === "function") {
-      const i = remapCaptionsForCuts(t, e);
-      window.setLiveCaptionTimedWords(i);
+    if (i && typeof window.setLiveCaptionTimedWords === "function") {
+      const t = remapCaptionsForCuts(i, e);
+      window.setLiveCaptionTimedWords(t);
     }
-    o = true;
+    r = true;
     setButtonState();
     markDirty();
-    const i = window.PreviewTimeline?.getActiveEditRange?.();
-    const n = i && i.segIndex != null;
-    showNote(n ? `Removed ${formatRemoved(s)}s silence in block ${i.segIndex + 1}` : `Removed ${formatRemoved(s)}s of silence`);
-    const r = getPreviewVideo();
-    if (r) {
+    const n = window.PreviewTimeline?.getActiveEditRange?.();
+    const o = n && n.segIndex != null;
+    const c = t.message || (o ? `Removed ${formatRemoved(s)}s of silence in block ${n.segIndex + 1}.` : `Removed ${formatRemoved(s)}s of silence.`);
+    companionSpeak(c, t.reasoning || [ "Cutting dead air from the timeline.", "Updating playback skips." ]);
+    const l = getPreviewVideo();
+    if (l) {
       try {
-        const e = r.currentTime || 0;
+        const e = l.currentTime || 0;
         const t = window.PreviewTimeline.resolveSkipTime?.(e);
         if (t != null && Math.abs(t - e) > .05) {
-          r.currentTime = t;
+          l.currentTime = t;
         }
-        r.play().catch(() => {});
+        l.play().catch(() => {});
       } catch (e) {}
     }
   }
   async function applySilencer() {
-    if (a || o) return;
+    if (c || r) return;
     if (!isLibraryPreview()) return;
     if (!window.PreviewTimeline?.setSkipRegions) {
-      showNote("Preview not ready yet");
+      companionSpeak("Preview isn’t ready yet.", [ "Waiting on the timeline." ]);
       return;
     }
     if (window.SolisSilenceCutSuggest?.isOpen?.()) return;
-    a = true;
+    c = true;
     const e = $("previewSilencerBtn");
     if (e) e.classList.add("is-working");
     try {
-      showNote("Scanning for pauses…");
+      await companionBegin([ "Scanning for pauses…", "Listening for dead air.", "Checking what you want cut." ]);
       const e = await detectCuts();
       if (!e.length) {
-        showNote("No long pauses found");
+        await companionFinish("No long pauses found.");
         return;
       }
       const t = window.PreviewTimeline?.getActiveEditRange?.();
       const i = t && t.segIndex != null;
       const n = formatRemoved(totalRemoved(e));
+      await companionFinish(i ? `Found ${n}s of silence in block ${t.segIndex + 1} — accept the red cuts?` : `Found ${n}s of silence — accept the red cuts?`);
       window.SolisSilenceCutSuggest?.show({
         source: "silencer",
-        regions: e,
+        regions: e.map(e => ({
+          ...e,
+          kind: "remove"
+        })),
         label: i ? `Red = ${n}s silence in block ${t.segIndex + 1} · Accept?` : `Red = ${n}s silence · Accept?`,
         onAccept: e => {
           commitSilencer(e);
+          try {
+            window.SolisMemory?.recordEditorialHabit?.("silence", true, {
+              source: "silencer"
+            });
+          } catch (e) {}
         },
         onReject: () => {
-          showNote("Silence cleanup dismissed");
+          companionSpeak("Okay — left the pauses in.", [ "Keeping the original pacing." ]);
+          try {
+            window.SolisMemory?.recordEditorialHabit?.("silence", false, {
+              source: "silencer"
+            });
+          } catch (e) {}
         }
       });
     } finally {
-      a = false;
+      c = false;
       if (e) e.classList.remove("is-working");
     }
   }
+  async function maybeOfferHabit() {
+    return false;
+  }
   function undoSilencer() {
-    if (!o) return;
+    if (!r) return;
     try {
       window.SolisSilenceCutSuggest?.clear?.();
     } catch (e) {}
     if (window.PreviewTimeline?.clearSkipRegions) {
       window.PreviewTimeline.clearSkipRegions();
     }
-    if (c && typeof window.setLiveCaptionTimedWords === "function") {
-      window.setLiveCaptionTimedWords(c);
+    if (a && typeof window.setLiveCaptionTimedWords === "function") {
+      window.setLiveCaptionTimedWords(a);
     }
-    c = null;
+    a = null;
     s = 0;
-    o = false;
+    r = false;
     setButtonState();
     markDirty();
     hideNote();
-    showNote("Silence restored");
+    companionSpeak("Silence restored.", [ "Putting the pauses back." ]);
   }
   function resetSilencer() {
     try {
@@ -377,10 +437,10 @@
     if (window.PreviewTimeline?.clearSkipRegions) {
       window.PreviewTimeline.clearSkipRegions();
     }
-    c = null;
+    a = null;
     s = 0;
-    o = false;
-    a = false;
+    r = false;
+    c = false;
     setButtonState();
     hideNote();
     try {
@@ -396,22 +456,22 @@
       e.stopPropagation();
     }
     if (!isLibraryPreview()) return;
-    if (o) undoSilencer(); else applySilencer();
+    if (r) undoSilencer(); else applySilencer();
   }
   function syncVisibility() {
     const e = $("previewSilencerBtn");
     const t = $("previewImproveBtn");
     const i = $("previewModifiersBtn");
     const n = $("previewModifiersMenu");
-    const r = $("previewEditorPill");
-    const o = isLibraryPreview();
+    const o = $("previewEditorPill");
+    const r = isLibraryPreview();
     if (e) {
-      e.style.display = o ? "" : "none";
-      if (!o) resetSilencer(); else setButtonState();
+      e.style.display = r ? "" : "none";
+      if (!r) resetSilencer(); else setButtonState();
     }
     if (t) {
-      t.style.display = o ? "" : "none";
-      if (!o) {
+      t.style.display = r ? "" : "none";
+      if (!r) {
         try {
           window.SolisImproveClip?.reset?.();
         } catch (e) {}
@@ -421,16 +481,16 @@
         } catch (e) {}
       }
     }
-    if (i) i.style.display = o ? "none" : "";
-    if (n && o) {
+    if (i) i.style.display = r ? "none" : "";
+    if (n && r) {
       n.hidden = true;
       if (i) i.setAttribute("aria-expanded", "false");
     }
-    if (r) {
-      const n = o && e && e.style.display !== "none";
-      const s = o && t && t.style.display !== "none";
-      const c = !o && i && i.style.display !== "none";
-      r.classList.toggle("has-feature-tools", Boolean(n || s || c));
+    if (o) {
+      const n = r && e && e.style.display !== "none";
+      const s = r && t && t.style.display !== "none";
+      const a = !r && i && i.style.display !== "none";
+      o.classList.toggle("has-feature-tools", Boolean(n || s || a));
     }
   }
   window.SolisSilencer = {
@@ -440,9 +500,65 @@
     reset: resetSilencer,
     syncVisibility: syncVisibility,
     detectCuts: detectCuts,
-    isApplied: () => o,
-    getCuts: () => o ? (window.PreviewTimeline?.getSkipRegions?.() || []).slice() : [],
-    getRemovedSec: () => s
+    maybeOfferHabit: maybeOfferHabit,
+    isApplied: () => r,
+    getCuts: () => r ? (window.PreviewTimeline?.getSkipRegions?.() || []).slice() : [],
+    getRemovedSec: () => s,
+    applyManualCut: (e, t) => {
+      const i = Number(e);
+      const n = Number(t);
+      if (!Number.isFinite(i) || !Number.isFinite(n) || n - i < .2) return false;
+      if (!window.PreviewTimeline?.setSkipRegions) return false;
+      const o = {
+        start: Math.min(i, n),
+        end: Math.max(i, n),
+        kind: "remove"
+      };
+      if (window.SolisSilenceCutSuggest?.show) {
+        window.SolisSilenceCutSuggest.show({
+          source: "cut",
+          regions: [ o ],
+          onAccept: e => {
+            const t = r ? window.PreviewTimeline.getSkipRegions?.() || [] : [];
+            const o = mergeRegions([ ...t, ...e.map(e => ({
+              start: e.start,
+              end: e.end
+            })) ]);
+            commitSilencer(o, {
+              message: `Cut ${formatRemoved(n - i)}s.`,
+              reasoning: [ "Cutting that selection out.", "Updating playback skips." ]
+            });
+            const s = Math.min(i, n) <= .45;
+            try {
+              window.SolisMemory?.recordEditorialHabit?.(s ? "tight_open" : "silence", true, {
+                source: "manual_cut",
+                weight: s ? 1 : .4
+              });
+            } catch (e) {}
+          },
+          onReject: () => {
+            companionSpeak("Okay — kept that part.", [ "Leaving the selection in." ]);
+            try {
+              window.SolisMemory?.recordEditorialHabit?.("tight_open", false, {
+                source: "manual_cut"
+              });
+            } catch (e) {}
+          }
+        });
+        return true;
+      }
+      const s = r ? window.PreviewTimeline.getSkipRegions?.() || [] : [];
+      const a = mergeRegions([ ...s, {
+        start: o.start,
+        end: o.end
+      } ]);
+      if (!a.length) return false;
+      commitSilencer(a, {
+        message: `Cut ${formatRemoved(n - i)}s.`,
+        reasoning: [ "Cutting that selection out.", "Updating playback skips." ]
+      });
+      return true;
+    }
   };
   document.addEventListener("DOMContentLoaded", () => {
     const e = $("previewSilencerBtn");

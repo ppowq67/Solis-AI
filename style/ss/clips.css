@@ -12601,6 +12601,7 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
     position: absolute !important;
     inset: 0 !important;
     z-index: 2;
+    pointer-events: none !important;
     white-space: normal;
     visibility: visible !important;
     opacity: 1 !important;
@@ -12666,7 +12667,8 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
 
 #templateVideoPreview.library-splitscreen-preview > .sub-text-block,
 #templateVideoPreview.library-splitscreen-preview > .overlay-text-block,
-#templateVideoPreview > .sub-text-block {
+#templateVideoPreview > .sub-text-block,
+#templateVideoPreview > .overlay-text-block {
     z-index: 120 !important;
     pointer-events: auto !important;
     max-width: calc(100% - 28px) !important;
@@ -12689,8 +12691,11 @@ html:not([data-solis-cursor="off"]) .preview-placeholder {
 #templateVideoPreview.library-splitscreen-preview > .sub-text-block.selected,
 #templateVideoPreview.library-splitscreen-preview > .overlay-text-block.selected,
 #templateVideoPreview > .sub-text-block.selected,
+#templateVideoPreview > .overlay-text-block.selected,
 #templateVideoPreview > .sub-text-block.is-resizing,
-#templateVideoPreview > .sub-text-block.is-dragging {
+#templateVideoPreview > .sub-text-block.is-dragging,
+#templateVideoPreview > .overlay-text-block.is-resizing,
+#templateVideoPreview > .overlay-text-block.is-dragging {
     z-index: 220 !important;
 }
 

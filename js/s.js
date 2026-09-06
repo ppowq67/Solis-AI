@@ -326,16 +326,32 @@ function applyPreviewAudioState(e) {
     }
   });
   const n = document.getElementById("previewAudioToggle") || t.querySelector(".preview-audio-toggle");
-  if (n) n.hidden = true;
+  if (n) {
+    n.hidden = false;
+    n.classList.toggle("is-unmuted", !!_previewAudioEnabled);
+    n.setAttribute("aria-pressed", _previewAudioEnabled ? "true" : "false");
+    n.setAttribute("aria-label", _previewAudioEnabled ? "Mute preview" : "Unmute preview");
+    n.innerHTML = _previewAudioEnabled ? PREVIEW_AUDIO_ICON_ON : PREVIEW_AUDIO_ICON_MUTED;
+  }
 }
 
 function ensurePreviewAudioToggle(e) {
   const t = document.getElementById("previewAudioToggle");
-  if (t) t.hidden = true;
   const i = e || document.getElementById("templateVideoPreview");
-  _previewAudioEnabled = false;
+  if (t) {
+    t.hidden = false;
+    if (!t.dataset.boundAudio) {
+      t.dataset.boundAudio = "1";
+      t.addEventListener("click", e => {
+        e.preventDefault();
+        e.stopPropagation();
+        _previewAudioEnabled = !_previewAudioEnabled;
+        applyPreviewAudioState(i);
+      });
+    }
+  }
   if (i) applyPreviewAudioState(i);
-  return null;
+  return t;
 }
 
 const PreviewTimeline = (() => {
@@ -381,9 +397,9 @@ const PreviewTimeline = (() => {
   let $ = null;
   let O = 0;
   let j = null;
+  let z = false;
   let H = false;
-  let G = false;
-  const z = 220;
+  const G = 220;
   const V = 14;
   let q = null;
   let W = false;
@@ -733,7 +749,7 @@ const PreviewTimeline = (() => {
       clearTimeout(O);
       O = 0;
     }
-    G = false;
+    H = false;
   }
   function syncSegFocusClass() {
     if (!te) return;
@@ -1049,7 +1065,7 @@ const PreviewTimeline = (() => {
     if (!j || d === "segment") return;
     clearTimeout(O);
     O = 0;
-    if (isRankingEdit() && !G) return;
+    if (isRankingEdit() && !H) return;
     d = "segment";
     y = l ? !l.paused : false;
     if (l && !l.paused) l.pause();
@@ -1076,8 +1092,8 @@ const PreviewTimeline = (() => {
     clearSegHold();
     const i = getSegmentBounds();
     if (e < 0 || e >= i.length - 1) return;
+    z = false;
     H = false;
-    G = false;
     j = {
       index: e,
       pointerId: t.pointerId,
@@ -1088,9 +1104,9 @@ const PreviewTimeline = (() => {
     };
     O = setTimeout(() => {
       O = 0;
-      G = true;
+      H = true;
       j?.target?.classList.add("is-hold-ready");
-    }, z);
+    }, G);
   }
   function onSegmentPointerMove(e) {
     if (W) return;
@@ -1101,16 +1117,16 @@ const PreviewTimeline = (() => {
     const t = Math.abs(e.clientX - j.startX);
     if (d === "segment") {
       e.preventDefault();
-      if (t >= V) H = true;
-      if (!H) return;
+      if (t >= V) z = true;
+      if (!z) return;
       paintSegmentMove(e.clientX);
       return;
     }
     if (isRankingEdit()) {
-      if (G && t >= V) {
+      if (H && t >= V) {
         beginSegmentDrag();
         if (d === "segment") {
-          H = true;
+          z = true;
           paintSegmentMove(e.clientX);
         }
       }
@@ -1118,14 +1134,14 @@ const PreviewTimeline = (() => {
     }
     if (t >= V) {
       beginSegmentDrag();
-      H = true;
+      z = true;
       paintSegmentMove(e.clientX);
     }
   }
   function onSegmentPointerUp(e) {
     if (!j) return;
     const t = j;
-    const i = H;
+    const i = z;
     const n = t.hoverIndex;
     clearSegHold();
     t.target?.classList.remove("is-dragging", "is-hold-ready");
@@ -1834,7 +1850,7 @@ const PreviewTimeline = (() => {
           X = 0;
           if (!J || J.pointerId !== e.pointerId) return;
           J.held = true;
-        }, z);
+        }, G);
         return;
       }
       if (e.pointerType === "mouse" && e.button === 0) {
@@ -1851,7 +1867,7 @@ const PreviewTimeline = (() => {
           X = 0;
           if (!J || J.pointerId !== e.pointerId) return;
           J.held = true;
-        }, z);
+        }, G);
         if (e.target?.closest?.(".preview-timeline-segment-clip")) return;
         return;
       }
@@ -2100,7 +2116,7 @@ const PreviewTimeline = (() => {
     if (e) e.hidden = false;
     if (te) te.hidden = false;
     const t = document.getElementById("previewAudioToggle");
-    if (t) t.hidden = true;
+    if (t) t.hidden = false;
     try {
       if (typeof window.syncPreviewTimelineHookLane === "function") {
         window.syncPreviewTimelineHookLane();
@@ -2112,7 +2128,6 @@ const PreviewTimeline = (() => {
     if (e) e.hidden = true;
     if (te) te.hidden = true;
     const t = document.getElementById("previewAudioToggle");
-    if (t) t.hidden = true;
     const i = document.getElementById("previewTimelineHookLane");
     if (i) i.hidden = true;
     if (typeof PreviewCtxMenu !== "undefined") PreviewCtxMenu.close();
@@ -2147,7 +2162,7 @@ const PreviewTimeline = (() => {
     d = null;
     clearSegHold();
     j = null;
-    H = false;
+    z = false;
     W = false;
     if (X) {
       clearTimeout(X);
@@ -9632,7 +9647,8 @@ class ClipsStudio {
             selectAfter: false,
             applyFill: true,
             playAnim: false,
-            markSuggest: true,
+            markSuggest: false,
+            accepted: true,
             softClamp: true,
             previewText: i || null
           });
@@ -9646,7 +9662,8 @@ class ClipsStudio {
           secondary_type: e.splitscreen_secondary_type || (typeof splitscreenSecondaryType !== "undefined" ? splitscreenSecondaryType : "gameplay"),
           inverted: e.splitscreen_inverted != null ? Boolean(e.splitscreen_inverted) : typeof splitscreenInverted !== "undefined" ? splitscreenInverted : false,
           content_ratio: e.splitscreen_content_ratio ?? (typeof splitscreenContentRatio !== "undefined" ? splitscreenContentRatio : .5),
-          secondary_collapsed: e.splitscreen_secondary_collapsed != null ? Boolean(e.splitscreen_secondary_collapsed) : typeof splitscreenSecondaryCollapsed !== "undefined" ? splitscreenSecondaryCollapsed : false
+          secondary_collapsed: e.splitscreen_secondary_collapsed != null ? Boolean(e.splitscreen_secondary_collapsed) : typeof splitscreenSecondaryCollapsed !== "undefined" ? splitscreenSecondaryCollapsed : false,
+          markSuggest: false
         };
         window.ensureLibraryAiHookOverlay(n, t);
         requestAnimationFrame(() => {
@@ -9660,11 +9677,19 @@ class ClipsStudio {
       requestAnimationFrame(() => {
         try {
           const e = document.getElementById("templateVideoPreview");
-          if (!e || typeof window.markSubtitleSuggest !== "function") return;
-          const t = e.querySelector(".sub-text-block:not(.overlay-text-block)");
-          const i = e.querySelector('.overlay-text-block[data-ai-hook="1"]');
-          if (t) window.markSubtitleSuggest(t);
-          if (i) window.markSubtitleSuggest(i);
+          if (!e) return;
+          e.querySelectorAll("video.library-preview-video, video").forEach(e => {
+            if (e.closest("#splitscreenRoot")) return;
+            e.style.setProperty("pointer-events", "none", "important");
+            e.style.setProperty("z-index", "2", "important");
+          });
+          e.querySelectorAll(".sub-text-block, .overlay-text-block").forEach(t => {
+            t.classList.remove("sub-suggest", "sub-mem-pick");
+            t.dataset.subTouched = "1";
+            t.style.setProperty("pointer-events", "auto", "important");
+            t.style.setProperty("z-index", "120", "important");
+            e.appendChild(t);
+          });
         } catch (e) {}
       });
       return Boolean(t || n);
@@ -10397,11 +10422,11 @@ class ClipsStudio {
     o.playsInline = true;
     o.muted = true;
     o.autoplay = true;
-    o.preload = "auto";
+    o.preload = "metadata";
     o.setAttribute("playsinline", "");
     o.setAttribute("controlslist", "nodownload nofullscreen noremoteplayback noplaybackrate");
     o.disablePictureInPicture = true;
-    o.style.cssText = "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:transparent;z-index:2;display:block;visibility:visible;opacity:0;";
+    o.style.cssText = "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:transparent;z-index:2;display:block;visibility:visible;opacity:0;pointer-events:none;";
     o.removeAttribute("crossorigin");
     e.querySelectorAll("video").forEach(e => e.remove());
     if (!e.querySelector(".preview-skel")) {
@@ -10414,9 +10439,21 @@ class ClipsStudio {
     e.classList.remove("has-video");
     try {
       if (typeof PreviewTimeline !== "undefined") {
-        const e = this._resolveLibraryDurationSeconds(null, t) || (this._isCurrentLibraryRanking?.() ? 40 : 15);
+        const e = !!this._isCurrentLibraryRanking?.();
+        try {
+          PreviewTimeline.setRankingEditMode?.(e);
+        } catch (e) {}
+        if (!e) {
+          try {
+            PreviewTimeline.setClipOrder?.([ 1 ]);
+          } catch (e) {}
+          try {
+            PreviewTimeline.clearSplits?.();
+          } catch (e) {}
+        }
+        const i = this._resolveLibraryDurationSeconds(null, t) || (e ? 40 : 15);
         PreviewTimeline.attach(o, {
-          durationHint: e
+          durationHint: i
         });
         PreviewTimeline.show?.();
       }
@@ -10439,11 +10476,19 @@ class ClipsStudio {
       ensurePreviewAudioToggle(e);
       try {
         if (typeof PreviewTimeline !== "undefined") {
+          const e = !!this._isCurrentLibraryRanking?.();
+          try {
+            PreviewTimeline.setRankingEditMode?.(e);
+          } catch (e) {}
+          if (!e) {
+            try {
+              PreviewTimeline.clearSplits?.();
+            } catch (e) {}
+          }
           PreviewTimeline.attach(o);
           PreviewTimeline.show?.();
           if (typeof PreviewTimeline.scheduleFilmstripBuild === "function") {
-            PreviewTimeline.scheduleFilmstripBuild(80);
-            PreviewTimeline.scheduleFilmstripBuild(600);
+            PreviewTimeline.scheduleFilmstripBuild(280);
           }
         }
       } catch (e) {}
@@ -10700,7 +10745,8 @@ class ClipsStudio {
             selectAfter: false,
             applyFill: true,
             playAnim: false,
-            markSuggest: true,
+            markSuggest: false,
+            accepted: true,
             softClamp: true,
             previewText: i || null
           });
@@ -10708,9 +10754,16 @@ class ClipsStudio {
         requestAnimationFrame(() => {
           const e = document.getElementById("templateVideoPreview");
           const t = e?.querySelector(".sub-text-block:not(.overlay-text-block)");
-          if (t && typeof window.markSubtitleSuggest === "function") {
-            window.markSubtitleSuggest(t);
+          if (t) {
+            t.classList.remove("sub-suggest", "sub-mem-pick");
+            t.dataset.subTouched = "1";
+            t.style.setProperty("pointer-events", "auto", "important");
+            t.style.setProperty("z-index", "120", "important");
+            e.appendChild(t);
           }
+          e?.querySelectorAll("video.library-preview-video").forEach(e => {
+            e.style.setProperty("pointer-events", "none", "important");
+          });
         });
       }
     } catch (e) {
@@ -11831,27 +11884,35 @@ class ClipsStudio {
     if (a <= 0) {
       p = "No clips landed yet. Try again when the job finishes.";
     } else if (a === 1) {
-      p = r.length ? c ? `This clip holds up. ${c}` : "This clip holds up. Hook lands early and the thought is complete." : d ? `This one's soft. ${d} Keep it in the set anyway?` : "This one's soft. Keep it in the set anyway?";
+      p = r.length ? c ? `This clip holds up. ${c}` : "This clip holds up." : d ? `This one's soft. ${d} Keep it in the set anyway?` : "This one's soft. Keep it in the set anyway?";
     } else if (l) {
-      const e = n > a ? `You asked for ${n} clips. I found ${a} real moments, and all of them hold up.` : `You asked for ${n} clips. All ${a} clips are real moments.`;
-      p = c ? `${e} I'd ship every one. Strongest open: ${c}` : `${e} I'd ship every one.`;
+      const e = r.map(e => {
+        const t = String(e.reason || "").trim().replace(/\.$/, "");
+        return t ? `Clip ${e.batch_index}: ${t}.` : `Clip ${e.batch_index} holds up.`;
+      });
+      const t = n !== a ? `You asked for ${n}. All ${a} landed and hold up.` : `All ${a} clips hold up.`;
+      p = [ t, ...e, "I'd ship every one." ].join(" ");
     } else if (!r.length) {
-      p = d ? `No strong keep yet. Softest issue: ${d} Still want them visible?` : "No strong keep yet. Still want them visible?";
+      const e = o.map(e => {
+        const t = String(e.reason || "").trim().replace(/\.$/, "");
+        return t ? `Clip ${e.batch_index} soft: ${t}.` : `Clip ${e.batch_index} is soft.`;
+      });
+      p = [ `You asked for ${n}. ${a} landed — all soft.`, ...e, "Still want them visible?" ].join(" ");
     } else {
       const e = r.length;
       const t = o.length;
-      const i = e === 1 ? "moment" : "moments";
-      const a = t === 1 ? "is" : "are";
-      const l = this._formatCompanionIndices(s) || "none";
-      const u = o.map(e => e.batch_index).filter(Boolean).slice(0, 3).join(", ") || "the soft ones";
-      const m = [ `You asked for ${n} clips. This video only has ${e} real ${i}.`, `The other ${t} ${a} fine, not special.`, `I'd ship ${l}.` ];
-      if (c) m.push(c.endsWith(".") ? c : `${c}.`);
-      if (d) {
-        m.push(`Clip ${u} is soft (${d.replace(/\.$/, "")}). Hide them?`);
-      } else {
-        m.push("Hide the soft ones?");
-      }
-      p = m.join(" ");
+      const i = this._formatCompanionIndices(s) || "none";
+      const l = [ `You asked for ${n}. ${a} landed — ${e} ship-ready, ${t} soft.` ];
+      r.forEach(e => {
+        const t = String(e.reason || "").trim().replace(/\.$/, "");
+        l.push(t ? `Clip ${e.batch_index}: ${t}.` : `Clip ${e.batch_index} holds up.`);
+      });
+      o.forEach(e => {
+        const t = String(e.reason || "").trim().replace(/\.$/, "");
+        l.push(t ? `Clip ${e.batch_index} soft: ${t}.` : `Clip ${e.batch_index} is soft.`);
+      });
+      l.push(`I'd ship ${i}. Hide the soft ones?`);
+      p = l.join(" ");
     }
     const u = this._buildLocalReasoningSteps(i, n, a);
     const m = {
@@ -11922,47 +11983,54 @@ class ClipsStudio {
     return m;
   }
   _clipReasonFromItem(e, t) {
-    const i = e?.virality || {};
-    const n = String(this._whyFromVirality(i) || i.why || "").trim();
-    const r = String(i?.hook?.note || "").trim();
-    const o = String(i?.clip?.note || "").trim();
-    let s = String(i?.fix || "").trim().replace(/push toward\s*80:\s*/i, "").trim();
-    if (s && /^[a-z]/.test(s)) s = s.charAt(0).toUpperCase() + s.slice(1);
-    const a = String(e?.share_pack?.why || "").trim();
+    const i = /(proven format|grabs attention|driving engagement|you need to see this|wait for the ending)/i;
+    const scrub = e => {
+      const t = String(e || "").trim();
+      if (!t || i.test(t)) return "";
+      return t;
+    };
+    const n = e?.virality || {};
+    const r = scrub(this._whyFromVirality(n) || n.why || "");
+    const o = scrub(n?.hook?.note || "");
+    const s = scrub(n?.clip?.note || "");
+    let a = scrub(String(n?.fix || "").replace(/push toward\s*80:\s*/i, ""));
+    if (a && /^[a-z]/.test(a)) a = a.charAt(0).toUpperCase() + a.slice(1);
+    const l = scrub(e?.share_pack?.why || "");
     if (t) {
-      if (n && !/thin/i.test(n)) return n;
-      if (a) return a;
-      if (r) return r;
+      if (r && !/thin/i.test(r)) return r;
+      if (l) return l;
       if (o) return o;
+      if (s) return s;
       return "Hook lands early and the cut holds a complete thought.";
     }
-    if (s) return s;
-    if (n) return n;
+    if (a) return a;
     if (r) return r;
     if (o) return o;
-    return "Fine as filler, not a scroll-stopper.";
+    if (s) return s;
+    return "Fine as filler — soft open or incomplete thought.";
   }
   _buildLocalReasoningSteps(e, t, i) {
     const n = [];
     if (t > 0) {
-      n.push(`You asked for ${t} clips. Checking what actually landed.`);
+      n.push(`You asked for ${t}. ${i} landed — grading each one.`);
     }
+    e.forEach(e => {
+      if (e.keep) {
+        n.push(e.reason ? `Clip ${e.batch_index}: ${e.reason}` : `Clip ${e.batch_index}: keep.`);
+      } else {
+        n.push(e.reason ? `Clip ${e.batch_index} soft: ${e.reason}` : `Clip ${e.batch_index}: soft cut.`);
+      }
+    });
     const r = e.filter(e => e.keep);
     const o = e.filter(e => !e.keep);
-    r.slice(0, 2).forEach(e => {
-      n.push(e.reason ? `Clip ${e.batch_index}: ${e.reason}` : `Clip ${e.batch_index}: keep.`);
-    });
-    o.slice(0, 2).forEach(e => {
-      n.push(e.reason ? `Clip ${e.batch_index} soft: ${e.reason}` : `Clip ${e.batch_index}: soft cut.`);
-    });
     if (i > 1) {
       if (r.length && o.length) {
         n.push(`${r.length} worth shipping, ${o.length} better hidden.`);
       } else if (r.length) {
-        n.push(`All ${i} hold up. No weak cuts to hide.`);
+        n.push(`All ${i} hold up.`);
       }
     }
-    return n.slice(0, 5);
+    return n;
   }
   async _fetchCompanionVerdict(e) {
     try {
@@ -13873,24 +13941,41 @@ class ClipsStudio {
           u.subtitles_enabled = true;
           safeLog("Sending caption style:", u.caption_style);
         } else if (i && o) {
+          const e = (typeof window.SolisMemory?.getCaptions === "function" ? window.SolisMemory.getCaptions() : null) || window.SolisMemory?.readState?.()?.captions || {};
           u.caption_style = {
-            anim: "karaoke",
+            anim: e.anim || "karaoke",
+            font: e.font || undefined,
+            color: e.color || undefined,
+            highlight: e.highlight || undefined,
+            fill: e.fill || undefined,
             enabled: true,
             smart_captions: window.solisSmartCaptionsEnabled !== false,
             crisper_mode: window.solisSmartCaptionsEnabled !== false ? "verbatim" : "intended",
-            remove_fillers: false
+            remove_fillers: false,
+            ...e.words_per_chunk ? {
+              words_per_chunk: e.words_per_chunk
+            } : {}
           };
           u.subtitles_enabled = true;
-          safeLog("Subtitle block present — sending default caption style");
+          safeLog("Subtitle block present — sending memory/default caption style", u.caption_style);
         } else if (m?.auto_captions && !r) {
+          const e = (typeof window.SolisMemory?.getCaptions === "function" ? window.SolisMemory.getCaptions() : null) || window.SolisMemory?.readState?.()?.captions || {};
           u.caption_style = {
-            anim: "karaoke",
+            anim: e.anim || "karaoke",
+            font: e.font || undefined,
+            color: e.color || undefined,
+            highlight: e.highlight || undefined,
+            fill: e.fill || undefined,
             enabled: true,
             smart_captions: window.solisSmartCaptionsEnabled !== false,
             crisper_mode: window.solisSmartCaptionsEnabled !== false ? "verbatim" : "intended",
-            remove_fillers: false
+            remove_fillers: false,
+            ...e.words_per_chunk ? {
+              words_per_chunk: e.words_per_chunk
+            } : {}
           };
           u.subtitles_enabled = true;
+          safeLog("Plugin auto_captions — memory caption style", u.caption_style);
           safeLog("Plugin auto_captions on — default karaoke burn");
         } else {
           u.subtitles_enabled = false;

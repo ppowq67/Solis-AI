@@ -48,7 +48,7 @@
     <link rel="stylesheet" href="/style/ss/ios-pill-nav.css?v=29">
     <link rel="stylesheet" href="/style/ss/mobile-nav.css?v=43">
     <link rel="stylesheet" href="/style/ss/customize.css?v=27">
-    <link rel="stylesheet" href="/style/ss/clips.css?v=256">
+    <link rel="stylesheet" href="/style/ss/clips.css?v=258">
     <link rel="stylesheet" href="/style/ss/profile.css?v=34">
     <link rel="stylesheet" href="/style/ss/tasks-panel-v2-demo.css?v=18">
     <link rel="stylesheet" href="/style/ss/solis-gen-stage.css?v=54">
@@ -78,8 +78,8 @@
     <script src="/js/payment/platform-connections.js?v=7"></script>
     <script src="/js/ui/plan-selector.js?v=72"></script>
     <script src="/js/core/video-preview-system.js?v=2"></script>
-    <script src="/js/s_new/clip-card.js?v=28"></script>
-    <script src="/js/s.js?v=344"></script>
+    <script src="/js/s_new/clip-card.js?v=29"></script>
+    <script src="/js/s.js?v=347"></script>
     <script src="/js/s_new/silence-cut-suggest.js?v=4"></script>
     <script src="/js/s_new/silencer.js?v=14"></script>
     <script src="/js/s_new/improve-clip.js?v=30"></script>
@@ -15673,12 +15673,27 @@
             inner.style.fontWeight='inherit';
             inner.style.whiteSpace='normal';
         }
-        delete block.dataset.subTouched;
-        block.classList.remove('selected');
+        const asSuggest=style?.markSuggest===true;
+        block.classList.remove('selected','sub-suggest','sub-mem-pick');
+        if(asSuggest){
+            delete block.dataset.subTouched;
+        }else{
+            block.dataset.subTouched='1';
+        }
+        block.style.setProperty('pointer-events','auto','important');
+        block.style.setProperty('z-index','120','important');
+        if(block.parentNode===cont) cont.appendChild(block);
+        cont.querySelectorAll('video.library-preview-video').forEach((v)=>{
+            v.style.setProperty('pointer-events','none','important');
+        });
         requestAnimationFrame(()=>{
             window.placeAiHookInLayout(block, cont, style||{});
-            if(typeof markSubtitleSuggest==='function') markSubtitleSuggest(block);
-            else if(typeof window.markSubtitleSuggest==='function') window.markSubtitleSuggest(block);
+            if(asSuggest){
+                if(typeof markSubtitleSuggest==='function') markSubtitleSuggest(block);
+                else if(typeof window.markSubtitleSuggest==='function') window.markSubtitleSuggest(block);
+            }else{
+                block.classList.remove('sub-suggest','sub-mem-pick');
+            }
         });
         if(isNew){
             try{ if(window.clipsStudio) window.clipsStudio._libraryHookCleared=false; }catch(_){}

@@ -362,17 +362,13 @@
     c?.addEventListener("pause", () => {
       if (r === c) r = null;
     });
-    s?.addEventListener("mouseenter", () => {
-      ensureSrc();
-      if (c && c.paused) playClip();
-    });
-    s?.addEventListener("mouseleave", () => {
-      if (c) {
-        c.pause();
-        s?.classList.remove("has-video-playing");
-        showPoster();
-      }
-    });
+    if (c) {
+      c.removeAttribute("src");
+      c.load?.();
+      c.style.display = "none";
+    }
+    s?.classList.remove("has-video-playing", "has-clip");
+    showPoster();
     e.addEventListener("click", r => {
       const s = r.target.closest(".scc-res-pill");
       if (s) {

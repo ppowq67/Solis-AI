@@ -127,6 +127,8 @@ class GenerationProgressSpinner {
     this._completeSoundUnlocked = false;
     this._completeSoundPlayedFor = new Set;
     this._previewOpenedFor = new Set;
+    this._feelTimer = null;
+    this._feltDisplayPct = 0;
     this._completeAudio = null;
     this._audioCtx = null;
     this._terminalCheckTimers = new Map;
@@ -1173,6 +1175,7 @@ class GenerationProgressSpinner {
     this._ensureDomRefs();
     if (!this.wrapper || !this.progressCircle) return;
     if (this.activeGenerations.size === 0) {
+      this._stopFeelProgress();
       if (this.optimisticPending) {
         this.displayProgress(this._optimisticProgress || 0, this._optimisticMessage || "Starting…");
       }
@@ -1182,7 +1185,47 @@ class GenerationProgressSpinner {
     if (e) {
       const [t, s] = e;
       this._applyPipelineFromGeneration(s, t);
-      this.displayProgress(s.progress, s.message, s.queueInfo || null);
+      this._ensureFeelProgress();
+      const i = this._feltProgressFor(s);
+      this.displayProgress(i, s.message, s.queueInfo || null);
+    }
+  }
+  _feltProgressFor(e) {
+    if (!e) return 0;
+    const t = Math.max(0, Number(e.progress) || 0);
+    const s = this.showQueueWaitTask || this._shouldShowQueueWaitTask(e.message || "", e.queueInfo || null);
+    if (s) return Math.min(t, 2);
+    if (t >= 28) return t;
+    const i = e.startTime || e._lastProgressAt || Date.now();
+    const r = Math.max(0, (Date.now() - i) / 1e3);
+    const n = Math.min(26, 4 + r * 2.8 + Math.min(6, r * .22));
+    const o = Math.max(t, n);
+    this._feltDisplayPct = o;
+    return o;
+  }
+  _ensureFeelProgress() {
+    if (this._feelTimer) return;
+    this._feelTimer = setInterval(() => {
+      if (this.activeGenerations.size === 0) {
+        this._stopFeelProgress();
+        return;
+      }
+      const e = [ ...this.activeGenerations.values() ].some(e => {
+        const t = Number(e.progress) || 0;
+        return t < 28 && !this._shouldShowQueueWaitTask(e.message || "", e.queueInfo || null);
+      });
+      if (!e) {
+        this._stopFeelProgress();
+        this._syncDisplayFromActive();
+        return;
+      }
+      this._syncDisplayFromActive();
+    }, 350);
+  }
+  _stopFeelProgress() {
+    if (this._feelTimer) {
+      clearInterval(this._feelTimer);
+      this._feelTimer = null;
     }
   }
   async syncFromServer(e = {}) {
@@ -1575,6 +1618,7 @@ class GenerationProgressSpinner {
     this.saveToLocalStorage(e);
     this._syncGeneratingBadge();
     this.updateProgress(e, 0, t);
+    this._ensureFeelProgress();
     this.startPolling();
     this.verifyWebSocketAccess(e, t => {
       if (!t) {
@@ -1657,6 +1701,7 @@ class GenerationProgressSpinner {
     }
     this._syncCancelLockOnSubmitButton(t, s);
     this._ensureDomRefs();
+    this._ensureFeelProgress();
     this._syncDisplayFromActive();
   }
   _isCancelLockedStage(e = 0, t = "") {
@@ -1720,7 +1765,10 @@ class GenerationProgressSpinner {
     const i = this._cleanMessage(t);
     this._setQueueWaitVisible(this._shouldShowQueueWaitTask(i, s));
     const r = this.showQueueWaitTask;
-    const n = r ? Math.min(e, 2) : e;
+    let n = r ? Math.min(e, 2) : e;
+    if (!r && n < 100) {
+      n = Math.min(99, Math.round(n));
+    }
     const o = this._friendlyProgressLabel(n, i, s);
     this.wrapper.style.display = "flex";
     const a = n >= 100;

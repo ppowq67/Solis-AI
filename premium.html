@@ -1091,6 +1091,30 @@
     .plan-features li.disabled .check { background: rgba(200,185,170,0.2); color: var(--text-faint); }
     .plan-features li.disabled .check svg { stroke: currentColor; }
     .plan-features li b { font-weight: 700; color: var(--text-primary); }
+    .plan-features li.is-hero .plan-feat-hero {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 0;
+    }
+    .plan-features li.is-hero .plan-feat-hero-main {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+    }
+    .plan-features li.is-hero .plan-feat-hero-main b {
+      font-weight: 800;
+      font-family: var(--font-numeric);
+      letter-spacing: -0.03em;
+    }
+    .plan-features li.is-hero .plan-feat-hero-sub {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 500;
+      line-height: 1.35;
+    }
     .plan-features li .plan-feat-text {
       display: inline-flex;
       align-items: center;
@@ -2453,9 +2477,14 @@
           <div class="plan-divider"></div>
           <p class="plan-features-label">What&apos;s included</p>
           <ul class="plan-features">
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>75</b> uploads per month</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>3</b> clips per upload</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>5</b> per day</li>
+            <li class="is-hero">
+              <span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>
+              <span class="plan-feat-hero">
+                <span class="plan-feat-hero-main">Up to <b>225</b> clips/month</span>
+                <span class="plan-feat-hero-sub">75 uploads · up to 3 clips/upload</span>
+              </span>
+            </li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>5</b> uploads/day</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><span class="plan-feat-text"><b>Any video length</b><button type="button" class="plan-tip" aria-label="About video length on Basic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v5"/><path d="M12 16h.01"/></svg><span class="plan-tip-bubble">AI analyzes up to 30 minutes of each upload to find clips. Longer videos are supported; only that window is reviewed.</span></button></span></li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>No watermark</b> on exports</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>Unlimited</b> clips in library</li>
@@ -2489,9 +2518,14 @@
           <div class="plan-divider"></div>
           <p class="plan-features-label">Everything in Basic, plus</p>
           <ul class="plan-features">
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>200</b> uploads per month</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>5</b> clips per upload</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>10</b> per day</li>
+            <li class="is-hero">
+              <span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>
+              <span class="plan-feat-hero">
+                <span class="plan-feat-hero-main">Up to <b>1,000</b> clips/month</span>
+                <span class="plan-feat-hero-sub">200 uploads · up to 5 clips/upload</span>
+              </span>
+            </li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>10</b> uploads/day</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><span class="plan-feat-text"><b>Any video length</b><button type="button" class="plan-tip" aria-label="About video length on Prime"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v5"/><path d="M12 16h.01"/></svg><span class="plan-tip-bubble">AI analyzes up to 120 minutes of each upload to find clips. Longer videos are supported; only that window is reviewed.</span></button></span></li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>Max quality</b> mode</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>Multi Task</b></li>
@@ -2520,8 +2554,14 @@
           <div class="plan-divider"></div>
           <p class="plan-features-label">Everything in Prime, plus</p>
           <ul class="plan-features">
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>400</b> uploads per month</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>20</b> per day</li>
+            <li class="is-hero">
+              <span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>
+              <span class="plan-feat-hero">
+                <span class="plan-feat-hero-main">Up to <b>2,000</b> clips/month</span>
+                <span class="plan-feat-hero-sub">400 uploads · up to 5 clips/upload</span>
+              </span>
+            </li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>20</b> uploads/day</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><span class="plan-feat-text"><b>Any video length</b><button type="button" class="plan-tip" aria-label="About video length on Elite"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v5"/><path d="M12 16h.01"/></svg><span class="plan-tip-bubble">AI analyzes up to 240 minutes of each upload to find clips. Longer videos are supported; only that window is reviewed.</span></button></span></li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>Max quality</b> mode</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>Multi Task</b></li>
@@ -2922,6 +2962,7 @@
       }
       var comparisonData = [
         { group: 'Uploads', rows: [
+          { feature: 'Clips per month (up to)',     free: { t: 'text', v: '15' }, basic: { t: 'text', v: '225' }, prime: { t: 'text', v: '1,000' }, elite: { t: 'text', v: '2,000' } },
           { feature: 'Monthly uploads',             free: { t: 'text', v: '15 per month' }, basic: { t: 'text', v: '75 per month' },  prime: { t: 'text', v: '200 per month' }, elite: { t: 'text', v: '400 per month' } },
           { feature: 'Clips per upload',            free: { t: 'text', v: '1' }, basic: { t: 'text', v: 'Up to 3' },  prime: { t: 'text', v: 'Up to 5' }, elite: { t: 'text', v: 'Up to 5' } },
           { feature: 'Daily pace',                  free: { t: 'text', v: 'Up to 1/day' }, basic: { t: 'text', v: 'Up to 5/day' },  prime: { t: 'text', v: 'Up to 10/day' }, elite: { t: 'text', v: 'Up to 20/day' } },

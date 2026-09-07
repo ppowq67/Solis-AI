@@ -716,16 +716,43 @@
     .trust-badge strong { color: var(--text-primary); font-weight: 700; }
     @media (max-width: 640px) { .trust-badges { gap: 14px 18px; } .trust-badge { font-size: 11.5px; } }
 
-    .billing-wrap { display: flex; align-items: center; justify-content: center; margin-top: 8px; }
-
-    .billing-label { transition: color 0.2s; }
+    .billing-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .billing-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.2s;
+    }
     .billing-label.is-active { color: var(--text-primary); font-weight: 700; }
+    .billing-label .save-chip {
+      display: inline-block;
+      margin-left: 6px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: var(--solis-deep);
+      background: rgba(255, 106, 0, 0.12);
+      vertical-align: middle;
+    }
     .toggle-track {
       width: 42px; height: 23px; border-radius: 100px;
-      background: var(--ink); position: relative; border: none; flex-shrink: 0;
+      background: rgba(0,0,0,0.18); position: relative; border: none; flex-shrink: 0;
       transition: background 0.2s;
+      cursor: pointer;
+      padding: 0;
     }
-    .toggle-knob { position: absolute; top: 3px; left: 3px; width: 17px; height: 17px; border-radius: 50%; background: #fff; transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1); }
+    .toggle-track[aria-checked="true"] { background: var(--ink); }
+    .toggle-knob { position: absolute; top: 3px; left: 3px; width: 17px; height: 17px; border-radius: 50%; background: #fff; transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 1px 2px rgba(0,0,0,0.18); }
     .toggle-track[aria-checked="true"] .toggle-knob { transform: translateX(19px); }
     .hero-offer {
       margin: 0 auto 8px;
@@ -2075,6 +2102,14 @@
         <h1 class="hero-title">Simple pricing. <span class="text-solis-gradient">Serious output.</span></h1>
         <p class="hero-subtitle">Start free. Scale when clips are part of your workflow.</p>
         <p class="hero-offer">40% off Basic &amp; Prime <span>for your first 2 months</span></p>
+        <div class="billing-wrap" role="group" aria-label="Billing period">
+          <span class="billing-label is-active" data-interval="month">Monthly</span>
+          <button type="button" class="toggle-track" id="billingToggle" role="switch" aria-checked="false" aria-label="Switch to annual billing">
+            <span class="toggle-knob" aria-hidden="true"></span>
+          </button>
+          <span class="billing-label" data-interval="year">Annual <span class="save-chip">Save ~17%</span></span>
+        </div>
+        <p class="savings-callout" id="billingSavings" style="opacity:0" aria-hidden="true">Pay once a year — same limits, lower effective rate</p>
       </div>
     </section>
 
@@ -2143,7 +2178,7 @@
           <ul class="plan-features">
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>200</b> uploads per month</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>5</b> clips per upload</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>10</b> per day</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>10</b>uploads per day</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>AI processes up to <b>120 minutes</b> per upload</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>Max quality</b> mode</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>Unlimited</b> clips in library</li>
@@ -2729,9 +2764,9 @@
       });
     })();
   </script>
-  <script src="/js/payment/payment-flow.js?v=16"></script>
+  <script src="/js/payment/payment-flow.js?v=17"></script>
   <script src="/js/s_new/qwqs.js?v=7"></script>
-  <script src="/js/payment/premium-page.js?v=7"></script>
+  <script src="/js/payment/premium-page.js?v=8"></script>
   <script>
     (function () {
       var params = new URLSearchParams(window.location.search);

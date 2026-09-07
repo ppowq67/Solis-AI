@@ -7476,7 +7476,17 @@ class ClipsStudio {
     try {
       this.bindEvents();
       this.loadTemplates();
-      await this.loadLibraryItems();
+      if (typeof this._hydrateLibraryFromSessionCache === "function") {
+        this._hydrateLibraryFromSessionCache();
+      }
+      if ((!this.libraryItems || this.libraryItems.length === 0) && typeof this.loadLibraryItemsFromStorage === "function") {
+        this.loadLibraryItemsFromStorage();
+      } else if (this.libraryItems && this.libraryItems.length > 0) {
+        this.updateLibraryView();
+      }
+      await this.loadLibraryItems({
+        soft: true
+      });
       await this.loadProcessingItems();
       this.initialized = true;
       this.enforceUrlButtonRateLimitOnLoad();
@@ -15617,9 +15627,29 @@ class ClipsStudio {
   async loadLibraryItems(e = {}) {
     const t = e.force === true;
     const i = 5 * 60 * 1e3;
-    const n = Array.isArray(this.libraryItems) && this.libraryItems.length > 0;
-    const r = Array.isArray(this.libraryCollections) && this.libraryCollections.length > 0;
+    let n = Array.isArray(this.libraryItems) && this.libraryItems.length > 0;
+    let r = Array.isArray(this.libraryCollections) && this.libraryCollections.length > 0;
     const o = this._libraryLastLoaded && Date.now() - this._libraryLastLoaded < i;
+    if (!n && typeof this._hydrateLibraryFromSessionCache === "function") {
+      this._hydrateLibraryFromSessionCache();
+      n = Array.isArray(this.libraryItems) && this.libraryItems.length > 0;
+      r = Array.isArray(this.libraryCollections) && this.libraryCollections.length > 0;
+    }
+    if (!n) {
+      try {
+        const e = localStorage.getItem("clipsLibrary");
+        if (e) {
+          const t = JSON.parse(e);
+          if (Array.isArray(t) && t.length) {
+            this.libraryItems = t.map(e => ({
+              ...e,
+              timestamp: e.timestamp ? new Date(e.timestamp) : new Date
+            }));
+            n = true;
+          }
+        }
+      } catch (e) {}
+    }
     if (!t && n && o) {
       if (this.libraryPreviewModalOpen) this._libraryRefreshPending = true; else this.updateLibraryView();
       return;
@@ -15627,7 +15657,9 @@ class ClipsStudio {
     const s = document.getElementById("libraryGrid");
     const a = !!(s && s.querySelector(".library-card, .library-collection-folder"));
     const l = e.soft === true || n || r || a || Array.isArray(this.processingItems) && this.processingItems.length > 0;
-    if (!l) {
+    if ((n || r) && !a && !this.libraryPreviewModalOpen) {
+      this.updateLibraryView();
+    } else if (!l) {
       this.showLibrarySkeleton(6);
     }
     try {
@@ -16988,7 +17020,10 @@ class ClipsStudio {
     }
   }
   manualRefresh() {
-    this.loadLibraryItems();
+    this.loadLibraryItems({
+      soft: true,
+      force: true
+    });
     this.loadProcessingItems();
     showNotification("Library refreshed", "info");
   }

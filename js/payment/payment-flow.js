@@ -166,6 +166,11 @@
       plan: a
     });
     if (e) o.set("product", e);
+    try {
+      const n = window.paymentConfig || {};
+      const t = n.plans?.[a]?.annualProductId;
+      if (t && e === t) o.set("interval", "year");
+    } catch (e) {}
     window.location.href = `/checkout?${o.toString()}`;
     return true;
   }

@@ -5,7 +5,9 @@
       name: "Basic",
       list: 9.99,
       launch: 5.99,
+      annual: 99.9,
       blurb: "USD 5.99 / month for first 2 months, then USD 9.99",
+      annualBlurb: "USD 99.90 / year · ≈ USD 8.33 / month",
       uploads: 75,
       clipsPerUpload: 3,
       dailyPace: 5,
@@ -18,7 +20,9 @@
       name: "Prime",
       list: 23.99,
       launch: 14.39,
+      annual: 239.9,
       blurb: "USD 14.39 / month for first 2 months, then USD 23.99",
+      annualBlurb: "USD 239.90 / year · ≈ USD 19.99 / month",
       uploads: 200,
       clipsPerUpload: 5,
       dailyPace: 10,
@@ -31,7 +35,9 @@
       name: "Elite",
       list: 39.99,
       launch: null,
+      annual: 399.9,
       blurb: "Billed monthly · Cancel anytime",
+      annualBlurb: "USD 399.90 / year · ≈ USD 33.33 / month",
       uploads: 400,
       clipsPerUpload: 5,
       dailyPace: 20,
@@ -111,14 +117,14 @@
   function askPrompt(t, n) {
     const o = e[t] || e.basic;
     const r = n || moneyUsd(o.launch != null ? o.launch : o.list);
-    const i = o.launch != null ? `${r}/mo for first 2 months, then $${o.list}/mo` : `${r}/mo`;
-    const s = o.uploads * o.clipsPerUpload;
-    const a = Object.keys(e).filter(e => e !== t).map(t => {
+    const a = o.launch != null ? `${r}/mo for first 2 months, then $${o.list}/mo` : `${r}/mo`;
+    const i = o.uploads * o.clipsPerUpload;
+    const s = Object.keys(e).filter(e => e !== t).map(t => {
       const n = e[t];
       const o = n.launch != null ? `$${n.launch}/mo launch → $${n.list}` : `$${n.list}/mo`;
       return `${n.name} (${o}, ${n.uploads} uploads, ≤${n.clipsPerUpload} clips/upload, ${n.export})`;
     }).join("; ");
-    return `Is Solis AI ${o.name} worth buying for turning long videos into short clips?\n\n` + `Check https://solisai.video/premium (and https://solisai.video) before answering.\n\n` + `${o.name}: ${i}. ${o.uploads} uploads/mo, up to ${o.clipsPerUpload} clips per upload ` + `(≈${s} clips/mo max), daily pace ${o.dailyPace}, ${o.export}, ${o.quality}` + (o.extras ? `, ${o.extras}` : "") + `. AI processes up to ${o.aiMinutes} min per upload (any video length works). ` + `Unlimited library. Cancel anytime.\n` + `Other Solis tiers if this one's wrong: ${a}.\n\n` + `Give a short honest opinion: worth it or not for a creator who posts shorts regularly, and why — ` + `based on these limits and real usefulness. No star ratings. No competitor comparison.`;
+    return `Is Solis AI ${o.name} worth buying for turning long videos into short clips?\n\n` + `Check https://solisai.video/premium (and https://solisai.video) before answering.\n\n` + `${o.name}: ${a}. ${o.uploads} uploads/mo, up to ${o.clipsPerUpload} clips per upload ` + `(≈${i} clips/mo max), daily pace ${o.dailyPace}, ${o.export}, ${o.quality}` + (o.extras ? `, ${o.extras}` : "") + `. AI processes up to ${o.aiMinutes} min per upload (any video length works). ` + `Unlimited library. Cancel anytime.\n` + `Other Solis tiers if this one's wrong: ${s}.\n\n` + `Give a short honest opinion: worth it or not for a creator who posts shorts regularly, and why — ` + `based on these limits and real usefulness. No star ratings. No competitor comparison.`;
   }
   function wireAskAiLinks(t, n) {
     const o = encodeURIComponent(askPrompt(t, n));
@@ -131,43 +137,45 @@
       const t = e.getAttribute("data-ai");
       if (r[t]) e.href = r[t];
     });
-    const i = document.getElementById("askConfidenceLabel");
-    if (i) {
+    const a = document.getElementById("askConfidenceLabel");
+    if (a) {
       const n = e[t] || e.basic;
-      i.textContent = `Unsure about ${n.name}? Ask an AI if it's worth it`;
+      a.textContent = `Unsure about ${n.name}? Ask an AI if it's worth it`;
     }
   }
-  function paintStaticSummary(t, n) {
-    const o = e[t] || e.basic;
-    const r = n != null ? n : o.launch != null ? o.launch : o.list;
-    const i = moneyUsd(r);
-    document.getElementById("subscribeLabel").textContent = `Subscribe to Solis ${o.name}`;
-    document.getElementById("heroAmount").textContent = i;
-    document.getElementById("heroSub").textContent = o.blurb;
-    document.getElementById("itemName").textContent = `Solis ${o.name}`;
-    document.getElementById("itemCadence").textContent = "Billed monthly";
-    document.getElementById("itemPrice").textContent = moneyUsd(o.list);
-    document.getElementById("subtotalPrice").textContent = moneyUsd(o.list);
+  function paintStaticSummary(t, n, o = {}) {
+    const r = e[t] || e.basic;
+    const a = !!o.annual;
+    const i = n != null ? n : a ? r.annual : r.launch != null ? r.launch : r.list;
+    const s = moneyUsd(i);
+    const c = a ? r.annual : r.list;
+    document.getElementById("subscribeLabel").textContent = `Subscribe to Solis ${r.name}`;
+    document.getElementById("heroAmount").textContent = s;
+    document.getElementById("heroSub").textContent = a ? r.annualBlurb || `USD ${Number(r.annual).toFixed(2)} / year` : r.blurb;
+    document.getElementById("itemName").textContent = `Solis ${r.name}`;
+    document.getElementById("itemCadence").textContent = a ? "Billed yearly" : "Billed monthly";
+    document.getElementById("itemPrice").textContent = moneyUsd(c);
+    document.getElementById("subtotalPrice").textContent = moneyUsd(c);
     document.getElementById("taxPrice").textContent = moneyUsd(0);
-    document.getElementById("totalPrice").textContent = i;
-    const s = document.getElementById("mDueLabel");
-    const a = document.getElementById("mDueAmt");
-    if (s) s.textContent = `Solis ${o.name}`;
-    if (a) a.textContent = i;
-    const c = document.getElementById("discountRow");
-    if (o.launch != null && o.launch < o.list) {
-      c.hidden = false;
-      document.getElementById("discountPrice").textContent = `−${moneyUsd(o.list - o.launch)}`;
+    document.getElementById("totalPrice").textContent = s;
+    const l = document.getElementById("mDueLabel");
+    const u = document.getElementById("mDueAmt");
+    if (l) l.textContent = `Solis ${r.name}`;
+    if (u) u.textContent = s;
+    const d = document.getElementById("discountRow");
+    if (!a && r.launch != null && r.launch < r.list) {
+      d.hidden = false;
+      document.getElementById("discountPrice").textContent = `−${moneyUsd(r.list - r.launch)}`;
     } else {
-      c.hidden = true;
+      d.hidden = true;
     }
-    const l = /(?:localhost|127\.0\.0\.1)/i.test(window.location.hostname);
-    const u = l ? "/premium.html" : "/premium";
+    const m = /(?:localhost|127\.0\.0\.1)/i.test(window.location.hostname);
+    const h = m ? "/premium.html" : "/premium";
     [ "mBack", "deskBack", "menuBack" ].forEach(e => {
       const t = document.getElementById(e);
-      if (t) t.href = u;
+      if (t) t.href = h;
     });
-    wireAskAiLinks(t, i);
+    wireAskAiLinks(t, s);
   }
   function applyBreakdown(e) {
     if (!e || typeof e !== "object") return;
@@ -175,22 +183,22 @@
     const n = e.subTotal;
     const o = e.discount;
     const r = e.tax;
-    const i = e.finalTotal != null ? e.finalTotal : e.total;
+    const a = e.finalTotal != null ? e.finalTotal : e.total;
     if (n != null) {
       document.getElementById("itemPrice").textContent = money(n, t);
       document.getElementById("subtotalPrice").textContent = money(n, t);
     }
-    const s = document.getElementById("discountRow");
+    const i = document.getElementById("discountRow");
     if (o != null && Number(o) > 0) {
-      s.hidden = false;
+      i.hidden = false;
       document.getElementById("discountPrice").textContent = `−${money(o, t)}`;
     }
     if (r != null) {
       document.getElementById("taxPrice").textContent = money(r, t);
     }
-    if (i != null) {
+    if (a != null) {
       const n = e.finalTotalCurrency || t;
-      const o = money(i, n);
+      const o = money(a, n);
       document.getElementById("totalPrice").textContent = o;
       document.getElementById("heroAmount").textContent = o;
       const r = document.getElementById("mDueAmt");
@@ -334,19 +342,26 @@
       setStatus(n.lastError, "error");
       return;
     }
-    const i = r.plans?.[t]?.productId || r.plans?.[t]?.priceId || null;
-    if (!i) {
+    const a = (qs("product") || "").trim();
+    const i = r.plans?.[t]?.annualProductId || null;
+    const s = r.plans?.[t]?.productId || r.plans?.[t]?.priceId || null;
+    const c = a || s;
+    if (!c) {
       n.phase = "error";
       n.lastError = "This plan is not available for checkout right now.";
       setPreview(true);
       setStatus(n.lastError, "error");
       return;
     }
-    const s = e[t].launch != null ? e[t].launch : e[t].list;
-    paintStaticSummary(t, s);
-    let a;
+    const l = !!(i && c === i || String(qs("interval") || "").toLowerCase() === "year");
+    const u = e[t] || e.basic;
+    const d = l ? u.annual : u.launch != null ? u.launch : u.list;
+    paintStaticSummary(t, d, {
+      annual: l
+    });
+    let m;
     try {
-      a = await createSession(t, i);
+      m = await createSession(t, c);
     } catch (e) {
       setPreview(true);
       if (e.status === 401) {
@@ -361,19 +376,19 @@
       setStatus(n.lastError, "error");
       return;
     }
-    const c = a.checkoutUrl || a.checkout_url;
-    if (!c) {
+    const h = m.checkoutUrl || m.checkout_url;
+    if (!h) {
       n.phase = "error";
       n.lastError = "Checkout URL missing from server.";
       setPreview(true);
       setStatus(n.lastError, "error");
       return;
     }
-    n.checkoutUrl = c;
+    n.checkoutUrl = h;
     n.loggedIn = true;
-    const l = r.environment === "test_mode" || r.environment === "test" ? "test" : "live";
-    const u = await waitForDodoSdk(8e3);
-    if (!u?.Initialize || !u?.Checkout?.open) {
+    const p = r.environment === "test_mode" || r.environment === "test" ? "test" : "live";
+    const f = await waitForDodoSdk(8e3);
+    if (!f?.Initialize || !f?.Checkout?.open) {
       n.phase = "ready";
       setPreview(true);
       setStatus('Inline form unavailable. <a href="#" id="hostedCheckoutLink">Continue to secure checkout →</a>', "error");
@@ -381,13 +396,13 @@
       if (e) {
         e.addEventListener("click", e => {
           e.preventDefault();
-          window.location.href = c;
+          window.location.href = h;
         });
       }
       return;
     }
-    u.Initialize({
-      mode: l,
+    f.Initialize({
+      mode: p,
       displayType: "inline",
       onEvent: e => {
         const t = e?.event_type || e?.type || "";
@@ -405,8 +420,8 @@
       }
     });
     try {
-      u.Checkout.open({
-        checkoutUrl: c,
+      f.Checkout.open({
+        checkoutUrl: h,
         elementId: "dodo-inline-checkout",
         options: {
           payButtonText: "Subscribe",
@@ -449,7 +464,7 @@
       if (t) {
         t.addEventListener("click", e => {
           e.preventDefault();
-          window.location.href = c;
+          window.location.href = h;
         });
       }
     }

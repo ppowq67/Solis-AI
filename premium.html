@@ -1091,6 +1091,86 @@
     .plan-features li.disabled .check { background: rgba(200,185,170,0.2); color: var(--text-faint); }
     .plan-features li.disabled .check svg { stroke: currentColor; }
     .plan-features li b { font-weight: 700; color: var(--text-primary); }
+    .plan-features li .plan-feat-text {
+      display: inline-flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 5px;
+      min-width: 0;
+    }
+    .plan-tip {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,0.12);
+      background: rgba(255,255,255,0.9);
+      color: var(--text-muted);
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 800;
+      line-height: 1;
+      cursor: help;
+      flex-shrink: 0;
+      padding: 0;
+      margin: 0;
+      vertical-align: middle;
+    }
+    .plan-tip:hover,
+    .plan-tip:focus-visible {
+      color: var(--solis-deep);
+      border-color: rgba(249,115,22,0.4);
+      background: rgba(249,115,22,0.08);
+      outline: none;
+    }
+    .plan-tip-bubble {
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 8px);
+      transform: translateX(-50%) translateY(4px);
+      width: min(220px, 70vw);
+      padding: 9px 11px;
+      border-radius: 10px;
+      background: #1a1410;
+      color: rgba(255,255,255,0.92);
+      font-size: 11.5px;
+      font-weight: 500;
+      line-height: 1.4;
+      letter-spacing: -0.01em;
+      text-align: left;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.22);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+      z-index: 20;
+    }
+    .plan-tip-bubble::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border: 5px solid transparent;
+      border-top-color: #1a1410;
+    }
+    .plan-tip:hover .plan-tip-bubble,
+    .plan-tip:focus-visible .plan-tip-bubble,
+    .plan-tip:focus-within .plan-tip-bubble {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
+    }
+    .plan-card.prime .plan-tip-bubble,
+    .plan-card[data-plan="elite"] .plan-tip-bubble {
+      z-index: 30;
+    }
+    @media (max-width: 860px) {
+      .plan-tip-bubble { width: min(200px, 64vw); font-size: 11px; }
+    }
 
     .pricing-footnote { text-align: center; margin-top: 28px; font-size: 12.5px; color: var(--text-muted); max-width: 580px; margin-left: auto; margin-right: auto; line-height: 1.6; }
     .pricing-footnote a { color: var(--solis); }
@@ -2377,7 +2457,7 @@
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>75</b> uploads per month</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>3</b> clips per upload</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>5</b> per day</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>AI processes up to <b>30 minutes</b> per upload</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><span class="plan-feat-text"><b>Any video length</b><button type="button" class="plan-tip" aria-label="About video length on Basic"><span aria-hidden="true">!</span><span class="plan-tip-bubble">AI reviews up to 30 minutes of the video to find clips. Longer links are fine — nothing to stress about.</span></button></span></li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>No watermark</b> on exports</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>Unlimited</b> clips in library</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Export videos in <b>1080p</b></li>
@@ -2413,7 +2493,7 @@
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>200</b> uploads per month</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>5</b> clips per upload</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>10</b> per day</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>AI processes up to <b>120 minutes</b> per upload</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><span class="plan-feat-text"><b>Any video length</b><button type="button" class="plan-tip" aria-label="About video length on Prime"><span aria-hidden="true">!</span><span class="plan-tip-bubble">AI reviews up to 120 minutes of the video to find clips. Longer links are fine — nothing to stress about.</span></button></span></li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>Max quality</b> mode</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>Multi Task</b></li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Export videos in <b>1440p</b></li>
@@ -2443,7 +2523,7 @@
           <ul class="plan-features">
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>400</b> uploads per month</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>20</b> per day</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>AI processes up to <b>240 minutes</b> per upload</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><span class="plan-feat-text"><b>Any video length</b><button type="button" class="plan-tip" aria-label="About video length on Elite"><span aria-hidden="true">!</span><span class="plan-tip-bubble">AI reviews up to 240 minutes of the video to find clips. Longer links are fine — nothing to stress about.</span></button></span></li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>Max quality</b> mode</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>Multi Task</b></li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Priority render queue</li>
@@ -2846,7 +2926,7 @@
           { feature: 'Monthly uploads',             free: { t: 'text', v: '15 per month' }, basic: { t: 'text', v: '75 per month' },  prime: { t: 'text', v: '200 per month' }, elite: { t: 'text', v: '400 per month' } },
           { feature: 'Clips per upload',            free: { t: 'text', v: '1' }, basic: { t: 'text', v: 'Up to 3' },  prime: { t: 'text', v: 'Up to 5' }, elite: { t: 'text', v: 'Up to 5' } },
           { feature: 'Daily pace',                  free: { t: 'text', v: 'Up to 1/day' }, basic: { t: 'text', v: 'Up to 5/day' },  prime: { t: 'text', v: 'Up to 10/day' }, elite: { t: 'text', v: 'Up to 20/day' } },
-          { feature: 'AI processing per upload',    free: { t: 'text', v: 'Up to 11 min' }, basic: { t: 'text', v: 'Up to 30 min' }, prime: { t: 'text', v: 'Up to 120 min' }, elite: { t: 'text', v: 'Up to 240 min' } },
+          { feature: 'Any video length',           free: { t: 'text', v: 'Up to 11 min AI' }, basic: { t: 'text', v: 'Up to 30 min AI' }, prime: { t: 'text', v: 'Up to 120 min AI' }, elite: { t: 'text', v: 'Up to 240 min AI' } },
           { feature: 'Clips in library',            free: { t: 'text', v: '5 max' }, basic: { t: 'text', v: 'Unlimited' },       prime: { t: 'text', v: 'Unlimited' },      elite: { t: 'text', v: 'Unlimited' } },
           { feature: 'Export resolution',           free: { t: 'text', v: '720p' }, basic: { t: 'text', v: '1080p' },    prime: { t: 'text', v: '1440p' },   elite: { t: 'text', v: '1440p' } },
           { feature: 'Watermark on export',         free: { t: 'text', v: 'Small mark' }, basic: { t: 'text', v: 'None' }, prime: { t: 'text', v: 'None' }, elite: { t: 'text', v: 'None' } },

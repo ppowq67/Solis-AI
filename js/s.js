@@ -392,8 +392,8 @@ const PreviewTimeline = (() => {
   let R = -1;
   let U = 0;
   let D = 1;
-  let N = null;
-  let F = false;
+  let F = null;
+  let N = false;
   let $ = null;
   let O = 0;
   let j = null;
@@ -441,8 +441,8 @@ const PreviewTimeline = (() => {
     fe = document.getElementById("previewTimelinePlayhead");
   }
   function setHandlesUnlocked(e) {
-    F = !!e;
-    if (te) te.classList.toggle("handles-on", F);
+    N = !!e;
+    if (te) te.classList.toggle("handles-on", N);
   }
   function setRankingEditMode(e) {
     refreshEls();
@@ -985,7 +985,7 @@ const PreviewTimeline = (() => {
     paintChrome();
     ae?.querySelectorAll(".preview-timeline-segment.is-selected").forEach(e => e.classList.remove("is-selected"));
     ae?.children?.[e]?.classList.add("is-selected");
-    if (!F) setHandlesUnlocked(true);
+    if (!N) setHandlesUnlocked(true);
     syncSegFocusClass();
     try {
       const i = document.getElementById("silencerNote");
@@ -1085,7 +1085,7 @@ const PreviewTimeline = (() => {
     if (W) return;
     t.preventDefault();
     t.stopPropagation();
-    if (!F && !te?.classList.contains("is-ranking-edit")) {
+    if (!N && !te?.classList.contains("is-ranking-edit")) {
       setHandlesUnlocked(true);
     }
     cacheTrackMetrics();
@@ -1279,10 +1279,10 @@ const PreviewTimeline = (() => {
       u = e;
       return;
     }
-    if (N != null) {
-      const t = E.findIndex(e => Math.abs(e - N) < .05);
+    if (F != null) {
+      const t = E.findIndex(e => Math.abs(e - F) < .05);
       if (t >= 0) E[t] = e; else E.push(e);
-      N = e;
+      F = e;
     } else {
       E.push(e);
     }
@@ -1305,8 +1305,8 @@ const PreviewTimeline = (() => {
     paintSegmentsFast();
   }
   function startBoundDrag(t, i) {
-    if (!F && !te?.classList.contains("is-ranking-edit")) return;
-    if (!F) setHandlesUnlocked(true);
+    if (!N && !te?.classList.contains("is-ranking-edit")) return;
+    if (!N) setHandlesUnlocked(true);
     if (i.pointerType === "mouse" && i.button !== 0) return;
     i.preventDefault();
     i.stopPropagation();
@@ -1317,7 +1317,7 @@ const PreviewTimeline = (() => {
     R = t;
     U = t === 0 ? 0 : n[t - 1] + e;
     D = t === n.length - 1 ? m : n[t + 1] - e;
-    N = t > 0 && t < n.length - 1 ? n[t] : null;
+    F = t > 0 && t < n.length - 1 ? n[t] : null;
     y = l ? !l.paused : false;
     if (l && !l.paused) l.pause();
     oe?.classList.add("is-dragging", "is-trimming");
@@ -1705,7 +1705,7 @@ const PreviewTimeline = (() => {
     }
     d = null;
     R = -1;
-    N = null;
+    F = null;
     if (e === "start" || e === "end" || e === "bound") {
       f = Math.max(p, Math.min(u, f));
       if (p > .05 || u < m - .05) {
@@ -1728,8 +1728,8 @@ const PreviewTimeline = (() => {
     });
   }
   function startDrag(e, t) {
-    if ((e === "start" || e === "end" || e === "bound") && !F && !te?.classList.contains("is-ranking-edit")) return;
-    if ((e === "start" || e === "end" || e === "bound") && !F) {
+    if ((e === "start" || e === "end" || e === "bound") && !N && !te?.classList.contains("is-ranking-edit")) return;
+    if ((e === "start" || e === "end" || e === "bound") && !N) {
       setHandlesUnlocked(true);
     }
     if (t.pointerType === "mouse" && t.button !== 0) return;
@@ -2175,7 +2175,7 @@ const PreviewTimeline = (() => {
     $ = null;
     M = [];
     B = [];
-    F = false;
+    N = false;
     if (te) {
       te.classList.remove("handles-on");
       te.classList.remove("is-ranking-edit");
@@ -8618,6 +8618,57 @@ class ClipsStudio {
       if (e.key === "Escape") this.closeWatermarkPlanPopover();
     });
     const i = document.getElementById("solisUpgradeCards");
+    const n = i?.querySelector(".solis-upgrade-card--paid");
+    const applyPaidCard = e => {
+      if (!n) return;
+      const t = e === "multitask" ? "Multitask" : e === "quota" ? "Quota" : "Watermark";
+      const i = n.dataset;
+      const r = i[`name${t}`] || "Paid";
+      const o = i[`chip${t}`] || "";
+      const s = i[`tag${t}`] || "";
+      const a = i[`cta${t}`] || "";
+      const l = i[`href${t}`] || "/premium.html";
+      const c = i[`plan${t}`] || "basic";
+      const d = t === "Quota" ? "Watermark" : t;
+      const p = i[`priceFull${d}`] || "$9.99";
+      const u = i[`priceLaunch${d}`] || "$5.99";
+      const m = i[`priceWasFull${d}`] || p;
+      const f = i[`priceWasLaunch${d}`] || p;
+      const y = i[`noteFull${d}`] || "";
+      const h = i[`noteLaunch${d}`] || "";
+      const g = i[`features${t}`] || "";
+      n.dataset.plan = c;
+      const w = n.querySelector(".solis-upgrade-card-name");
+      const b = n.querySelector(".solis-upgrade-card-chip");
+      const v = n.querySelector(".solis-upgrade-card-tag");
+      const S = n.querySelector(".solis-upgrade-card-now");
+      const _ = n.querySelector(".solis-upgrade-card-was");
+      const k = n.querySelector(".solis-upgrade-card-note");
+      const C = n.querySelector(".solis-upgrade-card-cta--primary");
+      const L = n.querySelector(".solis-upgrade-card-cta-label");
+      const T = n.querySelector(".solis-upgrade-card-features");
+      if (w) w.textContent = r;
+      if (b && o) b.textContent = o;
+      if (v && s) v.textContent = s;
+      if (S) {
+        S.dataset.priceFull = p;
+        S.dataset.priceLaunch = u;
+      }
+      if (_) {
+        _.dataset.priceWasFull = m;
+        _.dataset.priceWasLaunch = f;
+      }
+      if (k) {
+        k.dataset.noteFull = y;
+        k.dataset.noteLaunch = h;
+      }
+      if (C) C.setAttribute("href", l);
+      if (L && a) L.textContent = a;
+      if (T && g) {
+        T.innerHTML = g.split("|").map(e => `<li class="is-win">${sanitizeHTML(e.trim())}</li>`).join("");
+      }
+    };
+    this._applySolisUpgradePaidCard = applyPaidCard;
     const setBilling = e => {
       const t = e === "launch";
       document.getElementById("solisUpgradeBillingLaunch")?.classList.toggle("is-active", t);
@@ -8649,6 +8700,7 @@ class ClipsStudio {
     this._setSolisUpgradeBilling = setBilling;
   }
   openWatermarkPlanPopover(e = {}) {
+    this.bindWatermarkPlanPopoverOnce();
     const t = document.getElementById("watermarkPlanPopover");
     if (!t) return;
     if (t.parentElement !== document.body) {
@@ -8663,17 +8715,18 @@ class ClipsStudio {
         e.style.pointerEvents = "none";
       });
     } catch (e) {}
-    const i = e.reason === "quota" ? "quota" : "watermark";
+    const i = [ "quota", "multitask" ].includes(e.reason) ? e.reason : "watermark";
+    const n = i === "quota" ? "copyQuota" : i === "multitask" ? "copyMultitask" : "copyWatermark";
     const applyCopy = e => {
       if (!e) return;
-      const t = i === "quota" ? "copyQuota" : "copyWatermark";
-      const n = e.dataset?.[t];
-      if (n) e.textContent = n;
+      const t = e.dataset?.[n];
+      if (t) e.textContent = t;
     };
     applyCopy(document.getElementById("solisUpgradeEyebrow"));
     applyCopy(document.getElementById("solisUpgradeTitle"));
     applyCopy(document.getElementById("solisUpgradeSub"));
     t.dataset.reason = i;
+    this._applySolisUpgradePaidCard?.(i);
     this._setSolisUpgradeBilling?.("launch");
     clearTimeout(this._wmPlanCloseTimer);
     t.hidden = false;

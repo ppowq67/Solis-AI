@@ -13,8 +13,8 @@
   };
   const n = "solis_effort_mode";
   const o = "solis_effort_selection";
-  const i = "solis_effort_ui_mode";
-  const r = "solis_multi_task";
+  const r = "solis_effort_ui_mode";
+  const i = "solis_multi_task";
   const a = "solis_quota_rail_dismiss";
   const s = 6e4;
   const l = [ "low", "normal", "max" ];
@@ -38,14 +38,14 @@
   }
   function readMultiTaskEnabled() {
     try {
-      return localStorage.getItem(r) === "1";
+      return localStorage.getItem(i) === "1";
     } catch (e) {
       return false;
     }
   }
   function persistMultiTaskEnabled(e) {
     try {
-      localStorage.setItem(r, e ? "1" : "0");
+      localStorage.setItem(i, e ? "1" : "0");
     } catch (e) {}
   }
   function syncMultiTaskUI() {
@@ -104,11 +104,11 @@
     if (!n) return;
     window.clearTimeout(v);
     const o = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const i = t && !o;
+    const r = t && !o;
     if (e) {
       n.hidden = false;
       n.setAttribute("aria-hidden", "false");
-      if (i) {
+      if (r) {
         n.classList.remove("is-expanded");
         void n.offsetHeight;
         requestAnimationFrame(() => {
@@ -120,7 +120,7 @@
     } else {
       n.setAttribute("aria-hidden", "true");
       n.classList.remove("is-expanded");
-      if (i && !n.hidden) {
+      if (r && !n.hidden) {
         v = window.setTimeout(() => {
           n.hidden = true;
         }, S);
@@ -133,8 +133,8 @@
     const t = e.animate !== false;
     const n = isAutoMode();
     const o = document.getElementById("planEffortAdvancedToggle");
-    const i = document.getElementById("planEffortModeTitle");
-    const r = document.getElementById("planEffortModeHint");
+    const r = document.getElementById("planEffortModeTitle");
+    const i = document.getElementById("planEffortModeHint");
     const a = document.getElementById("planEffortModeRow");
     if (o) {
       o.setAttribute("aria-checked", n ? "true" : "false");
@@ -144,13 +144,13 @@
     setAdvancedBodyVisible(!n, {
       animate: t
     });
-    if (i) i.textContent = "Auto";
-    if (r) {
+    if (r) r.textContent = "Auto";
+    if (i) {
       if (n) {
-        r.textContent = g === "free" ? "Solis picks the best effort for your video" : "Balanced quality and speed, recommended for most tasks";
-        requestAnimationFrame(() => r.classList.remove("is-collapsed"));
+        i.textContent = g === "free" ? "Solis picks the best effort for your video" : "Balanced quality and speed, recommended for most tasks";
+        requestAnimationFrame(() => i.classList.remove("is-collapsed"));
       } else {
-        r.classList.add("is-collapsed");
+        i.classList.add("is-collapsed");
       }
     }
     if (a) a.dataset.mode = n ? "auto" : "manual";
@@ -201,14 +201,14 @@
   }
   function readEffortUiMode() {
     try {
-      const e = localStorage.getItem(i);
+      const e = localStorage.getItem(r);
       if (e === "slider" || e === "flyout") return e;
     } catch (e) {}
     return "slider";
   }
   function persistEffortUiMode(e) {
     try {
-      localStorage.setItem(i, e === "slider" ? "slider" : "flyout");
+      localStorage.setItem(r, e === "slider" ? "slider" : "flyout");
     } catch (e) {}
   }
   function effortIndex(e) {
@@ -233,12 +233,12 @@
     const t = effortIndex(e);
     const n = document.querySelector(`.plan-effort-slider-pro[data-step="${t}"]`);
     const o = document.querySelector(`.plan-effort-option[data-effort="${e}"] .plan-effort-pro-badge`);
-    const i = n && !n.hasAttribute("hidden") ? n : o && !o.hasAttribute("hidden") ? o : null;
-    if (!i) return;
-    i.classList.remove("is-pulse");
-    void i.offsetWidth;
-    i.classList.add("is-pulse");
-    window.setTimeout(() => i.classList.remove("is-pulse"), 560);
+    const r = n && !n.hasAttribute("hidden") ? n : o && !o.hasAttribute("hidden") ? o : null;
+    if (!r) return;
+    r.classList.remove("is-pulse");
+    void r.offsetWidth;
+    r.classList.add("is-pulse");
+    window.setTimeout(() => r.classList.remove("is-pulse"), 560);
   }
   function notifyEffortLocked(e) {
     if (e === "max") {
@@ -260,21 +260,21 @@
   }
   function applyEffortUiMode(e, {persist: t = true, animate: n = true} = {}) {
     const o = e === "slider" ? "slider" : "flyout";
-    const i = h !== o || document.documentElement.dataset.effortUi !== o;
-    const r = !isAutoMode();
-    if (i && o === "slider") closeEffortFlyout();
+    const r = h !== o || document.documentElement.dataset.effortUi !== o;
+    const i = !isAutoMode();
+    if (r && o === "slider") closeEffortFlyout();
     h = o;
     document.documentElement.dataset.effortUi = o;
     if (t) persistEffortUiMode(o);
     const a = getEffortTrigger();
     const s = getSliderPanel();
     if (a) {
-      a.hidden = !r || o === "slider";
+      a.hidden = !i || o === "slider";
       a.setAttribute("aria-controls", "planEffortFlyout");
-      if (!r || o === "slider") a.setAttribute("aria-expanded", "false");
+      if (!i || o === "slider") a.setAttribute("aria-expanded", "false");
     }
     if (s) {
-      if (r && o === "slider") {
+      if (i && o === "slider") {
         s.hidden = false;
         s.classList.remove("is-ready");
         const reveal = () => {
@@ -312,9 +312,9 @@
   function setSliderT(e, {animate: t = false, magnet: n = false} = {}) {
     const o = document.getElementById("planEffortSlider");
     if (!o) return;
-    const i = Math.max(0, Math.min(1, e));
-    o.style.setProperty("--effort-t", String(i));
-    o.classList.toggle("is-max", i >= .98);
+    const r = Math.max(0, Math.min(1, e));
+    o.style.setProperty("--effort-t", String(r));
+    o.classList.toggle("is-max", r >= .98);
     window.clearTimeout(setSliderT._snapTimer);
     o.classList.toggle("is-snapping", t);
     o.classList.toggle("is-magnet", n && !t);
@@ -354,28 +354,28 @@
     if (!t) return 0;
     const n = t.getBoundingClientRect();
     const o = 18;
-    const i = Math.max(1, n.width - o);
-    return Math.max(0, Math.min(1, (e - n.left - o / 2) / i));
+    const r = Math.max(1, n.width - o);
+    return Math.max(0, Math.min(1, (e - n.left - o / 2) / r));
   }
   function magnetizeT(e) {
     const t = l.length - 1;
     const n = .16;
     let o = e;
-    let i = n;
-    let r = false;
+    let r = n;
+    let i = false;
     for (let n = 0; n <= t; n += 1) {
       if (!isEffortSelectable(effortFromIndex(n))) continue;
       const a = n / t;
       const s = Math.abs(e - a);
-      if (s <= i) {
-        i = s;
+      if (s <= r) {
+        r = s;
         o = a;
-        r = true;
+        i = true;
       }
     }
     return {
       t: o,
-      snapped: r,
+      snapped: i,
       index: Math.round(o * t)
     };
   }
@@ -383,12 +383,12 @@
     const t = l.length - 1;
     let n = null;
     let o = Infinity;
-    for (let i = 0; i <= t; i += 1) {
-      if (!isEffortSelectable(effortFromIndex(i))) continue;
-      const t = Math.abs(i - e);
+    for (let r = 0; r <= t; r += 1) {
+      if (!isEffortSelectable(effortFromIndex(r))) continue;
+      const t = Math.abs(r - e);
       if (t < o) {
         o = t;
-        n = i;
+        n = r;
       }
     }
     return n == null ? 0 : n;
@@ -396,19 +396,19 @@
   function syncEffortSliderUI({animate: e = false} = {}) {
     const n = effortIndex(u);
     const o = t[u] || "Low";
-    const i = n / (l.length - 1);
-    const r = allowedEffortsForTier(g);
+    const r = n / (l.length - 1);
+    const i = allowedEffortsForTier(g);
     const a = document.getElementById("planEffortSlider");
     const s = document.getElementById("planEffortSliderValue");
     const c = document.getElementById("planEffortSliderPanel");
-    if (!w) setSliderT(i, {
+    if (!w) setSliderT(r, {
       animate: e
     });
     if (s) s.textContent = o;
     if (a) {
       a.setAttribute("aria-valuenow", String(n));
       a.setAttribute("aria-valuetext", o);
-      a.classList.toggle("is-single", r.length <= 1);
+      a.classList.toggle("is-single", i.length <= 1);
       a.classList.toggle("is-max", u === "max");
     }
     if (!w) {
@@ -424,14 +424,14 @@
       c.querySelectorAll(".plan-effort-slider-dot").forEach(e => {
         const t = Number(e.dataset.step || 0);
         const o = effortFromIndex(t);
-        const s = w ? Math.round((Number(a?.style.getPropertyValue("--effort-t")) || i) * (l.length - 1)) : n;
+        const s = w ? Math.round((Number(a?.style.getPropertyValue("--effort-t")) || r) * (l.length - 1)) : n;
         e.classList.toggle("is-passed", t <= s);
-        e.classList.toggle("is-locked", !r.includes(o));
+        e.classList.toggle("is-locked", !i.includes(o));
       });
       c.querySelectorAll(".plan-effort-slider-pro").forEach(e => {
         const t = Number(e.dataset.step || 0);
         const n = effortFromIndex(t);
-        if (!r.includes(n)) e.removeAttribute("hidden"); else e.setAttribute("hidden", "");
+        if (!i.includes(n)) e.removeAttribute("hidden"); else e.setAttribute("hidden", "");
       });
     }
   }
@@ -445,18 +445,18 @@
   function syncEffortUI(e) {
     const n = isAutoMode() ? "auto" : u;
     const o = t[n] || "Auto";
-    const i = document.getElementById("planSelectorLabel");
-    if (i) {
-      i.removeAttribute("hidden");
-      if (!i.textContent.trim()) {
+    const r = document.getElementById("planSelectorLabel");
+    if (r) {
+      r.removeAttribute("hidden");
+      if (!r.textContent.trim()) {
         const e = (g || "free").charAt(0).toUpperCase() + (g || "free").slice(1);
-        i.textContent = `${e} Plan`;
+        r.textContent = `${e} Plan`;
       }
     }
-    const r = document.getElementById("planSelectorWrap");
-    if (r) {
-      r.dataset.effortSelection = isAutoMode() ? "auto" : "advanced";
-      r.dataset.effort = n;
+    const i = document.getElementById("planSelectorWrap");
+    if (i) {
+      i.dataset.effortSelection = isAutoMode() ? "auto" : "advanced";
+      i.dataset.effort = n;
     }
     const a = getPopover();
     if (a) {
@@ -470,7 +470,7 @@
     }
     const l = document.getElementById("planSelectorBtn");
     if (l) {
-      const e = i?.textContent?.trim() || "Plan";
+      const e = r?.textContent?.trim() || "Plan";
       const t = isCompactPlanUi();
       l.setAttribute("aria-label", t ? `${o}. ${e} usage` : `${e}, ${o}`);
     }
@@ -486,16 +486,16 @@
       const t = e.dataset.effort;
       const n = m.includes(t);
       const o = t === u;
-      const i = e.querySelector(".plan-effort-pro-badge");
-      const r = e.querySelector(".plan-effort-option-hint");
+      const r = e.querySelector(".plan-effort-pro-badge");
+      const i = e.querySelector(".plan-effort-option-hint");
       e.classList.toggle("is-locked", !n);
       e.classList.toggle("is-active", o);
       e.setAttribute("aria-checked", o ? "true" : "false");
-      if (i) {
-        if (!n) i.removeAttribute("hidden"); else i.setAttribute("hidden", "");
-      }
       if (r) {
-        r.hidden = !n;
+        if (!n) r.removeAttribute("hidden"); else r.setAttribute("hidden", "");
+      }
+      if (i) {
+        i.hidden = !n;
       }
       if (n && t === "max") {
         const t = c?.generations || {};
@@ -530,8 +530,8 @@
     const t = e.getBoundingClientRect();
     const n = 176;
     const o = window.innerWidth - t.right;
-    const i = o < n + 16 && t.left > n + 16;
-    e.classList.toggle("effort-open-left", i);
+    const r = o < n + 16 && t.left > n + 16;
+    e.classList.toggle("effort-open-left", r);
   }
   function openEffortFlyout() {
     if (h === "slider") return;
@@ -572,9 +572,9 @@
   function trySelectEffortFromSlider(e, {animate: t = true} = {}) {
     const n = effortFromIndex(e);
     const o = nearestAllowedIndex(e);
-    const i = effortFromIndex(o);
-    if (n !== i) notifyEffortLocked(n);
-    return setEffort(i, {
+    const r = effortFromIndex(o);
+    if (n !== r) notifyEffortLocked(n);
+    return setEffort(r, {
       closeFlyout: false,
       animate: t
     });
@@ -585,14 +585,14 @@
     e.dataset.bound = "true";
     const n = document.getElementById("planEffortSliderValue");
     let o = null;
-    let i = null;
+    let r = null;
     const previewFromT = o => {
-      const r = magnetizeT(o);
-      const a = r.snapped;
-      const s = r.t;
-      const c = r.index;
+      const i = magnetizeT(o);
+      const a = i.snapped;
+      const s = i.t;
+      const c = i.index;
       clearMaxBits();
-      if (a && i !== c) {
+      if (a && r !== c) {
         setSliderT(s, {
           magnet: true
         });
@@ -601,12 +601,12 @@
           animate: false
         });
       } else {
-        i = null;
+        r = null;
         setSliderT(o, {
           animate: false
         });
       }
-      if (a) i = c;
+      if (a) r = c;
       const d = t[effortFromIndex(c)] || "Low";
       if (n) n.textContent = d;
       e.classList.toggle("is-max", c === l.length - 1 && isEffortSelectable("max"));
@@ -620,7 +620,7 @@
     const finishDrag = t => {
       const n = magnetizeT(clientXToSliderT(t));
       w = false;
-      i = null;
+      r = null;
       e.classList.remove("is-dragging");
       e.querySelectorAll(".plan-effort-slider-dot").forEach(e => {
         e.classList.remove("is-magnet-hot");
@@ -637,7 +637,7 @@
       t.stopPropagation();
       o = t.pointerId;
       w = true;
-      i = null;
+      r = null;
       clearMaxBits();
       e.classList.add("is-dragging");
       e.classList.remove("is-snapping", "is-magnet");
@@ -697,13 +697,13 @@
       if (!o?.data) throw new Error("Invalid tier response");
       c = o.data;
       d = Date.now();
-      const i = c.library || c.saved_videos;
-      if (i && typeof window.applyStorageBadgeUI === "function") {
+      const r = c.library || c.saved_videos;
+      if (r && typeof window.applyStorageBadgeUI === "function") {
         const e = (c.tier || "free").toLowerCase();
-        const t = i.unlimited === true || typeof window.isUnlimitedLibrary === "function" && window.isUnlimitedLibrary(null, e);
+        const t = r.unlimited === true || typeof window.isUnlimitedLibrary === "function" && window.isUnlimitedLibrary(null, e);
         window.applyStorageBadgeUI({
-          used: i.used ?? 0,
-          limit: t ? null : i.limit ?? i.max_videos ?? 5,
+          used: r.used ?? 0,
+          limit: t ? null : r.limit ?? r.max_videos ?? 5,
           plan: e,
           unlimited: t
         });
@@ -740,8 +740,8 @@
     if (!t) return null;
     const n = /[zZ]|[+-]\d{2}:?\d{2}$/.test(t);
     const o = n ? t : `${t.replace(" ", "T")}Z`;
-    const i = new Date(o);
-    return Number.isNaN(i.getTime()) ? null : i;
+    const r = new Date(o);
+    return Number.isNaN(r.getTime()) ? null : r;
   }
   function formatQuotaUnlockWhen(e) {
     const t = parseQuotaResetWhen(e);
@@ -751,17 +751,17 @@
       hour: "numeric",
       minute: "2-digit"
     });
-    const i = t.toLocaleDateString([], {
+    const r = t.toLocaleDateString([], {
       weekday: "long",
       month: "short",
       day: "numeric"
     });
-    const r = new Date(n.getFullYear(), n.getMonth(), n.getDate());
+    const i = new Date(n.getFullYear(), n.getMonth(), n.getDate());
     const a = new Date(t.getFullYear(), t.getMonth(), t.getDate());
-    const s = Math.round((a - r) / 864e5);
+    const s = Math.round((a - i) / 864e5);
     if (s === 0) return `today at ${o}`;
     if (s === 1) return `tomorrow at ${o}`;
-    return `${i} at ${o}`;
+    return `${r} at ${o}`;
   }
   function nextLocalMidnightLabel() {
     const e = new Date;
@@ -774,24 +774,24 @@
   function parseQuotaState(e, t) {
     const n = Math.max(0, Number(e?.daily?.remaining ?? t?.remaining ?? 0));
     const o = Math.max(0, Number(e?.daily?.limit ?? t?.max_per_period ?? t?.max_per_day ?? 0));
-    const i = Math.max(0, Number(e?.monthly?.remaining ?? t?.remaining_month ?? 0));
-    const r = Math.max(0, Number(e?.monthly?.limit ?? t?.max_per_month ?? 0));
-    const a = r > 0 && i <= 0;
+    const r = Math.max(0, Number(e?.monthly?.remaining ?? t?.remaining_month ?? 0));
+    const i = Math.max(0, Number(e?.monthly?.limit ?? t?.max_per_month ?? 0));
+    const a = i > 0 && r <= 0;
     const s = o > 0 && n <= 0 || e?.daily_limit_reached === true || e?.block_reason === "daily_limit";
     let l = n;
     if (a) {
       l = 0;
     } else if (s) {
       l = 0;
-    } else if (r > 0) {
-      l = Math.min(n, i);
+    } else if (i > 0) {
+      l = Math.min(n, r);
     }
-    const c = r > 0 && i <= n ? "monthly" : "daily";
+    const c = i > 0 && r <= n ? "monthly" : "daily";
     return {
       dailyRem: n,
       dailyMax: o,
-      monthlyRem: i,
-      monthlyMax: r,
+      monthlyRem: r,
+      monthlyMax: i,
       monthlyEmpty: a,
       dailyEmpty: s,
       headlineRem: l,
@@ -800,27 +800,27 @@
     };
   }
   function formatQuotaChipDisplay(e, t, n, o) {
-    const i = e.monthlyMax > 0 ? e.monthlyMax : Math.max(1, Number(n?.max_per_month ?? n?.max_per_day ?? 1));
-    const r = Math.max(0, Number(e.monthlyRem));
-    const a = `<span class="plan-count-remaining">${r}</span>` + `<span class="plan-count-sep"> / ${i}</span>`;
-    const s = i > 0 ? Math.min(100, (i - r) / i * 100) : 0;
+    const r = e.monthlyMax > 0 ? e.monthlyMax : Math.max(1, Number(n?.max_per_month ?? n?.max_per_day ?? 1));
+    const i = Math.max(0, Number(e.monthlyRem));
+    const a = `<span class="plan-count-remaining">${i}</span>` + `<span class="plan-count-sep"> / ${r}</span>`;
+    const s = r > 0 ? Math.min(100, (r - i) / r * 100) : 0;
     if (e.monthlyEmpty) {
       return {
-        countHtml: '<span class="plan-count-remaining">0</span>' + `<span class="plan-count-sep"> / ${i}</span>`,
+        countHtml: '<span class="plan-count-remaining">0</span>' + `<span class="plan-count-sep"> / ${r}</span>`,
         kicker: "uploads left",
         progressPct: 100,
         resetLine: "Resets with your plan renewal"
       };
     }
     let l = "";
-    if (e.dailyEmpty && r > 0) {
+    if (e.dailyEmpty && i > 0) {
       const e = t?.daily?.resets_at || n?.daily_resets_at || n?.resets_at;
       const o = resolveDailyUnlockLabel(e);
       l = o ? `Next upload unlocks ${o}` : "Next upload unlocks tomorrow";
     }
     return {
       countHtml: a,
-      kicker: r === 1 ? "upload left" : "uploads left",
+      kicker: i === 1 ? "upload left" : "uploads left",
       progressPct: s,
       resetLine: l
     };
@@ -860,12 +860,12 @@
     if (!t) return;
     const n = String(e?.tier || e?.plan || window.currentUser?.plan || "free").toLowerCase();
     const o = e?.generations || {};
-    const i = e?.library || e?.saved_videos || {};
-    const r = Math.max(0, Number(o.used_today ?? 0));
+    const r = e?.library || e?.saved_videos || {};
+    const i = Math.max(0, Number(o.used_today ?? 0));
     const a = Math.max(0, Number(o.used_this_month ?? 0));
     const s = Math.max(0, Number(o.used_lifetime ?? 0));
-    const l = Math.max(0, Number(i.used ?? 0));
-    const c = r > 0 || a > 0 || s > 0 || l > 0 || readSolisEverGenerated();
+    const l = Math.max(0, Number(r.used ?? 0));
+    const c = i > 0 || a > 0 || s > 0 || l > 0 || readSolisEverGenerated();
     if (c) markSolisEverGenerated();
     const d = freeTenureDays() >= I;
     const f = [ "basic", "prime", "elite", "pro" ].includes(n);
@@ -889,10 +889,10 @@
   function syncQuotaRail(e, t) {
     const n = document.getElementById("urlQuotaRail");
     const o = document.getElementById("urlQuotaBanner");
-    const i = document.getElementById("urlQuotaTitle");
-    const r = document.getElementById("urlQuotaSub");
+    const r = document.getElementById("urlQuotaTitle");
+    const i = document.getElementById("urlQuotaSub");
     const a = document.getElementById("urlInputStack");
-    if (!n || !o || !i || !r) return;
+    if (!n || !o || !r || !i) return;
     const s = e?.generations || {};
     const l = parseQuotaState(t, s);
     const {dailyRem: c, dailyMax: d, monthlyRem: f, monthlyMax: m, monthlyEmpty: p, dailyEmpty: y, binding: h} = l;
@@ -962,8 +962,8 @@
       return;
     }
     o.dataset.kind = b;
-    i.textContent = T;
-    r.textContent = k;
+    r.textContent = T;
+    i.textContent = k;
     n.hidden = false;
     if (a) a.classList.add("has-quota");
   }
@@ -989,8 +989,8 @@
     const t = document.getElementById("planSelectorWrap");
     const n = document.getElementById("planSelectorLabel");
     const o = document.getElementById("planPopoverTier");
-    const i = document.getElementById("planPopoverCount");
-    const r = document.getElementById("planPopoverProgress");
+    const r = document.getElementById("planPopoverCount");
+    const i = document.getElementById("planPopoverProgress");
     const a = document.getElementById("planPopoverReset");
     const s = document.getElementById("planPopoverUpgrade");
     if (!t || !n) return;
@@ -1018,22 +1018,22 @@
     syncQuotaRail(e, E);
     const p = e?.generations;
     const y = document.getElementById("planPopoverKicker");
-    if (p && i) {
+    if (p && r) {
       const e = formatQuotaChipDisplay(parseQuotaState(E, p), E, p, l);
-      i.innerHTML = e.countHtml;
+      r.innerHTML = e.countHtml;
       if (y) y.textContent = e.kicker || "uploads left";
-      if (r) {
-        r.style.width = `${Math.min(100, e.progressPct || 0)}%`;
+      if (i) {
+        i.style.width = `${Math.min(100, e.progressPct || 0)}%`;
       }
       if (a) {
         const t = e.resetLine || formatResetLabel(p);
         a.textContent = t;
         a.hidden = !t;
       }
-    } else if (i) {
-      i.textContent = "—";
+    } else if (r) {
+      r.textContent = "—";
       if (y) y.textContent = "uploads left";
-      if (r) r.style.width = "0%";
+      if (i) i.style.width = "0%";
       if (a) {
         a.textContent = "";
         a.hidden = true;
@@ -1085,20 +1085,20 @@
     if (!e || !t || t.hidden) return;
     const n = e.getBoundingClientRect();
     const o = isCompactPlanUi();
-    const i = o ? 10 : 12;
-    const r = o ? Math.min(360, window.innerWidth - i * 2) : Math.min(268, window.innerWidth - 48);
-    const a = r;
+    const r = o ? 10 : 12;
+    const i = o ? Math.min(360, window.innerWidth - r * 2) : Math.min(268, window.innerWidth - 48);
+    const a = i;
     let s;
     if (o) {
-      s = Math.max(i, Math.round((window.innerWidth - a) / 2));
+      s = Math.max(r, Math.round((window.innerWidth - a) / 2));
     } else {
-      s = Math.max(i, n.right - a);
-      s = Math.min(s, window.innerWidth - a - i);
+      s = Math.max(r, n.right - a);
+      s = Math.min(s, window.innerWidth - a - r);
     }
     let l = n.bottom + (o ? 12 : 10);
     const c = t.offsetHeight || (o ? 320 : 260);
-    if (l + c > window.innerHeight - i) {
-      l = Math.max(i, n.top - c - 10);
+    if (l + c > window.innerHeight - r) {
+      l = Math.max(r, n.top - c - 10);
     }
     t.style.top = `${l}px`;
     t.style.left = `${s}px`;
@@ -1168,33 +1168,33 @@
     const t = Boolean(e.immediate);
     const n = document.getElementById("planSelectorWrap");
     const o = document.getElementById("planSelectorBtn");
-    const i = getPopover();
-    const r = getInputContainer();
-    if (!n || !o || !i) return;
-    if (i.hidden && !n.classList.contains("is-open") && !i.classList.contains("is-open")) {
+    const r = getPopover();
+    const i = getInputContainer();
+    if (!n || !o || !r) return;
+    if (r.hidden && !n.classList.contains("is-open") && !r.classList.contains("is-open")) {
       return;
     }
     closeEffortFlyout();
     n.classList.remove("is-open");
-    i.classList.remove("is-open");
-    if (r) r.classList.remove("is-open");
+    r.classList.remove("is-open");
+    if (i) i.classList.remove("is-open");
     o.setAttribute("aria-expanded", "false");
     unbindReposition();
     const finish = () => {
       if (!n.classList.contains("is-open")) {
-        i.hidden = true;
-        i.style.top = "";
-        i.style.left = "";
-        i.style.width = "";
+        r.hidden = true;
+        r.style.top = "";
+        r.style.left = "";
+        r.style.width = "";
         unmountPopover();
       }
-      i.removeEventListener("transitionend", finish);
+      r.removeEventListener("transitionend", finish);
     };
     if (t) {
       finish();
       return;
     }
-    i.addEventListener("transitionend", finish);
+    r.addEventListener("transitionend", finish);
     setTimeout(finish, 280);
   }
   function togglePopover() {
@@ -1202,22 +1202,37 @@
     if (!e) return;
     if (e.classList.contains("is-open")) closePopover(); else openPopover();
   }
+  function openMultiTaskUpgrade() {
+    try {
+      if (typeof window.closePlanSelectorPopover === "function") {
+        window.closePlanSelectorPopover(true);
+      }
+    } catch (e) {}
+    try {
+      if (typeof window.clipsStudio?.openWatermarkPlanPopover === "function") {
+        window.clipsStudio.openWatermarkPlanPopover({
+          reason: "multitask"
+        });
+        return;
+      }
+    } catch (e) {}
+    window.location.href = "/premium.html?plan=prime";
+  }
   function onPopoverClick(e) {
     const t = e.target.closest("#planMultiTaskToggle");
-    if (t) {
+    const n = e.target.closest("#planMultiTaskRow");
+    if (t || n) {
       e.preventDefault();
       e.stopPropagation();
       if (!multiTaskAllowedForTier(g)) {
-        if (typeof window.showNotification === "function") {
-          window.showNotification("Multi Task is on Prime and Elite", "info");
-        }
+        openMultiTaskUpgrade();
         return;
       }
       setMultiTaskEnabled(!p);
       return;
     }
-    const n = e.target.closest("#planEffortAdvancedToggle");
-    if (n) {
+    const o = e.target.closest("#planEffortAdvancedToggle");
+    if (o) {
       e.preventDefault();
       e.stopPropagation();
       setEffortSelection(isAutoMode() ? "advanced" : "auto");
@@ -1227,8 +1242,8 @@
       e.stopPropagation();
       return;
     }
-    const o = e.target.closest("#planEffortTrigger");
-    if (o) {
+    const r = e.target.closest("#planEffortTrigger");
+    if (r) {
       e.preventDefault();
       e.stopPropagation();
       if (isAutoMode()) setEffortSelection("advanced");
@@ -1239,12 +1254,12 @@
     if (!i) return;
     e.preventDefault();
     e.stopPropagation();
-    const r = i.dataset.effort;
-    if (!isEffortSelectable(r)) {
-      notifyEffortLocked(r);
+    const a = i.dataset.effort;
+    if (!isEffortSelectable(a)) {
+      notifyEffortLocked(a);
       return;
     }
-    setEffort(r, {
+    setEffort(a, {
       animate: false
     });
     if (c) syncQuotaRail(c, E);
@@ -1284,9 +1299,9 @@
         const n = t?.dataset?.kind || "";
         dismissQuotaKind(n);
         const o = document.getElementById("urlQuotaRail");
-        const i = document.getElementById("urlInputStack");
+        const r = document.getElementById("urlInputStack");
         if (o) o.hidden = true;
-        if (i) i.classList.remove("has-quota");
+        if (r) r.classList.remove("has-quota");
       });
     }
     t.addEventListener("click", e => {

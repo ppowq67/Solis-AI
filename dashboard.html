@@ -76,10 +76,10 @@
     <script src="/js/payment/portal-manager.js?v=7"></script>
     <script src="/js/payment/payment-success.js?v=2"></script>
     <script src="/js/payment/platform-connections.js?v=7"></script>
-    <script src="/js/ui/plan-selector.js?v=74"></script>
+    <script src="/js/ui/plan-selector.js?v=75"></script>
     <script src="/js/core/video-preview-system.js?v=2"></script>
     <script src="/js/s_new/clip-card.js?v=29"></script>
-    <script src="/js/s.js?v=349"></script>
+    <script src="/js/s.js?v=350"></script>
     <script src="/js/s_new/silence-cut-suggest.js?v=4"></script>
     <script src="/js/s_new/silencer.js?v=14"></script>
     <script src="/js/s_new/improve-clip.js?v=30"></script>
@@ -17033,9 +17033,9 @@
         </button>
 
         <header class="solis-upgrade-modal-head">
-            <p class="solis-upgrade-modal-eyebrow" id="solisUpgradeEyebrow" data-copy-watermark="Upgrade" data-copy-quota="Out of uploads">Upgrade</p>
-            <h2 class="solis-upgrade-modal-title" id="solisUpgradeTitle" data-copy-watermark="Export without the watermark" data-copy-quota="Keep creating without the wait">Export without the watermark</h2>
-            <p class="solis-upgrade-modal-sub" id="solisUpgradeSub" data-copy-watermark="Free keeps the Solis mark on every clip. Paid removes it and unlocks cleaner, client-ready exports." data-copy-quota="You have used today's free uploads. Paid unlocks more daily generations, no watermark, and cleaner exports.">Free keeps the Solis mark on every clip. Paid removes it and unlocks cleaner, client-ready exports.</p>
+            <p class="solis-upgrade-modal-eyebrow" id="solisUpgradeEyebrow" data-copy-watermark="Upgrade" data-copy-quota="Out of uploads" data-copy-multitask="Prime feature">Upgrade</p>
+            <h2 class="solis-upgrade-modal-title" id="solisUpgradeTitle" data-copy-watermark="Export without the watermark" data-copy-quota="Keep creating without the wait" data-copy-multitask="Paste several links at once">Export without the watermark</h2>
+            <p class="solis-upgrade-modal-sub" id="solisUpgradeSub" data-copy-watermark="Free keeps the Solis mark on every clip. Paid removes it and unlocks cleaner, client-ready exports." data-copy-quota="You have used today's free uploads. Paid unlocks more daily generations, no watermark, and cleaner exports." data-copy-multitask="Multi Task is on Prime and Elite. Queue up to 3 videos, pick one template, and generate them together.">Free keeps the Solis mark on every clip. Paid removes it and unlocks cleaner, client-ready exports.</p>
             <div class="solis-upgrade-billing" role="group" aria-label="Billing period">
                 <button type="button" class="solis-upgrade-billing-opt" data-billing="full" id="solisUpgradeBillingFull">Monthly</button>
                 <button type="button" class="solis-upgrade-billing-opt is-active" data-billing="launch" id="solisUpgradeBillingLaunch" aria-pressed="true">
@@ -17073,7 +17073,40 @@
                 </div>
             </article>
 
-            <article class="solis-upgrade-card is-popular solis-upgrade-card--paid" data-plan="basic">
+            <article class="solis-upgrade-card is-popular solis-upgrade-card--paid" data-plan="basic"
+                data-plan-watermark="basic"
+                data-plan-quota="basic"
+                data-plan-multitask="prime"
+                data-name-watermark="Paid"
+                data-name-quota="Paid"
+                data-name-multitask="Prime"
+                data-chip-watermark="No watermark"
+                data-chip-quota="More uploads"
+                data-chip-multitask="Multi Task"
+                data-tag-watermark="Clean brand exports. Built for creators who ship daily."
+                data-tag-quota="Clean brand exports. Built for creators who ship daily."
+                data-tag-multitask="Batch links, priority render, and room to run several gens at once."
+                data-cta-watermark="Remove watermark"
+                data-cta-quota="Get more uploads"
+                data-cta-multitask="Unlock Multi Task"
+                data-href-watermark="/premium.html?plan=basic"
+                data-href-quota="/premium.html?plan=basic"
+                data-href-multitask="/premium.html?plan=prime"
+                data-price-full-watermark="$9.99"
+                data-price-launch-watermark="$5.99"
+                data-price-was-full-watermark="$9.99"
+                data-price-was-launch-watermark="$9.99"
+                data-note-full-watermark="Billed monthly. Cancel anytime."
+                data-note-launch-watermark="First 2 months at launch price, then $9.99/mo"
+                data-price-full-multitask="$23.99"
+                data-price-launch-multitask="$14.39"
+                data-price-was-full-multitask="$23.99"
+                data-price-was-launch-multitask="$23.99"
+                data-note-full-multitask="Billed monthly. Cancel anytime."
+                data-note-launch-multitask="First 2 months at launch price, then $23.99/mo"
+                data-features-watermark="No Solis watermark|5 uploads / day|Up to 3 clips per upload|1080p export|Unlimited library clips"
+                data-features-quota="No Solis watermark|5 uploads / day|Up to 3 clips per upload|1080p export|Unlimited library clips"
+                data-features-multitask="Multi Task — up to 3 links|Priority render queue|No Solis watermark|More daily uploads|1080p export">
                 <span class="solis-upgrade-card-ribbon">Recommended</span>
                 <div class="solis-upgrade-card-body">
                     <div class="solis-upgrade-card-topline">

@@ -57,20 +57,20 @@ window.fetch = async function(...e) {
       n = await originalFetch(t, r);
       if (n.status !== 401) return n;
     }
-    const o = await originalFetch(`${window.API_BASE_URL}/auth/check`, {
+    const s = await originalFetch(`${window.API_BASE_URL}/auth/check`, {
       method: "GET",
       credentials: "include",
       headers: {
         "Content-Type": "application/json"
       }
     });
-    if (o.ok) {
-      const e = await o.json();
+    if (s.ok) {
+      const e = await s.json();
       if (e.authenticated && e.user) {
         n = await originalFetch(t, r);
         if (n.status !== 401) return n;
       }
-    } else if (o.status >= 500) {
+    } else if (s.status >= 500) {
       return n;
     }
   } catch (e) {
@@ -360,8 +360,8 @@ const PreviewTimeline = (() => {
   const i = 56;
   const n = 100;
   const r = 100;
-  const o = 180;
-  const s = 24;
+  const s = 180;
+  const o = 24;
   const a = new Map;
   let l = null;
   let c = false;
@@ -392,8 +392,8 @@ const PreviewTimeline = (() => {
   let R = -1;
   let U = 0;
   let D = 1;
-  let F = null;
-  let N = false;
+  let N = null;
+  let F = false;
   let $ = null;
   let O = 0;
   let j = null;
@@ -414,8 +414,8 @@ const PreviewTimeline = (() => {
   let ie;
   let ne;
   let re;
-  let oe;
   let se;
+  let oe;
   let ae;
   let le;
   let ce;
@@ -429,8 +429,8 @@ const PreviewTimeline = (() => {
     ie = document.getElementById("previewTimelineWrap");
     ne = document.getElementById("previewTimelineCurrent");
     re = document.getElementById("previewTimelineDuration");
-    oe = ie;
-    se = document.getElementById("previewTimelineFilmstrip");
+    se = ie;
+    oe = document.getElementById("previewTimelineFilmstrip");
     ae = document.getElementById("previewTimelineSegments");
     le = document.getElementById("previewTimelineDimLeft");
     ce = document.getElementById("previewTimelineDimRight");
@@ -441,8 +441,8 @@ const PreviewTimeline = (() => {
     fe = document.getElementById("previewTimelinePlayhead");
   }
   function setHandlesUnlocked(e) {
-    N = !!e;
-    if (te) te.classList.toggle("handles-on", N);
+    F = !!e;
+    if (te) te.classList.toggle("handles-on", F);
   }
   function setRankingEditMode(e) {
     refreshEls();
@@ -520,10 +520,10 @@ const PreviewTimeline = (() => {
     const n = getSegmentBounds();
     const r = n.length - 1;
     if (t < 0 || i < 0 || t >= r || i >= r || t === i) return false;
-    const o = getClipOrder();
-    const [s] = o.splice(t, 1);
-    o.splice(i, 0, s);
-    Z = o;
+    const s = getClipOrder();
+    const [o] = s.splice(t, 1);
+    s.splice(i, 0, o);
+    Z = s;
     const a = [];
     for (let t = 0; t < r; t++) a.push(Math.max(e, n[t + 1] - n[t]));
     const [l] = a.splice(t, 1);
@@ -566,14 +566,14 @@ const PreviewTimeline = (() => {
   function rememberCache(e, t) {
     if (a.has(e)) a.delete(e);
     a.set(e, t);
-    while (a.size > s) {
+    while (a.size > o) {
       const e = a.keys().next().value;
       a.delete(e);
     }
   }
   function cacheTrackMetrics() {
-    if (!oe) return;
-    const e = oe.getBoundingClientRect();
+    if (!se) return;
+    const e = se.getBoundingClientRect();
     I = e.left;
     P = Math.max(1, e.width);
   }
@@ -614,9 +614,9 @@ const PreviewTimeline = (() => {
       const t = e / m * P;
       fe.style.transform = `translate3d(${t}px,0,0) translateX(-50%)`;
     }
-    if (!t && oe) {
-      oe.setAttribute("aria-valuenow", String(Math.round(f / m * 100)));
-      oe.setAttribute("aria-valuetext", fmt(f));
+    if (!t && se) {
+      se.setAttribute("aria-valuenow", String(Math.round(f / m * 100)));
+      se.setAttribute("aria-valuetext", fmt(f));
     }
     if (t) paintSegmentsFast(); else if (e) paintSegments();
     paintSilenceCuts();
@@ -705,8 +705,8 @@ const PreviewTimeline = (() => {
     });
   }
   function cloneFilmInto(e) {
-    if (!se) return;
-    const i = se.querySelectorAll(".preview-timeline-frame");
+    if (!oe) return;
+    const i = oe.querySelectorAll(".preview-timeline-frame");
     if (!i.length) {
       for (let i = 0; i < t; i++) {
         const t = document.createElement("div");
@@ -834,16 +834,16 @@ const PreviewTimeline = (() => {
     }
     const n = Math.max(0, Math.min(q.start, e)) / e;
     const r = Math.max(0, Math.min(q.end, e)) / e;
-    const o = Math.min(n, r) * i;
-    const s = Math.max(2, Math.abs(r - n) * i);
+    const s = Math.min(n, r) * i;
+    const o = Math.max(2, Math.abs(r - n) * i);
     const a = pe.hidden || pe.hasAttribute("hidden") || pe.classList.contains("is-exiting");
     pe.hidden = false;
     pe.removeAttribute("hidden");
     pe.setAttribute("aria-hidden", "false");
     ie?.classList.add("is-range-picking");
     pe.style.display = "block";
-    pe.style.transform = `translate3d(${o}px,0,0)`;
-    pe.style.width = `${s}px`;
+    pe.style.transform = `translate3d(${s}px,0,0)`;
+    pe.style.width = `${o}px`;
     pe.classList.remove("is-settled");
     pe.classList.toggle("is-dragging", !!W);
     if (a || !pe.classList.contains("is-live")) {
@@ -928,44 +928,44 @@ const PreviewTimeline = (() => {
     if (!(i > .25)) return null;
     const n = getSegmentBounds();
     let r;
-    let o;
-    let s = t.segIndex;
-    if (s != null && s >= 0 && s < n.length - 1) {
-      r = n[s];
-      o = n[s + 1];
+    let s;
+    let o = t.segIndex;
+    if (o != null && o >= 0 && o < n.length - 1) {
+      r = n[o];
+      s = n[o + 1];
     } else if (n.length > 2 && Number.isFinite(e)) {
       const t = Number(e);
-      s = null;
+      o = null;
       for (let e = 0; e < n.length - 1; e++) {
         const i = n[e];
         const a = n[e + 1];
         if (t >= i - .02 && (e === n.length - 2 ? t <= a + .02 : t < a - .01)) {
           r = i;
-          o = a;
-          s = e;
+          s = a;
+          o = e;
           break;
         }
       }
     }
-    if (!(Number.isFinite(r) && Number.isFinite(o) && o - r >= .35)) {
+    if (!(Number.isFinite(r) && Number.isFinite(s) && s - r >= .35)) {
       const t = Math.max(p, Math.min(u || i, Number(e) || f || 0));
       const n = 1.75;
       r = Math.max(p, t - n);
-      o = Math.min(u > p ? u : i, t + n);
-      if (o - r < .35) {
+      s = Math.min(u > p ? u : i, t + n);
+      if (s - r < .35) {
         r = Math.max(p, Math.min(r, (u || i) - .35));
-        o = Math.min(u > p ? u : i, r + Math.max(.35, Math.min(3.5, i)));
+        s = Math.min(u > p ? u : i, r + Math.max(.35, Math.min(3.5, i)));
       }
-      s = null;
+      o = null;
     }
-    x = s != null ? s : null;
+    x = o != null ? o : null;
     syncSegFocusClass();
     ae?.querySelectorAll(".preview-timeline-segment.is-selected").forEach(e => e.classList.remove("is-selected"));
     if (x != null && ae?.children?.[x]) {
       ae.children[x].classList.add("is-selected");
     }
-    const a = setManualRange(r, o);
-    f = Math.max(r, Math.min(o - .05, r + Math.min(.35, (o - r) * .2)));
+    const a = setManualRange(r, s);
+    f = Math.max(r, Math.min(s - .05, r + Math.min(.35, (s - r) * .2)));
     scheduleSeek(f, true);
     paintChrome();
     return a;
@@ -985,7 +985,7 @@ const PreviewTimeline = (() => {
     paintChrome();
     ae?.querySelectorAll(".preview-timeline-segment.is-selected").forEach(e => e.classList.remove("is-selected"));
     ae?.children?.[e]?.classList.add("is-selected");
-    if (!N) setHandlesUnlocked(true);
+    if (!F) setHandlesUnlocked(true);
     syncSegFocusClass();
     try {
       const i = document.getElementById("silencerNote");
@@ -1002,10 +1002,10 @@ const PreviewTimeline = (() => {
         }, 1600);
       }
     } catch (e) {}
-    const o = Math.max(1, 5 - e);
-    const s = document.querySelector("#templateVideoPreview .ranking-preview-container, .ranking-preview-container");
-    const a = s?.querySelector(`[data-template-element-id="rank_${o}_number"]`);
-    const l = s?.querySelector(`[data-template-element-id="rank_${o}_title"]`);
+    const s = Math.max(1, 5 - e);
+    const o = document.querySelector("#templateVideoPreview .ranking-preview-container, .ranking-preview-container");
+    const a = o?.querySelector(`[data-template-element-id="rank_${s}_number"]`);
+    const l = o?.querySelector(`[data-template-element-id="rank_${s}_title"]`);
     const c = a || l;
     if (!c) return;
     try {
@@ -1020,14 +1020,14 @@ const PreviewTimeline = (() => {
   function applySegmentTimes(t, i, n) {
     const r = getSegmentBounds();
     if (t < 0 || t >= r.length - 1) return;
-    const o = t === 0 ? 0 : r[t - 1] + e;
-    const s = t >= r.length - 2 ? m : r[t + 2] - e;
+    const s = t === 0 ? 0 : r[t - 1] + e;
+    const o = t >= r.length - 2 ? m : r[t + 2] - e;
     const a = Math.max(e, n - i);
-    let l = Math.max(o, Math.min(i, s - a));
+    let l = Math.max(s, Math.min(i, o - a));
     let c = l + a;
-    if (c > s) {
-      c = s;
-      l = Math.max(o, c - a);
+    if (c > o) {
+      c = o;
+      l = Math.max(s, c - a);
     }
     if (t === 0) p = l; else {
       const e = r[t];
@@ -1048,16 +1048,16 @@ const PreviewTimeline = (() => {
       return;
     }
     const {index: t, startX: i, startA: n, startB: r} = j;
-    const o = (e - i) / P * m;
-    applySegmentTimes(t, n + o, r + o);
-    f = Math.max(p, Math.min(u, n + o));
-    const s = p / m * P;
+    const s = (e - i) / P * m;
+    applySegmentTimes(t, n + s, r + s);
+    f = Math.max(p, Math.min(u, n + s));
+    const o = p / m * P;
     const a = u / m * P;
     if (de) {
-      de.style.width = `${Math.max(2, a - s)}px`;
-      de.style.transform = `translate3d(${s}px,0,0)`;
+      de.style.width = `${Math.max(2, a - o)}px`;
+      de.style.transform = `translate3d(${o}px,0,0)`;
     }
-    if (le) le.style.width = `${s}px`;
+    if (le) le.style.width = `${o}px`;
     if (ce) ce.style.width = `${Math.max(0, P - a)}px`;
     paintSegmentsFast();
   }
@@ -1069,8 +1069,8 @@ const PreviewTimeline = (() => {
     d = "segment";
     y = l ? !l.paused : false;
     if (l && !l.paused) l.pause();
-    oe?.classList.add("is-dragging", "is-trimming");
-    if (isRankingEdit()) oe?.classList.add("is-reordering");
+    se?.classList.add("is-dragging", "is-trimming");
+    if (isRankingEdit()) se?.classList.add("is-reordering");
     j.target?.classList.add("is-dragging");
     ae?.children?.[j.index]?.classList.add("is-dragging");
     if (j.target?.setPointerCapture && j.pointerId != null) {
@@ -1085,7 +1085,7 @@ const PreviewTimeline = (() => {
     if (W) return;
     t.preventDefault();
     t.stopPropagation();
-    if (!N && !te?.classList.contains("is-ranking-edit")) {
+    if (!F && !te?.classList.contains("is-ranking-edit")) {
       setHandlesUnlocked(true);
     }
     cacheTrackMetrics();
@@ -1147,11 +1147,11 @@ const PreviewTimeline = (() => {
     t.target?.classList.remove("is-dragging", "is-hold-ready");
     ae?.children?.[t.index]?.classList.remove("is-dragging");
     ae?.querySelectorAll(".is-drop-target").forEach(e => e.classList.remove("is-drop-target"));
-    oe?.classList.remove("is-reordering");
+    se?.classList.remove("is-reordering");
     if (d === "segment" && !i) {
       d = null;
       j = null;
-      oe?.classList.remove("is-dragging", "is-trimming");
+      se?.classList.remove("is-dragging", "is-trimming");
       if (y) l?.play().catch(() => {});
       y = false;
       customizeSegment(t.index);
@@ -1186,11 +1186,11 @@ const PreviewTimeline = (() => {
     for (let i = 0; i < t.length - 1; i++) {
       const n = t[i];
       const r = t[i + 1];
-      let o = n / m * P;
-      let s = r / m * P;
-      if (i > 0) o += ge / 2;
-      if (i < t.length - 2) s -= ge / 2;
-      const a = Math.max(8, s - o);
+      let s = n / m * P;
+      let o = r / m * P;
+      if (i > 0) s += ge / 2;
+      if (i < t.length - 2) o -= ge / 2;
+      const a = Math.max(8, o - s);
       const l = document.createElement("div");
       l.className = "preview-timeline-segment";
       l.dataset.segIndex = String(i);
@@ -1198,7 +1198,7 @@ const PreviewTimeline = (() => {
         l.classList.add("is-new");
       }
       l.style.width = `${a}px`;
-      l.style.transform = `translate3d(${o}px,0,0)`;
+      l.style.transform = `translate3d(${s}px,0,0)`;
       const c = document.createElement("div");
       c.className = "preview-timeline-segment-clip";
       const d = getClipOrder()[i] || 5 - i;
@@ -1215,7 +1215,7 @@ const PreviewTimeline = (() => {
       const p = document.createElement("div");
       p.className = "preview-timeline-segment-film";
       p.style.width = `${P}px`;
-      p.style.transform = `translate3d(${-o}px,0,0)`;
+      p.style.transform = `translate3d(${-s}px,0,0)`;
       cloneFilmInto(p);
       c.appendChild(p);
       c.addEventListener("pointerdown", e => onSegmentPointerDown(i, e));
@@ -1250,18 +1250,18 @@ const PreviewTimeline = (() => {
     for (let i = 0; i < t.length - 1; i++) {
       const n = t[i];
       const r = t[i + 1];
-      let o = n / m * P;
-      let s = r / m * P;
-      if (i > 0) o += ge / 2;
-      if (i < t.length - 2) s -= ge / 2;
-      const a = Math.max(6, s - o);
+      let s = n / m * P;
+      let o = r / m * P;
+      if (i > 0) s += ge / 2;
+      if (i < t.length - 2) o -= ge / 2;
+      const a = Math.max(6, o - s);
       const l = e[i];
       l.style.width = `${a}px`;
-      l.style.transform = `translate3d(${o}px,0,0)`;
+      l.style.transform = `translate3d(${s}px,0,0)`;
       const c = l.querySelector(".preview-timeline-segment-film");
       if (c) {
         c.style.width = `${P}px`;
-        c.style.transform = `translate3d(${-o}px,0,0)`;
+        c.style.transform = `translate3d(${-s}px,0,0)`;
       }
       const d = l.querySelector(".preview-timeline-handle.left");
       const p = l.querySelector(".preview-timeline-handle.right");
@@ -1279,10 +1279,10 @@ const PreviewTimeline = (() => {
       u = e;
       return;
     }
-    if (F != null) {
-      const t = E.findIndex(e => Math.abs(e - F) < .05);
+    if (N != null) {
+      const t = E.findIndex(e => Math.abs(e - N) < .05);
       if (t >= 0) E[t] = e; else E.push(e);
-      F = e;
+      N = e;
     } else {
       E.push(e);
     }
@@ -1305,8 +1305,8 @@ const PreviewTimeline = (() => {
     paintSegmentsFast();
   }
   function startBoundDrag(t, i) {
-    if (!N && !te?.classList.contains("is-ranking-edit")) return;
-    if (!N) setHandlesUnlocked(true);
+    if (!F && !te?.classList.contains("is-ranking-edit")) return;
+    if (!F) setHandlesUnlocked(true);
     if (i.pointerType === "mouse" && i.button !== 0) return;
     i.preventDefault();
     i.stopPropagation();
@@ -1317,10 +1317,10 @@ const PreviewTimeline = (() => {
     R = t;
     U = t === 0 ? 0 : n[t - 1] + e;
     D = t === n.length - 1 ? m : n[t + 1] - e;
-    F = t > 0 && t < n.length - 1 ? n[t] : null;
+    N = t > 0 && t < n.length - 1 ? n[t] : null;
     y = l ? !l.paused : false;
     if (l && !l.paused) l.pause();
-    oe?.classList.add("is-dragging", "is-trimming");
+    se?.classList.add("is-dragging", "is-trimming");
     i.currentTarget?.classList.add("is-dragging");
     if (i.currentTarget?.setPointerCapture && i.pointerId != null) {
       try {
@@ -1345,9 +1345,9 @@ const PreviewTimeline = (() => {
     }
     const n = p / m * P;
     const r = u / m * P;
-    const o = Math.max(2, r - n);
+    const s = Math.max(2, r - n);
     if (de) {
-      de.style.width = `${o}px`;
+      de.style.width = `${s}px`;
       de.style.transform = `translate3d(${n}px,0,0)`;
     }
     if (le) le.style.width = `${n}px`;
@@ -1358,19 +1358,19 @@ const PreviewTimeline = (() => {
     if (!l || !Number.isFinite(e)) return;
     _ = Math.max(0, Math.min(m || e, e));
     const i = performance.now();
-    const n = d === "scrub" ? o : r;
-    const s = t ? 0 : Math.max(0, n - (i - C));
+    const n = d === "scrub" ? s : r;
+    const o = t ? 0 : Math.max(0, n - (i - C));
     if (L) {
       clearTimeout(L);
       L = 0;
     }
-    if (s === 0) {
+    if (o === 0) {
       flushSeek();
     } else {
       L = setTimeout(() => {
         L = 0;
         flushSeek();
-      }, s);
+      }, o);
     }
   }
   function flushSeek() {
@@ -1490,8 +1490,8 @@ const PreviewTimeline = (() => {
     }
   }
   function mountFilmstripCanvases(e) {
-    if (!se) return;
-    se.innerHTML = "";
+    if (!oe) return;
+    oe.innerHTML = "";
     const i = document.createDocumentFragment();
     for (let n = 0; n < t; n++) {
       const t = document.createElement("div");
@@ -1507,26 +1507,26 @@ const PreviewTimeline = (() => {
       }
       i.appendChild(t);
     }
-    se.appendChild(i);
+    oe.appendChild(i);
     paintSegments();
   }
   function buildPlaceholderFilmstrip() {
     mountFilmstripCanvases(null);
   }
   async function buildFilmstripFromVideo() {
-    if (!se || !l) return;
+    if (!oe || !l) return;
     const e = l.currentSrc || l.src;
     if (!e || !m || m <= 0) {
       buildPlaceholderFilmstrip();
       return;
     }
     const r = cacheKey(e, m);
-    const o = a.get(r);
-    if (o?.length) {
-      mountFilmstripCanvases(o);
+    const s = a.get(r);
+    if (s?.length) {
+      mountFilmstripCanvases(s);
       return;
     }
-    const s = ++h;
+    const o = ++h;
     buildPlaceholderFilmstrip();
     destroyCaptureVideo();
     const c = document.createElement("video");
@@ -1535,7 +1535,7 @@ const PreviewTimeline = (() => {
     c.preload = "auto";
     c.setAttribute("playsinline", "");
     c.src = await resolveCaptureSrc(e);
-    if (s !== h) {
+    if (o !== h) {
       destroyCaptureVideo();
       return;
     }
@@ -1545,14 +1545,14 @@ const PreviewTimeline = (() => {
       for (let e = 0; e < 20 && !(c.videoWidth > 2); e++) {
         await new Promise(e => setTimeout(e, 50));
       }
-      if (s !== h) return;
+      if (o !== h) return;
       const e = Math.max(.01, m - .04);
-      const o = [];
+      const s = [];
       for (let r = 0; r < t; r++) {
-        if (s !== h) return;
+        if (o !== h) return;
         const a = r / Math.max(1, t - 1) * e;
         await seekCapture(c, a);
-        if (s !== h) return;
+        if (o !== h) return;
         const l = document.createElement("canvas");
         l.width = i;
         l.height = n;
@@ -1560,7 +1560,7 @@ const PreviewTimeline = (() => {
           alpha: false
         });
         if (!d) {
-          o.push(l);
+          s.push(l);
           continue;
         }
         d.fillStyle = "#ffffff";
@@ -1575,15 +1575,15 @@ const PreviewTimeline = (() => {
             d.drawImage(c, (i - t) / 2, (n - r) / 2, t, r);
           } catch (e) {}
         }
-        o.push(l);
+        s.push(l);
       }
-      if (s === h && o.length) {
-        rememberCache(r, o);
-        mountFilmstripCanvases(o);
+      if (o === h && s.length) {
+        rememberCache(r, s);
+        mountFilmstripCanvases(s);
       }
     } catch (e) {} finally {
       if (g === c) destroyCaptureVideo();
-      if (s === h && !se?.querySelector("canvas")) {
+      if (o === h && !oe?.querySelector("canvas")) {
         paintSegments();
       }
     }
@@ -1689,7 +1689,7 @@ const PreviewTimeline = (() => {
     }
     if (!d) return;
     const e = d;
-    oe?.classList.remove("is-scrubbing", "is-trimming", "is-dragging");
+    se?.classList.remove("is-scrubbing", "is-trimming", "is-dragging");
     ae?.querySelectorAll(".preview-timeline-handle.is-dragging").forEach(e => e.classList.remove("is-dragging"));
     ue?.classList.remove("is-dragging");
     me?.classList.remove("is-dragging");
@@ -1705,7 +1705,7 @@ const PreviewTimeline = (() => {
     }
     d = null;
     R = -1;
-    F = null;
+    N = null;
     if (e === "start" || e === "end" || e === "bound") {
       f = Math.max(p, Math.min(u, f));
       if (p > .05 || u < m - .05) {
@@ -1728,8 +1728,8 @@ const PreviewTimeline = (() => {
     });
   }
   function startDrag(e, t) {
-    if ((e === "start" || e === "end" || e === "bound") && !N && !te?.classList.contains("is-ranking-edit")) return;
-    if ((e === "start" || e === "end" || e === "bound") && !N) {
+    if ((e === "start" || e === "end" || e === "bound") && !F && !te?.classList.contains("is-ranking-edit")) return;
+    if ((e === "start" || e === "end" || e === "bound") && !F) {
       setHandlesUnlocked(true);
     }
     if (t.pointerType === "mouse" && t.button !== 0) return;
@@ -1743,8 +1743,8 @@ const PreviewTimeline = (() => {
     d = e;
     y = l ? !l.paused : false;
     if (l && !l.paused) l.pause();
-    oe?.classList.add("is-dragging");
-    if (e === "scrub") oe?.classList.add("is-scrubbing"); else oe?.classList.add("is-trimming");
+    se?.classList.add("is-dragging");
+    if (e === "scrub") se?.classList.add("is-scrubbing"); else se?.classList.add("is-trimming");
     if (e === "start") ue?.classList.add("is-dragging");
     if (e === "end") me?.classList.add("is-dragging");
     if (t.currentTarget?.setPointerCapture && t.pointerId != null) {
@@ -1876,7 +1876,7 @@ const PreviewTimeline = (() => {
     };
     const onStartDown = e => startDrag("start", e);
     const onEndDown = e => startDrag("end", e);
-    oe?.addEventListener("pointerdown", onTrackDown, true);
+    se?.addEventListener("pointerdown", onTrackDown, true);
     const onTrackDblClick = e => {
       if (e.button != null && e.button !== 0) return;
       if (e.target?.closest?.(".preview-timeline-handle")) return;
@@ -1886,7 +1886,7 @@ const PreviewTimeline = (() => {
       cacheTrackMetrics();
       highlightPartAt(timeFromClientX(e.clientX));
     };
-    oe?.addEventListener("dblclick", onTrackDblClick);
+    se?.addEventListener("dblclick", onTrackDblClick);
     ie?.addEventListener("dblclick", onTrackDblClick);
     const onDocRangeDown = e => {
       if (!(e.pointerType === "mouse" && e.button === 2)) return;
@@ -1899,7 +1899,7 @@ const PreviewTimeline = (() => {
       onTrackDown(e);
     };
     document.addEventListener("pointerdown", onDocRangeDown, true);
-    oe?.addEventListener("contextmenu", e => {
+    se?.addEventListener("contextmenu", e => {
       if (W || Q) {
         e.preventDefault();
         e.stopPropagation();
@@ -2054,8 +2054,8 @@ const PreviewTimeline = (() => {
     window.addEventListener("mousedown", onOutsideRangeClear, true);
     ee.push(() => {
       clearLeftRangePending();
-      oe?.removeEventListener("pointerdown", onTrackDown, true);
-      oe?.removeEventListener("dblclick", onTrackDblClick);
+      se?.removeEventListener("pointerdown", onTrackDown, true);
+      se?.removeEventListener("dblclick", onTrackDblClick);
       ie?.removeEventListener("dblclick", onTrackDblClick);
       document.removeEventListener("pointerdown", onDocRangeDown, true);
       window.removeEventListener("pointerdown", onOutsideRangeClear, true);
@@ -2094,8 +2094,8 @@ const PreviewTimeline = (() => {
         scheduleSeek(f, true);
       }
     };
-    oe?.addEventListener("keydown", onKey);
-    ee.push(() => oe?.removeEventListener("keydown", onKey));
+    se?.addEventListener("keydown", onKey);
+    ee.push(() => se?.removeEventListener("keydown", onKey));
     const i = document.getElementById("previewTimelineSplitBtn");
     const onSplitClick = e => {
       e.preventDefault();
@@ -2175,7 +2175,7 @@ const PreviewTimeline = (() => {
     $ = null;
     M = [];
     B = [];
-    N = false;
+    F = false;
     if (te) {
       te.classList.remove("handles-on");
       te.classList.remove("is-ranking-edit");
@@ -2432,8 +2432,8 @@ const PreviewTimeline = (() => {
       return true;
     }
     const r = isRankingEdit();
-    const o = r ? 4 : 24;
-    if (E.length >= o) {
+    const s = r ? 4 : 24;
+    if (E.length >= s) {
       if (!r) {
         paintSegments(i);
         return false;
@@ -2447,13 +2447,13 @@ const PreviewTimeline = (() => {
           t = e;
         }
       }
-      const o = t > 0 ? E[t - 1] + e : p + e;
-      const s = t < E.length - 1 ? E[t + 1] - e : u - e;
-      if (s - o < e) {
+      const s = t > 0 ? E[t - 1] + e : p + e;
+      const o = t < E.length - 1 ? E[t + 1] - e : u - e;
+      if (o - s < e) {
         paintSegments(i);
         return false;
       }
-      E[t] = Math.max(o, Math.min(s, i));
+      E[t] = Math.max(s, Math.min(o, i));
       const a = E[t];
       E.sort((e, t) => e - t);
       f = a;
@@ -2643,15 +2643,15 @@ const PreviewCtxMenu = (() => {
     n.style.left = "0px";
     n.style.top = "0px";
     const r = 8;
-    const o = 8;
-    const s = n.getBoundingClientRect();
+    const s = 8;
+    const o = n.getBoundingClientRect();
     let a = e + 10;
-    let l = t - s.height - o;
-    if (a + s.width > window.innerWidth - r) {
-      a = Math.max(r, window.innerWidth - s.width - r);
+    let l = t - o.height - s;
+    if (a + o.width > window.innerWidth - r) {
+      a = Math.max(r, window.innerWidth - o.width - r);
     }
     if (l < r) {
-      l = Math.max(r, t - s.height - 4);
+      l = Math.max(r, t - o.height - 4);
     }
     n.style.left = `${Math.round(Math.max(r, a))}px`;
     n.style.top = `${Math.round(l)}px`;
@@ -2665,8 +2665,8 @@ const PreviewCtxMenu = (() => {
     const n = i?.duration || 0;
     if (!t || !n) return i ? document.querySelector("#templateVideoPreview video")?.currentTime || 0 : 0;
     const r = t.getBoundingClientRect();
-    const o = r.width ? (e.clientX - r.left) / r.width : 0;
-    return Math.max(0, Math.min(n, o * n));
+    const s = r.width ? (e.clientX - r.left) / r.width : 0;
+    return Math.max(0, Math.min(n, s * n));
   }
   function openFromEvent(e) {
     if (performance.now() < r) {
@@ -2688,12 +2688,12 @@ const PreviewCtxMenu = (() => {
     }
     if (!(i instanceof Element)) return false;
     const n = i.closest("#previewTimelineWrap, #previewTimelineShell") || (e.clientX != null ? document.getElementById("previewTimelineWrap") : null);
-    const o = i.closest("#templateVideoPreview");
-    if (!n && !o) return false;
+    const s = i.closest("#templateVideoPreview");
+    if (!n && !s) return false;
     e.preventDefault?.();
     e.stopPropagation?.();
-    const s = document.getElementById("previewTimelineWrap");
-    t = n ? timeAtEvent(e, s) : document.querySelector("#templateVideoPreview video")?.currentTime || 0;
+    const o = document.getElementById("previewTimelineWrap");
+    t = n ? timeAtEvent(e, o) : document.querySelector("#templateVideoPreview video")?.currentTime || 0;
     if (n && typeof PreviewTimeline !== "undefined") {
       try {
         PreviewTimeline.selectSegmentAtTime?.(t);
@@ -2711,8 +2711,8 @@ const PreviewCtxMenu = (() => {
       const i = Number(t.duration) || 0;
       const n = e && Number.isFinite(e.start) && Number.isFinite(e.end) ? e.end - e.start : 0;
       const r = n >= .35 && (e.manual || e.segIndex != null) && (i <= 0 || n < i * .92);
-      const o = !!document.getElementById("previewTimelineShell")?.classList.contains("is-ranking-edit");
-      if (r && !o && window.SolisSilencer?.applyManualCut) {
+      const s = !!document.getElementById("previewTimelineShell")?.classList.contains("is-ranking-edit");
+      if (r && !s && window.SolisSilencer?.applyManualCut) {
         const t = window.SolisSilencer.applyManualCut(e.start, e.end);
         if (t) {
           try {
@@ -2856,18 +2856,18 @@ const TimelineRangeGlass = (() => {
     i.style.top = "0px";
     const n = 10;
     const r = i.getBoundingClientRect();
-    let o = (e || window.innerWidth / 2) - r.width / 2;
-    let s = (t || 120) - r.height - 14;
+    let s = (e || window.innerWidth / 2) - r.width / 2;
+    let o = (t || 120) - r.height - 14;
     const a = document.getElementById("previewTimelineShell");
     if (a) {
       const e = a.getBoundingClientRect();
-      s = e.top - r.height - 10;
-      o = e.left + (e.width - r.width) / 2;
+      o = e.top - r.height - 10;
+      s = e.left + (e.width - r.width) / 2;
     }
-    o = Math.max(n, Math.min(o, window.innerWidth - r.width - n));
-    s = Math.max(n, s);
-    i.style.left = `${Math.round(o)}px`;
-    i.style.top = `${Math.round(s)}px`;
+    s = Math.max(n, Math.min(s, window.innerWidth - r.width - n));
+    o = Math.max(n, o);
+    i.style.left = `${Math.round(s)}px`;
+    i.style.top = `${Math.round(o)}px`;
   }
   function showForRange(e, t, i) {
     if (!Number.isFinite(e) || !Number.isFinite(t) || t - e < .35) {
@@ -3052,10 +3052,10 @@ async function fetchSecureVideoObjectUrlPair(e) {
   const r = n.type ? n : new Blob([ n ], {
     type: "video/mp4"
   });
-  const o = URL.createObjectURL(r);
   const s = URL.createObjectURL(r);
-  _librarySplitscreenObjectUrls.push(o, s);
-  return [ o, s ];
+  const o = URL.createObjectURL(r);
+  _librarySplitscreenObjectUrls.push(s, o);
+  return [ s, o ];
 }
 
 function bindLibrarySplitscreenPlaybackSync(e, t) {
@@ -3083,11 +3083,11 @@ function bindLibrarySplitscreenPlaybackSync(e, t) {
   const syncSlaveTime = (n = false) => {
     if (r || e.seeking || t.seeking) return;
     if (!Number.isFinite(e.currentTime)) return;
-    const o = Math.abs((t.currentTime || 0) - (e.currentTime || 0));
-    const s = performance.now();
-    if (!n && o < .45) return;
-    if (!n && s - i < 1800) return;
-    i = s;
+    const s = Math.abs((t.currentTime || 0) - (e.currentTime || 0));
+    const o = performance.now();
+    if (!n && s < .45) return;
+    if (!n && o - i < 1800) return;
+    i = o;
     r = true;
     try {
       t.currentTime = e.currentTime;
@@ -3200,8 +3200,8 @@ function forceLibraryPanelVideoFill(e) {
 
 function applyPanelCropPreviewBox(e, t, i, n, r) {
   if (!e || !t || !i || !n || !r) return;
-  const o = Number(i[0]) || 0;
-  const s = Number(i[1]) || 0;
+  const s = Number(i[0]) || 0;
+  const o = Number(i[1]) || 0;
   const a = Math.max(1, Number(i[2]) || n);
   const l = Math.max(1, Number(i[3]) || r);
   const c = e.closest(".ss-panel-crop-viewport") || t;
@@ -3214,8 +3214,8 @@ function applyPanelCropPreviewBox(e, t, i, n, r) {
   const u = Math.max(d / a, p / l);
   e.classList.add("ss-live-face-crop");
   e.style.setProperty("position", "absolute", "important");
-  e.style.setProperty("left", `${-o * u}px`, "important");
-  e.style.setProperty("top", `${-s * u}px`, "important");
+  e.style.setProperty("left", `${-s * u}px`, "important");
+  e.style.setProperty("top", `${-o * u}px`, "important");
   e.style.setProperty("right", "auto", "important");
   e.style.setProperty("bottom", "auto", "important");
   e.style.setProperty("width", `${n * u}px`, "important");
@@ -3230,14 +3230,14 @@ function applyPanelCropPreviewBox(e, t, i, n, r) {
 
 function applyContentCropPreview(e, t, i, n, r) {
   if (!e || !t || !n || !r) return;
-  const o = e.closest(".ss-panel-crop-viewport") || t;
-  const s = o.clientWidth || t.clientWidth || 1;
-  const a = o.clientHeight || t.clientHeight || 1;
-  if (s < 2 || a < 2) {
+  const s = e.closest(".ss-panel-crop-viewport") || t;
+  const o = s.clientWidth || t.clientWidth || 1;
+  const a = s.clientHeight || t.clientHeight || 1;
+  if (o < 2 || a < 2) {
     forceLibraryPanelVideoFill(e);
     return;
   }
-  const l = s / a;
+  const l = o / a;
   let c = r;
   let d = c * l;
   if (d > n) {
@@ -3256,7 +3256,7 @@ function syncLibrarySplitscreenCropPreview() {
   const i = _splitscreenQuery("splitscreenTop");
   const n = _splitscreenQuery("splitscreenReframeVideo");
   const r = _splitscreenQuery("splitscreenBottom");
-  const o = _splitscreenQuery("splitscreenGameplayVideo");
+  const s = _splitscreenQuery("splitscreenGameplayVideo");
   if (e.useLayers && t) {
     forceLibraryPanelVideoFill(t);
   } else if (t && i && e.srcW && e.srcH) {
@@ -3265,8 +3265,8 @@ function syncLibrarySplitscreenCropPreview() {
     forceLibraryPanelVideoFill(t);
   }
   if (splitscreenSecondaryType === "face_track" && n) {
-    if (o) {
-      o.style.setProperty("display", "none", "important");
+    if (s) {
+      s.style.setProperty("display", "none", "important");
     }
     if (e.faceDisplayMode === "baked" || !e.liveFaceEdit && e.secondaryFromLayer) {
       forceLibraryPanelVideoFill(n);
@@ -3285,8 +3285,8 @@ function syncLibrarySplitscreenCropPreview() {
     }
     return;
   }
-  if (e.secondaryFromLayer && o) {
-    forceLibraryPanelVideoFill(o);
+  if (e.secondaryFromLayer && s) {
+    forceLibraryPanelVideoFill(s);
   }
 }
 
@@ -3299,8 +3299,8 @@ function bindFaceReframePanHandlers() {
   let i = 0;
   let n = 0;
   let r = null;
-  let o = false;
-  let s = null;
+  let s = false;
+  let o = null;
   let a = false;
   let l = null;
   let c = false;
@@ -3308,19 +3308,19 @@ function bindFaceReframePanHandlers() {
   let p = 0;
   const u = 6;
   const onMove = (l, c) => {
-    if (!o) return;
+    if (!s) return;
     const m = _librarySplitscreenCropState;
     const f = l - i;
     const y = c - n;
     const h = Math.hypot(f, y);
-    if (!s) {
+    if (!o) {
       if (h < u) return;
       const t = !!(m?.liveFaceEdit && r && (m.faceSrcW || m.srcW));
-      s = !t || Math.abs(y) >= Math.abs(f) * .85 ? "resize" : "pan";
+      o = !t || Math.abs(y) >= Math.abs(f) * .85 ? "resize" : "pan";
       a = true;
       armPreviewModalDragGuard(800);
       const i = _splitscreenQuery("splitscreenRoot");
-      if (s === "resize") {
+      if (o === "resize") {
         if (i) {
           i.classList.add("is-dragging");
           i.dataset._didPanelDrag = "1";
@@ -3336,7 +3336,7 @@ function bindFaceReframePanHandlers() {
       }
       e.style.cursor = "grabbing";
     }
-    if (s === "resize") {
+    if (o === "resize") {
       if (!d) {
         const e = _splitscreenQuery("splitscreenRoot");
         d = e?.getBoundingClientRect() || null;
@@ -3368,13 +3368,13 @@ function bindFaceReframePanHandlers() {
     syncLibrarySplitscreenCropPreview();
   };
   const endPan = (t = null) => {
-    if (!o) return;
-    const i = !!s;
-    const n = s === "resize";
+    if (!s) return;
+    const i = !!o;
+    const n = o === "resize";
     const r = p;
     const c = d;
-    o = false;
-    s = null;
+    s = false;
+    o = null;
     d = null;
     e.style.cursor = "grab";
     if (t != null && e.hasPointerCapture?.(t)) {
@@ -3412,13 +3412,13 @@ function bindFaceReframePanHandlers() {
         if (!u.faceCrop || u.faceCrop.length < 4) {
           const n = _splitscreenQuery("splitscreenBottom") || t;
           const r = (n.clientWidth || 9) / Math.max(1, n.clientHeight || 16);
-          let o = i * .55;
-          let s = o * r;
-          if (s > e) {
-            s = e * .7;
-            o = s / r;
+          let s = i * .55;
+          let o = s * r;
+          if (o > e) {
+            o = e * .7;
+            s = o / r;
           }
-          u.faceCrop = [ Math.max(0, (e - s) / 2), Math.max(0, (i - o) / 2), s, o ];
+          u.faceCrop = [ Math.max(0, (e - o) / 2), Math.max(0, (i - s) / 2), o, s ];
         }
         if (u.faceDisplayMode !== "live") {
           u.faceDisplayMode = "live";
@@ -3427,8 +3427,8 @@ function bindFaceReframePanHandlers() {
         r = u.faceCrop.slice();
       }
     }
-    o = true;
-    s = null;
+    s = true;
+    o = null;
     d = null;
     p = a;
     i = e;
@@ -3454,13 +3454,13 @@ function bindFaceReframePanHandlers() {
     beginTrack(t.clientX, t.clientY, t.pointerId);
   });
   e.addEventListener("pointermove", e => {
-    if (!o) return;
+    if (!s) return;
     if (l != null && e.pointerId !== l) return;
     e.preventDefault();
     onMove(e.clientX, e.clientY);
   });
   const onPointerEnd = e => {
-    if (!o) return;
+    if (!s) return;
     if (l != null && e.pointerId !== l) return;
     e.preventDefault();
     e.stopPropagation();
@@ -3469,12 +3469,12 @@ function bindFaceReframePanHandlers() {
   e.addEventListener("pointerup", onPointerEnd);
   e.addEventListener("pointercancel", onPointerEnd);
   e.addEventListener("lostpointercapture", () => {
-    if (o) endPan(l);
+    if (s) endPan(l);
   });
   e.addEventListener("click", e => {
     e.preventDefault();
     e.stopPropagation();
-    if (a || s) {
+    if (a || o) {
       a = false;
       return;
     }
@@ -3496,7 +3496,7 @@ async function promoteReframeToLiveEdit() {
   if (!e || !t || !i) return;
   if (e.faceDisplayMode === "live" && !e.secondaryFromLayer) return;
   const r = `${API_BASE_URL}/clips/projects/${encodeURIComponent(t)}/splitscreen-segment`;
-  const o = n?.currentTime || 0;
+  const s = n?.currentTime || 0;
   try {
     const t = await fetchSecureVideoObjectUrl(r);
     await new Promise(e => {
@@ -3524,7 +3524,7 @@ async function promoteReframeToLiveEdit() {
     e.faceDisplayMode = "live";
     e.liveFaceEdit = true;
     try {
-      if (Number.isFinite(o)) i.currentTime = o;
+      if (Number.isFinite(s)) i.currentTime = s;
     } catch (e) {}
     i.play().catch(() => {});
     syncLibrarySplitscreenCropPreview();
@@ -3712,11 +3712,11 @@ function syncUseTemplateFab() {
   t.disabled = !!e.disabled || n;
   t.classList.toggle("library-download-mode", e.classList.contains("library-download-mode"));
   const r = t.querySelector(".template-use-fab-label");
-  const o = (e.querySelector(".template-use-confirm-label")?.textContent || e.textContent || "").trim() || "Use Template";
-  if (r) r.textContent = o;
-  t.setAttribute("aria-label", o);
-  t.title = o;
-  if (e.classList.contains("library-download-mode") || !/^use template$/i.test(o)) {
+  const s = (e.querySelector(".template-use-confirm-label")?.textContent || e.textContent || "").trim() || "Use Template";
+  if (r) r.textContent = s;
+  t.setAttribute("aria-label", s);
+  t.title = s;
+  if (e.classList.contains("library-download-mode") || !/^use template$/i.test(s)) {
     t.removeAttribute("data-solis-keyhint");
     t.removeAttribute("aria-keyshortcuts");
     e.removeAttribute("data-solis-keyhint");
@@ -3776,18 +3776,18 @@ function toggleClipIntentMode(e) {
   const n = document.getElementById("clipIntentRow");
   const r = document.getElementById("clipIntentInput");
   if (!t || !i || !n) return false;
-  const o = typeof e === "boolean" ? e : !t.classList.contains("is-intent-mode");
-  t.classList.toggle("is-intent-mode", o);
-  i.setAttribute("aria-pressed", o ? "true" : "false");
-  n.hidden = !o;
-  if (o && r) {
+  const s = typeof e === "boolean" ? e : !t.classList.contains("is-intent-mode");
+  t.classList.toggle("is-intent-mode", s);
+  i.setAttribute("aria-pressed", s ? "true" : "false");
+  n.hidden = !s;
+  if (s && r) {
     requestAnimationFrame(() => {
       try {
         r.focus();
       } catch (e) {}
     });
   }
-  return o;
+  return s;
 }
 
 window.getClipIntentText = getClipIntentText;
@@ -3844,22 +3844,22 @@ function bindUseTemplateFabIdleHint() {
   const i = 2600;
   const n = 3200;
   let r = null;
-  let o = null;
+  let s = null;
   const clearTimers = () => {
     if (r) {
       clearTimeout(r);
       r = null;
     }
-    if (o) {
-      clearTimeout(o);
-      o = null;
+    if (s) {
+      clearTimeout(s);
+      s = null;
     }
   };
   const collapse = () => {
     e.classList.remove("is-hinting");
-    if (o) {
-      clearTimeout(o);
-      o = null;
+    if (s) {
+      clearTimeout(s);
+      s = null;
     }
   };
   const showHint = () => {
@@ -3867,7 +3867,7 @@ function bindUseTemplateFabIdleHint() {
     if (window.innerWidth > 768) return;
     if (t && (t.style.display === "none" || t.style.visibility === "hidden")) return;
     e.classList.add("is-hinting");
-    o = setTimeout(collapse, n);
+    s = setTimeout(collapse, n);
   };
   const bump = () => {
     collapse();
@@ -3898,9 +3898,9 @@ function collectLibraryOverlayTexts() {
   e.querySelectorAll(".overlay-text-block").forEach(e => {
     if (e.dataset.placeholder === "1") return;
     if (e.dataset.aiHook === "1") return;
-    const o = e.querySelector(".sub-text-inner");
-    let s = (o?.textContent || "").replace(/\u00a0/g, " ").trim();
-    if (!s || s.toLowerCase() === "text") return;
+    const s = e.querySelector(".sub-text-inner");
+    let o = (s?.textContent || "").replace(/\u00a0/g, " ").trim();
+    if (!o || o.toLowerCase() === "text") return;
     const a = e.getBoundingClientRect();
     const l = (a.left + a.width / 2 - t.left) / i;
     const c = (a.top + a.height / 2 - t.top) / n;
@@ -3912,7 +3912,7 @@ function collectLibraryOverlayTexts() {
     let y = "outline";
     if (!f || f === "none") y = "none"; else if (f.includes("3px")) y = "thick-outline";
     r.push({
-      text: s.slice(0, 200),
+      text: o.slice(0, 200),
       x: Math.max(0, Math.min(1, l)),
       y: Math.max(0, Math.min(1, c)),
       font_size_ratio: p / n,
@@ -4410,8 +4410,8 @@ window._subCache = (() => {
   }
   return {
     async get(r = false) {
-      const o = Date.now();
-      if (!r && e && o - t < n) return e;
+      const s = Date.now();
+      if (!r && e && s - t < n) return e;
       if (i) return i;
       i = _doFetch().catch(e => {
         i = null;
@@ -4549,8 +4549,8 @@ function buildSplitscreenFormatDropdown() {
     i.className = "gp-layout-item" + (t ? " on" : "");
     const n = e.id === "inverted" ? "gp-lp--reframe-top" : "gp-lp--content-top";
     const r = e.id === "inverted" ? "AI Reframe" : "Content";
-    const o = e.id === "inverted" ? "Content" : "AI Reframe";
-    i.innerHTML = `\n            <div class="gp-layout-preview ${n}" aria-hidden="true">\n                <span class="gp-lp-a">${r}</span>\n                <span class="gp-lp-b">${o}</span>\n            </div>\n            <div class="gp-layout-text">\n                <span class="gp-layout-label">${e.label}</span>\n                <span class="gp-layout-desc">${e.desc}</span>\n            </div>\n            <span class="gp-layout-check" aria-hidden="true">\n                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>\n            </span>\n        `;
+    const s = e.id === "inverted" ? "Content" : "AI Reframe";
+    i.innerHTML = `\n            <div class="gp-layout-preview ${n}" aria-hidden="true">\n                <span class="gp-lp-a">${r}</span>\n                <span class="gp-lp-b">${s}</span>\n            </div>\n            <div class="gp-layout-text">\n                <span class="gp-layout-label">${e.label}</span>\n                <span class="gp-layout-desc">${e.desc}</span>\n            </div>\n            <span class="gp-layout-check" aria-hidden="true">\n                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>\n            </span>\n        `;
     i.addEventListener("pointerenter", () => previewGpLayoutOption(e.id === "inverted"));
     i.addEventListener("pointerleave", () => endGpLayoutPreview());
     i.addEventListener("click", t => {
@@ -4656,19 +4656,19 @@ function buildGameplayClipCard(e) {
   const n = gameplayClipPreviewSrc(e);
   const r = e.filename ? resolveGameplayMediaUrl(`/assets/${e.filename}`) : "";
   t.innerHTML = `\n        <span class="gp-clip-media">\n            <span class="gp-clip-skel" aria-hidden="true">\n                <span class="gp-clip-skel-shine"></span>\n                <span class="gp-clip-skel-grid">\n                    <i></i><i></i><i></i><i></i><i></i><i></i>\n                    <i></i><i></i><i></i><i></i><i></i><i></i>\n                </span>\n            </span>\n            <img class="gp-clip-thumb" alt="" decoding="async" draggable="false" />\n        </span>\n        <span class="gp-clip-label">${i}</span>\n        <span class="gp-clip-check" aria-hidden="true">\n            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 13l4 4L19 7"/></svg>\n        </span>\n    `;
-  const o = t.querySelector("img.gp-clip-thumb");
-  const s = t.querySelector(".gp-clip-media");
+  const s = t.querySelector("img.gp-clip-thumb");
+  const o = t.querySelector(".gp-clip-media");
   const reveal = () => t.classList.add("is-ready");
-  if (o && n) {
-    o.addEventListener("load", reveal, {
+  if (s && n) {
+    s.addEventListener("load", reveal, {
       once: true
     });
-    o.addEventListener("error", () => {
-      if (!r || !s) {
+    s.addEventListener("error", () => {
+      if (!r || !o) {
         t.classList.add("is-failed");
         return;
       }
-      o.remove();
+      s.remove();
       const e = document.createElement("video");
       e.className = "gp-clip-thumb";
       e.muted = true;
@@ -4684,13 +4684,13 @@ function buildGameplayClipCard(e) {
         once: true
       });
       e.src = r;
-      s.appendChild(e);
+      o.appendChild(e);
     }, {
       once: true
     });
-    o.src = n;
-  } else if (o && r) {
-    o.remove();
+    s.src = n;
+  } else if (s && r) {
+    s.remove();
     const e = document.createElement("video");
     e.className = "gp-clip-thumb";
     e.muted = true;
@@ -4704,7 +4704,7 @@ function buildGameplayClipCard(e) {
       once: true
     });
     e.src = r;
-    s.appendChild(e);
+    o.appendChild(e);
   }
   t.addEventListener("pointerenter", () => previewGpSecondaryOption(e.id));
   t.addEventListener("pointerleave", () => endGpHoverPreview());
@@ -4717,24 +4717,24 @@ function buildGameplayClipCard(e) {
   return t;
 }
 
-function buildModeTile({id: e, title: t, hint: i, previewClass: n, previewHtml: r, suggested: o}) {
-  const s = document.createElement("button");
-  s.type = "button";
-  s.className = "gp-mode-tile" + (isGameplayOptionSelected(e) ? " on" : "") + (o ? " gp-mode-suggested" : "");
-  s.setAttribute("data-mode", e);
-  s.innerHTML = `\n        <span class="gp-mode-preview ${n}" aria-hidden="true">${r || ""}</span>\n        <span class="gp-mode-meta">\n            <span class="gp-mode-label">${t}${o ? '<em class="gp-ai-tag">AI</em>' : ""}</span>\n            ${i ? `<span class="gp-mode-hint">${i}</span>` : ""}\n        </span>\n        <span class="gp-mode-check" aria-hidden="true">\n            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><path d="M5 13l4 4L19 7"/></svg>\n        </span>\n    `;
-  s.addEventListener("pointerenter", () => {
+function buildModeTile({id: e, title: t, hint: i, previewClass: n, previewHtml: r, suggested: s}) {
+  const o = document.createElement("button");
+  o.type = "button";
+  o.className = "gp-mode-tile" + (isGameplayOptionSelected(e) ? " on" : "") + (s ? " gp-mode-suggested" : "");
+  o.setAttribute("data-mode", e);
+  o.innerHTML = `\n        <span class="gp-mode-preview ${n}" aria-hidden="true">${r || ""}</span>\n        <span class="gp-mode-meta">\n            <span class="gp-mode-label">${t}${s ? '<em class="gp-ai-tag">AI</em>' : ""}</span>\n            ${i ? `<span class="gp-mode-hint">${i}</span>` : ""}\n        </span>\n        <span class="gp-mode-check" aria-hidden="true">\n            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><path d="M5 13l4 4L19 7"/></svg>\n        </span>\n    `;
+  o.addEventListener("pointerenter", () => {
     if (e === "focus") return;
     previewGpSecondaryOption(e === "blur" ? "blank_blur" : e);
   });
-  s.addEventListener("pointerleave", () => endGpHoverPreview());
-  s.addEventListener("click", t => {
+  o.addEventListener("pointerleave", () => endGpHoverPreview());
+  o.addEventListener("click", t => {
     t.stopPropagation();
     _gpCommittedSecondary = null;
     selectClipMode(e);
     rebuildGameplayClipsDropdown();
   });
-  return s;
+  return o;
 }
 
 function getSuggestedClipMode() {
@@ -4804,20 +4804,20 @@ function isCanvasSelected() {
 function clampCanvasPanelHeights(e, t, i) {
   const n = Math.max(1, Number(i) || 1);
   let r = Number(e) || 0;
-  let o = Number(t) || 0;
+  let s = Number(t) || 0;
   if (!isCanvasSelected()) {
     return {
       contentH: r,
-      secondaryH: o,
+      secondaryH: s,
       avail: n
     };
   }
-  const s = Math.round(n * (SPLITSCREEN_CANVAS_MAX / 2));
-  o = Math.max(0, Math.min(s, o));
-  r = Math.max(0, n - o * 2);
+  const o = Math.round(n * (SPLITSCREEN_CANVAS_MAX / 2));
+  s = Math.max(0, Math.min(o, s));
+  r = Math.max(0, n - s * 2);
   return {
     contentH: r,
-    secondaryH: o,
+    secondaryH: s,
     avail: n
   };
 }
@@ -4886,8 +4886,8 @@ function selectClipMode(e, t) {
     } catch (e) {}
     return;
   }
-  const o = e === "blur" ? "blank_blur" : e;
-  if (o === "face_track") {
+  const s = e === "blur" ? "blank_blur" : e;
+  if (s === "face_track") {
     splitscreenSecondaryType = "face_track";
     splitscreenInverted = true;
     const e = Number(_clipModeRatioMemory.face_track);
@@ -4895,7 +4895,7 @@ function selectClipMode(e, t) {
       splitscreenContentRatio = e;
       splitscreenSavedRatio = e;
     }
-  } else if (o === "blank_blur") {
+  } else if (s === "blank_blur") {
     splitscreenSecondaryType = "blank_blur";
     splitscreenCanvasMode = "blank_blur";
     splitscreenInverted = true;
@@ -5079,33 +5079,33 @@ function openGameplayDropdown(e, t) {
     const i = e.classList.contains("gp-clips-dd");
     const n = e.offsetWidth || (i ? 360 : 280);
     const r = e.offsetHeight || (i ? 360 : 220);
-    const o = {
+    const s = {
       w: window.innerWidth,
       h: window.innerHeight
     };
-    const s = 10;
+    const o = 10;
     const a = document.getElementById("templateVideoPreview");
     const l = a?.getBoundingClientRect();
-    const c = o.h - (t.bottom + s) - 12;
-    const d = t.top - s - 12;
+    const c = s.h - (t.bottom + o) - 12;
+    const d = t.top - o - 12;
     let p;
     if (c >= Math.min(r, 220) || c >= d) {
-      p = t.bottom + s;
-      if (p + r > o.h - 12) p = Math.max(12, o.h - r - 12);
-      if (p + 20 < t.bottom && c > 120) p = t.bottom + s;
+      p = t.bottom + o;
+      if (p + r > s.h - 12) p = Math.max(12, s.h - r - 12);
+      if (p + 20 < t.bottom && c > 120) p = t.bottom + o;
     } else {
-      p = Math.max(12, t.top - r - s);
+      p = Math.max(12, t.top - r - o);
     }
     let u;
     if (l) {
-      u = l.right + s;
-      if (u + n > o.w - 12) {
-        u = Math.max(l.right + 6, o.w - n - 12);
+      u = l.right + o;
+      if (u + n > s.w - 12) {
+        u = Math.max(l.right + 6, s.w - n - 12);
       }
-      if (u < l.right) u = Math.min(l.right + s, Math.max(12, o.w - n - 12));
+      if (u < l.right) u = Math.min(l.right + o, Math.max(12, s.w - n - 12));
     } else {
-      u = t.right + s;
-      if (u + n > o.w - 12) u = Math.max(12, o.w - n - 12);
+      u = t.right + o;
+      if (u + n > s.w - 12) u = Math.max(12, s.w - n - 12);
     }
     e.style.top = Math.round(p) + "px";
     e.style.left = Math.round(u) + "px";
@@ -5135,26 +5135,26 @@ function positionGameplayPill() {
     w: window.innerWidth,
     h: window.innerHeight
   };
-  let o;
   let s;
+  let o;
   if (gpPillAnchor) {
-    o = gpPillAnchor.x + e + t;
-    s = gpPillAnchor.y - n / 2;
-    if (o + i > r.w - 8) {
-      o = gpPillAnchor.x - i - e;
+    s = gpPillAnchor.x + e + t;
+    o = gpPillAnchor.y - n / 2;
+    if (s + i > r.w - 8) {
+      s = gpPillAnchor.x - i - e;
     }
   } else {
     const e = document.getElementById("splitscreenRoot") || document.getElementById("templateVideoPreview");
     const t = document.getElementById("splitscreenBottom");
     const n = (t || e)?.getBoundingClientRect();
     if (!n) return;
-    o = n.left + n.width * .62 - i / 2;
-    s = n.top + Math.min(56, n.height * .12);
+    s = n.left + n.width * .62 - i / 2;
+    o = n.top + Math.min(56, n.height * .12);
   }
-  o = Math.max(8, Math.min(o, r.w - i - 8));
-  s = Math.max(8, Math.min(s, r.h - n - 8));
-  gpPill.style.left = o + "px";
-  gpPill.style.top = s + "px";
+  s = Math.max(8, Math.min(s, r.w - i - 8));
+  o = Math.max(8, Math.min(o, r.h - n - 8));
+  gpPill.style.left = s + "px";
+  gpPill.style.top = o + "px";
 }
 
 function showGameplayPillMenu(e, t) {
@@ -5304,11 +5304,11 @@ function syncBlurLetterboxBar(e) {
   i.style.minHeight = "0";
   i.style.overflow = "hidden";
   i.classList.add("mode-blur");
-  const o = _splitscreenQuery("splitscreenBlankPanel");
-  const s = o?.querySelector(".gp-blank-blur-vid");
+  const s = _splitscreenQuery("splitscreenBlankPanel");
+  const o = s?.querySelector(".gp-blank-blur-vid");
   const a = i.querySelector(".gp-blank-blur-vid");
-  if (s && a) {
-    const e = s.currentSrc || s.src || "";
+  if (o && a) {
+    const e = o.currentSrc || o.src || "";
     if (e && a.dataset.currentSrc !== e) {
       a.dataset.currentSrc = e;
       a.src = e;
@@ -5323,8 +5323,8 @@ function syncBlurLetterboxBar(e) {
       once: true
     });
     try {
-      if (Math.abs((a.currentTime || 0) - (s.currentTime || 0)) > .4) {
-        a.currentTime = s.currentTime || 0;
+      if (Math.abs((a.currentTime || 0) - (o.currentTime || 0)) > .4) {
+        a.currentTime = o.currentTime || 0;
       }
     } catch (e) {}
   }
@@ -5477,28 +5477,28 @@ function getSplitscreenLayout() {
 function calcSplitscreenHeights(e, t, i) {
   const n = Math.max(0, Math.min(2, Number(i) || 1));
   const r = Math.max(1, t.height - n);
-  const o = e - t.top;
-  const s = Math.max(0, Math.min(r, o - n / 2));
+  const s = e - t.top;
+  const o = Math.max(0, Math.min(r, s - n / 2));
   let a;
   let l;
   if (splitscreenSecondaryType === "blank_blur" && !splitscreenSecondaryCollapsed) {
-    l = Math.max(0, Math.min(r * (SPLITSCREEN_CANVAS_MAX / 2), s));
+    l = Math.max(0, Math.min(r * (SPLITSCREEN_CANVAS_MAX / 2), o));
     a = Math.max(0, r - l * 2);
     return clampCanvasPanelHeights(a, l, r);
   }
   if (splitscreenInverted) {
-    l = s;
+    l = o;
     a = r - l;
   } else {
-    a = s;
+    a = o;
     l = r - a;
   }
   return clampCanvasPanelHeights(a, l, r);
 }
 
 function setSplitscreenPanelHeights(e, t, i) {
-  const {root: n, divider: r, content: o, secondary: s} = getSplitscreenLayout();
-  if (!n || !r || !o || !s || splitscreenSecondaryCollapsed) return;
+  const {root: n, divider: r, content: s, secondary: o} = getSplitscreenLayout();
+  if (!n || !r || !s || !o || splitscreenSecondaryCollapsed) return;
   if (_reframeImmersive) return;
   const a = splitscreenSecondaryType === "blank_blur";
   const l = 1;
@@ -5526,21 +5526,21 @@ function setSplitscreenPanelHeights(e, t, i) {
   r.style.margin = "0";
   r.style.opacity = "1";
   r.style.pointerEvents = "";
-  s.style.display = "";
-  s.style.opacity = "1";
   o.style.display = "";
   o.style.opacity = "1";
-  o.style.flex = "";
+  s.style.display = "";
+  s.style.opacity = "1";
   s.style.flex = "";
+  o.style.flex = "";
   if (splitscreenSecondaryType === "face_track" || isCanvasSelected()) {
     splitscreenInverted = true;
   }
   if (splitscreenInverted) {
-    s.style.flex = `0 0 ${p}px`;
-    o.style.flex = `0 0 ${u}px`;
+    o.style.flex = `0 0 ${p}px`;
+    s.style.flex = `0 0 ${u}px`;
   } else {
-    o.style.flex = `0 0 ${u}px`;
-    s.style.flex = `0 0 ${p}px`;
+    s.style.flex = `0 0 ${u}px`;
+    o.style.flex = `0 0 ${p}px`;
   }
   syncBlurLetterboxBar(a ? p : 0);
 }
@@ -5595,12 +5595,12 @@ async function probeProjectFaces(e, t, i) {
     });
     if (!n.ok) throw new Error(`face-probe ${n.status}`);
     const r = await n.json();
-    const o = {
+    const s = {
       has_face: Boolean(r.has_face && r.face_crop),
       face_crop: Array.isArray(r.face_crop) ? r.face_crop.slice(0, 4).map(Number) : null
     };
-    _reframeFaceProbeCache.set(e, o);
-    return o;
+    _reframeFaceProbeCache.set(e, s);
+    return s;
   } catch (t) {
     safeLog("Face probe failed:", t);
     const i = {
@@ -5758,14 +5758,14 @@ function ensureImmersiveExitGrip() {
     n = false;
     const e = _splitscreenQuery("splitscreenRoot");
     const i = e?.clientHeight || 1;
-    const o = _reframePeekOffsetY / i;
+    const s = _reframePeekOffsetY / i;
     if (r != null && t.hasPointerCapture?.(r)) {
       try {
         t.releasePointerCapture(r);
       } catch (e) {}
     }
     r = null;
-    if (o >= SPLITSCREEN_PEEK_EXIT) {
+    if (s >= SPLITSCREEN_PEEK_EXIT) {
       exitReframeImmersive();
       return;
     }
@@ -5818,14 +5818,14 @@ function bindReframePeekHandlers() {
     i = false;
     const t = _splitscreenQuery("splitscreenRoot");
     const r = t?.clientHeight || 1;
-    const o = _reframePeekOffsetY / r;
+    const s = _reframePeekOffsetY / r;
     if (n != null && e.hasPointerCapture?.(n)) {
       try {
         e.releasePointerCapture(n);
       } catch (e) {}
     }
     n = null;
-    if (o >= SPLITSCREEN_PEEK_EXIT) {
+    if (s >= SPLITSCREEN_PEEK_EXIT) {
       exitReframeImmersive();
       return;
     }
@@ -5914,9 +5914,9 @@ function smoothCollapseSplitscreenSecondary() {
   if (!e || !t || !i || !n) return;
   notifySubtitleLayoutEdit();
   const r = 1;
-  const o = e.getBoundingClientRect().height || e.offsetHeight;
-  const s = Math.max(1, o - r);
-  const a = s;
+  const s = e.getBoundingClientRect().height || e.offsetHeight;
+  const o = Math.max(1, s - r);
+  const a = o;
   e.classList.remove("is-dragging");
   setSplitscreenPanelHeights(a, 0);
   let l = false;
@@ -5946,20 +5946,20 @@ function expandSplitscreenSecondary(e) {
   markLibrarySplitscreenDirty();
   ensureKeptReframePanelLoaded();
   if (!t) return;
-  const {contentH: r, secondaryH: o} = (() => {
+  const {contentH: r, secondaryH: s} = (() => {
     const e = 1;
     const i = t.getBoundingClientRect().height || t.offsetHeight;
     const r = Math.max(1, i - e);
-    const o = Math.round(r * n);
+    const s = Math.round(r * n);
     return {
-      contentH: o,
-      secondaryH: r - o
+      contentH: s,
+      secondaryH: r - s
     };
   })();
   setSplitscreenPanelHeights(r, 0);
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      setSplitscreenPanelHeights(r, o);
+      setSplitscreenPanelHeights(r, s);
       playBothLibraryPanels(t);
     });
   });
@@ -6026,25 +6026,25 @@ function initSplitscreenCollapseHandle(e) {
     const i = t.getBoundingClientRect();
     const n = 1;
     const r = i.height - n;
-    let o = false;
+    let s = false;
     const onMove = e => {
       const t = e.clientY - i.top;
       let n;
-      let s;
+      let o;
       if (splitscreenInverted) {
-        s = Math.max(0, Math.min(r, t));
-        if (s <= 1) return;
-        n = r - s;
+        o = Math.max(0, Math.min(r, t));
+        if (o <= 1) return;
+        n = r - o;
       } else {
         n = Math.max(0, Math.min(r, t));
-        s = r - n;
-        if (s <= 1) return;
+        o = r - n;
+        if (o <= 1) return;
       }
-      o = true;
+      s = true;
       splitscreenSecondaryCollapsed = false;
       removeSplitscreenCollapseHandle();
       splitscreenContentRatio = n / r;
-      setSplitscreenPanelHeights(n, s, r);
+      setSplitscreenPanelHeights(n, o, r);
     };
     const onUp = () => {
       t.classList.remove("is-dragging");
@@ -6052,7 +6052,7 @@ function initSplitscreenCollapseHandle(e) {
       document.removeEventListener("mouseup", onUp);
       document.removeEventListener("touchmove", onTouchMove);
       document.removeEventListener("touchend", onUp);
-      if (!o) {
+      if (!s) {
         expandSplitscreenSecondary();
       } else {
         syncSplitscreenSubtitles(getSplitscreenPreviewContainer());
@@ -6118,33 +6118,33 @@ function finishSplitscreenDrag(e, t, i) {
     _splitscreenDragRaf = 0;
   }
   _splitscreenDragPending = null;
-  const {contentH: r, secondaryH: o, avail: s} = calcSplitscreenHeights(e, t, i);
-  if (o <= SPLITSCREEN_COLLAPSE_SNAP && !isCanvasSelected()) {
+  const {contentH: r, secondaryH: s, avail: o} = calcSplitscreenHeights(e, t, i);
+  if (s <= SPLITSCREEN_COLLAPSE_SNAP && !isCanvasSelected()) {
     n?.classList.remove("is-dragging");
     collapseSplitscreenSecondary();
     notifySubtitleLayoutIdle();
     return;
   }
-  const a = r / Math.max(1, s);
+  const a = r / Math.max(1, o);
   if (splitscreenSecondaryType !== "face_track" && !isCanvasSelected() && a >= SPLITSCREEN_IMMERSIVE_ENTER) {
     n?.classList.remove("is-dragging");
     collapseSplitscreenSecondary();
     notifySubtitleLayoutIdle();
     return;
   }
-  if (maybeEnterReframeImmersiveFromDrag(r, o, s)) {
+  if (maybeEnterReframeImmersiveFromDrag(r, s, o)) {
     n?.classList.remove("is-dragging");
     notifySubtitleLayoutIdle();
     return;
   }
-  let l = Math.max(0, Math.min(s, r));
-  let c = isCanvasSelected() ? Math.max(0, o) : Math.max(0, s - l);
+  let l = Math.max(0, Math.min(o, r));
+  let c = isCanvasSelected() ? Math.max(0, s) : Math.max(0, o - l);
   if (isCanvasSelected()) {
-    const e = clampCanvasPanelHeights(l, c, s);
+    const e = clampCanvasPanelHeights(l, c, o);
     l = e.contentH;
     c = e.secondaryH;
   }
-  splitscreenContentRatio = s > 0 ? l / s : .5;
+  splitscreenContentRatio = o > 0 ? l / o : .5;
   if (splitscreenContentRatio > .01 && splitscreenContentRatio < .99) {
     splitscreenSavedRatio = splitscreenContentRatio;
     const e = currentClipModeId();
@@ -6152,7 +6152,7 @@ function finishSplitscreenDrag(e, t, i) {
       _clipModeRatioMemory[e] = splitscreenContentRatio;
     }
   }
-  setSplitscreenPanelHeights(l, c, s);
+  setSplitscreenPanelHeights(l, c, o);
   requestAnimationFrame(() => {
     n?.classList.remove("is-dragging");
     syncSplitscreenSubtitles(getSplitscreenPreviewContainer());
@@ -6207,20 +6207,20 @@ function applySplitscreenRatio() {
   t.style.overflow = "visible";
   t.style.padding = "0";
   t.style.margin = "0";
-  const o = 1;
-  const s = Math.max(1, r - o);
+  const s = 1;
+  const o = Math.max(1, r - s);
   let a = Number(splitscreenContentRatio);
   if (!Number.isFinite(a) || a <= 0 || a >= 1) a = .5;
   a = clampCanvasContentRatio(a);
   splitscreenContentRatio = a;
   if (isCanvasSelected()) {
-    const e = Math.round(s * a);
-    const t = Math.max(0, Math.floor((s - e) / 2));
-    setSplitscreenPanelHeights(e, t, s);
+    const e = Math.round(o * a);
+    const t = Math.max(0, Math.floor((o - e) / 2));
+    setSplitscreenPanelHeights(e, t, o);
   } else {
-    const e = Math.round(s * a);
-    const t = Math.max(0, s - e);
-    setSplitscreenPanelHeights(e, t, s);
+    const e = Math.round(o * a);
+    const t = Math.max(0, o - e);
+    setSplitscreenPanelHeights(e, t, o);
   }
   syncLibrarySplitscreenCropPreview();
 }
@@ -6569,10 +6569,10 @@ window.offerSplitscreenMemorySuggest = function(e, t) {
     gameplay_clip_id: n.gameplay_clip_id
   };
   const r = String(e.splitscreen_secondary_type || "").toLowerCase();
-  const o = r && (String(n.splitscreen_secondary_type || "") !== r || r === "gameplay" && n.gameplay_clip_id !== e.gameplay_clip_id);
-  const s = Number(e.splitscreen_content_ratio);
+  const s = r && (String(n.splitscreen_secondary_type || "") !== r || r === "gameplay" && n.gameplay_clip_id !== e.gameplay_clip_id);
+  const o = Number(e.splitscreen_content_ratio);
   const a = Number(n.splitscreen_content_ratio);
-  const l = Number.isFinite(s) && (!Number.isFinite(a) || Math.abs(s - a) > .015);
+  const l = Number.isFinite(o) && (!Number.isFinite(a) || Math.abs(o - a) > .015);
   const c = e.splitscreen_inverted != null && !!e.splitscreen_inverted !== !!n.splitscreen_inverted;
   try {
     hideGameplayPillMenu();
@@ -6582,17 +6582,17 @@ window.offerSplitscreenMemorySuggest = function(e, t) {
     document.getElementById("subPillMenu")?.classList.remove("active");
     document.getElementById("previewEditorPill")?.querySelectorAll(".tool-btn.active").forEach(e => e.classList.remove("active"));
   } catch (e) {}
-  if (!o && !l && !c) return true;
+  if (!s && !l && !c) return true;
   try {
     window.SolisMemory && (window.SolisMemory._applying = true);
     if (c) {
       splitscreenInverted = !!e.splitscreen_inverted;
     }
     if (l) {
-      splitscreenContentRatio = Math.max(.02, Math.min(.98, s));
+      splitscreenContentRatio = Math.max(.02, Math.min(.98, o));
       splitscreenSavedRatio = splitscreenContentRatio;
     }
-    if (o && r) {
+    if (s && r) {
       if (r === "face_track" || r === "blank" || r === "blank_blur") {
         selectSecondaryGameplay(r);
       } else if (r === "gameplay" || e.gameplay_clip_id) {
@@ -6688,9 +6688,9 @@ function storeSubtitleDividerOffset(e, t) {
   if (i === null) return;
   const n = t.getBoundingClientRect();
   const r = e.getBoundingClientRect();
-  const o = r.top + r.height / 2 - n.top;
-  if (!Number.isFinite(o)) return;
-  e.dataset.dividerOffsetY = String(o - i);
+  const s = r.top + r.height / 2 - n.top;
+  if (!Number.isFinite(s)) return;
+  e.dataset.dividerOffsetY = String(s - i);
 }
 
 function syncSplitscreenSubtitles(e, t) {
@@ -6719,22 +6719,22 @@ function syncSplitscreenSubtitles(e, t) {
       return;
     }
     if (t.classList.contains("overlay-text-block")) return;
-    let o = t.dataset.dividerPinned === "1";
-    const s = t.offsetHeight || 0;
+    let s = t.dataset.dividerPinned === "1";
+    const o = t.offsetHeight || 0;
     const a = parseFloat(t.style.top);
     const l = Number(t.dataset.yPct);
-    if (!o) {
+    if (!s) {
       if (Number.isFinite(l)) {
         if (typeof window.placeCaptionAtYPct === "function") {
           try {
             window.placeCaptionAtYPct(t, e, l);
           } catch (e) {}
         } else {
-          const e = Math.round(l * n - s / 2);
-          t.style.top = `${Math.max(0, Math.min(Math.max(0, n - s), e))}px`;
+          const e = Math.round(l * n - o / 2);
+          t.style.top = `${Math.max(0, Math.min(Math.max(0, n - o), e))}px`;
         }
       } else if (Number.isFinite(a) && n > 0) {
-        const e = (a + s / 2) / n;
+        const e = (a + o / 2) / n;
         t.dataset.yPct = String(Math.max(.02, Math.min(.98, e)).toFixed(3));
       }
       return;
@@ -6742,12 +6742,12 @@ function syncSplitscreenSubtitles(e, t) {
     if (t.dataset.dividerOffsetY == null || t.dataset.dividerOffsetY === "") {
       storeSubtitleDividerOffset(t, e);
       if (t.dataset.dividerOffsetY == null || t.dataset.dividerOffsetY === "") {
-        t.dataset.dividerOffsetY = String(-(s / 2 + 6));
+        t.dataset.dividerOffsetY = String(-(o / 2 + 6));
       }
     }
     const c = parseFloat(t.dataset.dividerOffsetY || "0");
     if (!Number.isFinite(c)) return;
-    const d = Math.max(0, Math.min(Math.max(0, n - s), Math.round(i + c - s / 2)));
+    const d = Math.max(0, Math.min(Math.max(0, n - o), Math.round(i + c - o / 2)));
     t.style.top = `${d}px`;
     if (typeof window.lockSubtitleCenterX === "function") {
       window.lockSubtitleCenterX(t);
@@ -6834,8 +6834,8 @@ function initializeSplitscreenDivider() {
     }
     const n = i.getBoundingClientRect();
     const r = 1;
-    let o = e;
-    applySplitscreenDrag(o, n, r);
+    let s = e;
+    applySplitscreenDrag(s, n, r);
     if (_splitscreenDragRaf) {
       cancelAnimationFrame(_splitscreenDragRaf);
       _splitscreenDragRaf = 0;
@@ -6849,13 +6849,13 @@ function initializeSplitscreenDivider() {
       syncSplitscreenSubtitles(getSplitscreenPreviewContainer(), getDividerCenterYFromHeights(t, i));
     }
     const onMove = e => {
-      o = e.clientY;
-      applySplitscreenDrag(o, n, r);
+      s = e.clientY;
+      applySplitscreenDrag(s, n, r);
       armPreviewModalDragGuard(1200);
     };
     const onUp = () => {
       setDividerHover(false);
-      finishSplitscreenDrag(o, n, r);
+      finishSplitscreenDrag(s, n, r);
       armPreviewModalDragGuard(800);
       document.removeEventListener("mousemove", onMove);
       document.removeEventListener("mouseup", onUp);
@@ -6935,11 +6935,11 @@ function bindSeamHoldDrag(e, t) {
     if (splitscreenSecondaryCollapsed || _reframeImmersive) return;
     if (r.target.closest("#splitscreenDivider")) return;
     if (r.target.closest("#ssModeDots") || r.target.closest(".sub-text-block") || r.target.closest(".sub-resize-handle") || r.target.closest(".sub-pill-menu") || r.target.closest(".overlay-text-block")) return;
-    const o = _splitscreenQuery("splitscreenBottom");
-    const s = _splitscreenQuery("splitscreenTop");
-    if (!o || !s) return;
-    const a = o.getBoundingClientRect();
-    const l = s.getBoundingClientRect();
+    const s = _splitscreenQuery("splitscreenBottom");
+    const o = _splitscreenQuery("splitscreenTop");
+    if (!s || !o) return;
+    const a = s.getBoundingClientRect();
+    const l = o.getBoundingClientRect();
     const c = r.clientY;
     const d = splitscreenInverted ? c >= a.bottom - i && c <= l.top + i : c >= l.bottom - i && c <= a.top + i;
     if (!d) return;
@@ -6948,10 +6948,10 @@ function bindSeamHoldDrag(e, t) {
     const onMove = i => {
       if (!n) return;
       const r = i.clientY - p;
-      const o = i.clientX - u;
+      const s = i.clientX - u;
       if (!n.started) {
         if (Math.abs(r) < 10) return;
-        if (Math.abs(o) > Math.abs(r) * 1.1) {
+        if (Math.abs(s) > Math.abs(r) * 1.1) {
           clear();
           return;
         }
@@ -7014,30 +7014,30 @@ function showNotification(e, t = "info") {
     if (e._removeTimer) clearTimeout(e._removeTimer);
     e.remove();
   });
-  const o = document.createElement("div");
-  const s = [ "success", "error", "warning", "info" ].includes(t) ? t : "info";
-  o.className = `notification notification-${s} ${s}`;
-  o.setAttribute("role", "status");
-  const a = s === "success" ? "check" : s === "error" ? "exclamation" : s === "warning" ? "exclamation-triangle" : "info";
-  o.innerHTML = `\n        <div class="notification-content">\n            <i class="fas fa-${a}-circle notification-icon" aria-hidden="true"></i>\n            <span class="notification-message"></span>\n        </div>\n    `;
-  o.querySelector(".notification-message").textContent = String(e || "");
-  r.appendChild(o);
+  const s = document.createElement("div");
+  const o = [ "success", "error", "warning", "info" ].includes(t) ? t : "info";
+  s.className = `notification notification-${o} ${o}`;
+  s.setAttribute("role", "status");
+  const a = o === "success" ? "check" : o === "error" ? "exclamation" : o === "warning" ? "exclamation-triangle" : "info";
+  s.innerHTML = `\n        <div class="notification-content">\n            <i class="fas fa-${a}-circle notification-icon" aria-hidden="true"></i>\n            <span class="notification-message"></span>\n        </div>\n    `;
+  s.querySelector(".notification-message").textContent = String(e || "");
+  r.appendChild(s);
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      o.classList.add("show");
+      s.classList.add("show");
     });
   });
   const dismiss = () => {
-    if (o._leaving) return;
-    o._leaving = true;
-    o.classList.remove("show");
-    o.classList.add("is-leaving");
-    o._removeTimer = setTimeout(() => {
-      o.remove();
+    if (s._leaving) return;
+    s._leaving = true;
+    s.classList.remove("show");
+    s.classList.add("is-leaving");
+    s._removeTimer = setTimeout(() => {
+      s.remove();
     }, n);
   };
-  o._hideTimer = setTimeout(dismiss, i);
-  o.addEventListener("click", dismiss);
+  s._hideTimer = setTimeout(dismiss, i);
+  s.addEventListener("click", dismiss);
 }
 
 window.showNotification = showNotification;
@@ -7106,17 +7106,17 @@ function init() {
     sidebar.classList.add("expanded");
   }
   const r = document.querySelector(".input-section");
-  const o = r ? r.querySelector(".input-container") : null;
-  if (o) {
-    o.classList.add("first-prompt");
+  const s = r ? r.querySelector(".input-container") : null;
+  if (s) {
+    s.classList.add("first-prompt");
   }
   if (r) {
     r.classList.add("is-first-prompt");
   }
   initClipsStudio();
-  const s = document.getElementById("plusFeaturesBtn");
-  if (s) {
-    s.addEventListener("click", function(e) {
+  const o = document.getElementById("plusFeaturesBtn");
+  if (o) {
+    o.addEventListener("click", function(e) {
       e.stopPropagation();
       const t = document.getElementById("featuresTabContainer");
       if (t) {
@@ -7187,17 +7187,17 @@ function debounce(e, t) {
   let i;
   let n = 0;
   return function debounced(...r) {
-    const o = Date.now();
-    const s = o - n;
+    const s = Date.now();
+    const o = s - n;
     clearTimeout(i);
-    if (s >= t) {
-      n = o;
+    if (o >= t) {
+      n = s;
       e.apply(this, r);
     } else {
       i = setTimeout(() => {
         n = Date.now();
         e.apply(this, r);
-      }, t - s);
+      }, t - o);
     }
   };
 }
@@ -7318,28 +7318,28 @@ const LibraryPreviewMediaCache = (() => {
       const r = e.get(i);
       e.delete(i);
       if (r?.srcKey) t.delete(r.srcKey);
-      const o = r?.objectUrl;
-      if (o) {
+      const s = r?.objectUrl;
+      if (s) {
         setTimeout(() => {
           try {
-            const e = Array.from(document.querySelectorAll("video")).some(e => (e.src || e.currentSrc) === o);
-            if (!e) URL.revokeObjectURL(o);
+            const e = Array.from(document.querySelectorAll("video")).some(e => (e.src || e.currentSrc) === s);
+            if (!e) URL.revokeObjectURL(s);
           } catch (e) {
             try {
-              URL.revokeObjectURL(o);
+              URL.revokeObjectURL(s);
             } catch (e) {}
           }
         }, 8e3);
       }
     }
   }
-  function put(i, n, r, o, s) {
-    if (!r || !o) return null;
+  function put(i, n, r, s, o) {
+    if (!r || !s) return null;
     const a = projectKey(i, n);
-    const l = normalizeSrc(s || o);
+    const l = normalizeSrc(o || s);
     evictIfNeeded(r.size || 0);
     const c = e.get(a);
-    if (c?.objectUrl && c.objectUrl !== o) {
+    if (c?.objectUrl && c.objectUrl !== s) {
       try {
         URL.revokeObjectURL(c.objectUrl);
       } catch (e) {}
@@ -7347,7 +7347,7 @@ const LibraryPreviewMediaCache = (() => {
     }
     const d = {
       blob: r,
-      objectUrl: o,
+      objectUrl: s,
       srcKey: l,
       ts: Date.now(),
       size: r.size || 0,
@@ -7373,13 +7373,13 @@ const LibraryPreviewMediaCache = (() => {
   function rememberSrc(e, i, n) {
     if (!i || !n) return null;
     const r = normalizeSrc(e);
-    const o = t.get(r);
-    if (o) {
-      touch(o);
-      return o;
+    const s = t.get(r);
+    if (s) {
+      touch(s);
+      return s;
     }
     evictIfNeeded(i.size || 0);
-    const s = {
+    const o = {
       blob: i,
       objectUrl: n,
       srcKey: r,
@@ -7388,8 +7388,8 @@ const LibraryPreviewMediaCache = (() => {
       projectId: null,
       clean: false
     };
-    t.set(r, s);
-    return s;
+    t.set(r, o);
+    return o;
   }
   function rememberProject(e, t, i, n, r) {
     return put(e, t, i, n, r);
@@ -7398,15 +7398,15 @@ const LibraryPreviewMediaCache = (() => {
     if (!i) return;
     for (const n of [ false, true ]) {
       const r = projectKey(i, n);
-      const o = e.get(r);
-      if (!o) continue;
+      const s = e.get(r);
+      if (!s) continue;
       e.delete(r);
-      if (o.srcKey) t.delete(o.srcKey);
-      const s = o.objectUrl;
-      if (s) {
+      if (s.srcKey) t.delete(s.srcKey);
+      const o = s.objectUrl;
+      if (o) {
         setTimeout(() => {
           try {
-            URL.revokeObjectURL(s);
+            URL.revokeObjectURL(o);
           } catch (e) {}
         }, 2e3);
       }
@@ -7574,11 +7574,11 @@ class ClipsStudio {
     const i = t - new Date(e);
     const n = Math.floor(i / 6e4);
     const r = Math.floor(i / 36e5);
-    const o = Math.floor(i / 864e5);
+    const s = Math.floor(i / 864e5);
     if (n < 1) return "0 minutes ago";
     if (n < 60) return `${n} minute${n > 1 ? "s" : ""} ago`;
     if (r < 24) return `${r} hour${r > 1 ? "s" : ""} ago`;
-    if (o < 7) return `${o} day${o > 1 ? "s" : ""} ago`;
+    if (s < 7) return `${s} day${s > 1 ? "s" : ""} ago`;
     return e.toLocaleDateString();
   }
   async loadTemplates() {
@@ -7775,7 +7775,9 @@ class ClipsStudio {
         }, 50);
       });
       e.addEventListener("input", () => {
-        this.clearUrlSubmitUpgradeCta();
+        if (!this._isQuotaExhausted(this._limitCheckCache?.data, 1)) {
+          this.clearUrlSubmitUpgradeCta();
+        }
         clearTimeout(t);
         const i = e.value.trim();
         this.syncTemplateConfirmButton();
@@ -7938,8 +7940,8 @@ class ClipsStudio {
       } catch (e) {}
       const r = document.getElementById("clips-submenu");
       if (r) r.classList.add("open");
-      const o = document.querySelector("#clips-toggle .chevron-icon");
-      if (o) o.classList.add("rotated");
+      const s = document.querySelector("#clips-toggle .chevron-icon");
+      if (s) s.classList.add("rotated");
       if (!this.initialized) {
         try {
           this.init();
@@ -8102,8 +8104,8 @@ class ClipsStudio {
         templateDesc: "Single Clip Clean layouts for any video."
       }
     };
-    const o = r[e] || r["splitscreen"];
-    n.innerHTML = `\n            <div class="pro-modal">\n                <div class="pro-panel-left">\n                    <div class="pro-left-top">\n                        <div class="pro-lock-wrap">\n                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FF6A3D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">\n                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>\n                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>\n                            </svg>\n                        </div>\n                        <h1 class="pro-title">${o.title}</h1>\n                        <p class="pro-subtitle">${o.subtitle}</p>\n                    </div>\n\n                    <div class="pro-template-preview">\n                        <div class="pro-tpb-preview">\n                            <div class="pro-tpb-pro">PRO</div>\n                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C8C4BE" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">\n                                <rect x="3" y="3" width="7" height="18" rx="1"/>\n                                <rect x="14" y="3" width="7" height="18" rx="1"/>\n                            </svg>\n                            <div class="pro-locked-overlay">\n                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF6A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>\n                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>\n                                </svg>\n                            </div>\n                        </div>\n                        <div class="pro-tpb-info">\n                            <div>\n                                <strong>${o.templateName}</strong>\n                                <span style="display:block;margin-top:2px;font-size:11px;color:#AAA">${o.templateDesc}</span>\n                            </div>\n                            <span style="font-size:11px;color:#FF6A3D;font-weight:600;background:#FFF3EF;padding:3px 9px;border-radius:100px;border:1px solid #FFD0C2">PRO</span>\n                        </div>\n                    </div>\n                </div>\n\n                <div class="pro-panel-right">\n                    <button class="pro-close-btn">\n                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">\n                            <line x1="18" y1="6" x2="6" y2="18"/>\n                            <line x1="6" y1="6" x2="18" y2="18"/>\n                        </svg>\n                    </button>\n\n                    <div>\n                        <div class="pro-plans-label">Unlock with a plan</div>\n                        <div class="pro-plan-options">\n                            <div class="pro-plan-card">\n                                <div class="pro-plan-card-icon">\n                                   <svg width="20" height="20" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">\n                                    <defs>\n                                        <linearGradient id="basicGrad" x1="0%" y1="0%" x2="100%" y2="100%">\n                                            <stop offset="0%" style="stop-color:#f1f5f9;stop-opacity:1"></stop>\n                                            <stop offset="50%" style="stop-color:#cbd5e1;stop-opacity:1"></stop>\n                                            <stop offset="100%" style="stop-color:#94a3b8;stop-opacity:1"></stop>\n                                        </linearGradient>\n                                    </defs>\n                                    <circle cx="50" cy="50" r="16" fill="url(#basicGrad)"></circle>\n                                    <ellipse rx="42" ry="18" cx="50" cy="50" stroke="url(#basicGrad)" stroke-width="10" fill="none" transform="rotate(45 50 50)" stroke-linecap="round"></ellipse>\n                                    <ellipse rx="42" ry="18" cx="50" cy="50" stroke="url(#basicGrad)" stroke-width="10" fill="none" transform="rotate(-45 50 50)" stroke-linecap="round"></ellipse>\n                                </svg>\n                                </div>\n                                <div class="pro-plan-card-body">\n                                    <strong>Basic</strong>\n                                    <span>Any length · 5 uploads/day · up to 3 clips</span>\n                                </div>\n                                <div class="pro-plan-card-price">$9.99/mo</div>\n                            </div>\n\n                            <div class="pro-plan-card highlighted">\n                                <div class="pro-popular-tag">Popular</div>\n                                <div class="pro-plan-card-icon">\n                                   <svg width="20" height="20" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">\n                                    <defs>\n                                        <linearGradient id="primeGrad" x1="0%" y1="0%" x2="100%" y2="100%">\n                                            <stop offset="0%" style="stop-color:#fff176;stop-opacity:1"></stop>\n                                            <stop offset="50%" style="stop-color:#ffd600;stop-opacity:1"></stop>\n                                            <stop offset="100%" style="stop-color:#ff9100;stop-opacity:1"></stop>\n                                        </linearGradient>\n                                    </defs>\n                                    <circle cx="50" cy="50" r="16" fill="url(#primeGrad)"></circle>\n                                    <ellipse rx="42" ry="18" cx="50" cy="50" stroke="url(#primeGrad)" stroke-width="12" fill="none" transform="rotate(45 50 50)" stroke-linecap="round"></ellipse>\n                                    <ellipse rx="42" ry="18" cx="50" cy="50" stroke="url(#primeGrad)" stroke-width="12" fill="none" transform="rotate(-45 50 50)" stroke-linecap="round"></ellipse>\n                                </svg>\n                                </div>\n                                <div class="pro-plan-card-body">\n                                    <strong>Prime</strong>\n                                    <span>Any length · 10/day · up to 5 clips</span>\n                                </div>\n                                <div class="pro-plan-card-price">$23.99/mo</div>\n                            </div>\n\n                            <div class="pro-plan-card">\n                                <div class="pro-plan-card-icon">\n                                <svg width="20" height="20" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">\n                                    <defs>\n                                        <linearGradient id="eliteGrad" x1="0%" y1="0%" x2="100%" y2="100%">\n                                            <stop offset="0%" style="stop-color:#ff6b3d;stop-opacity:1" />\n                                            <stop offset="50%" style="stop-color:#ff3d00;stop-opacity:1" />\n                                            <stop offset="100%" style="stop-color:#c70000;stop-opacity:1" />\n                                        </linearGradient>\n                                    </defs>\n                                    <circle cx="50" cy="50" r="16" fill="url(#eliteGrad)"></circle>\n                                    <ellipse rx="42" ry="18" cx="50" cy="50" stroke="url(#eliteGrad)" stroke-width="12" fill="none" transform="rotate(45 50 50)" stroke-linecap="round"></ellipse>\n                                    <ellipse rx="42" ry="18" cx="50" cy="50" stroke="url(#eliteGrad)" stroke-width="12" fill="none" transform="rotate(-45 50 50)" stroke-linecap="round"></ellipse>\n                                </svg>\n                                </div>\n                                <div class="pro-plan-card-body">\n                                    <strong>Elite</strong>\n                                    <span>Any length · 20/day · up to 10 clips</span>\n                                </div>\n                                <div class="pro-plan-card-price">$39.99/mo</div>\n                            </div>\n                        </div>\n                    </div>\n\n                    <div class="pro-right-footer">\n                        <button class="pro-cta-btn">\n                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">\n                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>\n                                <path d="M7 11V7a5 5 0 0 1 9.9-1"/>\n                            </svg>\n                            Unlock Clip\n                        </button>\n                        <p class="pro-fine-print"><a>Maybe later</a></p>\n                    </div>\n                </div>\n            </div>\n        `;
+    const s = r[e] || r["splitscreen"];
+    n.innerHTML = `\n            <div class="pro-modal">\n                <div class="pro-panel-left">\n                    <div class="pro-left-top">\n                        <div class="pro-lock-wrap">\n                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FF6A3D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">\n                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>\n                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>\n                            </svg>\n                        </div>\n                        <h1 class="pro-title">${s.title}</h1>\n                        <p class="pro-subtitle">${s.subtitle}</p>\n                    </div>\n\n                    <div class="pro-template-preview">\n                        <div class="pro-tpb-preview">\n                            <div class="pro-tpb-pro">PRO</div>\n                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C8C4BE" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">\n                                <rect x="3" y="3" width="7" height="18" rx="1"/>\n                                <rect x="14" y="3" width="7" height="18" rx="1"/>\n                            </svg>\n                            <div class="pro-locked-overlay">\n                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF6A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>\n                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>\n                                </svg>\n                            </div>\n                        </div>\n                        <div class="pro-tpb-info">\n                            <div>\n                                <strong>${s.templateName}</strong>\n                                <span style="display:block;margin-top:2px;font-size:11px;color:#AAA">${s.templateDesc}</span>\n                            </div>\n                            <span style="font-size:11px;color:#FF6A3D;font-weight:600;background:#FFF3EF;padding:3px 9px;border-radius:100px;border:1px solid #FFD0C2">PRO</span>\n                        </div>\n                    </div>\n                </div>\n\n                <div class="pro-panel-right">\n                    <button class="pro-close-btn">\n                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">\n                            <line x1="18" y1="6" x2="6" y2="18"/>\n                            <line x1="6" y1="6" x2="18" y2="18"/>\n                        </svg>\n                    </button>\n\n                    <div>\n                        <div class="pro-plans-label">Unlock with a plan</div>\n                        <div class="pro-plan-options">\n                            <div class="pro-plan-card">\n                                <div class="pro-plan-card-icon">\n                                   <svg width="20" height="20" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">\n                                    <defs>\n                                        <linearGradient id="basicGrad" x1="0%" y1="0%" x2="100%" y2="100%">\n                                            <stop offset="0%" style="stop-color:#f1f5f9;stop-opacity:1"></stop>\n                                            <stop offset="50%" style="stop-color:#cbd5e1;stop-opacity:1"></stop>\n                                            <stop offset="100%" style="stop-color:#94a3b8;stop-opacity:1"></stop>\n                                        </linearGradient>\n                                    </defs>\n                                    <circle cx="50" cy="50" r="16" fill="url(#basicGrad)"></circle>\n                                    <ellipse rx="42" ry="18" cx="50" cy="50" stroke="url(#basicGrad)" stroke-width="10" fill="none" transform="rotate(45 50 50)" stroke-linecap="round"></ellipse>\n                                    <ellipse rx="42" ry="18" cx="50" cy="50" stroke="url(#basicGrad)" stroke-width="10" fill="none" transform="rotate(-45 50 50)" stroke-linecap="round"></ellipse>\n                                </svg>\n                                </div>\n                                <div class="pro-plan-card-body">\n                                    <strong>Basic</strong>\n                                    <span>Any length · 5 uploads/day · up to 3 clips</span>\n                                </div>\n                                <div class="pro-plan-card-price">$9.99/mo</div>\n                            </div>\n\n                            <div class="pro-plan-card highlighted">\n                                <div class="pro-popular-tag">Popular</div>\n                                <div class="pro-plan-card-icon">\n                                   <svg width="20" height="20" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">\n                                    <defs>\n                                        <linearGradient id="primeGrad" x1="0%" y1="0%" x2="100%" y2="100%">\n                                            <stop offset="0%" style="stop-color:#fff176;stop-opacity:1"></stop>\n                                            <stop offset="50%" style="stop-color:#ffd600;stop-opacity:1"></stop>\n                                            <stop offset="100%" style="stop-color:#ff9100;stop-opacity:1"></stop>\n                                        </linearGradient>\n                                    </defs>\n                                    <circle cx="50" cy="50" r="16" fill="url(#primeGrad)"></circle>\n                                    <ellipse rx="42" ry="18" cx="50" cy="50" stroke="url(#primeGrad)" stroke-width="12" fill="none" transform="rotate(45 50 50)" stroke-linecap="round"></ellipse>\n                                    <ellipse rx="42" ry="18" cx="50" cy="50" stroke="url(#primeGrad)" stroke-width="12" fill="none" transform="rotate(-45 50 50)" stroke-linecap="round"></ellipse>\n                                </svg>\n                                </div>\n                                <div class="pro-plan-card-body">\n                                    <strong>Prime</strong>\n                                    <span>Any length · 10/day · up to 5 clips</span>\n                                </div>\n                                <div class="pro-plan-card-price">$23.99/mo</div>\n                            </div>\n\n                            <div class="pro-plan-card">\n                                <div class="pro-plan-card-icon">\n                                <svg width="20" height="20" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">\n                                    <defs>\n                                        <linearGradient id="eliteGrad" x1="0%" y1="0%" x2="100%" y2="100%">\n                                            <stop offset="0%" style="stop-color:#ff6b3d;stop-opacity:1" />\n                                            <stop offset="50%" style="stop-color:#ff3d00;stop-opacity:1" />\n                                            <stop offset="100%" style="stop-color:#c70000;stop-opacity:1" />\n                                        </linearGradient>\n                                    </defs>\n                                    <circle cx="50" cy="50" r="16" fill="url(#eliteGrad)"></circle>\n                                    <ellipse rx="42" ry="18" cx="50" cy="50" stroke="url(#eliteGrad)" stroke-width="12" fill="none" transform="rotate(45 50 50)" stroke-linecap="round"></ellipse>\n                                    <ellipse rx="42" ry="18" cx="50" cy="50" stroke="url(#eliteGrad)" stroke-width="12" fill="none" transform="rotate(-45 50 50)" stroke-linecap="round"></ellipse>\n                                </svg>\n                                </div>\n                                <div class="pro-plan-card-body">\n                                    <strong>Elite</strong>\n                                    <span>Any length · 20/day · up to 10 clips</span>\n                                </div>\n                                <div class="pro-plan-card-price">$39.99/mo</div>\n                            </div>\n                        </div>\n                    </div>\n\n                    <div class="pro-right-footer">\n                        <button class="pro-cta-btn">\n                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">\n                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>\n                                <path d="M7 11V7a5 5 0 0 1 9.9-1"/>\n                            </svg>\n                            Unlock Clip\n                        </button>\n                        <p class="pro-fine-print"><a>Maybe later</a></p>\n                    </div>\n                </div>\n            </div>\n        `;
     n.querySelector(".pro-close-btn").addEventListener("click", () => {
       n.style.opacity = "0";
       n.style.transition = "opacity 0.25s ease";
@@ -8145,7 +8147,7 @@ class ClipsStudio {
       this._autoOpenedPreview = n;
     }
     const r = document.getElementById("templatePreviewModal");
-    const o = document.getElementById("templatePreviewLoading");
+    const s = document.getElementById("templatePreviewLoading");
     if (!r) {
       return;
     }
@@ -8161,16 +8163,16 @@ class ClipsStudio {
     this._librarySplitscreenCustomize = false;
     this._libraryEditingEnabled = false;
     this._libraryDirtyArmed = false;
-    const s = document.getElementById("confirmUseTemplateBtn");
-    if (s) {
-      s.textContent = "Use Template";
-      s.classList.remove("library-download-mode");
-      s.disabled = false;
-      s.style.pointerEvents = "";
-      s.style.opacity = "";
-      delete s.dataset.applying;
-      s.setAttribute("data-solis-keyhint", "Use template|Enter");
-      s.setAttribute("aria-keyshortcuts", "Enter");
+    const o = document.getElementById("confirmUseTemplateBtn");
+    if (o) {
+      o.textContent = "Use Template";
+      o.classList.remove("library-download-mode");
+      o.disabled = false;
+      o.style.pointerEvents = "";
+      o.style.opacity = "";
+      delete o.dataset.applying;
+      o.setAttribute("data-solis-keyhint", "Use template|Enter");
+      o.setAttribute("aria-keyshortcuts", "Enter");
     }
     if (typeof window.syncUseTemplateFab === "function") window.syncUseTemplateFab();
     if (typeof window.syncPreviewModifiersForTemplate === "function") {
@@ -8212,12 +8214,12 @@ class ClipsStudio {
       }
       a.classList.remove("has-video", "library-splitscreen-preview", "library-ranking-edit");
     }
-    if (o) {
-      o.classList.add("hidden");
-      o.style.display = "none";
-      o.style.visibility = "hidden";
-      o.style.opacity = "0";
-      o.style.pointerEvents = "none";
+    if (s) {
+      s.classList.add("hidden");
+      s.style.display = "none";
+      s.style.visibility = "hidden";
+      s.style.opacity = "0";
+      s.style.pointerEvents = "none";
     }
     const l = document.getElementById("previewTemplateName");
     const c = document.getElementById("previewTemplateDescription");
@@ -8290,13 +8292,13 @@ class ClipsStudio {
     }
     requestAnimationFrame(() => {
       const hideLoadingSpinner = () => {
-        if (!o) return;
-        o.classList.add("hidden");
-        o.style.visibility = "hidden";
-        o.style.pointerEvents = "none";
+        if (!s) return;
+        s.classList.add("hidden");
+        s.style.visibility = "hidden";
+        s.style.pointerEvents = "none";
         setTimeout(() => {
-          if (o.classList.contains("hidden")) {
-            o.style.display = "none";
+          if (s.classList.contains("hidden")) {
+            s.style.display = "none";
           }
         }, 180);
       };
@@ -8312,9 +8314,9 @@ class ClipsStudio {
         videoUrl: u,
         isLibraryPreview: false
       };
-      const s = document.getElementById("aiPromptInput");
-      if (s) {
-        s.value = "";
+      const o = document.getElementById("aiPromptInput");
+      if (o) {
+        o.value = "";
         document.getElementById("charCountDisplay").textContent = "0";
       }
       const a = document.getElementById("aiResponseArea");
@@ -8359,8 +8361,8 @@ class ClipsStudio {
     if (t === "classic") {
       const e = "Watermark_v4.png";
       const t = "/assets/solis-watermark-classic.png";
-      const o = r ? `${r}/assets/${e}` : t;
-      return `\n            <div class="solis-watermark ${n}" data-variant="classic" data-place="${i}" role="button" tabindex="0" aria-label="Solis AI">\n                <img class="solis-watermark-mark" src="${o}" alt="" draggable="false"\n                     onerror="this.onerror=null;this.src='${t}';" />\n            </div>\n        `;
+      const s = r ? `${r}/assets/${e}` : t;
+      return `\n            <div class="solis-watermark ${n}" data-variant="classic" data-place="${i}" role="button" tabindex="0" aria-label="Solis AI">\n                <img class="solis-watermark-mark" src="${s}" alt="" draggable="false"\n                     onerror="this.onerror=null;this.src='${t}';" />\n            </div>\n        `;
     }
     return `\n            <div class="solis-watermark ${n}" data-variant="branded" data-place="${i}" role="button" tabindex="0" aria-label="Solis AI">\n                <div class="solis-watermark-icon" aria-hidden="true">\n                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">\n                        <circle cx="50" cy="50" r="12" fill="#ffffff" stroke="none"/>\n                        <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#ffffff" stroke-width="6" transform="rotate(45 50 50)"/>\n                        <ellipse rx="44" ry="18" cx="50" cy="50" stroke="#ffffff" stroke-width="6" transform="rotate(-45 50 50)"/>\n                    </svg>\n                </div>\n                <div class="solis-watermark-label">SOLIS <span class="ai">AI</span></div>\n            </div>\n        `;
   }
@@ -8524,10 +8526,10 @@ class ClipsStudio {
     const n = !!e?.isPremium;
     const r = Number(e?.usedLifetime ?? e?.data?.used_lifetime ?? 0);
     document.getElementById("watermarkNotice")?.remove();
-    const o = document.getElementById("watermarkUpgradeBtn");
-    if (o) {
-      o.hidden = true;
-      o.style.display = "none";
+    const s = document.getElementById("watermarkUpgradeBtn");
+    if (s) {
+      s.hidden = true;
+      s.style.display = "none";
     }
     this.closeWatermarkPlanPopover?.();
     safeLog(`Watermark UI — premium=${n} usedLifetime=${r}`);
@@ -8624,8 +8626,8 @@ class ClipsStudio {
       const t = e === "multitask" ? "Multitask" : e === "quota" ? "Quota" : "Watermark";
       const i = n.dataset;
       const r = i[`name${t}`] || "Paid";
-      const o = i[`chip${t}`] || "";
-      const s = i[`tag${t}`] || "";
+      const s = i[`chip${t}`] || "";
+      const o = i[`tag${t}`] || "";
       const a = i[`cta${t}`] || "";
       const l = i[`href${t}`] || "/premium.html";
       const c = i[`plan${t}`] || "basic";
@@ -8648,8 +8650,8 @@ class ClipsStudio {
       const L = n.querySelector(".solis-upgrade-card-cta-label");
       const T = n.querySelector(".solis-upgrade-card-features");
       if (w) w.textContent = r;
-      if (b && o) b.textContent = o;
-      if (v && s) v.textContent = s;
+      if (b && s) b.textContent = s;
+      if (v && o) v.textContent = o;
       if (S) {
         S.dataset.priceFull = p;
         S.dataset.priceLaunch = u;
@@ -8846,16 +8848,16 @@ class ClipsStudio {
       const e = document.getElementById("pill");
       if (e) e.style.display = "none";
     }
-    const o = document.getElementById("previewEditorPill");
-    if (o) {
-      o.style.display = "";
-      const e = o.querySelector('[data-tool="text"]');
-      const t = o.querySelector('[data-tool="animations"]');
+    const s = document.getElementById("previewEditorPill");
+    if (s) {
+      s.style.display = "";
+      const e = s.querySelector('[data-tool="text"]');
+      const t = s.querySelector('[data-tool="animations"]');
       if (e) e.style.display = "none";
       if (t) t.style.display = "";
       if (typeof window.activatePreviewToolbar === "function") {
         if (t) {
-          const e = Array.from(o.querySelectorAll(".tool-btn")).filter(e => e.style.display !== "none");
+          const e = Array.from(s.querySelectorAll(".tool-btn")).filter(e => e.style.display !== "none");
           window.activatePreviewToolbar(t, Math.max(0, e.indexOf(t)));
         }
       }
@@ -8914,8 +8916,8 @@ class ClipsStudio {
         syncSplitscreenSubtitles(e);
       }, 80);
     }
-    const s = !!this.currentTemplateForPreview?.isLibraryPreview;
-    if (!s && (t?.id === "splitscreen" || t?.id === "ranked_compilation")) {
+    const o = !!this.currentTemplateForPreview?.isLibraryPreview;
+    if (!o && (t?.id === "splitscreen" || t?.id === "ranked_compilation")) {
       const e = t.id;
       const seedCaptionsAndSuggest = () => {
         try {
@@ -9077,15 +9079,15 @@ class ClipsStudio {
       if (n.includes("..") || n.includes("//")) {
         return false;
       }
-      const o = this.detectMediaPlatform(e);
-      if (o === "tiktok" || o === "instagram") {
+      const s = this.detectMediaPlatform(e);
+      if (s === "tiktok" || s === "instagram") {
         return false;
       }
-      if (o === "youtube") {
+      if (s === "youtube") {
         const t = this.extractYouTubeVideoId(e);
         return !!(t && /^[a-zA-Z0-9_-]{11}$/.test(t));
       }
-      if (o === "youtube_shorts") {
+      if (s === "youtube_shorts") {
         return /youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/i.test(e);
       }
       return false;
@@ -9130,13 +9132,13 @@ class ClipsStudio {
         if (n) n.textContent = "Invalid YouTube URL";
         return;
       }
-      const o = window.API_BASE_URL || "https://api.solisai.video/api";
+      const s = window.API_BASE_URL || "https://api.solisai.video/api";
       try {
-        const s = await fetch(`${o}/youtube/get-metadata/${r}`, {
+        const o = await fetch(`${s}/youtube/get-metadata/${r}`, {
           signal: AbortSignal.timeout(3e3)
         });
-        if (s.ok) {
-          const r = await s.json();
+        if (o.ok) {
+          const r = await o.json();
           if (n && r.title) {
             n.textContent = r.title;
           }
@@ -9262,25 +9264,25 @@ class ClipsStudio {
       n.classList.remove("expanded");
     }
     const r = document.getElementById("navWrapper");
-    const o = document.querySelector(".profile-notif-wrapper");
+    const s = document.querySelector(".profile-notif-wrapper");
     if (r) {
       r.classList.remove("disabled");
     }
-    if (o) {
-      o.classList.remove("disabled");
-    }
-    const s = document.getElementById("confirmUseTemplateBtn");
     if (s) {
+      s.classList.remove("disabled");
+    }
+    const o = document.getElementById("confirmUseTemplateBtn");
+    if (o) {
       if (typeof window.setConfirmUseTemplateLabel === "function") {
         window.setConfirmUseTemplateLabel("Use Template");
       } else {
-        const e = s.querySelector(".template-use-confirm-label");
-        if (e) e.textContent = "Use Template"; else s.textContent = "Use Template";
+        const e = o.querySelector(".template-use-confirm-label");
+        if (e) e.textContent = "Use Template"; else o.textContent = "Use Template";
       }
-      s.classList.remove("library-download-mode");
-      s.disabled = false;
-      s.style.pointerEvents = "";
-      s.style.opacity = "";
+      o.classList.remove("library-download-mode");
+      o.disabled = false;
+      o.style.pointerEvents = "";
+      o.style.opacity = "";
     }
     if (typeof window.resetClipIntentMode === "function") {
       window.resetClipIntentMode();
@@ -9415,9 +9417,9 @@ class ClipsStudio {
     const n = i || this._libraryPreviewProjectId || this.currentTemplateForPreview?.projectId || "";
     const r = String(n).replace(/"/g, "");
     this._resetPhoneMedia(e, `\n            <div class="preview-video-placeholder">\n                <i class="fas fa-exclamation-circle"></i>\n                <p>${t}</p>\n                ${r ? `<button type="button" class="library-preview-retry-btn" data-project-id="${r}">Retry</button>` : ""}\n            </div>\n        `);
-    const o = e.querySelector(".library-preview-retry-btn");
-    if (o && r) {
-      o.addEventListener("click", t => {
+    const s = e.querySelector(".library-preview-retry-btn");
+    if (s && r) {
+      s.addEventListener("click", t => {
         t.preventDefault();
         t.stopPropagation();
         this._setLibraryPreviewPlaceholder(e);
@@ -9446,11 +9448,11 @@ class ClipsStudio {
     }
     let n = 0;
     const r = t.match(/(\d+)\s*h/i);
-    const o = t.match(/(\d+)\s*m/i);
-    const s = t.match(/(\d+(?:\.\d+)?)\s*s/i);
+    const s = t.match(/(\d+)\s*m/i);
+    const o = t.match(/(\d+(?:\.\d+)?)\s*s/i);
     if (r) n += Number(r[1]) * 3600;
-    if (o) n += Number(o[1]) * 60;
-    if (s) n += Number(s[1]);
+    if (s) n += Number(s[1]) * 60;
+    if (o) n += Number(o[1]);
     return n > 0 ? n : 0;
   }
   _resolveLibraryDurationSeconds(e, t = null) {
@@ -9481,26 +9483,26 @@ class ClipsStudio {
     if (!i) return;
     const n = e || this._libraryPreviewProjectId || this.currentTemplateForPreview?.projectId || null;
     const r = t || (this.libraryItems || []).find(e => String(e.projectId || e.id) === String(n || "")) || this.currentTemplateForPreview?.data || null;
-    const o = this._ensureLibraryTimelineStubVideo(i);
-    let s = this._resolveLibraryDurationSeconds(r, n);
-    if (!(s > .25) && this._libraryRankingTimelineState) {
+    const s = this._ensureLibraryTimelineStubVideo(i);
+    let o = this._resolveLibraryDurationSeconds(r, n);
+    if (!(o > .25) && this._libraryRankingTimelineState) {
       try {
         const e = this._libraryRankingTimelineState?.ranking_timeline?.segments;
         if (Array.isArray(e) && e.length) {
           const t = Math.max(...e.map(e => Number(e?.output_end) || 0).filter(e => e > 0));
-          if (t > .25) s = t;
+          if (t > .25) o = t;
         }
       } catch (e) {}
     }
-    if (!(s > .25)) {
-      s = this._isCurrentLibraryRanking?.() ? 40 : 15;
+    if (!(o > .25)) {
+      o = this._isCurrentLibraryRanking?.() ? 40 : 15;
     }
     try {
-      PreviewTimeline.attach(o, {
-        durationHint: s
+      PreviewTimeline.attach(s, {
+        durationHint: o
       });
       PreviewTimeline.show?.();
-      PreviewTimeline.seedDuration?.(s);
+      PreviewTimeline.seedDuration?.(o);
       if (this._libraryRankingTimelineState) {
         this.seedLibraryRankingTimelineSplits(this._libraryRankingTimelineState);
       } else if (n) {
@@ -9535,10 +9537,10 @@ class ClipsStudio {
   openLibraryPreviewWhenReady(e, t, i = 0) {
     const n = t != null ? String(t) : "";
     const r = e != null ? e : t;
-    let o = this.libraryItems.find(e => String(e.id) === String(r) || String(e.projectId) === n || String(e.id) === n);
-    if (!o && n && i === 0) {
+    let s = this.libraryItems.find(e => String(e.id) === String(r) || String(e.projectId) === n || String(e.id) === n);
+    if (!s && n && i === 0) {
       const e = (this.processingItems || []).find(e => String(e.projectId) === n || String(e.id) === String(r));
-      o = {
+      s = {
         id: r || n,
         projectId: n,
         name: e?.name || "Clip Preview",
@@ -9548,11 +9550,11 @@ class ClipsStudio {
         timestamp: (new Date).toISOString(),
         _optimistic: true
       };
-      this.libraryItems.unshift(o);
+      this.libraryItems.unshift(s);
     }
-    const s = n ? document.querySelector(`.library-card[data-project-id="${CSS.escape(n)}"]`) : null;
-    if (o && (s || i >= 2)) {
-      this.openLibraryPreview(o.id, o.projectId || n, s, {
+    const o = n ? document.querySelector(`.library-card[data-project-id="${CSS.escape(n)}"]`) : null;
+    if (s && (o || i >= 2)) {
+      this.openLibraryPreview(s.id, s.projectId || n, o, {
         fast: true
       });
       return;
@@ -9561,8 +9563,8 @@ class ClipsStudio {
       setTimeout(() => this.openLibraryPreviewWhenReady(r, n, i + 1), 120);
       return;
     }
-    if (o || n) {
-      this.openLibraryPreview(o && o.id || r || n, o && o.projectId || n, s, {
+    if (s || n) {
+      this.openLibraryPreview(s && s.id || r || n, s && s.projectId || n, o, {
         fast: true
       });
     }
@@ -9589,30 +9591,30 @@ class ClipsStudio {
     this._pendingLibraryTextConfig = null;
     this._libraryTextSeedInFlight = null;
     this._showLibraryPreviewLoading();
-    const o = document.getElementById("templateVideoPreview");
-    if (o) {
-      this._setLibraryPreviewPlaceholder(o);
+    const s = document.getElementById("templateVideoPreview");
+    if (s) {
+      this._setLibraryPreviewPlaceholder(s);
     }
-    const s = this.libraryItems.find(i => i.id == e || i.projectId == t || i.id == t || i.projectId == e);
-    if (!s) {
+    const o = this.libraryItems.find(i => i.id == e || i.projectId == t || i.id == t || i.projectId == e);
+    if (!o) {
       safeLog(`âŒ Library item not found: ${e}`);
       this.libraryPreviewModalOpen = false;
       this._hideLibraryPreviewLoading();
       return;
     }
-    t = s.projectId || s.id || t;
+    t = o.projectId || o.id || t;
     const a = document.getElementById("previewTemplateName");
     const l = document.getElementById("previewTemplateDescription");
     const c = document.getElementById("previewVideoDuration");
     const d = document.getElementById("previewVideoFormat");
     if (a) {
-      a.textContent = s.name || "Clip Preview";
+      a.textContent = o.name || "Clip Preview";
     }
     if (l) {
-      l.textContent = `Template: ${s.templateName || s.template || "Custom"}`;
+      l.textContent = `Template: ${o.templateName || o.template || "Custom"}`;
     }
-    if (c && s.duration) {
-      c.textContent = s.duration;
+    if (c && o.duration) {
+      c.textContent = o.duration;
     }
     if (d) {
       d.textContent = "Generated Clip";
@@ -9646,7 +9648,7 @@ class ClipsStudio {
     }
     const y = document.getElementById("watermarkToggle");
     const h = y ? y.checked : false;
-    const g = s.template || s.templateName || "";
+    const g = o.template || o.templateName || "";
     this.currentTemplateForPreview = {
       id: e,
       projectId: t,
@@ -9655,15 +9657,15 @@ class ClipsStudio {
       isLibraryPreview: true,
       card: i,
       data: {
-        name: s.name,
-        template: s.template,
-        templateName: s.templateName
+        name: o.name,
+        template: o.template,
+        templateName: o.templateName
       },
       addWatermark: h,
       videoQuality: "auto"
     };
     this.toggleLibraryPreviewLayout(true);
-    this._renderPreviewViralityRail(s);
+    this._renderPreviewViralityRail(o);
     if (typeof window.syncPreviewModifiersForTemplate === "function") {
       window.syncPreviewModifiersForTemplate("");
     }
@@ -9680,7 +9682,7 @@ class ClipsStudio {
       window.SolisSilencer?.syncVisibility?.();
     } catch (e) {}
     try {
-      this._ensureLibraryTimelineVisible(t, s);
+      this._ensureLibraryTimelineVisible(t, o);
     } catch (e) {}
     this._watermarkCheckCache = null;
     this.setupWatermarkToggle();
@@ -9873,8 +9875,8 @@ class ClipsStudio {
         }
         return false;
       };
-      const o = Boolean(n.has_segment || layerReady(r.segment) || layerReady(r.content) || layerReady(r.secondary));
-      if (!o) {
+      const s = Boolean(n.has_segment || layerReady(r.segment) || layerReady(r.content) || layerReady(r.secondary));
+      if (!s) {
         this.mountLibraryPreviewVideo(e, t, {
           clean: true
         });
@@ -9888,9 +9890,9 @@ class ClipsStudio {
         this.fetchAndSeedLibraryTextOverlays(t);
         return;
       }
-      const s = Boolean(n.captions_burned || n.subtitles_enabled || n.caption_style && (n.caption_style.anim || n.caption_style.enabled) || Array.isArray(n.caption_preview_words) && n.caption_preview_words.length || String(n.caption_preview_text || "").trim());
-      this._libraryCaptionsOn = s;
-      if (s && !(n.can_customize || n.has_segment)) {
+      const o = Boolean(n.captions_burned || n.subtitles_enabled || n.caption_style && (n.caption_style.anim || n.caption_style.enabled) || Array.isArray(n.caption_preview_words) && n.caption_preview_words.length || String(n.caption_preview_text || "").trim());
+      this._libraryCaptionsOn = o;
+      if (o && !(n.can_customize || n.has_segment)) {
         safeLog("Captioned master → flat library preview with editable overlays");
         this._librarySplitscreenCustomize = false;
         this._libraryPreviewProjectId = t;
@@ -10164,8 +10166,8 @@ class ClipsStudio {
       this.fetchAndSeedLibraryTextOverlays(t);
     }
   }
-  async runLibraryApplyWithSpinner(e, {needsRecompose: t, needsOverlayRender: i, needsRankingRecompose: n = false, needsSilenceOnly: r = false, overlays: o = null}) {
-    const s = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
+  async runLibraryApplyWithSpinner(e, {needsRecompose: t, needsOverlayRender: i, needsRankingRecompose: n = false, needsSilenceOnly: r = false, overlays: s = null}) {
+    const o = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
     const a = t || i || n || r ? async () => {
       if (n) {
         await this.saveLibraryRankingCustomizations(e);
@@ -10177,7 +10179,7 @@ class ClipsStudio {
         await this.saveLibrarySilenceCuts(e);
       }
       if (i) {
-        await this.saveLibraryOverlayTexts(e, o);
+        await this.saveLibraryOverlayTexts(e, s);
       }
     } : null;
     const downloadFn = async () => {
@@ -10186,8 +10188,8 @@ class ClipsStudio {
         quiet: true
       });
     };
-    if (s?.runLibraryApplyFlow) {
-      await s.runLibraryApplyFlow(e, {
+    if (o?.runLibraryApplyFlow) {
+      await o.runLibraryApplyFlow(e, {
         applyFn: a,
         downloadFn: downloadFn
       });
@@ -10340,7 +10342,7 @@ class ClipsStudio {
       const e = await r.json().catch(() => ({}));
       throw this._libraryApplyError(e, r.status, "Recompose failed");
     }
-    const o = await r.json().catch(() => ({}));
+    const s = await r.json().catch(() => ({}));
     this._librarySplitscreenDirty = false;
     this._librarySilenceDirty = false;
     this._librarySilenceCuts = [];
@@ -10354,7 +10356,7 @@ class ClipsStudio {
       window.LibraryPreviewMediaCache?.invalidateProject?.(e);
     } catch (e) {}
     try {
-      await this.refreshQuotaAfterApply(o);
+      await this.refreshQuotaAfterApply(s);
     } catch (e) {}
   }
   async mountLibraryRankingPreview(e, t) {
@@ -10384,9 +10386,9 @@ class ClipsStudio {
       };
       const n = Boolean(i.overlay_burned) && !Boolean(i.burn_deferred);
       const r = typeof i.has_clean_master === "boolean" ? i.has_clean_master : false;
-      const o = Boolean(i.can_edit) && !i.customize_expired;
+      const s = Boolean(i.can_edit) && !i.customize_expired;
       this._libraryRankingTimelineState = i;
-      if (o && (r || !n)) {
+      if (s && (r || !n)) {
         this._libraryRankingUseCleanVideo = r;
         this._libraryRankingOverlayPending = i;
       } else {
@@ -10505,19 +10507,19 @@ class ClipsStudio {
       this._libraryRankingEditable = false;
       this._libraryRankingNeedsBurn = false;
     }
-    const o = document.createElement("video");
-    o.className = "library-preview-video";
-    o.controls = false;
-    o.removeAttribute("controls");
-    o.playsInline = true;
-    o.muted = true;
-    o.autoplay = true;
-    o.preload = "metadata";
-    o.setAttribute("playsinline", "");
-    o.setAttribute("controlslist", "nodownload nofullscreen noremoteplayback noplaybackrate");
-    o.disablePictureInPicture = true;
-    o.style.cssText = "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:transparent;z-index:2;display:block;visibility:visible;opacity:0;pointer-events:none;";
-    o.removeAttribute("crossorigin");
+    const s = document.createElement("video");
+    s.className = "library-preview-video";
+    s.controls = false;
+    s.removeAttribute("controls");
+    s.playsInline = true;
+    s.muted = true;
+    s.autoplay = true;
+    s.preload = "metadata";
+    s.setAttribute("playsinline", "");
+    s.setAttribute("controlslist", "nodownload nofullscreen noremoteplayback noplaybackrate");
+    s.disablePictureInPicture = true;
+    s.style.cssText = "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:transparent;z-index:2;display:block;visibility:visible;opacity:0;pointer-events:none;";
+    s.removeAttribute("crossorigin");
     e.querySelectorAll("video").forEach(e => e.remove());
     if (!e.querySelector(".preview-skel")) {
       const t = document.createElement("div");
@@ -10525,7 +10527,7 @@ class ClipsStudio {
       t.setAttribute("aria-hidden", "true");
       e.appendChild(t);
     }
-    e.appendChild(o);
+    e.appendChild(s);
     e.classList.remove("has-video");
     try {
       if (typeof PreviewTimeline !== "undefined") {
@@ -10542,25 +10544,25 @@ class ClipsStudio {
           } catch (e) {}
         }
         const i = this._resolveLibraryDurationSeconds(null, t) || (e ? 40 : 15);
-        PreviewTimeline.attach(o, {
+        PreviewTimeline.attach(s, {
           durationHint: i
         });
         PreviewTimeline.show?.();
       }
     } catch (e) {}
-    let s = false;
+    let o = false;
     const reveal = (i = false) => {
-      if (s || isStale()) return;
-      const n = o.videoWidth > 0 && o.videoHeight > 0;
-      const r = Number.isFinite(o.duration) && o.duration > 0;
-      if (!i && !n && !r && o.readyState < 1) return;
-      if (!i && !n && o.readyState < 1) return;
-      s = true;
+      if (o || isStale()) return;
+      const n = s.videoWidth > 0 && s.videoHeight > 0;
+      const r = Number.isFinite(s.duration) && s.duration > 0;
+      if (!i && !n && !r && s.readyState < 1) return;
+      if (!i && !n && s.readyState < 1) return;
+      o = true;
       e.classList.add("has-video");
-      o.style.setProperty("display", "block", "important");
-      o.style.setProperty("visibility", "visible", "important");
-      o.style.setProperty("opacity", "1", "important");
-      o.style.setProperty("background", "#000", "important");
+      s.style.setProperty("display", "block", "important");
+      s.style.setProperty("visibility", "visible", "important");
+      s.style.setProperty("opacity", "1", "important");
+      s.style.setProperty("background", "#000", "important");
       e.querySelector(".preview-skel")?.remove();
       this._hideLibraryPreviewLoading();
       ensurePreviewAudioToggle(e);
@@ -10575,14 +10577,14 @@ class ClipsStudio {
               PreviewTimeline.clearSplits?.();
             } catch (e) {}
           }
-          PreviewTimeline.attach(o);
+          PreviewTimeline.attach(s);
           PreviewTimeline.show?.();
           if (typeof PreviewTimeline.scheduleFilmstripBuild === "function") {
             PreviewTimeline.scheduleFilmstripBuild(280);
           }
         }
       } catch (e) {}
-      o.play().catch(() => {});
+      s.play().catch(() => {});
       this.maybeMountLibraryRankingOverlay(e, t).catch(() => {});
       if (this._isCurrentLibraryRanking?.() && this._libraryRankingTimelineState) {
         try {
@@ -10605,41 +10607,41 @@ class ClipsStudio {
         window.SolisImproveClip?.syncVisibility?.();
       } catch (e) {}
     };
-    o.addEventListener("loadedmetadata", () => reveal());
-    o.addEventListener("loadeddata", () => reveal());
-    o.addEventListener("canplay", () => reveal());
-    o.addEventListener("durationchange", () => reveal());
-    o.addEventListener("playing", () => reveal());
-    o.addEventListener("error", () => {
-      if (isStale() || s) return;
+    s.addEventListener("loadedmetadata", () => reveal());
+    s.addEventListener("loadeddata", () => reveal());
+    s.addEventListener("canplay", () => reveal());
+    s.addEventListener("durationchange", () => reveal());
+    s.addEventListener("playing", () => reveal());
+    s.addEventListener("error", () => {
+      if (isStale() || o) return;
       try {
         this._ensureLibraryTimelineVisible(t);
       } catch (e) {}
     });
     let a = 0;
     const l = setInterval(() => {
-      if (s || isStale()) {
+      if (o || isStale()) {
         clearInterval(l);
         return;
       }
       a += 1;
-      if ((o.videoWidth > 0 || Number.isFinite(o.duration) && o.duration > 0) && o.readyState >= 1) {
+      if ((s.videoWidth > 0 || Number.isFinite(s.duration) && s.duration > 0) && s.readyState >= 1) {
         clearInterval(l);
         reveal();
         return;
       }
       if (a >= 40) clearInterval(l);
     }, 200);
-    o.src = i;
-    o.load();
-    o.play().catch(() => {});
+    s.src = i;
+    s.load();
+    s.play().catch(() => {});
     setTimeout(() => {
-      if (!s && !isStale() && (o.videoWidth > 0 || o.readyState >= 1)) {
+      if (!o && !isStale() && (s.videoWidth > 0 || s.readyState >= 1)) {
         reveal();
       }
     }, 500);
     setTimeout(() => {
-      if (!s && !isStale() && o.readyState >= 1) {
+      if (!o && !isStale() && s.readyState >= 1) {
         reveal(true);
       }
     }, 2500);
@@ -10675,15 +10677,15 @@ class ClipsStudio {
         apply_consumes_quota: n.apply_consumes_quota !== false
       };
       const r = Boolean(n.overlay_burned) && !Boolean(n.burn_deferred);
-      const o = typeof n.has_clean_master === "boolean" ? n.has_clean_master : false;
-      const s = Boolean(n.can_edit) && !n.customize_expired;
-      if (!s || r && !o) {
+      const s = typeof n.has_clean_master === "boolean" ? n.has_clean_master : false;
+      const o = Boolean(n.can_edit) && !n.customize_expired;
+      if (!o || r && !s) {
         this._libraryRankingEditable = Boolean(n.can_edit) && !n.customize_expired;
         this._libraryRankingNeedsBurn = false;
         this._updateLibraryCustomizeExpiryPill();
         return;
       }
-      this._libraryRankingUseCleanVideo = o;
+      this._libraryRankingUseCleanVideo = s;
       this._libraryRankingTimelineState = n;
       this.mountLibraryRankingOverlay(e, n);
       this._updateLibraryCustomizeExpiryPill();
@@ -10704,17 +10706,17 @@ class ClipsStudio {
     if (!r) return;
     r.classList.add("library-ranking-layer");
     e.appendChild(r);
-    const o = n.querySelector("style");
-    if (o) {
-      o.setAttribute("data-ranking-library", "1");
+    const s = n.querySelector("style");
+    if (s) {
+      s.setAttribute("data-ranking-library", "1");
       const t = e.querySelector("style[data-ranking-library]");
-      if (t) t.replaceWith(o); else e.appendChild(o);
+      if (t) t.replaceWith(s); else e.appendChild(s);
     }
     e.classList.add("library-ranking-edit");
-    const s = e.querySelector("video.library-preview-video");
-    if (s) {
-      s.controls = false;
-      s.style.pointerEvents = "none";
+    const o = e.querySelector("video.library-preview-video");
+    if (o) {
+      o.controls = false;
+      o.style.pointerEvents = "none";
     }
     this._libraryRankingEditable = true;
     this._libraryRankingDirty = false;
@@ -10752,8 +10754,8 @@ class ClipsStudio {
         ...c[e]
       } : {};
       const r = String(n.content || "").trim();
-      const o = !r || /^(ranking|best|funniest|channel moments)$/i.test(r);
-      if (o) {
+      const s = !r || /^(ranking|best|funniest|channel moments)$/i.test(r);
+      if (s) {
         n.content = i;
         c[e] = n;
       }
@@ -10903,8 +10905,8 @@ class ClipsStudio {
     if (!e) return;
     const n = e.querySelector?.(".ranking-preview-container") || e;
     const r = t && t.ai_text_pack && typeof t.ai_text_pack === "object" ? t.ai_text_pack : {};
-    const o = i && typeof i === "object" ? i : {};
-    const s = Array.isArray(t?.moments) ? t.moments : this._libraryRankingMoments || [];
+    const s = i && typeof i === "object" ? i : {};
+    const o = Array.isArray(t?.moments) ? t.moments : this._libraryRankingMoments || [];
     const a = Array.isArray(r.moments) ? r.moments : [];
     const byRank = (e = []) => {
       const t = new Map;
@@ -10915,7 +10917,7 @@ class ClipsStudio {
       return t;
     };
     const l = byRank(a);
-    const c = byRank(s);
+    const c = byRank(o);
     const normalizeOverlayText = (e, t = 80) => String(e || "").replace(/\s+/g, " ").trim().slice(0, t);
     const isClassicPlaceholder = e => {
       const t = String(e || "").replace(/\s+/g, " ").trim();
@@ -10932,8 +10934,8 @@ class ClipsStudio {
     const setHeaderText = (e, t, {force: i = false} = {}) => {
       const r = n.querySelector(`[data-template-element-id="${e}"]`);
       if (!r) return;
-      const s = o[e]?.content;
-      const a = s != null ? String(s).trim() : "";
+      const o = s[e]?.content;
+      const a = o != null ? String(o).trim() : "";
       const l = normalizeOverlayText(t, e.startsWith("title_") ? 32 : 48);
       const c = a && !isClassicPlaceholder(a) && !i;
       const d = c ? normalizeOverlayText(a, e.startsWith("title_") ? 32 : 48) : l;
@@ -10963,8 +10965,8 @@ class ClipsStudio {
       const t = l.get(e);
       const i = c.get(e);
       const r = String(window.rankingCustomizer?.customizations?.[`rank_${e}_title`]?.content || "").trim();
-      const s = r || String(o[`rank_${e}_title`]?.content || "").trim();
-      const a = s && !isClassicPlaceholder(s) ? s : "";
+      const o = r || String(s[`rank_${e}_title`]?.content || "").trim();
+      const a = o && !isClassicPlaceholder(o) ? o : "";
       const d = normalizeOverlayText(a || t?.title || t?.text || i?.title || i?.text || "", 48);
       y[e] = d;
       if (d && window.rankingCustomizer?.customizations) {
@@ -11007,11 +11009,11 @@ class ClipsStudio {
     })();
     let n = null;
     for (let r = 1; r <= 5; r++) {
-      const o = e.querySelector(`[data-template-element-id="rank_${r}_title"]`)?.getAttribute("data-rk-font");
-      const s = i[`rank_${r}_title`] || i[`rank_${r}_number`];
-      const a = t[`rank_${r}_title`]?.font || t[`rank_${r}_number`]?.font || s;
-      if (o) {
-        n = o;
+      const s = e.querySelector(`[data-template-element-id="rank_${r}_title"]`)?.getAttribute("data-rk-font");
+      const o = i[`rank_${r}_title`] || i[`rank_${r}_number`];
+      const a = t[`rank_${r}_title`]?.font || t[`rank_${r}_number`]?.font || o;
+      if (s) {
+        n = s;
         break;
       }
       if (a && window.rankingCustomizer?._displayFont) {
@@ -11027,7 +11029,7 @@ class ClipsStudio {
       return;
     }
     const r = n === "Luckiest Guy" ? `'Luckiest Guy', cursive` : `'${n}', sans-serif`;
-    const o = {
+    const s = {
       Fredoka: "700",
       Montserrat: "700",
       "Bebas Neue": "400",
@@ -11036,17 +11038,17 @@ class ClipsStudio {
       Poppins: "600",
       Roboto: "700"
     };
-    const s = o[n] || "400";
+    const o = s[n] || "400";
     for (let t = 1; t <= 5; t++) {
       for (const i of [ "title", "number" ]) {
-        const o = `rank_${t}_${i}`;
-        const a = e.querySelector(`[data-template-element-id="${o}"]`);
+        const s = `rank_${t}_${i}`;
+        const a = e.querySelector(`[data-template-element-id="${s}"]`);
         if (!a) continue;
         a.style.setProperty("font-family", r, "important");
-        a.style.setProperty("font-weight", s, "important");
+        a.style.setProperty("font-weight", o, "important");
         a.setAttribute("data-rk-font", n);
         if (window.rankingCustomizer?.setElementFontFile) {
-          window.rankingCustomizer.setElementFontFile(o, n);
+          window.rankingCustomizer.setElementFontFile(s, n);
         }
       }
     }
@@ -11070,11 +11072,11 @@ class ClipsStudio {
       const r = t?.base_durations || this._libraryRankingBaseDurations || {};
       for (let e = 5; e >= 1; e--) {
         let t = 0;
-        const o = n?.[String(e)] || n?.[e];
-        if (o) {
-          t = Number(o.duration);
-          if (!(t > 0) && o.start != null && o.end != null) {
-            t = Number(o.end) - Number(o.start);
+        const s = n?.[String(e)] || n?.[e];
+        if (s) {
+          t = Number(s.duration);
+          if (!(t > 0) && s.start != null && s.end != null) {
+            t = Number(s.end) - Number(s.start);
           }
         }
         if (!(t > 0)) t = Number(r[String(e)] || r[e] || 0);
@@ -11083,20 +11085,20 @@ class ClipsStudio {
           duration: t
         });
       }
-      let o = 0;
+      let s = 0;
       return i.map(({rank: e, duration: t}) => {
-        const i = o;
-        o += t;
+        const i = s;
+        s += t;
         return {
           rank: e,
           start: i,
-          end: o
+          end: s
         };
       });
     })();
     if (!r.length) return;
-    const o = this._libraryRankingTitleByRank || {};
-    let s = null;
+    const s = this._libraryRankingTitleByRank || {};
+    let o = null;
     const paintTitle = (e, t) => {
       if (e.classList.contains("rk-inline-editing") || e.isContentEditable) return;
       const i = String(e.textContent || "").trim();
@@ -11112,7 +11114,7 @@ class ClipsStudio {
           };
         }
       }
-      const n = e.getAttribute("data-rk-full-title") || o[t] || i || "";
+      const n = e.getAttribute("data-rk-full-title") || s[t] || i || "";
       if (n && !/^add title/i.test(n)) {
         if (e.textContent !== n) e.textContent = n;
         e.classList.remove("rk-title-empty");
@@ -11125,21 +11127,21 @@ class ClipsStudio {
     };
     const applyReveal = (e = false) => {
       const t = Number(n.currentTime) || 0;
-      let o = r[0]?.rank ?? 5;
+      let s = r[0]?.rank ?? 5;
       for (const e of r) {
         if (t >= e.start - .02 && t < e.end - .02) {
-          o = e.rank;
+          s = e.rank;
           break;
         }
-        if (t >= e.end - .02) o = e.rank;
+        if (t >= e.end - .02) s = e.rank;
       }
-      if (!e && o === s) return;
-      s = o;
+      if (!e && s === o) return;
+      o = s;
       for (let e = 1; e <= 5; e++) {
         const t = i.querySelector(`[data-template-element-id="rank_${e}_title"]`);
         if (!t) continue;
         paintTitle(t, e);
-        t.classList.toggle("rk-title-active", e === o);
+        t.classList.toggle("rk-title-active", e === s);
       }
     };
     if (n._rkRevealCleanup) {
@@ -11225,12 +11227,12 @@ class ClipsStudio {
         }
         return;
       }
-      const o = t.reduce((e, t) => e + t, 0) || 1;
-      const s = r / o;
+      const s = t.reduce((e, t) => e + t, 0) || 1;
+      const o = r / s;
       const a = [];
       let l = 0;
       for (let e = 0; e < t.length - 1 && a.length < 4; e++) {
-        l += t[e] * s;
+        l += t[e] * o;
         if (l > .05 && l < r - .05) a.push(l);
       }
       if (a.length) PreviewTimeline.setSplits(a);
@@ -11248,24 +11250,24 @@ class ClipsStudio {
     const i = typeof PreviewTimeline !== "undefined" && PreviewTimeline.getClipOrder ? PreviewTimeline.getClipOrder() : [ 5, 4, 3, 2, 1 ];
     const n = {};
     const r = Math.min(5, t.length - 1);
-    for (let o = 0; o < r; o++) {
-      const r = i[o] || 5 - o;
-      const s = Number(e[String(r)] || e[r] || 0);
-      const a = Math.max(1.5, Number(t[o + 1]) - Number(t[o]));
-      if (!(s > 0)) {
+    for (let s = 0; s < r; s++) {
+      const r = i[s] || 5 - s;
+      const o = Number(e[String(r)] || e[r] || 0);
+      const a = Math.max(1.5, Number(t[s + 1]) - Number(t[s]));
+      if (!(o > 0)) {
         n[String(r)] = {
           start: 0,
           end: a
         };
         continue;
       }
-      if (a >= s - .08) {
+      if (a >= o - .08) {
         n[String(r)] = {
           start: 0,
-          end: s
+          end: o
         };
       } else {
-        const e = Math.max(0, (s - a) / 2);
+        const e = Math.max(0, (o - a) / 2);
         n[String(r)] = {
           start: e,
           end: e + a
@@ -11283,12 +11285,12 @@ class ClipsStudio {
     const n = {};
     for (let e = 0; e < 5; e++) {
       const r = 5 - e;
-      const o = i[e] || r;
-      const s = t.querySelector(`[data-template-element-id="rank_${r}_title"]`);
-      const a = (s?.getAttribute("data-rk-full-title") || s?.textContent || this._libraryRankingTitleByRank?.[r] || "").trim();
-      n[o] = a;
+      const s = i[e] || r;
+      const o = t.querySelector(`[data-template-element-id="rank_${r}_title"]`);
+      const a = (o?.getAttribute("data-rk-full-title") || o?.textContent || this._libraryRankingTitleByRank?.[r] || "").trim();
+      n[s] = a;
       if (this._libraryRankingTitleByPhysical == null) this._libraryRankingTitleByPhysical = {};
-      if (a) this._libraryRankingTitleByPhysical[o] = a;
+      if (a) this._libraryRankingTitleByPhysical[s] = a;
     }
     const r = {
       ...this._libraryRankingTitleByPhysical || {},
@@ -11296,25 +11298,25 @@ class ClipsStudio {
     };
     for (let i = 0; i < e.length; i++) {
       const n = 5 - i;
-      const o = e[i];
-      const s = r[o] || "";
+      const s = e[i];
+      const o = r[s] || "";
       const a = t.querySelector(`[data-template-element-id="rank_${n}_title"]`);
       if (a) {
-        if (s && !/^add title/i.test(s)) {
-          a.textContent = s;
-          a.setAttribute("data-rk-full-title", s);
+        if (o && !/^add title/i.test(o)) {
+          a.textContent = o;
+          a.setAttribute("data-rk-full-title", o);
           a.classList.remove("rk-title-empty");
           a.removeAttribute("data-placeholder");
         }
       }
       if (this._libraryRankingTitleByRank) {
-        this._libraryRankingTitleByRank[n] = s;
+        this._libraryRankingTitleByRank[n] = o;
       }
       if (window.rankingCustomizer?.customizations) {
         const e = `rank_${n}_title`;
         window.rankingCustomizer.customizations[e] = {
           ...window.rankingCustomizer.customizations[e] || {},
-          content: s
+          content: o
         };
       }
     }
@@ -11363,8 +11365,8 @@ class ClipsStudio {
     if (!r) {
       r = this._libraryRankingCaptionStyle || window.__solisLastCaptionStyle || null;
     }
-    const o = Boolean(this._libraryRankingSubtitlesOn);
-    const s = await fetch(`${API_BASE_URL}/clips/projects/${encodeURIComponent(e)}/ranking/recompose`, {
+    const s = Boolean(this._libraryRankingSubtitlesOn);
+    const o = await fetch(`${API_BASE_URL}/clips/projects/${encodeURIComponent(e)}/ranking/recompose`, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -11377,7 +11379,7 @@ class ClipsStudio {
         clip_windows: i,
         clip_order: n || undefined,
         caption_style: r || undefined,
-        subtitles_enabled: o,
+        subtitles_enabled: s,
         silence_cuts: (() => {
           try {
             const e = typeof window.SolisSilencer?.getCuts === "function" ? window.SolisSilencer.getCuts() : this._librarySilenceCuts || [];
@@ -11391,11 +11393,11 @@ class ClipsStudio {
         })()
       })
     });
-    if (!s.ok) {
-      const e = await s.json().catch(() => ({}));
-      throw this._libraryApplyError(e, s.status, "Ranking recompose failed");
+    if (!o.ok) {
+      const e = await o.json().catch(() => ({}));
+      throw this._libraryApplyError(e, o.status, "Ranking recompose failed");
     }
-    const a = await s.json().catch(() => ({}));
+    const a = await o.json().catch(() => ({}));
     this._libraryRankingDirty = false;
     this._libraryRankingNeedsBurn = false;
     this._librarySilenceDirty = false;
@@ -11444,12 +11446,12 @@ class ClipsStudio {
   }
   async fetchSecureLibraryPreviewBlob(e, t, i = null, n = {}) {
     const r = n.loadGen != null ? n.loadGen : ++this._libraryPreviewLoadGen;
-    const o = Math.max(0, Number(n.attempt) || 0);
-    const s = Boolean((this.libraryItems || []).some(e => {
+    const s = Math.max(0, Number(n.attempt) || 0);
+    const o = Boolean((this.libraryItems || []).some(e => {
       const i = String(e.projectId || e.id || "");
       return i === String(t) && (e._justCompleted || e._optimistic);
     }));
-    const a = n.clean ? 3 : s ? 18 : 5;
+    const a = n.clean ? 3 : o ? 18 : 5;
     const l = !!n.clean;
     if (this._libraryPreviewFetchController) {
       this._libraryPreviewFetchController.abort();
@@ -11491,13 +11493,13 @@ class ClipsStudio {
     const retrySoon = i => {
       if (isStale()) return;
       if (String(this._libraryPreviewFailedId) === String(t)) return;
-      if (o + 1 >= a) {
+      if (s + 1 >= a) {
         giveUp(i);
         return;
       }
-      const c = s ? Math.min(8e3, 1500 + o * 1500) : Math.min(4e3, 900 + o * 900);
-      safeLog(`Preview not ready (${i}) — retry ${o + 1}/${a} in ${c}ms`);
-      if (o === 0 && !e.querySelector("video")) {
+      const c = o ? Math.min(8e3, 1500 + s * 1500) : Math.min(4e3, 900 + s * 900);
+      safeLog(`Preview not ready (${i}) — retry ${s + 1}/${a} in ${c}ms`);
+      if (s === 0 && !e.querySelector("video")) {
         this._setLibraryPreviewPlaceholder(e);
       }
       if (this._libraryPreviewRetryTimer) {
@@ -11508,7 +11510,7 @@ class ClipsStudio {
         if (isStale()) return;
         this.fetchSecureLibraryPreviewBlob(e, t, null, {
           loadGen: r,
-          attempt: o + 1,
+          attempt: s + 1,
           clean: l,
           cleanFallbackTried: !!n.cleanFallbackTried,
           burnedFallbackTried: !!n.burnedFallbackTried
@@ -11517,31 +11519,31 @@ class ClipsStudio {
     };
     try {
       const i = this.getLibraryPreviewVideoUrl(t, {
-        bust: o > 0,
+        bust: s > 0,
         clean: l
       });
       const n = `${i}${i.includes("?") ? "&" : "?"}resolve=1`;
       if (isStale()) return;
-      const s = await fetch(n, {
+      const o = await fetch(n, {
         credentials: "include",
         headers: typeof getAuthHeaders === "function" ? getAuthHeaders() : {},
         signal: c.signal,
         cache: "no-store"
       });
       if (isStale()) return;
-      if (!s.ok) {
-        if (s.status === 404 || s.status === 409 || s.status === 425 || s.status === 202) {
-          retrySoon(`http ${s.status}`);
+      if (!o.ok) {
+        if (o.status === 404 || o.status === 409 || o.status === 425 || o.status === 202) {
+          retrySoon(`http ${o.status}`);
           return;
         }
-        retrySoon(`http ${s.status}`);
+        retrySoon(`http ${o.status}`);
         return;
       }
-      const a = String(s.headers.get("content-type") || "").toLowerCase();
+      const a = String(o.headers.get("content-type") || "").toLowerCase();
       let d = null;
       let p = false;
       if (a.includes("application/json")) {
-        const e = await s.json().catch(() => ({}));
+        const e = await o.json().catch(() => ({}));
         if (isStale()) return;
         if (e?.url) {
           d = String(e.url);
@@ -11578,7 +11580,7 @@ class ClipsStudio {
           return;
         }
       } else {
-        const e = await s.blob();
+        const e = await o.blob();
         if (isStale()) return;
         if (!e || e.size < 64) {
           retrySoon("empty blob");
@@ -11658,12 +11660,12 @@ class ClipsStudio {
       if (!n.ok) return;
       const r = await n.blob();
       if (!r.size || r.size > 90 * 1024 * 1024) return;
-      const o = r.type ? r : new Blob([ r ], {
+      const s = r.type ? r : new Blob([ r ], {
         type: "video/mp4"
       });
-      const s = URL.createObjectURL(o);
-      window.LibraryPreviewMediaCache.rememberProject(e, i, o, s, t);
-      this._libraryPreviewObjectUrl = s;
+      const o = URL.createObjectURL(s);
+      window.LibraryPreviewMediaCache.rememberProject(e, i, s, o, t);
+      this._libraryPreviewObjectUrl = o;
     } catch (e) {}
   }
   async fetchSecureLibraryPreview(e, t) {
@@ -11776,12 +11778,12 @@ class ClipsStudio {
       });
       if (!n.ok) return;
       const r = await n.json().catch(() => ({}));
-      const o = r?.share_pack;
-      if (o) {
+      const s = r?.share_pack;
+      if (s) {
         const t = this.libraryItems.find(t => String(t.projectId || t.id) === String(e));
-        if (t) t.share_pack = o;
+        if (t) t.share_pack = s;
         if (this.currentTemplateForPreview) {
-          this.currentTemplateForPreview.share_pack = o;
+          this.currentTemplateForPreview.share_pack = s;
         }
       }
     } catch (e) {}
@@ -11922,7 +11924,7 @@ class ClipsStudio {
     const i = String(e?.batchParent || "");
     const n = String(e?.collectionId || "");
     const r = Array.isArray(this.libraryItems) ? this.libraryItems : [];
-    let o = r.filter(e => {
+    let s = r.filter(e => {
       const r = String(e.projectId || e.id || "");
       if (!r) return false;
       if (r === t) return true;
@@ -11932,24 +11934,24 @@ class ClipsStudio {
       if (String(e.batchParent || "") === t) return true;
       return false;
     });
-    if (!o.length && e) o = [ e ];
-    const s = new Set;
-    o = o.filter(e => {
+    if (!s.length && e) s = [ e ];
+    const o = new Set;
+    s = s.filter(e => {
       const t = String(e.projectId || e.id || "");
-      if (!t || s.has(t)) return false;
-      s.add(t);
+      if (!t || o.has(t)) return false;
+      o.add(t);
       return true;
     });
-    o.sort((e, t) => {
+    s.sort((e, t) => {
       const i = Number(e.batchIndex) || 9999;
       const n = Number(t.batchIndex) || 9999;
       if (i !== n) return i - n;
       return String(e.projectId || e.id).localeCompare(String(t.projectId || t.id));
     });
-    o.forEach((e, t) => {
+    s.forEach((e, t) => {
       if (!Number(e.batchIndex)) e.batchIndex = t + 1;
     });
-    return o;
+    return s;
   }
   _buildLocalCompanionVerdict(e, t) {
     const i = t.map((e, t) => {
@@ -11964,12 +11966,12 @@ class ClipsStudio {
     });
     const n = Math.max(1, ...t.map(e => Number(e.requestedClipCount) || 0), Number(e?.requestedClipCount) || 0, i.length);
     const r = i.filter(e => e.keep);
-    const o = i.filter(e => !e.keep);
-    const s = r.map(e => e.batch_index);
+    const s = i.filter(e => !e.keep);
+    const o = r.map(e => e.batch_index);
     const a = i.length;
-    const l = a > 0 && o.length === 0;
+    const l = a > 0 && s.length === 0;
     const c = r[0]?.reason || "";
-    const d = o[0]?.reason || "";
+    const d = s[0]?.reason || "";
     let p = "Looking over your clips…";
     if (a <= 0) {
       p = "No clips landed yet. Try again when the job finishes.";
@@ -11983,21 +11985,21 @@ class ClipsStudio {
       const t = n !== a ? `You asked for ${n}. All ${a} landed and hold up.` : `All ${a} clips hold up.`;
       p = [ t, ...e, "I'd ship every one." ].join(" ");
     } else if (!r.length) {
-      const e = o.map(e => {
+      const e = s.map(e => {
         const t = String(e.reason || "").trim().replace(/\.$/, "");
         return t ? `Clip ${e.batch_index} soft: ${t}.` : `Clip ${e.batch_index} is soft.`;
       });
       p = [ `You asked for ${n}. ${a} landed — all soft.`, ...e, "Still want them visible?" ].join(" ");
     } else {
       const e = r.length;
-      const t = o.length;
-      const i = this._formatCompanionIndices(s) || "none";
+      const t = s.length;
+      const i = this._formatCompanionIndices(o) || "none";
       const l = [ `You asked for ${n}. ${a} landed — ${e} ship-ready, ${t} soft.` ];
       r.forEach(e => {
         const t = String(e.reason || "").trim().replace(/\.$/, "");
         l.push(t ? `Clip ${e.batch_index}: ${t}.` : `Clip ${e.batch_index} holds up.`);
       });
-      o.forEach(e => {
+      s.forEach(e => {
         const t = String(e.reason || "").trim().replace(/\.$/, "");
         l.push(t ? `Clip ${e.batch_index} soft: ${t}.` : `Clip ${e.batch_index} is soft.`);
       });
@@ -12008,10 +12010,10 @@ class ClipsStudio {
     const m = {
       requested: n,
       delivered: a,
-      keep: s,
-      weak: o.map(e => e.batch_index),
+      keep: o,
+      weak: s.map(e => e.batch_index),
       keep_project_ids: r.map(e => e.project_id),
-      weak_project_ids: o.map(e => e.project_id),
+      weak_project_ids: s.map(e => e.project_id),
       all_strong: l,
       message: p,
       reasoning: u,
@@ -12022,7 +12024,7 @@ class ClipsStudio {
         reason: e.reason || ""
       })),
       options: (() => {
-        if (a > 1 && o.length && r.length) {
+        if (a > 1 && s.length && r.length) {
           return [ {
             id: "a",
             label: "Hide soft ones",
@@ -12081,22 +12083,22 @@ class ClipsStudio {
     };
     const n = e?.virality || {};
     const r = scrub(this._whyFromVirality(n) || n.why || "");
-    const o = scrub(n?.hook?.note || "");
-    const s = scrub(n?.clip?.note || "");
+    const s = scrub(n?.hook?.note || "");
+    const o = scrub(n?.clip?.note || "");
     let a = scrub(String(n?.fix || "").replace(/push toward\s*80:\s*/i, ""));
     if (a && /^[a-z]/.test(a)) a = a.charAt(0).toUpperCase() + a.slice(1);
     const l = scrub(e?.share_pack?.why || "");
     if (t) {
       if (r && !/thin/i.test(r)) return r;
       if (l) return l;
-      if (o) return o;
       if (s) return s;
+      if (o) return o;
       return "Hook lands early and the cut holds a complete thought.";
     }
     if (a) return a;
     if (r) return r;
-    if (o) return o;
     if (s) return s;
+    if (o) return o;
     return "Fine as filler — soft open or incomplete thought.";
   }
   _buildLocalReasoningSteps(e, t, i) {
@@ -12112,10 +12114,10 @@ class ClipsStudio {
       }
     });
     const r = e.filter(e => e.keep);
-    const o = e.filter(e => !e.keep);
+    const s = e.filter(e => !e.keep);
     if (i > 1) {
-      if (r.length && o.length) {
-        n.push(`${r.length} worth shipping, ${o.length} better hidden.`);
+      if (r.length && s.length) {
+        n.push(`${r.length} worth shipping, ${s.length} better hidden.`);
       } else if (r.length) {
         n.push(`All ${i} hold up.`);
       }
@@ -12142,10 +12144,10 @@ class ClipsStudio {
     const i = String(e?.batchParent || e?.collectionId || (t.length > 1 ? t[0]?.batchParent || t[0]?.projectId || t[0]?.id : e?.projectId || e?.id) || "");
     const n = this._loadCompanionChoice(i);
     const r = !!(n.verdict?.message || n.message);
-    const o = this._companionBatchKey === i && !!this._companionTypedKey;
-    const s = document.getElementById("companionVerdictActions");
-    if (!o && !r) {
-      if (s) s.hidden = true;
+    const s = this._companionBatchKey === i && !!this._companionTypedKey;
+    const o = document.getElementById("companionVerdictActions");
+    if (!s && !r) {
+      if (o) o.hidden = true;
       this._stopCompanionTypewriter();
       this._setCompanionChatMarkState("reasoning");
       this._setCompanionBubbleTyping(false);
@@ -12293,20 +12295,20 @@ class ClipsStudio {
     const i = document.getElementById("companionChatReason");
     const n = document.getElementById("companionChatReasonLive");
     const r = document.getElementById("companionChatReasonDone");
-    const o = document.getElementById("companionChatReasonLabel");
-    const s = document.getElementById("companionChatCard");
+    const s = document.getElementById("companionChatReasonLabel");
+    const o = document.getElementById("companionChatCard");
     const a = document.getElementById("companionChatBubble");
     if (!i) return;
     if (e === "live") {
       i.hidden = false;
       if (n) n.hidden = false;
       if (r) r.hidden = true;
-      if (o && !o.textContent.trim()) {
-        o.textContent = "Reviewing clips";
+      if (s && !s.textContent.trim()) {
+        s.textContent = "Reviewing clips";
       }
-      if (s) {
-        s.classList.add("is-thinking");
-        s.classList.remove("is-typing");
+      if (o) {
+        o.classList.add("is-thinking");
+        o.classList.remove("is-typing");
       }
       if (a) a.hidden = false;
       return;
@@ -12320,13 +12322,13 @@ class ClipsStudio {
         r.hidden = false;
         r.textContent = e === 1 ? "Thought for 1 second" : `Thought for ${e} seconds`;
       }
-      if (s) s.classList.remove("is-thinking");
+      if (o) o.classList.remove("is-thinking");
       return;
     }
     i.hidden = true;
     if (n) n.hidden = true;
     if (r) r.hidden = true;
-    if (s) s.classList.remove("is-thinking");
+    if (o) o.classList.remove("is-thinking");
   }
   _stopCompanionReasoningSteps() {
     if (this._companionReasonTimer) {
@@ -12386,16 +12388,16 @@ class ClipsStudio {
     const n = String(e || "");
     this._stopCompanionTypewriter();
     const r = this._companionTypeToken;
-    const o = document.getElementById("companionVerdictActions");
-    if (o) o.hidden = true;
+    const s = document.getElementById("companionVerdictActions");
+    if (s) s.hidden = true;
     this._setCompanionChatText("");
     this._setCompanionChatCaret(false);
     this._setCompanionBubbleVisible(true);
-    const s = i || this._companionVerdict?.reasoning || [ "Reviewing clips from the understanding pass." ];
+    const o = i || this._companionVerdict?.reasoning || [ "Reviewing clips from the understanding pass." ];
     this._setCompanionReasoning("live");
-    this._startCompanionReasoningSteps(s);
+    this._startCompanionReasoningSteps(o);
     this._setCompanionChatMarkState("reasoning");
-    const a = Array.isArray(s) ? s.length : 1;
+    const a = Array.isArray(o) ? o.length : 1;
     const l = 1100 + Math.min(1600, a * 480);
     const c = Date.now();
     this._companionTypeTimer = setTimeout(() => {
@@ -12417,7 +12419,7 @@ class ClipsStudio {
           this._setCompanionBubbleTyping(false);
           this._setCompanionChatMarkState("idle");
           this._companionTypedKey = `${this._companionBatchKey || ""}::${n}`;
-          if (o) o.hidden = !t;
+          if (s) s.hidden = !t;
           this._syncCompanionReadingTarget(n);
           this._companionTypeTimer = null;
           try {
@@ -12428,8 +12430,8 @@ class ClipsStudio {
           } catch (e) {}
           return;
         }
-        const s = n.length - i;
-        let a = s <= 24 ? 3 : s <= 80 ? 5 : 8;
+        const o = n.length - i;
+        let a = o <= 24 ? 3 : o <= 80 ? 5 : 8;
         const l = n[i];
         if (l === "\n") a = 1; else if (/[.,!?;:]/.test(l)) a = 1;
         i = Math.min(n.length, i + a);
@@ -12448,10 +12450,10 @@ class ClipsStudio {
     const setOpt = (e, t, i, n) => {
       if (!e) return;
       const r = String(t?.label || i || "").trim() || i;
-      const o = String(t?.action || n || "keep_as_is").trim();
-      e.dataset.action = o;
-      const s = e.querySelector(".companion-chat-suggest-label");
-      if (s) s.textContent = r; else e.textContent = r;
+      const s = String(t?.action || n || "keep_as_is").trim();
+      e.dataset.action = s;
+      const o = e.querySelector(".companion-chat-suggest-label");
+      if (o) o.textContent = r; else e.textContent = r;
     };
     const r = Number(e?.delivered) || (this._companionSiblings || []).length || 0;
     setOpt(i, t[0], "Hide soft ones", "hide_weak");
@@ -12462,11 +12464,11 @@ class ClipsStudio {
     const i = document.getElementById("companionVerdictActions");
     const n = String(t.message || "Looking over your clips…");
     const r = this._personalizeCompanionMessage(n);
-    const o = !this._companionChoice && !!t.show_actions && Array.isArray(t.options) && t.options.length >= 2;
+    const s = !this._companionChoice && !!t.show_actions && Array.isArray(t.options) && t.options.length >= 2;
     this._paintCompanionOptions(t);
     if (e.type) {
       this._typeCompanionMessage(r, {
-        showActions: o,
+        showActions: s,
         reasoning: t.reasoning || null
       });
       return;
@@ -12479,7 +12481,7 @@ class ClipsStudio {
     this._setCompanionReasoning("done", this._companionLastReasonSecs || e.reasonSecs || 2);
     this._setCompanionChatMarkState("idle");
     this._companionTypedKey = `${this._companionBatchKey || ""}::${r}`;
-    if (i) i.hidden = !o;
+    if (i) i.hidden = !s;
     this._syncCompanionReadingTarget(r);
   }
   _bindCompanionVerdictChrome() {
@@ -12521,10 +12523,10 @@ class ClipsStudio {
     if (!i || !n) return;
     if (n.classList.contains("is-watching-type")) return;
     const r = i.getBoundingClientRect();
-    const o = Math.max(0, Math.min(1, (e.clientX - r.left) / Math.max(1, r.width)));
-    const s = Math.max(0, Math.min(1, (e.clientY - r.top) / Math.max(1, r.height)));
-    const a = (o - .5) * 12;
-    const l = (s - .2) * 16;
+    const s = Math.max(0, Math.min(1, (e.clientX - r.left) / Math.max(1, r.width)));
+    const o = Math.max(0, Math.min(1, (e.clientY - r.top) / Math.max(1, r.height)));
+    const a = (s - .5) * 12;
+    const l = (o - .2) * 16;
     n.classList.add("is-reading");
     n.style.setProperty("--look-x", a.toFixed(2));
     n.style.setProperty("--look-y", l.toFixed(2));
@@ -12591,10 +12593,10 @@ class ClipsStudio {
     if (!n) return Promise.resolve();
     this._stopCompanionTypewriter();
     const r = this._companionTypeToken;
-    const o = document.getElementById("companionVerdictActions");
-    if (o) o.hidden = true;
-    const s = this._companionTextEl();
-    const a = String(s?.textContent || "").trim();
+    const s = document.getElementById("companionVerdictActions");
+    if (s) s.hidden = true;
+    const o = this._companionTextEl();
+    const a = String(o?.textContent || "").trim();
     const l = document.getElementById("companionChatBubble");
     const c = !!a && l && !l.hidden;
     const runThinkThenType = () => {
@@ -12606,11 +12608,11 @@ class ClipsStudio {
       this._setCompanionReasoning("live");
       this._startCompanionReasoningSteps(e);
       this._setCompanionChatMarkState("reasoning");
-      const o = i != null ? i : 850 + Math.min(1400, e.length * 420);
-      const s = Date.now();
+      const s = i != null ? i : 850 + Math.min(1400, e.length * 420);
+      const o = Date.now();
       this._companionTypeTimer = setTimeout(() => {
         if (r !== this._companionTypeToken) return;
-        const e = Math.max(1, Math.round((Date.now() - s) / 1e3));
+        const e = Math.max(1, Math.round((Date.now() - o) / 1e3));
         this._companionLastReasonSecs = e;
         this._setCompanionReasoning("done", e);
         this._setCompanionChatMarkState("talking");
@@ -12636,16 +12638,16 @@ class ClipsStudio {
           }
           const e = n.length - t;
           let i = e <= 24 ? 3 : e <= 80 ? 5 : 8;
-          const o = n[t];
-          if (o === "\n") i = 1; else if (/[.,!?;:]/.test(o)) i = 1;
+          const s = n[t];
+          if (s === "\n") i = 1; else if (/[.,!?;:]/.test(s)) i = 1;
           t = Math.min(n.length, t + i);
           this._setCompanionChatText(n.slice(0, t));
-          const s = n[t - 1];
-          const a = s === "\n" ? 18 : /[.]/.test(s) ? 22 : /[,!?;:]/.test(s) ? 12 : 5;
+          const o = n[t - 1];
+          const a = o === "\n" ? 18 : /[.]/.test(o) ? 22 : /[,!?;:]/.test(o) ? 12 : 5;
           this._companionTypeTimer = setTimeout(step, a);
         };
         this._companionTypeTimer = setTimeout(step, 60);
-      }, o);
+      }, s);
     };
     return new Promise(e => {
       this._companionTaskResolve = e;
@@ -12663,8 +12665,8 @@ class ClipsStudio {
     if (i) i.hidden = true;
     const n = this._companionTextEl();
     const r = String(n?.textContent || "").trim();
-    const o = document.getElementById("companionChatBubble");
-    const s = !!r && o && !o.hidden;
+    const s = document.getElementById("companionChatBubble");
+    const o = !!r && s && !s.hidden;
     const startThink = () => {
       if (t !== this._companionTypeToken) return;
       const i = Array.isArray(e) && e.length ? e : [ "Scanning the clip.", "Listening for dead air." ];
@@ -12677,7 +12679,7 @@ class ClipsStudio {
       this._companionTaskStartedAt = Date.now();
     };
     return new Promise(e => {
-      if (s) {
+      if (o) {
         this._untypeCompanionMessage(r, t, () => {
           startThink();
           e();
@@ -12707,13 +12709,13 @@ class ClipsStudio {
         this._setCompanionBubbleTyping(true);
         this._setCompanionChatCaret(true);
         this._setCompanionChatText("");
-        let o = 0;
+        let s = 0;
         const step = () => {
           if (n !== this._companionTypeToken) {
             e();
             return;
           }
-          if (o >= i.length) {
+          if (s >= i.length) {
             this._setCompanionChatText(i);
             this._setCompanionChatCaret(false);
             this._setCompanionBubbleTyping(false);
@@ -12723,13 +12725,13 @@ class ClipsStudio {
             e();
             return;
           }
-          const t = i.length - o;
+          const t = i.length - s;
           let r = t <= 24 ? 3 : t <= 80 ? 5 : 8;
-          const s = i[o];
-          if (s === "\n") r = 1; else if (/[.,!?;:]/.test(s)) r = 1;
-          o = Math.min(i.length, o + r);
-          this._setCompanionChatText(i.slice(0, o));
-          const a = i[o - 1];
+          const o = i[s];
+          if (o === "\n") r = 1; else if (/[.,!?;:]/.test(o)) r = 1;
+          s = Math.min(i.length, s + r);
+          this._setCompanionChatText(i.slice(0, s));
+          const a = i[s - 1];
           const l = a === "\n" ? 18 : /[.]/.test(a) ? 22 : /[,!?;:]/.test(a) ? 12 : 5;
           this._companionTypeTimer = setTimeout(step, l);
         };
@@ -12812,14 +12814,14 @@ class ClipsStudio {
       });
       const e = document.getElementById("companionVerdictActions");
       if (e) e.hidden = true;
-      const o = this._companionAckForAction(i, t);
-      const s = n.has(i);
-      if (s) this._setCompanionChatMarkState("reasoning");
+      const s = this._companionAckForAction(i, t);
+      const o = n.has(i);
+      if (o) this._setCompanionChatMarkState("reasoning");
       try {
-        if (s || r.has(i)) {
+        if (o || r.has(i)) {
           await this._recordCompanionTaste(i, t);
         }
-        if (s) {
+        if (o) {
           this._setCompanionMemoryStatus("done", "Memory Updated");
           clearTimeout(this._companionMemStatusT);
           this._companionMemStatusT = setTimeout(() => {
@@ -12828,21 +12830,21 @@ class ClipsStudio {
         } else {
           this._setCompanionMemoryStatus("off");
         }
-        this._setCompanionChatText(this._personalizeCompanionMessage(o));
+        this._setCompanionChatText(this._personalizeCompanionMessage(s));
         this._setCompanionChatMarkState("idle");
         if (i === "drop_soft") {
           this._paintCompanionHiddenRow();
           this._syncClipBatchPager();
         }
       } catch (e) {
-        if (s) {
+        if (o) {
           this._setCompanionMemoryStatus("done", "Memory Updated");
           clearTimeout(this._companionMemStatusT);
           this._companionMemStatusT = setTimeout(() => {
             this._setCompanionMemoryStatus("off");
           }, 2200);
         }
-        this._setCompanionChatText(this._personalizeCompanionMessage(o));
+        this._setCompanionChatText(this._personalizeCompanionMessage(s));
         this._setCompanionChatMarkState("idle");
       }
       return;
@@ -12859,10 +12861,10 @@ class ClipsStudio {
       this._stepClipBatch(1);
       return;
     }
-    const o = i === "hide_weak" || i === "ship_best";
-    this._companionChoice = o ? "hide_weak" : i;
+    const s = i === "hide_weak" || i === "ship_best";
+    this._companionChoice = s ? "hide_weak" : i;
     this._setCompanionMemoryStatus("off");
-    if (o) {
+    if (s) {
       this._companionHiddenIds = new Set((t.weak_project_ids || []).map(String));
       const e = String(this.currentTemplateForPreview?.projectId || "");
       if (e && this._companionHiddenIds.has(e)) {
@@ -12886,7 +12888,7 @@ class ClipsStudio {
       choice: this._companionChoice,
       hidden: [ ...this._companionHiddenIds ]
     });
-    if (o || i === "review_all" || i === "keep_as_is") {
+    if (s || i === "review_all" || i === "keep_as_is") {
       try {
         this._recordCompanionTaste(i, t);
       } catch (e) {}
@@ -12966,12 +12968,12 @@ class ClipsStudio {
     }
     t.hidden = false;
     const r = String(e?.projectId || e?.id || this.currentTemplateForPreview?.projectId || "");
-    const o = Math.max(0, n.findIndex(e => String(e.projectId || e.id) === r));
-    const s = new Set((this._companionVerdict?.weak_project_ids || []).map(String));
+    const s = Math.max(0, n.findIndex(e => String(e.projectId || e.id) === r));
+    const o = new Set((this._companionVerdict?.weak_project_ids || []).map(String));
     i.innerHTML = n.map((e, t) => {
       const i = String(e.projectId || e.id);
-      const n = s.has(i) && this._companionChoice !== "hide_weak";
-      return `<button type="button" class="clip-batch-dot${t === o ? " is-active" : ""}${n ? " is-weak" : ""}" data-pid="${i}" aria-label="Clip ${e.batchIndex || t + 1}"></button>`;
+      const n = o.has(i) && this._companionChoice !== "hide_weak";
+      return `<button type="button" class="clip-batch-dot${t === s ? " is-active" : ""}${n ? " is-weak" : ""}" data-pid="${i}" aria-label="Clip ${e.batchIndex || t + 1}"></button>`;
     }).join("");
     i.querySelectorAll(".clip-batch-dot").forEach(e => {
       e.addEventListener("click", () => {
@@ -12990,8 +12992,8 @@ class ClipsStudio {
     let n = t.findIndex(e => String(e.projectId || e.id) === i);
     if (n < 0) n = 0;
     const r = (n + e + t.length) % t.length;
-    const o = t[r];
-    if (o) this.openLibraryPreview(o.id, o.projectId || o.id, null, {
+    const s = t[r];
+    if (s) this.openLibraryPreview(s.id, s.projectId || s.id, null, {
       fast: true
     });
   }
@@ -13045,10 +13047,10 @@ class ClipsStudio {
     const i = document.getElementById("libraryInfoPanel");
     const n = document.getElementById("previewDurationRow");
     const r = document.getElementById("multiGenCard");
-    const o = document.getElementById("previewEditorPill");
-    const s = o?.querySelector('[data-tool="text"]');
+    const s = document.getElementById("previewEditorPill");
+    const o = s?.querySelector('[data-tool="text"]');
     const a = this._isCurrentLibraryRanking();
-    const visibleToolbarBtns = () => o ? Array.from(o.querySelectorAll(".tool-btn")).filter(e => e.style.display !== "none" && getComputedStyle(e).display !== "none") : [];
+    const visibleToolbarBtns = () => s ? Array.from(s.querySelectorAll(".tool-btn")).filter(e => e.style.display !== "none" && getComputedStyle(e).display !== "none") : [];
     this._setTipPublishMode(!!e);
     const l = document.getElementById("clipBatchPager");
     if (l && !e) {
@@ -13072,9 +13074,9 @@ class ClipsStudio {
     if (e) {
       if (t) t.style.display = "";
       if (i) i.style.display = "block";
-      if (o) o.style.display = "";
-      if (s) s.style.display = a ? "none" : "";
-      const e = o?.querySelector('[data-tool="animations"]');
+      if (s) s.style.display = "";
+      if (o) o.style.display = a ? "none" : "";
+      const e = s?.querySelector('[data-tool="animations"]');
       if (e) e.style.display = "";
       try {
         window.SolisSilencer?.syncVisibility?.();
@@ -13091,19 +13093,19 @@ class ClipsStudio {
         });
       }
       const n = visibleToolbarBtns();
-      if (o) {
-        o.querySelectorAll(".tool-btn").forEach(e => e.classList.remove("active"));
+      if (s) {
+        s.querySelectorAll(".tool-btn").forEach(e => e.classList.remove("active"));
       }
       this.attachSocialButtonListeners();
       this._configureLibraryEditingUI();
     } else {
       if (t) t.style.display = "";
       if (i) i.style.display = "none";
-      if (o) o.style.display = "";
-      if (s) s.style.display = a ? "none" : "";
+      if (s) s.style.display = "";
+      if (o) o.style.display = a ? "none" : "";
       const e = visibleToolbarBtns();
-      if (o) {
-        o.querySelectorAll(".tool-btn").forEach(e => e.classList.remove("active"));
+      if (s) {
+        s.querySelectorAll(".tool-btn").forEach(e => e.classList.remove("active"));
       }
       this._libraryEditingEnabled = false;
       if (typeof PreviewTimeline !== "undefined") {
@@ -13171,9 +13173,9 @@ class ClipsStudio {
         nameAttr: "data-lucide"
       });
     }
-    const o = Array.from(e.querySelectorAll(".tool-btn")).filter(e => e.style.display !== "none");
+    const s = Array.from(e.querySelectorAll(".tool-btn")).filter(e => e.style.display !== "none");
     e.querySelectorAll(".tool-btn").forEach(e => e.classList.remove("active"));
-    void o;
+    void s;
     this._libraryDirtyArmed = false;
     this._librarySplitscreenDirty = false;
     this._libraryOverlayDirty = false;
@@ -13213,13 +13215,13 @@ class ClipsStudio {
       const n = await i.blob();
       if (!n.size) throw new Error("Rendered file is empty");
       const r = URL.createObjectURL(n);
-      const o = document.createElement("a");
-      o.href = r;
-      o.download = `clip_${e}.mp4`;
-      o.style.display = "none";
-      document.body.appendChild(o);
-      o.click();
-      document.body.removeChild(o);
+      const s = document.createElement("a");
+      s.href = r;
+      s.download = `clip_${e}.mp4`;
+      s.style.display = "none";
+      document.body.appendChild(s);
+      s.click();
+      document.body.removeChild(s);
       URL.revokeObjectURL(r);
       showNotification("Edited clip download started!", "success");
     } catch (e) {
@@ -13252,8 +13254,8 @@ class ClipsStudio {
     try {
       const n = await window._subCache.get();
       const r = (n?.plan_name || n?.plan || "free").toLowerCase();
-      const o = [ "basic", "prime", "elite" ].includes(r);
-      if (o) {
+      const s = [ "basic", "prime", "elite" ].includes(r);
+      if (s) {
         if (t) t.style.display = "block";
         if (e) e.style.display = "none";
         i.disabled = false;
@@ -13309,17 +13311,17 @@ class ClipsStudio {
       const t = Boolean(this._libraryHookCleared);
       const i = Boolean(this._libraryCaptionsCleared);
       const r = Boolean(this._librarySilenceDirty || typeof window.SolisSilencer?.isApplied === "function" && window.SolisSilencer.isApplied());
-      const o = Boolean(this._librarySplitscreenCustomize && (this._librarySplitscreenDirty || t || i || r));
-      const s = typeof window.collectLibraryOverlayTexts === "function" ? window.collectLibraryOverlayTexts() : [];
+      const s = Boolean(this._librarySplitscreenCustomize && (this._librarySplitscreenDirty || t || i || r));
+      const o = typeof window.collectLibraryOverlayTexts === "function" ? window.collectLibraryOverlayTexts() : [];
       const a = Boolean(this._libraryOverlayDirty && !r);
       const l = Boolean(this._libraryRankingEditable && (this._libraryRankingDirty || this._libraryRankingNeedsBurn || r));
-      const c = Boolean(r && !o && !l);
+      const c = Boolean(r && !s && !l);
       if (e) {
         e.dataset.applying = "1";
         e.disabled = true;
         const t = (e.querySelector(".template-use-confirm-label")?.textContent || e.textContent || "").trim();
         e.dataset.prevLabel = t || "Download";
-        const i = o || a || l || c ? "Applying…" : "Downloading…";
+        const i = s || a || l || c ? "Applying…" : "Downloading…";
         if (typeof window.setConfirmUseTemplateLabel === "function") {
           window.setConfirmUseTemplateLabel(i);
         } else {
@@ -13328,8 +13330,8 @@ class ClipsStudio {
         }
       }
       try {
-        if (o || a || l || c) {
-          if (a && !s.length && !l && !o && !c) {
+        if (s || a || l || c) {
+          if (a && !o.length && !l && !s && !c) {
             throw new Error("Type some text on the preview first (not just “Text”)");
           }
           const e = this._libraryCustomizeMeta || {};
@@ -13342,11 +13344,11 @@ class ClipsStudio {
             } catch (e) {}
           }
           await this.runLibraryApplyWithSpinner(n, {
-            needsRecompose: o,
+            needsRecompose: s,
             needsOverlayRender: a,
             needsRankingRecompose: l,
             needsSilenceOnly: c,
-            overlays: s
+            overlays: o
           });
           this.closeTemplatePreviewModal();
         } else {
@@ -13375,8 +13377,8 @@ class ClipsStudio {
       showNotification(`Template "${t}" not found. Available: ${Object.keys(this.templates).join(", ")}`, "error");
       return;
     }
-    const o = document.getElementById("aiPromptInput")?.value.trim() || "";
-    this.currentAIPrompt = o;
+    const s = document.getElementById("aiPromptInput")?.value.trim() || "";
+    this.currentAIPrompt = s;
     try {
       const e = localStorage.getItem("watermarkEnabled") === "true";
       fetch(`${window.API_BASE_URL}/user/settings/watermark`, {
@@ -13391,18 +13393,18 @@ class ClipsStudio {
         })
       }).catch(() => {});
     } catch (e) {}
-    const s = document.getElementById("youtubeUrlInput")?.value.trim() || "";
+    const o = document.getElementById("youtubeUrlInput")?.value.trim() || "";
     let a = [];
     if (Array.isArray(this._multiTaskBatchUrls) && this._multiTaskBatchUrls.length) {
       a = [ ...this._multiTaskBatchUrls ];
     } else if (this._multiTaskActive() && this.getMultiTaskUrls().length) {
       a = this.getMultiTaskUrls();
-      if (s && this.isValidMediaUrl(s)) {
-        this.addMultiTaskUrl(s);
+      if (o && this.isValidMediaUrl(o)) {
+        this.addMultiTaskUrl(o);
         a = this.getMultiTaskUrls();
       }
-    } else if (s) {
-      a = [ s ];
+    } else if (o) {
+      a = [ o ];
     }
     try {
       if (!a.length) {
@@ -13521,9 +13523,9 @@ class ClipsStudio {
           return;
         }
         const r = Number(e?.concurrent_live || 0);
-        const o = Number(e?.concurrent_cap || this._multiTaskBatchMax() || 1);
-        if (r + t > o) {
-          showNotification(`Your plan allows ${o} at once — you have ${r} live and selected ${t}`, "warning");
+        const s = Number(e?.concurrent_cap || this._multiTaskBatchMax() || 1);
+        if (r + t > s) {
+          showNotification(`Your plan allows ${s} at once — you have ${r} live and selected ${t}`, "warning");
           return;
         }
       } catch (e) {}
@@ -13623,10 +13625,10 @@ class ClipsStudio {
     }
     const n = Array.isArray(this._multiTaskBatchUrls) && this._multiTaskBatchUrls.length > 1 ? this._multiTaskBatchUrls : this._multiTaskActive() && this.getMultiTaskUrls().length > 1 ? this.getMultiTaskUrls() : null;
     const r = n ? n.length : 1;
-    const o = i.supportsSlotSystem ? "\n\n🎯 Using Slot System: New clips will fill from slot 5 upward" : "";
-    const s = r > 1 ? `\n\nMulti Task: ${r} links → ${r} uploads (1 credit each)` : "";
+    const s = i.supportsSlotSystem ? "\n\n🎯 Using Slot System: New clips will fill from slot 5 upward" : "";
+    const o = r > 1 ? `\n\nMulti Task: ${r} links → ${r} uploads (1 credit each)` : "";
     const a = r > 1 ? `Links: ${r} videos` : `URL: ${t}`;
-    if (confirm(`Create "${i.name}" from this YouTube URL?\n\n${a}\n\n${i.description}\n${i.duration}${s}${o}\n\nThis may take a few minutes to process.`)) {
+    if (confirm(`Create "${i.name}" from this YouTube URL?\n\n${a}\n\n${i.description}\n${i.duration}${o}${s}\n\nThis may take a few minutes to process.`)) {
       if (r > 1) {
         this.startMultiTaskBatch(n, e);
       } else {
@@ -13745,8 +13747,8 @@ class ClipsStudio {
     const i = e?.daily || t?.daily || {};
     const n = e?.monthly || t?.monthly || {};
     const r = t?.daily_count ?? i.used;
-    const o = t?.daily_limit ?? i.limit;
-    const s = i.remaining ?? (o != null && r != null ? Math.max(0, o - r) : null);
+    const s = t?.daily_limit ?? i.limit;
+    const o = i.remaining ?? (s != null && r != null ? Math.max(0, s - r) : null);
     const a = t?.monthly_count ?? n.used;
     const l = t?.monthly_limit ?? n.limit;
     const c = n.remaining ?? (l != null && a != null ? Math.max(0, l - a) : null);
@@ -13779,9 +13781,9 @@ class ClipsStudio {
             });
             const n = new Date(e.getFullYear(), e.getMonth(), e.getDate());
             const r = new Date(t.getFullYear(), t.getMonth(), t.getDate());
-            const o = Math.round((r - n) / 864e5);
-            if (o === 0) return `today at ${i}`;
-            if (o === 1) return `tomorrow at ${i}`;
+            const s = Math.round((r - n) / 864e5);
+            if (s === 0) return `today at ${i}`;
+            if (s === 1) return `tomorrow at ${i}`;
             return t.toLocaleString([], {
               month: "short",
               day: "numeric",
@@ -13796,9 +13798,9 @@ class ClipsStudio {
           });
           const i = new Date(e.getFullYear(), e.getMonth(), e.getDate());
           const n = new Date(r.getFullYear(), r.getMonth(), r.getDate());
-          const o = Math.round((n - i) / 864e5);
-          if (o === 0) return `today at ${t}`;
-          if (o === 1) return `tomorrow at ${t}`;
+          const s = Math.round((n - i) / 864e5);
+          if (s === 0) return `today at ${t}`;
+          if (s === 1) return `tomorrow at ${t}`;
           return r.toLocaleString([], {
             month: "short",
             day: "numeric",
@@ -13822,7 +13824,7 @@ class ClipsStudio {
       showNotification("You've used this month's uploads. Resets with your plan renewal.", "warning");
       return;
     }
-    if (e?.daily_limit_reached || t?.error_code === "DAILY_LIMIT_REACHED" || s === 0) {
+    if (e?.daily_limit_reached || t?.error_code === "DAILY_LIMIT_REACHED" || o === 0) {
       const e = formatWhen(i.resets_at || t?.daily?.resets_at);
       if (c > 0) {
         showNotification(e ? `Next upload unlocks ${e}.` : "Next upload unlocks tomorrow.", "info");
@@ -13917,12 +13919,12 @@ class ClipsStudio {
       safeLog("Duration preflight failed (continuing):", e?.message || e);
     }
     if (this._generationStartInFlight) return false;
-    let o = null;
+    let s = null;
     try {
       const r = this.templates[t];
-      const s = r?.name || t;
+      const o = r?.name || t;
       const a = Number(i.batchIndex);
-      o = Number.isFinite(a) ? Date.now() + a + 1 : Date.now();
+      s = Number.isFinite(a) ? Date.now() + a + 1 : Date.now();
       this._generationStartInFlight = true;
       this._lockGenerationButtons();
       this.switchTab("library");
@@ -13932,27 +13934,27 @@ class ClipsStudio {
       const l = typeof initGenerationProgressSpinner === "function" ? initGenerationProgressSpinner() : typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
       if (l) {
         const r = (typeof this.resolveSourceVideoCardMeta === "function" ? this.resolveSourceVideoCardMeta(e) : {}) || {};
-        const o = r.title || (e ? "YouTube video" : "Your video");
-        const s = {
+        const s = r.title || (e ? "YouTube video" : "Your video");
+        const o = {
           ...t === "splitscreen" && typeof window.getSplitscreenConfig === "function" ? {
             secondaryType: window.getSplitscreenConfig().splitscreen_secondary_type
           } : {},
-          videoTitle: o,
-          title: o,
+          videoTitle: s,
+          title: s,
           thumbnailUrl: r.thumbnailUrl || null,
           videoId: r.videoId || null
         };
         if (!n || i.batchIndex === 0 || !l.optimisticPending) {
-          l.beginOptimisticGeneration("Starting...", t, s);
+          l.beginOptimisticGeneration("Starting...", t, o);
         }
       }
       const c = {
-        id: o,
+        id: s,
         projectId: null,
         optimistic: true,
-        name: `${s} from YouTube`,
+        name: `${o} from YouTube`,
         template: t,
-        templateName: s,
+        templateName: o,
         status: "processing",
         progress: 0,
         message: "Starting...",
@@ -14124,13 +14126,13 @@ class ClipsStudio {
         const i = !!document.getElementById("templateVideoPreview")?.querySelector(".sub-text-block:not(.overlay-text-block)");
         const n = !!(e && typeof e === "object");
         const r = !!window.__solisCaptionsClearedForGenerate && !n;
-        const o = !!window.__solisCaptionsOptedIn || i || n;
+        const s = !!window.__solisCaptionsOptedIn || i || n;
         window.__solisCaptionsClearedForGenerate = false;
         if (r && !i && !n) {
           y.subtitles_enabled = false;
           delete y.caption_style;
           safeLog("Captions removed in preview — skipping burn");
-        } else if (e && typeof e === "object" && o && e.enabled !== false) {
+        } else if (e && typeof e === "object" && s && e.enabled !== false) {
           const t = window.solisSmartCaptionsEnabled !== false;
           y.caption_style = {
             ...e,
@@ -14141,7 +14143,7 @@ class ClipsStudio {
           };
           y.subtitles_enabled = true;
           safeLog("Sending caption style:", y.caption_style);
-        } else if (i && o) {
+        } else if (i && s) {
           const e = (typeof window.SolisMemory?.getCaptions === "function" ? window.SolisMemory.getCaptions() : null) || window.SolisMemory?.readState?.()?.captions || {};
           y.caption_style = {
             anim: e.anim || "karaoke",
@@ -14228,7 +14230,7 @@ class ClipsStudio {
         }
       }
       if (g.status === 401) {
-        this._rollbackOptimisticStart(o, "Session expired. Please try again.");
+        this._rollbackOptimisticStart(s, "Session expired. Please try again.");
         showNotification("Session expired. Please try again.", "error");
         return;
       }
@@ -14236,19 +14238,19 @@ class ClipsStudio {
         const e = await g.json().catch(() => ({}));
         if (g.status === 429) {
           if (e.error_code === "CONCURRENT_GENERATION_BLOCKED") {
-            this._rollbackOptimisticStart(o, e.error || "Another generation is already running.");
+            this._rollbackOptimisticStart(s, e.error || "Another generation is already running.");
             showNotification(e.error, "error");
             return;
           }
           if (e.error_code === "GENERATION_COOLDOWN") {
-            this._rollbackOptimisticStart(o, e.error || "Please wait before starting another generation.");
+            this._rollbackOptimisticStart(s, e.error || "Please wait before starting another generation.");
             const t = e.remaining_seconds || e.cooldown_seconds || 30;
             startCooldownTimer(t);
             showNotification(e.error, "error");
             return;
           }
           if (e.error_code === "MAX_EFFORT_LIMIT_REACHED") {
-            this._rollbackOptimisticStart(o, e.error || "Max effort daily limit reached. Switch to Normal effort.");
+            this._rollbackOptimisticStart(s, e.error || "Max effort daily limit reached. Switch to Normal effort.");
             showNotification(e.error || "Max effort daily limit reached. Switch to Normal effort.", "error");
             try {
               if (typeof window.setSelectedEffortMode === "function") {
@@ -14261,7 +14263,7 @@ class ClipsStudio {
             return;
           }
           if (e.error_code === "DAILY_LIMIT_REACHED" || e.error_code === "MONTHLY_LIMIT_REACHED") {
-            this._rollbackOptimisticStart(o, e.error || "Generation limit reached — upgrade or wait for reset.");
+            this._rollbackOptimisticStart(s, e.error || "Generation limit reached — upgrade or wait for reset.");
             this._notifyGenerationBlock(null, e);
             try {
               if (typeof window.refreshPlanSelector === "function") {
@@ -14271,32 +14273,32 @@ class ClipsStudio {
             return;
           }
           if (e.error_code === "VIDEO_LIMIT_REACHED") {
-            this._rollbackOptimisticStart(o, e.error || "Library is full — free a slot or upgrade.");
+            this._rollbackOptimisticStart(s, e.error || "Library is full — free a slot or upgrade.");
             this._notifyGenerationBlock({
               storage_limit_reached: true,
               plan_type: e.plan_type
             }, e);
             return;
           }
-          this._rollbackOptimisticStart(o, e.error || "Rate limit reached. Please try again later.");
+          this._rollbackOptimisticStart(s, e.error || "Rate limit reached. Please try again later.");
           showNotification(e.error || "Rate limit reached. Please try again later.", "error");
           return;
         }
         if (g.status === 503 && e.error_code === "SERVER_AT_CAPACITY") {
           const t = e.error || e.message || "Our servers are at capacity right now. Please try again in a few minutes or upload your video directly.";
-          this._rollbackOptimisticStart(o, t);
+          this._rollbackOptimisticStart(s, t);
           showNotification(t, "error");
           return;
         } else if (e.error_code === "VIDEO_TOO_LONG") {
           const t = e.video_minutes || 0;
           const i = e.max_duration_minutes || 0;
           const n = e.error || `Source exceeds the ${i}m safety limit (${t}m).`;
-          this._rollbackOptimisticStart(o, n);
+          this._rollbackOptimisticStart(s, n);
           showNotification(n, "error");
           return;
         } else {
           const t = e.error || "Failed to start processing";
-          this._rollbackOptimisticStart(o, t);
+          this._rollbackOptimisticStart(s, t);
           showNotification(t, "error");
           throw new Error(t);
         }
@@ -14316,7 +14318,7 @@ class ClipsStudio {
         const e = await this.resolveWatermarkPolicy(true);
         this.applyWatermarkControls(e);
       } catch (e) {}
-      const b = this.processingItems.find(e => e.id === o);
+      const b = this.processingItems.find(e => e.id === s);
       if (b) {
         b.projectId = this.currentProjectId;
         b.optimistic = false;
@@ -14326,7 +14328,7 @@ class ClipsStudio {
         this.saveProcessingItems();
       } else {
         const e = {
-          id: o,
+          id: s,
           projectId: this.currentProjectId,
           name: `${w.template.name} from YouTube`,
           template: t,
@@ -14346,7 +14348,7 @@ class ClipsStudio {
         const i = (typeof this.resolveSourceVideoCardMeta === "function" ? this.resolveSourceVideoCardMeta(e) : {}) || {};
         const n = l.activeTemplateOptions || {};
         const r = i.title || n.videoTitle || n.title || "Your video";
-        const o = {
+        const s = {
           ...n,
           ...t === "splitscreen" && typeof window.getSplitscreenConfig === "function" ? {
             secondaryType: window.getSplitscreenConfig().splitscreen_secondary_type
@@ -14356,11 +14358,11 @@ class ClipsStudio {
           thumbnailUrl: i.thumbnailUrl || n.thumbnailUrl || null,
           videoId: i.videoId || n.videoId || null
         };
-        const s = w?.queue?.queue_status;
+        const o = w?.queue?.queue_status;
         const a = Number(w?.queue?.users_ahead);
-        const c = s === "waiting" || Number.isFinite(a) && a > 0;
+        const c = o === "waiting" || Number.isFinite(a) && a > 0;
         const d = w?.message || (c ? "We’re experiencing very high demand — your generation will be ready soon." : "Starting upload...");
-        l.startGeneration(w.project_id, d, t, o);
+        l.startGeneration(w.project_id, d, t, s);
         if (w?.queue) {
           l.updateProgress(w.project_id, c ? 1 : 3, d, true, w.queue);
         }
@@ -14397,7 +14399,7 @@ class ClipsStudio {
       if (solisWSClient && w.project_id) {
         solisWSClient.registerTask(w.project_id, "processing");
       }
-      this.startMonitoring(o);
+      this.startMonitoring(s);
       this._generationStartInFlight = false;
       try {
         if (window.SolisMemory && typeof window.SolisMemory.recordFromGeneration === "function") {
@@ -14416,7 +14418,7 @@ class ClipsStudio {
       }
       return true;
     } catch (e) {
-      this._rollbackOptimisticStart(o, e?.message ? `Failed to start: ${e.message}` : null);
+      this._rollbackOptimisticStart(s, e?.message ? `Failed to start: ${e.message}` : null);
       safeLog("startClipProcessingWithSlots error:", e);
       showNotification("Failed to start processing: " + e.message, "error");
       return false;
@@ -14469,8 +14471,8 @@ class ClipsStudio {
       });
       if (!n.ok) return;
       const r = await n.json();
-      const o = t.status !== r.status || t.progress !== r.progress;
-      if (o) {
+      const s = t.status !== r.status || t.progress !== r.progress;
+      if (s) {
         t.status = r.status;
         t.progress = r.progress;
         t.message = r.message;
@@ -14568,12 +14570,12 @@ class ClipsStudio {
             this.stopLibraryPolling();
           }
         }, 5e3);
-        const o = r.message || "";
-        safeLog("Processing error detected:", o);
-        const s = /Video is too long\. Maximum allowed:\s*(\d+)\s*minutes\. Your video:\s*(\d+)\s*minutes/i;
+        const s = r.message || "";
+        safeLog("Processing error detected:", s);
+        const o = /Video is too long\. Maximum allowed:\s*(\d+)\s*minutes\. Your video:\s*(\d+)\s*minutes/i;
         const a = /Maximum allowed:\s*(\d+)\s*minutes.*Your video:\s*(\d+)\s*minutes/i;
         const l = /too long|duration limit/i;
-        let c = o.match(s);
+        let c = s.match(o);
         safeLog("Pattern 1 match:", c);
         if (c && c.length >= 3) {
           const e = parseInt(c[1]);
@@ -14585,7 +14587,7 @@ class ClipsStudio {
             }
           }, 100);
         } else {
-          c = o.match(a);
+          c = s.match(a);
           safeLog("Pattern 2 match:", c);
           if (c && c.length >= 3) {
             const e = parseInt(c[1]);
@@ -14596,9 +14598,9 @@ class ClipsStudio {
                 window.openVideoTooLongModal(t, e);
               }
             }, 100);
-          } else if (l.test(o)) {
+          } else if (l.test(s)) {
             safeLog("Pattern 3 match (keywords found), trying number extraction...");
-            const e = o.match(/\d+/g);
+            const e = s.match(/\d+/g);
             if (e && e.length >= 2) {
               const t = parseInt(e[e.length - 2]);
               const i = parseInt(e[e.length - 1]);
@@ -14782,6 +14784,47 @@ class ClipsStudio {
       showNotification(t, "warning");
     }
   }
+  _isQuotaExhausted(e, t = 1) {
+    if (!e || typeof e !== "object") return false;
+    const i = Math.max(1, Number(t) || 1);
+    const n = Number(e.daily?.remaining);
+    const r = Number(e.monthly?.remaining);
+    const s = String(e.block_reason || "").toLowerCase();
+    if (s === "daily_limit" || s === "monthly_limit") return true;
+    if (e.daily_limit_reached === true) return true;
+    if (Number.isFinite(n) && n < i) return true;
+    if (e.monthly_limit_reached === true) return true;
+    if (e.monthly?.limit > 0 && Number.isFinite(r) && r < i) return true;
+    if (e.can_generate === false && (s === "daily_limit" || s === "monthly_limit" || s === "quota")) {
+      return true;
+    }
+    return false;
+  }
+  _blockQuotaExhausted(e = null) {
+    try {
+      if (e && typeof window.updateUrlQuotaRail === "function") {
+        window.updateUrlQuotaRail(e);
+      }
+    } catch (e) {}
+    try {
+      sessionStorage.removeItem("solis_quota_rail_dismiss");
+    } catch (e) {}
+    this.showUrlSubmitUpgradeCta({
+      holdDotsMs: 0
+    });
+    try {
+      this.openWatermarkPlanPopover({
+        reason: "quota"
+      });
+    } catch (e) {
+      this.openUrlSubmitUpgrade();
+    }
+    try {
+      if (typeof window.refreshPlanSelector === "function") {
+        window.refreshPlanSelector();
+      }
+    } catch (e) {}
+  }
   enforceUrlButtonRateLimitOnLoad() {
     const e = document.getElementById("processUrlBtn");
     if (!e) return;
@@ -14892,9 +14935,18 @@ class ClipsStudio {
         if (!e || !this.isValidMediaUrl(e)) return;
         if (this._urlAnalyzeInFlight || this._generationStartInFlight) return;
         const t = document.getElementById("processUrlBtn");
-        if (t?.classList.contains("is-generating") || t?.classList.contains("is-upgrade-cta")) return;
+        if (t?.classList.contains("is-generating") || t?.classList.contains("is-upgrade-cta")) {
+          if (t.classList.contains("is-upgrade-cta")) {
+            this.openUrlSubmitUpgrade();
+          }
+          return;
+        }
         if (document.getElementById("templatePreviewModal")?.classList.contains("active")) return;
         if (this._awaitingUrlForTemplate) return;
+        if (this._isQuotaExhausted(this._limitCheckCache?.data, 1)) {
+          this._blockQuotaExhausted(this._limitCheckCache.data);
+          return;
+        }
         const i = document.getElementById("templatePreviewModal")?.classList.contains("active");
         if (this._lastAutoSubmittedUrl === e && Date.now() - (this._lastAutoSubmittedAt || 0) < 1500 && i) {
           return;
@@ -15112,8 +15164,8 @@ class ClipsStudio {
       return false;
     }
     this.multiTaskUrls = [ ...this.multiTaskUrls || [], i ];
-    const o = document.getElementById("youtubeUrlInput");
-    if (o) o.value = "";
+    const s = document.getElementById("youtubeUrlInput");
+    if (s) s.value = "";
     this._renderMultiTaskChips();
     this.syncTemplateConfirmButton();
     if (t) {
@@ -15185,7 +15237,7 @@ class ClipsStudio {
       return;
     }
     e.hidden = false;
-    const o = this._multiTaskBatchMax();
+    const s = this._multiTaskBatchMax();
     t.innerHTML = n.map((e, t) => `\n            <div class="multi-task-chip" role="listitem" data-mt-idx="${t}" title="${sanitizeHTML(e)}">\n                <span class="multi-task-chip-label">${sanitizeHTML(this._chipLabelForUrl(e))}</span>\n                <button type="button" class="multi-task-chip-remove" data-mt-remove="${t}" aria-label="Remove link">×</button>\n            </div>\n        `).join("");
     t.querySelectorAll("[data-mt-remove]").forEach(e => {
       e.addEventListener("click", t => {
@@ -15196,7 +15248,7 @@ class ClipsStudio {
     });
     if (i) {
       i.hidden = false;
-      i.textContent = `${n.length} / ${o} links · ${n.length}× upload when you generate`;
+      i.textContent = `${n.length} / ${s} links · ${n.length}× upload when you generate`;
     }
   }
   _resolveBatchUrlsForSubmit() {
@@ -15214,20 +15266,25 @@ class ClipsStudio {
     if (this._urlAnalyzeInFlight || this._generationStartInFlight) {
       return;
     }
-    const e = document.getElementById("processUrlBtn")?.classList.contains("is-generating");
-    if (e && !this._multiTaskActive()) {
+    const e = document.getElementById("processUrlBtn");
+    if (e?.classList.contains("is-upgrade-cta")) {
+      this.openUrlSubmitUpgrade();
+      return;
+    }
+    const t = e?.classList.contains("is-generating");
+    if (t && !this._multiTaskActive()) {
       showNotification("A video is already generating. Please wait for it to finish.", "warning");
       return;
     }
     if (typeof window.closePlanSelectorPopover === "function") {
       window.closePlanSelectorPopover(true);
     }
-    const t = Date.now();
-    if (t - this.lastYouTubeProcessTime < CONFIG.RATE_LIMITING.YOUTUBE_PROCESS_MIN_MS) {
+    const i = Date.now();
+    if (i - this.lastYouTubeProcessTime < CONFIG.RATE_LIMITING.YOUTUBE_PROCESS_MIN_MS) {
       showNotification("Please wait a moment before trying again", "warning");
       return;
     }
-    this.lastYouTubeProcessTime = t;
+    this.lastYouTubeProcessTime = i;
     this._urlAnalyzeInFlight = true;
     try {
       const e = this._resolveBatchUrlsForSubmit();
@@ -15263,103 +15320,67 @@ class ClipsStudio {
       this._softWakeModalWorker("url_submit");
       const n = this._limitCheckCache && Date.now() - this._limitCheckCache.at < 3e4 ? this._limitCheckCache.data : null;
       const r = this._getCachedLimitCheck(!n);
-      const o = n || await Promise.race([ r, new Promise(e => setTimeout(() => e(null), 180)) ]);
-      if (n) {
+      let s = n || null;
+      if (!s) {
+        try {
+          s = await Promise.race([ r, new Promise(e => setTimeout(() => e(null), 2500)) ]);
+        } catch (e) {
+          s = null;
+        }
+      } else {
         r.catch(() => null);
       }
-      const s = e.length;
-      if (o) {
+      if (!s) {
         try {
-          if (typeof window.updateUrlQuotaRail === "function") {
-            window.updateUrlQuotaRail(o);
-          }
-        } catch (e) {}
-        const e = Number(o.daily?.remaining);
-        const t = Number(o.monthly?.remaining);
-        if (Number.isFinite(e) && e < s) {
-          if (s > 1) {
-            showNotification(`Multi Task needs ${s} uploads — you have ${Math.max(0, e)} left today`, "warning");
-          } else {
-            this.showUrlSubmitUpgradeCta();
-            try {
-              this.openWatermarkPlanPopover({
-                reason: "quota"
-              });
-            } catch (e) {}
-          }
-          return;
+          s = await this._getCachedLimitCheck(true);
+        } catch (e) {
+          s = null;
         }
-        if (o.daily_limit_reached || e === 0) {
-          this.showUrlSubmitUpgradeCta();
-          try {
-            this.openWatermarkPlanPopover({
-              reason: "quota"
-            });
-          } catch (e) {}
-          try {
-            if (typeof window.updateUrlQuotaRail === "function") {
-              window.updateUrlQuotaRail(o);
-            }
-          } catch (e) {}
-          try {
-            sessionStorage.removeItem("solis_quota_rail_dismiss");
-          } catch (e) {}
-          try {
-            if (typeof window.refreshPlanSelector === "function") {
-              window.refreshPlanSelector();
-            }
-          } catch (e) {}
-          return;
+      }
+      const o = e.length;
+      if (!s) {
+        showNotification("Couldn't verify your upload limit. Stay here and try again in a moment.", "warning");
+        return;
+      }
+      try {
+        if (typeof window.updateUrlQuotaRail === "function") {
+          window.updateUrlQuotaRail(s);
         }
-        if (Number.isFinite(t) && t < s) {
-          showNotification(s > 1 ? `Multi Task needs ${s} uploads — you have ${Math.max(0, t)} left this month` : "Monthly upload limit reached", "warning");
-          if (s <= 1) {
-            this.showUrlSubmitUpgradeCta();
-            try {
-              this.openWatermarkPlanPopover({
-                reason: "quota"
-              });
-            } catch (e) {}
-          }
-          return;
+      } catch (e) {}
+      if (this._isQuotaExhausted(s, o)) {
+        if (o > 1) {
+          const e = Number(s.daily?.remaining);
+          const t = Number(s.monthly?.remaining);
+          const i = Number.isFinite(e) ? Math.max(0, e) : Number.isFinite(t) ? Math.max(0, t) : 0;
+          showNotification(`Multi Task needs ${o} uploads — you have ${i} left`, "warning");
         }
-        if (o.monthly_limit_reached || o.monthly?.limit > 0 && t === 0) {
-          this.showUrlSubmitUpgradeCta();
-          try {
-            this.openWatermarkPlanPopover({
-              reason: "quota"
-            });
-          } catch (e) {}
-          try {
-            if (typeof window.refreshPlanSelector === "function") {
-              window.refreshPlanSelector();
-            }
-          } catch (e) {}
-          return;
-        }
-        const i = o.max_effort;
-        if (i && i.limit > 0 && i.remaining <= 0 && typeof window.getSelectedEffortMode === "function" && window.getSelectedEffortMode() === "max") {
+        this._blockQuotaExhausted(s);
+        return;
+      }
+      {
+        const e = s.max_effort;
+        if (e && e.limit > 0 && e.remaining <= 0 && typeof window.getSelectedEffortMode === "function" && window.getSelectedEffortMode() === "max") {
           if (typeof window.setSelectedEffortMode === "function") {
             window.setSelectedEffortMode("normal");
           }
         }
-        if (!o.can_generate) {
-          if (o.block_reason === "library_full" || o.block_reason === "storage_full") {
-            this._notifyGenerationBlock(o);
+        if (!s.can_generate) {
+          if (s.block_reason === "library_full" || s.block_reason === "storage_full") {
+            this._notifyGenerationBlock(s);
             if (typeof window.syncStorageLimitsFromStatus === "function") {
-              window.syncStorageLimitsFromStatus(o);
+              window.syncStorageLimitsFromStatus(s);
             }
-          } else if (o.is_generating || o.block_reason === "in_progress") {
-            const e = Number(o.concurrent_live || 0);
-            const t = Number(o.concurrent_cap || 1);
+          } else if (s.is_generating || s.block_reason === "in_progress") {
+            const e = Number(s.concurrent_live || 0);
+            const t = Number(s.concurrent_cap || 1);
             if (e >= t) {
               showNotification(t > 1 ? `You already have ${e} generating (max ${t}). Wait for one to finish.` : "An upload may still be finishing. You can pick a template — we'll retry when you confirm.", "warning");
-              if (s > 1 || t > 1) return;
+              if (o > 1 || t > 1) return;
             } else if (t > 1) {
               showNotification(`You have ${e} generating — room for ${Math.max(0, t - e)} more.`, "info");
             }
-          } else if ((o.generation?.cooldown_remaining_seconds || 0) > 0) {
-            this._notifyGenerationBlock(o);
+          } else if ((s.generation?.cooldown_remaining_seconds || 0) > 0) {
+            this._notifyGenerationBlock(s);
           }
         }
       }
@@ -15382,7 +15403,7 @@ class ClipsStudio {
       if (l && !l.pending) {
         this._rememberVideoDuration(l);
       }
-      const c = typeof window.syncStorageLimitsFromStatus === "function" ? window.syncStorageLimitsFromStatus(o) : null;
+      const c = typeof window.syncStorageLimitsFromStatus === "function" ? window.syncStorageLimitsFromStatus(s) : null;
       if (c?.phase === "high" || c?.phase === "full") {
         if (typeof window.pulseStorageBadgeWarning === "function") {
           window.pulseStorageBadgeWarning();
@@ -15442,15 +15463,15 @@ class ClipsStudio {
     }
     const r = String(e.channel || "").trim();
     if (r) this._lastVideoChannel = r;
-    const o = String(e.thumbnail || e.thumbnailUrl || "").trim();
-    if (o && /^https?:\/\//i.test(o)) {
-      this._lastVideoThumbnail = o;
+    const s = String(e.thumbnail || e.thumbnailUrl || "").trim();
+    if (s && /^https?:\/\//i.test(s)) {
+      this._lastVideoThumbnail = s;
     }
-    const s = String(e.video_id || e.videoId || "").trim();
-    if (s && /^[a-zA-Z0-9_-]{11}$/.test(s)) {
-      this._lastVideoId = s;
+    const o = String(e.video_id || e.videoId || "").trim();
+    if (o && /^[a-zA-Z0-9_-]{11}$/.test(o)) {
+      this._lastVideoId = o;
       if (!this._lastVideoThumbnail) {
-        this._lastVideoThumbnail = `https://i.ytimg.com/vi/${s}/hqdefault.jpg`;
+        this._lastVideoThumbnail = `https://i.ytimg.com/vi/${o}/hqdefault.jpg`;
       }
     }
   }
@@ -15462,13 +15483,13 @@ class ClipsStudio {
     if (!r || /^https?:\/\//i.test(r)) {
       r = "";
     }
-    let o = String(this._lastVideoThumbnail || n.thumbnail || n.thumbnail_url || "").trim();
-    if (!o && i) {
-      o = `https://i.ytimg.com/vi/${i}/hqdefault.jpg`;
+    let s = String(this._lastVideoThumbnail || n.thumbnail || n.thumbnail_url || "").trim();
+    if (!s && i) {
+      s = `https://i.ytimg.com/vi/${i}/hqdefault.jpg`;
     }
     return {
       title: r,
-      thumbnailUrl: o,
+      thumbnailUrl: s,
       videoId: i,
       url: t,
       channel: this._lastVideoChannel || n.channel || n.uploader || ""
@@ -15576,15 +15597,15 @@ class ClipsStudio {
         };
       }
       const r = n.duration_minutes || 0;
-      const o = n.ai_budget_minutes || n.max_duration_minutes || 0;
-      const s = Boolean(n.ai_budget_capped);
+      const s = n.ai_budget_minutes || n.max_duration_minutes || 0;
+      const o = Boolean(n.ai_budget_capped);
       return {
         allowed: true,
         duration: r,
         duration_seconds: n.duration_seconds ?? (Number.isFinite(n.duration_minutes) ? n.duration_minutes * 60 : null),
-        maxAllowed: o,
-        aiBudgetMinutes: o,
-        aiBudgetCapped: s,
+        maxAllowed: s,
+        aiBudgetMinutes: s,
+        aiBudgetCapped: o,
         title: n.title || null,
         channel: n.channel || null,
         thumbnail: n.thumbnail || null,
@@ -15705,12 +15726,12 @@ class ClipsStudio {
           });
           if (t.ok) {
             const r = await t.json();
-            const o = r.full_download_url;
-            if (o) {
+            const s = r.full_download_url;
+            if (s) {
               let t = false;
               for (let e = 0; e < 8; e++) {
                 try {
-                  const i = await fetch(o, {
+                  const i = await fetch(s, {
                     method: "GET",
                     credentials: "include",
                     redirect: "manual",
@@ -15740,7 +15761,7 @@ class ClipsStudio {
                 throw new Error("Clip is still uploading — try again in a moment.");
               }
               const r = document.createElement("a");
-              r.href = o;
+              r.href = s;
               r.rel = "noopener";
               r.download = `clip_${e}.mp4`;
               r.style.display = "none";
@@ -15772,19 +15793,19 @@ class ClipsStudio {
         }
       }
       const t = r ? "?light=1" : "";
-      const o = `${API_BASE_URL}/clips/download/${encodeURIComponent(e)}${t}`;
-      const s = await fetch(o, {
+      const s = `${API_BASE_URL}/clips/download/${encodeURIComponent(e)}${t}`;
+      const o = await fetch(s, {
         method: "GET",
         credentials: "include",
         headers: {
           Accept: "video/mp4,*/*"
         }
       });
-      if (!s.ok) {
-        const e = await s.json().catch(() => ({}));
-        throw new Error(e.error || `Download failed (${s.status})`);
+      if (!o.ok) {
+        const e = await o.json().catch(() => ({}));
+        throw new Error(e.error || `Download failed (${o.status})`);
       }
-      const a = await s.blob();
+      const a = await o.blob();
       if (!a || a.size < 1e3) {
         throw new Error("Downloaded file is empty");
       }
@@ -16024,7 +16045,7 @@ class ClipsStudio {
     const i = 5 * 60 * 1e3;
     let n = Array.isArray(this.libraryItems) && this.libraryItems.length > 0;
     let r = Array.isArray(this.libraryCollections) && this.libraryCollections.length > 0;
-    const o = this._libraryLastLoaded && Date.now() - this._libraryLastLoaded < i;
+    const s = this._libraryLastLoaded && Date.now() - this._libraryLastLoaded < i;
     if (!n && typeof this._hydrateLibraryFromSessionCache === "function") {
       this._hydrateLibraryFromSessionCache();
       n = Array.isArray(this.libraryItems) && this.libraryItems.length > 0;
@@ -16045,12 +16066,12 @@ class ClipsStudio {
         }
       } catch (e) {}
     }
-    if (!t && n && o) {
+    if (!t && n && s) {
       if (this.libraryPreviewModalOpen) this._libraryRefreshPending = true; else this.updateLibraryView();
       return;
     }
-    const s = document.getElementById("libraryGrid");
-    const a = !!(s && s.querySelector(".library-card, .library-collection-folder"));
+    const o = document.getElementById("libraryGrid");
+    const a = !!(o && o.querySelector(".library-card, .library-collection-folder"));
     const l = e.soft === true || n || r || a || Array.isArray(this.processingItems) && this.processingItems.length > 0;
     if ((n || r) && !a && !this.libraryPreviewModalOpen) {
       this.updateLibraryView();
@@ -16384,14 +16405,14 @@ class ClipsStudio {
       this._durationObservers = [];
       const n = this.openCollectionId ? this._findCollection(this.openCollectionId) : null;
       let r;
-      let o = [];
+      let s = [];
       if (n) {
         r = this._getCollectionClips(n.id);
       } else {
         r = this._getLibraryRootItems();
-        o = (this.libraryCollections || []).filter(e => (e.clipCount || this._getCollectionClips(e.id).length) > 0);
+        s = (this.libraryCollections || []).filter(e => (e.clipCount || this._getCollectionClips(e.id).length) > 0);
       }
-      const s = this.getSortedLibraryItems(r);
+      const o = this.getSortedLibraryItems(r);
       let a = 0;
       let l = false;
       const buildCollectionCard = e => {
@@ -16403,11 +16424,11 @@ class ClipsStudio {
         const i = e.title || "Project";
         const n = sanitizeHTML(i);
         const r = e.clipCount || this._getCollectionClips(e.id).length;
-        const o = `${r} clip${r !== 1 ? "s" : ""}`;
-        const s = sanitizeHTML(o);
+        const s = `${r} clip${r !== 1 ? "s" : ""}`;
+        const o = sanitizeHTML(s);
         const a = sanitizeHTML(e.planLabel || "Project");
         const l = e.thumbnailUrl ? `<img class="scc-collection-thumb" src="${sanitizeHTML(e.thumbnailUrl)}" alt="" draggable="false" loading="lazy">` : `<div class="scc-collection-thumb scc-collection-thumb-empty"><i class="fas fa-folder"></i></div>`;
-        t.innerHTML = `\n                <div class="scc-collection-stack">\n                    <div class="scc-collection-hover-title" title="${n}">${n}</div>\n                    <span class="scc-collection-layer scc-collection-layer--2" aria-hidden="true"></span>\n                    <span class="scc-collection-layer scc-collection-layer--1" aria-hidden="true"></span>\n                    <div class="scc-collection-preview">\n                        ${l}\n                        <div class="scc-collection-expiry">${s}</div>\n                    </div>\n                </div>\n                <div class="scc-collection-meta">\n                    <div class="scc-collection-title-row">\n                        <h2 class="scc-collection-title" title="${n}">${n}</h2>\n                        <button type="button" class="scc-collection-menu" aria-label="Project options" aria-haspopup="menu" aria-expanded="false">···</button>\n                    </div>\n                    <p class="scc-collection-sub">${a}</p>\n                    <div class="scc-collection-dropdown" role="menu" hidden>\n                        <button type="button" class="scc-collection-dd-item" data-action="zip" role="menuitem">\n                            <span>Download zip</span><span class="scc-collection-dd-ext">ZIP</span>\n                        </button>\n                        <div class="scc-collection-dd-sep" aria-hidden="true"></div>\n                        <button type="button" class="scc-collection-dd-item" data-action="delete" role="menuitem">Delete</button>\n                    </div>\n                </div>`;
+        t.innerHTML = `\n                <div class="scc-collection-stack">\n                    <div class="scc-collection-hover-title" title="${n}">${n}</div>\n                    <span class="scc-collection-layer scc-collection-layer--2" aria-hidden="true"></span>\n                    <span class="scc-collection-layer scc-collection-layer--1" aria-hidden="true"></span>\n                    <div class="scc-collection-preview">\n                        ${l}\n                        <div class="scc-collection-expiry">${o}</div>\n                    </div>\n                </div>\n                <div class="scc-collection-meta">\n                    <div class="scc-collection-title-row">\n                        <h2 class="scc-collection-title" title="${n}">${n}</h2>\n                        <button type="button" class="scc-collection-menu" aria-label="Project options" aria-haspopup="menu" aria-expanded="false">···</button>\n                    </div>\n                    <p class="scc-collection-sub">${a}</p>\n                    <div class="scc-collection-dropdown" role="menu" hidden>\n                        <button type="button" class="scc-collection-dd-item" data-action="zip" role="menuitem">\n                            <span>Download zip</span><span class="scc-collection-dd-ext">ZIP</span>\n                        </button>\n                        <div class="scc-collection-dd-sep" aria-hidden="true"></div>\n                        <button type="button" class="scc-collection-dd-item" data-action="delete" role="menuitem">Delete</button>\n                    </div>\n                </div>`;
         t.addEventListener("click", t => {
           if (t.target.closest(".library-delete-btn, .scc-collection-menu, .scc-collection-dropdown")) return;
           this.openLibraryCollection(e.id);
@@ -16460,16 +16481,16 @@ class ClipsStudio {
         return t;
       };
       const appendBatch = () => {
-        const t = !n && !l && o.length > 0;
-        if (a >= s.length && !t) return;
-        const r = Math.min(a + i, s.length);
+        const t = !n && !l && s.length > 0;
+        if (a >= o.length && !t) return;
+        const r = Math.min(a + i, o.length);
         const c = document.createDocumentFragment();
-        if (!n && !l && o.length) {
-          o.forEach(e => c.appendChild(buildCollectionCard(e)));
+        if (!n && !l && s.length) {
+          s.forEach(e => c.appendChild(buildCollectionCard(e)));
           l = true;
         }
         for (let e = a; e < r; e++) {
-          c.appendChild(buildCard(s[e]));
+          c.appendChild(buildCard(o[e]));
         }
         a = r;
         e.querySelector(".library-scroll-sentinel")?.remove();
@@ -16479,8 +16500,8 @@ class ClipsStudio {
           this._librarySentinelObserver = null;
         }
         e.appendChild(c);
-        if (a < s.length) {
-          const t = s.length - a;
+        if (a < o.length) {
+          const t = o.length - a;
           const i = document.createElement("div");
           i.className = "library-scroll-sentinel";
           i.setAttribute("aria-hidden", "true");
@@ -16488,7 +16509,7 @@ class ClipsStudio {
           const n = document.getElementById("clipsContainer");
           this._librarySentinelObserver = new IntersectionObserver(e => {
             if (!e.some(e => e.isIntersecting)) return;
-            if (a >= s.length) return;
+            if (a >= o.length) return;
             if (this._libraryAppending) return;
             this._libraryAppending = true;
             try {
@@ -16538,7 +16559,7 @@ class ClipsStudio {
         if (!e.classList.contains("empty-state")) e.remove();
       });
       document.getElementById("libraryLoadMoreFab")?.remove();
-      if (!s.length && !o.length && !n) {
+      if (!o.length && !s.length && !n) {
         const i = Array.isArray(this.libraryCollections) && this.libraryCollections.length > 0;
         if (i) {
           t.style.display = "none";
@@ -16555,7 +16576,7 @@ class ClipsStudio {
         if (r) r.textContent = "Try Newest, or another filter.";
         return;
       }
-      if (n && !s.length) {
+      if (n && !o.length) {
         e.classList.remove("is-empty");
         t.style.display = "none";
         appendBatch();
@@ -16664,16 +16685,16 @@ class ClipsStudio {
       e.classList.remove("is-delete-confirm");
     }
     const r = e.querySelector(".scc-preview") || e;
-    const o = i.name || "this clip";
-    const s = document.createElement("div");
-    s.className = "scc-delete-confirm";
-    s.setAttribute("role", "alertdialog");
-    s.setAttribute("aria-label", "Delete clip");
-    s.innerHTML = `\n            <div class="scc-delete-confirm-panel">\n                <p class="scc-delete-confirm-text">Delete this clip?<span>Can’t be undone</span></p>\n                <div class="scc-delete-confirm-actions">\n                    <button type="button" class="scc-delete-confirm-btn keep">Keep</button>\n                    <button type="button" class="scc-delete-confirm-btn go">Delete</button>\n                </div>\n            </div>`;
-    const a = s.querySelector(".keep");
-    const l = s.querySelector(".go");
+    const s = i.name || "this clip";
+    const o = document.createElement("div");
+    o.className = "scc-delete-confirm";
+    o.setAttribute("role", "alertdialog");
+    o.setAttribute("aria-label", "Delete clip");
+    o.innerHTML = `\n            <div class="scc-delete-confirm-panel">\n                <p class="scc-delete-confirm-text">Delete this clip?<span>Can’t be undone</span></p>\n                <div class="scc-delete-confirm-actions">\n                    <button type="button" class="scc-delete-confirm-btn keep">Keep</button>\n                    <button type="button" class="scc-delete-confirm-btn go">Delete</button>\n                </div>\n            </div>`;
+    const a = o.querySelector(".keep");
+    const l = o.querySelector(".go");
     const dismiss = () => {
-      s.remove();
+      o.remove();
       e.classList.remove("is-delete-confirm");
       document.removeEventListener("pointerdown", onOutside, true);
       document.removeEventListener("keydown", onKey, true);
@@ -16708,50 +16729,50 @@ class ClipsStudio {
         l.textContent = "Delete";
       }
     });
-    s.addEventListener("click", e => {
+    o.addEventListener("click", e => {
       e.preventDefault();
       e.stopPropagation();
     });
     e.classList.add("is-delete-confirm");
-    r.appendChild(s);
+    r.appendChild(o);
     l.focus();
     setTimeout(() => {
       document.addEventListener("pointerdown", onOutside, true);
       document.addEventListener("keydown", onKey, true);
     }, 0);
-    safeLog(`Inline delete confirm shown for "${o}"`);
+    safeLog(`Inline delete confirm shown for "${s}"`);
   }
   _showDeleteConfirmModal(e, t) {
     const i = document.getElementById("deleteConfirmationModal");
     const n = document.getElementById("deleteModalTitle");
     const r = document.getElementById("deleteConfirmationText");
-    const o = i?.querySelector(".delete-modal-warning");
-    let s = document.getElementById("confirmDeleteBtn");
-    if (!i || !r || !s) {
+    const s = i?.querySelector(".delete-modal-warning");
+    let o = document.getElementById("confirmDeleteBtn");
+    if (!i || !r || !o) {
       showNotification("Error: Delete confirm not available", "error");
       return;
     }
     if (n) n.textContent = "Delete clip?";
-    if (o) o.textContent = "This can’t be undone.";
-    s.textContent = "Delete";
-    s.disabled = false;
+    if (s) s.textContent = "This can’t be undone.";
+    o.textContent = "Delete";
+    o.disabled = false;
     const a = t.name || "this clip";
     r.textContent = `"${a}" will be removed from your library.`;
-    if (s._eventControllers) {
-      Object.values(s._eventControllers).forEach(e => {
+    if (o._eventControllers) {
+      Object.values(o._eventControllers).forEach(e => {
         try {
           e.abort();
         } catch (e) {}
       });
-      s._eventControllers = {};
+      o._eventControllers = {};
     }
     const l = new AbortController;
-    if (!s._eventControllers) s._eventControllers = {};
-    s._eventControllers["click"] = l;
-    s.addEventListener("click", async () => {
+    if (!o._eventControllers) o._eventControllers = {};
+    o._eventControllers["click"] = l;
+    o.addEventListener("click", async () => {
       l.abort();
-      s.disabled = true;
-      s.textContent = "Deleting…";
+      o.disabled = true;
+      o.textContent = "Deleting…";
       try {
         i.classList.remove("show");
         await this._performDeleteClip(e, t);
@@ -16759,8 +16780,8 @@ class ClipsStudio {
         showNotification("Failed to delete clip: " + (e.message || e), "error");
       } finally {
         i.classList.remove("show");
-        s.disabled = false;
-        s.textContent = "Delete";
+        o.disabled = false;
+        o.textContent = "Delete";
       }
     }, {
       once: true,
@@ -17211,42 +17232,42 @@ class ClipsStudio {
     const i = document.getElementById("deleteModalTitle");
     const n = document.getElementById("deleteConfirmationText");
     const r = t?.querySelector(".delete-modal-warning");
-    let o = document.getElementById("confirmDeleteBtn");
-    if (!t || !n || !o) {
+    let s = document.getElementById("confirmDeleteBtn");
+    if (!t || !n || !s) {
       this.deleteSelectedClips();
       return;
     }
     if (i) i.textContent = e.length === 1 ? "Delete clip?" : `Delete ${e.length} clips?`;
     n.textContent = e.length === 1 ? "Remove this clip from your library." : `Remove ${e.length} selected clips from your library.`;
     if (r) r.textContent = "This can’t be undone.";
-    o.textContent = e.length === 1 ? "Delete" : `Delete ${e.length}`;
-    o.disabled = false;
-    if (o._eventControllers) {
-      Object.values(o._eventControllers).forEach(e => {
+    s.textContent = e.length === 1 ? "Delete" : `Delete ${e.length}`;
+    s.disabled = false;
+    if (s._eventControllers) {
+      Object.values(s._eventControllers).forEach(e => {
         try {
           e.abort();
         } catch (e) {}
       });
-      o._eventControllers = {};
+      s._eventControllers = {};
     }
-    const s = new AbortController;
-    o._eventControllers = {
-      click: s
+    const o = new AbortController;
+    s._eventControllers = {
+      click: o
     };
-    o.addEventListener("click", async () => {
-      s.abort();
-      o.disabled = true;
-      o.textContent = "Deleting…";
+    s.addEventListener("click", async () => {
+      o.abort();
+      s.disabled = true;
+      s.textContent = "Deleting…";
       t.classList.remove("show");
       try {
         await this.deleteSelectedClips();
       } finally {
-        o.disabled = false;
-        o.textContent = "Delete";
+        s.disabled = false;
+        s.textContent = "Delete";
       }
     }, {
       once: true,
-      signal: s.signal
+      signal: o.signal
     });
     t.classList.add("show");
     const closeOnBackdropClick = e => {
@@ -17568,16 +17589,16 @@ class ClipsStudio {
     }
     this._webSocketHandlersSetup = true;
     solisWSClient.on("progress", e => {
-      const {taskId: t, progress: i, step: n, status: r, project_id: o} = e;
-      const s = o || t;
+      const {taskId: t, progress: i, step: n, status: r, project_id: s} = e;
+      const o = s || t;
       if (typeof i !== "number" || isNaN(i) || i < 0 || i > 100) {
         safeLog(`⚠ï¸ Invalid progress value received: ${i}`);
         return;
       }
       const a = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
-      if (a?.updateProgress && s) {
-        const e = a._resolveActiveProjectId?.(s) || s;
-        if (a.activeGenerations?.has?.(e) || a.activeGenerations?.has?.(s)) {
+      if (a?.updateProgress && o) {
+        const e = a._resolveActiveProjectId?.(o) || o;
+        if (a.activeGenerations?.has?.(e) || a.activeGenerations?.has?.(o)) {
           a.updateProgress(e, i, n || r || "Processing...", true);
         }
       }
@@ -17591,11 +17612,11 @@ class ClipsStudio {
         return;
       }
       const r = this.processingItems[n];
-      const o = document.querySelector(`[data-processing-id="${t}"]`);
-      const s = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
+      const s = document.querySelector(`[data-processing-id="${t}"]`);
+      const o = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
       const a = i?.project_id || r?.projectId;
-      if (s?.completeGeneration && a) {
-        s.completeGeneration(a);
+      if (o?.completeGeneration && a) {
+        o.completeGeneration(a);
       }
       const finishToLibrary = () => {
         const e = this.processingItems.findIndex(e => e.id === t);
@@ -17623,8 +17644,8 @@ class ClipsStudio {
         this.loadStorageInfo();
         safeLog(`✅ Moved ${r.name} to library`);
       };
-      if (o) {
-        o.classList.add("unblurring");
+      if (s) {
+        s.classList.add("unblurring");
         setTimeout(finishToLibrary, 600);
       } else {
         finishToLibrary();
@@ -17645,9 +17666,9 @@ class ClipsStudio {
       if (r?.failGeneration && t) {
         r.failGeneration(t, i || "There was an error — try again");
       }
-      const o = this.processingItems.findIndex(e => e.id === t);
-      if (o !== -1) {
-        this.processingItems.splice(o, 1);
+      const s = this.processingItems.findIndex(e => e.id === t);
+      if (s !== -1) {
+        this.processingItems.splice(s, 1);
         this.saveProcessingItems();
       }
     });
@@ -17655,20 +17676,20 @@ class ClipsStudio {
       const {taskId: t, error: i, message: n} = e;
       const r = n || i || "Unknown processing error";
       safeLog(`âŒ Processing failed: ${r}`);
-      const o = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
-      if (o?.failGeneration && t) {
-        o.failGeneration(t, r);
+      const s = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
+      if (s?.failGeneration && t) {
+        s.failGeneration(t, r);
       }
-      const s = document.querySelector(`[data-processing-id="${t}"]`);
-      if (s) {
-        s.style.opacity = "0.5";
-        s.style.borderColor = "#ef4444";
-        s.style.borderWidth = "2px";
-        const e = s.querySelector(".card-title");
+      const o = document.querySelector(`[data-processing-id="${t}"]`);
+      if (o) {
+        o.style.opacity = "0.5";
+        o.style.borderColor = "#ef4444";
+        o.style.borderWidth = "2px";
+        const e = o.querySelector(".card-title");
         if (e) {
           e.textContent = "âŒ Failed";
         }
-        const t = s.querySelector(".card-subtitle") || s.querySelector(".card-status");
+        const t = o.querySelector(".card-subtitle") || o.querySelector(".card-status");
         if (t) {
           let e = r;
           if (r.includes("Video is too long")) {
@@ -17695,10 +17716,10 @@ class ClipsStudio {
       if (n._eventControllers[r]) {
         n._eventControllers[r].abort();
       }
-      const o = new AbortController;
-      n._eventControllers[r] = o;
+      const s = new AbortController;
+      n._eventControllers[r] = s;
       n.addEventListener(t, i, {
-        signal: o.signal
+        signal: s.signal
       });
     });
   }
@@ -17713,10 +17734,10 @@ class ClipsStudio {
       if (n._eventControllers[r]) {
         n._eventControllers[r].abort();
       }
-      const o = new AbortController;
-      n._eventControllers[r] = o;
+      const s = new AbortController;
+      n._eventControllers[r] = s;
       n.addEventListener(t, i, {
-        signal: o.signal
+        signal: s.signal
       });
     } else {
       safeLog(`⚠️ Element not found with id: ${e}`);
@@ -17753,8 +17774,8 @@ class ClipsStudio {
     let i = false;
     let n = 0;
     let r = 0;
-    let o = 0;
     let s = 0;
+    let o = 0;
     let a = 0;
     const peekY = () => Math.max(0, (t.offsetHeight || 280) - 36);
     const readY = () => {
@@ -17767,8 +17788,8 @@ class ClipsStudio {
       if (l.pointerType === "mouse" && l.button !== 0) return;
       i = true;
       n = l.clientY;
-      o = l.clientY;
-      s = performance.now();
+      s = l.clientY;
+      o = performance.now();
       a = 0;
       r = readY();
       t.classList.add("is-dragging");
@@ -17785,10 +17806,10 @@ class ClipsStudio {
       const d = peekY();
       let p = Math.min(d, Math.max(0, r + c));
       t.style.transform = `translateY(${p}px)`;
-      const u = Math.max(1, l - s);
-      a = (e.clientY - o) / u;
-      o = e.clientY;
-      s = l;
+      const u = Math.max(1, l - o);
+      a = (e.clientY - s) / u;
+      s = e.clientY;
+      o = l;
     };
     const onUp = () => {
       if (!i) return;
@@ -17798,10 +17819,10 @@ class ClipsStudio {
       const e = peekY();
       const n = readY();
       const r = a < -.45;
-      const o = a > .45;
-      const s = r || !o && n < e * .55;
+      const s = a > .45;
+      const o = r || !s && n < e * .55;
       t.style.transform = "";
-      t.classList.toggle("expanded", s);
+      t.classList.toggle("expanded", o);
     };
     e.addEventListener("pointerdown", onDown, {
       passive: false
@@ -17817,7 +17838,7 @@ class ClipsStudio {
     });
     e.addEventListener("click", e => {
       if (window.innerWidth > 768) return;
-      if (Math.abs(o - n) > 10) {
+      if (Math.abs(s - n) > 10) {
         e.preventDefault();
         e.stopPropagation();
         return;
@@ -17950,11 +17971,11 @@ function setupEventListeners() {
   if (r) {
     r.addEventListener("click", closeSettingsPanel);
   }
-  const o = localStorage.getItem("theme");
-  if (o) {
-    setTheme(o);
+  const s = localStorage.getItem("theme");
+  if (s) {
+    setTheme(s);
     if (darkModeSettingsToggle) {
-      darkModeSettingsToggle.checked = o === "dark";
+      darkModeSettingsToggle.checked = s === "dark";
     }
   }
   if (darkModeSettingsToggle) {
@@ -17968,9 +17989,9 @@ function setupEventListeners() {
       setTheme(e);
     });
   }
-  const s = document.getElementById("shuffleIdeasBtn");
-  if (s) {
-    s.addEventListener("click", generateVideoIdeas);
+  const o = document.getElementById("shuffleIdeasBtn");
+  if (o) {
+    o.addEventListener("click", generateVideoIdeas);
   }
   const a = document.getElementById("watermarkToggle");
   if (a) {
@@ -18128,8 +18149,8 @@ function initiateYouTubeConnection() {
     const i = 600;
     const n = (window.innerWidth - t) / 2;
     const r = (window.innerHeight - i) / 2;
-    const o = window.open(e.auth_url, "YouTubeOAuth", `width=${t},height=${i},left=${n},top=${r},noopener,noreferrer`);
-    if (!o) {
+    const s = window.open(e.auth_url, "YouTubeOAuth", `width=${t},height=${i},left=${n},top=${r},noopener,noreferrer`);
+    if (!s) {
       safeLog("⚠ï¸ Popup blocked, falling back to redirect");
       window.location.href = e.auth_url;
     } else {
@@ -18163,7 +18184,7 @@ function initiateYouTubeConnection() {
       window.addEventListener("message", e);
       let t = setInterval(() => {
         try {
-          if (o.closed) {
+          if (s.closed) {
             clearInterval(t);
             safeLog("🔄 OAuth window closed, verifying connection...");
             window.__ytOAuthInFlight = false;
@@ -18273,26 +18294,26 @@ async function startClipCompilation(e) {
         const t = await r.json();
         const i = t.remaining_seconds || t.cooldown_seconds || 30;
         const n = Math.floor(i / 60);
-        const o = i % 60;
+        const s = i % 60;
         startCooldownTimer(i);
-        let s = "";
+        let o = "";
         if (n > 0) {
-          s = `in ${n}m ${o}s`;
+          o = `in ${n}m ${s}s`;
         } else {
-          s = `in ${i}s`;
+          o = `in ${i}s`;
         }
-        e = `You can generate another video ${s}.`;
+        e = `You can generate another video ${o}.`;
       }
       n.innerHTML = `\n                <div style="text-align: center;">\n                    <div style="font-size: 48px; margin-bottom: 16px;">âŒ</div>\n                    <h1 style="font-size: 24px; color: var(--text); margin-bottom: 8px;">Error</h1>\n                    <p style="color: var(--muted); margin-bottom: 24px;">${e}</p>\n                    <button onclick="this.closest('#clip-processing-modal').remove()" style="\n                        padding: 10px 20px;\n                        background: linear-gradient(135deg, #ff6b35 0%, #ff8856 100%);\n                        color: white;\n                        border: none;\n                        border-radius: 8px;\n                        cursor: pointer;\n                        font-weight: 600;\n                    ">Close</button>\n                </div>\n            `;
       return;
     }
-    const o = await r.json();
-    const s = o.project_id;
+    const s = await r.json();
+    const o = s.project_id;
     const a = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
     if (a) {
       const t = (typeof clipsStudio?.resolveSourceVideoCardMeta === "function" ? clipsStudio.resolveSourceVideoCardMeta(e) : {}) || {};
       const i = t.title || "Your video";
-      a.startGeneration(s, "Starting upload...", "splitscreen", {
+      a.startGeneration(o, "Starting upload...", "splitscreen", {
         secondaryType: splitscreenSecondaryType,
         videoTitle: i,
         title: i,
@@ -18308,7 +18329,7 @@ async function startClipCompilation(e) {
     while (!l && c < d) {
       c++;
       try {
-        const e = await fetch(`${API_BASE_URL}/clips/status/${s}`, {
+        const e = await fetch(`${API_BASE_URL}/clips/status/${o}`, {
           headers: t,
           credentials: "include"
         });
@@ -18323,8 +18344,8 @@ async function startClipCompilation(e) {
           }
           const i = t.status || "processing";
           const r = t.progress || 0;
-          const o = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
-          if (o) {
+          const s = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
+          if (s) {
             const e = {
               downloading: "Downloading video...",
               processing: "Processing moments...",
@@ -18332,7 +18353,7 @@ async function startClipCompilation(e) {
               completed: "Complete!"
             };
             const t = e[i] || `${i}...`;
-            o.updateProgress(s, r, t);
+            s.updateProgress(o, r, t);
           }
           const a = Date.now() - p;
           const c = a / 1e3;
@@ -18355,7 +18376,7 @@ async function startClipCompilation(e) {
             sessionStorage.removeItem("clipProcessing");
             const e = typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
             if (e) {
-              e.completeGeneration(s);
+              e.completeGeneration(o);
             }
             n.innerHTML = `\n                            <div style="text-align: center; animation: slideUp 0.3s ease;">\n                                <div style="font-size: 80px; margin-bottom: 16px; animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);">✅</div>\n                                <h1 style="font-size: 32px; color: var(--text); margin-bottom: 8px; font-weight: 700;">Compilation Ready!</h1>\n                                <p style="color: var(--muted); margin-bottom: 32px;">Your video is ready to edit and publish</p>\n                                <button onclick="\n                                    document.getElementById('clip-processing-modal').remove();\n                                    window.location.hash = '#/clips';\n                                " style="\n                                    padding: 12px 24px;\n                                    background: linear-gradient(135deg, #ff6b35 0%, #ff8856 100%);\n                                    color: white;\n                                    border: none;\n                                    border-radius: 8px;\n                                    cursor: pointer;\n                                    font-weight: 600;\n                                    font-size: 14px;\n                                    transition: all 0.2s;\n                                " onmouseover="this.style.transform='translateY(-2px); this.style.boxShadow='0 4px 12px rgba(255, 107, 53, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'>\n                                    📎 Open Project\n                                </button>\n                            </div>\n                            <style>\n                                @keyframes popIn {\n                                    0% { transform: scale(0.3); opacity: 0; }\n                                    70% { transform: scale(1.1); }\n                                    100% { transform: scale(1); opacity: 1; }\n                                }\n                                @keyframes slideUp {\n                                    from { transform: translateY(20px); opacity: 0; }\n                                    to { transform: translateY(0); opacity: 1; }\n                                }\n                            </style>\n                        `;
           } else if (i === "failed") {

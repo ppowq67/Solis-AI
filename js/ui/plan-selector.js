@@ -53,6 +53,7 @@
     if (!e) p = false;
     const t = document.getElementById("planMultiTaskRow");
     const n = document.getElementById("planMultiTaskToggle");
+    const o = document.getElementById("planMultiTaskHint");
     if (t) {
       t.dataset.on = p ? "1" : "0";
       t.dataset.locked = e ? "0" : "1";
@@ -62,6 +63,13 @@
       n.setAttribute("aria-checked", p ? "true" : "false");
       n.disabled = !e;
       n.setAttribute("aria-label", e ? "Multi Task" : "Multi Task (Prime or Elite)");
+    }
+    if (o) {
+      if (p) {
+        requestAnimationFrame(() => o.classList.remove("is-collapsed"));
+      } else {
+        o.classList.add("is-collapsed");
+      }
     }
   }
   function setMultiTaskEnabled(e, {persist: t = true} = {}) {
@@ -1366,7 +1374,11 @@
   };
   window.getMultiTaskBatchMax = function getMultiTaskBatchMax() {
     if (!multiTaskAllowedForTier(g)) return 1;
-    return g === "elite" ? 5 : 3;
+    const e = Number(E?.multi_task_batch_max);
+    if (Number.isFinite(e) && e > 1) {
+      return Math.min(10, Math.max(1, e));
+    }
+    return 10;
   };
   window.getCurrentPlanTier = function getCurrentPlanTier() {
     return g || "free";

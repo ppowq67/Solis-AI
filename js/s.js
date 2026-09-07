@@ -366,8 +366,8 @@ const PreviewTimeline = (() => {
   let l = null;
   let c = false;
   let d = null;
-  let p = 0;
-  let u = 1;
+  let u = 0;
+  let p = 1;
   let m = 0;
   let f = 0;
   let y = false;
@@ -392,8 +392,8 @@ const PreviewTimeline = (() => {
   let R = -1;
   let U = 0;
   let D = 1;
-  let N = null;
-  let F = false;
+  let F = null;
+  let N = false;
   let $ = null;
   let O = 0;
   let j = null;
@@ -420,8 +420,8 @@ const PreviewTimeline = (() => {
   let le;
   let ce;
   let de;
-  let pe;
   let ue;
+  let pe;
   let me;
   let fe;
   function refreshEls() {
@@ -435,14 +435,14 @@ const PreviewTimeline = (() => {
     le = document.getElementById("previewTimelineDimLeft");
     ce = document.getElementById("previewTimelineDimRight");
     de = document.getElementById("previewTimelineSelection");
-    pe = document.getElementById("previewTimelineRangePick");
-    ue = document.getElementById("previewTimelineHandleL");
+    ue = document.getElementById("previewTimelineRangePick");
+    pe = document.getElementById("previewTimelineHandleL");
     me = document.getElementById("previewTimelineHandleR");
     fe = document.getElementById("previewTimelinePlayhead");
   }
   function setHandlesUnlocked(e) {
-    F = !!e;
-    if (te) te.classList.toggle("handles-on", F);
+    N = !!e;
+    if (te) te.classList.toggle("handles-on", N);
   }
   function setRankingEditMode(e) {
     refreshEls();
@@ -504,16 +504,16 @@ const PreviewTimeline = (() => {
   }
   function rebuildSplitsFromLengths(t) {
     if (!t.length) return;
-    let i = p;
+    let i = u;
     E = [];
     for (let n = 0; n < t.length - 1; n++) {
       i += Math.max(e, Number(t[n]) || e);
-      if (i < u - .04) E.push(i);
+      if (i < p - .04) E.push(i);
     }
     const n = t.reduce((t, i) => t + Math.max(e, Number(i) || e), 0);
-    const r = p + n;
-    if (r > p + e) {
-      u = Math.min(m, r);
+    const r = u + n;
+    if (r > u + e) {
+      p = Math.min(m, r);
     }
   }
   function applySegmentReorder(t, i) {
@@ -585,7 +585,7 @@ const PreviewTimeline = (() => {
   function paintPlayheadOnly() {
     if (ne) ne.textContent = fmt(f);
     if (!m || P <= 0 || !fe) return;
-    const e = Math.max(p, Math.min(u, f));
+    const e = Math.max(u, Math.min(p, f));
     const t = e / m * P;
     fe.style.transform = `translate3d(${t}px,0,0) translateX(-50%)`;
   }
@@ -600,8 +600,8 @@ const PreviewTimeline = (() => {
       if (re) re.textContent = fmt(m || 0);
     }
     if (!m || P <= 0) return;
-    const i = p / m * P;
-    const n = u / m * P;
+    const i = u / m * P;
+    const n = p / m * P;
     const r = Math.max(2, n - i);
     if (de) {
       de.style.width = `${r}px`;
@@ -610,7 +610,7 @@ const PreviewTimeline = (() => {
     if (le) le.style.width = `${i}px`;
     if (ce) ce.style.width = `${Math.max(0, P - n)}px`;
     if (fe && !t) {
-      const e = Math.max(p, Math.min(u, f));
+      const e = Math.max(u, Math.min(p, f));
       const t = e / m * P;
       fe.style.transform = `translate3d(${t}px,0,0) translateX(-50%)`;
     }
@@ -731,8 +731,8 @@ const PreviewTimeline = (() => {
   }
   const ge = 6;
   function getSegmentBounds() {
-    const e = E.filter(e => e > p + .04 && e < u - .04);
-    return [ p, ...e, u ];
+    const e = E.filter(e => e > u + .04 && e < p - .04);
+    return [ u, ...e, p ];
   }
   function makeSegHandle(e, t) {
     const i = document.createElement("button");
@@ -774,42 +774,42 @@ const PreviewTimeline = (() => {
       };
     }
     return {
-      start: p,
-      end: u > p ? u : m,
+      start: u,
+      end: p > u ? p : m,
       segIndex: null
     };
   }
   function effectiveDuration() {
     if (m > .25) return m;
-    if (u > p + .25) return u;
+    if (p > u + .25) return p;
     return 0;
   }
   function paintManualRange() {
-    if (!pe) refreshEls();
-    if (!pe) return;
+    if (!ue) refreshEls();
+    if (!ue) return;
     const e = effectiveDuration();
     if (!q || !e) {
-      if (!pe.hidden && pe.classList.contains("is-live")) {
-        pe.classList.remove("is-dragging", "is-settled", "is-dimmed", "is-collecting", "is-enter");
-        pe.classList.add("is-exiting");
-        pe.classList.remove("is-live");
+      if (!ue.hidden && ue.classList.contains("is-live")) {
+        ue.classList.remove("is-dragging", "is-settled", "is-dimmed", "is-collecting", "is-enter");
+        ue.classList.add("is-exiting");
+        ue.classList.remove("is-live");
         if (K) clearTimeout(K);
         K = setTimeout(() => {
           K = 0;
           if (q) return;
-          if (!pe) return;
-          pe.hidden = true;
-          pe.setAttribute("hidden", "");
-          pe.setAttribute("aria-hidden", "true");
-          pe.classList.remove("is-exiting", "is-live", "is-enter");
+          if (!ue) return;
+          ue.hidden = true;
+          ue.setAttribute("hidden", "");
+          ue.setAttribute("aria-hidden", "true");
+          ue.classList.remove("is-exiting", "is-live", "is-enter");
           ie?.classList.remove("is-range-picking");
         }, 460);
         return;
       }
-      pe.hidden = true;
-      pe.setAttribute("hidden", "");
-      pe.setAttribute("aria-hidden", "true");
-      pe.classList.remove("is-dragging", "is-settled", "is-live", "is-enter", "is-exiting");
+      ue.hidden = true;
+      ue.setAttribute("hidden", "");
+      ue.setAttribute("aria-hidden", "true");
+      ue.classList.remove("is-dragging", "is-settled", "is-live", "is-enter", "is-exiting");
       ie?.classList.remove("is-range-picking");
       return;
     }
@@ -817,13 +817,13 @@ const PreviewTimeline = (() => {
       clearTimeout(K);
       K = 0;
     }
-    pe.classList.remove("is-exiting");
+    ue.classList.remove("is-exiting");
     const t = Math.abs(q.end - q.start);
     if (t < .12 && !Q) {
-      pe.hidden = true;
-      pe.setAttribute("hidden", "");
-      pe.setAttribute("aria-hidden", "true");
-      pe.classList.remove("is-dragging", "is-settled", "is-live", "is-enter", "is-exiting");
+      ue.hidden = true;
+      ue.setAttribute("hidden", "");
+      ue.setAttribute("aria-hidden", "true");
+      ue.classList.remove("is-dragging", "is-settled", "is-live", "is-enter", "is-exiting");
       ie?.classList.remove("is-range-picking");
       return;
     }
@@ -836,28 +836,28 @@ const PreviewTimeline = (() => {
     const r = Math.max(0, Math.min(q.end, e)) / e;
     const s = Math.min(n, r) * i;
     const o = Math.max(2, Math.abs(r - n) * i);
-    const a = pe.hidden || pe.hasAttribute("hidden") || pe.classList.contains("is-exiting");
-    pe.hidden = false;
-    pe.removeAttribute("hidden");
-    pe.setAttribute("aria-hidden", "false");
+    const a = ue.hidden || ue.hasAttribute("hidden") || ue.classList.contains("is-exiting");
+    ue.hidden = false;
+    ue.removeAttribute("hidden");
+    ue.setAttribute("aria-hidden", "false");
     ie?.classList.add("is-range-picking");
-    pe.style.display = "block";
-    pe.style.transform = `translate3d(${s}px,0,0)`;
-    pe.style.width = `${o}px`;
-    pe.classList.remove("is-settled");
-    pe.classList.toggle("is-dragging", !!W);
-    if (a || !pe.classList.contains("is-live")) {
-      pe.classList.add("is-enter");
-      pe.classList.remove("is-live");
+    ue.style.display = "block";
+    ue.style.transform = `translate3d(${s}px,0,0)`;
+    ue.style.width = `${o}px`;
+    ue.classList.remove("is-settled");
+    ue.classList.toggle("is-dragging", !!W);
+    if (a || !ue.classList.contains("is-live")) {
+      ue.classList.add("is-enter");
+      ue.classList.remove("is-live");
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          if (!pe || pe.hidden || q == null) return;
-          pe.classList.remove("is-enter");
-          pe.classList.add("is-live");
+          if (!ue || ue.hidden || q == null) return;
+          ue.classList.remove("is-enter");
+          ue.classList.add("is-live");
         });
       });
     } else {
-      pe.classList.add("is-live");
+      ue.classList.add("is-live");
     }
   }
   function setManualRange(e, t) {
@@ -884,8 +884,8 @@ const PreviewTimeline = (() => {
   }
   function clearManualRange() {
     q = null;
-    if (pe) {
-      pe.classList.remove("is-dragging", "is-settled", "is-dimmed", "is-collecting");
+    if (ue) {
+      ue.classList.remove("is-dragging", "is-settled", "is-dimmed", "is-collecting");
     }
     paintManualRange();
     try {
@@ -948,13 +948,13 @@ const PreviewTimeline = (() => {
       }
     }
     if (!(Number.isFinite(r) && Number.isFinite(s) && s - r >= .35)) {
-      const t = Math.max(p, Math.min(u || i, Number(e) || f || 0));
+      const t = Math.max(u, Math.min(p || i, Number(e) || f || 0));
       const n = 1.75;
-      r = Math.max(p, t - n);
-      s = Math.min(u > p ? u : i, t + n);
+      r = Math.max(u, t - n);
+      s = Math.min(p > u ? p : i, t + n);
       if (s - r < .35) {
-        r = Math.max(p, Math.min(r, (u || i) - .35));
-        s = Math.min(u > p ? u : i, r + Math.max(.35, Math.min(3.5, i)));
+        r = Math.max(u, Math.min(r, (p || i) - .35));
+        s = Math.min(p > u ? p : i, r + Math.max(.35, Math.min(3.5, i)));
       }
       o = null;
     }
@@ -985,7 +985,7 @@ const PreviewTimeline = (() => {
     paintChrome();
     ae?.querySelectorAll(".preview-timeline-segment.is-selected").forEach(e => e.classList.remove("is-selected"));
     ae?.children?.[e]?.classList.add("is-selected");
-    if (!F) setHandlesUnlocked(true);
+    if (!N) setHandlesUnlocked(true);
     syncSegFocusClass();
     try {
       const i = document.getElementById("silencerNote");
@@ -1029,17 +1029,17 @@ const PreviewTimeline = (() => {
       c = o;
       l = Math.max(s, c - a);
     }
-    if (t === 0) p = l; else {
+    if (t === 0) u = l; else {
       const e = r[t];
       const i = E.findIndex(t => Math.abs(t - e) < .05);
       if (i >= 0) E[i] = l; else E.push(l);
     }
-    if (t === r.length - 2) u = c; else {
+    if (t === r.length - 2) p = c; else {
       const e = r[t + 1];
       const i = E.findIndex(t => Math.abs(t - e) < .05);
       if (i >= 0) E[i] = c; else E.push(c);
     }
-    E = E.filter(e => e > p + .04 && e < u - .04).sort((e, t) => e - t);
+    E = E.filter(e => e > u + .04 && e < p - .04).sort((e, t) => e - t);
   }
   function paintSegmentMove(e) {
     if (!j || !m || P <= 0) return;
@@ -1050,9 +1050,9 @@ const PreviewTimeline = (() => {
     const {index: t, startX: i, startA: n, startB: r} = j;
     const s = (e - i) / P * m;
     applySegmentTimes(t, n + s, r + s);
-    f = Math.max(p, Math.min(u, n + s));
-    const o = p / m * P;
-    const a = u / m * P;
+    f = Math.max(u, Math.min(p, n + s));
+    const o = u / m * P;
+    const a = p / m * P;
     if (de) {
       de.style.width = `${Math.max(2, a - o)}px`;
       de.style.transform = `translate3d(${o}px,0,0)`;
@@ -1085,7 +1085,7 @@ const PreviewTimeline = (() => {
     if (W) return;
     t.preventDefault();
     t.stopPropagation();
-    if (!F && !te?.classList.contains("is-ranking-edit")) {
+    if (!N && !te?.classList.contains("is-ranking-edit")) {
       setHandlesUnlocked(true);
     }
     cacheTrackMetrics();
@@ -1212,12 +1212,12 @@ const PreviewTimeline = (() => {
         e.textContent = `#${5 - i}`;
         c.appendChild(e);
       }
-      const p = document.createElement("div");
-      p.className = "preview-timeline-segment-film";
-      p.style.width = `${P}px`;
-      p.style.transform = `translate3d(${-s}px,0,0)`;
-      cloneFilmInto(p);
-      c.appendChild(p);
+      const u = document.createElement("div");
+      u.className = "preview-timeline-segment-film";
+      u.style.width = `${P}px`;
+      u.style.transform = `translate3d(${-s}px,0,0)`;
+      cloneFilmInto(u);
+      c.appendChild(u);
       c.addEventListener("pointerdown", e => onSegmentPointerDown(i, e));
       c.addEventListener("pointermove", onSegmentPointerMove);
       c.addEventListener("pointerup", onSegmentPointerUp);
@@ -1264,25 +1264,25 @@ const PreviewTimeline = (() => {
         c.style.transform = `translate3d(${-s}px,0,0)`;
       }
       const d = l.querySelector(".preview-timeline-handle.left");
-      const p = l.querySelector(".preview-timeline-handle.right");
+      const u = l.querySelector(".preview-timeline-handle.right");
       if (d) d.dataset.boundIndex = String(i);
-      if (p) p.dataset.boundIndex = String(i + 1);
+      if (u) u.dataset.boundIndex = String(i + 1);
     }
   }
   function applyBoundTime(e) {
     if (R === 0) {
-      p = e;
+      u = e;
       return;
     }
     const t = getSegmentBounds();
     if (R >= t.length - 1) {
-      u = e;
+      p = e;
       return;
     }
-    if (N != null) {
-      const t = E.findIndex(e => Math.abs(e - N) < .05);
+    if (F != null) {
+      const t = E.findIndex(e => Math.abs(e - F) < .05);
       if (t >= 0) E[t] = e; else E.push(e);
-      N = e;
+      F = e;
     } else {
       E.push(e);
     }
@@ -1294,8 +1294,8 @@ const PreviewTimeline = (() => {
     const i = Math.max(U, Math.min(D, t));
     applyBoundTime(i);
     f = i;
-    const n = p / m * P;
-    const r = u / m * P;
+    const n = u / m * P;
+    const r = p / m * P;
     if (de) {
       de.style.width = `${Math.max(2, r - n)}px`;
       de.style.transform = `translate3d(${n}px,0,0)`;
@@ -1305,8 +1305,8 @@ const PreviewTimeline = (() => {
     paintSegmentsFast();
   }
   function startBoundDrag(t, i) {
-    if (!F && !te?.classList.contains("is-ranking-edit")) return;
-    if (!F) setHandlesUnlocked(true);
+    if (!N && !te?.classList.contains("is-ranking-edit")) return;
+    if (!N) setHandlesUnlocked(true);
     if (i.pointerType === "mouse" && i.button !== 0) return;
     i.preventDefault();
     i.stopPropagation();
@@ -1317,7 +1317,7 @@ const PreviewTimeline = (() => {
     R = t;
     U = t === 0 ? 0 : n[t - 1] + e;
     D = t === n.length - 1 ? m : n[t + 1] - e;
-    N = t > 0 && t < n.length - 1 ? n[t] : null;
+    F = t > 0 && t < n.length - 1 ? n[t] : null;
     y = l ? !l.paused : false;
     if (l && !l.paused) l.pause();
     se?.classList.add("is-dragging", "is-trimming");
@@ -1337,14 +1337,14 @@ const PreviewTimeline = (() => {
     }
     const i = timeFromClientX(t);
     if (d === "start") {
-      p = Math.max(0, Math.min(i, u - e));
+      u = Math.max(0, Math.min(i, p - e));
     } else if (d === "end") {
-      u = Math.min(m, Math.max(i, p + e));
+      p = Math.min(m, Math.max(i, u + e));
     } else {
       return;
     }
-    const n = p / m * P;
-    const r = u / m * P;
+    const n = u / m * P;
+    const r = p / m * P;
     const s = Math.max(2, r - n);
     if (de) {
       de.style.width = `${s}px`;
@@ -1565,12 +1565,12 @@ const PreviewTimeline = (() => {
         }
         d.fillStyle = "#ffffff";
         d.fillRect(0, 0, i, n);
-        const p = c.videoWidth || 0;
-        const u = c.videoHeight || 0;
-        if (p > 2 && u > 2) {
-          const e = Math.max(i / p, n / u);
-          const t = p * e;
-          const r = u * e;
+        const u = c.videoWidth || 0;
+        const p = c.videoHeight || 0;
+        if (u > 2 && p > 2) {
+          const e = Math.max(i / u, n / p);
+          const t = u * e;
+          const r = p * e;
           try {
             d.drawImage(c, (i - t) / 2, (n - r) / 2, t, r);
           } catch (e) {}
@@ -1601,19 +1601,19 @@ const PreviewTimeline = (() => {
   function clampPlayback() {
     if (!l || !m || d || k) return;
     const e = l.currentTime || 0;
-    if (e < p - .02) {
+    if (e < u - .02) {
       const e = !l.paused;
       try {
-        l.currentTime = p;
+        l.currentTime = u;
       } catch (e) {
-        scheduleSeek(p, true);
+        scheduleSeek(u, true);
       }
-      f = p;
+      f = u;
       if (e) l.play().catch(() => {});
       return;
     }
     const t = resolveSkipTime(e);
-    if (t != null && t > e + .03 && t <= u + .01) {
+    if (t != null && t > e + .03 && t <= p + .01) {
       const e = !l.paused;
       try {
         l.currentTime = t;
@@ -1625,14 +1625,14 @@ const PreviewTimeline = (() => {
       paintChrome();
       return;
     }
-    if (e > u - .05) {
+    if (e > p - .05) {
       const e = !l.paused;
       try {
-        l.currentTime = p;
+        l.currentTime = u;
       } catch (e) {
-        scheduleSeek(p, true);
+        scheduleSeek(u, true);
       }
-      f = p;
+      f = u;
       if (e) {
         l.loop = true;
         l.play().catch(() => {});
@@ -1650,7 +1650,7 @@ const PreviewTimeline = (() => {
       let i = timeFromClientX(e);
       const n = resolveSkipTime(i);
       if (n != null) i = n;
-      f = Math.max(p, Math.min(u, i));
+      f = Math.max(u, Math.min(p, i));
       paintPlayheadOnly();
       if (t) scheduleSeek(f);
     }
@@ -1691,7 +1691,7 @@ const PreviewTimeline = (() => {
     const e = d;
     se?.classList.remove("is-scrubbing", "is-trimming", "is-dragging");
     ae?.querySelectorAll(".preview-timeline-handle.is-dragging").forEach(e => e.classList.remove("is-dragging"));
-    ue?.classList.remove("is-dragging");
+    pe?.classList.remove("is-dragging");
     me?.classList.remove("is-dragging");
     if (S != null) {
       applyPointer(S, {
@@ -1705,10 +1705,10 @@ const PreviewTimeline = (() => {
     }
     d = null;
     R = -1;
-    N = null;
+    F = null;
     if (e === "start" || e === "end" || e === "bound") {
-      f = Math.max(p, Math.min(u, f));
-      if (p > .05 || u < m - .05) {
+      f = Math.max(u, Math.min(p, f));
+      if (u > .05 || p < m - .05) {
         try {
           markLibrarySplitscreenDirty();
         } catch (e) {}
@@ -1728,8 +1728,8 @@ const PreviewTimeline = (() => {
     });
   }
   function startDrag(e, t) {
-    if ((e === "start" || e === "end" || e === "bound") && !F && !te?.classList.contains("is-ranking-edit")) return;
-    if ((e === "start" || e === "end" || e === "bound") && !F) {
+    if ((e === "start" || e === "end" || e === "bound") && !N && !te?.classList.contains("is-ranking-edit")) return;
+    if ((e === "start" || e === "end" || e === "bound") && !N) {
       setHandlesUnlocked(true);
     }
     if (t.pointerType === "mouse" && t.button !== 0) return;
@@ -1745,7 +1745,7 @@ const PreviewTimeline = (() => {
     if (l && !l.paused) l.pause();
     se?.classList.add("is-dragging");
     if (e === "scrub") se?.classList.add("is-scrubbing"); else se?.classList.add("is-trimming");
-    if (e === "start") ue?.classList.add("is-dragging");
+    if (e === "start") pe?.classList.add("is-dragging");
     if (e === "end") me?.classList.add("is-dragging");
     if (t.currentTarget?.setPointerCapture && t.pointerId != null) {
       try {
@@ -1768,9 +1768,9 @@ const PreviewTimeline = (() => {
       const e = Number.isFinite(l.duration) ? l.duration : 0;
       const t = Math.abs(e - m) > .05;
       m = e;
-      if (t || u <= p) {
-        p = 0;
-        u = m || 1;
+      if (t || p <= u) {
+        u = 0;
+        p = m || 1;
       }
       cacheTrackMetrics();
       paintChrome({
@@ -1799,7 +1799,7 @@ const PreviewTimeline = (() => {
     const beginRangeAt = (e, t) => {
       refreshEls();
       if (!(effectiveDuration() > .25)) {
-        seedDuration(m > .25 ? m : u > .25 ? u : 15, {
+        seedDuration(m > .25 ? m : p > .25 ? p : 15, {
           rebuildSegments: true
         });
       }
@@ -1916,7 +1916,7 @@ const PreviewTimeline = (() => {
         window.PreviewCtxMenu?.open?.(e);
       } catch (e) {}
     });
-    ue?.addEventListener("pointerdown", onStartDown);
+    pe?.addEventListener("pointerdown", onStartDown);
     me?.addEventListener("pointerdown", onEndDown);
     const e = document.getElementById("previewTimelinePlayheadGrip");
     const onPlayheadDown = e => {
@@ -1987,7 +1987,7 @@ const PreviewTimeline = (() => {
             try {
               const e = timeFromClientX(t.startX);
               if (Number.isFinite(e)) {
-                f = Math.max(p, Math.min(u || m || e, e));
+                f = Math.max(u, Math.min(p || m || e, e));
                 if (l) {
                   try {
                     l.currentTime = f;
@@ -2060,7 +2060,7 @@ const PreviewTimeline = (() => {
       document.removeEventListener("pointerdown", onDocRangeDown, true);
       window.removeEventListener("pointerdown", onOutsideRangeClear, true);
       window.removeEventListener("mousedown", onOutsideRangeClear, true);
-      ue?.removeEventListener("pointerdown", onStartDown);
+      pe?.removeEventListener("pointerdown", onStartDown);
       me?.removeEventListener("pointerdown", onEndDown);
       e?.removeEventListener("pointerdown", onPlayheadDown);
       window.removeEventListener("pointermove", onPointerMove);
@@ -2089,7 +2089,7 @@ const PreviewTimeline = (() => {
       if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
         e.preventDefault();
         const t = e.key === "ArrowLeft" ? -.5 : .5;
-        f = Math.max(p, Math.min(u, (l.currentTime || 0) + t));
+        f = Math.max(u, Math.min(p, (l.currentTime || 0) + t));
         paintChrome();
         scheduleSeek(f, true);
       }
@@ -2175,7 +2175,7 @@ const PreviewTimeline = (() => {
     $ = null;
     M = [];
     B = [];
-    F = false;
+    N = false;
     if (te) {
       te.classList.remove("handles-on");
       te.classList.remove("is-ranking-edit");
@@ -2191,8 +2191,8 @@ const PreviewTimeline = (() => {
     c = false;
     m = 0;
     f = 0;
-    p = 0;
-    u = 1;
+    u = 0;
+    p = 1;
     hide();
   }
   function scheduleFilmstripBuild(e = 450) {
@@ -2220,11 +2220,11 @@ const PreviewTimeline = (() => {
     if (!(i > .25)) return false;
     const n = Math.abs(i - m) > .05;
     m = i;
-    if (n || u <= p || u > m + .2) {
-      p = 0;
-      u = m;
+    if (n || p <= u || p > m + .2) {
+      u = 0;
+      p = m;
     }
-    f = Math.max(p, Math.min(u, f || 0));
+    f = Math.max(u, Math.min(p, f || 0));
     show();
     buildPlaceholderFilmstrip();
     cacheTrackMetrics();
@@ -2250,8 +2250,8 @@ const PreviewTimeline = (() => {
     l.disablePictureInPicture = true;
     const i = Number(t.durationHint);
     m = Number.isFinite(l.duration) && l.duration > 0 ? l.duration : i > .25 ? i : 0;
-    p = 0;
-    u = m || 1;
+    u = 0;
+    p = m || 1;
     f = Number.isFinite(l.currentTime) ? l.currentTime : 0;
     const n = !!document.querySelector(".template-preview-content.is-library-preview");
     setHandlesUnlocked(n);
@@ -2283,10 +2283,10 @@ const PreviewTimeline = (() => {
     const kickFilmstrip = () => {
       if (!l || l !== e) return;
       m = Number.isFinite(l.duration) && l.duration > 0 ? l.duration : m;
-      u = Math.max(u, m || 1);
-      if (p >= u) {
-        p = 0;
-        u = m || 1;
+      p = Math.max(p, m || 1);
+      if (u >= p) {
+        u = 0;
+        p = m || 1;
       }
       cacheTrackMetrics();
       paintChrome({
@@ -2322,8 +2322,8 @@ const PreviewTimeline = (() => {
   }
   function getTrim() {
     return {
-      start: p,
-      end: u,
+      start: u,
+      end: p,
       duration: m
     };
   }
@@ -2341,7 +2341,7 @@ const PreviewTimeline = (() => {
     for (const e of t) {
       const t = Number(e);
       if (!Number.isFinite(t)) continue;
-      const n = Math.max(p + .05, Math.min(u - .05, t));
+      const n = Math.max(u + .05, Math.min(p - .05, t));
       if (i.some(e => Math.abs(e - n) < .08)) continue;
       i.push(n);
     }
@@ -2381,17 +2381,17 @@ const PreviewTimeline = (() => {
     cacheTrackMetrics();
     const i = Number.isFinite(t) ? t : f;
     const n = Math.min(2.5, Math.max(.8, m * .12));
-    const r = u - p;
+    const r = p - u;
     if (r >= m * .95) {
-      p = Math.max(0, i - n * .35);
-      u = Math.min(m, Math.max(p + e, i + n * .65));
+      u = Math.max(0, i - n * .35);
+      p = Math.min(m, Math.max(u + e, i + n * .65));
     }
-    f = Math.max(p, Math.min(u, i));
+    f = Math.max(u, Math.min(p, i));
     paintChrome({
       rebuildSegments: true
     });
     scheduleSeek(f, true);
-    [ ue, me ].forEach(e => {
+    [ pe, me ].forEach(e => {
       if (!e) return;
       e.classList.remove("is-pulse");
       void e.offsetWidth;
@@ -2411,9 +2411,9 @@ const PreviewTimeline = (() => {
       const e = Number(l?.duration);
       if (e > .25) {
         m = e;
-        if (!(u > p)) {
-          p = 0;
-          u = m;
+        if (!(p > u)) {
+          u = 0;
+          p = m;
         }
       } else {
         return false;
@@ -2421,7 +2421,7 @@ const PreviewTimeline = (() => {
     }
     cacheTrackMetrics();
     let i = Number.isFinite(t) ? t : f;
-    i = Math.max(p + .05, Math.min(u - .05, i));
+    i = Math.max(u + .05, Math.min(p - .05, i));
     const n = E.findIndex(e => Math.abs(e - i) < .08);
     if (n >= 0) {
       f = E[n];
@@ -2447,8 +2447,8 @@ const PreviewTimeline = (() => {
           t = e;
         }
       }
-      const s = t > 0 ? E[t - 1] + e : p + e;
-      const o = t < E.length - 1 ? E[t + 1] - e : u - e;
+      const s = t > 0 ? E[t - 1] + e : u + e;
+      const o = t < E.length - 1 ? E[t + 1] - e : p - e;
       if (o - s < e) {
         paintSegments(i);
         return false;
@@ -2542,7 +2542,7 @@ const PreviewTimeline = (() => {
       A = i;
       if (l && Number.isFinite(l.duration) && l.duration > 0) {
         m = l.duration;
-        u = Math.max(u, m);
+        p = Math.max(p, m);
       }
       if (c) {
         cacheTrackMetrics();
@@ -3206,20 +3206,20 @@ function applyPanelCropPreviewBox(e, t, i, n, r) {
   const l = Math.max(1, Number(i[3]) || r);
   const c = e.closest(".ss-panel-crop-viewport") || t;
   const d = c.clientWidth || t.clientWidth || 1;
-  const p = c.clientHeight || t.clientHeight || 1;
-  if (d < 2 || p < 2) {
+  const u = c.clientHeight || t.clientHeight || 1;
+  if (d < 2 || u < 2) {
     forceLibraryPanelVideoFill(e);
     return;
   }
-  const u = Math.max(d / a, p / l);
+  const p = Math.max(d / a, u / l);
   e.classList.add("ss-live-face-crop");
   e.style.setProperty("position", "absolute", "important");
-  e.style.setProperty("left", `${-s * u}px`, "important");
-  e.style.setProperty("top", `${-o * u}px`, "important");
+  e.style.setProperty("left", `${-s * p}px`, "important");
+  e.style.setProperty("top", `${-o * p}px`, "important");
   e.style.setProperty("right", "auto", "important");
   e.style.setProperty("bottom", "auto", "important");
-  e.style.setProperty("width", `${n * u}px`, "important");
-  e.style.setProperty("height", `${r * u}px`, "important");
+  e.style.setProperty("width", `${n * p}px`, "important");
+  e.style.setProperty("height", `${r * p}px`, "important");
   e.style.setProperty("max-width", "none", "important");
   e.style.setProperty("object-fit", "fill", "important");
   e.style.setProperty("transform", "none", "important");
@@ -3244,9 +3244,9 @@ function applyContentCropPreview(e, t, i, n, r) {
     d = n;
     c = d / l;
   }
-  const p = i != null && Number(i) >= 0 ? Number(i) : Math.max(0, (n - d) / 2);
-  const u = Math.max(0, (r - c) / 2);
-  applyPanelCropPreviewBox(e, t, [ p, u, d, c ], n, r);
+  const u = i != null && Number(i) >= 0 ? Number(i) : Math.max(0, (n - d) / 2);
+  const p = Math.max(0, (r - c) / 2);
+  applyPanelCropPreviewBox(e, t, [ u, p, d, c ], n, r);
 }
 
 function syncLibrarySplitscreenCropPreview() {
@@ -3305,8 +3305,8 @@ function bindFaceReframePanHandlers() {
   let l = null;
   let c = false;
   let d = null;
-  let p = 0;
-  const u = 6;
+  let u = 0;
+  const p = 6;
   const onMove = (l, c) => {
     if (!s) return;
     const m = _librarySplitscreenCropState;
@@ -3314,7 +3314,7 @@ function bindFaceReframePanHandlers() {
     const y = c - n;
     const h = Math.hypot(f, y);
     if (!o) {
-      if (h < u) return;
+      if (h < p) return;
       const t = !!(m?.liveFaceEdit && r && (m.faceSrcW || m.srcW));
       o = !t || Math.abs(y) >= Math.abs(f) * .85 ? "resize" : "pan";
       a = true;
@@ -3327,7 +3327,7 @@ function bindFaceReframePanHandlers() {
         }
         notifySubtitleLayoutEdit();
         d = i?.getBoundingClientRect() || null;
-        p = c;
+        u = c;
         e.style.cursor = "ns-resize";
         if (d) {
           applySplitscreenDrag(c, d, 1);
@@ -3342,7 +3342,7 @@ function bindFaceReframePanHandlers() {
         d = e?.getBoundingClientRect() || null;
       }
       if (!d) return;
-      p = c;
+      u = c;
       applySplitscreenDrag(c, d, 1);
       armPreviewModalDragGuard(1200);
       return;
@@ -3371,7 +3371,7 @@ function bindFaceReframePanHandlers() {
     if (!s) return;
     const i = !!o;
     const n = o === "resize";
-    const r = p;
+    const r = u;
     const c = d;
     s = false;
     o = null;
@@ -3403,13 +3403,13 @@ function bindFaceReframePanHandlers() {
   };
   const beginTrack = (e, a, c = null) => {
     if (splitscreenSecondaryType !== "face_track") return;
-    const u = _librarySplitscreenCropState;
+    const p = _librarySplitscreenCropState;
     r = null;
-    if (u?.liveFaceEdit) {
-      const e = u.faceSrcW || u.srcW;
-      const i = u.faceSrcH || u.srcH;
+    if (p?.liveFaceEdit) {
+      const e = p.faceSrcW || p.srcW;
+      const i = p.faceSrcH || p.srcH;
       if (e && i) {
-        if (!u.faceCrop || u.faceCrop.length < 4) {
+        if (!p.faceCrop || p.faceCrop.length < 4) {
           const n = _splitscreenQuery("splitscreenBottom") || t;
           const r = (n.clientWidth || 9) / Math.max(1, n.clientHeight || 16);
           let s = i * .55;
@@ -3418,19 +3418,19 @@ function bindFaceReframePanHandlers() {
             o = e * .7;
             s = o / r;
           }
-          u.faceCrop = [ Math.max(0, (e - o) / 2), Math.max(0, (i - s) / 2), o, s ];
+          p.faceCrop = [ Math.max(0, (e - o) / 2), Math.max(0, (i - s) / 2), o, s ];
         }
-        if (u.faceDisplayMode !== "live") {
-          u.faceDisplayMode = "live";
+        if (p.faceDisplayMode !== "live") {
+          p.faceDisplayMode = "live";
           syncLibrarySplitscreenCropPreview();
         }
-        r = u.faceCrop.slice();
+        r = p.faceCrop.slice();
       }
     }
     s = true;
     o = null;
     d = null;
-    p = a;
+    u = a;
     i = e;
     n = a;
     l = c;
@@ -3905,8 +3905,8 @@ function collectLibraryOverlayTexts() {
     const l = (a.left + a.width / 2 - t.left) / i;
     const c = (a.top + a.height / 2 - t.top) / n;
     const d = getComputedStyle(e);
-    const p = parseFloat(e.style.fontSize) || parseFloat(d.fontSize) || 28;
-    const u = (e.style.fontFamily || d.fontFamily || "Luckiest Guy").split(",")[0].replace(/['"]/g, "").trim();
+    const u = parseFloat(e.style.fontSize) || parseFloat(d.fontSize) || 28;
+    const p = (e.style.fontFamily || d.fontFamily || "Luckiest Guy").split(",")[0].replace(/['"]/g, "").trim();
     const m = e.style.color || d.color || "#ffffff";
     const f = (e.style.textShadow || d.textShadow || "").trim();
     let y = "outline";
@@ -3915,8 +3915,8 @@ function collectLibraryOverlayTexts() {
       text: o.slice(0, 200),
       x: Math.max(0, Math.min(1, l)),
       y: Math.max(0, Math.min(1, c)),
-      font_size_ratio: p / n,
-      font: u || "Luckiest Guy",
+      font_size_ratio: u / n,
+      font: p || "Luckiest Guy",
       color: m,
       shadow: y
     });
@@ -5088,27 +5088,27 @@ function openGameplayDropdown(e, t) {
     const l = a?.getBoundingClientRect();
     const c = s.h - (t.bottom + o) - 12;
     const d = t.top - o - 12;
-    let p;
-    if (c >= Math.min(r, 220) || c >= d) {
-      p = t.bottom + o;
-      if (p + r > s.h - 12) p = Math.max(12, s.h - r - 12);
-      if (p + 20 < t.bottom && c > 120) p = t.bottom + o;
-    } else {
-      p = Math.max(12, t.top - r - o);
-    }
     let u;
-    if (l) {
-      u = l.right + o;
-      if (u + n > s.w - 12) {
-        u = Math.max(l.right + 6, s.w - n - 12);
-      }
-      if (u < l.right) u = Math.min(l.right + o, Math.max(12, s.w - n - 12));
+    if (c >= Math.min(r, 220) || c >= d) {
+      u = t.bottom + o;
+      if (u + r > s.h - 12) u = Math.max(12, s.h - r - 12);
+      if (u + 20 < t.bottom && c > 120) u = t.bottom + o;
     } else {
-      u = t.right + o;
-      if (u + n > s.w - 12) u = Math.max(12, s.w - n - 12);
+      u = Math.max(12, t.top - r - o);
     }
-    e.style.top = Math.round(p) + "px";
-    e.style.left = Math.round(u) + "px";
+    let p;
+    if (l) {
+      p = l.right + o;
+      if (p + n > s.w - 12) {
+        p = Math.max(l.right + 6, s.w - n - 12);
+      }
+      if (p < l.right) p = Math.min(l.right + o, Math.max(12, s.w - n - 12));
+    } else {
+      p = t.right + o;
+      if (p + n > s.w - 12) p = Math.max(12, s.w - n - 12);
+    }
+    e.style.top = Math.round(u) + "px";
+    e.style.left = Math.round(p) + "px";
   };
   place();
   requestAnimationFrame(place);
@@ -5504,17 +5504,17 @@ function setSplitscreenPanelHeights(e, t, i) {
   const l = 1;
   const c = n.clientHeight || n.getBoundingClientRect().height || n.offsetHeight;
   const d = Math.max(1, Number(i) > 0 ? Number(i) : c - l);
-  let p;
   let u;
+  let p;
   if (a) {
     const i = clampCanvasPanelHeights(Number(e) || 0, Number(t) || 0, d);
-    p = i.secondaryH;
-    u = i.contentH;
-    splitscreenContentRatio = d > 0 ? u / d : .78;
+    u = i.secondaryH;
+    p = i.contentH;
+    splitscreenContentRatio = d > 0 ? p / d : .78;
   } else {
-    u = Math.max(0, Math.min(d, Number(e) || 0));
-    p = Math.max(0, d - u);
-    splitscreenContentRatio = d > 0 ? u / d : .5;
+    p = Math.max(0, Math.min(d, Number(e) || 0));
+    u = Math.max(0, d - p);
+    splitscreenContentRatio = d > 0 ? p / d : .5;
   }
   r.style.display = "";
   r.style.flex = "0 0 1px";
@@ -5536,13 +5536,13 @@ function setSplitscreenPanelHeights(e, t, i) {
     splitscreenInverted = true;
   }
   if (splitscreenInverted) {
-    o.style.flex = `0 0 ${p}px`;
-    s.style.flex = `0 0 ${u}px`;
+    o.style.flex = `0 0 ${u}px`;
+    s.style.flex = `0 0 ${p}px`;
   } else {
-    s.style.flex = `0 0 ${u}px`;
-    o.style.flex = `0 0 ${p}px`;
+    s.style.flex = `0 0 ${p}px`;
+    o.style.flex = `0 0 ${u}px`;
   }
-  syncBlurLetterboxBar(a ? p : 0);
+  syncBlurLetterboxBar(a ? u : 0);
 }
 
 let _reframeImmersive = false;
@@ -6943,12 +6943,12 @@ function bindSeamHoldDrag(e, t) {
     const c = r.clientY;
     const d = splitscreenInverted ? c >= a.bottom - i && c <= l.top + i : c >= l.bottom - i && c <= a.top + i;
     if (!d) return;
-    const p = r.clientY;
-    const u = r.clientX;
+    const u = r.clientY;
+    const p = r.clientX;
     const onMove = i => {
       if (!n) return;
-      const r = i.clientY - p;
-      const s = i.clientX - u;
+      const r = i.clientY - u;
+      const s = i.clientX - p;
       if (!n.started) {
         if (Math.abs(r) < 10) return;
         if (Math.abs(s) > Math.abs(r) * 1.1) {
@@ -7757,12 +7757,15 @@ class ClipsStudio {
       };
       e.addEventListener("paste", t => {
         const i = (t.clipboardData || window.clipboardData)?.getData?.("text") || "";
-        if (this._multiTaskActive() && i && this.isValidMediaUrl(i.trim())) {
-          t.preventDefault();
-          this.addMultiTaskUrl(i.trim(), {
-            fromPaste: true
-          });
-          return;
+        if (this._multiTaskActive() && i) {
+          const e = this._extractMediaUrlsFromText(i);
+          if (e.length) {
+            t.preventDefault();
+            this.addMultiTaskUrlsFromText(i, {
+              fromPaste: true
+            });
+            return;
+          }
         }
         setTimeout(() => {
           try {
@@ -7867,12 +7870,14 @@ class ClipsStudio {
     };
     const applyPastedUrl = e => {
       const t = String(e || "").trim();
-      if (!t || !this.isValidMediaUrl(t)) return false;
-      const i = document.getElementById("youtubeUrlInput");
-      if (!i) return false;
-      const n = document.getElementById("createSection");
-      const r = !!n?.classList.contains("active");
-      if (!r) {
+      if (!t) return false;
+      const i = this._multiTaskActive() ? this._extractMediaUrlsFromText(t) : [];
+      if (!i.length && !this.isValidMediaUrl(t)) return false;
+      const n = document.getElementById("youtubeUrlInput");
+      if (!n) return false;
+      const r = document.getElementById("createSection");
+      const s = !!r?.classList.contains("active");
+      if (!s) {
         try {
           this.goToCreateUrlSubmit();
         } catch (e) {
@@ -7882,23 +7887,29 @@ class ClipsStudio {
         }
       }
       if (this._multiTaskActive()) {
-        this.addMultiTaskUrl(t, {
+        if (i.length > 1) {
+          this.addMultiTaskUrlsFromText(t, {
+            fromPaste: true
+          });
+          return true;
+        }
+        this.addMultiTaskUrl(i[0] || t, {
           fromPaste: true
         });
         return true;
       }
-      i.value = t;
+      n.value = t;
       try {
-        i.dispatchEvent(new Event("input", {
+        n.dispatchEvent(new Event("input", {
           bubbles: true
         }));
       } catch (e) {}
       try {
-        i.focus({
+        n.focus({
           preventScroll: true
         });
-        const e = i.value.length;
-        i.setSelectionRange(e, e);
+        const e = n.value.length;
+        n.setSelectionRange(e, e);
       } catch (e) {}
       this._scheduleAutoSubmitFromPaste();
       return true;
@@ -8224,12 +8235,12 @@ class ClipsStudio {
     const l = document.getElementById("previewTemplateName");
     const c = document.getElementById("previewTemplateDescription");
     const d = document.getElementById("previewVideoDuration");
-    const p = document.getElementById("previewVideoFormat");
+    const u = document.getElementById("previewVideoFormat");
     safeLog("Elements found:", {
       nameEl: !!l,
       descEl: !!c,
       durationEl: !!d,
-      formatEl: !!p
+      formatEl: !!u
     });
     if (l) {
       const t = e.replace(/_/g, " ").replace(/\b\w/g, e => e.toUpperCase());
@@ -8238,15 +8249,15 @@ class ClipsStudio {
     } else {
       safeLog("⚠ï¸ nameEl not found");
     }
-    const u = document.getElementById("youtubeUrlInput")?.value.trim();
-    if (u) {
+    const p = document.getElementById("youtubeUrlInput")?.value.trim();
+    if (p) {
       if (c) c.textContent = "Loading video info...";
       if (d) d.textContent = "~60s";
-      if (p) p.textContent = "TikTok / Shorts";
+      if (u) u.textContent = "TikTok / Shorts";
     } else {
       if (c) c.textContent = "Paste a YouTube URL to see video details";
       if (d) d.textContent = "~60s";
-      if (p) p.textContent = "TikTok / Shorts";
+      if (u) u.textContent = "TikTok / Shorts";
     }
     r.classList.remove("closing");
     r.style.removeProperty("opacity");
@@ -8311,7 +8322,7 @@ class ClipsStudio {
         data: i,
         addWatermark: r,
         videoQuality: "auto",
-        videoUrl: u,
+        videoUrl: p,
         isLibraryPreview: false
       };
       const o = document.getElementById("aiPromptInput");
@@ -8337,11 +8348,11 @@ class ClipsStudio {
           window.SolisMemory.onTemplatePreviewOpen(e);
         }
       });
-      if (u) {
+      if (p) {
         const e = document.getElementById("previewTemplateDescription");
         const t = document.getElementById("previewVideoDuration");
         const i = document.getElementById("previewVideoFormat");
-        this.fetchVideoMetadata(u, t, i, e);
+        this.fetchVideoMetadata(p, t, i, e);
       }
     });
   }
@@ -8632,10 +8643,10 @@ class ClipsStudio {
       const l = i[`href${t}`] || "/premium.html";
       const c = i[`plan${t}`] || "basic";
       const d = t === "Quota" ? "Watermark" : t;
-      const p = i[`priceFull${d}`] || "$9.99";
-      const u = i[`priceLaunch${d}`] || "$5.99";
-      const m = i[`priceWasFull${d}`] || p;
-      const f = i[`priceWasLaunch${d}`] || p;
+      const u = i[`priceFull${d}`] || "$9.99";
+      const p = i[`priceLaunch${d}`] || "$5.99";
+      const m = i[`priceWasFull${d}`] || u;
+      const f = i[`priceWasLaunch${d}`] || u;
       const y = i[`noteFull${d}`] || "";
       const h = i[`noteLaunch${d}`] || "";
       const g = i[`features${t}`] || "";
@@ -8653,8 +8664,8 @@ class ClipsStudio {
       if (b && s) b.textContent = s;
       if (v && o) v.textContent = o;
       if (S) {
-        S.dataset.priceFull = p;
-        S.dataset.priceLaunch = u;
+        S.dataset.priceFull = u;
+        S.dataset.priceLaunch = p;
       }
       if (_) {
         _.dataset.priceWasFull = m;
@@ -9619,25 +9630,25 @@ class ClipsStudio {
     if (d) {
       d.textContent = "Generated Clip";
     }
-    const p = document.getElementById("confirmUseTemplateBtn");
-    if (p) {
+    const u = document.getElementById("confirmUseTemplateBtn");
+    if (u) {
       if (typeof window.setConfirmUseTemplateLabel === "function") {
         window.setConfirmUseTemplateLabel("Download");
       } else {
-        const e = p.querySelector(".template-use-confirm-label");
-        if (e) e.textContent = "Download"; else p.textContent = "Download";
+        const e = u.querySelector(".template-use-confirm-label");
+        if (e) e.textContent = "Download"; else u.textContent = "Download";
       }
-      p.classList.add("library-download-mode");
+      u.classList.add("library-download-mode");
     }
     r.classList.add("active");
     r.style.display = "flex";
     r.style.visibility = "visible";
     r.style.opacity = "1";
     document.body.classList.add("modal-open");
-    const u = document.getElementById("navWrapper");
+    const p = document.getElementById("navWrapper");
     const m = document.querySelector(".profile-notif-wrapper");
-    if (u) {
-      u.classList.add("disabled");
+    if (p) {
+      p.classList.add("disabled");
     }
     if (m) {
       m.classList.add("disabled");
@@ -9910,14 +9921,14 @@ class ClipsStudio {
       const l = splitscreenSecondaryType === "face_track";
       const c = Boolean(r.secondary);
       const d = Boolean(r.content);
-      const p = Boolean(n.has_segment || r.segment);
-      if (l && !c && !p) {
+      const u = Boolean(n.has_segment || r.segment);
+      if (l && !c && !u) {
         splitscreenSecondaryCollapsed = true;
         splitscreenContentRatio = 1;
       }
-      const u = Boolean(splitscreenSecondaryCollapsed || n.layers?.collapsed || a.secondary_collapsed || splitscreenContentRatio >= .97);
+      const p = Boolean(splitscreenSecondaryCollapsed || n.layers?.collapsed || a.secondary_collapsed || splitscreenContentRatio >= .97);
       const m = Boolean(a.face_crop && Number(a.face_crop.w) > 0 && Number(a.face_crop.h) > 0);
-      const f = l && c && d && !u && m;
+      const f = l && c && d && !p && m;
       const y = !l && d || f;
       setLibrarySplitscreenCropState({
         cropX: a.crop_x ?? null,
@@ -9925,8 +9936,8 @@ class ClipsStudio {
         srcW: 0,
         srcH: 0,
         useLayers: y,
-        liveFaceEdit: l && (f || p),
-        faceDisplayMode: l ? f ? "baked" : p ? "live" : "baked" : null,
+        liveFaceEdit: l && (f || u),
+        faceDisplayMode: l ? f ? "baked" : u ? "live" : "baked" : null,
         secondaryFromLayer: f
       });
       this._librarySplitscreenCustomize = true;
@@ -10023,7 +10034,7 @@ class ClipsStudio {
           b.style.cursor = "grab";
           const e = await wireVideo(b, `${h}/secondary`);
           if (!e) {
-            if (!p) throw new Error("Failed to load reframe layer");
+            if (!u) throw new Error("Failed to load reframe layer");
             safeLog("Reframe layer failed — falling back to live segment crop");
             if (_librarySplitscreenCropState) {
               _librarySplitscreenCropState.faceDisplayMode = "live";
@@ -10041,7 +10052,7 @@ class ClipsStudio {
         }
         bindLibrarySplitscreenPlaybackSync(w, b);
         syncLibrarySplitscreenCropPreview();
-      } else if (l && p && !u) {
+      } else if (l && u && !p) {
         if (v) {
           v.style.setProperty("display", "none", "important");
           v.removeAttribute("src");
@@ -10070,13 +10081,13 @@ class ClipsStudio {
         }
         bindLibrarySplitscreenPlaybackSync(w, b);
         syncLibrarySplitscreenCropPreview();
-      } else if (l && !c && !p) {
+      } else if (l && !c && !u) {
         safeLog("Face track without secondary/segment yet — flat preview");
         throw new Error("Reframe layers not ready");
       } else {
         const e = y ? `${h}/content` : g;
         const t = await wireVideo(w, e);
-        if (!t && y && p) {
+        if (!t && y && u) {
           if (_librarySplitscreenCropState) _librarySplitscreenCropState.useLayers = false;
           await wireVideo(w, g);
         }
@@ -10085,7 +10096,7 @@ class ClipsStudio {
             v.style.setProperty("display", "none", "important");
             v.removeAttribute("src");
           }
-          if (b && c && !u && m) {
+          if (b && c && !p && m) {
             if (_librarySplitscreenCropState) {
               _librarySplitscreenCropState.faceDisplayMode = "baked";
               _librarySplitscreenCropState.liveFaceEdit = false;
@@ -10814,8 +10825,8 @@ class ClipsStudio {
         }
       }
     } catch (e) {}
-    const p = document.querySelector('#previewEditorPill [data-tool="animations"]');
-    if (p) p.style.display = "";
+    const u = document.querySelector('#previewEditorPill [data-tool="animations"]');
+    if (u) u.style.display = "";
     try {
       if (this._libraryRankingSubtitlesOn && this._libraryRankingNeedsBurn) {
         const e = this._libraryRankingCaptionStyle || {
@@ -10889,10 +10900,10 @@ class ClipsStudio {
         } catch (e) {}
       }
     }, true);
-    const u = document.getElementById("previewTimelineShell");
-    if (u && !u.dataset.rankingBound) {
-      u.dataset.rankingBound = "1";
-      u.addEventListener("pointerup", () => {
+    const p = document.getElementById("previewTimelineShell");
+    if (p && !p.dataset.rankingBound) {
+      p.dataset.rankingBound = "1";
+      p.addEventListener("pointerup", () => {
         if (!this._libraryRankingEditable) return;
         if (typeof PreviewTimeline !== "undefined" && PreviewTimeline._rankingTouched) {
           markDirty();
@@ -10951,14 +10962,14 @@ class ClipsStudio {
       }
     };
     const d = String(r.header_line1 || "").trim();
-    const p = String(r.header_line2 || "").trim();
-    const u = String(r.header_line3 || "").trim();
+    const u = String(r.header_line2 || "").trim();
+    const p = String(r.header_line3 || "").trim();
     if (d) setHeaderText("title_ranking", d); else setHeaderText("title_ranking", "RANKING");
-    if (p) setHeaderText("title_funniest", p); else setHeaderText("title_funniest", "BEST");
-    const m = String(u || this._libraryRankingChannel || t?.channel_name || t?.overlay_subject || "CHANNEL").toUpperCase();
+    if (u) setHeaderText("title_funniest", u); else setHeaderText("title_funniest", "BEST");
+    const m = String(p || this._libraryRankingChannel || t?.channel_name || t?.overlay_subject || "CHANNEL").toUpperCase();
     const f = m.includes("MOMENT") ? m : `${m.replace(/\s+MOMENTS?$/i, "")} MOMENTS`.replace(/\s+/g, " ").trim();
-    setHeaderText("title_channel", u ? f : f, {
-      force: !!u
+    setHeaderText("title_channel", p ? f : f, {
+      force: !!p
     });
     const y = {};
     for (let e = 1; e <= 5; e++) {
@@ -10976,17 +10987,17 @@ class ClipsStudio {
         };
         window.rankingCustomizer.customizations[`rank_${e}_title`] = t;
       }
-      const p = n.querySelector(`[data-template-element-id="rank_${e}_title"]`);
-      if (p) {
-        p.setAttribute("data-rk-full-title", d || "");
+      const u = n.querySelector(`[data-template-element-id="rank_${e}_title"]`);
+      if (u) {
+        u.setAttribute("data-rk-full-title", d || "");
         if (d) {
-          p.textContent = d;
-          p.classList.remove("rk-title-empty");
-          p.removeAttribute("data-placeholder");
+          u.textContent = d;
+          u.classList.remove("rk-title-empty");
+          u.removeAttribute("data-placeholder");
         } else {
-          p.textContent = "";
-          p.classList.add("rk-title-empty");
-          p.setAttribute("data-placeholder", "Add title…");
+          u.textContent = "";
+          u.classList.add("rk-title-empty");
+          u.setAttribute("data-placeholder", "Add title…");
         }
       }
     }
@@ -11541,7 +11552,7 @@ class ClipsStudio {
       }
       const a = String(o.headers.get("content-type") || "").toLowerCase();
       let d = null;
-      let p = false;
+      let u = false;
       if (a.includes("application/json")) {
         const e = await o.json().catch(() => ({}));
         if (isStale()) return;
@@ -11570,7 +11581,7 @@ class ClipsStudio {
             type: "video/mp4"
           });
           d = URL.createObjectURL(r);
-          p = true;
+          u = true;
           this._libraryPreviewObjectUrl = d;
           try {
             window.LibraryPreviewMediaCache?.rememberProject?.(t, l, r, d, i);
@@ -11590,7 +11601,7 @@ class ClipsStudio {
           type: "video/mp4"
         });
         d = URL.createObjectURL(n);
-        p = true;
+        u = true;
         this._libraryPreviewObjectUrl = d;
         try {
           window.LibraryPreviewMediaCache?.rememberProject?.(t, l, n, d, i);
@@ -11605,24 +11616,24 @@ class ClipsStudio {
         clean: l,
         fromCache: false
       });
-      const u = e.querySelector("video.library-preview-video");
-      if (!u) {
+      const p = e.querySelector("video.library-preview-video");
+      if (!p) {
         retrySoon("video missing");
         return;
       }
       let m = false;
       const scheduleRetry = t => {
         if (m || isStale()) return;
-        if (e.classList.contains("has-video") && u.videoWidth > 0) return;
+        if (e.classList.contains("has-video") && p.videoWidth > 0) return;
         m = true;
-        if (p && this._libraryPreviewObjectUrl === d) {
+        if (u && this._libraryPreviewObjectUrl === d) {
           try {
             URL.revokeObjectURL(d);
           } catch (e) {}
         }
         retrySoon(t);
       };
-      u.addEventListener("error", () => {
+      p.addEventListener("error", () => {
         scheduleRetry("video decode error");
       }, {
         once: true
@@ -11972,24 +11983,24 @@ class ClipsStudio {
     const l = a > 0 && s.length === 0;
     const c = r[0]?.reason || "";
     const d = s[0]?.reason || "";
-    let p = "Looking over your clips…";
+    let u = "Looking over your clips…";
     if (a <= 0) {
-      p = "No clips landed yet. Try again when the job finishes.";
+      u = "No clips landed yet. Try again when the job finishes.";
     } else if (a === 1) {
-      p = r.length ? c ? `This clip holds up. ${c}` : "This clip holds up." : d ? `This one's soft. ${d} Keep it in the set anyway?` : "This one's soft. Keep it in the set anyway?";
+      u = r.length ? c ? `This clip holds up. ${c}` : "This clip holds up." : d ? `This one's soft. ${d} Keep it in the set anyway?` : "This one's soft. Keep it in the set anyway?";
     } else if (l) {
       const e = r.map(e => {
         const t = String(e.reason || "").trim().replace(/\.$/, "");
         return t ? `Clip ${e.batch_index}: ${t}.` : `Clip ${e.batch_index} holds up.`;
       });
       const t = n !== a ? `You asked for ${n}. All ${a} landed and hold up.` : `All ${a} clips hold up.`;
-      p = [ t, ...e, "I'd ship every one." ].join(" ");
+      u = [ t, ...e, "I'd ship every one." ].join(" ");
     } else if (!r.length) {
       const e = s.map(e => {
         const t = String(e.reason || "").trim().replace(/\.$/, "");
         return t ? `Clip ${e.batch_index} soft: ${t}.` : `Clip ${e.batch_index} is soft.`;
       });
-      p = [ `You asked for ${n}. ${a} landed — all soft.`, ...e, "Still want them visible?" ].join(" ");
+      u = [ `You asked for ${n}. ${a} landed — all soft.`, ...e, "Still want them visible?" ].join(" ");
     } else {
       const e = r.length;
       const t = s.length;
@@ -12004,9 +12015,9 @@ class ClipsStudio {
         l.push(t ? `Clip ${e.batch_index} soft: ${t}.` : `Clip ${e.batch_index} is soft.`);
       });
       l.push(`I'd ship ${i}. Hide the soft ones?`);
-      p = l.join(" ");
+      u = l.join(" ");
     }
-    const u = this._buildLocalReasoningSteps(i, n, a);
+    const p = this._buildLocalReasoningSteps(i, n, a);
     const m = {
       requested: n,
       delivered: a,
@@ -12015,8 +12026,8 @@ class ClipsStudio {
       keep_project_ids: r.map(e => e.project_id),
       weak_project_ids: s.map(e => e.project_id),
       all_strong: l,
-      message: p,
-      reasoning: u,
+      message: u,
+      reasoning: p,
       clip_reasons: i.map(e => ({
         batch_index: e.batch_index,
         project_id: e.project_id,
@@ -13812,7 +13823,7 @@ class ClipsStudio {
       return "";
     };
     const d = e?.storage?.videos?.used ?? t?.current_count ?? (typeof window.clipsStudio?.libraryItems?.length === "number" ? window.clipsStudio.libraryItems.length : null);
-    const p = e?.storage?.videos?.limit ?? t?.limit ?? null;
+    const u = e?.storage?.videos?.limit ?? t?.limit ?? null;
     const showStorageFullModal = (e, t) => {
       if (typeof window.showUpgradeModal === "function") {
         window.showUpgradeModal(e, t);
@@ -13833,16 +13844,16 @@ class ClipsStudio {
       showNotification(e ? `Daily limit reached. Resets around ${e}.` : "Daily limit reached.", "warning");
       return;
     }
-    const u = e?.generation?.cooldown_remaining_seconds || t?.cooldown_remaining_seconds || 0;
-    if (u > 0) {
-      const e = Math.floor(u / 60);
-      const t = u % 60;
+    const p = e?.generation?.cooldown_remaining_seconds || t?.cooldown_remaining_seconds || 0;
+    if (p > 0) {
+      const e = Math.floor(p / 60);
+      const t = p % 60;
       const i = e > 0 ? `${e}m ${t}s` : `${t}s`;
       showNotification(`Please wait ${i} before your next upload.`, "warning");
       return;
     }
     if (e?.library_limit_reached || e?.block_reason === "library_full" || t?.error_code === "VIDEO_LIMIT_REACHED") {
-      showStorageFullModal("Library Storage Full", `You have ${d ?? "?"}/${p ?? "?"} saved videos. Delete clips from your library to create new ones, or upgrade your plan for more storage.`);
+      showStorageFullModal("Library Storage Full", `You have ${d ?? "?"}/${u ?? "?"} saved videos. Delete clips from your library to create new ones, or upgrade your plan for more storage.`);
       return;
     }
     if (e?.storage_limit_reached || e?.block_reason === "storage_full" || t?.error_code === "INSUFFICIENT_STORAGE") {
@@ -13876,16 +13887,21 @@ class ClipsStudio {
       return;
     }
     showNotification(`Starting ${i.length} upload${i.length === 1 ? "" : "s"}…`, "info");
-    let r = 0;
+    const r = {};
+    let s = 0;
     for (let e = 0; e < i.length; e++) {
-      const n = await this.startClipProcessingWithSlots(i[e], t, {
+      const n = this._multiTaskVideoKey(i[e]);
+      const o = r[n] || 0;
+      r[n] = o + 1;
+      const a = await this.startClipProcessingWithSlots(i[e], t, {
         batchMode: true,
         batchIndex: e,
         batchTotal: i.length,
+        varietyRank: o,
         forceDurationCheck: true,
         skipCancelTemplate: e < i.length - 1
       });
-      if (n !== false) r += 1;
+      if (a !== false) s += 1;
       if (e < i.length - 1) {
         await new Promise(e => setTimeout(e, 120));
       }
@@ -13895,8 +13911,8 @@ class ClipsStudio {
     try {
       sessionStorage.removeItem("solis_batch_urls");
     } catch (e) {}
-    if (r > 0) {
-      showNotification(`Queued ${r} of ${i.length} Multi Task upload${i.length === 1 ? "" : "s"}`, r === i.length ? "success" : "warning");
+    if (s > 0) {
+      showNotification(`Queued ${s} of ${i.length} Multi Task upload${i.length === 1 ? "" : "s"}`, s === i.length ? "success" : "warning");
     }
   }
   async startClipProcessingWithSlots(e, t, i = {}) {
@@ -13966,8 +13982,8 @@ class ClipsStudio {
       };
       this.addProcessingItem(c);
       const d = document.getElementById("watermarkToggle");
-      const p = d ? d.checked : false;
-      const u = getAuthHeaders();
+      const u = d ? d.checked : false;
+      const p = getAuthHeaders();
       let m = null;
       let f = null;
       if (window.customizer && typeof window.customizer.collectCustomizations === "function") {
@@ -14086,7 +14102,7 @@ class ClipsStudio {
         url: e,
         template_id: t,
         use_slot_system: true,
-        watermark_enabled: p,
+        watermark_enabled: u,
         watermark_variant: typeof this.getWatermarkVariant === "function" ? this.getWatermarkVariant() : localStorage.getItem("solisWatermarkVariant") || "branded",
         effort: (typeof window.getSelectedEffortMode === "function" ? window.getSelectedEffortMode() : null) || "auto",
         ai_text_generation: window.solisAiTitleGenerationEnabled !== false,
@@ -14211,9 +14227,17 @@ class ClipsStudio {
           y.clip_intent = e;
         }
       }
+      if (n && Number.isFinite(Number(i.batchIndex))) {
+        y.batch_index = Number(i.batchIndex) + 1;
+        y.batch_total = Math.max(1, Number(i.batchTotal) || 1);
+        const e = Number(i.varietyRank);
+        if (Number.isFinite(e) && e >= 0) {
+          y.variety_rank = e;
+        }
+      }
       let g = await fetch(`${API_BASE_URL}/clips/start`, {
         method: "POST",
-        headers: u,
+        headers: p,
         credentials: "include",
         body: JSON.stringify(y)
       });
@@ -15113,7 +15137,7 @@ class ClipsStudio {
   }
   _multiTaskBatchMax() {
     if (typeof window.getMultiTaskBatchMax === "function") {
-      return Math.max(1, Number(window.getMultiTaskBatchMax()) || 1);
+      return Math.min(10, Math.max(1, Number(window.getMultiTaskBatchMax()) || 1));
     }
     return 1;
   }
@@ -15141,6 +15165,22 @@ class ClipsStudio {
       return t;
     }
   }
+  _extractMediaUrlsFromText(e) {
+    const t = String(e || "");
+    const i = [];
+    const push = e => {
+      const t = this._normalizeMultiTaskUrl(e).replace(/[.,);\]}>'"]+$/g, "");
+      if (!t || !this.isValidMediaUrl(t)) return;
+      i.push(t);
+    };
+    const n = t.match(/https?:\/\/[^\s<>"']+/gi) || [];
+    n.forEach(push);
+    if (!i.length) {
+      t.split(/[\n\r\t,;]+/).map(e => e.trim()).filter(Boolean).forEach(push);
+    }
+    if (!i.length && this.isValidMediaUrl(t.trim())) push(t.trim());
+    return i.slice(0, 10);
+  }
   onMultiTaskToggled(e) {
     if (!e) this.clearMultiTaskUrls(); else this._renderMultiTaskChips();
     this.syncTemplateConfirmButton();
@@ -15153,19 +15193,14 @@ class ClipsStudio {
       return false;
     }
     const n = this._multiTaskBatchMax();
-    const r = this._multiTaskVideoKey(i);
-    if ((this.multiTaskUrls || []).some(e => this._multiTaskVideoKey(e) === r)) {
-      showNotification("That link is already in Multi Task", "info");
-      this._renderMultiTaskChips();
-      return false;
-    }
     if ((this.multiTaskUrls || []).length >= n) {
-      showNotification(`Multi Task max is ${n} links on your plan`, "warning");
+      showNotification(`Multi Task max is ${n} links`, "warning");
       return false;
     }
     this.multiTaskUrls = [ ...this.multiTaskUrls || [], i ];
-    const s = document.getElementById("youtubeUrlInput");
-    if (s) s.value = "";
+    const r = document.getElementById("youtubeUrlInput");
+    if (r) r.value = "";
+    this._ensureMultiTaskCardMeta(i);
     this._renderMultiTaskChips();
     this.syncTemplateConfirmButton();
     if (t) {
@@ -15177,6 +15212,18 @@ class ClipsStudio {
       } catch (e) {}
     }
     return true;
+  }
+  addMultiTaskUrlsFromText(e, {fromPaste: t = false} = {}) {
+    if (!this._multiTaskActive()) return 0;
+    const i = this._extractMediaUrlsFromText(e);
+    if (!i.length) return 0;
+    let n = 0;
+    for (const e of i) {
+      if (this.addMultiTaskUrl(e, {
+        fromPaste: t
+      })) n += 1; else if ((this.multiTaskUrls || []).length >= this._multiTaskBatchMax()) break;
+    }
+    return n;
   }
   removeMultiTaskUrl(e) {
     const t = Number(e);
@@ -15206,6 +15253,72 @@ class ClipsStudio {
     }
     return 1;
   }
+  _multiTaskCardMeta(e) {
+    const t = this._normalizeMultiTaskUrl(e);
+    const i = this._multiTaskVideoKey(t);
+    const n = (this._multiTaskMetaCache || {})[i] || {};
+    const r = this.extractYouTubeVideoId?.(t) || (i.startsWith("yt:") ? i.slice(3) : "") || "";
+    const s = n.thumbnailUrl || (r ? `https://i.ytimg.com/vi/${r}/hqdefault.jpg` : "");
+    return {
+      key: i,
+      videoId: r,
+      title: n.title || "",
+      thumbnailUrl: s,
+      channel: n.channel || "",
+      loading: !!n.loading && !n.title
+    };
+  }
+  _ensureMultiTaskCardMeta(e) {
+    const t = this._normalizeMultiTaskUrl(e);
+    const i = this._multiTaskVideoKey(t);
+    if (!this._multiTaskMetaCache) this._multiTaskMetaCache = {};
+    const n = this._multiTaskMetaCache[i];
+    const r = this.extractYouTubeVideoId?.(t) || (i.startsWith("yt:") ? i.slice(3) : "") || "";
+    const s = r ? `https://i.ytimg.com/vi/${r}/hqdefault.jpg` : "";
+    if (n?.title) {
+      if (!n.thumbnailUrl && s) n.thumbnailUrl = s;
+      return;
+    }
+    if (n?.loading) return;
+    this._multiTaskMetaCache[i] = {
+      ...n || {},
+      thumbnailUrl: n?.thumbnailUrl || s,
+      loading: true
+    };
+    if (!r) {
+      this._multiTaskMetaCache[i].loading = false;
+      this._multiTaskMetaCache[i].title = this._chipLabelForUrl(t);
+      return;
+    }
+    const o = window.API_BASE_URL || "https://api.solisai.video/api";
+    const apply = (e, n, r) => {
+      this._multiTaskMetaCache[i] = {
+        title: e || this._chipLabelForUrl(t),
+        thumbnailUrl: n || s,
+        channel: r || "",
+        loading: false
+      };
+      this._renderMultiTaskChips();
+    };
+    fetch(`${o}/youtube/get-metadata/${encodeURIComponent(r)}`, {
+      credentials: "include",
+      signal: AbortSignal.timeout(4e3)
+    }).then(e => e.ok ? e.json() : null).then(e => {
+      if (e && (e.title || e.thumbnail || e.thumbnail_url)) {
+        apply(e.title, e.thumbnail_url || e.thumbnail || s, e.channel || e.uploader || e.author_name || "");
+        return;
+      }
+      return fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(t)}&format=json`, {
+        signal: AbortSignal.timeout(3500)
+      }).then(e => e.ok ? e.json() : null).then(e => {
+        if (e?.title) {
+          apply(e.title, e.thumbnail_url || s, e.author_name || "");
+        } else {
+          apply("", s, "");
+        }
+      });
+    }).catch(() => apply("", s, ""));
+  }
   _chipLabelForUrl(e) {
     const t = this._normalizeMultiTaskUrl(e);
     try {
@@ -15213,7 +15326,7 @@ class ClipsStudio {
       const i = e.hostname.replace(/^www\./, "");
       if (i.includes("youtu")) {
         const e = this._multiTaskVideoKey(t).replace(/^yt:/, "");
-        return e ? `YouTube · ${e.slice(0, 11)}` : "YouTube";
+        return e ? `YouTube video` : "YouTube";
       }
       return i || t.slice(0, 28);
     } catch (e) {
@@ -15238,7 +15351,14 @@ class ClipsStudio {
     }
     e.hidden = false;
     const s = this._multiTaskBatchMax();
-    t.innerHTML = n.map((e, t) => `\n            <div class="multi-task-chip" role="listitem" data-mt-idx="${t}" title="${sanitizeHTML(e)}">\n                <span class="multi-task-chip-label">${sanitizeHTML(this._chipLabelForUrl(e))}</span>\n                <button type="button" class="multi-task-chip-remove" data-mt-remove="${t}" aria-label="Remove link">×</button>\n            </div>\n        `).join("");
+    t.innerHTML = n.map((e, t) => {
+      const i = this._multiTaskCardMeta(e);
+      const n = i.title || (i.loading ? "Loading…" : this._chipLabelForUrl(e));
+      const r = i.thumbnailUrl ? `<img class="multi-task-card-thumb" src="${sanitizeHTML(i.thumbnailUrl)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : `<div class="multi-task-card-thumb is-skeleton" aria-hidden="true"></div>`;
+      const s = i.channel || (i.videoId ? `YouTube · ${i.videoId.slice(0, 11)}` : "Video link");
+      return `\n            <div class="multi-task-card" role="listitem" data-mt-idx="${t}" title="${sanitizeHTML(e)}">\n                <span class="multi-task-card-num" aria-hidden="true">${t + 1}</span>\n                <button type="button" class="multi-task-card-remove" data-mt-remove="${t}" aria-label="Remove link ${t + 1}">×</button>\n                ${r}\n                <div class="multi-task-card-body">\n                    <p class="multi-task-card-title">${sanitizeHTML(n)}</p>\n                    <p class="multi-task-card-sub">${sanitizeHTML(s)}</p>\n                </div>\n            </div>`;
+    }).join("");
+    n.forEach(e => this._ensureMultiTaskCardMeta(e));
     t.querySelectorAll("[data-mt-remove]").forEach(e => {
       e.addEventListener("click", t => {
         t.preventDefault();
@@ -15248,7 +15368,7 @@ class ClipsStudio {
     });
     if (i) {
       i.hidden = false;
-      i.textContent = `${n.length} / ${s} links · ${n.length}× upload when you generate`;
+      i.textContent = `${n.length} / ${s} · ${n.length}× upload when you generate`;
     }
   }
   _resolveBatchUrlsForSubmit() {
@@ -17804,10 +17924,10 @@ class ClipsStudio {
       const l = performance.now();
       const c = e.clientY - n;
       const d = peekY();
-      let p = Math.min(d, Math.max(0, r + c));
-      t.style.transform = `translateY(${p}px)`;
-      const u = Math.max(1, l - o);
-      a = (e.clientY - s) / u;
+      let u = Math.min(d, Math.max(0, r + c));
+      t.style.transform = `translateY(${u}px)`;
+      const p = Math.max(1, l - o);
+      a = (e.clientY - s) / p;
       s = e.clientY;
       o = l;
     };
@@ -18324,8 +18444,8 @@ async function startClipCompilation(e) {
     let l = false;
     let c = 0;
     const d = 300;
-    let p = Date.now();
-    let u = null;
+    let u = Date.now();
+    let p = null;
     while (!l && c < d) {
       c++;
       try {
@@ -18355,12 +18475,12 @@ async function startClipCompilation(e) {
             const t = e[i] || `${i}...`;
             s.updateProgress(o, r, t);
           }
-          const a = Date.now() - p;
+          const a = Date.now() - u;
           const c = a / 1e3;
-          if (r > 0 && !u) {
-            u = c / r * 100;
+          if (r > 0 && !p) {
+            p = c / r * 100;
           }
-          const d = u ? u * (100 - r) / 100 * 1e3 : 0;
+          const d = p ? p * (100 - r) / 100 * 1e3 : 0;
           const m = Math.floor(d / 6e4);
           const f = Math.floor(d % 6e4 / 1e3);
           const y = document.getElementById("clipStatus");

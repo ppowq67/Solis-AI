@@ -48,7 +48,7 @@
     <link rel="stylesheet" href="/style/ss/ios-pill-nav.css?v=29">
     <link rel="stylesheet" href="/style/ss/mobile-nav.css?v=43">
     <link rel="stylesheet" href="/style/ss/customize.css?v=27">
-    <link rel="stylesheet" href="/style/ss/clips.css?v=260">
+    <link rel="stylesheet" href="/style/ss/clips.css?v=262">
     <link rel="stylesheet" href="/style/ss/profile.css?v=34">
     <link rel="stylesheet" href="/style/ss/tasks-panel-v2-demo.css?v=18">
     <link rel="stylesheet" href="/style/ss/solis-gen-stage.css?v=54">
@@ -76,10 +76,10 @@
     <script src="/js/payment/portal-manager.js?v=7"></script>
     <script src="/js/payment/payment-success.js?v=2"></script>
     <script src="/js/payment/platform-connections.js?v=7"></script>
-    <script src="/js/ui/plan-selector.js?v=75"></script>
+    <script src="/js/ui/plan-selector.js?v=77"></script>
     <script src="/js/core/video-preview-system.js?v=2"></script>
     <script src="/js/s_new/clip-card.js?v=29"></script>
-    <script src="/js/s.js?v=351"></script>
+    <script src="/js/s.js?v=352"></script>
     <script src="/js/s_new/silence-cut-suggest.js?v=4"></script>
     <script src="/js/s_new/silencer.js?v=14"></script>
     <script src="/js/s_new/improve-clip.js?v=30"></script>
@@ -1074,42 +1074,114 @@
     </aside>
     <script>
     (function initImprovePromo() {
-        const KEY = 'solis_improve_promo_dismissed_v4';
         const el = document.getElementById('improvePromo');
         const btn = document.getElementById('improvePromoDismiss');
         if (!el) return;
-        try {
-            sessionStorage.removeItem('solis_improve_promo_dismissed_v1');
-            sessionStorage.removeItem('solis_improve_promo_dismissed_v2');
-            sessionStorage.removeItem('solis_improve_promo_dismissed_v3');
-        } catch (_) { /* ignore */ }
-        try {
-            if (sessionStorage.getItem(KEY) === '1') {
+
+        const legacyKeys = [
+            'solis_improve_promo_dismissed_v1',
+            'solis_improve_promo_dismissed_v2',
+            'solis_improve_promo_dismissed_v3',
+            'solis_improve_promo_dismissed_v4',
+            'solis_improve_promo_dismissed_v5',
+        ];
+
+        function userId() {
+            try {
+                const u = window.currentUser || JSON.parse(localStorage.getItem('currentUser') || 'null');
+                return String(u?.id || u?.user_id || '').trim();
+            } catch (_) {
+                return '';
+            }
+        }
+
+        function storageKey(uid) {
+            return uid
+                ? `solis_improve_promo_seen_v1_u${uid}`
+                : 'solis_improve_promo_seen_v1_anon';
+        }
+
+        function hasSeen(uid) {
+            try {
+                if (localStorage.getItem(storageKey(uid)) === '1') return true;
+                if (localStorage.getItem('solis_improve_promo_seen_v1') === '1') return true;
+                for (const k of legacyKeys) {
+                    if (sessionStorage.getItem(k) === '1' || localStorage.getItem(k) === '1') {
+                        markSeen(uid);
+                        return true;
+                    }
+                }
+            } catch (_) { /* ignore */ }
+            return false;
+        }
+
+        function markSeen(uid) {
+            try {
+                localStorage.setItem(storageKey(uid), '1');
+                localStorage.setItem('solis_improve_promo_seen_v1', '1');
+                if (uid) localStorage.setItem(storageKey(''), '1'); // anon too
+            } catch (_) { /* ignore */ }
+            try {
+                for (const k of legacyKeys) {
+                    sessionStorage.removeItem(k);
+                    localStorage.removeItem(k);
+                }
+            } catch (_) { /* ignore */ }
+        }
+
+        function hideNow(animate) {
+            if (animate) {
+                el.classList.add('is-out');
+                setTimeout(() => {
+                    el.hidden = true;
+                    el.setAttribute('hidden', '');
+                }, 280);
+            } else {
                 el.hidden = true;
                 el.setAttribute('hidden', '');
-                return;
             }
-        } catch (_) { /* ignore */ }
-        el.hidden = false;
-        el.removeAttribute('hidden');
+        }
+
+        function showNow() {
+            el.hidden = false;
+            el.removeAttribute('hidden');
+            el.classList.remove('is-out');
+        }
+
+        function syncVisibility() {
+            const uid = userId();
+            if (hasSeen(uid)) {
+                hideNow(false);
+                return false;
+            }
+            showNow();
+            return true;
+        }
+
+        syncVisibility();
+        let tries = 0;
+        const boot = setInterval(() => {
+            tries += 1;
+            syncVisibility();
+            if (userId() || tries >= 40) clearInterval(boot);
+        }, 250);
+
         btn?.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            el.classList.add('is-out');
-            setTimeout(() => {
-                el.hidden = true;
-                el.setAttribute('hidden', '');
-            }, 280);
-            try { sessionStorage.setItem(KEY, '1'); } catch (_) { /* ignore */ }
+            markSeen(userId());
+            hideNow(true);
         });
-        const sync = () => {
+
+        const syncModal = () => {
+            if (el.hidden) return;
             const previewOn = document.getElementById('templatePreviewModal')?.classList.contains('active');
             const genOn = document.getElementById('solisGenStage')?.classList.contains('is-open')
                 || document.getElementById('solisGenStage')?.getAttribute('aria-hidden') === 'false';
             el.classList.toggle('is-hidden-by-modal', Boolean(previewOn || genOn));
         };
-        sync();
-        setInterval(sync, 800);
+        syncModal();
+        setInterval(syncModal, 800);
     })();
     </script>
 
@@ -4646,6 +4718,7 @@
                                 <div class="plan-effort-mode-row plan-effort-mode-row--multi" id="planMultiTaskRow" data-on="0">
                                     <div class="plan-effort-mode-copy">
                                         <span class="plan-effort-mode-title" id="planMultiTaskTitle">Multi Task</span>
+                                        <span class="plan-effort-mode-hint is-collapsed" id="planMultiTaskHint">Paste multiple URLs and do tasks simultaneously</span>
                                     </div>
                                     <div class="plan-effort-advanced-switch">
                                         <button
@@ -4778,7 +4851,7 @@
             </div>
 
             <div class="multi-task-tray" id="multiTaskTray" hidden>
-                <div class="multi-task-chips" id="multiTaskChips" role="list" aria-label="Multi Task links"></div>
+                <div class="multi-task-cards" id="multiTaskChips" role="list" aria-label="Multi Task links"></div>
                 <p class="multi-task-meta" id="multiTaskMeta" hidden></p>
             </div>
 
@@ -17035,7 +17108,7 @@
         <header class="solis-upgrade-modal-head">
             <p class="solis-upgrade-modal-eyebrow" id="solisUpgradeEyebrow" data-copy-watermark="Upgrade" data-copy-quota="Out of uploads" data-copy-multitask="Prime feature">Upgrade</p>
             <h2 class="solis-upgrade-modal-title" id="solisUpgradeTitle" data-copy-watermark="Export without the watermark" data-copy-quota="Keep creating without the wait" data-copy-multitask="Paste several links at once">Export without the watermark</h2>
-            <p class="solis-upgrade-modal-sub" id="solisUpgradeSub" data-copy-watermark="Free keeps the Solis mark on every clip. Paid removes it and unlocks cleaner, client-ready exports." data-copy-quota="You have used today's free uploads. Paid unlocks more daily generations, no watermark, and cleaner exports." data-copy-multitask="Multi Task is on Prime and Elite. Queue up to 3 videos, pick one template, and generate them together.">Free keeps the Solis mark on every clip. Paid removes it and unlocks cleaner, client-ready exports.</p>
+            <p class="solis-upgrade-modal-sub" id="solisUpgradeSub" data-copy-watermark="Free keeps the Solis mark on every clip. Paid removes it and unlocks cleaner, client-ready exports." data-copy-quota="You have used today's free uploads. Paid unlocks more daily generations, no watermark, and cleaner exports." data-copy-multitask="Multi Task is on Prime and Elite. Queue up to 10 videos, pick one template, and generate them together.">Free keeps the Solis mark on every clip. Paid removes it and unlocks cleaner, client-ready exports.</p>
             <div class="solis-upgrade-billing" role="group" aria-label="Billing period">
                 <button type="button" class="solis-upgrade-billing-opt" data-billing="full" id="solisUpgradeBillingFull">Monthly</button>
                 <button type="button" class="solis-upgrade-billing-opt is-active" data-billing="launch" id="solisUpgradeBillingLaunch" aria-pressed="true">
@@ -17106,7 +17179,7 @@
                 data-note-launch-multitask="First 2 months at launch price, then $23.99/mo"
                 data-features-watermark="No Solis watermark|5 uploads / day|Up to 3 clips per upload|1080p export|Unlimited library clips"
                 data-features-quota="No Solis watermark|5 uploads / day|Up to 3 clips per upload|1080p export|Unlimited library clips"
-                data-features-multitask="Multi Task — up to 3 links|Priority render queue|No Solis watermark|More daily uploads|1080p export">
+                data-features-multitask="Multi Task - up to 10 links|Priority render queue|No Solis watermark|More daily uploads|1080p export">
                 <span class="solis-upgrade-card-ribbon">Recommended</span>
                 <div class="solis-upgrade-card-body">
                     <div class="solis-upgrade-card-topline">

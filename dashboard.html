@@ -48,7 +48,7 @@
     <link rel="stylesheet" href="/style/ss/ios-pill-nav.css?v=29">
     <link rel="stylesheet" href="/style/ss/mobile-nav.css?v=43">
     <link rel="stylesheet" href="/style/ss/customize.css?v=27">
-    <link rel="stylesheet" href="/style/ss/clips.css?v=258">
+    <link rel="stylesheet" href="/style/ss/clips.css?v=260">
     <link rel="stylesheet" href="/style/ss/profile.css?v=34">
     <link rel="stylesheet" href="/style/ss/tasks-panel-v2-demo.css?v=18">
     <link rel="stylesheet" href="/style/ss/solis-gen-stage.css?v=54">
@@ -76,10 +76,10 @@
     <script src="/js/payment/portal-manager.js?v=7"></script>
     <script src="/js/payment/payment-success.js?v=2"></script>
     <script src="/js/payment/platform-connections.js?v=7"></script>
-    <script src="/js/ui/plan-selector.js?v=72"></script>
+    <script src="/js/ui/plan-selector.js?v=74"></script>
     <script src="/js/core/video-preview-system.js?v=2"></script>
     <script src="/js/s_new/clip-card.js?v=29"></script>
-    <script src="/js/s.js?v=348"></script>
+    <script src="/js/s.js?v=349"></script>
     <script src="/js/s_new/silence-cut-suggest.js?v=4"></script>
     <script src="/js/s_new/silencer.js?v=14"></script>
     <script src="/js/s_new/improve-clip.js?v=30"></script>
@@ -4643,6 +4643,23 @@
                                         </button>
                                     </div>
                                 </div>
+                                <div class="plan-effort-mode-row plan-effort-mode-row--multi" id="planMultiTaskRow" data-on="0">
+                                    <div class="plan-effort-mode-copy">
+                                        <span class="plan-effort-mode-title" id="planMultiTaskTitle">Multi Task</span>
+                                    </div>
+                                    <div class="plan-effort-advanced-switch">
+                                        <button
+                                            type="button"
+                                            class="stgToggle"
+                                            id="planMultiTaskToggle"
+                                            role="switch"
+                                            aria-checked="false"
+                                            aria-label="Multi Task"
+                                        >
+                                            <span class="stgToggleKnob" aria-hidden="true"></span>
+                                        </button>
+                                    </div>
+                                </div>
                                 <div class="plan-effort-advanced-body" id="planEffortAdvancedBody" hidden aria-hidden="true">
                                 <div class="plan-effort-advanced-inner">
                                 <button
@@ -4758,6 +4775,11 @@
                     </div>
                 </div>
             </div>
+            </div>
+
+            <div class="multi-task-tray" id="multiTaskTray" hidden>
+                <div class="multi-task-chips" id="multiTaskChips" role="list" aria-label="Multi Task links"></div>
+                <p class="multi-task-meta" id="multiTaskMeta" hidden></p>
             </div>
 
             <div class="url-quota-rail" id="urlQuotaRail" hidden>

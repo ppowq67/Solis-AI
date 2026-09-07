@@ -720,42 +720,73 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-      margin-top: 14px;
+      margin: 0 auto 18px;
     }
-    .billing-label {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-muted);
-      cursor: pointer;
-      user-select: none;
-      transition: color 0.2s;
-    }
-    .billing-label.is-active { color: var(--text-primary); font-weight: 700; }
-    .billing-label .save-chip {
-      display: inline-block;
-      margin-left: 6px;
-      padding: 2px 7px;
+    .billing-slider {
+      display: inline-grid;
+      grid-template-columns: 1fr 1fr;
+      position: relative;
+      padding: 4px;
       border-radius: 999px;
-      font-size: 10.5px;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      color: var(--solis-deep);
-      background: rgba(255, 106, 0, 0.12);
-      vertical-align: middle;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(0,0,0,0.08);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.8);
+      gap: 0;
+      min-width: min(280px, 86vw);
     }
-    .toggle-track {
-      width: 42px; height: 23px; border-radius: 100px;
-      background: rgba(0,0,0,0.18); position: relative; border: none; flex-shrink: 0;
-      transition: background 0.2s;
+    .billing-slider-thumb {
+      position: absolute;
+      top: 4px;
+      bottom: 4px;
+      left: 4px;
+      width: calc(50% - 4px);
+      border-radius: 999px;
+      background: var(--ink);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.14);
+      transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .billing-slider[data-interval="year"] .billing-slider-thumb {
+      transform: translateX(100%);
+    }
+    .billing-slider-btn {
+      position: relative;
+      z-index: 1;
+      appearance: none;
+      border: 0;
+      background: transparent;
       cursor: pointer;
-      padding: 0;
+      padding: 10px 14px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--text-muted);
+      border-radius: 999px;
+      transition: color 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      white-space: nowrap;
     }
-    .toggle-track[aria-checked="true"] { background: var(--ink); }
-    .toggle-knob { position: absolute; top: 3px; left: 3px; width: 17px; height: 17px; border-radius: 50%; background: #fff; transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 1px 2px rgba(0,0,0,0.18); }
-    .toggle-track[aria-checked="true"] .toggle-knob { transform: translateX(19px); }
+    .billing-slider-btn.is-active { color: #fff; }
+    .billing-slider-btn .save-chip {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(255,106,0,0.16);
+      color: var(--solis-deep);
+    }
+    .billing-slider-btn.is-active .save-chip {
+      background: rgba(255,255,255,0.18);
+      color: #fff;
+    }
     .hero-offer {
-      margin: 0 auto 8px;
+      margin: 10px auto 0;
       font-size: 13px;
       font-weight: 600;
       color: var(--solis-deep);
@@ -765,9 +796,6 @@
       color: var(--text-muted);
       font-weight: 500;
     }
-
-    .savings-callout { text-align: center; margin-top: 14px; font-size: 12.5px; color: var(--text-muted); height: 18px; transition: opacity 0.2s; }
-    .savings-callout strong { color: var(--solis-deep); font-family: var(--font-numeric); font-weight: 700; }
 
     .pricing-section { padding: 28px 20px 80px; margin-top: 12px; }
     .pricing-trust {
@@ -1677,9 +1705,8 @@
 
       .hero-title { font-size: clamp(22px, 6.2vw, 32px); letter-spacing: -0.04em; margin-bottom: 10px; }
       .hero-subtitle { font-size: clamp(11px, 3.1vw, 13.5px); margin-bottom: 10px; }
-      .toggle-track { width: 38px; height: 21px; }
-      .toggle-knob { width: 15px; height: 15px; }
-      .toggle-track[aria-checked="true"] .toggle-knob { transform: translateX(17px); }
+      .billing-slider { min-width: min(260px, 92vw); }
+      .billing-slider-btn { font-size: 12.5px; padding: 9px 12px; }
       .hero-offer { font-size: 12px; }
 
       .pricing-section { padding: 20px 16px 64px; margin-top: 8px; }
@@ -2099,17 +2126,18 @@
   <main>
     <section class="hero">
       <div class="hero-inner">
+        <div class="billing-wrap" role="group" aria-label="Billing period">
+          <div class="billing-slider" id="billingSlider" data-interval="month">
+            <span class="billing-slider-thumb" aria-hidden="true"></span>
+            <button type="button" class="billing-slider-btn is-active" data-interval="month" aria-pressed="true">Monthly</button>
+            <button type="button" class="billing-slider-btn" data-interval="year" aria-pressed="false">
+              Annual <span class="save-chip">−17%</span>
+            </button>
+          </div>
+        </div>
         <h1 class="hero-title">Simple pricing. <span class="text-solis-gradient">Serious output.</span></h1>
         <p class="hero-subtitle">Start free. Scale when clips are part of your workflow.</p>
         <p class="hero-offer">40% off Basic &amp; Prime <span>for your first 2 months</span></p>
-        <div class="billing-wrap" role="group" aria-label="Billing period">
-          <span class="billing-label is-active" data-interval="month">Monthly</span>
-          <button type="button" class="toggle-track" id="billingToggle" role="switch" aria-checked="false" aria-label="Switch to annual billing">
-            <span class="toggle-knob" aria-hidden="true"></span>
-          </button>
-          <span class="billing-label" data-interval="year">Annual <span class="save-chip">Save ~17%</span></span>
-        </div>
-        <p class="savings-callout" id="billingSavings" style="opacity:0" aria-hidden="true">Pay once a year — same limits, lower effective rate</p>
       </div>
     </section>
 
@@ -2181,6 +2209,7 @@
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>10</b>uploads per day</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>AI processes up to <b>120 minutes</b> per upload</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>Max quality</b> mode</li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>Multi Task</b> — paste several links at once</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>Unlimited</b> clips in library</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Export videos in <b>1440p</b></li>
           </ul>
@@ -2617,9 +2646,10 @@
           { feature: 'Full text customizer',        free: { t: 'yes' }, basic: { t: 'yes' }, prime: { t: 'yes' }, elite: { t: 'yes' } },
           { feature: 'Smart effort (Auto)',         free: { t: 'yes' }, basic: { t: 'yes' }, prime: { t: 'yes' }, elite: { t: 'yes' } },
           { feature: 'Max quality mode',            free: { t: 'no' }, basic: { t: 'no' }, prime: { t: 'yes' }, elite: { t: 'yes' } },
+          { feature: 'Multi Task (batch links)',    free: { t: 'no' }, basic: { t: 'no' }, prime: { t: 'text', v: 'Up to 3' }, elite: { t: 'text', v: 'Up to 5' } },
         ]},
         { group: 'Workflow', rows: [
-          { feature: 'Priority render queue',       free: { t: 'no' },  basic: { t: 'no' },  prime: { t: 'no' },  elite: { t: 'yes' } },
+          { feature: 'Priority render queue',       free: { t: 'no' },  basic: { t: 'no' },  prime: { t: 'yes' },  elite: { t: 'yes' } },
           { feature: 'Dedicated support channel',   free: { t: 'no' },  basic: { t: 'no' },  prime: { t: 'no' },  elite: { t: 'yes' } },
           { feature: 'Cancel anytime',              free: { t: 'yes' }, basic: { t: 'yes' }, prime: { t: 'yes' }, elite: { t: 'yes' } },
           { feature: 'Commercial usage license',    free: { t: 'no' },  basic: { t: 'yes' }, prime: { t: 'yes' }, elite: { t: 'yes' } },
@@ -2766,7 +2796,7 @@
   </script>
   <script src="/js/payment/payment-flow.js?v=17"></script>
   <script src="/js/s_new/qwqs.js?v=7"></script>
-  <script src="/js/payment/premium-page.js?v=8"></script>
+  <script src="/js/payment/premium-page.js?v=9"></script>
   <script>
     (function () {
       var params = new URLSearchParams(window.location.search);

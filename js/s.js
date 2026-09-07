@@ -378,12 +378,12 @@ const PreviewTimeline = (() => {
   let v = 0;
   let S = null;
   let _ = null;
-  let C = false;
-  let k = 0;
+  let k = false;
+  let C = 0;
   let L = 0;
+  let T = 0;
   let I = 0;
-  let P = 0;
-  let T = 1;
+  let P = 1;
   let E = [];
   let x = null;
   let M = [];
@@ -392,8 +392,8 @@ const PreviewTimeline = (() => {
   let R = -1;
   let U = 0;
   let D = 1;
-  let F = null;
-  let N = false;
+  let N = null;
+  let F = false;
   let $ = null;
   let O = 0;
   let j = null;
@@ -441,8 +441,8 @@ const PreviewTimeline = (() => {
     fe = document.getElementById("previewTimelinePlayhead");
   }
   function setHandlesUnlocked(e) {
-    N = !!e;
-    if (te) te.classList.toggle("handles-on", N);
+    F = !!e;
+    if (te) te.classList.toggle("handles-on", F);
   }
   function setRankingEditMode(e) {
     refreshEls();
@@ -548,7 +548,7 @@ const PreviewTimeline = (() => {
     if (r) {
       const e = (() => {
         const e = getSegmentBounds();
-        return e[j.index] / m * T;
+        return e[j.index] / m * P;
       })();
       r.style.transform = `translate3d(${e + n}px,0,0)`;
       r.style.zIndex = "5";
@@ -574,19 +574,19 @@ const PreviewTimeline = (() => {
   function cacheTrackMetrics() {
     if (!oe) return;
     const e = oe.getBoundingClientRect();
-    P = e.left;
-    T = Math.max(1, e.width);
+    I = e.left;
+    P = Math.max(1, e.width);
   }
   function timeFromClientX(e) {
     if (!m) return 0;
-    const t = (e - P) / T;
+    const t = (e - I) / P;
     return Math.max(0, Math.min(m, t * m));
   }
   function paintPlayheadOnly() {
     if (ne) ne.textContent = fmt(f);
-    if (!m || T <= 0 || !fe) return;
+    if (!m || P <= 0 || !fe) return;
     const e = Math.max(p, Math.min(u, f));
-    const t = e / m * T;
+    const t = e / m * P;
     fe.style.transform = `translate3d(${t}px,0,0) translateX(-50%)`;
   }
   function paintChrome({rebuildSegments: e = false} = {}) {
@@ -599,19 +599,19 @@ const PreviewTimeline = (() => {
       if (ne) ne.textContent = fmt(f);
       if (re) re.textContent = fmt(m || 0);
     }
-    if (!m || T <= 0) return;
-    const i = p / m * T;
-    const n = u / m * T;
+    if (!m || P <= 0) return;
+    const i = p / m * P;
+    const n = u / m * P;
     const r = Math.max(2, n - i);
     if (de) {
       de.style.width = `${r}px`;
       de.style.transform = `translate3d(${i}px,0,0)`;
     }
     if (le) le.style.width = `${i}px`;
-    if (ce) ce.style.width = `${Math.max(0, T - n)}px`;
+    if (ce) ce.style.width = `${Math.max(0, P - n)}px`;
     if (fe && !t) {
       const e = Math.max(p, Math.min(u, f));
-      const t = e / m * T;
+      const t = e / m * P;
       fe.style.transform = `translate3d(${t}px,0,0) translateX(-50%)`;
     }
     if (!t && oe) {
@@ -624,7 +624,7 @@ const PreviewTimeline = (() => {
   }
   let ye = "";
   function paintCutPreview() {
-    if (!ie || !m || T <= 0) return;
+    if (!ie || !m || P <= 0) return;
     let e = ie.querySelector(".preview-timeline-cut-preview");
     if (!B.length) {
       ye = "";
@@ -634,7 +634,7 @@ const PreviewTimeline = (() => {
       }
       return;
     }
-    const t = `${T}|${B.map(e => `${e.kind || "remove"}:${e.start}:${e.end}`).join(",")}`;
+    const t = `${P}|${B.map(e => `${e.kind || "remove"}:${e.start}:${e.end}`).join(",")}`;
     if (e && t === ye) return;
     ye = t;
     const i = B.some(e => (e.kind || "remove") !== "add");
@@ -650,8 +650,8 @@ const PreviewTimeline = (() => {
     e.innerHTML = "";
     const r = document.createDocumentFragment();
     for (const e of B) {
-      const t = e.start / m * T;
-      const i = Math.max(2, (e.end - e.start) / m * T);
+      const t = e.start / m * P;
+      const i = Math.max(2, (e.end - e.start) / m * P);
       const n = document.createElement("i");
       n.className = e.kind === "add" ? "is-add" : "is-remove";
       n.style.transform = `translate3d(${t}px,0,0)`;
@@ -662,21 +662,21 @@ const PreviewTimeline = (() => {
   }
   function flushPendingPreviewRegions() {
     if (!A) return;
-    if (!c || !m || T <= 0) return;
+    if (!c || !m || P <= 0) return;
     B = A;
     A = null;
     paintCutPreview();
   }
   let he = "";
   function paintSilenceCuts() {
-    if (!ie || !m || T <= 0) return;
+    if (!ie || !m || P <= 0) return;
     let e = ie.querySelector(".preview-timeline-silence-cuts");
     if (!M.length) {
       he = "";
       if (e) e.remove();
       return;
     }
-    const t = `${T}|${M.map(e => `${e.start}:${e.end}`).join(",")}`;
+    const t = `${P}|${M.map(e => `${e.start}:${e.end}`).join(",")}`;
     if (e && t === he) return;
     he = t;
     if (!e) {
@@ -688,8 +688,8 @@ const PreviewTimeline = (() => {
     e.innerHTML = "";
     const i = document.createDocumentFragment();
     for (const e of M) {
-      const t = e.start / m * T;
-      const n = Math.max(2, (e.end - e.start) / m * T);
+      const t = e.start / m * P;
+      const n = Math.max(2, (e.end - e.start) / m * P);
       const r = document.createElement("i");
       r.style.transform = `translate3d(${t}px,0,0)`;
       r.style.width = `${n}px`;
@@ -985,7 +985,7 @@ const PreviewTimeline = (() => {
     paintChrome();
     ae?.querySelectorAll(".preview-timeline-segment.is-selected").forEach(e => e.classList.remove("is-selected"));
     ae?.children?.[e]?.classList.add("is-selected");
-    if (!N) setHandlesUnlocked(true);
+    if (!F) setHandlesUnlocked(true);
     syncSegFocusClass();
     try {
       const i = document.getElementById("silencerNote");
@@ -1042,23 +1042,23 @@ const PreviewTimeline = (() => {
     E = E.filter(e => e > p + .04 && e < u - .04).sort((e, t) => e - t);
   }
   function paintSegmentMove(e) {
-    if (!j || !m || T <= 0) return;
+    if (!j || !m || P <= 0) return;
     if (isRankingEdit()) {
       paintSegmentReorderGhost(e);
       return;
     }
     const {index: t, startX: i, startA: n, startB: r} = j;
-    const o = (e - i) / T * m;
+    const o = (e - i) / P * m;
     applySegmentTimes(t, n + o, r + o);
     f = Math.max(p, Math.min(u, n + o));
-    const s = p / m * T;
-    const a = u / m * T;
+    const s = p / m * P;
+    const a = u / m * P;
     if (de) {
       de.style.width = `${Math.max(2, a - s)}px`;
       de.style.transform = `translate3d(${s}px,0,0)`;
     }
     if (le) le.style.width = `${s}px`;
-    if (ce) ce.style.width = `${Math.max(0, T - a)}px`;
+    if (ce) ce.style.width = `${Math.max(0, P - a)}px`;
     paintSegmentsFast();
   }
   function beginSegmentDrag() {
@@ -1085,7 +1085,7 @@ const PreviewTimeline = (() => {
     if (W) return;
     t.preventDefault();
     t.stopPropagation();
-    if (!N && !te?.classList.contains("is-ranking-edit")) {
+    if (!F && !te?.classList.contains("is-ranking-edit")) {
       setHandlesUnlocked(true);
     }
     cacheTrackMetrics();
@@ -1180,14 +1180,14 @@ const PreviewTimeline = (() => {
     customizeSegment(t.index);
   }
   function paintSegments(e) {
-    if (!ae || !m || T <= 0) return;
+    if (!ae || !m || P <= 0) return;
     const t = getSegmentBounds();
     ae.innerHTML = "";
     for (let i = 0; i < t.length - 1; i++) {
       const n = t[i];
       const r = t[i + 1];
-      let o = n / m * T;
-      let s = r / m * T;
+      let o = n / m * P;
+      let s = r / m * P;
       if (i > 0) o += ge / 2;
       if (i < t.length - 2) s -= ge / 2;
       const a = Math.max(8, s - o);
@@ -1214,7 +1214,7 @@ const PreviewTimeline = (() => {
       }
       const p = document.createElement("div");
       p.className = "preview-timeline-segment-film";
-      p.style.width = `${T}px`;
+      p.style.width = `${P}px`;
       p.style.transform = `translate3d(${-o}px,0,0)`;
       cloneFilmInto(p);
       c.appendChild(p);
@@ -1240,7 +1240,7 @@ const PreviewTimeline = (() => {
     syncSegFocusClass();
   }
   function paintSegmentsFast() {
-    if (!ae || !m || T <= 0) return;
+    if (!ae || !m || P <= 0) return;
     const e = Array.from(ae.children);
     const t = getSegmentBounds();
     if (e.length !== t.length - 1) {
@@ -1250,8 +1250,8 @@ const PreviewTimeline = (() => {
     for (let i = 0; i < t.length - 1; i++) {
       const n = t[i];
       const r = t[i + 1];
-      let o = n / m * T;
-      let s = r / m * T;
+      let o = n / m * P;
+      let s = r / m * P;
       if (i > 0) o += ge / 2;
       if (i < t.length - 2) s -= ge / 2;
       const a = Math.max(6, s - o);
@@ -1260,7 +1260,7 @@ const PreviewTimeline = (() => {
       l.style.transform = `translate3d(${o}px,0,0)`;
       const c = l.querySelector(".preview-timeline-segment-film");
       if (c) {
-        c.style.width = `${T}px`;
+        c.style.width = `${P}px`;
         c.style.transform = `translate3d(${-o}px,0,0)`;
       }
       const d = l.querySelector(".preview-timeline-handle.left");
@@ -1279,34 +1279,34 @@ const PreviewTimeline = (() => {
       u = e;
       return;
     }
-    if (F != null) {
-      const t = E.findIndex(e => Math.abs(e - F) < .05);
+    if (N != null) {
+      const t = E.findIndex(e => Math.abs(e - N) < .05);
       if (t >= 0) E[t] = e; else E.push(e);
-      F = e;
+      N = e;
     } else {
       E.push(e);
     }
     E.sort((e, t) => e - t);
   }
   function paintBoundFast(e) {
-    if (!m || T <= 0 || R < 0) return;
+    if (!m || P <= 0 || R < 0) return;
     const t = timeFromClientX(e);
     const i = Math.max(U, Math.min(D, t));
     applyBoundTime(i);
     f = i;
-    const n = p / m * T;
-    const r = u / m * T;
+    const n = p / m * P;
+    const r = u / m * P;
     if (de) {
       de.style.width = `${Math.max(2, r - n)}px`;
       de.style.transform = `translate3d(${n}px,0,0)`;
     }
     if (le) le.style.width = `${n}px`;
-    if (ce) ce.style.width = `${Math.max(0, T - r)}px`;
+    if (ce) ce.style.width = `${Math.max(0, P - r)}px`;
     paintSegmentsFast();
   }
   function startBoundDrag(t, i) {
-    if (!N && !te?.classList.contains("is-ranking-edit")) return;
-    if (!N) setHandlesUnlocked(true);
+    if (!F && !te?.classList.contains("is-ranking-edit")) return;
+    if (!F) setHandlesUnlocked(true);
     if (i.pointerType === "mouse" && i.button !== 0) return;
     i.preventDefault();
     i.stopPropagation();
@@ -1317,7 +1317,7 @@ const PreviewTimeline = (() => {
     R = t;
     U = t === 0 ? 0 : n[t - 1] + e;
     D = t === n.length - 1 ? m : n[t + 1] - e;
-    F = t > 0 && t < n.length - 1 ? n[t] : null;
+    N = t > 0 && t < n.length - 1 ? n[t] : null;
     y = l ? !l.paused : false;
     if (l && !l.paused) l.pause();
     oe?.classList.add("is-dragging", "is-trimming");
@@ -1330,7 +1330,7 @@ const PreviewTimeline = (() => {
     paintBoundFast(i.clientX);
   }
   function paintTrimFast(t) {
-    if (!m || T <= 0) return;
+    if (!m || P <= 0) return;
     if (d === "bound") {
       paintBoundFast(t);
       return;
@@ -1343,15 +1343,15 @@ const PreviewTimeline = (() => {
     } else {
       return;
     }
-    const n = p / m * T;
-    const r = u / m * T;
+    const n = p / m * P;
+    const r = u / m * P;
     const o = Math.max(2, r - n);
     if (de) {
       de.style.width = `${o}px`;
       de.style.transform = `translate3d(${n}px,0,0)`;
     }
     if (le) le.style.width = `${n}px`;
-    if (ce) ce.style.width = `${Math.max(0, T - r)}px`;
+    if (ce) ce.style.width = `${Math.max(0, P - r)}px`;
     paintSegmentsFast();
   }
   function scheduleSeek(e, t = false) {
@@ -1359,7 +1359,7 @@ const PreviewTimeline = (() => {
     _ = Math.max(0, Math.min(m || e, e));
     const i = performance.now();
     const n = d === "scrub" ? o : r;
-    const s = t ? 0 : Math.max(0, n - (i - k));
+    const s = t ? 0 : Math.max(0, n - (i - C));
     if (L) {
       clearTimeout(L);
       L = 0;
@@ -1374,7 +1374,7 @@ const PreviewTimeline = (() => {
     }
   }
   function flushSeek() {
-    if (!l || _ == null || C) return;
+    if (!l || _ == null || k) return;
     const e = _;
     _ = null;
     if (Math.abs((l.currentTime || 0) - e) < .012) {
@@ -1384,10 +1384,10 @@ const PreviewTimeline = (() => {
       }
       return;
     }
-    C = true;
-    k = performance.now();
+    k = true;
+    C = performance.now();
     const onSeeked = () => {
-      C = false;
+      k = false;
       l.removeEventListener("seeked", onSeeked);
       if (!d) {
         f = l.currentTime || f;
@@ -1399,7 +1399,7 @@ const PreviewTimeline = (() => {
     try {
       l.currentTime = e;
     } catch (e) {
-      C = false;
+      k = false;
     }
   }
   function waitEvent(e, t, i = 2e3) {
@@ -1599,7 +1599,7 @@ const PreviewTimeline = (() => {
     return null;
   }
   function clampPlayback() {
-    if (!l || !m || d || C) return;
+    if (!l || !m || d || k) return;
     const e = l.currentTime || 0;
     if (e < p - .02) {
       const e = !l.paused;
@@ -1705,7 +1705,7 @@ const PreviewTimeline = (() => {
     }
     d = null;
     R = -1;
-    F = null;
+    N = null;
     if (e === "start" || e === "end" || e === "bound") {
       f = Math.max(p, Math.min(u, f));
       if (p > .05 || u < m - .05) {
@@ -1728,8 +1728,8 @@ const PreviewTimeline = (() => {
     });
   }
   function startDrag(e, t) {
-    if ((e === "start" || e === "end" || e === "bound") && !N && !te?.classList.contains("is-ranking-edit")) return;
-    if ((e === "start" || e === "end" || e === "bound") && !N) {
+    if ((e === "start" || e === "end" || e === "bound") && !F && !te?.classList.contains("is-ranking-edit")) return;
+    if ((e === "start" || e === "end" || e === "bound") && !F) {
       setHandlesUnlocked(true);
     }
     if (t.pointerType === "mouse" && t.button !== 0) return;
@@ -2139,9 +2139,9 @@ const PreviewTimeline = (() => {
       clearTimeout(L);
       L = 0;
     }
-    if (I) {
-      clearTimeout(I);
-      I = 0;
+    if (T) {
+      clearTimeout(T);
+      T = 0;
     }
     if (b) {
       cancelAnimationFrame(b);
@@ -2158,7 +2158,7 @@ const PreviewTimeline = (() => {
     }
     S = null;
     _ = null;
-    C = false;
+    k = false;
     d = null;
     clearSegHold();
     j = null;
@@ -2175,7 +2175,7 @@ const PreviewTimeline = (() => {
     $ = null;
     M = [];
     B = [];
-    N = false;
+    F = false;
     if (te) {
       te.classList.remove("handles-on");
       te.classList.remove("is-ranking-edit");
@@ -2196,22 +2196,22 @@ const PreviewTimeline = (() => {
     hide();
   }
   function scheduleFilmstripBuild(e = 450) {
-    if (I) {
-      clearTimeout(I);
-      I = 0;
+    if (T) {
+      clearTimeout(T);
+      T = 0;
     }
     const run = () => {
-      I = 0;
+      T = 0;
       buildFilmstripFromVideo();
     };
     if (typeof requestIdleCallback === "function") {
-      I = setTimeout(() => {
+      T = setTimeout(() => {
         requestIdleCallback(() => run(), {
           timeout: 1200
         });
       }, e);
     } else {
-      I = setTimeout(run, e);
+      T = setTimeout(run, e);
     }
   }
   function seedDuration(e, t = {}) {
@@ -2538,7 +2538,7 @@ const PreviewTimeline = (() => {
     }
     i.sort((e, t) => e.start - t.start);
     B = i;
-    if (!c || !m || T <= 0) {
+    if (!c || !m || P <= 0) {
       A = i;
       if (l && Number.isFinite(l.duration) && l.duration > 0) {
         m = l.duration;
@@ -3355,16 +3355,16 @@ function bindFaceReframePanHandlers() {
     const v = e.closest(".ss-panel-crop-viewport") || b;
     const S = v.clientWidth || b.clientWidth || 1;
     const _ = v.clientHeight || b.clientHeight || 1;
-    const C = r[2];
-    const k = r[3];
-    const L = Math.max(S / Math.max(1, C), _ / Math.max(1, k));
-    const I = (l - i) / L;
-    const P = (c - n) / L;
-    let T = r[0] - I;
-    let E = r[1] - P;
-    T = Math.max(0, Math.min(g - C, T));
-    E = Math.max(0, Math.min(w - k, E));
-    m.faceCrop = [ T, E, C, k ];
+    const k = r[2];
+    const C = r[3];
+    const L = Math.max(S / Math.max(1, k), _ / Math.max(1, C));
+    const T = (l - i) / L;
+    const I = (c - n) / L;
+    let P = r[0] - T;
+    let E = r[1] - I;
+    P = Math.max(0, Math.min(g - k, P));
+    E = Math.max(0, Math.min(w - C, E));
+    m.faceCrop = [ P, E, k, C ];
     syncLibrarySplitscreenCropPreview();
   };
   const endPan = (t = null) => {
@@ -7446,6 +7446,8 @@ class ClipsStudio {
     this._pasteAutoSubmitT = null;
     this._lastAutoSubmittedUrl = "";
     this._lastAutoSubmittedAt = 0;
+    this.multiTaskUrls = [];
+    this._multiTaskBatchUrls = null;
     this.templates = {};
     this.isMonitoring = false;
     this.monitoringIntervals = new Map;
@@ -7720,12 +7722,23 @@ class ClipsStudio {
     });
     const e = document.getElementById("youtubeUrlInput");
     if (e) {
-      e.addEventListener("keypress", e => {
-        if (e.key === "Enter") {
-          e.preventDefault();
-          const t = document.getElementById("processUrlBtn");
-          if (t?.classList.contains("is-upgrade-cta")) {
+      e.addEventListener("keypress", t => {
+        if (t.key === "Enter") {
+          t.preventDefault();
+          const i = document.getElementById("processUrlBtn");
+          if (i?.classList.contains("is-upgrade-cta")) {
             this.openUrlSubmitUpgrade();
+            return;
+          }
+          if (this._multiTaskActive()) {
+            const t = e.value.trim();
+            if (t && this.isValidMediaUrl(t)) {
+              this.addMultiTaskUrl(t);
+              return;
+            }
+            if (this.getMultiTaskUrls().length) {
+              this.processYouTubeUrl();
+            }
             return;
           }
           this.processYouTubeUrl();
@@ -7742,7 +7755,15 @@ class ClipsStudio {
           } catch (e) {}
         }
       };
-      e.addEventListener("paste", () => {
+      e.addEventListener("paste", t => {
+        const i = (t.clipboardData || window.clipboardData)?.getData?.("text") || "";
+        if (this._multiTaskActive() && i && this.isValidMediaUrl(i.trim())) {
+          t.preventDefault();
+          this.addMultiTaskUrl(i.trim(), {
+            fromPaste: true
+          });
+          return;
+        }
         setTimeout(() => {
           try {
             const t = e.value.length;
@@ -7857,6 +7878,12 @@ class ClipsStudio {
             this.switchTab("create");
           } catch (e) {}
         }
+      }
+      if (this._multiTaskActive()) {
+        this.addMultiTaskUrl(t, {
+          fromPaste: true
+        });
+        return true;
       }
       i.value = t;
       try {
@@ -13311,7 +13338,26 @@ class ClipsStudio {
         })
       }).catch(() => {});
     } catch (e) {}
-    const s = document.getElementById("youtubeUrlInput")?.value.trim();
+    const s = document.getElementById("youtubeUrlInput")?.value.trim() || "";
+    let a = [];
+    if (Array.isArray(this._multiTaskBatchUrls) && this._multiTaskBatchUrls.length) {
+      a = [ ...this._multiTaskBatchUrls ];
+    } else if (this._multiTaskActive() && this.getMultiTaskUrls().length) {
+      a = this.getMultiTaskUrls();
+      if (s && this.isValidMediaUrl(s)) {
+        this.addMultiTaskUrl(s);
+        a = this.getMultiTaskUrls();
+      }
+    } else if (s) {
+      a = [ s ];
+    }
+    try {
+      if (!a.length) {
+        const e = sessionStorage.getItem("solis_batch_urls");
+        const t = e ? JSON.parse(e) : null;
+        if (Array.isArray(t) && t.length) a = t;
+      }
+    } catch (e) {}
     try {
       window.__solisPendingGenerateCaptions = typeof window.flushCaptionsForGenerate === "function" ? window.flushCaptionsForGenerate(t) : typeof window.collectSubtitleStyle === "function" ? window.collectSubtitleStyle() : null;
       if (window.__solisPendingGenerateCaptions) {
@@ -13394,20 +13440,50 @@ class ClipsStudio {
       window.__solisPendingGenerateRankingCustoms = null;
       window.__solisRankingStyleLock = null;
     }
-    if (!s) {
+    if (!a.length) {
       this.closeTemplatePreviewModal();
       this._armTemplateThenUrlFlow(t);
       return;
     }
-    if (!this.isValidMediaUrl(s)) {
-      showNotification(this.getMediaUrlError(s), "error");
+    for (const e of a) {
+      if (!this.isValidMediaUrl(e)) {
+        showNotification(this.getMediaUrlError(e), "error");
+        this.closeTemplatePreviewModal();
+        this._armTemplateThenUrlFlow(t);
+        return;
+      }
+    }
+    if (a.length > 1) {
+      try {
+        const e = await this._getCachedLimitCheck(true);
+        const t = a.length;
+        const i = Number(e?.daily?.remaining);
+        const n = Number(e?.monthly?.remaining);
+        if (Number.isFinite(i) && i < t) {
+          showNotification(`Multi Task needs ${t} uploads — you have ${Math.max(0, i)} left today`, "warning");
+          return;
+        }
+        if (Number.isFinite(n) && n < t) {
+          showNotification(`Multi Task needs ${t} uploads — you have ${Math.max(0, n)} left this month`, "warning");
+          return;
+        }
+        const r = Number(e?.concurrent_live || 0);
+        const o = Number(e?.concurrent_cap || this._multiTaskBatchMax() || 1);
+        if (r + t > o) {
+          showNotification(`Your plan allows ${o} at once — you have ${r} live and selected ${t}`, "warning");
+          return;
+        }
+      } catch (e) {}
       this.closeTemplatePreviewModal();
-      this._armTemplateThenUrlFlow(t);
+      this.selectedTemplate = t;
+      this._multiTaskBatchUrls = a;
+      await this.startMultiTaskBatch(a, t);
       return;
     }
+    const l = a[0];
     this.closeTemplatePreviewModal();
     this.selectedTemplate = t;
-    this.startClipProcessingWithSlots(s, t);
+    this.startClipProcessingWithSlots(l, t);
   }
   _armTemplateThenUrlFlow(e) {
     this.selectedTemplate = e;
@@ -13469,9 +13545,10 @@ class ClipsStudio {
       showNotification("Please select a template first", "error");
       return;
     }
-    const e = document.getElementById("youtubeUrlInput")?.value.trim();
-    if (!e) {
-      showNotification("Please enter a YouTube URL first", "error");
+    const e = this._resolveBatchUrlsForSubmit();
+    const t = e[0] || document.getElementById("youtubeUrlInput")?.value.trim();
+    if (!t) {
+      showNotification(this._multiTaskActive() ? "Paste at least one video link into Multi Task" : "Please enter a YouTube URL first", "error");
       return;
     }
     if (this._pendingDurationCheck) {
@@ -13483,7 +13560,7 @@ class ClipsStudio {
       }
       this._rememberVideoDuration(e);
     }
-    this.showTemplateConfirmation(this.selectedTemplate, e);
+    this.showTemplateConfirmation(this.selectedTemplate, t);
   }
   showTemplateConfirmation(e, t) {
     const i = this.templates[e];
@@ -13491,9 +13568,17 @@ class ClipsStudio {
       showNotification("Template not found", "error");
       return;
     }
-    const n = i.supportsSlotSystem ? "\n\n🎯 Using Slot System: New clips will fill from slot 5 upward" : "";
-    if (confirm(`Create "${i.name}" from this YouTube URL?\n\nURL: ${t}\n\n${i.description}\n${i.duration}${n}\n\nThis may take a few minutes to process.`)) {
-      this.startClipProcessingWithSlots(t, e);
+    const n = Array.isArray(this._multiTaskBatchUrls) && this._multiTaskBatchUrls.length > 1 ? this._multiTaskBatchUrls : this._multiTaskActive() && this.getMultiTaskUrls().length > 1 ? this.getMultiTaskUrls() : null;
+    const r = n ? n.length : 1;
+    const o = i.supportsSlotSystem ? "\n\n🎯 Using Slot System: New clips will fill from slot 5 upward" : "";
+    const s = r > 1 ? `\n\nMulti Task: ${r} links → ${r} uploads (1 credit each)` : "";
+    const a = r > 1 ? `Links: ${r} videos` : `URL: ${t}`;
+    if (confirm(`Create "${i.name}" from this YouTube URL?\n\n${a}\n\n${i.description}\n${i.duration}${s}${o}\n\nThis may take a few minutes to process.`)) {
+      if (r > 1) {
+        this.startMultiTaskBatch(n, e);
+      } else {
+        this.startClipProcessingWithSlots(t, e);
+      }
     }
   }
   cancelTemplateSelection() {
@@ -13552,21 +13637,25 @@ class ClipsStudio {
     if (e.dataset.applying === "1") return;
     if (document.getElementById("processUrlBtn")?.classList.contains("is-generating")) {
       e.disabled = true;
+      const t = this._multiTaskConfirmCount();
+      const i = t > 1 ? `Use Template · ${t}×` : "Use Template";
       if (typeof window.setConfirmUseTemplateLabel === "function") {
-        window.setConfirmUseTemplateLabel("Use Template");
+        window.setConfirmUseTemplateLabel(i);
       } else {
         const t = e.querySelector(".template-use-confirm-label");
-        if (t) t.textContent = "Use Template"; else e.textContent = "Use Template";
+        if (t) t.textContent = i; else e.textContent = i;
       }
       if (typeof window.syncUseTemplateFab === "function") window.syncUseTemplateFab();
       return;
     }
     e.disabled = false;
+    const t = this._multiTaskConfirmCount();
+    const i = t > 1 ? `Use Template · ${t}×` : "Use Template";
     if (typeof window.setConfirmUseTemplateLabel === "function") {
-      window.setConfirmUseTemplateLabel("Use Template");
+      window.setConfirmUseTemplateLabel(i);
     } else {
       const t = e.querySelector(".template-use-confirm-label");
-      if (t) t.textContent = "Use Template"; else e.textContent = "Use Template";
+      if (t) t.textContent = i; else e.textContent = i;
     }
     e.removeAttribute("aria-disabled");
     e.style.pointerEvents = "";
@@ -13709,59 +13798,108 @@ class ClipsStudio {
       return;
     }
     if (e?.block_reason === "in_progress" || e?.is_generating) {
-      showNotification("A video is already generating. Please wait for it to finish.", "warning");
+      const i = Number(e?.concurrent_live ?? t?.concurrent_live ?? 0);
+      const n = Number(e?.concurrent_cap ?? t?.concurrent_cap ?? 1);
+      if (Number.isFinite(i) && Number.isFinite(n) && i < n) {
+        showNotification(`You have ${i} generating — room for ${n - i} more on your plan.`, "info");
+        return;
+      }
+      showNotification(n > 1 ? `You already have ${i || n} generating (max ${n}). Wait for one to finish.` : "A video is already generating. Please wait for it to finish.", "warning");
       return;
     }
     showNotification("Cannot start a new upload right now. Try again shortly.", "warning");
   }
-  async startClipProcessingWithSlots(e, t) {
+  async startMultiTaskBatch(e, t) {
+    const i = (Array.isArray(e) ? e : []).map(e => this._normalizeMultiTaskUrl(e)).filter(e => e && this.isValidMediaUrl(e));
+    if (!i.length) {
+      showNotification("No valid Multi Task links to generate", "error");
+      return;
+    }
+    const n = this._multiTaskBatchMax();
+    if (i.length > n) {
+      showNotification(`Multi Task max is ${n} links on your plan`, "warning");
+      return;
+    }
+    showNotification(`Starting ${i.length} upload${i.length === 1 ? "" : "s"}…`, "info");
+    let r = 0;
+    for (let e = 0; e < i.length; e++) {
+      const n = await this.startClipProcessingWithSlots(i[e], t, {
+        batchMode: true,
+        batchIndex: e,
+        batchTotal: i.length,
+        forceDurationCheck: true,
+        skipCancelTemplate: e < i.length - 1
+      });
+      if (n !== false) r += 1;
+      if (e < i.length - 1) {
+        await new Promise(e => setTimeout(e, 120));
+      }
+    }
+    this.clearMultiTaskUrls();
+    this._multiTaskBatchUrls = null;
     try {
-      const t = !(Number.isFinite(this._lastVideoDurationSeconds) && this._lastVideoDurationSeconds > 0);
+      sessionStorage.removeItem("solis_batch_urls");
+    } catch (e) {}
+    if (r > 0) {
+      showNotification(`Queued ${r} of ${i.length} Multi Task upload${i.length === 1 ? "" : "s"}`, r === i.length ? "success" : "warning");
+    }
+  }
+  async startClipProcessingWithSlots(e, t, i = {}) {
+    const n = Boolean(i.batchMode);
+    const r = Boolean(i.forceDurationCheck) || n;
+    try {
+      const t = r || !(Number.isFinite(this._lastVideoDurationSeconds) && this._lastVideoDurationSeconds > 0);
       if (t && e) {
+        if (r) {
+          this._lastVideoDurationSeconds = null;
+          this._lastVideoDurationMinutes = null;
+        }
         const t = await this._getCachedDurationCheck(e);
         if (t && t.allowed === false) {
-          return;
+          return false;
         }
         this._rememberVideoDuration(t);
       }
     } catch (e) {
       safeLog("Duration preflight failed (continuing):", e?.message || e);
     }
-    if (this._generationStartInFlight) return;
-    let i = null;
+    if (this._generationStartInFlight) return false;
+    let o = null;
     try {
-      const n = this.templates[t];
-      const r = n?.name || t;
-      i = Date.now();
+      const r = this.templates[t];
+      const s = r?.name || t;
+      const a = Number(i.batchIndex);
+      o = Number.isFinite(a) ? Date.now() + a + 1 : Date.now();
       this._generationStartInFlight = true;
       this._lockGenerationButtons();
       this.switchTab("library");
       if (typeof window.refreshPlanSelector === "function") {
         window.refreshPlanSelector().catch(() => {});
       }
-      const o = typeof initGenerationProgressSpinner === "function" ? initGenerationProgressSpinner() : typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
-      if (o) {
-        const e = document.getElementById("youtubeUrlInput")?.value?.trim() || "";
-        const i = (typeof this.resolveSourceVideoCardMeta === "function" ? this.resolveSourceVideoCardMeta(e) : {}) || {};
-        const n = i.title || (e ? "YouTube video" : "Your video");
-        const r = {
+      const l = typeof initGenerationProgressSpinner === "function" ? initGenerationProgressSpinner() : typeof getGenerationProgressSpinner === "function" ? getGenerationProgressSpinner() : window.generationProgressSpinner;
+      if (l) {
+        const r = (typeof this.resolveSourceVideoCardMeta === "function" ? this.resolveSourceVideoCardMeta(e) : {}) || {};
+        const o = r.title || (e ? "YouTube video" : "Your video");
+        const s = {
           ...t === "splitscreen" && typeof window.getSplitscreenConfig === "function" ? {
             secondaryType: window.getSplitscreenConfig().splitscreen_secondary_type
           } : {},
-          videoTitle: n,
-          title: n,
-          thumbnailUrl: i.thumbnailUrl || null,
-          videoId: i.videoId || null
+          videoTitle: o,
+          title: o,
+          thumbnailUrl: r.thumbnailUrl || null,
+          videoId: r.videoId || null
         };
-        o.beginOptimisticGeneration("Starting...", t, r);
+        if (!n || i.batchIndex === 0 || !l.optimisticPending) {
+          l.beginOptimisticGeneration("Starting...", t, s);
+        }
       }
-      const s = {
-        id: i,
+      const c = {
+        id: o,
         projectId: null,
         optimistic: true,
-        name: `${r} from YouTube`,
+        name: `${s} from YouTube`,
         template: t,
-        templateName: r,
+        templateName: s,
         status: "processing",
         progress: 0,
         message: "Starting...",
@@ -13771,14 +13909,14 @@ class ClipsStudio {
         useSlotSystem: true,
         isSlotSystem: true
       };
-      this.addProcessingItem(s);
-      const a = document.getElementById("watermarkToggle");
-      const l = a ? a.checked : false;
-      const c = getAuthHeaders();
-      let d = null;
-      let p = null;
+      this.addProcessingItem(c);
+      const d = document.getElementById("watermarkToggle");
+      const p = d ? d.checked : false;
+      const u = getAuthHeaders();
+      let m = null;
+      let f = null;
       if (window.customizer && typeof window.customizer.collectCustomizations === "function") {
-        d = window.customizer.collectCustomizations();
+        m = window.customizer.collectCustomizations();
       }
       if (t === "ranked_compilation") {
         const mergeStyleMaps = (...e) => {
@@ -13835,53 +13973,53 @@ class ClipsStudio {
         } catch (e) {
           n = null;
         }
-        p = mergeStyleMaps(i, e, n, window.__solisPendingGenerateRankingCustoms, window.__solisRankingStyleLock, t);
+        f = mergeStyleMaps(i, e, n, window.__solisPendingGenerateRankingCustoms, window.__solisRankingStyleLock, t);
         const countFonts = e => {
           if (!e || typeof e !== "object") return 0;
           return Object.entries(e).filter(([e, t]) => e !== "__ranking_layout" && t && typeof t === "object" && t.font).length;
         };
-        if (countFonts(p) === 0) {
-          const n = mergeStyleMaps(p, i, e, t, window.__solisRankingStyleLock, window.rankingCustomizer?.customizations);
+        if (countFonts(f) === 0) {
+          const n = mergeStyleMaps(f, i, e, t, window.__solisRankingStyleLock, window.rankingCustomizer?.customizations);
           if (countFonts(n) > 0) {
-            p = n;
+            f = n;
             safeLog("[RankingStyles] Rescued fonts after empty merge:", countFonts(n));
           }
         }
         window.__solisPendingGenerateRankingCustoms = null;
         try {
-          sessionStorage.setItem("solisPendingRankingCustoms", JSON.stringify(p || {}));
-          const e = countFonts(p);
+          sessionStorage.setItem("solisPendingRankingCustoms", JSON.stringify(f || {}));
+          const e = countFonts(f);
           const i = countFonts(t);
           if (e > 0) {
-            sessionStorage.setItem("solisRankingStyleLock", JSON.stringify(p || {}));
-            window.__solisRankingStyleLock = p;
+            sessionStorage.setItem("solisRankingStyleLock", JSON.stringify(f || {}));
+            window.__solisRankingStyleLock = f;
           } else if (i > 0) {
-            p = mergeStyleMaps(p, t);
+            f = mergeStyleMaps(f, t);
             safeLog("[RankingStyles] Kept prior style lock fonts:", i);
           } else {
-            sessionStorage.setItem("solisRankingStyleLock", JSON.stringify(p || {}));
-            window.__solisRankingStyleLock = p;
+            sessionStorage.setItem("solisRankingStyleLock", JSON.stringify(f || {}));
+            window.__solisRankingStyleLock = f;
           }
         } catch (e) {}
-        if (!p || !Object.keys(p).length) {
-          p = {
+        if (!f || !Object.keys(f).length) {
+          f = {
             __ranking_layout: window.__solisRankingLayout || {}
           };
         }
         if (typeof window.rankingCustomizer.ensureGeneratePayload === "function") {
-          p = window.rankingCustomizer.ensureGeneratePayload(p);
+          f = window.rankingCustomizer.ensureGeneratePayload(f);
         }
       }
       if (t !== "ranked_compilation") {
-        p = null;
+        f = null;
       }
-      if (t === "ranked_compilation" && p) {
+      if (t === "ranked_compilation" && f) {
         try {
           if (typeof window.rankingCustomizer?.ensureGeneratePayload === "function") {
-            p = window.rankingCustomizer.ensureGeneratePayload(p);
+            f = window.rankingCustomizer.ensureGeneratePayload(f);
           }
-          const e = Object.entries(p).filter(([e, t]) => e !== "__ranking_layout" && t && t.font).map(([e, t]) => `${e}:${t.font}`);
-          const t = Object.entries(p).filter(([e, t]) => e !== "__ranking_layout" && t && t.color).map(([e, t]) => `${e}:rgb(${(t.color || []).slice(0, 3).join(",")})`);
+          const e = Object.entries(f).filter(([e, t]) => e !== "__ranking_layout" && t && t.font).map(([e, t]) => `${e}:${t.font}`);
+          const t = Object.entries(f).filter(([e, t]) => e !== "__ranking_layout" && t && t.color).map(([e, t]) => `${e}:rgb(${(t.color || []).slice(0, 3).join(",")})`);
           safeLog("[RankingStyles] Sending fonts:", e.slice(0, 14));
           safeLog("[RankingStyles] Sending colors:", t.slice(0, 8));
           if (!e.length) {
@@ -13889,11 +14027,11 @@ class ClipsStudio {
           }
         } catch (e) {}
       }
-      const u = {
+      const y = {
         url: e,
         template_id: t,
         use_slot_system: true,
-        watermark_enabled: l,
+        watermark_enabled: p,
         watermark_variant: typeof this.getWatermarkVariant === "function" ? this.getWatermarkVariant() : localStorage.getItem("solisWatermarkVariant") || "branded",
         effort: (typeof window.getSelectedEffortMode === "function" ? window.getSelectedEffortMode() : null) || "auto",
         ai_text_generation: window.solisAiTitleGenerationEnabled !== false,
@@ -13905,19 +14043,19 @@ class ClipsStudio {
         window.__solisPendingGenerateHook = null;
         const t = e || (typeof window.collectAiHookFromPreview === "function" ? window.collectAiHookFromPreview() : null);
         if (t?.present && t.style) {
-          u.ai_hook_style = t.style;
+          y.ai_hook_style = t.style;
         } else if (window.solisAiTitleGenerationEnabled === false) {
-          u.ai_text_generation = false;
+          y.ai_text_generation = false;
         }
       } catch (e) {}
       if (Number.isFinite(this._lastVideoDurationSeconds) && this._lastVideoDurationSeconds > 0) {
-        u.video_duration_seconds = this._lastVideoDurationSeconds;
+        y.video_duration_seconds = this._lastVideoDurationSeconds;
       } else if (Number.isFinite(this._lastVideoDurationMinutes) && this._lastVideoDurationMinutes > 0) {
-        u.video_duration_minutes = this._lastVideoDurationMinutes;
+        y.video_duration_minutes = this._lastVideoDurationMinutes;
       }
-      const m = typeof window.getSolisPluginPrefs === "function" ? window.getSolisPluginPrefs() : null;
-      if (m) {
-        u.subtitles_enabled = !!m.auto_captions;
+      const h = typeof window.getSolisPluginPrefs === "function" ? window.getSolisPluginPrefs() : null;
+      if (h) {
+        y.subtitles_enabled = !!h.auto_captions;
       }
       try {
         let e = window.__solisPendingGenerateCaptions || null;
@@ -13936,23 +14074,23 @@ class ClipsStudio {
         const o = !!window.__solisCaptionsOptedIn || i || n;
         window.__solisCaptionsClearedForGenerate = false;
         if (r && !i && !n) {
-          u.subtitles_enabled = false;
-          delete u.caption_style;
+          y.subtitles_enabled = false;
+          delete y.caption_style;
           safeLog("Captions removed in preview — skipping burn");
         } else if (e && typeof e === "object" && o && e.enabled !== false) {
           const t = window.solisSmartCaptionsEnabled !== false;
-          u.caption_style = {
+          y.caption_style = {
             ...e,
             enabled: true,
             smart_captions: e.smart_captions !== undefined ? !!e.smart_captions : t,
             crisper_mode: (e.smart_captions !== undefined ? !!e.smart_captions : t) ? "verbatim" : "intended",
             remove_fillers: false
           };
-          u.subtitles_enabled = true;
-          safeLog("Sending caption style:", u.caption_style);
+          y.subtitles_enabled = true;
+          safeLog("Sending caption style:", y.caption_style);
         } else if (i && o) {
           const e = (typeof window.SolisMemory?.getCaptions === "function" ? window.SolisMemory.getCaptions() : null) || window.SolisMemory?.readState?.()?.captions || {};
-          u.caption_style = {
+          y.caption_style = {
             anim: e.anim || "karaoke",
             font: e.font || undefined,
             color: e.color || undefined,
@@ -13966,11 +14104,11 @@ class ClipsStudio {
               words_per_chunk: e.words_per_chunk
             } : {}
           };
-          u.subtitles_enabled = true;
-          safeLog("Subtitle block present — sending memory/default caption style", u.caption_style);
-        } else if (m?.auto_captions && !r) {
+          y.subtitles_enabled = true;
+          safeLog("Subtitle block present — sending memory/default caption style", y.caption_style);
+        } else if (h?.auto_captions && !r) {
           const e = (typeof window.SolisMemory?.getCaptions === "function" ? window.SolisMemory.getCaptions() : null) || window.SolisMemory?.readState?.()?.captions || {};
-          u.caption_style = {
+          y.caption_style = {
             anim: e.anim || "karaoke",
             font: e.font || undefined,
             color: e.color || undefined,
@@ -13984,80 +14122,80 @@ class ClipsStudio {
               words_per_chunk: e.words_per_chunk
             } : {}
           };
-          u.subtitles_enabled = true;
-          safeLog("Plugin auto_captions — memory caption style", u.caption_style);
+          y.subtitles_enabled = true;
+          safeLog("Plugin auto_captions — memory caption style", y.caption_style);
           safeLog("Plugin auto_captions on — default karaoke burn");
         } else {
-          u.subtitles_enabled = false;
-          delete u.caption_style;
+          y.subtitles_enabled = false;
+          delete y.caption_style;
           safeLog("No caption opt-in — skipping ASR/burn");
         }
       } catch (e) {
         safeLog("Caption style collect failed:", e?.message || e);
       }
-      if (d && Object.keys(d).length > 0) {
-        u.customizations = d;
-        safeLog("ðŸ“ Sending customizations with video generation:", d);
+      if (m && Object.keys(m).length > 0) {
+        y.customizations = m;
+        safeLog("ðŸ“ Sending customizations with video generation:", m);
       }
-      if (p && Object.keys(p).length > 0) {
-        u.ranking_customizations = p;
-        u.ranking_style_lock = p;
-        safeLog("Sending ranking customizations:", Object.keys(p));
+      if (f && Object.keys(f).length > 0) {
+        y.ranking_customizations = f;
+        y.ranking_style_lock = f;
+        safeLog("Sending ranking customizations:", Object.keys(f));
       }
       if (t === "splitscreen" && typeof window.getSplitscreenConfig === "function") {
-        Object.assign(u, window.getSplitscreenConfig());
+        Object.assign(y, window.getSplitscreenConfig());
       }
       if ((t === "splitscreen" || t === "ranked_compilation") && typeof window.getMultiGenCount === "function") {
         const e = Math.max(1, Number(window.getMultiGenCount()) || 1);
-        u.clip_count = e;
-        u.series_mode = e > 1;
+        y.clip_count = e;
+        y.series_mode = e > 1;
       }
       if (typeof window.isClipIntentEnabled === "function" && window.isClipIntentEnabled()) {
         const e = typeof window.getClipIntentText === "function" ? window.getClipIntentText() : "";
         if (e) {
-          u.clip_intent = e;
+          y.clip_intent = e;
         }
       }
-      let f = await fetch(`${API_BASE_URL}/clips/start`, {
+      let g = await fetch(`${API_BASE_URL}/clips/start`, {
         method: "POST",
-        headers: c,
+        headers: u,
         credentials: "include",
-        body: JSON.stringify(u)
+        body: JSON.stringify(y)
       });
-      if (f.status === 403) {
-        const e = await f.clone().json().catch(() => ({}));
+      if (g.status === 403) {
+        const e = await g.clone().json().catch(() => ({}));
         if (e.code === "CSRF_INVALID" && typeof initializeCSRFToken === "function") {
           await initializeCSRFToken();
-          f = await fetch(`${API_BASE_URL}/clips/start`, {
+          g = await fetch(`${API_BASE_URL}/clips/start`, {
             method: "POST",
             headers: getAuthHeaders(),
             credentials: "include",
-            body: JSON.stringify(u)
+            body: JSON.stringify(y)
           });
         }
       }
-      if (f.status === 401) {
-        this._rollbackOptimisticStart(i, "Session expired. Please try again.");
+      if (g.status === 401) {
+        this._rollbackOptimisticStart(o, "Session expired. Please try again.");
         showNotification("Session expired. Please try again.", "error");
         return;
       }
-      if (!f.ok) {
-        const e = await f.json().catch(() => ({}));
-        if (f.status === 429) {
+      if (!g.ok) {
+        const e = await g.json().catch(() => ({}));
+        if (g.status === 429) {
           if (e.error_code === "CONCURRENT_GENERATION_BLOCKED") {
-            this._rollbackOptimisticStart(i, e.error || "Another generation is already running.");
+            this._rollbackOptimisticStart(o, e.error || "Another generation is already running.");
             showNotification(e.error, "error");
             return;
           }
           if (e.error_code === "GENERATION_COOLDOWN") {
-            this._rollbackOptimisticStart(i, e.error || "Please wait before starting another generation.");
+            this._rollbackOptimisticStart(o, e.error || "Please wait before starting another generation.");
             const t = e.remaining_seconds || e.cooldown_seconds || 30;
             startCooldownTimer(t);
             showNotification(e.error, "error");
             return;
           }
           if (e.error_code === "MAX_EFFORT_LIMIT_REACHED") {
-            this._rollbackOptimisticStart(i, e.error || "Max effort daily limit reached. Switch to Normal effort.");
+            this._rollbackOptimisticStart(o, e.error || "Max effort daily limit reached. Switch to Normal effort.");
             showNotification(e.error || "Max effort daily limit reached. Switch to Normal effort.", "error");
             try {
               if (typeof window.setSelectedEffortMode === "function") {
@@ -14070,7 +14208,7 @@ class ClipsStudio {
             return;
           }
           if (e.error_code === "DAILY_LIMIT_REACHED" || e.error_code === "MONTHLY_LIMIT_REACHED") {
-            this._rollbackOptimisticStart(i, e.error || "Generation limit reached — upgrade or wait for reset.");
+            this._rollbackOptimisticStart(o, e.error || "Generation limit reached — upgrade or wait for reset.");
             this._notifyGenerationBlock(null, e);
             try {
               if (typeof window.refreshPlanSelector === "function") {
@@ -14080,38 +14218,38 @@ class ClipsStudio {
             return;
           }
           if (e.error_code === "VIDEO_LIMIT_REACHED") {
-            this._rollbackOptimisticStart(i, e.error || "Library is full — free a slot or upgrade.");
+            this._rollbackOptimisticStart(o, e.error || "Library is full — free a slot or upgrade.");
             this._notifyGenerationBlock({
               storage_limit_reached: true,
               plan_type: e.plan_type
             }, e);
             return;
           }
-          this._rollbackOptimisticStart(i, e.error || "Rate limit reached. Please try again later.");
+          this._rollbackOptimisticStart(o, e.error || "Rate limit reached. Please try again later.");
           showNotification(e.error || "Rate limit reached. Please try again later.", "error");
           return;
         }
-        if (f.status === 503 && e.error_code === "SERVER_AT_CAPACITY") {
+        if (g.status === 503 && e.error_code === "SERVER_AT_CAPACITY") {
           const t = e.error || e.message || "Our servers are at capacity right now. Please try again in a few minutes or upload your video directly.";
-          this._rollbackOptimisticStart(i, t);
+          this._rollbackOptimisticStart(o, t);
           showNotification(t, "error");
           return;
         } else if (e.error_code === "VIDEO_TOO_LONG") {
           const t = e.video_minutes || 0;
-          const n = e.max_duration_minutes || 0;
-          const r = e.error || `Source exceeds the ${n}m safety limit (${t}m).`;
-          this._rollbackOptimisticStart(i, r);
-          showNotification(r, "error");
+          const i = e.max_duration_minutes || 0;
+          const n = e.error || `Source exceeds the ${i}m safety limit (${t}m).`;
+          this._rollbackOptimisticStart(o, n);
+          showNotification(n, "error");
           return;
         } else {
           const t = e.error || "Failed to start processing";
-          this._rollbackOptimisticStart(i, t);
+          this._rollbackOptimisticStart(o, t);
           showNotification(t, "error");
           throw new Error(t);
         }
       }
-      const y = await f.json();
-      this.currentProjectId = y.project_id;
+      const w = await g.json();
+      this.currentProjectId = w.project_id;
       try {
         window.solisQuotaDisplay?.markEverGenerated?.();
         if (typeof window.refreshPlanSelector === "function") {
@@ -14125,21 +14263,21 @@ class ClipsStudio {
         const e = await this.resolveWatermarkPolicy(true);
         this.applyWatermarkControls(e);
       } catch (e) {}
-      const h = this.processingItems.find(e => e.id === i);
-      if (h) {
-        h.projectId = this.currentProjectId;
-        h.optimistic = false;
-        h.templateName = y.template.name;
-        h.name = `${y.template.name} from YouTube`;
-        h.message = "Starting download...";
+      const b = this.processingItems.find(e => e.id === o);
+      if (b) {
+        b.projectId = this.currentProjectId;
+        b.optimistic = false;
+        b.templateName = w.template.name;
+        b.name = `${w.template.name} from YouTube`;
+        b.message = "Starting download...";
         this.saveProcessingItems();
       } else {
         const e = {
-          id: i,
+          id: o,
           projectId: this.currentProjectId,
-          name: `${y.template.name} from YouTube`,
+          name: `${w.template.name} from YouTube`,
           template: t,
-          templateName: y.template.name,
+          templateName: w.template.name,
           status: "processing",
           progress: 0,
           message: "Starting download...",
@@ -14151,12 +14289,11 @@ class ClipsStudio {
         };
         this.addProcessingItem(e);
       }
-      if (o) {
-        const e = document.getElementById("youtubeUrlInput")?.value?.trim() || "";
+      if (l) {
         const i = (typeof this.resolveSourceVideoCardMeta === "function" ? this.resolveSourceVideoCardMeta(e) : {}) || {};
-        const n = o.activeTemplateOptions || {};
+        const n = l.activeTemplateOptions || {};
         const r = i.title || n.videoTitle || n.title || "Your video";
-        const s = {
+        const o = {
           ...n,
           ...t === "splitscreen" && typeof window.getSplitscreenConfig === "function" ? {
             secondaryType: window.getSplitscreenConfig().splitscreen_secondary_type
@@ -14166,13 +14303,13 @@ class ClipsStudio {
           thumbnailUrl: i.thumbnailUrl || n.thumbnailUrl || null,
           videoId: i.videoId || n.videoId || null
         };
-        const a = y?.queue?.queue_status;
-        const l = Number(y?.queue?.users_ahead);
-        const c = a === "waiting" || Number.isFinite(l) && l > 0;
-        const d = y?.message || (c ? "We’re experiencing very high demand — your generation will be ready soon." : "Starting upload...");
-        o.startGeneration(y.project_id, d, t, s);
-        if (y?.queue) {
-          o.updateProgress(y.project_id, c ? 1 : 3, d, true, y.queue);
+        const s = w?.queue?.queue_status;
+        const a = Number(w?.queue?.users_ahead);
+        const c = s === "waiting" || Number.isFinite(a) && a > 0;
+        const d = w?.message || (c ? "We’re experiencing very high demand — your generation will be ready soon." : "Starting upload...");
+        l.startGeneration(w.project_id, d, t, o);
+        if (w?.queue) {
+          l.updateProgress(w.project_id, c ? 1 : 3, d, true, w.queue);
         }
       } else {
         console.warn("[GENERATION] Spinner not initialized! Trying fallback wrapper...");
@@ -14204,16 +14341,16 @@ class ClipsStudio {
           }
         }
       } catch (e) {}
-      if (solisWSClient && y.project_id) {
-        solisWSClient.registerTask(y.project_id, "processing");
+      if (solisWSClient && w.project_id) {
+        solisWSClient.registerTask(w.project_id, "processing");
       }
-      this.startMonitoring(i);
+      this.startMonitoring(o);
       this._generationStartInFlight = false;
       try {
         if (window.SolisMemory && typeof window.SolisMemory.recordFromGeneration === "function") {
           const e = t === "ranked_compilation" || String(t || "").toLowerCase().includes("rank");
-          const i = e ? p || d || null : null;
-          const n = e ? null : u && u.caption_style || null;
+          const i = e ? f || m || null : null;
+          const n = e ? null : y && y.caption_style || null;
           const r = t === "splitscreen" && typeof window.getSplitscreenConfig === "function" ? window.getSplitscreenConfig() : null;
           window.SolisMemory.recordFromGeneration(t, i, n, r);
         }
@@ -14221,11 +14358,15 @@ class ClipsStudio {
       try {
         this._noteSuccessfulGenerate(t);
       } catch (e) {}
-      this.cancelTemplateSelection();
+      if (!i.skipCancelTemplate) {
+        this.cancelTemplateSelection();
+      }
+      return true;
     } catch (e) {
-      this._rollbackOptimisticStart(i, e?.message ? `Failed to start: ${e.message}` : null);
+      this._rollbackOptimisticStart(o, e?.message ? `Failed to start: ${e.message}` : null);
       safeLog("startClipProcessingWithSlots error:", e);
       showNotification("Failed to start processing: " + e.message, "error");
+      return false;
     }
   }
   startMonitoring(e) {
@@ -14693,6 +14834,7 @@ class ClipsStudio {
     const t = e.quiet ? 380 : 60;
     this._pasteAutoSubmitT = setTimeout(() => {
       try {
+        if (this._multiTaskActive()) return;
         const e = document.getElementById("youtubeUrlInput")?.value.trim() || "";
         if (!e || !this.isValidMediaUrl(e)) return;
         if (this._urlAnalyzeInFlight || this._generationStartInFlight) return;
@@ -14861,46 +15003,208 @@ class ClipsStudio {
     });
     this._autoOpenedPreview = false;
   }
+  _multiTaskActive() {
+    return typeof window.isMultiTaskEnabled === "function" && !!window.isMultiTaskEnabled();
+  }
+  _multiTaskBatchMax() {
+    if (typeof window.getMultiTaskBatchMax === "function") {
+      return Math.max(1, Number(window.getMultiTaskBatchMax()) || 1);
+    }
+    return 1;
+  }
+  _normalizeMultiTaskUrl(e) {
+    return String(e || "").trim();
+  }
+  _multiTaskVideoKey(e) {
+    const t = this._normalizeMultiTaskUrl(e).toLowerCase();
+    try {
+      const e = new URL(t.startsWith("http") ? t : `https://${t}`);
+      const i = e.hostname.replace(/^www\./, "");
+      if (i.includes("youtu.be")) {
+        return `yt:${(e.pathname || "").replace(/^\//, "").split("/")[0]}`;
+      }
+      if (i.includes("youtube.com")) {
+        const t = e.searchParams.get("v");
+        if (t) return `yt:${t}`;
+        const i = (e.pathname || "").split("/").filter(Boolean);
+        if (i[0] === "shorts" || i[0] === "live" || i[0] === "embed") {
+          return `yt:${i[1] || i[0]}`;
+        }
+      }
+      return `${i}${e.pathname}${e.search}`;
+    } catch (e) {
+      return t;
+    }
+  }
+  onMultiTaskToggled(e) {
+    if (!e) this.clearMultiTaskUrls(); else this._renderMultiTaskChips();
+    this.syncTemplateConfirmButton();
+  }
+  addMultiTaskUrl(e, {fromPaste: t = false} = {}) {
+    if (!this._multiTaskActive()) return false;
+    const i = this._normalizeMultiTaskUrl(e);
+    if (!i || !this.isValidMediaUrl(i)) {
+      showNotification("Paste a valid video URL", "error");
+      return false;
+    }
+    const n = this._multiTaskBatchMax();
+    const r = this._multiTaskVideoKey(i);
+    if ((this.multiTaskUrls || []).some(e => this._multiTaskVideoKey(e) === r)) {
+      showNotification("That link is already in Multi Task", "info");
+      this._renderMultiTaskChips();
+      return false;
+    }
+    if ((this.multiTaskUrls || []).length >= n) {
+      showNotification(`Multi Task max is ${n} links on your plan`, "warning");
+      return false;
+    }
+    this.multiTaskUrls = [ ...this.multiTaskUrls || [], i ];
+    const o = document.getElementById("youtubeUrlInput");
+    if (o) o.value = "";
+    this._renderMultiTaskChips();
+    this.syncTemplateConfirmButton();
+    if (t) {
+      try {
+        this._getCachedDurationCheck(i);
+      } catch (e) {}
+      try {
+        this._softWakeModalWorker("multi_task_paste");
+      } catch (e) {}
+    }
+    return true;
+  }
+  removeMultiTaskUrl(e) {
+    const t = Number(e);
+    if (!Number.isFinite(t) || t < 0) return;
+    this.multiTaskUrls = (this.multiTaskUrls || []).filter((e, i) => i !== t);
+    this._renderMultiTaskChips();
+    this.syncTemplateConfirmButton();
+  }
+  clearMultiTaskUrls() {
+    this.multiTaskUrls = [];
+    this._multiTaskBatchUrls = null;
+    this._renderMultiTaskChips();
+  }
+  getMultiTaskUrls() {
+    return Array.isArray(this.multiTaskUrls) ? [ ...this.multiTaskUrls ] : [];
+  }
+  _multiTaskConfirmCount() {
+    if (Array.isArray(this._multiTaskBatchUrls) && this._multiTaskBatchUrls.length > 1) {
+      return this._multiTaskBatchUrls.length;
+    }
+    if (this._multiTaskActive()) {
+      const e = this.getMultiTaskUrls().length;
+      if (e > 1) return e;
+      if (e === 1) return 1;
+      const t = document.getElementById("youtubeUrlInput")?.value.trim() || "";
+      return t && this.isValidMediaUrl(t) ? 1 : e;
+    }
+    return 1;
+  }
+  _chipLabelForUrl(e) {
+    const t = this._normalizeMultiTaskUrl(e);
+    try {
+      const e = new URL(t.startsWith("http") ? t : `https://${t}`);
+      const i = e.hostname.replace(/^www\./, "");
+      if (i.includes("youtu")) {
+        const e = this._multiTaskVideoKey(t).replace(/^yt:/, "");
+        return e ? `YouTube · ${e.slice(0, 11)}` : "YouTube";
+      }
+      return i || t.slice(0, 28);
+    } catch (e) {
+      return t.slice(0, 28);
+    }
+  }
+  _renderMultiTaskChips() {
+    const e = document.getElementById("multiTaskTray");
+    const t = document.getElementById("multiTaskChips");
+    const i = document.getElementById("multiTaskMeta");
+    if (!e || !t) return;
+    const n = this.getMultiTaskUrls();
+    const r = this._multiTaskActive();
+    if (!r || !n.length) {
+      e.hidden = true;
+      t.innerHTML = "";
+      if (i) {
+        i.hidden = true;
+        i.textContent = "";
+      }
+      return;
+    }
+    e.hidden = false;
+    const o = this._multiTaskBatchMax();
+    t.innerHTML = n.map((e, t) => `\n            <div class="multi-task-chip" role="listitem" data-mt-idx="${t}" title="${sanitizeHTML(e)}">\n                <span class="multi-task-chip-label">${sanitizeHTML(this._chipLabelForUrl(e))}</span>\n                <button type="button" class="multi-task-chip-remove" data-mt-remove="${t}" aria-label="Remove link">×</button>\n            </div>\n        `).join("");
+    t.querySelectorAll("[data-mt-remove]").forEach(e => {
+      e.addEventListener("click", t => {
+        t.preventDefault();
+        t.stopPropagation();
+        this.removeMultiTaskUrl(e.getAttribute("data-mt-remove"));
+      });
+    });
+    if (i) {
+      i.hidden = false;
+      i.textContent = `${n.length} / ${o} links · ${n.length}× upload when you generate`;
+    }
+  }
+  _resolveBatchUrlsForSubmit() {
+    const e = document.getElementById("youtubeUrlInput")?.value.trim() || "";
+    if (this._multiTaskActive()) {
+      if (e && this.isValidMediaUrl(e)) {
+        this.addMultiTaskUrl(e);
+      }
+      const t = this.getMultiTaskUrls();
+      if (t.length) return t;
+    }
+    return e ? [ e ] : [];
+  }
   async processYouTubeUrl() {
     if (this._urlAnalyzeInFlight || this._generationStartInFlight) {
       return;
     }
-    if (document.getElementById("processUrlBtn")?.classList.contains("is-generating")) {
+    const e = document.getElementById("processUrlBtn")?.classList.contains("is-generating");
+    if (e && !this._multiTaskActive()) {
       showNotification("A video is already generating. Please wait for it to finish.", "warning");
       return;
     }
     if (typeof window.closePlanSelectorPopover === "function") {
       window.closePlanSelectorPopover(true);
     }
-    const e = Date.now();
-    if (e - this.lastYouTubeProcessTime < CONFIG.RATE_LIMITING.YOUTUBE_PROCESS_MIN_MS) {
+    const t = Date.now();
+    if (t - this.lastYouTubeProcessTime < CONFIG.RATE_LIMITING.YOUTUBE_PROCESS_MIN_MS) {
       showNotification("Please wait a moment before trying again", "warning");
       return;
     }
-    this.lastYouTubeProcessTime = e;
+    this.lastYouTubeProcessTime = t;
     this._urlAnalyzeInFlight = true;
     try {
-      const e = document.getElementById("youtubeUrlInput");
-      if (!e) return;
-      const t = e.value.trim();
-      if (t) {
-        sessionStorage.setItem("lastProcessedYouTubeUrl", t);
-      }
-      if (!t) {
-        showNotification("Please enter a video URL", "error");
+      const e = this._resolveBatchUrlsForSubmit();
+      if (!e.length) {
+        showNotification(this._multiTaskActive() ? "Paste at least one video link into Multi Task" : "Please enter a video URL", "error");
         return;
       }
-      if (!this.isValidMediaUrl(t)) {
-        showNotification(this.getMediaUrlError(t), "error");
-        return;
-      }
-      if (this.isShortFormUrl(t)) {
-        const e = await this.canUseShortFormUpload();
-        if (!e) {
-          this.showShortFormUploadModal();
+      for (const t of e) {
+        if (!this.isValidMediaUrl(t)) {
+          showNotification(this.getMediaUrlError(t), "error");
           return;
         }
+        if (this.isShortFormUrl(t)) {
+          const e = await this.canUseShortFormUpload();
+          if (!e) {
+            this.showShortFormUploadModal();
+            return;
+          }
+        }
       }
+      const t = e[0];
+      this._multiTaskBatchUrls = e.length > 1 ? e : null;
+      try {
+        sessionStorage.setItem("lastProcessedYouTubeUrl", t);
+        if (this._multiTaskBatchUrls) {
+          sessionStorage.setItem("solis_batch_urls", JSON.stringify(this._multiTaskBatchUrls));
+        } else {
+          sessionStorage.removeItem("solis_batch_urls");
+        }
+      } catch (e) {}
       this.toggleUrlButtonLoading(true);
       const i = this._getCachedDurationCheck(t);
       this._softWakeModalWorker("url_submit");
@@ -14910,14 +15214,28 @@ class ClipsStudio {
       if (n) {
         r.catch(() => null);
       }
+      const s = e.length;
       if (o) {
         try {
           if (typeof window.updateUrlQuotaRail === "function") {
             window.updateUrlQuotaRail(o);
           }
         } catch (e) {}
-        const e = o.daily?.remaining;
-        const t = o.monthly?.remaining;
+        const e = Number(o.daily?.remaining);
+        const t = Number(o.monthly?.remaining);
+        if (Number.isFinite(e) && e < s) {
+          if (s > 1) {
+            showNotification(`Multi Task needs ${s} uploads — you have ${Math.max(0, e)} left today`, "warning");
+          } else {
+            this.showUrlSubmitUpgradeCta();
+            try {
+              this.openWatermarkPlanPopover({
+                reason: "quota"
+              });
+            } catch (e) {}
+          }
+          return;
+        }
         if (o.daily_limit_reached || e === 0) {
           this.showUrlSubmitUpgradeCta();
           try {
@@ -14938,6 +15256,18 @@ class ClipsStudio {
               window.refreshPlanSelector();
             }
           } catch (e) {}
+          return;
+        }
+        if (Number.isFinite(t) && t < s) {
+          showNotification(s > 1 ? `Multi Task needs ${s} uploads — you have ${Math.max(0, t)} left this month` : "Monthly upload limit reached", "warning");
+          if (s <= 1) {
+            this.showUrlSubmitUpgradeCta();
+            try {
+              this.openWatermarkPlanPopover({
+                reason: "quota"
+              });
+            } catch (e) {}
+          }
           return;
         }
         if (o.monthly_limit_reached || o.monthly?.limit > 0 && t === 0) {
@@ -14967,33 +15297,40 @@ class ClipsStudio {
               window.syncStorageLimitsFromStatus(o);
             }
           } else if (o.is_generating || o.block_reason === "in_progress") {
-            showNotification("An upload may still be finishing. You can pick a template — we'll retry when you confirm.", "warning");
+            const e = Number(o.concurrent_live || 0);
+            const t = Number(o.concurrent_cap || 1);
+            if (e >= t) {
+              showNotification(t > 1 ? `You already have ${e} generating (max ${t}). Wait for one to finish.` : "An upload may still be finishing. You can pick a template — we'll retry when you confirm.", "warning");
+              if (s > 1 || t > 1) return;
+            } else if (t > 1) {
+              showNotification(`You have ${e} generating — room for ${Math.max(0, t - e)} more.`, "info");
+            }
           } else if ((o.generation?.cooldown_remaining_seconds || 0) > 0) {
             this._notifyGenerationBlock(o);
           }
         }
       }
-      const s = !!(this._awaitingUrlForTemplate && this.selectedTemplate && this.templates[this.selectedTemplate]);
-      let a = null;
+      const a = !!(this._awaitingUrlForTemplate && this.selectedTemplate && this.templates[this.selectedTemplate]);
+      let l = null;
       try {
-        a = await Promise.race([ i, new Promise(e => setTimeout(() => e({
+        l = await Promise.race([ i, new Promise(e => setTimeout(() => e({
           allowed: true,
           pending: true
         }), 120)) ]);
       } catch (e) {
-        a = {
+        l = {
           allowed: true,
           pending: true
         };
       }
-      if (a && a.allowed === false) {
+      if (l && l.allowed === false) {
         return;
       }
-      if (a && !a.pending) {
-        this._rememberVideoDuration(a);
+      if (l && !l.pending) {
+        this._rememberVideoDuration(l);
       }
-      const l = typeof window.syncStorageLimitsFromStatus === "function" ? window.syncStorageLimitsFromStatus(o) : null;
-      if (l?.phase === "high" || l?.phase === "full") {
+      const c = typeof window.syncStorageLimitsFromStatus === "function" ? window.syncStorageLimitsFromStatus(o) : null;
+      if (c?.phase === "high" || c?.phase === "full") {
         if (typeof window.pulseStorageBadgeWarning === "function") {
           window.pulseStorageBadgeWarning();
         }
@@ -15015,14 +15352,19 @@ class ClipsStudio {
           this._pendingDurationCheck = null;
         }
       });
-      if (s) {
-        const e = document.getElementById("processUrlBtn");
-        e?.classList.remove("needs-url-pulse");
+      if (a) {
+        const i = document.getElementById("processUrlBtn");
+        i?.classList.remove("needs-url-pulse");
         this._awaitingUrlForTemplate = false;
-        this.startClipProcessingWithSlots(t, this.selectedTemplate);
+        if (e.length > 1) {
+          await this.startMultiTaskBatch(e, this.selectedTemplate);
+        } else {
+          this.startClipProcessingWithSlots(t, this.selectedTemplate);
+        }
         return;
       }
       this._continueAfterUrlReady(t);
+      this.syncTemplateConfirmButton();
     } finally {
       this._urlAnalyzeInFlight = false;
       if (!this._urlUpgradeCtaPending && !document.getElementById("processUrlBtn")?.classList.contains("is-upgrade-cta")) {

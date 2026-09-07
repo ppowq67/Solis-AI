@@ -27,7 +27,7 @@
     prime: 14.39
   };
   let n = t;
-  let a = "month";
+  let r = "month";
   function apiBase() {
     return window.API_BASE_URL || `${window.location.origin}/api`;
   }
@@ -39,15 +39,15 @@
         credentials: "include"
       });
       if (!n.ok) throw new Error(`dodo-config ${n.status}`);
-      const a = await n.json();
-      if (a.plans && Object.keys(a.plans).length) {
+      const r = await n.json();
+      if (r.plans && Object.keys(r.plans).length) {
         const e = {
           ...t
         };
-        Object.keys(a.plans).forEach(n => {
+        Object.keys(r.plans).forEach(n => {
           e[n] = {
             ...t[n],
-            ...a.plans[n]
+            ...r.plans[n]
           };
         });
         return e;
@@ -57,7 +57,7 @@
     }
     return t;
   }
-  const r = {
+  const a = {
     free: 0,
     basic: 1,
     prime: 2,
@@ -65,7 +65,7 @@
   };
   function normalizePlan(t) {
     const e = String(t || "free").trim().toLowerCase();
-    return Object.prototype.hasOwnProperty.call(r, e) ? e : "free";
+    return Object.prototype.hasOwnProperty.call(a, e) ? e : "free";
   }
   function currentPlanLabel(t) {
     const e = String(t || "free");
@@ -74,38 +74,39 @@
   function splitMoney(t) {
     const e = Number(t) || 0;
     const n = e.toFixed(2);
-    const [a, r] = n.split(".");
+    const [r, a] = n.split(".");
     return {
-      intPart: a,
-      decPart: `.${r}`
+      intPart: r,
+      decPart: `.${a}`
     };
   }
   function productFor(e) {
-    const r = n[e] || t[e];
-    if (!r) return null;
-    if (a === "year") {
-      return r.annualProductId || r.productId || r.priceId;
+    const a = n[e] || t[e];
+    if (!a) return null;
+    if (r === "year") {
+      return a.annualProductId || a.productId || a.priceId;
     }
-    return r.productId || r.priceId;
+    return a.productId || a.priceId;
   }
   function paintPlanPrices() {
-    const r = a === "year";
-    document.querySelectorAll(".plan-card[data-plan]").forEach(a => {
-      const i = a.getAttribute("data-plan");
-      const o = n[i] || t[i];
-      if (!o) return;
-      const c = a.querySelector(".plan-price-was");
-      const l = a.querySelector(".plan-price-save");
-      const u = a.querySelector(".plan-price-period");
-      const s = a.querySelector(".plan-price-billnote");
-      const d = a.querySelector(".plan-price-int");
-      const p = a.querySelector(".plan-price-dec");
-      if (r) {
-        const e = Number(o.annualPrice != null ? o.annualPrice : t[i]?.annualPrice) || 0;
-        const {intPart: n, decPart: a} = splitMoney(e);
-        if (d) d.textContent = n;
+    const a = r === "year";
+    document.querySelectorAll(".plan-card[data-plan]").forEach(r => {
+      const o = r.getAttribute("data-plan");
+      const i = n[o] || t[o];
+      if (!i) return;
+      const c = r.querySelector(".plan-price-was");
+      const l = r.querySelector(".plan-price-save");
+      const u = r.querySelector(".plan-price-period");
+      const s = r.querySelector(".plan-price-billnote");
+      const d = r.querySelector(".plan-price-int");
+      const p = r.querySelector(".plan-price-dec");
+      if (a) {
+        const e = Number(i.annualPrice != null ? i.annualPrice : t[o]?.annualPrice) || 0;
+        const n = e / 12;
+        const {intPart: r, decPart: a} = splitMoney(n);
+        if (d) d.textContent = r;
         if (p) p.textContent = a;
-        if (u) u.textContent = "/year";
+        if (u) u.textContent = "/mo";
         if (c) {
           c.hidden = true;
           c.textContent = "";
@@ -115,18 +116,17 @@
           l.textContent = "";
         }
         if (s) {
-          const t = e / 12;
-          s.textContent = `Billed yearly · ≈$${t.toFixed(2)}/mo`;
+          s.textContent = `$${e.toFixed(2)} billed yearly`;
         }
       } else {
-        const n = Number(o.price != null ? o.price : t[i]?.price) || 0;
-        const a = e[i];
-        const r = a != null ? a : n;
-        const {intPart: f, decPart: m} = splitMoney(r);
+        const n = Number(i.price != null ? i.price : t[o]?.price) || 0;
+        const r = e[o];
+        const a = r != null ? r : n;
+        const {intPart: f, decPart: m} = splitMoney(a);
         if (d) d.textContent = f;
         if (p) p.textContent = m;
         if (u) u.textContent = "/month";
-        if (a != null) {
+        if (r != null) {
           if (c) {
             c.hidden = false;
             c.textContent = `$${n.toFixed(2)}`;
@@ -149,66 +149,64 @@
         }
       }
     });
-    const i = document.querySelector(".hero-offer");
-    if (i) {
-      i.hidden = r;
-    }
-    const o = document.getElementById("billingSavings");
+    const o = document.querySelector(".hero-offer");
     if (o) {
-      o.style.opacity = r ? "1" : "0";
-      o.setAttribute("aria-hidden", r ? "false" : "true");
+      o.hidden = a;
     }
-    const c = document.getElementById("_ctaPrice");
-    if (c && !c.closest("._cta")?.querySelector(".is-current-plan")) {
-      const a = n.prime || t.prime;
-      if (r) {
-        c.textContent = `$${Number(a.annualPrice).toFixed(2)}/year`;
+    const i = document.getElementById("_ctaPrice");
+    if (i && !i.closest("._cta")?.querySelector(".is-current-plan")) {
+      const r = n.prime || t.prime;
+      if (a) {
+        const t = Number(r.annualPrice) / 12;
+        i.textContent = `$${t.toFixed(2)}/mo · billed yearly`;
       } else {
-        c.textContent = `$${Number(e.prime).toFixed(2)}/mo launch`;
+        i.textContent = `$${Number(e.prime).toFixed(2)}/mo launch`;
       }
     }
   }
   function setBillingInterval(t) {
-    a = t === "year" ? "year" : "month";
-    const e = document.getElementById("billingToggle");
+    r = t === "year" ? "year" : "month";
+    const e = document.getElementById("billingSlider");
     if (e) {
-      e.setAttribute("aria-checked", a === "year" ? "true" : "false");
+      e.dataset.interval = r;
+      e.querySelectorAll(".billing-slider-btn").forEach(t => {
+        const e = t.getAttribute("data-interval") === r;
+        t.classList.toggle("is-active", e);
+        t.setAttribute("aria-pressed", e ? "true" : "false");
+      });
     }
-    document.querySelectorAll(".billing-label[data-interval]").forEach(t => {
-      t.classList.toggle("is-active", t.getAttribute("data-interval") === a);
-    });
     paintPlanPrices();
   }
   function applyCurrentPlan(t) {
     const e = normalizePlan(t);
     document.querySelectorAll(".plan-card[data-plan]").forEach(t => {
       const n = t.getAttribute("data-plan");
-      const a = t.querySelector(".plan-btn");
-      const r = n === e && e !== "free";
-      t.classList.toggle("is-current", r);
-      if (!a) return;
-      if (!a.dataset.defaultHtml) a.dataset.defaultHtml = a.innerHTML.trim();
-      if (r) {
-        a.classList.add("is-current-plan");
-        a.disabled = true;
-        a.setAttribute("aria-current", "true");
-        a.textContent = "Current plan";
+      const r = t.querySelector(".plan-btn");
+      const a = n === e && e !== "free";
+      t.classList.toggle("is-current", a);
+      if (!r) return;
+      if (!r.dataset.defaultHtml) r.dataset.defaultHtml = r.innerHTML.trim();
+      if (a) {
+        r.classList.add("is-current-plan");
+        r.disabled = true;
+        r.setAttribute("aria-current", "true");
+        r.textContent = "Current plan";
       } else {
-        a.classList.remove("is-current-plan");
-        a.disabled = false;
-        a.removeAttribute("aria-current");
-        if (a.dataset.defaultHtml) a.innerHTML = a.dataset.defaultHtml;
+        r.classList.remove("is-current-plan");
+        r.disabled = false;
+        r.removeAttribute("aria-current");
+        if (r.dataset.defaultHtml) r.innerHTML = r.dataset.defaultHtml;
       }
     });
     const n = document.querySelector("._cta-btn");
-    const a = document.getElementById("_ctaPrice");
+    const r = document.getElementById("_ctaPrice");
     if (e !== "free" && n) {
       n.textContent = e === "elite" ? "You are on Elite" : `You are on ${currentPlanLabel(e)}`;
       n.classList.add("is-current-plan");
       n.disabled = true;
     }
-    if (e !== "free" && a) {
-      a.textContent = "Manage billing from your dashboard";
+    if (e !== "free" && r) {
+      r.textContent = "Manage billing from your dashboard";
     }
   }
   window.applyPremiumCurrentPlan = applyCurrentPlan;
@@ -223,8 +221,8 @@
       });
       if (!e.ok) return;
       const n = await e.json();
-      const a = n?.subscription?.plan || n?.plan;
-      if (a) applyCurrentPlan(a);
+      const r = n?.subscription?.plan || n?.plan;
+      if (r) applyCurrentPlan(r);
     } catch (t) {}
   }
   function startCheckout(t, e, n) {
@@ -233,8 +231,8 @@
       alert("Payment system is still loading. Please try again in a moment.");
       return;
     }
-    const a = window.openCheckout || window.PaymentFlow.openCheckout.bind(window.PaymentFlow);
-    a(t, e, n);
+    const r = window.openCheckout || window.PaymentFlow.openCheckout.bind(window.PaymentFlow);
+    r(t, e, n);
   }
   function wirePlanButtons() {
     document.querySelectorAll(".plan-card[data-plan]").forEach(t => {
@@ -245,9 +243,9 @@
       n.addEventListener("click", t => {
         t.preventDefault();
         if (n.disabled || n.classList.contains("is-current-plan")) return;
-        const a = productFor(e);
-        if (!a) return;
-        startCheckout(a, e, t);
+        const r = productFor(e);
+        if (!r) return;
+        startCheckout(r, e, t);
       });
     });
     const t = document.querySelector("._cta-btn");
@@ -263,18 +261,10 @@
     }
   }
   function wireBillingToggle() {
-    const t = document.getElementById("billingToggle");
+    const t = document.getElementById("billingSlider");
     if (!t || t.dataset.bound) return;
     t.dataset.bound = "1";
-    const toggle = () => setBillingInterval(a === "year" ? "month" : "year");
-    t.addEventListener("click", toggle);
-    t.addEventListener("keydown", t => {
-      if (t.key === "Enter" || t.key === " ") {
-        t.preventDefault();
-        toggle();
-      }
-    });
-    document.querySelectorAll(".billing-label[data-interval]").forEach(t => {
+    t.querySelectorAll(".billing-slider-btn").forEach(t => {
       t.addEventListener("click", () => setBillingInterval(t.getAttribute("data-interval")));
     });
     setBillingInterval("month");

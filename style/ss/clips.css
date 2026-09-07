@@ -2935,6 +2935,77 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
     width: 100%;
 }
 
+.multi-task-tray {
+    margin: 10px 2px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.multi-task-tray[hidden] {
+    display: none !important;
+}
+
+.multi-task-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.multi-task-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    max-width: min(100%, 340px);
+    padding: 7px 8px 7px 12px;
+    border-radius: 999px;
+    background: rgba(255, 252, 248, 0.95);
+    border: 1px solid rgba(200, 185, 170, 0.35);
+    box-shadow: 0 1px 2px rgba(40, 30, 20, 0.04);
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #3f3a34;
+    line-height: 1.2;
+}
+
+.multi-task-chip-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.multi-task-chip-remove {
+    appearance: none;
+    border: 0;
+    background: rgba(80, 72, 64, 0.08);
+    color: rgba(80, 72, 64, 0.75);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    padding: 0;
+    font-size: 14px;
+    line-height: 1;
+}
+
+.multi-task-chip-remove:hover {
+    background: rgba(80, 72, 64, 0.14);
+    color: #3f3a34;
+}
+
+.multi-task-meta {
+    margin: 0;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: rgba(80, 72, 64, 0.68);
+    letter-spacing: -0.01em;
+}
+
 .url-input-stack.has-quota .url-input-wrapper,
 .url-input-stack.has-quota .url-input-shell {
     position: relative;
@@ -3704,6 +3775,16 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
 .plan-effort-mode-row[data-mode="manual"] {
     align-items: center;
     margin-bottom: 10px;
+}
+
+.plan-effort-mode-row--multi {
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+
+.plan-effort-mode-row--multi[data-locked="1"] {
+    opacity: 0.55;
 }
 
 .plan-effort-mode-copy {

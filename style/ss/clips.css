@@ -3863,13 +3863,26 @@ body:not(:has(#librarySection.active)) #libraryLoadMoreFab {
 }
 
 .plan-effort-mode-row--multi {
-    align-items: flex-start;
+    align-items: center;
     margin-top: 10px;
     margin-bottom: 0;
 }
 
+.plan-effort-mode-row--multi[data-on="1"] {
+    align-items: flex-start;
+}
+
 .plan-effort-mode-row--multi .plan-effort-advanced-switch {
-    padding-top: 1px;
+    padding-top: 0;
+    align-self: center;
+    min-height: calc(0.875rem * 1.2);
+}
+
+.plan-effort-mode-row--multi[data-on="1"] .plan-effort-advanced-switch {
+    align-self: flex-start;
+    min-height: 0;
+    padding-top: 0;
+    margin-top: 0;
 }
 
 .plan-effort-mode-row--multi[data-locked="1"] {
@@ -4613,6 +4626,14 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
         gap: 14px;
     }
 
+    .plan-effort-mode-row--multi {
+        align-items: center;
+    }
+
+    .plan-effort-mode-row--multi[data-on="1"] {
+        align-items: flex-start;
+    }
+
     .plan-effort-mode-title {
         font-size: 0.9375rem;
     }
@@ -4625,6 +4646,14 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     .plan-effort-mode-row .stgToggle {
         width: 44px;
         height: 28px;
+    }
+
+    .plan-effort-mode-row--multi .stgToggle {
+        margin-top: 0;
+    }
+
+    .plan-effort-mode-row--multi .plan-effort-advanced-switch {
+        min-height: calc(0.9375rem * 1.2);
     }
 
     .plan-effort-mode-row .stgToggleKnob {
@@ -20795,6 +20824,14 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
         align-items: flex-start;
     }
 
+    .plan-effort-mode-row--multi {
+        align-items: center;
+    }
+
+    .plan-effort-mode-row--multi[data-on="1"] {
+        align-items: flex-start;
+    }
+
     .plan-effort-mode-title {
         font-size: 0.9375rem;
     }
@@ -20809,6 +20846,14 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
         width: 44px;
         height: 28px;
         margin-top: 1px;
+    }
+
+    .plan-effort-mode-row--multi .stgToggle {
+        margin-top: 0;
+    }
+
+    .plan-effort-mode-row--multi .plan-effort-advanced-switch {
+        min-height: calc(0.9375rem * 1.2);
     }
 
     .plan-effort-mode-row .stgToggleKnob {

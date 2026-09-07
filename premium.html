@@ -1105,25 +1105,24 @@
       justify-content: center;
       width: 15px;
       height: 15px;
+      border: 0;
       border-radius: 50%;
-      border: 1px solid rgba(0,0,0,0.12);
-      background: rgba(255,255,255,0.9);
+      background: transparent;
       color: var(--text-muted);
-      font-family: var(--font-display);
-      font-size: 10px;
-      font-weight: 800;
-      line-height: 1;
       cursor: help;
       flex-shrink: 0;
       padding: 0;
       margin: 0;
       vertical-align: middle;
     }
+    .plan-tip svg {
+      width: 14px;
+      height: 14px;
+      display: block;
+    }
     .plan-tip:hover,
     .plan-tip:focus-visible {
       color: var(--solis-deep);
-      border-color: rgba(249,115,22,0.4);
-      background: rgba(249,115,22,0.08);
       outline: none;
     }
     .plan-tip-bubble {
@@ -2457,7 +2456,7 @@
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>75</b> uploads per month</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>3</b> clips per upload</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>5</b> per day</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><span class="plan-feat-text"><b>Any video length</b><button type="button" class="plan-tip" aria-label="About video length on Basic"><span aria-hidden="true">!</span><span class="plan-tip-bubble">AI reviews up to 30 minutes of the video to find clips. Longer links are fine — nothing to stress about.</span></button></span></li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><span class="plan-feat-text"><b>Any video length</b><button type="button" class="plan-tip" aria-label="About video length on Basic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v5"/><path d="M12 16h.01"/></svg><span class="plan-tip-bubble">AI analyzes up to 30 minutes of each upload to find clips. Longer videos are supported; only that window is reviewed.</span></button></span></li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>No watermark</b> on exports</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>Unlimited</b> clips in library</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Export videos in <b>1080p</b></li>
@@ -2493,7 +2492,7 @@
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>200</b> uploads per month</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>5</b> clips per upload</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>10</b> per day</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><span class="plan-feat-text"><b>Any video length</b><button type="button" class="plan-tip" aria-label="About video length on Prime"><span aria-hidden="true">!</span><span class="plan-tip-bubble">AI reviews up to 120 minutes of the video to find clips. Longer links are fine — nothing to stress about.</span></button></span></li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><span class="plan-feat-text"><b>Any video length</b><button type="button" class="plan-tip" aria-label="About video length on Prime"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v5"/><path d="M12 16h.01"/></svg><span class="plan-tip-bubble">AI analyzes up to 120 minutes of each upload to find clips. Longer videos are supported; only that window is reviewed.</span></button></span></li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>Max quality</b> mode</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>Multi Task</b></li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Export videos in <b>1440p</b></li>
@@ -2523,7 +2522,7 @@
           <ul class="plan-features">
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>400</b> uploads per month</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>20</b> per day</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><span class="plan-feat-text"><b>Any video length</b><button type="button" class="plan-tip" aria-label="About video length on Elite"><span aria-hidden="true">!</span><span class="plan-tip-bubble">AI reviews up to 240 minutes of the video to find clips. Longer links are fine — nothing to stress about.</span></button></span></li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><span class="plan-feat-text"><b>Any video length</b><button type="button" class="plan-tip" aria-label="About video length on Elite"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v5"/><path d="M12 16h.01"/></svg><span class="plan-tip-bubble">AI analyzes up to 240 minutes of each upload to find clips. Longer videos are supported; only that window is reviewed.</span></button></span></li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>Max quality</b> mode</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>Multi Task</b></li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Priority render queue</li>

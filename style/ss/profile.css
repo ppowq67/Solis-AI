@@ -492,64 +492,6 @@
     min-width: 0;
 }
 
-.generation-task-parallel {
-    list-style: none;
-    margin: 6px 0 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.generation-task-parallel[hidden] {
-    display: none !important;
-}
-
-.generation-task-parallel-item {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    font-size: 12px;
-    font-weight: 600;
-    color: #9ca3af;
-}
-
-.generation-task-parallel-item.is-running {
-    color: #57534e;
-}
-
-.generation-task-parallel-item.is-running.is-hot {
-    color: #ea580c;
-}
-
-.generation-task-parallel-item.is-done {
-    color: #16a34a;
-}
-
-.generation-task-parallel-dot {
-    width: 5px;
-    height: 5px;
-    border-radius: 999px;
-    background: #d6d3d1;
-    flex-shrink: 0;
-}
-
-.generation-todo-item.is-active .generation-task-parallel-item.is-running .generation-task-parallel-dot {
-    background: #f97316;
-    animation: genParallelPulse 1.25s ease-out infinite;
-}
-
-.generation-task-parallel-item.is-done .generation-task-parallel-dot {
-    background: #22c55e;
-    animation: none;
-}
-
-@keyframes genParallelPulse {
-    0% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.4); }
-    70% { box-shadow: 0 0 0 5px rgba(249, 115, 22, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); }
-}
-
 .generation-task-label {
     font-size: 13px;
     color: #4b5563;

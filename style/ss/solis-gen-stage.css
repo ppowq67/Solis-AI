@@ -626,7 +626,7 @@ html[data-solis-cursor="off"] .solis-gen-brand{
     min-height:0;
 }
 .solis-gen-step{
-    display:flex;align-items:center;gap:12px;
+    display:flex;align-items:flex-start;gap:12px;
     padding:7px 0;
     font-size:14.5px;font-weight:600;color:#9ca3af;
     opacity:0;transform:translateY(8px);
@@ -634,6 +634,44 @@ html[data-solis-cursor="off"] .solis-gen-brand{
         color .35s ease,
         opacity .4s cubic-bezier(.22,1,.36,1),
         transform .4s cubic-bezier(.22,1,.36,1);
+}
+.solis-gen-step-body{
+    flex:1;min-width:0;
+    display:flex;flex-direction:column;gap:6px;
+}
+.solis-gen-step-parallel{
+    list-style:none;margin:0;padding:2px 0 4px 2px;
+    display:flex;flex-direction:column;gap:5px;
+}
+.solis-gen-step-parallel[hidden]{display:none !important;}
+.solis-gen-step-parallel-item{
+    display:flex;align-items:center;gap:8px;
+    font-size:12.5px;font-weight:600;color:#9ca3af;
+    opacity:.88;
+}
+.solis-gen-step-parallel-item.is-running{color:#4b5563;}
+.solis-gen-step-parallel-item.is-running.is-hot{color:#ea580c;}
+.solis-gen-step-parallel-item.is-done{color:#16a34a;opacity:.9;}
+.solis-gen-step-parallel-dot{
+    width:6px;height:6px;border-radius:999px;flex-shrink:0;
+    background:#d1d5db;
+}
+.solis-gen-step-parallel-item.is-running .solis-gen-step-parallel-dot{
+    background:#f97316;
+    box-shadow:0 0 0 0 rgba(249,115,22,.45);
+    animation:solisParallelPulse 1.25s ease-out infinite;
+}
+.solis-gen-step-parallel-item.is-running.is-hot .solis-gen-step-parallel-dot{
+    animation-duration:.9s;
+}
+.solis-gen-step-parallel-item.is-done .solis-gen-step-parallel-dot{
+    background:#22c55e;
+    box-shadow:none;animation:none;
+}
+@keyframes solisParallelPulse{
+    0%{box-shadow:0 0 0 0 rgba(249,115,22,.4);}
+    70%{box-shadow:0 0 0 6px rgba(249,115,22,0);}
+    100%{box-shadow:0 0 0 0 rgba(249,115,22,0);}
 }
 .solis-gen-step.is-shown{opacity:1;transform:none;}
 .solis-gen-step.is-done{color:#16a34a;}
@@ -679,6 +717,7 @@ html[data-solis-cursor="off"] .solis-gen-brand{
     border:1.75px solid #e5e7eb;background:#fff;box-sizing:border-box;
     position:relative;
     overflow:visible;
+    margin-top:1px;
     transition:
         border-color .4s cubic-bezier(.22,.61,.36,1),
         background-color .4s cubic-bezier(.22,.61,.36,1),

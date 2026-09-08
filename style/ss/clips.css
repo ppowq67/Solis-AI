@@ -4885,8 +4885,10 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
 }
 
 .url-submit-btn.is-upgrade-cta {
-    width: 108px;
-    border-radius: 999px;
+    width: 108px !important;
+    min-width: 108px !important;
+    height: 52px !important;
+    border-radius: 999px !important;
     cursor: pointer;
     background: linear-gradient(145deg, #1f2937 0%, #111827 55%, #0b1220 100%);
     box-shadow:
@@ -4929,6 +4931,37 @@ html[data-effort-ui="slider"] .plan-selector-popover.effort-open .plan-effort-fl
     visibility: visible;
     transform: translateY(0) scale(1);
     transition-delay: 0.12s;
+}
+
+.url-submit-btn .url-submit-cooldown-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #fff;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    z-index: 4;
+}
+
+.url-submit-btn.is-cooldown .button-icon--go,
+.url-submit-btn.is-cooldown .button-icon--stop,
+.url-submit-btn.is-cooldown .loading-dots,
+.url-submit-btn.is-cooldown .url-submit-upgrade-label {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none;
+}
+
+.url-submit-btn.is-cooldown .url-submit-cooldown-label:not([hidden]) {
+    opacity: 1;
+    visibility: visible;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -17196,6 +17229,14 @@ body > #improveHoverCard {
         0 0 0 1px rgba(255, 122, 80, 0.14);
     background: #fff;
 }
+.solis-upgrade-card--elite {
+    border-color: rgba(68, 64, 60, 0.18);
+    box-shadow: 0 2px 10px rgba(120, 90, 60, 0.05);
+    background: #fff;
+}
+.solis-upgrade-modal-help[hidden] {
+    display: none !important;
+}
 .solis-upgrade-card-ribbon {
     position: absolute;
     top: 0;
@@ -20946,6 +20987,17 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
         flex-shrink: 0;
     }
 
+    .url-submit-btn.is-upgrade-cta {
+        width: 96px !important;
+        min-width: 96px !important;
+        height: 44px !important;
+        border-radius: 999px !important;
+    }
+
+    .url-submit-btn.is-upgrade-cta .url-submit-upgrade-label {
+        font-size: 0.72rem;
+    }
+
     .url-submit-btn.is-generating {
         opacity: 1;
         cursor: pointer;
@@ -21519,6 +21571,17 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
         margin-top: 0;
     }
 
+    .url-submit-btn.is-upgrade-cta {
+        width: 92px !important;
+        min-width: 92px !important;
+        height: 42px !important;
+        border-radius: 999px !important;
+    }
+
+    .url-submit-btn.is-upgrade-cta .url-submit-upgrade-label {
+        font-size: 0.7rem;
+    }
+
     .url-submit-btn.is-generating {
         opacity: 1;
         cursor: pointer;
@@ -21680,6 +21743,17 @@ body.solis-upgrade-modal-open .rk-suggest-actions {
         pointer-events: auto;
         align-self: center;
         margin-top: 0 !important;
+    }
+
+    .url-submit-btn.is-upgrade-cta {
+        width: 96px !important;
+        min-width: 96px !important;
+        height: 44px !important;
+        border-radius: 999px !important;
+    }
+
+    .url-submit-btn.is-upgrade-cta .url-submit-upgrade-label {
+        font-size: 0.72rem;
     }
 
     .url-submit-btn.is-generating {

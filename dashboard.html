@@ -18,7 +18,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#ff6b3d">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.socket.io https://static.cloudflareinsights.com https://api.solisai.video https://client.crisp.chat; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://client.crisp.chat; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://client.crisp.chat; connect-src 'self' https://api.solisai.video wss://api.solisai.video https://api.solisai.video wss://api.solisai.video https://api.solisai.video wss://api.solisai.video https://cdn.socket.io https://cloudflareinsights.com https: wss://client.relay.crisp.chat wss://stream.relay.crisp.chat wss://client.relay.rescue.crisp.chat https://client.crisp.chat https://storage.crisp.chat; img-src 'self' data: https:; frame-src 'self' https://checkout.dodopayments.com https://test.checkout.dodopayments.com https://game.crisp.chat https://client.crisp.chat https://*.crisp.help; worker-src 'self' blob: https://client.crisp.chat; media-src 'self' blob: https://api.solisai.video https://*.r2.cloudflarestorage.com https://client.crisp.chat;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.socket.io https://static.cloudflareinsights.com https://api.solisai.video https://client.crisp.chat https://challenges.cloudflare.com https://*.challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://client.crisp.chat; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://client.crisp.chat; connect-src 'self' https://api.solisai.video wss://api.solisai.video https://api.solisai.video wss://api.solisai.video https://api.solisai.video wss://api.solisai.video https://cdn.socket.io https://cloudflareinsights.com https: https://challenges.cloudflare.com https://*.challenges.cloudflare.com wss://client.relay.crisp.chat wss://stream.relay.crisp.chat wss://client.relay.rescue.crisp.chat https://client.crisp.chat https://storage.crisp.chat; img-src 'self' data: https:; frame-src 'self' https://checkout.dodopayments.com https://test.checkout.dodopayments.com https://game.crisp.chat https://client.crisp.chat https://*.crisp.help https://challenges.cloudflare.com https://*.challenges.cloudflare.com; worker-src 'self' blob: https://client.crisp.chat; media-src 'self' blob: https://api.solisai.video https://*.r2.cloudflarestorage.com https://client.crisp.chat;">
     <script src="/js/core/init.js?v=8"></script>
     <script src="/js/core/api-client.js?v=7"></script>
     <script src="/js/core/avatar-url.js?v=7"></script>
@@ -48,10 +48,10 @@
     <link rel="stylesheet" href="/style/ss/ios-pill-nav.css?v=29">
     <link rel="stylesheet" href="/style/ss/mobile-nav.css?v=43">
     <link rel="stylesheet" href="/style/ss/customize.css?v=27">
-    <link rel="stylesheet" href="/style/ss/clips.css?v=263">
-    <link rel="stylesheet" href="/style/ss/profile.css?v=34">
+    <link rel="stylesheet" href="/style/ss/clips.css?v=264">
+    <link rel="stylesheet" href="/style/ss/profile.css?v=35">
     <link rel="stylesheet" href="/style/ss/tasks-panel-v2-demo.css?v=18">
-    <link rel="stylesheet" href="/style/ss/solis-gen-stage.css?v=54">
+    <link rel="stylesheet" href="/style/ss/solis-gen-stage.css?v=55">
     <link rel="stylesheet" href="/style/ss/newsfeed-widget.css?v=71">
     <script src="/js/ui/navigation.js?v=8"></script>
     <script src="/js/ui/menu.js?v=7"></script>
@@ -63,8 +63,8 @@
     <script src="/js/s_new/stg.js?v=72"></script>
     <script src="/js/i_dq/video-generation-hook.js?v=1"></script>
     <script src="/js/ui/progress-ui.js?v=2"></script>
-    <script src="/js/ui/generation-progress-spinner.js?v=81"></script>
-    <script src="/js/ui/solis-gen-stage.js?v=46"></script>
+    <script src="/js/ui/generation-progress-spinner.js?v=82"></script>
+    <script src="/js/ui/solis-gen-stage.js?v=48"></script>
     <script src="/js/generation-recovery.js?v=7"></script>
     <script src="/js/i_dq/ranking-customizer.js?v=26"></script>
     <script src="/js/s_new/solis-style-pack.js?v=3"></script>
@@ -79,7 +79,7 @@
     <script src="/js/ui/plan-selector.js?v=77"></script>
     <script src="/js/core/video-preview-system.js?v=2"></script>
     <script src="/js/s_new/clip-card.js?v=29"></script>
-    <script src="/js/s.js?v=353"></script>
+    <script src="/js/s.js?v=354"></script>
     <script src="/js/s_new/silence-cut-suggest.js?v=4"></script>
     <script src="/js/s_new/silencer.js?v=14"></script>
     <script src="/js/s_new/improve-clip.js?v=30"></script>
@@ -1306,8 +1306,8 @@
                 <h1 class="solis-gen-heading" id="solisGenHeading"><span class="solis-gen-think-word" id="solisGenThinkWord">Watching</span></h1>
                 </div>
                 </div>
-                <div class="solis-gen-activity" id="solisGenActivity">
-                    <button type="button" class="solis-gen-activity-summary" id="solisGenActivitySummary" aria-expanded="false" aria-controls="solisGenStepsPanel">
+                <div class="solis-gen-activity is-open" id="solisGenActivity">
+                    <button type="button" class="solis-gen-activity-summary is-expanded" id="solisGenActivitySummary" aria-expanded="true" aria-controls="solisGenStepsPanel">
                         <span class="solis-gen-activity-count" id="solisGenActivityCount" hidden></span>
                         <span class="solis-gen-activity-text" id="solisGenActivityText">Getting started</span>
                         <svg class="solis-gen-activity-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
@@ -4718,7 +4718,7 @@
                                 <div class="plan-effort-mode-row plan-effort-mode-row--multi" id="planMultiTaskRow" data-on="0">
                                     <div class="plan-effort-mode-copy">
                                         <span class="plan-effort-mode-title" id="planMultiTaskTitle">Multi Task</span>
-                                        <span class="plan-effort-mode-hint is-collapsed" id="planMultiTaskHint">Paste multiple URLs and do tasks simultaneously</span>
+                                        <span class="plan-effort-mode-hint is-collapsed" id="planMultiTaskHint">Up to 10 Tasks in one go on Prime & Elite</span>
                                     </div>
                                     <div class="plan-effort-advanced-switch">
                                         <button
@@ -4833,6 +4833,7 @@
                         <span class="loading-dot"></span>
                     </div>
                     <span class="url-submit-upgrade-label" aria-hidden="true">Upgrade</span>
+                    <span class="url-submit-cooldown-label" aria-hidden="true" hidden></span>
                 </button>
                 <div class="url-input-overlay">
                     <div class="overlay-content">
@@ -17106,9 +17107,9 @@
         </button>
 
         <header class="solis-upgrade-modal-head">
-            <p class="solis-upgrade-modal-eyebrow" id="solisUpgradeEyebrow" data-copy-watermark="Upgrade" data-copy-quota="Out of uploads" data-copy-multitask="Prime feature">Upgrade</p>
-            <h2 class="solis-upgrade-modal-title" id="solisUpgradeTitle" data-copy-watermark="Export without the watermark" data-copy-quota="Keep creating without the wait" data-copy-multitask="Paste several links at once">Export without the watermark</h2>
-            <p class="solis-upgrade-modal-sub" id="solisUpgradeSub" data-copy-watermark="Free keeps the Solis mark on every clip. Paid removes it and unlocks cleaner, client-ready exports." data-copy-quota="You have used today's free uploads. Paid unlocks more daily generations, no watermark, and cleaner exports." data-copy-multitask="Multi Task is on Prime and Elite. Queue up to 10 videos, pick one template, and generate them together.">Free keeps the Solis mark on every clip. Paid removes it and unlocks cleaner, client-ready exports.</p>
+            <p class="solis-upgrade-modal-eyebrow" id="solisUpgradeEyebrow" data-copy-watermark="Upgrade" data-copy-quota="Out of uploads" data-copy-multitask="Prime & Elite">Upgrade</p>
+            <h2 class="solis-upgrade-modal-title" id="solisUpgradeTitle" data-copy-watermark="Export without the watermark" data-copy-quota="Keep creating without the wait" data-copy-multitask="Up to 10 Tasks in one go">Export without the watermark</h2>
+            <p class="solis-upgrade-modal-sub" id="solisUpgradeSub" data-copy-watermark="Free keeps the Solis mark on every clip. Paid removes it and unlocks cleaner, client-ready exports." data-copy-quota="You have used today's free uploads. Paid unlocks more daily generations, no watermark, and cleaner exports." data-copy-multitask="Multi Task is on Prime and Elite. Queue up to 10 Tasks in one go, pick one template, and generate them together.">Free keeps the Solis mark on every clip. Paid removes it and unlocks cleaner, client-ready exports.</p>
             <div class="solis-upgrade-billing" role="group" aria-label="Billing period">
                 <button type="button" class="solis-upgrade-billing-opt" data-billing="full" id="solisUpgradeBillingFull">Monthly</button>
                 <button type="button" class="solis-upgrade-billing-opt is-active" data-billing="launch" id="solisUpgradeBillingLaunch" aria-pressed="true">
@@ -17158,7 +17159,7 @@
                 data-chip-multitask="Multi Task"
                 data-tag-watermark="Clean brand exports. Built for creators who ship daily."
                 data-tag-quota="Clean brand exports. Built for creators who ship daily."
-                data-tag-multitask="Batch links and room to run several gens at once."
+                data-tag-multitask="Up to 10 Tasks in one go, with room to run several gens live."
                 data-cta-watermark="Remove watermark"
                 data-cta-quota="Get more uploads"
                 data-cta-multitask="Unlock Multi Task"
@@ -17179,7 +17180,7 @@
                 data-note-launch-multitask="First 2 months at launch price, then $23.99/mo"
                 data-features-watermark="No Solis watermark|5 uploads / day|Up to 3 clips per upload|1080p export|Unlimited library clips"
                 data-features-quota="No Solis watermark|5 uploads / day|Up to 3 clips per upload|1080p export|Unlimited library clips"
-                data-features-multitask="Multi Task - up to 10 links|Max quality mode|No Solis watermark|More daily uploads|1440p export">
+                data-features-multitask="Multi Task · up to 10 Tasks in one go|Max quality mode|No Solis watermark|More daily uploads|1440p export">
                 <span class="solis-upgrade-card-ribbon">Recommended</span>
                 <div class="solis-upgrade-card-body">
                     <div class="solis-upgrade-card-topline">
@@ -17223,6 +17224,37 @@
                     </div>
                 </div>
             </article>
+
+            <article class="solis-upgrade-card solis-upgrade-card--elite" data-plan="elite" hidden>
+                <div class="solis-upgrade-card-body">
+                    <div class="solis-upgrade-card-topline">
+                        <h3 class="solis-upgrade-card-name">Elite</h3>
+                        <span class="solis-upgrade-card-chip solis-upgrade-card-chip--hot">Priority</span>
+                    </div>
+                    <p class="solis-upgrade-card-tag">Multi Task with more live capacity and priority render queue.</p>
+                    <div class="solis-upgrade-card-price">
+                        <span class="solis-upgrade-card-was" data-price-was-full="$39.99" data-price-was-launch="$39.99">$39.99</span>
+                        <span class="solis-upgrade-card-amount">
+                            <span class="solis-upgrade-card-now" data-price-full="$39.99" data-price-launch="$39.99">$39.99</span>
+                            <span class="solis-upgrade-card-period">/month</span>
+                        </span>
+                    </div>
+                    <p class="solis-upgrade-card-note" data-note-full="Billed monthly. Cancel anytime." data-note-launch="Billed monthly. Cancel anytime.">Billed monthly. Cancel anytime.</p>
+                    <a class="solis-upgrade-card-cta solis-upgrade-card-cta--primary" href="/premium.html?plan=elite">
+                        <span class="solis-upgrade-card-cta-label">Get Elite</span>
+                    </a>
+                    <div class="solis-upgrade-card-features-wrap">
+                        <ul class="solis-upgrade-card-features">
+                            <li class="is-win">Multi Task · up to 10 Tasks in one go</li>
+                            <li class="is-win">More concurrent gens at once</li>
+                            <li class="is-win">Priority render queue</li>
+                            <li class="is-win">Max quality mode</li>
+                            <li class="is-win">No Solis watermark</li>
+                        </ul>
+                    </div>
+                </div>
+            </article>
+
         </div>
 
         <footer class="solis-upgrade-modal-foot">
@@ -17230,7 +17262,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                 <span>Compare all plans</span>
             </a>
-            <p class="solis-upgrade-modal-help">Need more power? <a href="/premium.html?plan=prime">See Prime &amp; Elite</a></p>
+            <p class="solis-upgrade-modal-help" id="solisUpgradeHelp">Need more power? <a href="/premium.html?plan=prime">See Prime &amp; Elite</a></p>
         </footer>
     </div>
 </div>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.solisai.video https://checkout.dodopayments.com https://test.checkout.dodopayments.com https://api.dodopayments.com https://test.dodopayments.com https://cloudflareinsights.com; frame-src 'self' https://checkout.dodopayments.com https://test.checkout.dodopayments.com;" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://challenges.cloudflare.com https://*.challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.solisai.video https://checkout.dodopayments.com https://test.checkout.dodopayments.com https://api.dodopayments.com https://test.dodopayments.com https://cloudflareinsights.com https://challenges.cloudflare.com https://*.challenges.cloudflare.com; frame-src 'self' https://checkout.dodopayments.com https://test.checkout.dodopayments.com https://challenges.cloudflare.com https://*.challenges.cloudflare.com;" />
   <script src="/js/core/init.js?v=7"></script>
   <script defer src="/js/auth-modal.js?v=3"></script>
   <script>if ('scrollRestoration' in history) history.scrollRestoration = 'manual';</script>
@@ -1402,6 +1402,25 @@
       color: var(--text-secondary);
       letter-spacing: -0.01em;
     }
+    .comparison-feat-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .comparison-feat-label .plan-tip {
+      width: 14px;
+      height: 14px;
+    }
+    .comparison-feat-label .plan-tip svg {
+      width: 13px;
+      height: 13px;
+    }
+    .comparison-feat-label .plan-tip-bubble {
+      width: min(240px, 72vw);
+      text-align: left;
+      font-weight: 500;
+    }
     .comparison-table .row-feature td.col-prime {
       background: rgba(249,115,22,0.03);
     }
@@ -2485,7 +2504,7 @@
               </span>
             </li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>5</b> uploads/day</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><span class="plan-feat-text"><b>Any video length</b><button type="button" class="plan-tip" aria-label="About video length on Basic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v5"/><path d="M12 16h.01"/></svg><span class="plan-tip-bubble">AI analyzes up to 30 minutes of each upload to find clips. Longer videos are supported; only that window is reviewed.</span></button></span></li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><span class="plan-feat-text"><b>Any video length</b><button type="button" class="plan-tip" aria-label="About video length on Basic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span class="plan-tip-bubble">AI analyzes up to 30 minutes of each upload to find clips. Longer videos are supported; only that window is reviewed.</span></button></span></li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>No watermark</b> on exports</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>Unlimited</b> clips in library</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Export videos in <b>1080p</b></li>
@@ -2526,9 +2545,9 @@
               </span>
             </li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>10</b> uploads/day</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><span class="plan-feat-text"><b>Any video length</b><button type="button" class="plan-tip" aria-label="About video length on Prime"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v5"/><path d="M12 16h.01"/></svg><span class="plan-tip-bubble">AI analyzes up to 120 minutes of each upload to find clips. Longer videos are supported; only that window is reviewed.</span></button></span></li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><span class="plan-feat-text"><b>Any video length</b><button type="button" class="plan-tip" aria-label="About video length on Prime"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span class="plan-tip-bubble">AI analyzes up to 120 minutes of each upload to find clips. Longer videos are supported; only that window is reviewed.</span></button></span></li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>Max quality</b> mode</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>Multi Task</b></li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>Multi Task</b> · up to 10 Tasks in one go</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Export videos in <b>1440p</b></li>
           </ul>
         </article>
@@ -2562,9 +2581,9 @@
               </span>
             </li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Up to <b>20</b> uploads/day</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><span class="plan-feat-text"><b>Any video length</b><button type="button" class="plan-tip" aria-label="About video length on Elite"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v5"/><path d="M12 16h.01"/></svg><span class="plan-tip-bubble">AI analyzes up to 240 minutes of each upload to find clips. Longer videos are supported; only that window is reviewed.</span></button></span></li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><span class="plan-feat-text"><b>Any video length</b><button type="button" class="plan-tip" aria-label="About video length on Elite"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span class="plan-tip-bubble">AI analyzes up to 240 minutes of each upload to find clips. Longer videos are supported; only that window is reviewed.</span></button></span></li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>Max quality</b> mode</li>
-            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>Multi Task</b></li>
+            <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span><b>Multi Task</b> · up to 10 Tasks in one go</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Priority render queue</li>
             <li><span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Dedicated support channel</li>
           </ul>
@@ -2966,7 +2985,7 @@
           { feature: 'Monthly uploads',             free: { t: 'text', v: '15 per month' }, basic: { t: 'text', v: '75 per month' },  prime: { t: 'text', v: '200 per month' }, elite: { t: 'text', v: '400 per month' } },
           { feature: 'Clips per upload',            free: { t: 'text', v: '1' }, basic: { t: 'text', v: 'Up to 3' },  prime: { t: 'text', v: 'Up to 5' }, elite: { t: 'text', v: 'Up to 5' } },
           { feature: 'Daily pace',                  free: { t: 'text', v: 'Up to 1/day' }, basic: { t: 'text', v: 'Up to 5/day' },  prime: { t: 'text', v: 'Up to 10/day' }, elite: { t: 'text', v: 'Up to 20/day' } },
-          { feature: 'Any video length',           free: { t: 'text', v: 'Up to 11 min AI' }, basic: { t: 'text', v: 'Up to 30 min AI' }, prime: { t: 'text', v: 'Up to 120 min AI' }, elite: { t: 'text', v: 'Up to 240 min AI' } },
+          { feature: 'Any video length', featureHtml: true, free: { t: 'text', v: 'Any length' }, basic: { t: 'text', v: 'Any length' }, prime: { t: 'text', v: 'Any length' }, elite: { t: 'text', v: 'Any length' } },
           { feature: 'Clips in library',            free: { t: 'text', v: '5 max' }, basic: { t: 'text', v: 'Unlimited' },       prime: { t: 'text', v: 'Unlimited' },      elite: { t: 'text', v: 'Unlimited' } },
           { feature: 'Export resolution',           free: { t: 'text', v: '720p' }, basic: { t: 'text', v: '1080p' },    prime: { t: 'text', v: '1440p' },   elite: { t: 'text', v: '1440p' } },
           { feature: 'Watermark on export',         free: { t: 'text', v: 'Small mark' }, basic: { t: 'text', v: 'None' }, prime: { t: 'text', v: 'None' }, elite: { t: 'text', v: 'None' } },
@@ -2977,7 +2996,7 @@
           { feature: 'Full text customizer',        free: { t: 'yes' }, basic: { t: 'yes' }, prime: { t: 'yes' }, elite: { t: 'yes' } },
           { feature: 'Smart effort (Auto)',         free: { t: 'yes' }, basic: { t: 'yes' }, prime: { t: 'yes' }, elite: { t: 'yes' } },
           { feature: 'Max quality mode',            free: { t: 'no' }, basic: { t: 'no' }, prime: { t: 'yes' }, elite: { t: 'yes' } },
-          { feature: 'Multi Task (batch links)',    free: { t: 'no' }, basic: { t: 'no' }, prime: { t: 'text', v: 'Up to 10' }, elite: { t: 'text', v: 'Up to 10' } },
+          { feature: 'Multi Task',    free: { t: 'no' }, basic: { t: 'no' }, prime: { t: 'text', v: 'Up to 10 Tasks in one go' }, elite: { t: 'text', v: 'Up to 10 Tasks in one go' } },
         ]},
         { group: 'Workflow', rows: [
           { feature: 'Priority render queue',       free: { t: 'no' },  basic: { t: 'no' },  prime: { t: 'no' },  elite: { t: 'yes' } },
@@ -2989,6 +3008,22 @@
 
       var ICON_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="4,12 10,18 20,6"/></svg>';
       var ICON_MINUS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="6" y1="12" x2="18" y2="12"/></svg>';
+
+      function renderFeatureLabel(row) {
+        if (!row.featureHtml) return row.feature;
+        var tip =
+          'AI analyzes up to 11 / 30 / 120 / 240 minutes per upload on Free / Basic / Prime / Elite. ' +
+          'Longer videos are supported; only that window is reviewed.';
+        return (
+          '<span class="comparison-feat-label">' +
+            '<span>Any video length</span>' +
+            '<button type="button" class="plan-tip" aria-label="About any video length">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' +
+              '<span class="plan-tip-bubble">' + tip + '</span>' +
+            '</button>' +
+          '</span>'
+        );
+      }
 
       function renderCell(cell, isPrime) {
         if (cell.t === 'yes') return '<span class="cell-yes' + (isPrime ? ' is-prime' : '') + '">' + ICON_CHECK + '</span>';
@@ -3003,7 +3038,7 @@
           html += '<tr class="row-group"><td colspan="5">' + group.group + '</td></tr>';
           group.rows.forEach(function (row) {
             html += '<tr class="row-feature">' +
-              '<td>' + row.feature + '</td>' +
+              '<td>' + renderFeatureLabel(row) + '</td>' +
               '<td>' + renderCell(row.free, false) + '</td>' +
               '<td>' + renderCell(row.basic, false) + '</td>' +
               '<td class="col-prime">' + renderCell(row.prime, true) + '</td>' +
@@ -3017,7 +3052,7 @@
         { q: "What's the AI processing limit?", a: "Each plan has an AI processing budget per upload: Free 11 minutes, Basic 30 minutes, Prime 120 minutes, Elite 240 minutes. You can still paste a longer URL. Solis finds the best moments inside that window. One upload still counts as one upload." },
         { q: 'Is video length metered?', a: "Your source URL can be longer than the plan budget. What changes by tier is how many minutes of that source AI will process, how many uploads you get per month, and how many clips per upload. You are not charged by total source length." },
         { q: 'How do monthly uploads and daily pace work?', a: "Your plan is built around monthly uploads. That is your allowance. Daily pace is a fair cap so one account cannot burn the whole month in a weekend. When you have used today's pace, your remaining monthly uploads are still yours. The next one unlocks on schedule." },
-        { q: 'Can I switch tiers later?', a: "Yes. Upgrade or downgrade anytime from your dashboard. Upgrades take effect immediately and we prorate the difference. Downgrades take effect at the end of your current billing cycle, so you keep the higher limits until then." },
+        { q: 'Can I switch tiers later?', a: "Yes. You can move to a different plan from billing or checkout. Immediate upgrades may start a new subscription period. If you already have an active plan and choose a deferred change, you keep your current plan until the renewal date, then the prepaid plan activates. Cancel anytime from settings; access continues until the end of the paid period." },
         { q: "What counts as an upload?", a: "One upload is one source URL you submit. We analyze that video once, then render the clips you chose for that run. On paid plans you can get multiple clips per upload without starting over. Each finished clip uses one saved video slot. Submitting the same source again with a different template counts as a new upload. Failed renders caused by platform-side errors are automatically refunded to your daily limit." },
         { q: 'Do you offer refunds?', a: "You can cancel within 5 days of your first charge and receive a full refund, no questions asked. Annual plans are refundable on a prorated basis within the first 14 days. See our <a href='/refund.html'>Refund Policy</a> for the full policy." },
         { q: 'What is the 40% off launch offer?', a: "For a limited time, Basic and Prime are 40% off for your first 2 months. Basic is $5.99/mo and Prime is $14.39/mo for those first two months, then billing returns to the regular price ($9.99 / $23.99). Elite is $39.99/mo. Cancel anytime." },

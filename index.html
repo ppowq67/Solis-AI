@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://challenges.cloudflare.com https://*.challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com https://arc.net https://challenges.cloudflare.com https://*.challenges.cloudflare.com; img-src 'self' data: https:; worker-src 'self' blob:; child-src 'self' blob: https://challenges.cloudflare.com https://*.challenges.cloudflare.com; connect-src 'self' https: wss: https://api.solisai.video wss://api.solisai.video https://api.solisai.video wss://api.solisai.video; frame-src 'self' https://checkout.dodopayments.com https://test.checkout.dodopayments.com https://challenges.cloudflare.com https://*.challenges.cloudflare.com;">
+  <!-- CSP meta removed: Cloudflare managed challenges inject their own CSP;
+       a second policy breaks regional hosts (brunhild.challenges.cloudflare.com)
+       and Vercel Live. Keep security via HTTPS + CF WAF instead on this page. -->
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="X-XSS-Protection" content="1; mode=block">
